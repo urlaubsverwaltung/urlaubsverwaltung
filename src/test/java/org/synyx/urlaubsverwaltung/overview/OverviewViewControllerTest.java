@@ -4,11 +4,8 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
@@ -18,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -27,7 +23,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -41,7 +36,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,7 +49,6 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -71,9 +64,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
-import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -116,7 +107,7 @@ class OverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService,
+            workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, clock);
     }
 
@@ -242,21 +233,6 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewCanAccessAbsenceOverview() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessAbsenceOverview", true));
-    }
-
-
-    @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
         final Person person = new Person();
         person.setId(1L);
@@ -296,83 +272,6 @@ class OverviewViewControllerTest {
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAccessCalendarShare", true));
-    }
-
-    @Test
-    void showOverviewCanAddApplicationForAnotherUserIfOffice() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
-    }
-
-    @Test
-    void showOverviewCanAddApplicationForAnotherUserOfDepartmentHeadAndApplicationAdd() throws Exception {
-        final Person departmentHead = new Person();
-        departmentHead.setId(1L);
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_ADD));
-        when(personService.getSignedInUser()).thenReturn(departmentHead);
-
-        final Person person = new Person();
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
-    void ensureOverviewCanAddSickNoteForAnotherUserIfRole(Role role) throws Exception {
-        final Person personWithRole = new Person();
-        personWithRole.setId(1L);
-        personWithRole.setPermissions(List.of(USER, role, SICK_NOTE_ADD));
-        when(personService.getSignedInUser()).thenReturn(personWithRole);
-
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
-    }
-
-    @Test
-    void ensureOverviewCanAddSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
-        final Person departmentHead = new Person();
-        departmentHead.setId(1L);
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
-        when(personService.getSignedInUser()).thenReturn(departmentHead);
-
-        final Person person = new Person();
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
-    }
-
-    @Test
-    void ensureOverviewCanAddSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
-        final Person ssa = new Person();
-        ssa.setId(1L);
-        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
-        when(personService.getSignedInUser()).thenReturn(ssa);
-
-        final Person person = new Person();
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
     }
 
     @Test
@@ -494,7 +393,6 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("applications", equalTo(List.of())))
             .andExpect(model().attribute("usedDaysOverview",
                 hasProperty("holidayDays",
                     hasProperty("sum", equalTo(ZERO))
@@ -534,38 +432,28 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
-
-        final Locale locale = GERMAN;
-        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
-        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
-            .id(1L)
-            .id(1L)
-            .category(HOLIDAY)
-            .messageKey("message-key")
-            .build();
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
 
         final Application revokedApplication = new Application();
         revokedApplication.setStatus(REVOKED);
-        revokedApplication.setVacationType(vacationType);
+        revokedApplication.setVacationType(mock(VacationType.class));
         revokedApplication.setPerson(person);
         revokedApplication.setStartDate(localDate.plusDays(1L));
         revokedApplication.setEndDate(localDate.plusDays(2L));
 
         final Application waitingApplication = new Application();
-        waitingApplication.setVacationType(vacationType);
+        waitingApplication.setVacationType(mock(VacationType.class));
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
         waitingApplication.setStartDate(localDate.plusDays(3L));
         waitingApplication.setEndDate(localDate.plusDays(4L));
 
         final Application allowedApplication = new Application();
-        allowedApplication.setVacationType(vacationType);
+        allowedApplication.setVacationType(mock(VacationType.class));
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
         allowedApplication.setStartDate(localDate.plusDays(5L));
@@ -597,34 +485,12 @@ class OverviewViewControllerTest {
 
         perform(
             get("/web/person/1/overview").param("year", "2021")
-                .locale(locale)
+                .locale(GERMAN)
         )
             .andExpect(status().isOk())
             .andExpect(view().name("person/person-overview"))
-            .andExpect(model().attribute("applications", hasSize(3)))
-            .andExpect(model().attribute("sickNotes", hasSize(2)))
             .andExpect(model().attribute("signedInUser", person))
-            .andExpect(model().attribute("userIsAllowedToCreateOvertime", true))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
-    }
-
-
-    @Test
-    void showUserPersonalOverviewAndIsNotAllowedToWriteOvertime() throws Exception {
-
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
-
-        MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
-        final ResultActions resultActions = perform(builder);
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("userIsAllowedToCreateOvertime", false));
     }
 
     private Person somePerson() {
@@ -648,12 +514,6 @@ class OverviewViewControllerTest {
             .withVacationDaysUsedNextYear(ZERO)
             .notExpiring(ZERO)
             .build();
-    }
-
-    private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
-        final MessageSource messageSource = mock(MessageSource.class);
-        when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
-        return messageSource;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

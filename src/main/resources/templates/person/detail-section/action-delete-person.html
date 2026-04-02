@@ -72,7 +72,7 @@
                   class="error text-sm"
                 ></p>
 
-                <div class="flex flex-col justify-between gap-2 sm:flex-row sm:gap-4">
+                <div class="flex flex-col justify-between gap-2 @2xl/main:flex-row @2xl/main:gap-4">
                   <button
                     th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
                     class="button-danger whitespace-normal w-auto"
@@ -87,7 +87,7 @@
                     th:formaction="@{/web/person/__${person.id}__}"
                     formmethod="get"
                     th:text="#{action.cancel}"
-                    class="button w-full sm:w-24"
+                    class="button w-full @2xl/main:w-24"
                   ></button>
                 </div>
               </div>

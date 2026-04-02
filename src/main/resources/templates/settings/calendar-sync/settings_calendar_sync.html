@@ -9,9 +9,9 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+  <body th:replace="~{_layout::body(~{::content})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form
@@ -24,7 +24,6 @@
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='calendar-sync')}" />
 
           <div role="group" aria-describedby="group-calendar-sync-description">
             <h2 id="group-calendar-sync-description" class="uv-form-legend" th:text="#{settings.calendar.title}">
@@ -44,7 +43,7 @@
             <div th:replace="~{settings/calendar-sync/google::section}"></div>
           </div>
 
-          <th:block th:replace="~{settings/fragments::save-button}" />
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>

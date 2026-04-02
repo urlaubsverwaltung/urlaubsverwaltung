@@ -216,7 +216,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
-                monthValue -> initializeAbsenceOverviewMonthDto(date, personList, locale));
+                _ -> initializeAbsenceOverviewMonthDto(date, personList, locale));
 
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, today, locale);
             monthView.getDays().add(tableHeadDay);

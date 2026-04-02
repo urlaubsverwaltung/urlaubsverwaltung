@@ -9,15 +9,15 @@
       <script defer type="module" asset:src="person_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
       <div th:replace="~{fragments/section-heading::section-heading(~{::person-permissions-body}, ~{})}">
         <th:block th:ref="person-permissions-body">
           <h2 th:text="#{person.form.permissions.title(${person.niceName})}">Berechtigungen für</h2>
         </th:block>
       </div>
 
-      <div class="flex items-center gap-4 sm:gap-6 mb-4 md:mb-12">
+      <div class="flex items-center gap-4 @2xl/main:gap-6 mb-4 @3xl/main:mb-12">
         <div th:replace="~{person/box::person-box(person=${person})}"></div>
       </div>
 
@@ -216,10 +216,12 @@
           </div>
         </div>
 
-        <div class="uv-form__actions">
-          <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
-        </div>
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
       </form>
     </main>
   </body>

@@ -23,9 +23,9 @@
       <script defer type="module" asset:src="account_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main">
-      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
+      <div class="content-container">
         <form
           id="holiday-account-settings-form"
           method="post"
@@ -195,7 +195,7 @@
                 <p
                   class="account-form-expire-description m-0"
                   th:with="
-                  settingsLink=@{/web/settings},
+                  settingsLink=@{/web/settings/account},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
                   messageKey=${account.doRemainingVacationDaysExpireGlobally ? 'person.form.annualVacation.remainingVacation.expire.global-info.true' : 'person.form.annualVacation.remainingVacation.expire.global-info.false'}
                 "
@@ -279,7 +279,7 @@
                 <p
                   class="account-form-expire-description m-0"
                   th:with="
-                  settingsLink=@{/web/settings},
+                  settingsLink=@{/web/settings/account},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expiryDate.global-info.settings') + '</a>'},
                   date=${account.expiryDateGlobally == null ? null : '<span class=&quot;font-bold&quot;>' + #temporals.format(account.expiryDateGlobally, #messages.msg('pattern.date')) + '</span>'},
                   messageKey=${account.expiryDateGlobally == null ? 'person.form.annualVacation.remainingVacation.expiryDate.global-info.none' : 'person.form.annualVacation.remainingVacation.expiryDate.global-info'}
@@ -344,10 +344,12 @@
             </div>
           </div>
 
-          <div class="uv-form__actions">
-            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
-            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
-          </div>
+          <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+            <div class="bottom-bar-inner flex justify-between items-center">
+              <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+              <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+            </div>
+          </uv-sticky>
         </form>
       </div>
     </main>

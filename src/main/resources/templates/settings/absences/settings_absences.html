@@ -9,9 +9,9 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+  <body th:replace="~{_layout::body(~{::content})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0" data-page="settings-absences">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form method="post" th:action="@{/web/settings/absences}" th:object="${settings}" class="uv-form uv-form-grid">
@@ -19,14 +19,12 @@
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absences')}" />
 
           <div role="group" aria-describedby="group-vacation-description">
             <h2 id="group-vacation-description" class="uv-form-legend" th:text="#{settings.vacation.title}">
               Einstellungen zu Urlaub
             </h2>
             <div th:replace="~{settings/absences/vacation::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
 
           <div role="group" aria-describedby="group-sick-note-description">
@@ -34,7 +32,6 @@
               Einstellungen zu Krankmeldungen
             </h2>
             <div th:replace="~{settings/absences/sick-days::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
 
           <div role="group" aria-describedby="group-reminder-absence-description">
@@ -46,7 +43,6 @@
               Automatische Erinnerung für wartende zu genehmigende Abwesenheiten
             </h2>
             <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
 
           <div role="group" aria-describedby="group-reminder-replacement-description">
@@ -58,7 +54,6 @@
               Automatische Erinnerung für bevorstehende Vertretungen
             </h2>
             <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
 
           <div role="group" aria-describedby="group-reminder-upcoming-absences-description">
@@ -71,8 +66,9 @@
             </h2>
 
             <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
+
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>

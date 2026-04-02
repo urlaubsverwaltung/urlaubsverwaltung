@@ -4,7 +4,7 @@
   margin-bottom: 0.5rem;
 
   position: sticky;
-  top: var(--uv-header-height);
+  top: 0;
 
   @apply text-lg;
   background-color: var(--color-white); /* sticky element background */

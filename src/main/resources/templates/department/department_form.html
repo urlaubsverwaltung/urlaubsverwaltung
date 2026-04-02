@@ -12,8 +12,8 @@
       <script defer type="module" asset:src="department_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
       <form
         method="post"
         th:with="action=${department.id == null ? '/web/department/new' : '/web/department/' + department.id}"
@@ -45,7 +45,7 @@
             </div>
 
             <div class="uv-form__input-row">
-              <label for="description" class="w-full lg:w-1/4" th:text="|#{department.data.info}:|">
+              <label for="description" class="w-full @5xl/main:w-1/4" th:text="|#{department.data.info}:|">
                 Beschreibung
               </label>
               <textarea id="description" rows="3" th:field="*{description}" th:errorclass="error"></textarea>
@@ -247,10 +247,12 @@
           </div>
         </div>
 
-        <div class="uv-form__actions">
-          <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
-        </div>
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
       </form>
     </main>
   </body>

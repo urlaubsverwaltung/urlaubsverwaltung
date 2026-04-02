@@ -22,173 +22,173 @@
       <script defer type="module" asset:src="workingtime_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
-      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
-        <form
-          method="post"
-          th:action="@{/web/person/__${person.id}__/workingtime}"
-          th:object="${workingTime}"
-          class="uv-form uv-form-grid"
-        >
-          <div role="group" aria-describedby="group-working-time-description">
-            <h1
-              id="group-working-time-description"
-              class="uv-form-legend"
-              th:text="#{person.form.workingTime.title(${person.niceName})}"
-            >
-              Arbeitszeiten von Marlene Muster
-            </h1>
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
+      <form
+        method="post"
+        th:action="@{/web/person/__${person.id}__/workingtime}"
+        th:object="${workingTime}"
+        class="uv-form uv-form-grid"
+      >
+        <div role="group" aria-describedby="group-working-time-description">
+          <h1
+            id="group-working-time-description"
+            class="uv-form-legend"
+            th:text="#{person.form.workingTime.title(${person.niceName})}"
+          >
+            Arbeitszeiten von Marlene Muster
+          </h1>
 
-            <div
-              class="uv-form__group"
-              th:with="
-                defaultFederalStateNameMessageKey=|federalState.${defaultFederalState}|,
-                countryMessageKey=|country.${defaultFederalState.country}|,
-                federalStateName=|#{${countryMessageKey}} - #{${defaultFederalStateNameMessageKey}}|,
-                defaultFederalStateName=#{${defaultFederalStateNameMessageKey}},
-                defaultFederalCountryAndStateName=${defaultFederalState.name == 'NONE' ? defaultFederalStateName : federalStateName}
+          <div
+            class="uv-form__group"
+            th:with="
+              defaultFederalStateNameMessageKey=|federalState.${defaultFederalState}|,
+              countryMessageKey=|country.${defaultFederalState.country}|,
+              federalStateName=|#{${countryMessageKey}} - #{${defaultFederalStateNameMessageKey}}|,
+              defaultFederalStateName=#{${defaultFederalStateNameMessageKey}},
+              defaultFederalCountryAndStateName=${defaultFederalState.name == 'NONE' ? defaultFederalStateName : federalStateName}
 "
-            >
-              <div th:if="${#fields.hasErrors('workingDays')}" class="uv-form__group-error">
-                <p class="alert alert-danger">
-                  <th:block th:errors="*{workingDays}"> workingDays errors </th:block>
-                </p>
-              </div>
+          >
+            <div th:if="${#fields.hasErrors('workingDays')}" class="uv-form__group-error">
+              <p class="alert alert-danger">
+                <th:block th:errors="*{workingDays}"> workingDays errors </th:block>
+              </p>
+            </div>
 
-              <div class="uv-form__group-info">
-                <p class="uv-help-block">
-                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-                  <th:block
-                    th:text="#{person.form.workingTime.federalState.description(${defaultFederalCountryAndStateName})}"
-                  >
-                    Baden-Württemberg
-                  </th:block>
-                </p>
-                <p class="uv-help-block">
-                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-                  <th:block th:text="#{person.form.workingTime.description}">Description</th:block>
-                </p>
-              </div>
-
-              <!-- Federal State -->
-              <div class="uv-form__input-row">
-                <label th:text="|#{person.form.workingTime.federalState}:|" class="is-required" for="federalStateType">
-                  Feiertagsregelung
-                </label>
-                <select
-                  th:replace="~{fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions})}"
-                  id="federalStateType"
+            <div class="uv-form__group-info">
+              <p class="uv-help-block">
+                <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                <th:block
+                  th:text="#{person.form.workingTime.federalState.description(${defaultFederalCountryAndStateName})}"
                 >
-                  <th:block th:fragment="federalStateOptions">
-                    <optgroup th:label="#{country.general}">
-                      <option
-                        th:text="#{person.form.workingTime.federalState.default(${defaultFederalCountryAndStateName})}"
-                        value=""
-                        th:selected="${workingTime.federalState == null}"
-                      ></option>
-                      <option
-                        th:text="#{federalState.NONE}"
-                        value="NONE"
-                        th:selected="${workingTime.federalState != null && workingTime.federalState.name == 'NONE'}"
-                      ></option>
-                    </optgroup>
+                  Baden-Württemberg
+                </th:block>
+              </p>
+              <p class="uv-help-block">
+                <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                <th:block th:text="#{person.form.workingTime.description}">Description</th:block>
+              </p>
+            </div>
 
-                    <optgroup
-                      th:label="${countryLabel}"
-                      th:each="federalStatesByCountry : ${federalStateTypes}"
-                      th:with="countryMessageKey2=|country.${federalStatesByCountry.key}|, countryLabel=#{${countryMessageKey2}}"
-                    >
-                      <option
-                        th:each="federalStateType : ${federalStatesByCountry.value}"
-                        th:with="countryMessageKey3=|federalState.${federalStateType}|"
-                        th:text="#{${countryMessageKey3}}"
-                        th:value="${federalStateType}"
-                        th:selected="${workingTime.federalState == federalStateType}"
-                      ></option>
-                    </optgroup>
-                  </th:block>
-                </select>
-              </div>
+            <!-- Federal State -->
+            <div class="uv-form__input-row">
+              <label th:text="|#{person.form.workingTime.federalState}:|" class="is-required" for="federalStateType">
+                Feiertagsregelung
+              </label>
+              <select
+                th:replace="~{fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions})}"
+                id="federalStateType"
+              >
+                <th:block th:fragment="federalStateOptions">
+                  <optgroup th:label="#{country.general}">
+                    <option
+                      th:text="#{person.form.workingTime.federalState.default(${defaultFederalCountryAndStateName})}"
+                      value=""
+                      th:selected="${workingTime.federalState == null}"
+                    ></option>
+                    <option
+                      th:text="#{federalState.NONE}"
+                      value="NONE"
+                      th:selected="${workingTime.federalState != null && workingTime.federalState.name == 'NONE'}"
+                    ></option>
+                  </optgroup>
 
-              <!-- Valid From -->
-              <div class="uv-form__input-row">
-                <label for="validFrom" class="is-required" th:text="|#{person.form.workingTime.valid-from}:|">
-                  Gültig ab
-                </label>
-                <input
-                  id="validFrom"
-                  th:field="*{validFrom}"
-                  th:errorclass="error"
-                  th:placeholder="#{pattern.date}"
-                  th:data-iso-value="${workingTime.validFromIsoValue}"
-                />
-                <p th:if="${#fields.hasErrors('validFrom')}" th:errors="*{validFrom}" class="uv-form__input-error"></p>
-              </div>
+                  <optgroup
+                    th:label="${countryLabel}"
+                    th:each="federalStatesByCountry : ${federalStateTypes}"
+                    th:with="countryMessageKey2=|country.${federalStatesByCountry.key}|, countryLabel=#{${countryMessageKey2}}"
+                  >
+                    <option
+                      th:each="federalStateType : ${federalStatesByCountry.value}"
+                      th:with="countryMessageKey3=|federalState.${federalStateType}|"
+                      th:text="#{${countryMessageKey3}}"
+                      th:value="${federalStateType}"
+                      th:selected="${workingTime.federalState == federalStateType}"
+                    ></option>
+                  </optgroup>
+                </th:block>
+              </select>
+            </div>
 
-              <!-- Working days -->
-              <div class="uv-form__input-row">
-                <p class="uv-form__label uv-form__label--required" th:text="|#{person.form.workingTime.weekDays}:|">
-                  Wochentage
-                </p>
-                <div class="flex flex-col gap-1">
-                  <div th:each="weekDay : ${weekDays}">
-                    <label th:for="${weekDay}">
-                      <input type="checkbox" th:id="${weekDay}" th:field="*{workingDays}" th:value="${weekDay.value}" />
-                      <span th:text="#{${weekDay}}"></span>
-                    </label>
-                  </div>
+            <!-- Valid From -->
+            <div class="uv-form__input-row">
+              <label for="validFrom" class="is-required" th:text="|#{person.form.workingTime.valid-from}:|">
+                Gültig ab
+              </label>
+              <input
+                id="validFrom"
+                th:field="*{validFrom}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                th:data-iso-value="${workingTime.validFromIsoValue}"
+              />
+              <p th:if="${#fields.hasErrors('validFrom')}" th:errors="*{validFrom}" class="uv-form__input-error"></p>
+            </div>
+
+            <!-- Working days -->
+            <div class="uv-form__input-row">
+              <p class="uv-form__label uv-form__label--required" th:text="|#{person.form.workingTime.weekDays}:|">
+                Wochentage
+              </p>
+              <div class="flex flex-col gap-1">
+                <div th:each="weekDay : ${weekDays}">
+                  <label th:for="${weekDay}">
+                    <input type="checkbox" th:id="${weekDay}" th:field="*{workingDays}" th:value="${weekDay.value}" />
+                    <span th:text="#{${weekDay}}"></span>
+                  </label>
                 </div>
               </div>
+            </div>
 
-              <!-- working times list -->
-              <div th:if="${not #lists.isEmpty(workingTimeHistories)}" class="uv-form__input-row">
-                <p class="uv-form__label" th:text="|#{person.form.workingTime.existent}:|">Arbeitszeiten</p>
-                <ul class="space-y-2 text-sm">
-                  <li th:each="workingTimeHistory, status : ${workingTimeHistories}">
+            <!-- working times list -->
+            <div th:if="${not #lists.isEmpty(workingTimeHistories)}" class="uv-form__input-row">
+              <p class="uv-form__label" th:text="|#{person.form.workingTime.existent}:|">Arbeitszeiten</p>
+              <ul class="space-y-2 text-sm">
+                <li th:each="workingTimeHistory, status : ${workingTimeHistories}">
+                  <span
+                    th:if="${status.first}"
+                    class="block"
+                    th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
+                  >
+                    <span th:text="#{person.form.workingTime.valid-from}"></span>
+                    <span th:text="${{workingTimeHistory.validFrom}}"></span>
+                  </span>
+                  <span
+                    th:if="${not status.first}"
+                    class="block"
+                    th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
+                  >
                     <span
-                      th:if="${status.first}"
-                      class="block"
-                      th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
-                    >
-                      <span th:text="#{person.form.workingTime.valid-from}"></span>
-                      <span th:text="${{workingTimeHistory.validFrom}}"></span>
-                    </span>
-                    <span
-                      th:if="${not status.first}"
-                      class="block"
-                      th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
-                    >
-                      <span
-                        th:text="#{person.form.workingTime.valid-from-to(${{workingTimeHistory.validFrom}}, ${{workingTimeHistory.validTo}})}"
-                      ></span>
-                    </span>
-
-                    <span
-                      th:each="workingDay, loop : ${workingTimeHistory.workingDays}"
-                      th:text="|#{${workingDay}}${loop.last ? '': ', '}|"
+                      th:text="#{person.form.workingTime.valid-from-to(${{workingTimeHistory.validFrom}}, ${{workingTimeHistory.validTo}})}"
                     ></span>
+                  </span>
 
-                    <th:block th:switch="${workingTimeHistory.federalState}">
-                      <div th:case="NONE" th:text="#{federalState.NONE}"></div>
-                      <div
-                        th:case="*"
-                        th:with="countryMessageKey=|country.${workingTimeHistory.country}|, federalStateMessageKey=|federalState.${workingTimeHistory.federalState}|"
-                        th:text="|#{${countryMessageKey}} - #{${federalStateMessageKey}}|"
-                      ></div>
-                    </th:block>
-                  </li>
-                </ul>
-              </div>
+                  <span
+                    th:each="workingDay, loop : ${workingTimeHistory.workingDays}"
+                    th:text="|#{${workingDay}}${loop.last ? '': ', '}|"
+                  ></span>
+
+                  <th:block th:switch="${workingTimeHistory.federalState}">
+                    <div th:case="NONE" th:text="#{federalState.NONE}"></div>
+                    <div
+                      th:case="*"
+                      th:with="countryMessageKey=|country.${workingTimeHistory.country}|, federalStateMessageKey=|federalState.${workingTimeHistory.federalState}|"
+                      th:text="|#{${countryMessageKey}} - #{${federalStateMessageKey}}|"
+                    ></div>
+                  </th:block>
+                </li>
+              </ul>
             </div>
           </div>
+        </div>
 
-          <div class="uv-form__actions">
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
             <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
-        </form>
-      </div>
+        </uv-sticky>
+      </form>
     </main>
   </body>
 </html>

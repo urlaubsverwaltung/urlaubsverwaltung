@@ -111,7 +111,7 @@ class OvertimeAbsenceApiControllerTest {
         when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
 
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(startDate, endDate)))
-            .thenReturn(Map.of(person, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
+            .thenReturn(Map.of(person, workingTimeCalendar(startDate, endDate, _ -> fullWorkday())));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())

@@ -11,179 +11,171 @@
       <script defer type="module" asset:src="department_list.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
-      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})}"
-        >
-          <th:block th:ref="department-list-heading-body">
-            <h1 th:text="#{departments.title}">Abteilungen</h1>
-          </th:block>
-          <th:block th:ref="department-list-heading-actions">
-            <div class="flex flex-col sm:flex-row sm:gap-2">
-              <a
-                th:if="${canCreateAndModifyDepartment}"
-                th:href="@{/web/department/new}"
-                class="icon-link flex items-center flex-row-reverse sm:flex-row"
-              >
-                <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
-                <span th:text="#{action.department.create}"></span>
-              </a>
-              <a th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse sm:flex-row">
-                <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
-                <span th:text="#{action.applications.absences_overview}"></span>
-              </a>
-              <button th:replace="~{fragments/print::button}"></button>
-            </div>
-          </th:block>
-        </div>
-
-        <th:block
-          th:if="${createdDepartmentName != null or updatedDepartmentName != null or deletedDepartmentName != null}"
-          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
-        >
-          <th:block th:ref="feedback-success-body">
-            <p
-              th:if="${createdDepartmentName != null}"
-              th:text="#{department.action.create.success(${createdDepartmentName})}"
-            ></p>
-            <p
-              th:if="${updatedDepartmentName != null}"
-              th:text="#{department.action.edit.success(${updatedDepartmentName})}"
-            ></p>
-            <p
-              th:if="${deletedDepartmentName != null}"
-              th:text="#{department.action.delete.success(${deletedDepartmentName})}"
-            ></p>
-          </th:block>
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})}"
+      >
+        <th:block th:ref="department-list-heading-body">
+          <h1 th:text="#{departments.title}">Abteilungen</h1>
         </th:block>
-
-        <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
-        <table
-          th:if="${not #lists.isEmpty(departments)}"
-          id="department-table"
-          class="list-table text-sm"
-          is="uv-table-sortable"
-        >
-          <caption class="sr-only" th:text="#{departments.title}">
-            Departments
-          </caption>
-          <thead class="hidden lg:table-header-group">
-            <tr>
-              <th
-                th:text="#{department.data.name}"
-                scope="col"
-                data-sortable
-                data-sorted="true"
-                data-sort-direction="asc"
-              ></th>
-              <th th:text="#{department.members}" scope="col" data-sortable data-sort-type="numeric"></th>
-              <th
-                th:text="#{department.data.twoStageApproval}"
-                class="whitespace-nowrap"
-                scope="col"
-                data-sortable
-              ></th>
-              <th
-                th:text="#{department.data.lastModification}"
-                class="whitespace-nowrap"
-                scope="col"
-                data-sortable
-                data-sort-type="date"
-              ></th>
-              <th th:if="${canCreateAndModifyDepartment}" scope="col">
-                <!--placeholder to ensure correct number of th-->
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="department : ${departments}">
-              <td>
-                <div class="font-bold">
-                  <th:block th:text="${department.name}"></th:block>
-                </div>
-                <div class="text-xs">
-                  <span th:text="${department.description}"></span>
-                </div>
-              </td>
-              <td class="hidden md:table-cell">
-                <a
-                  th:if="${department.activeMembersCount > 0}"
-                  th:href="@{/web/person?active=true&department=__${department.id}__}"
-                  th:text="|${department.activeMembersCount} #{department.members.active}|"
-                  class=""
-                >
-                </a>
-                <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
-                  /
-                </th:block>
-                <a
-                  th:if="${department.inactiveMembersCount > 0}"
-                  th:href="@{/web/person?active=false&department=__${department.id}__}"
-                  class=""
-                >
-                  <th:block th:text="${department.inactiveMembersCount}" />
-                  <th:block th:text="#{department.members.inactive}" />
-                </a>
-              </td>
-              <td class="is-centered hidden md:table-cell" th:data-sort-value="${department.twoStageApproval ? 0 : 1}">
-                <th:block th:if="${department.twoStageApproval == true}">
-                  <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
-                </th:block>
-              </td>
-              <td th:text="${{department.lastModification}}" class="hidden md:table-cell"></td>
-              <td th:if="${canCreateAndModifyDepartment}" th:with="dialogId=|modal-cancel-${department.id}|">
-                <dialog
-                  th:id="${dialogId}"
-                  th:aria-labelledby="${'modal-label-' + department.id}"
-                  class="modal"
-                  closedby="any"
-                >
-                  <form method="post" th:action="@{/web/department/__${department.id}__/delete}" class="modal__content">
-                    <div class="modal__header">
-                      <h4
-                        th:text="#{action.department.delete}"
-                        th:id="${'modal-label-' + department.id}"
-                        class="modal__header__title"
-                      >
-                        Löschen
-                      </h4>
-                      <button type="button" class="modal__close-button" th:commandfor="${dialogId}" command="close">
-                        <svg th:replace="~{icon/x-circle::svg(className='w-8 h-8')}"></svg>
-                      </button>
-                    </div>
-                    <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal__body"></div>
-                    <div class="modal__footer flex justify-around">
-                      <button autofocus class="button-danger" type="submit" th:text="#{action.department.delete}">
-                        Delete
-                      </button>
-                      <button
-                        th:text="#{action.cancel}"
-                        class="button"
-                        type="button"
-                        th:commandfor="${dialogId}"
-                        command="close"
-                      ></button>
-                    </div>
-                  </form>
-                </dialog>
-
-                <div class="flex gap-2 justify-end print:hidden">
-                  <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
-                    <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
-                    <th:block th:text="#{action.edit}" />
-                  </a>
-                  <button class="button" th:commandfor="${dialogId}" command="show-modal">
-                    <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 mr-1')}"></svg>
-                    <th:block th:text="#{action.department.delete}" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <th:block th:ref="department-list-heading-actions">
+          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
+            <a
+              th:if="${canCreateAndModifyDepartment}"
+              th:href="@{/web/department/new}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+            >
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.department.create}"></span>
+            </a>
+            <button th:replace="~{fragments/print::button}"></button>
+          </div>
+        </th:block>
       </div>
+
+      <th:block
+        th:if="${createdDepartmentName != null or updatedDepartmentName != null or deletedDepartmentName != null}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+      >
+        <th:block th:ref="feedback-success-body">
+          <p
+            th:if="${createdDepartmentName != null}"
+            th:text="#{department.action.create.success(${createdDepartmentName})}"
+          ></p>
+          <p
+            th:if="${updatedDepartmentName != null}"
+            th:text="#{department.action.edit.success(${updatedDepartmentName})}"
+          ></p>
+          <p
+            th:if="${deletedDepartmentName != null}"
+            th:text="#{department.action.delete.success(${deletedDepartmentName})}"
+          ></p>
+        </th:block>
+      </th:block>
+
+      <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
+      <table
+        th:if="${not #lists.isEmpty(departments)}"
+        id="department-table"
+        class="list-table text-sm"
+        is="uv-table-sortable"
+      >
+        <caption class="sr-only" th:text="#{departments.title}">
+          Departments
+        </caption>
+        <thead class="hidden @5xl/main:table-header-group">
+          <tr>
+            <th
+              th:text="#{department.data.name}"
+              scope="col"
+              data-sortable
+              data-sorted="true"
+              data-sort-direction="asc"
+            ></th>
+            <th th:text="#{department.members}" scope="col" data-sortable data-sort-type="numeric"></th>
+            <th th:text="#{department.data.twoStageApproval}" class="whitespace-nowrap" scope="col" data-sortable></th>
+            <th
+              th:text="#{department.data.lastModification}"
+              class="whitespace-nowrap"
+              scope="col"
+              data-sortable
+              data-sort-type="date"
+            ></th>
+            <th th:if="${canCreateAndModifyDepartment}" scope="col">
+              <!--placeholder to ensure correct number of th-->
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="department : ${departments}">
+            <td>
+              <div class="font-bold">
+                <th:block th:text="${department.name}"></th:block>
+              </div>
+              <div class="text-xs">
+                <span th:text="${department.description}"></span>
+              </div>
+            </td>
+            <td class="hidden @3xl/main:table-cell">
+              <a
+                th:if="${department.activeMembersCount > 0}"
+                th:href="@{/web/person?active=true&department=__${department.id}__}"
+                th:text="|${department.activeMembersCount} #{department.members.active}|"
+                class=""
+              >
+              </a>
+              <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
+                /
+              </th:block>
+              <a
+                th:if="${department.inactiveMembersCount > 0}"
+                th:href="@{/web/person?active=false&department=__${department.id}__}"
+                class=""
+              >
+                <th:block th:text="${department.inactiveMembersCount}" />
+                <th:block th:text="#{department.members.inactive}" />
+              </a>
+            </td>
+            <td
+              class="text-center hidden @3xl/main:table-cell"
+              th:data-sort-value="${department.twoStageApproval ? 0 : 1}"
+            >
+              <th:block th:if="${department.twoStageApproval == true}">
+                <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+              </th:block>
+            </td>
+            <td th:text="${{department.lastModification}}" class="hidden @3xl/main:table-cell"></td>
+            <td th:if="${canCreateAndModifyDepartment}" th:with="dialogId=|modal-cancel-${department.id}|">
+              <dialog
+                th:id="${dialogId}"
+                th:aria-labelledby="${'modal-label-' + department.id}"
+                class="modal"
+                closedby="any"
+              >
+                <form method="post" th:action="@{/web/department/__${department.id}__/delete}" class="modal__content">
+                  <div class="modal__header">
+                    <h4
+                      th:text="#{action.department.delete}"
+                      th:id="${'modal-label-' + department.id}"
+                      class="modal__header__title"
+                    >
+                      Löschen
+                    </h4>
+                    <button type="button" class="modal__close-button" th:commandfor="${dialogId}" command="close">
+                      <svg th:replace="~{icon/x-circle::svg(className='w-8 h-8')}"></svg>
+                    </button>
+                  </div>
+                  <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal__body"></div>
+                  <div class="modal__footer flex justify-around">
+                    <button autofocus class="button-danger" type="submit" th:text="#{action.department.delete}">
+                      Delete
+                    </button>
+                    <button
+                      th:text="#{action.cancel}"
+                      class="button"
+                      type="button"
+                      th:commandfor="${dialogId}"
+                      command="close"
+                    ></button>
+                  </div>
+                </form>
+              </dialog>
+
+              <div class="flex gap-2 justify-end print:hidden">
+                <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
+                  <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
+                  <th:block th:text="#{action.edit}" />
+                </a>
+                <button class="button" th:commandfor="${dialogId}" command="show-modal">
+                  <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 mr-1')}"></svg>
+                  <th:block th:text="#{action.department.delete}" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </main>
   </body>
 </html>

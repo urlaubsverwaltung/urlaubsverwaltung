@@ -256,7 +256,7 @@ class OvertimeViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, activeStatuses(), OVERTIME))
                 .thenReturn(List.of(overtimeReductionNonEditable));
 
-        final WorkingTimeCalendar workingTimeCalendarPerson = workingTimeCalendar(today, today, date -> fullWorkday());
+        final WorkingTimeCalendar workingTimeCalendarPerson = workingTimeCalendar(today, today, _ -> fullWorkday());
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(today, today)))
             .thenReturn(Map.of(person, workingTimeCalendarPerson));
 

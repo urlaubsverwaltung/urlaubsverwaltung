@@ -44,7 +44,7 @@ class PersonRestoreService {
 
     private void restore(PersonDTO personToRestore) {
         personService.getPersonByMailAddress(personToRestore.email())
-            .ifPresentOrElse(person -> LOG.warn("Person with email address {} already exists, skip restoring", personToRestore.email()),
+            .ifPresentOrElse(_ -> LOG.warn("Person with email address {} already exists, skip restoring", personToRestore.email()),
                 () -> {
                     Person person = personToRestore.toPerson();
                     LOG.info("Restoring person with username={}", person.getUsername());

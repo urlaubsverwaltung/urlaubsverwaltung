@@ -78,7 +78,7 @@ class ApplicationForLeaveDataProvider {
             try {
                 final Application application = applicationInteractionService.allow(maybeApplication.get(), boss, Optional.of("Ist in Ordnung"));
                 return Optional.of(application);
-            } catch (NotPrivilegedToApproveException e) {
+            } catch (NotPrivilegedToApproveException _) {
                 LOG.info("Application cannot be allowed by user {}", boss);
             }
         }

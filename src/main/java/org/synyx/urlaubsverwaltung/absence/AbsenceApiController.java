@@ -104,10 +104,10 @@ public class AbsenceApiController {
 
     private List<AbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, List<AbsenceDto.AbsenceType> types) {
 
-        final Predicate<AbsenceDto> vacationAsked = dto -> types.contains(VACATION);
-        final Predicate<AbsenceDto> sickAsked = dto -> types.contains(SICK_NOTE);
-        final Predicate<AbsenceDto> noWorkDayAsked = dto -> types.contains(NO_WORKDAY);
-        final Predicate<AbsenceDto> publicHolidayAsked = dto -> types.contains(PUBLIC_HOLIDAY);
+        final Predicate<AbsenceDto> vacationAsked = _ -> types.contains(VACATION);
+        final Predicate<AbsenceDto> sickAsked = _ -> types.contains(SICK_NOTE);
+        final Predicate<AbsenceDto> noWorkDayAsked = _ -> types.contains(NO_WORKDAY);
+        final Predicate<AbsenceDto> publicHolidayAsked = _ -> types.contains(PUBLIC_HOLIDAY);
 
         final Predicate<AbsenceDto> isVacation = dto -> dto.getAbsenceType().equals(VACATION);
         final Predicate<AbsenceDto> isSick = dto -> dto.getAbsenceType().equals(SICK_NOTE);

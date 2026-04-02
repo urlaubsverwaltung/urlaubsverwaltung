@@ -31,8 +31,8 @@
       <script defer type="module" asset:src="sick_note_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-2xl mx-auto px-4 lg:px-12 lg:max-w-6xl xl:px-0">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
       <form
         method="post"
         th:with="actionUrl=${editMode ? '/web/sicknote/__${sickNote.id}__/edit' : '/web/sicknote'}"
@@ -264,29 +264,31 @@
           </div>
         </div>
 
-        <div class="uv-form__actions">
-          <th:block th:if="${editMode}">
-            <button
-              type="submit"
-              class="button-main-green w-56"
-              th:text="#{action.apply.sicknote.edit}"
-              data-test-id="sicknote-submit-button"
-            >
-              Krankmeldung bearbeiten
-            </button>
-          </th:block>
-          <th:block th:if="${not editMode}">
-            <button
-              type="submit"
-              class="button-main-green w-56"
-              th:text="${canAddSickNote} ? #{action.apply.sicknote} : #{action.apply.sicknote.submit}"
-              data-test-id="sicknote-submit-button"
-            >
-              Krankmeldung einreichen/erstellen
-            </button>
-          </th:block>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
-        </div>
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <th:block th:if="${editMode}">
+              <button
+                type="submit"
+                class="button-main-green w-56"
+                th:text="#{action.apply.sicknote.edit}"
+                data-test-id="sicknote-submit-button"
+              >
+                Krankmeldung bearbeiten
+              </button>
+            </th:block>
+            <th:block th:if="${not editMode}">
+              <button
+                type="submit"
+                class="button-main-green w-56"
+                th:text="${canAddSickNote} ? #{action.apply.sicknote} : #{action.apply.sicknote.submit}"
+                data-test-id="sicknote-submit-button"
+              >
+                Krankmeldung einreichen/erstellen
+              </button>
+            </th:block>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
       </form>
     </main>
   </body>

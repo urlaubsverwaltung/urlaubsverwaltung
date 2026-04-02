@@ -14,35 +14,23 @@
       <script defer type="module" asset:src="overtime_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
-      <div
-        th:replace="~{fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{::overtime-list-heading-actions})}"
-      >
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{})}">
         <th:block th:fragment="overtime-list-heading-body">
           <h2 th:text="#{overtime.title}">Überstunden</h2>
           <div
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime?person=${person.id}&year=|, selectedYear=${selectedYear})}"
           ></div>
         </th:block>
-        <th:block th:fragment="overtime-list-heading-actions">
-          <a
-            th:if="${userIsAllowedToCreateOvertime}"
-            th:href="@{/web/overtime/new?person=__${person.id}__}"
-            class="icon-link"
-          >
-            <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
-            <span th:text="#{action.overtime.new}"></span>
-          </a>
-        </th:block>
       </div>
 
       <div class="mb-16">
-        <div class="sm:flex">
-          <div class="sm:flex-1 lg:flex-none lg:w-1/3">
+        <div class="@2xl/main:flex">
+          <div class="@2xl/main:flex-1 @5xl/main:flex-none @5xl/main:w-1/3">
             <div th:replace="~{person/box::person-box(person=${person}, departments=${departmentsOfPerson})}"></div>
           </div>
-          <div class="sm:flex-1 flex flex-col lg:flex-row gap-y-8">
+          <div class="@2xl/main:flex-1 flex flex-col @5xl/main:flex-row gap-y-8">
             <div class="flex-1">
               <div th:replace="~{overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})}"></div>
             </div>
@@ -148,7 +136,7 @@
                   <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
                   <span
                     th:text="#{action.edit}"
-                    class="ml-2 xs:ml-0 xs:sr-only sm:not-sr-only sm:ml-2 md:sr-only md:ml-0 lg:not-sr-only lg:ml-2"
+                    class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
                   ></span>
                 </a>
               </span>

@@ -38,20 +38,19 @@
       window.uv.language = /*[[${language}]]*/ "de";
     </script>
     <script>
-      !(function () {
-        function injectStyle(r, t) {
-          t === void 0 && (t = {});
-          var e = t.insertAt;
-          if (!(!r || typeof document == "undefined")) {
-            var d = document.head || document.getElementsByTagName("head")[0],
-              a = document.createElement("style");
-            ((a.type = "text/css"),
-              e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
-              a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r)));
-          }
+      function injectStyle(r, t) {
+        t === void 0 && (t = {});
+        var e = t.insertAt;
+        if (!(!r || typeof document == "undefined")) {
+          var d = document.head || document.getElementsByTagName("head")[0],
+            a = document.createElement("style");
+          ((a.type = "text/css"),
+            e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
+            a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r)));
+          return a;
         }
-        injectStyle("[data-js-hidden] { display: none !important; }");
-      })();
+      }
+      injectStyle("[data-js-hidden] { display: none !important; }");
     </script>
     <script th:if="${theme eq 'system'}">
       (function () {
@@ -125,14 +124,38 @@
     <th:block th:replace="${additional}"></th:block>
     <th:block th:replace="~{_header-script::script}"></th:block>
   </head>
-  <body th:fragment="body(content, scripts)">
+  <body th:fragment="body(content)">
     <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="~{_navigation::nav}">navigation block</nav>
 
-    <main th:replace="${content}">content block</main>
+    <div class="flex items-center gap-2 py-2 px-4 lg:pl-6" style="grid-area: launchpad-app">
+      <div th:replace="~{launchpad/launchpad::launchpad}"></div>
+      <a
+        href="/"
+        class="hidden desktop:block font-logo text-xl font-medium mr-8 md:mr-16 text-zinc-900 dark:text-zinc-100 no-underline"
+      >
+        Urlaubsverwaltung
+      </a>
+    </div>
 
-    <footer th:replace="~{_footer::footer}">footer block</footer>
+    <div
+      th:fragment="row"
+      class="flex items-center gap-4 justify-end py-2 px-4 lg:pr-6 bg-white dark:bg-zinc-900"
+      style="grid-area: avatar"
+    >
+      <div th:replace="~{_top::avatar}"></div>
+    </div>
 
-    <th:block th:replace="${scripts}"></th:block>
+    <div
+      class="grid overflow-y-scroll top-bar-content-separator bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"
+      style="grid-area: content; grid-template-columns: 1fr; grid-template-rows: 1fr auto"
+    >
+      <div class="@container/main">
+        <main th:replace="${content}">content block</main>
+      </div>
+      <div>
+        <footer th:replace="~{_footer::footer}">footer block</footer>
+      </div>
+    </div>
   </body>
 </html>

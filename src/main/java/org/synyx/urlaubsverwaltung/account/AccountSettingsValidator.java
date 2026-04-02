@@ -60,7 +60,7 @@ public final class AccountSettingsValidator {
         try {
             LocalDate.of(year.getValue(), month, dayOfMonth);
             return true;
-        } catch (DateTimeException e) {
+        } catch (DateTimeException _) {
             return false;
         }
     }

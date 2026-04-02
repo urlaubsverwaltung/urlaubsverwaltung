@@ -211,7 +211,7 @@ class ApplicationTest {
             LocalDate.of(2023, 1, 2), new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         ));
 
-        final Map<Integer, Duration> hoursByYear = application.getHoursByYear((personId, range) -> workingTimeCalendar);
+        final Map<Integer, Duration> hoursByYear = application.getHoursByYear((_, _) -> workingTimeCalendar);
 
         assertThat(hoursByYear).hasSize(2)
             .containsEntry(2022, Duration.ofMinutes(90))
@@ -287,7 +287,7 @@ class ApplicationTest {
 
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(date, fullWorkday()));
 
-        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
+        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
             date, Duration.ofHours(3).plusMinutes(40))
         );
@@ -332,7 +332,7 @@ class ApplicationTest {
 
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(date, workingDayInformation));
 
-        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
+        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(date, overtimeHours)
         );
     }
@@ -361,7 +361,7 @@ class ApplicationTest {
             LocalDate.of(2022, 8, 12), fullWorkday()
         ));
 
-        final var partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
+        final var partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
             startDate, ofHours(4),
             middleDate, ofHours(4),
@@ -393,7 +393,7 @@ class ApplicationTest {
             LocalDate.of(2022, 8, 12), fullWorkday()
         ));
 
-        final var partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
+        final var partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
             startDate, ofHours(6),
             middleDate, ofHours(0),

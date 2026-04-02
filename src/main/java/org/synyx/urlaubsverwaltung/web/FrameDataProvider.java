@@ -15,14 +15,17 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import static org.synyx.urlaubsverwaltung.application.me.ApplicationsViewController.MY_APPLICATIONS_ANONYMOUS_PATH;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
+import static org.synyx.urlaubsverwaltung.sicknote.me.SickNotesViewController.MY_SICKNOTES_ANONYMOUS_PATH;
 
 /**
  * Interceptor to add menu specific information to all requests
@@ -68,51 +71,147 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
 
             final Settings settings = settingsService.getSettings();
-            modelAndView.addObject("navigation", createNavigation(user, settings));
-            modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user, settings));
+            modelAndView.addObject("navigation", createNavigation(request, settings, user));
+            // TODO not used anymore -> check in favGroup
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
+            // TODO not used anymore -> check in favGroup
             modelAndView.addObject("navigationOvertimeAddAccess", isUserAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
             modelAndView.addObject("gravatarEnabled", settings.getAvatarSettings().isGravatarEnabled());
         }
     }
 
-    private NavigationDto createNavigation(Person user, Settings settings) {
+    private NavigationDto createNavigation(HttpServletRequest request, Settings settings, Person user) {
 
-        final ArrayList<NavigationItemDto> elements = new ArrayList<>();
+        final List<NavigationItemDto> favoriteItems = navFavoritesGroup(request, settings, user);
+        final List<NavigationItemDto> basicItems = navBasicGroup(request, settings, user);
+        final List<NavigationItemDto> companyItems = navCompanyGroup(request, settings, user);
+        final List<NavigationItemDto> settingItems = navSettingsGroup(request, settings, user);
 
-        elements.add(new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"));
-        elements.add(new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"));
+        return new NavigationDto(favoriteItems, basicItems, companyItems, settingItems);
+    }
 
-        final boolean overtimeIsEnabled = overtimeEnabled(settings.getOvertimeSettings());
-        if (overtimeIsEnabled) {
-            elements.add(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+    private List<NavigationItemDto> navFavoritesGroup(HttpServletRequest request, Settings settings, Person user) {
+        final List<NavigationItemDto> elements = new ArrayList<>();
+
+        final String url = request.getRequestURI();
+
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+
+        final String application = "/web/application/new";
+        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", url.equals(application), "create-application-link"));
+
+        if (isAllowedToAddOrSubmitSickNote(user, sickNoteSettings)) {
+            final String sickNote = "/web/sicknote/new";
+            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", url.equals(sickNote), "create-sicknote-link"));
         }
 
-        final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
-        if (canViewSickNotes) {
-            elements.add(new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"));
+        if (isUserAllowedToWriteOvertime(user, overtimeSettings)) {
+            final String overtime = "/web/overtime/new";
+            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", url.equals(overtime), "create-overtime-link"));
         }
+
+        return elements;
+    }
+
+    private List<NavigationItemDto> navBasicGroup(HttpServletRequest request, Settings settings, Person user) {
+        final List<NavigationItemDto> elements = new ArrayList<>();
+
+        final String url = request.getRequestURI();
+
+        final String overview = "/web/person/%d/overview".formatted(user.getId());
+        final String application = "/web/application";
+        final String absenceOverview = "/web/absences";
+        final String myApplications = MY_APPLICATIONS_ANONYMOUS_PATH;
+        final String mySicknotes = MY_SICKNOTES_ANONYMOUS_PATH;
+        final String overtime = "/web/overtime";
+
+        elements.add(new NavigationItemDto("basic-overview-link", overview, "nav.basic.overview", url.equals(overview)));
+        elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
+        elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", url.equals(absenceOverview)));
+        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$")));
+        elements.add(new NavigationItemDto("basic-sicknote-link", mySicknotes, "nav.basic.my-sicknotes", url.equals(mySicknotes) || url.matches("/web/persons/\\d+/sicknotes$")));
+
+        if (overtimeEnabled(settings.getOvertimeSettings())) {
+            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", url.equals(overtime)));
+        }
+
+        return elements;
+    }
+
+    private List<NavigationItemDto> navCompanyGroup(HttpServletRequest request, Settings settings, Person user) {
+        final List<NavigationItemDto> elements = new ArrayList<>();
+
+        final String url = request.getRequestURI();
 
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
-            elements.add(new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link"));
+            final String person = "/web/person";
+            elements.add(new NavigationItemDto("company-person-link", person, "nav.company.staff", url.equals(person), "navigation-persons-link"));
         }
 
         final boolean canViewDepartments = user.hasRole(OFFICE) || user.hasRole(BOSS);
         if (canViewDepartments) {
-            elements.add(new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"));
+            final String department = "/web/department";
+            elements.add(new NavigationItemDto("company-department-link", department, "nav.company.departments", url.equals(department)));
         }
+
+        final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
+        if (canViewApplications) {
+            final String applications = "/web/application/statistics";
+            elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", url.equals(applications)));
+        }
+
+        final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
+        if (canViewSickNotes) {
+
+            final String sickdays = "/web/sickdays";
+            final String statistics = "/web/sicknote/statistics";
+
+            final boolean sickdaysActive = url.equals(sickdays);
+            final boolean statisticsActive = url.equals(statistics);
+            final boolean rootActive = sickdaysActive || statisticsActive;
+
+            final NavigationItemDto rootItem =
+                new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", rootActive, "navigation-sick-notes-link");
+
+            elements.add(rootItem.withSubItems(List.of(
+                new NavigationItemDto("company-sicknote-overview-link", sickdays, "nav.company.sicknotes.overview", sickdaysActive),
+                new NavigationItemDto("company-sicknote-statistics-link", statistics, "nav.company.sicknotes.statistics", statisticsActive, "navigation-sick-notes-statistics-link")
+            )));
+        }
+
+        return elements;
+    }
+
+    private List<NavigationItemDto> navSettingsGroup(HttpServletRequest request, Settings settings, Person user) {
+        final List<NavigationItemDto> elements = new ArrayList<>();
 
         final boolean canViewSettings = user.hasRole(OFFICE);
         if (canViewSettings) {
-            elements.add(new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", "navigation-settings-link"));
+
+            final String url = request.getRequestURI();
+
+            final String absences = "/web/settings/absences";
+            final String absenceTypes = "/web/settings/absence-types";
+            final String overtime = "/web/settings/overtime";
+            final String publicHolidays = "/web/settings/public-holidays";
+            final String account = "/web/settings/account";
+            final String avatar = "/web/settings/avatar";
+            final String calendar = "/web/settings/calendar";
+            final String calendarSync = "/web/settings/calendar-sync";
+
+            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", url.equals(absences), "settings-absence-link"));
+            elements.add(new NavigationItemDto("settings-absencetypes-link", absenceTypes, "nav.settings.absenceTypes", url.equals(absenceTypes), "settings-absencetypes-link"));
+            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", url.equals(overtime), "settings-overtime-link"));
+            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", url.equals(publicHolidays), "settings-public-holiday-link"));
+            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", url.equals(account), "settings-holiday-account-link"));
+            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", url.equals(avatar), "settings-avatar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", url.equals(calendar), "settings-calendar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", url.equals(calendarSync), "settings-calendar-sync-link"));
         }
 
-        return new NavigationDto(elements);
-    }
-
-    private boolean popupMenuEnabled(Person signedInUser, Settings settings) {
-        return signedInUser.hasRole(OFFICE) || isUserAllowedToWriteOvertime(signedInUser, settings.getOvertimeSettings()) || isAllowedToAddOrSubmitSickNote(signedInUser, settings.getSickNoteSettings());
+        return elements;
     }
 
     private boolean overtimeEnabled(OvertimeSettings overtimeSettings) {

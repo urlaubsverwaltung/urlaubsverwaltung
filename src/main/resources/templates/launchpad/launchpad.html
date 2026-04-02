@@ -5,14 +5,9 @@
     <title>Launchpad</title>
   </head>
   <body>
-    <div th:fragment="navigation-item" th:if="${launchpad}" class="relative flex items-center mr-1">
-      <uv-nav-popup-menu-button>
-        <a
-          href="#launchpad"
-          aria-expanded="false"
-          aria-haspopup="true"
-          class="flex items-center text-gray-800 dark:text-zinc-100 dark:hover:dark:text-zinc-400"
-        >
+    <div th:fragment="launchpad" th:if="${launchpad}" class="launchpad-container">
+      <div class="flex gap-2 items-center">
+        <button popovertarget="launchpad">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -25,7 +20,7 @@
             stroke-linejoin="round"
             role="presentation"
             aria-hidden="true"
-            class="w-9 h-9 lg:w-8 lg:h-8"
+            class="w-9 h-9 @5xl/main:w-8 @5xl/main:h-8"
           >
             <circle cx="12" cy="6" r="1"></circle>
             <circle cx="19" cy="6" r="1"></circle>
@@ -37,35 +32,30 @@
             <circle cx="19" cy="18" r="1"></circle>
             <circle cx="5" cy="18" r="1"></circle>
           </svg>
-          <span class="sr-only" th:text="#{launchpad.core.apps.heading}"> Anwendungen </span>
-        </a>
-      </uv-nav-popup-menu-button>
-      <div id="launchpad" class="nav-popup-menu xs:-right-4">
-        <div class="nav-popup-menu-inner">
-          <div class="nav-popup-menu-inner__header">
-            <h2 class="text-base text-gray-700 dark:text-zinc-200" th:text="#{launchpad.core.apps.heading}">
-              Anwendungen
-            </h2>
-          </div>
-          <div class="nav-popup-menu-inner__content">
-            <ul
-              class="grid gap-2"
-              style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
-              th:with="size=${#lists.size(launchpad.apps)}"
-              th:styleappend="${size > 3 ? ';--cols:3' : (size > 1 ? ';--cols:2' : ';--cols:1')}"
-            >
-              <li th:each="app : ${launchpad.apps}">
-                <a
-                  class="h-full flex flex-col items-center gap-2 no-underline text-black dark:text-zinc-200 text-sm px-4 py-2 rounded-lg bg-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
-                  href="#"
-                  th:href="${app.url}"
-                >
-                  <img src="" th:src="${app.icon}" width="64" height="64" alt="" crossorigin="anonymous" />
-                  <span class="block text-center w-full break-words" th:text="${app.name}"> Awesome App </span>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <span class="sr-only" th:text="#{launchpad.core.apps.heading}">Anwendungen</span>
+        </button>
+      </div>
+      <div popover id="launchpad" class="nav-popover-menu-container nav-launchpad-popover">
+        <div class="navigation-popover-menu-header">
+          <h2 class="launchpad__title" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
+        </div>
+        <div class="navigation-popover-menu-content">
+          <ul
+            class="grid gap-2"
+            style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
+            th:with="size=${#lists.size(launchpad.apps)}"
+            th:styleappend="${size > 3 ? ';--cols:3' : (size > 1 ? ';--cols:2' : ';--cols:1')}"
+          >
+            <li th:each="app : ${launchpad.apps}">
+              <a
+                class="flex flex-col items-center gap-2 no-underline text-black dark:text-zinc-200 text-sm px-4 py-2 rounded-lg bg-transparent transition-colors hover:bg-gray-100 dark:hover:bg-slate-800"
+                th:href="${app.url}"
+              >
+                <img src="" th:src="${app.icon}" width="64" height="64" alt="" crossorigin="anonymous" />
+                <span class="text-center w-full break-words" th:text="${app.name}"> Awesome App </span>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

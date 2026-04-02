@@ -1340,7 +1340,7 @@ class OvertimeServiceImplTest {
 
         final DateRange applicationDateRange = new DateRange(applicationStartDate, applicationEndDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), applicationDateRange))
-            .thenReturn(Map.of(person, workingTimeCalendar(applicationDateRange, date -> fullWorkday())));
+            .thenReturn(Map.of(person, workingTimeCalendar(applicationDateRange, _ -> fullWorkday())));
 
         final Map<Person, LeftOvertime> actual = sut.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         assertThat(actual)

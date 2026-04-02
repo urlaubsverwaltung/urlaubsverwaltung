@@ -44,8 +44,10 @@
       <input type="hidden" th:field="*{ownSickNoteSubmittedCreatedEditedCancelled.active}" />
 
       <div class="list-selectable">
-        <div class="list-selectable__item flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
-          <span class="checkbox-switch flex items-center gap-2 md:gap-3">
+        <div
+          class="list-selectable__item flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16"
+        >
+          <span class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
             <input
               type="checkbox"
               id="email-notification-all-input"
@@ -65,11 +67,11 @@
         </div>
         <div
           th:if="${personNotificationsDto.restrictToDepartments.visible}"
-          class="list-selectable__item flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16"
+          class="list-selectable__item flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16"
         >
-          <div class="flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
-            <div class="md:w-64 lg:w-72">
-              <span class="checkbox-switch flex items-center gap-2 md:gap-3">
+          <div class="flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16">
+            <div class="@3xl/main:w-64 @5xl/main:w-72">
+              <span class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
                 <input
                   type="checkbox"
                   id="email-notification-department-restriction-input"
@@ -90,8 +92,10 @@
                 </span>
               </span>
             </div>
-            <div class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:md:text-inherit md:items-center">
-              <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 md:inline-block')}"></svg>
+            <div
+              class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:@3xl/main:text-inherit @3xl/main:items-center"
+            >
+              <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 @3xl/main:inline-block')}"></svg>
               <p
                 id="info-email-notification-department-restriction-input"
                 class="text-sm"
@@ -199,11 +203,11 @@
       </div>
 
       <noscript>
-        <hr class="mt-6" />
-
-        <div class="mt-6 flex justify-between gap-4">
-          <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+        <div class="bottom-bar" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center mt-16">
+            <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
         </div>
       </noscript>
     </form>

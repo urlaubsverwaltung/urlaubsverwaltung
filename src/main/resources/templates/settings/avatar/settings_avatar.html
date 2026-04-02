@@ -9,9 +9,9 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+  <body th:replace="~{_layout::body(~{::content})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form method="post" th:action="@{/web/settings/avatar}" th:object="${settings}" class="uv-form">
@@ -19,7 +19,6 @@
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='avatar')}" />
 
           <div role="group" aria-describedby="group-avatar-description">
             <h2
@@ -30,8 +29,9 @@
               Avatare
             </h2>
             <div th:replace="~{settings/avatar/avatar::section}"></div>
-            <th:block th:replace="~{settings/fragments::save-button}" />
           </div>
+
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>

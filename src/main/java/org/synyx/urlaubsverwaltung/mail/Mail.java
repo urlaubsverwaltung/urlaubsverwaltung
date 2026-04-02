@@ -84,7 +84,7 @@ public class Mail {
         private final List<Person> mailAddressRecipients = new ArrayList<>();
 
         private String templateName;
-        private MailTemplateModelSupplier templateModelSupplier = locale -> new HashMap<>();
+        private MailTemplateModelSupplier templateModelSupplier = _ -> new HashMap<>();
 
         private String subjectMessageKey;
         private Object[] subjectMessageArguments;
