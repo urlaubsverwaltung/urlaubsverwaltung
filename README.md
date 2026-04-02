@@ -8,6 +8,8 @@ zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krank
 
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
+*Hinweis*: Der `main`-Branch enthält die 6.x-Release-Reihe der Urlaubsverwaltung. Der aktuelle 5.x-Branch, der die 5.x-Reihe fortführt, ist unter `v5.x` verfügbar.
+
 * [Demo-System](#demo-system)
 * [FAQ](#faq)
 * [Berechtigungen](#berechtigungen)
