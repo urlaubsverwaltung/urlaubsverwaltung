@@ -65,7 +65,7 @@ public class AssetManifestService {
         final JsonMapper jsonMapper = new JsonMapper();
         try {
             return jsonMapper.readValue(manifest, new TypeReference<>() {});
-        } catch (JacksonException e) {
+        } catch (JacksonException _) {
             throw new IllegalStateException("could not parse manifest json file");
         }
     }
@@ -73,7 +73,7 @@ public class AssetManifestService {
     private InputStream getManifestFile() {
         try {
             return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getInputStream();
-        } catch (IOException e) {
+        } catch (IOException _) {
             final String message = "could not read %s. please ensure 'npm run build' has been executed.".formatted(ASSETS_MANIFEST_FILE);
             throw new IllegalStateException(message);
         }

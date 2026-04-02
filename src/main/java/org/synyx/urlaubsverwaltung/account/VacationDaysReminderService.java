@@ -179,7 +179,7 @@ public class VacationDaysReminderService {
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> model)
+            .withTemplate(templateName, _ -> model)
             .build();
         mailService.send(mailToPerson);
     }

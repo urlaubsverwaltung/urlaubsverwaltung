@@ -145,7 +145,7 @@ public class OvertimeViewController implements HasLaunchpad {
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
             userIsAllowedToUpdateOvertime,
-            (id, range) -> workingTimeCalendarByPersonId.get(id),
+            (id, _) -> workingTimeCalendarByPersonId.get(id),
             selectedYear
         );
 

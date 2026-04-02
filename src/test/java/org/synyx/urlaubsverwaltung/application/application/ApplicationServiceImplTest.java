@@ -833,7 +833,7 @@ class ApplicationServiceImplTest {
             )).thenReturn(List.of(applicationEntity));
 
             when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
-                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
+                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, _ -> fullWorkday())));
 
             assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
                 .containsEntry(batman, Duration.ofHours(10));
@@ -871,7 +871,7 @@ class ApplicationServiceImplTest {
             )).thenReturn(List.of(applicationEntity));
 
             when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
-                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
+                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, _ -> fullWorkday())));
 
             assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
                 .containsEntry(batman, Duration.ofHours(5));

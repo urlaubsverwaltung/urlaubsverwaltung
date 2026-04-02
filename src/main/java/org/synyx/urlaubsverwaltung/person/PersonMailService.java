@@ -33,7 +33,7 @@ public class PersonMailService {
         final Mail toOffice = Mail.builder()
             .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL))
             .withSubject("subject.person.created")
-            .withTemplate("person_created_office", locale -> model)
+            .withTemplate("person_created_office", _ -> model)
             .build();
 
         mailService.send(toOffice);
@@ -49,7 +49,7 @@ public class PersonMailService {
         final Mail toPerson = Mail.builder()
             .withRecipient(person)
             .withSubject("subject.person.gained-permissions")
-            .withTemplate("person_gained_permissions", locale -> model)
+            .withTemplate("person_gained_permissions", _ -> model)
             .build();
         mailService.send(toPerson);
     }

@@ -338,7 +338,7 @@ public class Application {
         final BigDecimal workingTimeDays = workingTimeCalendar.workingTime(this);
 
         if (Objects.equals(workingTimeDays, ZERO)) {
-            return dateRange.stream().collect(toMap(identity(), localDate -> Duration.ZERO));
+            return dateRange.stream().collect(toMap(identity(), _ -> Duration.ZERO));
         }
 
         // e.g. three
@@ -413,7 +413,7 @@ public class Application {
 
         return dateRanges.stream().collect(toMap(
             dateRangeForYear -> dateRangeForYear.startDate().getYear(),
-            dateRangeForYear -> getOvertimeReductionShareFor(dateRangeForYear, (person, range) -> workingTimeCalendar)
+            dateRangeForYear -> getOvertimeReductionShareFor(dateRangeForYear, (_, _) -> workingTimeCalendar)
         ));
     }
 
