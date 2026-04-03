@@ -396,12 +396,12 @@
 
     @apply backdrop-filter;
     @apply backdrop-blur-xl;
-    @apply supports-backdrop-blur:bg-white/60;
+    @apply supports-backdrop-blur:bg-white/80;
 
     @variant dark {
       @apply shadow-zinc-950;
       border-color: var(--color-zinc-800);
-      @apply supports-backdrop-blur:bg-zinc-900/60;
+      @apply supports-backdrop-blur:bg-zinc-950/80;
     }
   }
 }
