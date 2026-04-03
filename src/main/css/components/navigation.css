@@ -399,6 +399,7 @@
     @apply supports-backdrop-blur:bg-white/60;
 
     @variant dark {
+      @apply shadow-zinc-950;
       border-color: var(--color-zinc-800);
       @apply supports-backdrop-blur:bg-zinc-900/60;
     }
