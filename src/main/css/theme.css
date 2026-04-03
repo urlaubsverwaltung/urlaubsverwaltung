@@ -1,14 +1,3 @@
-@theme {
-  /* 30rem = 480px (16px base), tailwind uses rem, so we are */
-  --breakpoint-xs: 30rem;
-
-  --font-logo: "KaushanScript";
-
-  --color-black-almost: #444444;
-  --color-bootstrap-green: #5cb85c;
-  --color-bootstrap-green-dark: #449d44;
-}
-
 /* regular variables not required by tailwindcss toolchain */
 :root {
   --uv-cal-border-color: var(--color-white);

@@ -2,7 +2,15 @@
 @import "./theme.css";
 
 @theme {
+  /* 30rem = 480px (16px base), tailwind uses rem, so we are */
+  --breakpoint-xs: 30rem;
   --breakpoint-desktop: 1280px;
+
+  --font-logo: "KaushanScript";
+
+  --color-black-almost: #444444;
+  --color-bootstrap-green: #5cb85c;
+  --color-bootstrap-green-dark: #449d44;
 }
 
 /* html element has .dark class to enforce dark theme */
