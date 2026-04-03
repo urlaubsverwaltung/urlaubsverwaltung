@@ -266,6 +266,7 @@
         padding: calc(var(--spacing) * 3);
         padding-left: calc(var(--spacing) * 6);
         padding-right: calc(var(--spacing) * 10);
+        @apply rounded;
 
         &:hover,
         &:focus-visible {
@@ -286,10 +287,6 @@
 
       li:first-of-type .navigation-popover-menu__link {
         @apply rounded-t-2xl;
-      }
-
-      li:last-of-type .navigation-popover-menu__link {
-        @apply rounded-b-2xl;
       }
     }
   }
