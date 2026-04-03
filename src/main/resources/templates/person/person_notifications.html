@@ -16,7 +16,7 @@
   </head>
 
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <th:block
           th:if="${success}"

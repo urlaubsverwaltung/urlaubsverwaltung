@@ -4,7 +4,7 @@
     <title th:text="#{error-page.common.meta.title}"></title>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <div class="flex flex-col items-center gap-8 @2xl/main:gap-16">
         <div class="w-full max-w-screen-xl">
           <div class="px-8 @lg/main:px-16">

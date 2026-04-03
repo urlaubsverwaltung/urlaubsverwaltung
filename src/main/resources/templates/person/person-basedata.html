@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <div th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{})}">
         <th:block th:ref="person-basedata-heading-body">
           <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>

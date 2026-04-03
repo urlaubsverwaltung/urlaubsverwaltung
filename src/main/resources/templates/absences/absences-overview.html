@@ -16,7 +16,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main">
-      <div class="content-container">
+      <div class="content-container content--max-w">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
         >

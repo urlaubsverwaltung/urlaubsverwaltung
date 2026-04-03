@@ -13,7 +13,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <form
         method="post"
         th:with="action=${department.id == null ? '/web/department/new' : '/web/department/' + department.id}"

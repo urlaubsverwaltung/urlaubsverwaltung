@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container" data-page="applications">
+    <main th:fragment="main" class="content-container content--max-w" data-page="applications">
       <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
         <th:block th:ref="applications-heading-body">
           <h2 id="applications" th:text="#{applications.title}">Abwesenheiten</h2>

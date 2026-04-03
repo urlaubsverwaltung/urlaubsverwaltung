@@ -32,7 +32,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <form
         method="post"
         th:with="actionUrl=${editMode ? '/web/sicknote/__${sickNote.id}__/edit' : '/web/sicknote'}"

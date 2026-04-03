@@ -15,7 +15,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{})}">
         <th:block th:fragment="overtime-list-heading-body">
           <h2 th:text="#{overtime.title}">Überstunden</h2>
