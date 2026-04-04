@@ -1,6 +1,5 @@
 import "../components/feedback-box";
 import "../components/info-banner";
-import "../components/modal";
 import "../components/navigation";
 import "../components/sticky";
 import "../components/tablist";
