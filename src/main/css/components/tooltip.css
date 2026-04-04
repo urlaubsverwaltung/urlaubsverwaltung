@@ -1,5 +1,5 @@
 [role="tooltip"] {
-  padding: 3px 8px;
+  padding: 3px --spacing(2);
   font-size: 14px;
   color: #fff;
   background-color: #000;

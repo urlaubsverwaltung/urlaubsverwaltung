@@ -1,7 +1,7 @@
 @reference "../config.css";
 
 .sicknote-statistics-chart-container {
-  padding: 0.5rem;
+  padding: --spacing(2);
   @apply rounded-lg;
   background-color: var(--uv-chart-container-background);
 }
@@ -9,7 +9,7 @@
 .sicknote-statistics-chart {
   @apply rounded-md;
   overflow: hidden;
-  padding: 0.25rem;
+  padding: --spacing(1);
   background-color: var(--uv-chart-background);
 }
 
@@ -21,8 +21,8 @@
   }
 
   .statistic-summary-card-box {
-    --statistic-card-box-gap: 1rem;
-    margin-top: 1rem;
+    --statistic-card-box-gap: --spacing(4);
+    margin-top: --spacing(4);
     display: flex;
     flex-direction: column;
     gap: var(--statistic-card-box-gap);
@@ -35,9 +35,9 @@
       flex: 1 0 0;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: --spacing(2);
       background-color: var(--uv-chart-container-background);
-      padding: 0.5rem 1rem;
+      padding: --spacing(2) --spacing(4);
       margin: 0;
       @apply rounded-md;
 
@@ -53,7 +53,7 @@
         @apply text-black;
         @apply dark:text-zinc-100;
         display: flex;
-        gap: 0.5rem;
+        gap: --spacing(2);
       }
     }
   }
@@ -61,7 +61,7 @@
 
 @variant sm {
   .sicknote-statistics-chart-container {
-    padding: 1rem;
+    padding: --spacing(4);
     border: 1px solid var(--uv-chart-border);
   }
 
@@ -78,10 +78,10 @@
 
 @variant md {
   .sicknote-statistics-chart-container {
-    padding: 1.25rem;
+    padding: --spacing(5);
   }
 
   .sicknote-statistics-chart {
-    padding: 1rem;
+    padding: --spacing(4);
   }
 }

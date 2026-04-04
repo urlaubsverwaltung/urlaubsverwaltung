@@ -5,14 +5,13 @@
 .sick-note-extension-preview {
   @apply flex;
   @apply flex-col;
-  @apply gap-1;
+  gap: --spacing(1);
   @apply max-w-3xl;
 }
 
 .sick-note-extension-preview-card {
   @apply flex-1;
-  @apply px-4;
-  @apply py-3;
+  padding: --spacing(3) --spacing(4);
   @apply rounded-lg;
   @apply border-2;
   @apply border-zinc-200;
@@ -20,13 +19,13 @@
 }
 
 .sick-note-extension-preview-card_inner {
-  @apply mt-4;
-  @apply gap-x-8;
-  @apply gap-y-1;
+  margin-top: --spacing(4);
+  column-gap: --spacing(8);
+  row-gap: --spacing(1);
 }
 
 .sick-note-extension-preview-card_inner_label {
-  @apply mt-2;
+  margin-top: --spacing(2);
   @apply block;
   @apply text-sm;
 }
@@ -36,7 +35,7 @@
 }
 
 .sick-note-extension-preview-card_inner_workdays {
-  @apply mt-4;
+  margin-top: --spacing(4);
   @apply text-sm;
 }
 
@@ -53,7 +52,7 @@
 @container (min-width: 673px) {
   .sick-note-extension-preview {
     @apply flex-row;
-    @apply gap-4;
+    gap: --spacing(4);
   }
 
   .sick-note-extension-preview-arrow {

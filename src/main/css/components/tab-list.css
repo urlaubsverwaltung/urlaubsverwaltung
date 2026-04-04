@@ -80,7 +80,7 @@
 
 .tab-panel,
 [role="tabpanel"] {
-  margin-top: 1rem;
+  margin-top: --spacing(4);
 
   /* hide tabPanel, show when active  */
   display: none;

@@ -222,12 +222,12 @@
       --popover-duration: 50ms;
       width: anchor-size(width);
       position-area: bottom;
-      top: 0.25rem;
+      top: --spacing(1);
     }
   }
 
   .popover-menu {
-    top: 0.25rem;
+    top: --spacing(1);
     position-area: block-end span-inline-start;
 
     padding: 5px 0;
@@ -263,7 +263,7 @@
         a {
           display: flex;
           align-items: center;
-          padding: 3px 1rem;
+          padding: 3px --spacing(4);
           font-weight: 400;
           line-height: 1.42857143;
           color: #333333;
@@ -293,7 +293,7 @@
     ul {
       display: grid;
       grid-template-columns: auto 1fr;
-      column-gap: 0.25rem;
+      column-gap: --spacing(1);
       row-gap: 0;
 
       li {

@@ -9,7 +9,7 @@
 .extend-action-grid > button:not(:first-child),
 .extend-action-grid > input[type="date"],
 .extend-action-grid > duet-date-picker {
-  margin-top: 1rem;
+  margin-top: --spacing(4);
 }
 
 .extend-action-grid > duet-date-picker {
@@ -22,12 +22,12 @@
 
 .extend-action-grid > span,
 .extend-action-grid > label {
-  margin-top: 0.25rem;
+  margin-top: --spacing(1);
 }
 
 .extend-label {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+  margin-left: --spacing(1);
+  margin-right: --spacing(1);
   @apply text-sm;
   @apply font-normal;
 }
@@ -64,8 +64,8 @@
 @variant xs {
   .extend-action-grid {
     display: grid;
-    grid-column-gap: 1rem;
-    grid-row-gap: 0.5rem;
+    grid-column-gap: --spacing(4);
+    grid-row-gap: --spacing(2);
     align-items: center;
   }
 
@@ -123,8 +123,8 @@
 @variant md {
   .extend-action-grid {
     display: grid;
-    grid-column-gap: 1rem;
-    grid-row-gap: 0.25rem;
+    grid-column-gap: --spacing(4);
+    grid-row-gap: --spacing(1);
     grid-template-columns: fit-content(1fr);
   }
 

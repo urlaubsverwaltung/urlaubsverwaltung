@@ -3,7 +3,7 @@
   --alert-border-radius: 4px;
 
   padding: var(--alert-padding);
-  margin-bottom: 20px;
+  margin-bottom: --spacing(5);
   border: 1px solid transparent;
   border-radius: var(--alert-border-radius);
   @apply dark:font-medium;

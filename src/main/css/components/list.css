@@ -10,7 +10,7 @@
   .list-selectable__item {
     @apply rounded-sm;
     @apply border;
-    @apply p-2;
+    padding: --spacing(2);
     @apply transition-colors;
     @apply bg-white;
     @apply dark:border-zinc-800;
@@ -27,8 +27,7 @@
 
 @variant sm {
   .list-selectable__item {
-    @apply py-1;
-    @apply px-2;
+    padding: --spacing(1) --spacing(2);
     @apply rounded-sm;
     @apply transition-colors;
   }
@@ -59,8 +58,7 @@
 /* bootstrap view breakpoint. list is stretched to full width now */
 @media only screen and (min-width: 992px) {
   .list-selectable__item {
-    @apply py-1;
-    @apply px-4;
+    padding: --spacing(1) --spacing(4);
   }
 }
 

@@ -10,11 +10,8 @@ body:has(.person-table) {
 }
 
 .person-table {
-  th {
-    @apply p-2;
-  }
-
+  th,
   td {
-    @apply p-2;
+    padding: --spacing(2);
   }
 }

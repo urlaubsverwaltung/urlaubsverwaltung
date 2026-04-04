@@ -1,7 +1,7 @@
 .uv-help-block {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: --spacing(1);
 
   color: #737373;
   @apply text-sm;
@@ -28,7 +28,7 @@ label {
     font-weight: normal; /* override with utils if bolder text is required */
     display: flex;
     flex-wrap: nowrap;
-    gap: 0.5rem;
+    gap: --spacing(2);
   }
 }
 
@@ -120,7 +120,7 @@ select,
     display: inline-flex;
     align-items: center;
 
-    padding: 0 0.75rem;
+    padding: 0 --spacing(3);
     font-size: var(--uv-form-control-text-size);
     font-weight: 400;
     line-height: 1;
@@ -209,14 +209,14 @@ textarea.error {
 
 .department--member-image,
 .department--member-assignment {
-  padding: 12px;
+  padding: --spacing(3);
   display: table-cell;
   vertical-align: middle;
 }
 
 .department--member-image {
   width: 1px;
-  padding-left: 24px;
+  padding-left: --spacing(6);
 }
 
 .department--member-info {
@@ -248,8 +248,8 @@ textarea.error {
    */
 
   --uv-form-padding-x: 0;
-  --uv-form-col-gap: 1.25rem;
-  --uv-form-row-gap: 1.25rem;
+  --uv-form-col-gap: --spacing(5);
+  --uv-form-row-gap: --spacing(5);
   --uv-form-label-col-width: 11.25rem; /* 180px */
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
@@ -258,7 +258,7 @@ textarea.error {
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
     ~ div[role="group"] {
-      margin-top: 2.5rem;
+      margin-top: --spacing(10);
     }
 
     .uv-form-legend {
@@ -266,9 +266,9 @@ textarea.error {
 
       display: flex;
       flex-direction: row;
-      gap: 0.25rem;
+      gap: --spacing(1);
       align-items: center;
-      padding-bottom: 0.5rem;
+      padding-bottom: --spacing(2);
       border-bottom: 2px solid var(--color-gray-200);
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
@@ -304,7 +304,7 @@ textarea.error {
       p {
         margin: 0;
         + p {
-          margin-top: 1rem;
+          margin-top: --spacing(4);
         }
       }
     }
@@ -313,14 +313,14 @@ textarea.error {
     .uv-form__input-row {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: --spacing(1);
       margin-top: var(--uv-form-row-gap);
 
       /* if following item is not an interactive element -> it should be a row, just like any other input */
       > :is(label, .uv-form__label) + :is(div, span) {
         display: flex;
         flex-direction: row;
-        gap: 1rem;
+        gap: --spacing(4);
       }
 
       label,
@@ -380,7 +380,7 @@ textarea.error {
   input {
     /* in a col, the label has a gap to the following element */
     &:is(.uv-form__input-col .uv-form__label + label) {
-      margin-top: 0.5rem;
+      margin-top: --spacing(2);
     }
   }
 
@@ -557,7 +557,7 @@ div[role="group"]:not([aria-describedby]) {
     background-color: magenta;
     color: white;
     font-weight: 600;
-    padding: 1rem;
+    padding: --spacing(4);
     z-index: 999999;
   }
 }
@@ -572,7 +572,7 @@ div[role="group"]:not([aria-describedby]) {
     background-color: magenta;
     color: white;
     font-weight: 600;
-    padding: 1rem;
+    padding: --spacing(4);
     z-index: 999999;
   }
 }

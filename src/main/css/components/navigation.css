@@ -7,7 +7,7 @@
   }
 
   .navigation-button {
-    padding: 1rem;
+    padding: --spacing(4);
   }
 
   .navigation {
@@ -19,18 +19,18 @@
     height: calc(100dvh - anchor-size(height) - var(--info-banner-height));
 
     .navigation-inner {
-      padding: 2rem --spacing(8);
-      padding-bottom: 1rem;
+      padding: --spacing(8);
+      padding-bottom: --spacing(4);
       min-height: 100%;
 
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: --spacing(8);
 
       .navigation-inner__bottom {
         margin-top: auto;
         background: white;
-        padding: 0.5rem 0;
+        padding: --spacing(2) 0;
         border-top: 1px solid transparent;
         transition: border-color 150ms;
 
@@ -51,12 +51,12 @@
     ul {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: calc(--spacing(1) / 2);
     }
 
     .subnav-group {
-      margin-top: 0.25rem;
-      gap: 0.75rem;
+      margin-top: --spacing(1);
+      gap: --spacing(3);
     }
 
     .navigation-link,
@@ -67,7 +67,7 @@
     }
 
     .navigation-link {
-      padding: 0.5rem;
+      padding: --spacing(2);
       @apply rounded;
 
       --duration: 150ms;
@@ -97,12 +97,12 @@
       position: relative;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: --spacing(2);
 
-      margin-left: 1rem;
+      margin-left: --spacing(4);
       /* two times dot-size because of loading spinner */
-      padding-left: calc(var(--dot-size) * 2 + 0.25rem);
-      padding-right: 0.25rem;
+      padding-left: calc(var(--dot-size) * 2 + --spacing(1));
+      padding-right: --spacing(1);
 
       color: var(--color);
 
@@ -199,7 +199,7 @@
 
   .nav-group-label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: --spacing(2);
     @apply font-mono;
     font-size: 0.8rem;
     font-weight: 600;
@@ -242,7 +242,7 @@
         display: flex;
         width: 100%;
         justify-items: center;
-        gap: 1rem;
+        gap: --spacing(4);
 
         color: var(--color-gray-700);
         transition:
@@ -285,9 +285,9 @@
   /* we want it to be on the right of the screen instead of relative to the anchor. */
   position-area: unset !important;
   inset: unset;
-  top: calc(anchor(bottom) + 1rem);
-  right: 0.5rem;
-  bottom: 0.5rem;
+  top: calc(anchor(bottom) + --spacing(4));
+  right: --spacing(2);
+  bottom: --spacing(2);
   height: auto;
 }
 
@@ -349,8 +349,8 @@
       transform: unset;
 
       .navigation-inner {
-        padding: 2rem --spacing(5);
-        padding-bottom: 0.5rem;
+        padding: --spacing(8) --spacing(5);
+        padding-bottom: --spacing(2);
 
         .navigation-inner__bottom {
           @variant dark {
@@ -378,16 +378,16 @@
         }
 
         .subnav-group {
-          margin-top: 0.25rem;
-          margin-bottom: 0.25rem;
-          gap: 0.25rem;
+          margin-top: --spacing(1);
+          margin-bottom: --spacing(1);
+          gap: --spacing(1);
         }
       }
     }
   }
 
   .nav-launchpad-popover {
-    left: 0.5rem;
+    left: --spacing(2);
     right: auto;
   }
 }

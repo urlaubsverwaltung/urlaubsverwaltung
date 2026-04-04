@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   position: relative;
-  padding: 1rem 1.5rem;
+  padding: --spacing(4) --spacing(6);
   border: 2px solid var(--color-blue-100);
   border-radius: 1rem;
   @apply dark:border-sky-800;
