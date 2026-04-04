@@ -1,5 +1,5 @@
 .info-banner {
-  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  padding: --spacing(2) --spacing(4);
   background-color: var(--color-sky-900);
   color: var(--color-white);
 }

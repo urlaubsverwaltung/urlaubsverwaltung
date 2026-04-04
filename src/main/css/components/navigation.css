@@ -18,7 +18,7 @@
     background-color: inherit;
 
     .navigation-inner {
-      padding: 2rem calc(var(--spacing) * 8);
+      padding: 2rem --spacing(8);
       padding-bottom: 1rem;
       min-height: 100%;
 
@@ -229,7 +229,7 @@
   @apply rounded-2xl;
 
   .navigation-popover-menu-header {
-    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+    padding: --spacing(2) --spacing(4);
     @apply bg-linear-to-br;
     @apply from-blue-50;
     @apply via-gray-100;
@@ -243,12 +243,12 @@
   }
 
   .navigation-popover-menu-content {
-    padding: calc(var(--spacing) * 2);
+    padding: --spacing(2);
 
     ul.navigation-popover-menu {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing);
+      gap: --spacing(1);
 
       .navigation-popover-menu__link {
         --duration: 150ms;
@@ -263,9 +263,9 @@
           color var(--duration) ease-in-out,
           background-color var(--duration) ease-in-out;
         text-decoration: none;
-        padding: calc(var(--spacing) * 3);
-        padding-left: calc(var(--spacing) * 6);
-        padding-right: calc(var(--spacing) * 10);
+        padding: --spacing(3);
+        padding-left: --spacing(6);
+        padding-right: --spacing(10);
         @apply rounded;
 
         &:hover,
@@ -437,7 +437,7 @@
       opacity: 1;
 
       .navigation-inner {
-        padding: 2rem calc(var(--spacing) * 5);
+        padding: 2rem --spacing(5);
         padding-bottom: 0.5rem;
 
         .navigation-inner__bottom {
@@ -453,7 +453,7 @@
         }
 
         .navigation-link {
-          padding: var(--spacing) calc(var(--spacing) * 2);
+          padding: --spacing(1) --spacing(2);
         }
 
         .navigation-link ~ .subnav-group {
