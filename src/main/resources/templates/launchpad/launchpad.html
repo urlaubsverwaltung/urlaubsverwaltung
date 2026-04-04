@@ -35,7 +35,11 @@
           <span class="sr-only" th:text="#{launchpad.core.apps.heading}">Anwendungen</span>
         </button>
       </div>
-      <div popover id="launchpad" class="nav-popover-menu-container nav-launchpad-popover">
+      <div
+        popover
+        id="launchpad"
+        class="nav-popover-menu-container nav-launchpad-popover popover popover--slide-to-left desktop:popover--slide-to-right"
+      >
         <div class="navigation-popover-menu-header">
           <h2 class="launchpad__title" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
         </div>

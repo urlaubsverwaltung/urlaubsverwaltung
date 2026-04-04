@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+@import "./components/popover.css";
+
 @theme {
   /* 30rem = 480px (16px base), tailwind uses rem, so we are */
   --breakpoint-xs: 30rem;

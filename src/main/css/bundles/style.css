@@ -21,7 +21,6 @@
 @import "../components/navigation.css" layer(components);
 @import "../components/multi-select.css" layer(base);
 @import "../components/modal.css" layer(components);
-@import "../components/popover.css" layer(components);
 @import "../components/select.css" layer(components);
 @import "../components/table.css" layer(components);
 @import "../components/tab-list.css" layer(components);

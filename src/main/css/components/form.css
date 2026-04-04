@@ -34,11 +34,33 @@ label {
 
 input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
-select,
-.popover-button-select {
+select {
   display: inline-block;
   width: 100%;
-  padding: 6px 12px;
+
+  &::placeholder {
+    color: var(--uv-placeholder-color);
+  }
+
+  &[readonly] {
+    background-color: var(--color-gray-200);
+  }
+
+  @variant dark {
+    &[readonly] {
+      background-color: var(--color-zinc-800);
+    }
+  }
+}
+
+input:not(:is([type="radio"], [type="checkbox"])),
+textarea,
+select,
+.popover-button-select {
+  --input-padding-y: 6px;
+  --input-padding-x: 12px;
+
+  padding: var(--input-padding-y) var(--input-padding-x);
   font-size: var(--uv-form-control-text-size);
   line-height: 1.428571429;
   color: #555;
@@ -57,31 +79,10 @@ select,
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
   }
 
-  &::placeholder {
-    color: var(--uv-placeholder-color);
-  }
-
-  &[readonly] {
-    background-color: var(--color-gray-200);
-  }
-
   @variant dark {
     border-color: var(--color-zinc-600);
     background-color: var(--color-zinc-700);
     color: var(--color-zinc-50);
-
-    &[readonly] {
-      background-color: var(--color-zinc-800);
-    }
-  }
-}
-
-.popover-button-select {
-  width: auto; /* override common input styling */
-  :not([class*="border-"]) {
-    /* actually colors are meant here, like border-blue-400 */
-    /* however border-*-* is not a valid selector */
-    @apply dark:border-neutral-600!;
   }
 }
 

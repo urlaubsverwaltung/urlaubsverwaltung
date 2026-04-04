@@ -148,7 +148,12 @@
 
     <div
       class="grid overflow-y-scroll top-bar-content-separator bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"
-      style="grid-area: content; grid-template-columns: 1fr; grid-template-rows: 1fr auto"
+      style="
+        grid-area: content;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        anchor-name: --container-main-anchor;
+      "
     >
       <div class="@container/main">
         <main th:replace="${content}">content block</main>
