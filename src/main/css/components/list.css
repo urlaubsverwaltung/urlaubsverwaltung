@@ -17,7 +17,7 @@
     @apply dark:bg-zinc-800/20;
   }
 
-  .list-selectable__item[data-enabled="true"] {
+  .list-selectable__item:has(input:checked) {
     @apply border-blue-100;
     @apply bg-blue-50/20;
     @apply dark:border-zinc-800;
