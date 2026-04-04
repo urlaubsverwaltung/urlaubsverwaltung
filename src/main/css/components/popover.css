@@ -28,7 +28,52 @@
   }
 }
 
+.popover-button-select {
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--uv-input-border-radius);
+
+  padding-right: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: --spacing(1);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &::after {
+    content: "";
+    pointer-events: none;
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin: 0 --spacing(2);
+    flex-grow: 1;
+    flex-shrink: 0;
+
+    mask: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" ><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>');
+    mask-position: right center;
+    mask-repeat: no-repeat;
+
+    background-color: var(--color-zinc-700);
+    @variant dark {
+      background-color: var(--color-zinc-50);
+    }
+  }
+
+  ~ [popover] {
+    width: anchor-size(width);
+    position-area: bottom;
+    top: 0.25rem;
+  }
+}
+
 .popover-menu {
+  top: 0.25rem;
+  position-area: block-end span-inline-start;
+
   padding: 5px 0;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.15);

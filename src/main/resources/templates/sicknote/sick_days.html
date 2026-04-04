@@ -31,46 +31,40 @@
         </th:block>
         <th:block th:ref="sick-notes-heading-actions">
           <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
-            <div
-              th:replace="~{fragments/popover::popover-menu(
-                summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, placement='bottom-end'
-              )}"
-            >
-              <th:block th:ref="download-dropdown-summary">
-                <span class="icon-link text-base flex items-center flex-row-reverse @2xl/main:flex-row">
-                  <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
-                  <span id="statistics-download-label" th:text="#{action.sicknotes.download}"></span>
-                </span>
-              </th:block>
-              <th:block th:ref="download-dropdown-content">
-                <span class="block mb-2 px-4 font-bold" th:text="#{action.sicknotes.download.title}">
-                  Krankmeldungen
-                </span>
-                <ul class="space-y-2" aria-labelledby="statistics-download-label">
-                  <li>
-                    <a
-                      id="statistics-csv-download-link-all"
-                      th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
-                      class="icon-link"
-                      download
-                    >
-                      <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
-                      <th:block th:text="#{action.sicknotes.download.all.persons}"></th:block>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      id="statistics-csv-download-link"
-                      th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                      class="icon-link"
-                      download
-                    >
-                      <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
-                      <th:block th:text="#{action.sicknotes.download.visible.persons}"></th:block>
-                    </a>
-                  </li>
-                </ul>
-              </th:block>
+            <button type="button" popovertarget="csv-export-popover" class="popover-button">
+              <span class="icon-link text-base flex items-center flex-row-reverse @2xl/main:flex-row">
+                <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
+                <span id="statistics-download-label" th:text="#{action.sicknotes.download}"></span>
+              </span>
+            </button>
+            <div id="csv-export-popover" popover class="popover-menu">
+              <span class="block mb-2 px-4 font-bold" th:text="#{action.sicknotes.download.title}">
+                Krankmeldungen
+              </span>
+              <ul class="space-y-2" aria-labelledby="statistics-download-label">
+                <li>
+                  <a
+                    id="statistics-csv-download-link-all"
+                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                    class="icon-link"
+                    download
+                  >
+                    <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
+                    <th:block th:text="#{action.sicknotes.download.all.persons}"></th:block>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    id="statistics-csv-download-link"
+                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    class="icon-link"
+                    download
+                  >
+                    <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
+                    <th:block th:text="#{action.sicknotes.download.visible.persons}"></th:block>
+                  </a>
+                </li>
+              </ul>
             </div>
             <button th:replace="~{fragments/print::button}"></button>
           </div>
@@ -81,62 +75,57 @@
         <div
           class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2 print:hidden"
         >
-          <div
-            th:replace="~{fragments/popover::popover-select(
-              summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, placement='bottom-start'
-            )}"
-          >
-            <th:block th:ref="period-dropdown-summary">
-              <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
-              <span
-                id="period-text"
-                th:with="start=${{period.startDate}}, end=${{period.endDate}}"
-                th:text="#{sicknotes.statistics.period.selected(${start}, ${end})}"
-              ></span>
-            </th:block>
-            <th:block th:ref="period-dropdown-content">
-              <form
-                method="get"
-                action="#"
-                th:action="@{/web/sickdays}"
-                data-turbo-frame="frame-statistics"
-                data-turbo-action="advance"
-                id="form-date-from-to"
-              >
-                <div id="statistics-filter-inputs">
-                  <input type="hidden" name="sort" th:value="${sortQuery}" />
-                  <input type="hidden" name="query" th:value="${query}" />
-                </div>
-                <div class="flex flex-col gap-1">
-                  <fieldset>
-                    <legend class="sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
-                    <div class="flex flex-col">
-                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input">Von</label>
-                      <input
-                        id="from-date-input"
-                        name="from"
-                        th:value="${{period.startDate}}"
-                        th:data-iso-value="${period.startDateIsoValue}"
-                        th:placeholder="#{pattern.date}"
-                        class="mt-0.5"
-                      />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="mt-4"> Bis </label>
-                      <input
-                        id="to-date-input"
-                        name="to"
-                        th:value="${{period.endDate}}"
-                        th:data-iso-value="${period.endDateIsoValue}"
-                        th:placeholder="#{pattern.date}"
-                        class="mt-0.5"
-                      />
-                    </div>
-                    <div class="mt-6">
-                      <button th:text="#{action.confirm}" class="button-main py-1.5 px-3 w-full" type="submit" />
-                    </div>
-                  </fieldset>
-                </div>
-              </form>
-            </th:block>
+          <button type="button" popovertarget="period-popover" class="popover-button-select">
+            <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
+            <span
+              id="period-text"
+              th:with="start=${{period.startDate}}, end=${{period.endDate}}"
+              th:text="#{sicknotes.statistics.period.selected(${start}, ${end})}"
+              class="overflow-hidden text-ellipsis"
+            ></span>
+          </button>
+          <div id="period-popover" popover class="popover popover-menu p-4">
+            <form
+              method="get"
+              action="#"
+              th:action="@{/web/sickdays}"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+              id="form-date-from-to"
+            >
+              <div id="statistics-filter-inputs">
+                <input type="hidden" name="sort" th:value="${sortQuery}" />
+                <input type="hidden" name="query" th:value="${query}" />
+              </div>
+              <div class="flex flex-col gap-1">
+                <fieldset>
+                  <legend class="sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
+                  <div class="flex flex-col">
+                    <label th:text="|#{filter.period.startDate}: |" for="from-date-input">Von</label>
+                    <input
+                      id="from-date-input"
+                      name="from"
+                      th:value="${{period.startDate}}"
+                      th:data-iso-value="${period.startDateIsoValue}"
+                      th:placeholder="#{pattern.date}"
+                      class="mt-0.5"
+                    />
+                    <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="mt-4"> Bis </label>
+                    <input
+                      id="to-date-input"
+                      name="to"
+                      th:value="${{period.endDate}}"
+                      th:data-iso-value="${period.endDateIsoValue}"
+                      th:placeholder="#{pattern.date}"
+                      class="mt-0.5"
+                    />
+                  </div>
+                  <div class="mt-6">
+                    <button th:text="#{action.confirm}" class="button-main py-1.5 px-3 w-full" type="submit" />
+                  </div>
+                </fieldset>
+              </div>
+            </form>
           </div>
           <form
             action="#"
