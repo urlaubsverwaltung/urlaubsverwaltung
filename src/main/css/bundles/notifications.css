@@ -2,17 +2,9 @@
 
 .notification-section-title {
   margin-bottom: --spacing(2);
-
-  position: sticky;
-  top: 0;
+  padding-top: --spacing(1);
+  padding-bottom: --spacing(1);
 
   @apply text-lg;
-  background-color: var(--color-white); /* sticky element background */
   border-bottom-width: 1px;
-
-  @variant dark {
-    padding-top: --spacing(1);
-    padding-bottom: --spacing(1);
-    background-color: var(--color-zinc-900); /* sticky element background */
-  }
 }

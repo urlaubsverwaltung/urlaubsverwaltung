@@ -23,3 +23,16 @@
     @slot;
   }
 }
+
+@utility frosted-glass {
+  background-color: --alpha(var(--color-white) / var(--frosted-glass-opacity, 80%));
+  backdrop-filter: blur(3px) saturate(180%);
+
+  @variant dark {
+    background-color: --alpha(var(--color-zinc-900) / var(--frosted-glass-opacity, 80%));
+  }
+}
+
+@utility frosted-glass-opacity-* {
+  --frosted-glass-opacity: calc(1% * --value(integer));
+}

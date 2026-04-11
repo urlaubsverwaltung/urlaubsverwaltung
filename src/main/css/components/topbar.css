@@ -1,0 +1,40 @@
+.topbar-cell {
+  z-index: var(--z-index-topbar);
+  height: var(--topbar-height);
+}
+
+.topbar-backdrop {
+  anchor-name: --topbbar-backdrop-anchor;
+  z-index: var(--z-index-topbar);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--topbar-height) + var(--info-banner-height));
+}
+
+.topbar-backdrop--after {
+  position: fixed;
+  position-anchor: --topbbar-backdrop-anchor;
+  position-area: block-end;
+  width: anchor-size(width);
+  z-index: var(--z-index-topbar);
+
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(3px) saturate(180%) hue-rotate(260deg);
+
+  /* subtle "border" bottom */
+  height: 1px;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.05);
+
+  @variant dark {
+    @apply bg-zinc-900/80;
+    /* subtle "border" bottom */
+    box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.05);
+  }
+
+  @variant desktop {
+    /* backdrop must be above the navigation */
+    z-index: calc(var(--z-index-topbar) + 1);
+  }
+}

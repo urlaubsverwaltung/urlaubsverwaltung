@@ -136,12 +136,8 @@
 
 @variant md {
   .absence-type-list-head {
-    z-index: 1; /* place above color picker */
-    position: sticky;
-    top: 0;
+    z-index: 2; /* place above color picker */
     padding: 0 --spacing(4);
-    @apply bg-white;
-    @apply dark:bg-zinc-900;
     @apply font-bold;
     @apply text-sm;
   }

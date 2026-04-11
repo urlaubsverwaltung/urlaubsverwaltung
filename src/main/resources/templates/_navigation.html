@@ -7,12 +7,12 @@
   </head>
   <body>
     <th:block th:fragment="nav">
-      <div class="navigation-container">
+      <div class="topbar-cell navigation-container desktop:h-auto">
         <button class="navigation-button flex items-center gap-2 desktop:hidden" popovertarget="navigation">
           <svg th:replace="~{icon/menu::svg(className='w-5 h-5')}" />
           <th:block th:text="#{nav.menu}">Menü</th:block>
         </button>
-        <nav id="navigation" popover class="navigation popover popover--slide-to-right top-bar-content-separator">
+        <nav id="navigation" popover class="navigation popover popover--slide-to-right">
           <div class="navigation-inner">
             <div th:if="${not #lists.isEmpty(navigation.favorites)}">
               <span id="nav-group-quick-label" class="sr-only nav-group-label">
