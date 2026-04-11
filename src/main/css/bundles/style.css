@@ -77,7 +77,7 @@
   @variant desktop {
     body {
       grid-template-rows: auto auto 1fr auto;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: minmax(300px, auto) 1fr;
       grid-template-areas:
         "banner banner"
         "launchpad-app avatar"
