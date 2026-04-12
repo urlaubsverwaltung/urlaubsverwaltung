@@ -171,66 +171,6 @@ textarea.error {
   border-color: var(--uv-error-border-color) !important;
 }
 
-/**************************************************************************
-
-  DEPARTMENT FORM
-
-**************************************************************************/
-
-.department--members {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: auto;
-  height: 400px;
-  width: 100%;
-  @apply dark:border-zinc-600;
-}
-
-.department--member {
-  border-bottom: 1px solid #ddd;
-  display: table;
-  width: 100%;
-  @apply dark:border-zinc-600;
-}
-
-.department--member.is-assigned {
-  background-color: #e8efd1;
-  @apply dark:bg-zinc-800;
-}
-
-.department--member.is-inactive {
-  background-color: #fff4ea;
-  @apply dark:bg-transparent;
-}
-
-.department--member:last-child {
-  border-bottom: none;
-}
-
-.department--member-image,
-.department--member-assignment {
-  padding: --spacing(3);
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.department--member-image {
-  width: 1px;
-  padding-left: --spacing(6);
-}
-
-.department--member-info {
-  margin: 0;
-}
-
-.department--member-assignment > .checkbox > label {
-  display: block;
-}
-
-.department--member-assignment > .checkbox > label > input[type="checkbox"] {
-  margin-top: 2px;
-}
-
 .select-caret {
   @apply text-zinc-700;
   @apply dark:text-zinc-50;
