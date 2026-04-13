@@ -26,7 +26,7 @@
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>25</java.version>
-    <uv-extension-api.version>3.3.1</uv-extension-api.version>
+    <uv-extension-api.version>3.3.2</uv-extension-api.version>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
