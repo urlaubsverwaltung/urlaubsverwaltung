@@ -12,8 +12,8 @@
   border-left-color: transparent;
   @apply dark:border-t-neutral-100;
 
-  @apply ml-0.5;
-  @apply mt-0.5;
+  margin-left: --spacing(2);
+  margin-top: --spacing(2);
 }
 
 a:hover .dropdown-caret,

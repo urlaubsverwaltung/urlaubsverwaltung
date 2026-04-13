@@ -1,117 +1,394 @@
-[popover] {
-  /* override user-agent, content should define individual styles */
-  padding: unset;
+/* common popover animation duration. (e.g. opacity)
+ * popover can also be slided in, see `--popover-transform-duration`
+ */
+@property --popover-duration {
+  syntax: "<time>";
+  inherits: false;
+  initial-value: 100ms;
+}
 
-  /* by default, popover does not overflow. */
-  /* as long as datepicker doesn't use popovers, we have to change this behaviour. */
-  &:has(duet-date-picker) {
-    overflow: visible;
+/* webkit/safari has a bug not positioning the popover to it's anchor anymore when hidden
+ * since hiding popover is animated (with `transition-behavior:allow-discrete`) we're just animating when supported (see @supports(overlay: auto))
+ * there are some issues I've found that may or may not be related to this:
+ * - https://bugs.webkit.org/show_bug.cgi?id=276727 -> https://github.com/WebKit/WebKit/pull/59831
+ * - https://bugs.webkit.org/show_bug.cgi?id=309921
+ * - https://github.com/whatwg/html/issues/11694
+ */
+@property --popover-transform-duration {
+  syntax: "<time>";
+  inherits: false;
+  initial-value: 0ms;
+}
+
+@property --popover-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0; /* animated to 1 when visible */
+}
+
+/* "private" property (to "ensure" the type. devtools can give you a hint when type mismatches.) */
+@property --popover-x {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* set by `.popover--slide-to-[left/right]` utility classes. property can be overridden by elements. */
+@property --popover-x-start {
+  syntax: "*";
+  inherits: false;
+  initial-value: unset;
+}
+
+/* set by `.popover--slide-to-[left/right]` utility classes. property can be overridden by elements. */
+@property --popover-x-end {
+  syntax: "*";
+  inherits: false;
+  initial-value: unset;
+}
+
+/* "private" property (to "ensure" the type. devtools can give you a hint when type mismatches.) */
+@property --popover-y {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* set by `.popover--slide-to-[top/bottom]` utility classes. property can be overridden by elements. */
+@property --popover-y-start {
+  syntax: "*";
+  inherits: false;
+  initial-value: unset;
+}
+
+/* set by `.popover--slide-to-[top/bottom]` utility classes. property can be overridden by elements. */
+@property --popover-y-end {
+  syntax: "*";
+  inherits: false;
+  initial-value: unset;
+}
+
+@property --popover-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --popover-backdrop-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.5;
+}
+
+@layer basic {
+  [popover] {
+    /* by default, popover does not overflow. */
+    /* as long as datepicker doesn't use popovers, we have to change this behaviour. */
+    &:has(duet-date-picker) {
+      overflow: visible;
+    }
   }
 }
 
-.popover,
-.popover-menu {
-  /* ensure popover attribute */
-  &:not([popover]) {
-    outline: 3px solid lime;
-  }
-}
+@layer components {
+  .popover {
+    --popover-x: 0%;
+    --popover-y: 0%;
+    --popover-opacity: 0;
 
-.popover-button,
-.popover-button-select {
-  color: currentColor;
-  background-color: transparent;
-  font-size: var(--uv-form-control-text-size);
+    position-area: block-end span-inline-start;
+    top: calc(anchor(bottom) + --spacing(4));
 
-  &.popover-button--inherit {
-    font-size: inherit;
-  }
-}
+    opacity: var(--popover-opacity);
+    transform: translateX(var(--popover-x)) translateY(var(--popover-y));
 
-.popover-menu {
-  padding: 5px 0;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  font-size: 1rem;
-  @apply dark:shadow-none;
-  @apply dark:border;
-  @apply dark:border-zinc-700;
-  @apply dark:bg-zinc-900;
-  @apply dark:backdrop-filter;
-  @apply dark:backdrop-blur-xl;
-  @apply dark:supports-backdrop-blur:bg-zinc-900/70;
+    transition:
+      display var(--popover-transform-duration),
+      overlay var(--popover-duration),
+      transform var(--popover-transform-duration) ease-in-out,
+      opacity var(--popover-duration) ease-in-out;
+    transition-behavior: allow-discrete;
 
-  a {
-    color: inherit;
-    text-decoration: none;
-    &:hover {
-      color: inherit;
+    &:popover-open {
+      --popover-opacity: 1;
+    }
+
+    @supports (overlay: auto) {
+      --popover-duration: 300ms;
+      --popover-transform-duration: 300ms;
+    }
+
+    @starting-style {
+      &:popover-open {
+        --popover-opacity: 0;
+      }
     }
   }
 
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
+  .popover--backdrop-screen,
+  .popover--backdrop-content {
+    &::backdrop {
+      --popover-backdrop-opacity: 0;
+      opacity: var(--popover-backdrop-opacity);
+      background-color: var(--color-black);
+      transition: opacity var(--popover-duration) ease-in-out;
+      transition-behavior: allow-discrete;
+    }
+
+    &:popover-open {
+      &::backdrop {
+        --popover-backdrop-opacity: 0.5;
+      }
+    }
+
+    @starting-style {
+      &:popover-open {
+        &::backdrop {
+          --popover-backdrop-opacity: 0;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .popover {
+      --popover-duration: 50ms;
+      --popover-transform-duration: 0ms;
+    }
+  }
+}
+
+@layer components {
+  .popover,
+  .popover-menu {
+    /* ensure popover attribute */
+    &:not([popover]) {
+      outline: 3px solid lime;
+    }
+  }
+
+  .popover-button,
+  .popover-button-select {
+    color: currentColor;
+    background-color: transparent;
+    font-size: var(--uv-form-control-text-size);
+
+    &.popover-button--inherit {
+      font-size: inherit;
+    }
+  }
+
+  .popover-button-select {
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--uv-input-border-radius);
+
+    /* override form.css - caret ::after element defines spacing */
+    padding-right: 0 !important;
+
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: --spacing(1);
 
-    li {
-      a {
-        display: flex;
-        align-items: center;
-        padding: 3px 1rem;
-        font-weight: 400;
-        line-height: 1.42857143;
-        color: #333333;
-        white-space: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-        @apply dark:text-zinc-200;
+    @variant dark {
+      border-color: var(--color-neutral-600);
+    }
 
-        @apply hover:bg-neutral-100;
-        @apply focus:bg-neutral-100;
+    &::after {
+      content: "";
+      pointer-events: none;
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      margin: 0 --spacing(2);
+      flex-grow: 1;
+      flex-shrink: 0;
 
-        @apply dark:hover:bg-zinc-700;
-        @apply dark:hover:text-zinc-200;
-        @apply dark:focus:bg-zinc-700;
-        @apply dark:focus:text-zinc-200;
+      mask: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" ><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>');
+      mask-position: right center;
+      mask-repeat: no-repeat;
+
+      background-color: var(--color-zinc-700);
+      @variant dark {
+        background-color: var(--color-zinc-50);
       }
-      &[role="separator"] {
-        height: 1px;
-        margin: 9px 0;
-        background-color: #e5e5e5;
-        @apply dark:bg-zinc-700;
+    }
+
+    ~ [popover] {
+      --popover-duration: 50ms;
+      width: anchor-size(width);
+      position-area: bottom;
+      top: --spacing(1);
+    }
+  }
+
+  .popover-menu {
+    top: --spacing(1);
+    position-area: block-end span-inline-start;
+
+    padding: 5px 0;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    font-size: 1rem;
+    @apply dark:shadow-none;
+    @apply dark:border;
+    @apply dark:border-zinc-700;
+    @apply dark:bg-zinc-900;
+    @apply dark:backdrop-filter;
+    @apply dark:backdrop-blur-xl;
+    @apply dark:supports-backdrop-blur:bg-zinc-900/70;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      &:hover {
+        color: inherit;
+      }
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+
+      li {
+        a {
+          display: flex;
+          align-items: center;
+          padding: 3px --spacing(4);
+          font-weight: 400;
+          line-height: 1.42857143;
+          color: #333333;
+          white-space: nowrap;
+
+          @apply dark:text-zinc-200;
+
+          @apply hover:bg-neutral-100;
+          @apply focus:bg-neutral-100;
+
+          @apply dark:hover:bg-zinc-700;
+          @apply dark:hover:text-zinc-200;
+          @apply dark:focus:bg-zinc-700;
+          @apply dark:focus:text-zinc-200;
+        }
+        &[role="separator"] {
+          height: 1px;
+          margin: 9px 0;
+          background-color: #e5e5e5;
+          @apply dark:bg-zinc-700;
+        }
       }
     }
   }
-}
 
-.popover-menu.popover-menu-person-group {
-  ul {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 0.25rem;
-    row-gap: 0;
-
-    li {
+  .popover-menu.popover-menu-person-group {
+    ul {
       display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 1 / -1;
+      grid-template-columns: auto 1fr;
+      column-gap: --spacing(1);
+      row-gap: 0;
 
-      a {
+      li {
         display: grid;
         grid-template-columns: subgrid;
         grid-column: 1 / -1;
-        align-items: center;
-        > svg {
-          grid-column: 1;
-        }
-        > span {
-          grid-column: 2;
+
+        a {
+          display: grid;
+          grid-template-columns: subgrid;
+          grid-column: 1 / -1;
+          align-items: center;
+          > svg {
+            grid-column: 1;
+          }
+          > span {
+            grid-column: 2;
+          }
         }
       }
+    }
+  }
+}
+
+@utility popover--backdrop-content {
+  &::backdrop {
+    position-anchor: --container-main-anchor;
+    position: absolute;
+    /* anchor positioning of this ::backdrop pseudo element does not work in safari :( */
+    /* you may should use a shadow to elevate the popover from content. */
+    top: anchor(top);
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+@utility popover--backdrop-none {
+  &::backdrop {
+    display: none;
+  }
+}
+
+@utility popover--slide-to-top {
+  @supports (overlay: auto) {
+    --popover-y: abs(var(--popover-y-start, 100%));
+    &:popover-open {
+      --popover-y: abs(var(--popover-y-end, 0px));
+    }
+  }
+  @starting-style {
+    &:popover-open {
+      --popover-y: abs(var(--popover-y-start, 100%));
+    }
+  }
+}
+
+@utility popover--slide-to-bottom {
+  @supports (overlay: auto) {
+    --popover-y: calc(-1 * abs(var(--popover-y-start, -100%)));
+    &:popover-open {
+      --popover-y: calc(-1 * abs(var(--popover-y-end, 0px)));
+    }
+  }
+  @starting-style {
+    &:popover-open {
+      --popover-y: calc(-1 * abs(var(--popover-y-start, -100%)));
+    }
+  }
+}
+
+@utility popover--slide-to-left {
+  @supports (overlay: auto) {
+    --popover-x: abs(var(--popover-x-start, 100%));
+    &:popover-open {
+      --popover-x: abs(var(--popover-x-end, 0px));
+    }
+  }
+  @starting-style {
+    &:popover-open {
+      --popover-x: abs(var(--popover-x-start, 100%));
+    }
+  }
+}
+
+@utility popover--slide-to-right {
+  @supports (overlay: auto) {
+    --popover-x: calc(-1 * abs(var(--popover-x-start, -100%)));
+    &:popover-open {
+      --popover-x: calc(-1 * abs(var(--popover-x-end, 0px)));
+    }
+  }
+  @starting-style {
+    &:popover-open {
+      --popover-x: calc(-1 * abs(var(--popover-x-start, -100%)));
     }
   }
 }

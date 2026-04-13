@@ -128,7 +128,10 @@
                 personNotificationsDto.absenceForColleagues.visible
               }"
           >
-            <h2 class="notification-section-title" th:text="#{person.notifications.section.absences.management.title}">
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.absences.management.title}"
+            >
               Abwesenheiten meiner Kolleg:innen
             </h2>
             <ul class="list-selectable">
@@ -166,7 +169,10 @@
                 personNotificationsDto.sickNoteEditedByManagementForManagement.visible
               }"
           >
-            <h2 class="notification-section-title" th:text="#{person.notifications.section.sicknote.management.title}">
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.sicknote.management.title}"
+            >
               Krankmeldungen meiner Kolleg:innen
             </h2>
             <ul class="list-selectable">
@@ -187,7 +193,7 @@
           <th:block th:if="${!isOvertimeSyncActive}">
             <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">
               <h2
-                class="notification-section-title"
+                class="notification-section-title frosted-glass sticky top-0"
                 th:text="#{person.notifications.section.overtime.management.title}"
               >
                 Überstunden meiner Kolleg:innen

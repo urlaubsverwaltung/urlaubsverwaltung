@@ -4,7 +4,7 @@
     <title th:text="#{sicknote.extend.header.title}">Krankmeldung erweitern</title>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <h1 th:text="#{sicknote.extend.title}">Weiter Krank melden</h1>
       <p class="mt-8" th:text="#{sicknote.extend.not-found.paragraph}">
         Es gibt keine laufende Krankmeldung die erweitert werden könnte.

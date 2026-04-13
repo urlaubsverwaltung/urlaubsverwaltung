@@ -13,7 +13,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <form
         method="post"
         th:with="action=${department.id == null ? '/web/department/new' : '/web/department/' + department.id}"
@@ -168,21 +168,21 @@
                   value="1337"
                   th:value="${secondStageAuthority.id}"
                 />
-                <ul class="mt-4 department--members">
+                <ul class="mt-4 border border-[#ddd] rounded overflow-y-auto h-[400px] w-full dark:border-zinc-600">
                   <li
                     th:each="person : ${persons}"
-                    class="department--member"
+                    class="flex flex-row border-b border-[#ddd] dark:border-zinc-600 last:border-b-0"
                     th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
-                    th:classappend="${isMember ? ( isInactive ? 'is-inactive' : 'is-assigned') : ''}"
+                    th:classappend="${isMember ? ( isInactive ? 'bg-[#fff4ea] dark:bg-transparent' : 'bg-[#e8efd1] dark:bg-zinc-800') : ''}"
                   >
-                    <div class="department--member-image text-blue-50 dark:text-sky-800">
+                    <div class="shrink-0 p-3 pl-6 text-blue-50 dark:text-sky-800">
                       <img
                         th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
                         alt=""
                       />
                     </div>
-                    <div class="department--member-assignment">
-                      <p class="department--member-info mb-2">
+                    <div class="p-3">
+                      <p class="m-0 mb-2">
                         <a
                           th:text="${person.niceName}"
                           th:href="@{/web/person/__${person.id}__/overview}"

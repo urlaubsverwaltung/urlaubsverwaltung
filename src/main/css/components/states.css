@@ -20,7 +20,7 @@
 }
 
 .state.pull-right {
-  margin-right: 20px;
+  margin-right: --spacing(5);
 }
 
 .state.WAITING {

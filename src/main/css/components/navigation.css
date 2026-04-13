@@ -1,35 +1,35 @@
 .navigation-container {
   grid-area: navigation;
-  background-color: var(--color-white);
-
-  @variant dark {
-    background-color: var(--color-zinc-900);
-  }
 
   .navigation-button {
-    padding: 1rem;
+    padding: --spacing(4);
   }
 
   .navigation {
-    --popover-fade-x-start: -100%;
-    --popover-fade-x-end: 0;
+    background-color: var(--color-white);
+    width: 100dvw;
 
-    top: anchor(bottom);
-    background-color: inherit;
+    /* prevent body scrolling with overscroll behaviour and full height */
+    overscroll-behavior: none;
+    height: calc(100dvh - anchor-size(height) - var(--info-banner-height));
+
+    @variant dark {
+      background-color: var(--color-zinc-950);
+    }
 
     .navigation-inner {
-      padding: 2rem calc(var(--spacing) * 8);
-      padding-bottom: 1rem;
+      padding: --spacing(8);
+      padding-bottom: --spacing(4);
       min-height: 100%;
 
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: --spacing(8);
 
       .navigation-inner__bottom {
         margin-top: auto;
         background: white;
-        padding: 0.5rem 0;
+        padding: --spacing(2) 0;
         border-top: 1px solid transparent;
         transition: border-color 150ms;
 
@@ -50,12 +50,12 @@
     ul {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: calc(--spacing(1) / 2);
     }
 
     .subnav-group {
-      margin-top: 0.25rem;
-      gap: 0.75rem;
+      margin-top: --spacing(1);
+      gap: --spacing(3);
     }
 
     .navigation-link,
@@ -66,7 +66,7 @@
     }
 
     .navigation-link {
-      padding: 0.5rem;
+      padding: --spacing(2);
       @apply rounded;
 
       --duration: 150ms;
@@ -96,12 +96,12 @@
       position: relative;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: --spacing(2);
 
-      margin-left: 1rem;
+      margin-left: --spacing(4);
       /* two times dot-size because of loading spinner */
-      padding-left: calc(var(--dot-size) * 2 + 0.25rem);
-      padding-right: 0.25rem;
+      padding-left: calc(var(--dot-size) * 2 + --spacing(1));
+      padding-right: --spacing(1);
 
       color: var(--color);
 
@@ -194,22 +194,11 @@
         animation: rotate-loading 1s infinite linear;
       }
     }
-
-    &:popover-open {
-      position: fixed;
-      inset: 0;
-      top: anchor(bottom);
-      width: auto;
-
-      /* prevent body scrolling with overscroll behaviour and height + 1px */
-      overscroll-behavior: none;
-      height: calc(100dvh - anchor-size(height) - var(--info-banner-height));
-    }
   }
 
   .nav-group-label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: --spacing(2);
     @apply font-mono;
     font-size: 0.8rem;
     font-weight: 600;
@@ -222,14 +211,10 @@
 }
 
 .nav-popover-menu-container {
-  top: calc(anchor(bottom) + 1rem);
-  width: calc(100% - 1rem);
-  height: calc(100% - 1.5rem);
-  margin: 0 auto;
   @apply rounded-2xl;
 
   .navigation-popover-menu-header {
-    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+    padding: --spacing(2) --spacing(4);
     @apply bg-linear-to-br;
     @apply from-blue-50;
     @apply via-gray-100;
@@ -243,12 +228,12 @@
   }
 
   .navigation-popover-menu-content {
-    padding: calc(var(--spacing) * 2);
+    padding: --spacing(2);
 
     ul.navigation-popover-menu {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing);
+      gap: --spacing(1);
 
       .navigation-popover-menu__link {
         --duration: 150ms;
@@ -256,16 +241,17 @@
         display: flex;
         width: 100%;
         justify-items: center;
-        gap: 1rem;
+        gap: --spacing(4);
 
         color: var(--color-gray-700);
         transition:
           color var(--duration) ease-in-out,
           background-color var(--duration) ease-in-out;
         text-decoration: none;
-        padding: calc(var(--spacing) * 3);
-        padding-left: calc(var(--spacing) * 6);
-        padding-right: calc(var(--spacing) * 10);
+        padding: --spacing(3);
+        padding-left: --spacing(6);
+        padding-right: --spacing(10);
+        @apply rounded;
 
         &:hover,
         &:focus-visible {
@@ -287,95 +273,21 @@
       li:first-of-type .navigation-popover-menu__link {
         @apply rounded-t-2xl;
       }
-
-      li:last-of-type .navigation-popover-menu__link {
-        @apply rounded-b-2xl;
-      }
     }
   }
 }
 
-.navigation,
 .nav-avatar-popover,
 .nav-launchpad-popover {
-  /* animate opacity only */
-  /* this is progressively enhanced below adding slide in/out movement */
-
-  --popover-fade-x-start: 0;
-  --popover-fade-x-end: 0;
-  --duration: 300ms;
-
-  transition:
-    display var(--duration),
-    overlay var(--duration),
-    opacity var(--duration);
-
-  opacity: 0;
-
-  &:popover-open {
-    opacity: 1;
-  }
-
-  @starting-style {
-    &:popover-open {
-      opacity: 0;
-    }
-  }
-
-  @supports (overlay: auto) {
-    /* webkit/safari has a bug not positioning the popover to it's anchor anymore when hidden
-     * since hiding popover is animated (with `transition-behavior:allow-discrete`) we're just animating when supported...
-     * there are some issues I've found that may or may not be related to this:
-     * - https://bugs.webkit.org/show_bug.cgi?id=276727 -> https://github.com/WebKit/WebKit/pull/59831
-     * - https://bugs.webkit.org/show_bug.cgi?id=309921
-     * - https://github.com/whatwg/html/issues/11694
-     */
-    --duration: 500ms;
-    transform: translateX(var(--popover-fade-x-start));
-    transition:
-      display var(--duration),
-      overlay var(--duration),
-      transform var(--duration),
-      opacity var(--duration);
-    transition-behavior: allow-discrete;
-
-    &:popover-open {
-      transform: translateX(var(--popover-fade-x-end));
-    }
-
-    @starting-style {
-      &:popover-open {
-        transform: translateX(var(--popover-fade-x-start));
-      }
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    /* reduced-motion: faster transitioning */
-    --duration: 150ms;
-    /* and not movement */
-    transform: unset !important;
-  }
-}
-
-.navigation {
-  --popover-fade-x-start: -100%;
-  --popover-fade-x-end: 0;
-}
-
-.nav-launchpad-popover {
-  --popover-fade-x-start: 100%;
-  --popover-fade-x-end: 0;
-  position-area: bottom;
-  right: 0.5rem;
-  bottom: 0.5rem;
-}
-
-.nav-avatar-popover {
-  --popover-fade-x-start: 100%;
-  --popover-fade-x-end: 0;
-  position-area: bottom;
-  right: 0.5rem;
+  margin: 0;
+  /* override default .popover anchor positioning. */
+  /* we want it to be on the right of the screen instead of relative to the anchor. */
+  position-area: unset !important;
+  inset: unset;
+  top: calc(anchor(bottom) + --spacing(4));
+  right: --spacing(2);
+  bottom: --spacing(2);
+  height: auto;
 }
 
 @keyframes linear-loading {
@@ -397,13 +309,9 @@
     @apply shadow-2xl;
     border: 1px solid var(--color-gray-200);
 
-    @apply backdrop-filter;
-    @apply backdrop-blur-xl;
-    @apply supports-backdrop-blur:bg-white/60;
-
     @variant dark {
+      @apply shadow-zinc-950;
       border-color: var(--color-zinc-800);
-      @apply supports-backdrop-blur:bg-zinc-900/60;
     }
   }
 }
@@ -415,7 +323,7 @@
     padding: 0;
 
     @variant dark {
-      background-color: var(--color-zinc-950);
+      /*background-color: var(--color-zinc-950);*/
     }
 
     .navigation-button {
@@ -425,22 +333,18 @@
     .navigation {
       flex: 1 0 0;
       width: 100%;
-      position: static;
       overflow: auto;
       overscroll-behavior: none;
 
-      /* override popover hidden display */
+      /* override popover animation stuff */
+      position: static;
       display: block;
-
-      /* override animation stuff, there is not animation on desktop */
-      --popover-fade-x-start: 0;
-      --popover-fade-x-end: 0;
-      top: auto;
       opacity: 1;
+      transform: unset;
 
       .navigation-inner {
-        padding: 2rem calc(var(--spacing) * 5);
-        padding-bottom: 0.5rem;
+        padding: --spacing(8) --spacing(5);
+        padding-bottom: --spacing(2);
 
         .navigation-inner__bottom {
           @variant dark {
@@ -455,7 +359,7 @@
         }
 
         .navigation-link {
-          padding: var(--spacing) calc(var(--spacing) * 2);
+          padding: --spacing(1) --spacing(2);
         }
 
         .navigation-link ~ .subnav-group {
@@ -468,24 +372,16 @@
         }
 
         .subnav-group {
-          margin-top: 0.25rem;
-          margin-bottom: 0.25rem;
-          gap: 0.25rem;
+          margin-top: --spacing(1);
+          margin-bottom: --spacing(1);
+          gap: --spacing(1);
         }
-      }
-
-      &:popover-open {
-        /* opening the navigation on small screen and increasing the window size */
-        /* should render the navigation like normal on wide view */
-        position: static;
-        inset: unset;
       }
     }
   }
 
   .nav-launchpad-popover {
-    --popover-fade-x-start: -100%;
-    --popover-fade-x-end: 0;
-    left: 0.5rem;
+    left: --spacing(2);
+    right: auto;
   }
 }

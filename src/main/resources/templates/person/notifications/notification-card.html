@@ -15,12 +15,12 @@
         active=${active == null ? personNotificationsDto.applicationAppliedAndChanges.active : active}
       "
     >
-      <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
+      <li th:if="${visible}" class="list-selectable__item">
         <uv-checkbox-card
           class="flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16"
         >
           <div class="@3xl/main:w-64 @5xl/main:w-72">
-            <span data-list-item-selection-toggle class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
+            <span class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
               <input
                 type="checkbox"
                 id="input"

@@ -1,6 +1,6 @@
 caption {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: --spacing(2);
+  padding-bottom: --spacing(2);
   color: #777;
   text-align: left;
 }
@@ -48,13 +48,13 @@ tr.inactive td > * {
 
 .list-table td {
   vertical-align: middle !important;
-  padding: 12px;
+  padding: --spacing(3);
   border-top: 1px solid #dddddd;
   @apply dark:border-zinc-700;
 }
 
 .list-table td.number {
-  padding-left: 24px;
+  padding-left: --spacing(6);
 }
 
 .list-table tr:last-child td {
@@ -63,7 +63,7 @@ tr.inactive td > * {
 }
 
 .list-table th {
-  padding: 8px;
+  padding: --spacing(2);
 }
 
 .list-table--second-row {
@@ -143,10 +143,10 @@ table thead th[data-sortable]:hover {
 
 .tablesorter-header-inner:after {
   content: "";
-  margin-left: 0.5rem;
+  margin-left: --spacing(2);
   background-size: cover;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   background-image: url("../icons/selector.svg");
 }
 
@@ -188,20 +188,6 @@ td.halves h4 {
   Absence Type Settings Table
 **************************************************************************/
 
-table.absence-type-settings-table thead {
-  z-index: 1; /* color-picker should not cover the sticky header */
-  position: sticky;
-  top: 0;
-  @apply bg-white;
-  @apply dark:bg-zinc-900;
-}
-
-@variant sm {
-  table.absence-type-settings-table thead {
-    top: 3rem; /* header height */
-  }
-}
-
 /* kudos https://css-tricks.com/responsive-data-tables/ */
 @media only screen and (max-width: 639px) {
   table.absence-type-settings-table {
@@ -228,7 +214,7 @@ table.absence-type-settings-table thead {
       tr {
         @apply rounded-sm;
         @apply border;
-        @apply p-2;
+        padding: --spacing(2);
         @apply transition-colors;
         @apply bg-white;
         @apply dark:border-zinc-800;
@@ -236,7 +222,7 @@ table.absence-type-settings-table thead {
       }
 
       tr:not(:last-child) {
-        @apply mb-4;
+        margin-bottom: --spacing(4);
       }
 
       tr[data-enabled="true"] {
@@ -248,8 +234,7 @@ table.absence-type-settings-table thead {
 
       td {
         /* Behave  like a "row" */
-        @apply px-2;
-        @apply py-1;
+        padding: --spacing(1) --spacing(2);
         display: flex;
         align-items: center;
         @apply text-base;
@@ -266,7 +251,7 @@ table.absence-type-settings-table thead {
         /* Now like a table header */
         width: 40%;
         white-space: nowrap;
-        @apply pr-4;
+        padding-right: --spacing(4);
         @apply font-medium;
         @apply text-zinc-800;
         @apply text-sm;
@@ -318,39 +303,39 @@ table.absence-type-settings-table thead {
 
   table.absence-type-settings-table {
     border-collapse: separate;
-    border-spacing: 0 0.25rem;
+    border-spacing: 0 --spacing(1);
 
     thead {
       th {
         @apply text-sm;
-        @apply px-4;
-        @apply py-1;
+        padding: --spacing(1) --spacing(4);
       }
 
       th:first-of-type {
-        @apply pr-4;
+        padding-right: --spacing(4);
       }
     }
 
     tbody {
       td {
-        @apply mb-2;
-        @apply py-1;
+        margin-bottom: --spacing(2);
+        padding-top: --spacing(1);
+        padding-bottom: --spacing(1);
       }
 
       td:first-of-type {
         @apply rounded-l;
-        @apply pl-4;
-        @apply pr-4;
+        padding-left: --spacing(4);
+        padding-right: --spacing(4);
       }
       td:not(:first-of-type):not(:last-of-type) {
-        @apply pl-4;
-        @apply pr-8;
+        padding-left: --spacing(4);
+        padding-right: --spacing(8);
       }
       td:last-of-type {
         @apply rounded-r;
-        @apply pl-4;
-        @apply pr-4;
+        padding-left: --spacing(4);
+        padding-right: --spacing(4);
       }
     }
   }
@@ -358,6 +343,6 @@ table.absence-type-settings-table thead {
 
 @variant md {
   table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
-    @apply pr-16;
+    padding-right: --spacing(16);
   }
 }

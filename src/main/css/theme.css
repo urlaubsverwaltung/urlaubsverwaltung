@@ -1,16 +1,20 @@
-@theme {
-  /* 30rem = 480px (16px base), tailwind uses rem, so we are */
-  --breakpoint-xs: 30rem;
-
-  --font-logo: "KaushanScript";
-
-  --color-black-almost: #444444;
-  --color-bootstrap-green: #5cb85c;
-  --color-bootstrap-green-dark: #449d44;
-}
-
 /* regular variables not required by tailwindcss toolchain */
 :root {
+  /* tooltips shown on pointer hover should always be on top */
+  --z-index-tooltip: 99999;
+  /* topbar above everything else */
+  --z-index-topbar: 200;
+  /* datepicker must be above sticky elements, at least on time-entries page */
+  --z-index-duet-datepicker: 110;
+  --z-index-sticky: 100;
+
+  /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
+  --info-banner-height: 0;
+  --topbar-height: 3.5rem;
+  --top-content-start: calc(var(--info-banner-height) + var(--topbar-height));
+
+  --frosted-glass-opacity: 80%;
+
   --uv-cal-border-color: var(--color-white);
   --uv-cal-today-border-color: var(--color-zinc-500);
   --uv-cal-default-bg: var(--color-zinc-50);

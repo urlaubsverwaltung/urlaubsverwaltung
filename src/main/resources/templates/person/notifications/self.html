@@ -55,7 +55,10 @@
       <div class="mt-8 mb-16">
         <div class="space-y-8">
           <section>
-            <h2 class="notification-section-title" th:text="#{person.notifications.section.absences.title}">
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.absences.title}"
+            >
               Meine Abwesenheiten
             </h2>
             <ul class="list-selectable">
@@ -74,7 +77,10 @@
             </ul>
           </section>
           <section>
-            <h2 class="notification-section-title" th:text="#{person.notifications.section.sicknote.title}">
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.sicknote.title}"
+            >
               Meine Krankmeldungen
             </h2>
             <ul class="list-selectable">
@@ -85,7 +91,10 @@
           </section>
           <th:block th:if="${!isOvertimeSyncActive}">
             <section>
-              <h2 class="notification-section-title" th:text="#{person.notifications.section.overtime.title}">
+              <h2
+                class="notification-section-title frosted-glass sticky top-0"
+                th:text="#{person.notifications.section.overtime.title}"
+              >
                 Meine Überstunden
               </h2>
               <ul class="list-selectable">
@@ -99,7 +108,12 @@
             </section>
           </th:block>
           <section th:if="${personNotificationsDto.personNewManagementAll.visible}">
-            <h2 class="notification-section-title" th:text="#{person.notifications.section.persons.title}">Personen</h2>
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.persons.title}"
+            >
+              Personen
+            </h2>
             <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.personNewManagementAll.visible},active=${personNotificationsDto.personNewManagementAll.active},name='personNewManagementAll.active',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"

@@ -125,10 +125,13 @@
     <th:block th:replace="~{_header-script::script}"></th:block>
   </head>
   <body th:fragment="body(content)">
+    <div class="topbar-backdrop frosted-glass"></div>
+    <div class="topbar-backdrop--after"></div>
+
     <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="~{_navigation::nav}">navigation block</nav>
 
-    <div class="flex items-center gap-2 py-2 px-4 lg:pl-6" style="grid-area: launchpad-app">
+    <div class="topbar-cell flex items-center gap-2 py-2 px-4 lg:pl-6" style="grid-area: launchpad-app">
       <div th:replace="~{launchpad/launchpad::launchpad}"></div>
       <a
         href="/"
@@ -140,15 +143,23 @@
 
     <div
       th:fragment="row"
-      class="flex items-center gap-4 justify-end py-2 px-4 lg:pr-6 bg-white dark:bg-zinc-900"
+      class="topbar-cell flex items-center gap-4 justify-end p-2 lg:pr-6"
       style="grid-area: avatar"
     >
       <div th:replace="~{_top::avatar}"></div>
     </div>
 
     <div
-      class="grid overflow-y-scroll top-bar-content-separator bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"
-      style="grid-area: content; grid-template-columns: 1fr; grid-template-rows: 1fr auto"
+      id="main"
+      class="grid overflow-y-scroll bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"
+      style="
+        grid-area: content;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        anchor-name: --container-main-anchor;
+        margin-top: calc(-1 * var(--top-content-start));
+        padding-top: var(--top-content-start);
+      "
     >
       <div class="@container/main">
         <main th:replace="${content}">content block</main>

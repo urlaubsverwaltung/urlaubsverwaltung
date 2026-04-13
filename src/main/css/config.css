@@ -1,8 +1,18 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+@import "./components/popover.css";
+
 @theme {
+  /* 30rem = 480px (16px base), tailwind uses rem, so we are */
+  --breakpoint-xs: 30rem;
   --breakpoint-desktop: 1280px;
+
+  --font-logo: "KaushanScript";
+
+  --color-black-almost: #444444;
+  --color-bootstrap-green: #5cb85c;
+  --color-bootstrap-green-dark: #449d44;
 }
 
 /* html element has .dark class to enforce dark theme */
@@ -12,4 +22,17 @@
   @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
     @slot;
   }
+}
+
+@utility frosted-glass {
+  background-color: --alpha(var(--color-white) / var(--frosted-glass-opacity, 80%));
+  backdrop-filter: blur(3px) saturate(180%);
+
+  @variant dark {
+    background-color: --alpha(var(--color-zinc-900) / var(--frosted-glass-opacity, 80%));
+  }
+}
+
+@utility frosted-glass-opacity-* {
+  --frosted-glass-opacity: calc(1% * --value(integer));
 }

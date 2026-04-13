@@ -23,7 +23,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <form
         method="post"
         th:action="@{/web/person/__${person.id}__/workingtime}"

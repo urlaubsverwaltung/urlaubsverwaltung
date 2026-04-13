@@ -9,20 +9,20 @@
     /* item row followed by empty row to use custom row-gap */
     /* since gap between label and translation has another value */
     [status-and-color] auto
-    1rem
+    --spacing(4)
     [label] auto
-    0.5rem
+    --spacing(2)
     [translation] auto
-    1rem
+    --spacing(4)
     [apply] auto
-    1rem
+    --spacing(4)
     [cancel] auto
-    1rem
+    --spacing(4)
     [everyone] auto;
 }
 
 .absence-type-card:not(:first-child) {
-  margin-top: 1rem;
+  margin-top: --spacing(4);
 }
 
 .absence-type-card-cell_title {
@@ -44,7 +44,7 @@
   grid-column: 1 / span 3;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: --spacing(2);
   @apply overflow-hidden;
 }
 
@@ -65,20 +65,19 @@
 .absence-type-translation-inputs {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: --spacing(3);
 }
 
 .absence-type-translation-inputs__element {
   display: flex;
   flex-direction: column-reverse;
-  gap: 0.5rem;
+  gap: --spacing(2);
   @apply @3xl/main:flex-row;
 }
 
 .absence-type-translation-inputs__element__input {
   @apply flex-1;
-  @apply px-3;
-  @apply py-2;
+  padding: --spacing(2) --spacing(3);
   @apply @3xl/main:max-w-sm;
   @apply rounded-sm;
   @apply border;
@@ -88,7 +87,7 @@
   @apply whitespace-nowrap;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: --spacing(2);
   margin: 0;
   font-weight: 600;
 }
@@ -120,7 +119,7 @@
 .absence-type-card__color {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: --spacing(2);
 }
 
 .absence-type-card__status,
@@ -137,12 +136,8 @@
 
 @variant md {
   .absence-type-list-head {
-    z-index: 1; /* place above color picker */
-    position: sticky;
-    top: 0;
-    padding: 0 1rem;
-    @apply bg-white;
-    @apply dark:bg-zinc-900;
+    z-index: 2; /* place above color picker */
+    padding: 0 --spacing(4);
     @apply font-bold;
     @apply text-sm;
   }
@@ -152,7 +147,7 @@
     display: grid;
     grid-template-columns: 2.5rem 1fr 10rem 10rem 7rem 4rem;
     grid-template-rows: auto;
-    column-gap: 1rem;
+    column-gap: --spacing(4);
   }
 
   .absence-type-card {
@@ -160,7 +155,7 @@
   }
 
   .absence-type-card:not(:first-child) {
-    margin-top: 0.25rem;
+    margin-top: --spacing(1);
   }
 
   .absence-type-card[data-enabled="false"] {
@@ -217,7 +212,7 @@
   }
 
   .absence-type-translation-inputs {
-    gap: 0.25rem;
+    gap: --spacing(1);
   }
 
   .absence-type-translation-inputs__element__label {
@@ -226,8 +221,7 @@
 
   .absence-type-translation-inputs__element__input {
     @apply transition-colors;
-    @apply px-2;
-    @apply py-1;
+    padding: --spacing(1) --spacing(2);
   }
 
   .absence-type-card__approve-to-apply {
@@ -262,6 +256,6 @@
 @variant lg {
   .absence-type-list-head,
   .absence-type-card {
-    column-gap: 2rem;
+    column-gap: --spacing(8);
   }
 }

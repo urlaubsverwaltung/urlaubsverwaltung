@@ -1,7 +1,7 @@
 .uv-help-block {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: --spacing(1);
 
   color: #737373;
   @apply text-sm;
@@ -28,7 +28,28 @@ label {
     font-weight: normal; /* override with utils if bolder text is required */
     display: flex;
     flex-wrap: nowrap;
-    gap: 0.5rem;
+    gap: --spacing(2);
+  }
+}
+
+input:not(:is([type="radio"], [type="checkbox"])),
+textarea,
+select {
+  display: inline-block;
+  width: 100%;
+
+  &::placeholder {
+    color: var(--uv-placeholder-color);
+  }
+
+  &[readonly] {
+    background-color: var(--color-gray-200);
+  }
+
+  @variant dark {
+    &[readonly] {
+      background-color: var(--color-zinc-800);
+    }
   }
 }
 
@@ -36,9 +57,10 @@ input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
 select,
 .popover-button-select {
-  display: inline-block;
-  width: 100%;
-  padding: 6px 12px;
+  --input-padding-y: 6px;
+  --input-padding-x: 12px;
+
+  padding: var(--input-padding-y) var(--input-padding-x);
   font-size: var(--uv-form-control-text-size);
   line-height: 1.428571429;
   color: #555;
@@ -57,31 +79,10 @@ select,
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
   }
 
-  &::placeholder {
-    color: var(--uv-placeholder-color);
-  }
-
-  &[readonly] {
-    background-color: var(--color-gray-200);
-  }
-
   @variant dark {
     border-color: var(--color-zinc-600);
     background-color: var(--color-zinc-700);
     color: var(--color-zinc-50);
-
-    &[readonly] {
-      background-color: var(--color-zinc-800);
-    }
-  }
-}
-
-.popover-button-select {
-  width: auto; /* override common input styling */
-  :not([class*="border-"]) {
-    /* actually colors are meant here, like border-blue-400 */
-    /* however border-*-* is not a valid selector */
-    @apply dark:border-neutral-600!;
   }
 }
 
@@ -119,7 +120,7 @@ select,
     display: inline-flex;
     align-items: center;
 
-    padding: 0 0.75rem;
+    padding: 0 --spacing(3);
     font-size: var(--uv-form-control-text-size);
     font-weight: 400;
     line-height: 1;
@@ -170,66 +171,6 @@ textarea.error {
   border-color: var(--uv-error-border-color) !important;
 }
 
-/**************************************************************************
-
-  DEPARTMENT FORM
-
-**************************************************************************/
-
-.department--members {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: auto;
-  height: 400px;
-  width: 100%;
-  @apply dark:border-zinc-600;
-}
-
-.department--member {
-  border-bottom: 1px solid #ddd;
-  display: table;
-  width: 100%;
-  @apply dark:border-zinc-600;
-}
-
-.department--member.is-assigned {
-  background-color: #e8efd1;
-  @apply dark:bg-zinc-800;
-}
-
-.department--member.is-inactive {
-  background-color: #fff4ea;
-  @apply dark:bg-transparent;
-}
-
-.department--member:last-child {
-  border-bottom: none;
-}
-
-.department--member-image,
-.department--member-assignment {
-  padding: 12px;
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.department--member-image {
-  width: 1px;
-  padding-left: 24px;
-}
-
-.department--member-info {
-  margin: 0;
-}
-
-.department--member-assignment > .checkbox > label {
-  display: block;
-}
-
-.department--member-assignment > .checkbox > label > input[type="checkbox"] {
-  margin-top: 2px;
-}
-
 .select-caret {
   @apply text-zinc-700;
   @apply dark:text-zinc-50;
@@ -247,8 +188,8 @@ textarea.error {
    */
 
   --uv-form-padding-x: 0;
-  --uv-form-col-gap: 1.25rem;
-  --uv-form-row-gap: 1.25rem;
+  --uv-form-col-gap: --spacing(5);
+  --uv-form-row-gap: --spacing(5);
   --uv-form-label-col-width: 11.25rem; /* 180px */
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
@@ -257,7 +198,7 @@ textarea.error {
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
     ~ div[role="group"] {
-      margin-top: 2.5rem;
+      margin-top: --spacing(10);
     }
 
     .uv-form-legend {
@@ -265,9 +206,9 @@ textarea.error {
 
       display: flex;
       flex-direction: row;
-      gap: 0.25rem;
+      gap: --spacing(1);
       align-items: center;
-      padding-bottom: 0.5rem;
+      padding-bottom: --spacing(2);
       border-bottom: 2px solid var(--color-gray-200);
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
@@ -303,7 +244,7 @@ textarea.error {
       p {
         margin: 0;
         + p {
-          margin-top: 1rem;
+          margin-top: --spacing(4);
         }
       }
     }
@@ -312,14 +253,14 @@ textarea.error {
     .uv-form__input-row {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: --spacing(1);
       margin-top: var(--uv-form-row-gap);
 
       /* if following item is not an interactive element -> it should be a row, just like any other input */
       > :is(label, .uv-form__label) + :is(div, span) {
         display: flex;
         flex-direction: row;
-        gap: 1rem;
+        gap: --spacing(4);
       }
 
       label,
@@ -379,7 +320,7 @@ textarea.error {
   input {
     /* in a col, the label has a gap to the following element */
     &:is(.uv-form__input-col .uv-form__label + label) {
-      margin-top: 0.5rem;
+      margin-top: --spacing(2);
     }
   }
 
@@ -556,7 +497,7 @@ div[role="group"]:not([aria-describedby]) {
     background-color: magenta;
     color: white;
     font-weight: 600;
-    padding: 1rem;
+    padding: --spacing(4);
     z-index: 999999;
   }
 }
@@ -571,7 +512,7 @@ div[role="group"]:not([aria-describedby]) {
     background-color: magenta;
     color: white;
     font-weight: 600;
-    padding: 1rem;
+    padding: --spacing(4);
     z-index: 999999;
   }
 }

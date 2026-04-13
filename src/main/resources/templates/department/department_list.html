@@ -12,7 +12,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})}"
       >

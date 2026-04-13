@@ -27,8 +27,7 @@ a.button-info {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  @apply px-3;
-  @apply py-2;
+  padding: --spacing(2) --spacing(3);
   @apply rounded-sm;
   @apply font-medium;
   @apply dark:font-semibold;

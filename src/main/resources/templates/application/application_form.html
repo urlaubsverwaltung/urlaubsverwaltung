@@ -40,7 +40,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <th:block th:if="${noHolidaysAccount == true}" th:text="#{application.applier.account.none}" />
 
       <th:block th:if="${noHolidaysAccount == null || noHolidaysAccount == false}">

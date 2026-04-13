@@ -4,8 +4,7 @@
 
 [is="uv-color-picker"] .color-picker-button-color {
   @apply inline-block;
-  @apply px-3;
-  @apply py-2;
+  padding: --spacing(2) --spacing(3);
   @apply w-12;
   @apply h-4;
   @apply rounded-sm;
@@ -23,13 +22,13 @@
 
 [is="uv-color-picker"] .color-picker-dialog {
   position: absolute;
-  top: calc(100% + 0.25rem);
-  left: -1rem; /* to align the color boxes */
+  top: calc(100% + --spacing(1));
+  left: calc(-1 * --spacing(4)); /* to align the color boxes */
   width: 10rem;
   z-index: 1;
   display: flex;
   @apply rounded-sm;
-  @apply p-4;
+  padding: --spacing(4);
   @apply bg-white;
   @apply shadow-2xl;
   @apply border;
@@ -67,7 +66,7 @@
 }
 
 [is="uv-color-picker"] .color-picker-dialog > *:not(:first-child) {
-  margin-top: 0.25rem;
+  margin-top: --spacing(1);
 }
 
 [is="uv-color-picker"] .color-picker-dialog label {

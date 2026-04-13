@@ -26,7 +26,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <h1 class="sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
       <div class="mt-4 grid grid-cols-2 gap-2 flex-wrap @2xl/main:flex @5xl/main:mt-0">
         <a

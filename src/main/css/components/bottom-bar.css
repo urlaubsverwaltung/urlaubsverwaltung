@@ -8,8 +8,8 @@
   /* (see git history for css...) */
 
   .bottom-bar-inner {
-    padding-top: calc(var(--spacing) * 2);
-    padding-bottom: calc(var(--spacing) * 2);
+    padding-top: --spacing(2);
+    padding-bottom: --spacing(2);
   }
 }
 

@@ -16,7 +16,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main})}">
-    <main th:fragment="main" class="content-container">
+    <main th:fragment="main" class="content-container content--max-w">
       <div th:replace="~{fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{})}">
         <th:block th:ref="user-applications-heading-body">
           <h1 th:text="#{user-settings.title}">Account settings</h1>
