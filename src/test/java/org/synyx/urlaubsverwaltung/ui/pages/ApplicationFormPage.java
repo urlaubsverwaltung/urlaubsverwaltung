@@ -100,7 +100,7 @@ public class ApplicationFormPage {
     /**
      * Waits for the given person to be shown as a replacement at the given position.
      *
-     * @param person replacement person
+     * @param person   replacement person
      * @param position position
      */
     public void waitForReplacementAtPosition(Person person, int position) {
@@ -110,9 +110,9 @@ public class ApplicationFormPage {
     /**
      * Waits for the given person to be shown as a replacement at the given position.
      *
-     * @param person replacement person
+     * @param person   replacement person
      * @param position position
-     * @param comment optional comment
+     * @param comment  optional comment
      */
     public void waitForReplacementAtPosition(Person person, int position, String comment) {
         page.waitForCondition(() -> this.showsAddedReplacementAtPosition(person, position, comment));
@@ -149,6 +149,7 @@ public class ApplicationFormPage {
         final Locator textarea = row.locator("textarea");
         return textarea.inputValue().equals(comment);
     }
+
     /**
      * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */

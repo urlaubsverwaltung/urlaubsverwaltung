@@ -18,7 +18,7 @@ public class PersonsPage {
     /**
      * Returns the person row locator for the given criteria.
      *
-     * @param rowZeroBased row number
+     * @param rowZeroBased   row number
      * @param personNiceName name of the person
      * @return matching Locator
      */
