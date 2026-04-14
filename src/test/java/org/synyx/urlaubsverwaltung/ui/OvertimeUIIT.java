@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsWorkingTimePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;

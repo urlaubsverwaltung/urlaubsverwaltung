@@ -46,6 +46,7 @@ public class SickNoteExtensionPage {
         final Locator locator = page.locator("[data-test-id=sick-note-extension-next-preview]");
         assertThat(locator).containsText("%s %s %s %s".formatted(startLabel, startValue, nextEndLabel, nextEndValue));
     }
+
     /**
      * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */
