@@ -770,7 +770,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
             Lieschen Müller möchte die bereits genehmigte Abwesenheit vom 29.05.2020 stornieren.
 
-                https://localhost:8080/web/application/1234
+                https://localhost:8080/web/application/1234?action=cancel
 
             Kommentar von Lieschen Müller:
             Bitte stornieren!
