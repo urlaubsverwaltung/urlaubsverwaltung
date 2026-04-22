@@ -228,7 +228,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             ApplicationForLeaveStatisticsSortProperty.LEFT_VACATION_DAYS_FOR_YEAR_KEY
         );
 
-        final List<HtmlOptionDto> personOptions = sortOptionGroupDto(PersonPageRequest.PERSON_PREFIX, sortablePersonProperties, originalPersonSort);
+        final List<HtmlOptionDto> personOptions = sortOptionGroupDto("person", sortablePersonProperties, originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(ApplicationForLeaveStatisticsPageRequest.STATISTICS_PREFIX, sortableStatisticsProperties, originalPersonSort);

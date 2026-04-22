@@ -291,7 +291,7 @@ public class PersonsViewController implements HasLaunchpad {
             PersonSortProperty.LAST_NAME.key()
         );
 
-        final List<HtmlOptionDto> personOptions = htmlOptionDtos(PersonPageRequest.PERSON_PREFIX, sortablePersonProperties, personSort);
+        final List<HtmlOptionDto> personOptions = htmlOptionDtos("person", sortablePersonProperties, personSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), accountSort);

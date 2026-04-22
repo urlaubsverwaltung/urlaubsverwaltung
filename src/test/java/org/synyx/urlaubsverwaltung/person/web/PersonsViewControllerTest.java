@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +29,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.math.BigDecimal;
@@ -50,15 +52,16 @@ import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -735,8 +738,8 @@ class PersonsViewControllerTest {
                             hasItems(
                                 allOf(
                                     instanceOf(PersonDto.class),
-                                    hasProperty("lastName", CoreMatchers.is("Wayne")),
-                                    hasProperty("vacationDaysLeftRemaining", CoreMatchers.is(remainingVacationDays.doubleValue()))
+                                    hasProperty("lastName", is("Wayne")),
+                                    hasProperty("vacationDaysLeftRemaining", is(remainingVacationDays.doubleValue()))
                                 )
                             )
                         )
@@ -797,6 +800,251 @@ class PersonsViewControllerTest {
                     )
                 )
             );
+    }
+
+    // ==================== HtmlSelectDto Tests ====================
+
+    @Test
+    void ensureHtmlSelectDtoHasCorrectStructure() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        assertThat(htmlSelectDto).isNotNull();
+        assertThat(htmlSelectDto.optgroups()).hasSize(3);
+    }
+
+    @Test
+    void ensureHtmlSelectDtoPersonOptgroupHasCorrectLabel() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        assertThat(personOptgroup.labelMessageKey()).isEqualTo("persons.sort.optgroup.person.label");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoUrlaubOptgroupHasCorrectLabel() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto urlaubOptgroup = htmlSelectDto.optgroups().get(1);
+        assertThat(urlaubOptgroup.labelMessageKey()).isEqualTo("persons.sort.optgroup.urlaub.label");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoResturlaubOptgroupHasCorrectLabel() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto resturlaubOptgroup = htmlSelectDto.optgroups().get(2);
+        assertThat(resturlaubOptgroup.labelMessageKey()).isEqualTo("persons.sort.optgroup.resturlaub.label");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoPersonOptgroupHasCorrectOptions() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final List<HtmlOptionDto> options = personOptgroup.options();
+
+        assertThat(options).hasSize(4);
+
+        assertThat(options.get(0).textMessageKey()).isEqualTo("persons.sort.firstName.asc");
+        assertThat(options.get(0).value()).isEqualTo("person.firstName,asc");
+        assertThat(options.get(1).textMessageKey()).isEqualTo("persons.sort.firstName.desc");
+        assertThat(options.get(1).value()).isEqualTo("person.firstName,desc");
+        assertThat(options.get(2).textMessageKey()).isEqualTo("persons.sort.lastName.asc");
+        assertThat(options.get(2).value()).isEqualTo("person.lastName,asc");
+        assertThat(options.get(3).textMessageKey()).isEqualTo("persons.sort.lastName.desc");
+        assertThat(options.get(3).value()).isEqualTo("person.lastName,desc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoUrlaubOptgroupHasCorrectOptions() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto urlaubOptgroup = htmlSelectDto.optgroups().get(1);
+        final List<HtmlOptionDto> options = urlaubOptgroup.options();
+
+        assertThat(options).hasSize(6);
+
+        assertThat(options.get(0).textMessageKey()).isEqualTo("persons.sort.entitlementYear.asc");
+        assertThat(options.get(0).value()).isEqualTo("account.entitlementYear,asc");
+        assertThat(options.get(1).textMessageKey()).isEqualTo("persons.sort.entitlementYear.desc");
+        assertThat(options.get(1).value()).isEqualTo("account.entitlementYear,desc");
+        assertThat(options.get(2).textMessageKey()).isEqualTo("persons.sort.entitlementActual.asc");
+        assertThat(options.get(2).value()).isEqualTo("account.entitlementActual,asc");
+        assertThat(options.get(3).textMessageKey()).isEqualTo("persons.sort.entitlementActual.desc");
+        assertThat(options.get(3).value()).isEqualTo("account.entitlementActual,desc");
+        assertThat(options.get(4).textMessageKey()).isEqualTo("persons.sort.vacationDaysLeft.asc");
+        assertThat(options.get(4).value()).isEqualTo("account.vacationDaysLeft,asc");
+        assertThat(options.get(5).textMessageKey()).isEqualTo("persons.sort.vacationDaysLeft.desc");
+        assertThat(options.get(5).value()).isEqualTo("account.vacationDaysLeft,desc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoResturlaubOptgroupHasCorrectOptions() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto resturlaubOptgroup = htmlSelectDto.optgroups().get(2);
+        final List<HtmlOptionDto> options = resturlaubOptgroup.options();
+
+        assertThat(options).hasSize(4);
+
+        assertThat(options.get(0).textMessageKey()).isEqualTo("persons.sort.entitlementRemaining.asc");
+        assertThat(options.get(0).value()).isEqualTo("account.entitlementRemaining,asc");
+        assertThat(options.get(1).textMessageKey()).isEqualTo("persons.sort.entitlementRemaining.desc");
+        assertThat(options.get(1).value()).isEqualTo("account.entitlementRemaining,desc");
+        assertThat(options.get(2).textMessageKey()).isEqualTo("persons.sort.vacationDaysLeftRemaining.asc");
+        assertThat(options.get(2).value()).isEqualTo("account.vacationDaysLeftRemaining,asc");
+        assertThat(options.get(3).textMessageKey()).isEqualTo("persons.sort.vacationDaysLeftRemaining.desc");
+        assertThat(options.get(3).value()).isEqualTo("account.vacationDaysLeftRemaining,desc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoWithDefaultSortHasFirstOptionSelected() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final List<HtmlOptionDto> options = personOptgroup.options();
+
+        assertThat(options.get(0).selected()).isTrue();
+        assertThat(options.get(1).selected()).isFalse();
+        assertThat(options.get(2).selected()).isFalse();
+        assertThat(options.get(3).selected()).isFalse();
+    }
+
+    @Test
+    void ensureHtmlSelectDtoWithFirstNameDescSortHasCorrectOptionSelected() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        final PageRequest pageRequest = PageRequest.of(0, 20).withSort(Sort.by(Sort.Order.desc("person.firstName")));
+        when(personService.getActivePersons(PersonPageRequest.ofApiPageable(pageRequest), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person").param("sort", "person.firstName,DESC"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final List<HtmlOptionDto> options = personOptgroup.options();
+
+        assertThat(options.get(0).selected()).isFalse();
+        assertThat(options.get(1).selected()).isTrue();
+        assertThat(options.get(1).value()).isEqualTo("person.firstName,desc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoWithLastNameAscSortHasCorrectOptionSelected() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        final PageRequest pageRequest = PageRequest.of(0, 20).withSort(Sort.by(Sort.Order.asc("person.lastName")));
+        when(personService.getActivePersons(PersonPageRequest.ofApiPageable(pageRequest), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person").param("sort", "person.lastName,ASC"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final List<HtmlOptionDto> options = personOptgroup.options();
+
+        assertThat(options.get(2).selected()).isTrue();
+        assertThat(options.get(2).value()).isEqualTo("person.lastName,asc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoWithEntitlementYearDescSortHasCorrectOptionSelected() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        final PageRequest pageRequest = PageRequest.of(0, 20).withSort(Sort.by(Sort.Order.desc("account.entitlementYear")));
+        when(personService.getActivePersons(PersonPageRequest.ofApiPageable(pageRequest), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person").param("sort", "account.entitlementYear,DESC"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto urlaubOptgroup = htmlSelectDto.optgroups().get(1);
+        final List<HtmlOptionDto> options = urlaubOptgroup.options();
+
+        assertThat(options.get(1).selected()).isTrue();
+        assertThat(options.get(1).value()).isEqualTo("account.entitlementYear,desc");
+    }
+
+    @Test
+    void ensureHtmlSelectDtoWithVacationDaysLeftRemainingAscSortHasCorrectOptionSelected() throws Exception {
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        final PageRequest pageRequest = PageRequest.of(0, 20).withSort(Sort.by(Sort.Order.asc("account.vacationDaysLeftRemaining")));
+        when(personService.getActivePersons(PersonPageRequest.ofApiPageable(pageRequest), "")).thenReturn(page);
+
+        final ResultActions resultActions = perform(get("/web/person").param("sort", "account.vacationDaysLeftRemaining,ASC"));
+        final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
+
+        final HtmlOptgroupDto resturlaubOptgroup = htmlSelectDto.optgroups().get(2);
+        final List<HtmlOptionDto> options = resturlaubOptgroup.options();
+
+        assertThat(options.get(2).selected()).isTrue();
+        assertThat(options.get(2).value()).isEqualTo("account.vacationDaysLeftRemaining,asc");
+    }
+
+    private HtmlSelectDto extractSortSelect(ResultActions resultActions) {
+        return (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
