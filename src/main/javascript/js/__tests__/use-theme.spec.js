@@ -6,23 +6,23 @@ describe("useTheme", () => {
   let useMediaMock;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
 
     mockHtmlElement = {
       classList: {
-        contains: jest.fn(),
+        contains: vi.fn(),
       },
     };
-    document.querySelector = jest.fn().mockReturnValue(mockHtmlElement);
+    document.querySelector = vi.fn().mockReturnValue(mockHtmlElement);
 
     mockPrefersDark = {
       value: false,
-      subscribe: jest.fn(),
+      subscribe: vi.fn(),
     };
 
-    useMediaMock = jest.fn().mockReturnValue({ matches: mockPrefersDark });
+    useMediaMock = vi.fn().mockReturnValue({ matches: mockPrefersDark });
 
-    jest.doMock("../use-media", () => ({
+    vi.doMock("../use-media", () => ({
       useMedia: useMediaMock,
     }));
   });
@@ -87,7 +87,7 @@ describe("useTheme", () => {
     let prefersDarkCallback;
     mockPrefersDark.subscribe.mockImplementation((callback) => {
       prefersDarkCallback = callback;
-      return jest.fn();
+      return vi.fn();
     });
 
     const themeModule = await import("../use-theme");

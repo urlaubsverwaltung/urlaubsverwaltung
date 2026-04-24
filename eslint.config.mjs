@@ -43,7 +43,7 @@ export default [
   {
     files: ["**/*.spec.js", "**/*.test.js"],
     languageOptions: {
-      globals: globals.jest,
+      globals: globals.vitest,
     },
     rules: {
       "no-restricted-imports": "off",

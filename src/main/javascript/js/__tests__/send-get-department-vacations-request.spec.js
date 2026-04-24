@@ -1,27 +1,21 @@
-/**
- * @jest-environment jest-fixed-jsdom
- *
- * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
- * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
- * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
- */
-
 import fetchMock from "fetch-mock";
 import { parseISO as dateParseISOSpy } from "date-fns/parseISO";
-import { format as dateFormatSpy } from "date-fns/format";
+import { format as dateFormatSpy } from "date-fns";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
-jest.mock("date-fns/parseISO", () => {
-  const original = jest.requireActual("date-fns/parseISO");
+vi.mock("date-fns/parseISO", async () => {
+  const original = await vi.importActual("date-fns/parseISO");
   return {
-    parseISO: jest.fn(original.parseISO),
+    ...original,
+    parseISO: vi.fn(original.parseISO),
   };
 });
 
-jest.mock("date-fns/format", () => {
-  const original = jest.requireActual("date-fns/format");
+vi.mock("date-fns", async () => {
+  const original = await vi.importActual("date-fns");
   return {
-    format: jest.fn(original.format),
+    ...original,
+    format: vi.fn(original.format),
   };
 });
 
@@ -47,7 +41,7 @@ describe("send-get-department-vacations-request", () => {
     // and reset mocks
     fetchMock.removeRoutes();
     fetchMock.clearHistory();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("does nothing when startDate end endDate are not defined", async () => {

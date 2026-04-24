@@ -1,7 +1,7 @@
 import { initApplicationReplacementSelect } from "../application-replacement-select";
 import * as http from "../../../js/fetch";
 
-jest.mock("../../../js/fetch");
+vi.mock("../../../js/fetch");
 
 describe("application-replacement-select", function () {
   let selectElement;
@@ -34,17 +34,17 @@ describe("application-replacement-select", function () {
 
     initApplicationReplacementSelect();
 
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(function () {
-    jest.clearAllTimers();
+    vi.clearAllTimers();
 
     while (document.body.firstChild) {
       document.body.firstChild.remove();
     }
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("adds initially hidden loading indicator to the submit button", function () {
@@ -89,7 +89,7 @@ describe("application-replacement-select", function () {
     expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeTruthy();
     expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeTruthy();
 
-    jest.advanceTimersToNextTimer();
+    vi.advanceTimersToNextTimer();
     // await allSettled POST
     await Promise.resolve();
     await Promise.resolve();
@@ -113,7 +113,7 @@ describe("application-replacement-select", function () {
     expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeTruthy();
     expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeTruthy();
 
-    jest.advanceTimersToNextTimer();
+    vi.advanceTimersToNextTimer();
     // await allSettled POST
     await Promise.resolve();
     await Promise.resolve();
@@ -135,7 +135,7 @@ describe("application-replacement-select", function () {
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    jest.advanceTimersToNextTimer();
+    vi.advanceTimersToNextTimer();
     // await allSettled POST
     await Promise.resolve();
     await Promise.resolve();
@@ -159,7 +159,7 @@ describe("application-replacement-select", function () {
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    jest.advanceTimersToNextTimer();
+    vi.advanceTimersToNextTimer();
     // await allSettled POST
     await Promise.resolve();
     await Promise.resolve();
@@ -185,7 +185,7 @@ describe("application-replacement-select", function () {
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    jest.advanceTimersByTime(299);
+    vi.advanceTimersByTime(299);
     // await allSettled POST
     await Promise.resolve();
     await Promise.resolve();
@@ -194,7 +194,7 @@ describe("application-replacement-select", function () {
 
     expect(document.body.querySelectorAll("#replacement-section-container ul li")).toHaveLength(0);
 
-    jest.advanceTimersToNextTimer();
+    vi.advanceTimersToNextTimer();
 
     // await allSettled POST
     await Promise.resolve();
@@ -222,7 +222,7 @@ describe("application-replacement-select", function () {
 
       expect(submitButtonElement.getAttribute("aria-disabled")).toBe("true");
 
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       // await allSettled POST
       await Promise.resolve();
       await Promise.resolve();
@@ -244,7 +244,7 @@ describe("application-replacement-select", function () {
       );
 
       const clickEvent = new Event("click");
-      jest.spyOn(clickEvent, "preventDefault");
+      vi.spyOn(clickEvent, "preventDefault");
 
       selectElement.value = "3";
       selectElement.dispatchEvent(new Event("change"));
@@ -252,7 +252,7 @@ describe("application-replacement-select", function () {
       submitButtonElement.dispatchEvent(clickEvent);
       expect(clickEvent.preventDefault).toHaveBeenCalled();
 
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       // await allSettled POST
       await Promise.resolve();
       await Promise.resolve();

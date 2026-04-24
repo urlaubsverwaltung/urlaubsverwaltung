@@ -5,7 +5,7 @@ describe("special-leave-table", function () {
     while (document.body.firstElementChild) {
       document.body.firstElementChild.remove();
     }
-    jest.resetModules();
+    vi.resetModules();
   });
 
   it("does not break when table does not exist", async function () {
