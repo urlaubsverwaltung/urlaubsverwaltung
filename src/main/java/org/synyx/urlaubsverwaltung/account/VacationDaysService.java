@@ -140,19 +140,27 @@ public class VacationDaysService {
         return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
-                final BigDecimal vacationDays = account.getActualVacationDays();
-                final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
-                final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
                 final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
                 final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
-
                 final BigDecimal vacationDaysUsedNextYear = holidayAccountsNextYear.stream()
                     .filter(holidayAccountNextYear -> holidayAccountNextYear.getPerson().equals(account.getPerson()))
                     .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
                     .findFirst()
                     .map(this::getUsedRemainingVacationDays)
                     .orElse(ZERO);
+
+                final BigDecimal vacationDays = account.getActualVacationDays();
+                final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+
+                final BigDecimal remainingVacationDaysNotExpiring;
+                final LocalDate today = LocalDate.now(clock);
+                if (!account.doRemainingVacationDaysExpire() || today.isBefore(account.getExpiryDate())) {
+                    remainingVacationDaysNotExpiring =  remainingVacationDays;
+                } else {
+                    // it's after expiry day - only the left not expiring remaining vacation days must be used
+                    remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
+                }
 
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)

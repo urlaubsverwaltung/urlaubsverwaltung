@@ -20,6 +20,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -711,6 +713,35 @@ class VacationDaysServiceTest {
         account.setDoRemainingVacationDaysExpireLocally(true);
 
         assertThat(sut.getUsedRemainingVacationDays(account)).isEqualTo(ZERO);
+    }
+
+    @Test
+    void ensureGetTotalLeftVacationDaysRespectsClockBeforeAndAfterExpiry() {
+
+        final Person person = anyPerson();
+
+        final int year = LocalDate.now().getYear();
+        final Account account = anyAccount(person, Year.of(year));
+        account.setActualVacationDays(BigDecimal.valueOf(30));
+        account.setRemainingVacationDays(BigDecimal.valueOf(5));
+        account.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(2));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31)))
+            .thenReturn(List.of());
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year)))
+            .thenReturn(Map.of(person, new WorkingTimeCalendar(Map.of())));
+
+        // before expiry (APRIL 1 from anyAccount) -> include full remaining vacation days
+        final Clock beforeExpiryClock = Clock.fixed(Instant.parse(year + "-03-01T00:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysService sutBefore = new VacationDaysService(workingTimeCalendarService, applicationService, beforeExpiryClock);
+        assertThat(sutBefore.getTotalLeftVacationDays(account)).isEqualByComparingTo(BigDecimal.valueOf(35));
+
+        // after expiry -> only not expiring remaining vacation days
+        final Clock afterExpiryClock = Clock.fixed(Instant.parse(year + "-05-01T00:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysService sutAfter = new VacationDaysService(workingTimeCalendarService, applicationService, afterExpiryClock);
+        assertThat(sutAfter.getTotalLeftVacationDays(account)).isEqualByComparingTo(BigDecimal.valueOf(32));
     }
 
     private Person anyPerson() {
