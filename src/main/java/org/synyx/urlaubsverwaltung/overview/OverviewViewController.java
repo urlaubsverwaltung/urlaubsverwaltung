@@ -241,7 +241,6 @@ public class OverviewViewController implements HasLaunchpad {
             final boolean showExpiredVacationDays = !isBeforeExpiryDate && expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
             model.addAttribute("showExpiredVacationDays", showExpiredVacationDays);
             model.addAttribute("isBeforeExpiryDate", isBeforeExpiryDate);
-            model.addAttribute("remainingVacationDays", account.getRemainingVacationDays());
 
             model.addAttribute("account", account);
 

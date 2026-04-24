@@ -237,8 +237,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
             .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
             .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"))
-            .andExpect(model().attributeDoesNotExist("remainingVacationDays"));
+            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
     }
 
     @Test
