@@ -50,6 +50,7 @@ import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
+import static org.synyx.urlaubsverwaltung.person.PersonPageRequest.PERSON_PREFIX;
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 /**
@@ -194,8 +195,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
 
         // sorting by persons AND statistics is not supported by the UI. either person OR statistics.
-        // PersonPageRequest is only paged, when the original pageable contains sorting info
-        if (personPageRequest.isPaged()) {
+        if (personPageRequest.getSort().isSorted()) {
             final PersonPageRequest request = allElements ? PersonPageRequest.of(0, MAX_VALUE, personPageRequest.getSort()) : personPageRequest;
             return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery);
         }
@@ -228,7 +228,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             ApplicationForLeaveStatisticsSortProperty.LEFT_VACATION_DAYS_FOR_YEAR_KEY
         );
 
-        final List<HtmlOptionDto> personOptions = sortOptionGroupDto(PersonPageRequest.PERSON_PREFIX, sortablePersonProperties, originalPersonSort);
+        final List<HtmlOptionDto> personOptions = sortOptionGroupDto(PERSON_PREFIX, sortablePersonProperties, originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(ApplicationForLeaveStatisticsPageRequest.STATISTICS_PREFIX, sortableStatisticsProperties, originalPersonSort);

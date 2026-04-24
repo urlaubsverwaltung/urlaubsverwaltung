@@ -28,6 +28,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -38,13 +42,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.util.Locale.JAPANESE;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -106,7 +104,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
                 .param("to", "01.08.2020")
         )
             .andExpect(model().attribute("errors", List.of("applications.statistics.error.differentYear")))
-            .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
+            .andExpect(model().attributeExists("sortSelect"))
+            .andExpect(model().attributeExists("statisticsPagination"))
             .andExpect(view().name("application/application-statistics"));
     }
 
@@ -125,7 +124,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
                 .param("to", "01.01.2019")
         )
             .andExpect(model().attribute("errors", List.of("applications.statistics.error.endDateBeforeStartDate")))
-            .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
+            .andExpect(model().attributeExists("sortSelect"))
+            .andExpect(model().attributeExists("statisticsPagination"))
             .andExpect(view().name("application/application-statistics"));
     }
 
@@ -153,19 +153,23 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(
+        final ResultActions resultActions = perform(
             get("/web/application/statistics")
                 .locale(locale)
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2019")
-        )
+        );
+
+        resultActions
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("statisticsPagination", hasProperty("page", hasProperty("content", is(List.of())))))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label", 1L))))
             .andExpect(view().name("application/application-statistics"));
+
+        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = (PaginationDto<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statisticsPagination");
+        assertThat(statisticsPagination.getPage().getContent()).isEmpty();
     }
 
     @Test
@@ -206,35 +210,38 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(
+        final ResultActions resultActions = perform(
             get("/web/application/statistics")
                 .locale(locale)
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2019")
-        )
+        );
+
+        resultActions
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("statistics", hasSize(1)))
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("Firstname")),
-                    hasProperty("lastName", is("Lastname")),
-                    hasProperty("niceName", is("Firstname Lastname")),
-                    hasProperty("gravatarURL", is("https://gravatar.com/avatar/fb48a07b1c7315ffd490dc41292e56a4")),
-                    hasProperty("personnelNumber", is("42")),
-                    hasProperty("totalAllowedVacationDays", is(BigDecimal.valueOf(4))),
-                    hasProperty("allowedVacationDays", aMapWithSize(1)),
-                    hasProperty("totalWaitingVacationDays", is(BigDecimal.valueOf(3))),
-                    hasProperty("waitingVacationDays", aMapWithSize(1)),
-                    hasProperty("leftVacationDays", is(BigDecimal.valueOf(2))),
-                    hasProperty("leftOvertime", is("10 Std."))
-                )
-            )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label", 2L))))
             .andExpect(view().name("application/application-statistics"));
+
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+
+        final ApplicationForLeaveStatisticsDto dto = statistics.get(0);
+        assertThat(dto).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(dto.getFirstName()).isEqualTo("Firstname");
+        assertThat(dto.getLastName()).isEqualTo("Lastname");
+        assertThat(dto.getNiceName()).isEqualTo("Firstname Lastname");
+        assertThat(dto.getGravatarURL()).isEqualTo("https://gravatar.com/avatar/fb48a07b1c7315ffd490dc41292e56a4");
+        assertThat(dto.getPersonnelNumber()).isEqualTo("42");
+        assertThat(dto.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(4));
+        assertThat(dto.getAllowedVacationDays()).hasSize(1);
+        assertThat(dto.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(3));
+        assertThat(dto.getWaitingVacationDays()).hasSize(1);
+        assertThat(dto.getLeftVacationDays()).isEqualTo(BigDecimal.valueOf(2));
+        assertThat(dto.getLeftOvertime()).isEqualTo("10 Std.");
     }
 
     @Test
@@ -257,13 +264,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("query", "max"));
 
-        resultActions
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("Max"))
-                )
-            )));
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.get(0).getFirstName()).isEqualTo("Max");
     }
 
     @ParameterizedTest
@@ -289,13 +294,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("sort", sortQuery));
 
-        resultActions
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("John"))
-                )
-            )));
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -323,13 +326,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("sort", sortQuery));
 
-        resultActions
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("John"))
-                )
-            )));
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -355,13 +356,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("sort", sortQuery));
 
-        resultActions
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("John"))
-                )
-            )));
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -389,13 +388,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("sort", sortQuery));
 
-        resultActions
-            .andExpect(model().attribute("statistics", hasItems(
-                allOf(
-                    instanceOf(ApplicationForLeaveStatisticsDto.class),
-                    hasProperty("firstName", is("John"))
-                )
-            )));
+        @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
+
+        assertThat(statistics).hasSize(1);
+        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
     }
 
     @Test
@@ -417,8 +414,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("sort", "person.lastName,DESC"));
 
-        resultActions
-            .andExpect(model().attribute("sortQuery", is("person.lastName,DESC")));
+        assertThat(resultActions.andReturn().getModelAndView().getModel()).containsEntry("sortQuery", "person.lastName,DESC");
     }
 
     @Test
@@ -604,6 +600,259 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("query", "hans"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectHasCorrectOptgroups() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        assertThat(sortSelect).isInstanceOf(HtmlSelectDto.class);
+
+        final List<HtmlOptgroupDto> optgroups = sortSelect.optgroups();
+        assertThat(optgroups).hasSize(2);
+        assertThat(optgroups.get(0).labelMessageKey()).isEqualTo("applications.sort.optgroup.person.label");
+        assertThat(optgroups.get(1).labelMessageKey()).isEqualTo("applications.sort.optgroup.statistics.label");
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectPersonOptgroupHasCorrectOptions() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+
+        assertThat(personOptgroup.labelMessageKey()).isEqualTo("applications.sort.optgroup.person.label");
+
+        final List<HtmlOptionDto> personOptions = personOptgroup.options();
+        assertThat(personOptions).hasSize(4);
+
+        assertThat(personOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.firstName.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "person.firstName,asc")
+            .hasFieldOrPropertyWithValue("selected", true);
+
+        assertThat(personOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.firstName.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "person.firstName,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(personOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.lastName.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "person.lastName,asc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(personOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.lastName.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "person.lastName,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectStatisticsOptgroupHasCorrectOptions() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto statisticsOptgroup = sortSelect.optgroups().get(1);
+
+        assertThat(statisticsOptgroup.labelMessageKey()).isEqualTo("applications.sort.optgroup.statistics.label");
+
+        final List<HtmlOptionDto> statisticsOptions = statisticsOptgroup.options();
+        assertThat(statisticsOptions).hasSize(8);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.totalAllowedVacationDays.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "totalAllowedVacationDays,asc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.totalAllowedVacationDays.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "totalAllowedVacationDays,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.totalWaitingVacationDays.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "totalWaitingVacationDays,asc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.totalWaitingVacationDays.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "totalWaitingVacationDays,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.leftVacationDaysForPeriod.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "leftVacationDaysForPeriod,asc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.leftVacationDaysForPeriod.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "leftVacationDaysForPeriod,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.leftVacationDaysForYear.asc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "leftVacationDaysForYear,asc")
+            .hasFieldOrPropertyWithValue("selected", false);
+
+        assertThat(statisticsOptions.stream().filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.leftVacationDaysForYear.desc"))
+            .findFirst().orElseThrow()).hasFieldOrPropertyWithValue("value", "leftVacationDaysForYear,desc")
+            .hasFieldOrPropertyWithValue("selected", false);
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectPersonFirstNameAscIsSelectedWhenSortedByPersonFirstNameAsc() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", "person.firstName,ASC"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+
+        final HtmlOptionDto selectedOption = personOptgroup.options().stream()
+            .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.firstName.asc"))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(selectedOption.value()).isEqualTo("person.firstName,asc");
+        assertThat(selectedOption.selected()).isTrue();
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectPersonLastNameDescIsSelectedWhenSortedByPersonLastNameDesc() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", "person.lastName,DESC"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+
+        final HtmlOptionDto selectedOption = personOptgroup.options().stream()
+            .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.lastName.desc"))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(selectedOption.value()).isEqualTo("person.lastName,desc");
+        assertThat(selectedOption.selected()).isTrue();
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectStatisticsTotalAllowedVacationDaysAscIsSelectedWhenSortedByStatisticsTotalAllowedVacationDaysAsc() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by("totalAllowedVacationDays"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", "totalAllowedVacationDays,ASC"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto statisticsOptgroup = sortSelect.optgroups().get(1);
+
+        final HtmlOptionDto selectedOption = statisticsOptgroup.options().stream()
+            .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.totalAllowedVacationDays.asc"))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(selectedOption.value()).isEqualTo("totalAllowedVacationDays,asc");
+        assertThat(selectedOption.selected()).isTrue();
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSortSelectStatisticsLeftVacationDaysForYearDescIsSelectedWhenSortedByStatisticsLeftVacationDaysForYearDesc() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "leftVacationDaysForYear"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", "leftVacationDaysForYear,DESC"));
+
+        final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
+        final HtmlOptgroupDto statisticsOptgroup = sortSelect.optgroups().get(1);
+
+        final HtmlOptionDto selectedOption = statisticsOptgroup.options().stream()
+            .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.leftVacationDaysForYear.desc"))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(selectedOption.value()).isEqualTo("leftVacationDaysForYear,desc");
+        assertThat(selectedOption.selected()).isTrue();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
