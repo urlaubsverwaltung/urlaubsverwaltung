@@ -254,7 +254,6 @@ class OverviewViewControllerTest {
             .andExpect(model().attribute("canAccessAbsenceOverview", true));
     }
 
-
     @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
         final Person person = new Person();

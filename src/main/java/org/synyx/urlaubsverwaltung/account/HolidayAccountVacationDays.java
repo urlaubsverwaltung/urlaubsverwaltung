@@ -2,8 +2,11 @@ package org.synyx.urlaubsverwaltung.account;
 
 import java.util.Objects;
 
-public record HolidayAccountVacationDays(Account account, VacationDaysLeft vacationDaysYear,
-                                         VacationDaysLeft vacationDaysDateRange) {
+public record HolidayAccountVacationDays(
+    Account account,
+    VacationDaysLeft vacationDaysYear,
+    VacationDaysLeft vacationDaysDateRange
+) {
 
     @Override
     public boolean equals(Object o) {
