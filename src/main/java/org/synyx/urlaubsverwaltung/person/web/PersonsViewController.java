@@ -52,6 +52,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.PersonPageRequest.DEFAULT_PERSON_SORT_KEY;
+import static org.synyx.urlaubsverwaltung.person.PersonPageRequest.PERSON_PREFIX;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -93,7 +95,7 @@ public class PersonsViewController implements HasLaunchpad {
         @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
         final int currentYear = Year.now(clock).getValue();
@@ -108,8 +110,10 @@ public class PersonsViewController implements HasLaunchpad {
         Sort accountSort = Sort.unsorted();
         for (Sort.Order order : pageable.getSort()) {
             final String propertyWithPrefix = order.getProperty();
-            final String property = propertyWithPrefix.replace("account.", "");
-            accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+            if (!propertyWithPrefix.startsWith(PERSON_PREFIX + ".")) {
+                final String property = propertyWithPrefix.replace("account.", "");
+                accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+            }
         }
 
         Page<Person> personPage = null;
@@ -291,7 +295,7 @@ public class PersonsViewController implements HasLaunchpad {
             PersonSortProperty.LAST_NAME.key()
         );
 
-        final List<HtmlOptionDto> personOptions = htmlOptionDtos("person", sortablePersonProperties, personSort);
+        final List<HtmlOptionDto> personOptions = htmlOptionDtos(PERSON_PREFIX, sortablePersonProperties, personSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), accountSort);

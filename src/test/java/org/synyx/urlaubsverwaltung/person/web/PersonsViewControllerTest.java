@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,6 +68,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -339,6 +341,90 @@ class PersonsViewControllerTest {
                     )
                 )
             );
+    }
+
+    @Nested
+    class EnsureSortedPersonList {
+
+        private Person thorsten;
+        private Person theresa;
+        private Person juliane;
+
+        @BeforeEach
+        void setUp() {
+
+            final Person office = personWithRole(USER, OFFICE);
+            office.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(office);
+
+            thorsten = personWithRole(USER);
+            thorsten.setId(2L);
+            thorsten.setFirstName("Thorsten");
+
+            theresa = personWithRole(USER);
+            theresa.setId(3L);
+            theresa.setFirstName("Theresa");
+
+            juliane = personWithRole(USER);
+            juliane.setId(4L);
+            juliane.setFirstName("Juliane");
+        }
+
+        @Test
+        void ensureSortedByFirstnameAscending() throws Exception {
+
+            final PersonPageRequest expectedPersonPageRequest = PersonPageRequest.ofApiPageable(PageRequest.of(0, 12)
+                .withSort(Sort.by("person.firstName")));
+
+            final PageImpl<Person> page = new PageImpl<>(List.of(juliane, theresa, thorsten));
+            when(personService.getActivePersons(expectedPersonPageRequest, "")).thenReturn(page);
+
+            perform(get("/web/person")
+                .param("sort", "person.firstName%2Casc")
+                .param("size", "12")
+            )
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content", allOf(
+                            hasSize(3),
+                            contains(
+                                hasProperty("firstName", is("Juliane")),
+                                hasProperty("firstName", is("Theresa")),
+                                hasProperty("firstName", is("Thorsten"))
+                            ))
+                        )
+                    )
+                ));
+        }
+
+        @Test
+        void ensureSortedByFirstnameDescending() throws Exception {
+
+            final PersonPageRequest expectedPersonPageRequest = PersonPageRequest.ofApiPageable(PageRequest.of(0, 12)
+                .withSort(Sort.by("person.firstName").descending()));
+
+            final PageImpl<Person> page = new PageImpl<>(List.of(thorsten, theresa, juliane));
+            when(personService.getActivePersons(expectedPersonPageRequest, "")).thenReturn(page);
+
+            perform(get("/web/person")
+                .param("sort", "person.firstName%2Cdesc")
+                .param("size", "12")
+            )
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content", allOf(
+                            hasSize(3),
+                            contains(
+                                hasProperty("firstName", is("Thorsten")),
+                                hasProperty("firstName", is("Theresa")),
+                                hasProperty("firstName", is("Juliane"))
+                            ))
+                        )
+                    )
+                ));
+        }
     }
 
     @Test
