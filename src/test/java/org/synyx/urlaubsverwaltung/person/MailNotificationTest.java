@@ -42,97 +42,97 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class MailNotificationTest {
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED.isValidWith(List.of(USER, role))).isFalse();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED_isValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED.isValidWith(List.of(USER, role))).isTrue();
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED_isNotValidWith(Role role) {
         assertThat(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED.isValidWith(List.of(USER, role))).isFalse();
     }
