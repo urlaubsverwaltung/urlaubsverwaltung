@@ -17,8 +17,8 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    public static final String PERSON_PREFIX = "person.";
-    public static final String DEFAULT_PERSON_SORT_KEY = PERSON_PREFIX + PersonSortProperty.FIRST_NAME_KEY;
+    public static final String PERSON_PREFIX = "person";
+    public static final String DEFAULT_PERSON_SORT_KEY = PERSON_PREFIX + "." + PersonSortProperty.FIRST_NAME_KEY;
 
     private final Sort personSort;
 
@@ -104,8 +104,8 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
         final TypedSort<Person> personSort = TypedSort.sort(Person.class);
 
         for (Sort.Order order : pageable.getSort()) {
-            if (order.getProperty().startsWith(PERSON_PREFIX)) {
-                final String property = order.getProperty().replace(PERSON_PREFIX, "");
+            if (order.getProperty().startsWith(PERSON_PREFIX + ".")) {
+                final String property = order.getProperty().replace(PERSON_PREFIX + ".", "");
                 final Optional<PersonSortProperty> maybeSort = PersonSortProperty.byKey(property);
                 if (maybeSort.isPresent()) {
                     final TypedSort<?> by = personSort.by(maybeSort.get().propertyExtractor());
