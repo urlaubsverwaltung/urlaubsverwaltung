@@ -103,20 +103,14 @@ public class PersonsViewController implements HasLaunchpad {
         final LocalDate now = LocalDate.now(clock);
 
         final Person signedInUser = personService.getSignedInUser();
-
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
 
         // #5850 will introduce typed account page request
-        Sort accountSort = Sort.unsorted();
         // sorting is only possible for ONE attribute, EITHER person.firstName OR account.XXX for instance
         // therefore checking whether person should be sorted or not is sufficient here
-        if (!personPageRequest.getSort().isSorted()) {
-            for (Sort.Order order : pageable.getSort()) {
-                final String propertyWithPrefix = order.getProperty();
-                final String property = propertyWithPrefix.replace("account.", "");
-                accountSort = accountSort.and(Sort.by(order.getDirection(), property));
-            }
-        }
+        final Sort accountSort = personPageRequest.getSort().isSorted()
+            ? Sort.unsorted()
+            : accountSort(pageable);
 
         Page<Person> personPage = null;
 
@@ -174,6 +168,18 @@ public class PersonsViewController implements HasLaunchpad {
         model.addAttribute("query", query);
 
         return "person/persons";
+    }
+
+    private Sort accountSort(Pageable pageable) {
+        Sort accountSort = Sort.unsorted();
+
+        for (Sort.Order order : pageable.getSort()) {
+            final String propertyWithPrefix = order.getProperty();
+            final String property = propertyWithPrefix.replace("account.", "");
+            accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+        }
+
+        return accountSort;
     }
 
     private Page<Person> getRelevantActivePersons(Person signedInUser, PersonPageRequest personPageRequest, String query) {
