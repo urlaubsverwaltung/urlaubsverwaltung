@@ -111,20 +111,20 @@ class MailRecipientServiceImplTest {
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2L);
         bossAll.setPermissions(List.of(USER, BOSS));
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         // given department head
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
         departmentHead.setId(5L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
         // given second stage
         final Person secondStage = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
         secondStage.setId(6L);
         secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
         final Person secondStageWithoutMailNotification = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
         secondStageWithoutMailNotification.setId(7L);
@@ -141,7 +141,7 @@ class MailRecipientServiceImplTest {
         when(userNotificationSettingsService.findNotificationSettings(List.of(bossAllId)))
             .thenReturn(Map.of(bossAllId, new UserNotificationSettings(bossAllId, false)));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
         assertThat(recipientsForAllowAndRemind)
             .doesNotContain(secondStageWithoutMailNotification)
             .containsOnly(bossAll, departmentHead, secondStage);
@@ -219,10 +219,10 @@ class MailRecipientServiceImplTest {
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2L);
         bossAll.setPermissions(List.of(USER, BOSS));
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
 
         verifyNoInteractions(userNotificationSettingsService);
@@ -241,10 +241,10 @@ class MailRecipientServiceImplTest {
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2L);
         bossAll.setPermissions(List.of(USER, BOSS));
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
     }
 
@@ -320,7 +320,7 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1L);
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
         verify(personService, never()).getActivePersonsByRole(role);
     }
 
