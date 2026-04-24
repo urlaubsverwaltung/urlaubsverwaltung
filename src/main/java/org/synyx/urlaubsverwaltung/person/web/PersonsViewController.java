@@ -65,6 +65,8 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
 @RequestMapping("/web")
 public class PersonsViewController implements HasLaunchpad {
 
+    private static final String SORT_ACCOUNT_PREFIX = "account";
+
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
@@ -175,8 +177,8 @@ public class PersonsViewController implements HasLaunchpad {
 
         for (Sort.Order order : pageable.getSort()) {
             final String propertyWithPrefix = order.getProperty();
-            if (propertyWithPrefix.startsWith("account.")) {
-                final String property = propertyWithPrefix.replace("account.", "");
+            if (propertyWithPrefix.startsWith(SORT_ACCOUNT_PREFIX + ".")) {
+                final String property = propertyWithPrefix.replace(SORT_ACCOUNT_PREFIX + ".", "");
                 accountSort = accountSort.and(Sort.by(order.getDirection(), property));
             }
         }
@@ -308,10 +310,10 @@ public class PersonsViewController implements HasLaunchpad {
         final List<HtmlOptionDto> personOptions = htmlOptionDtos(PERSON_PREFIX, sortablePersonProperties, personSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
 
-        final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), accountSort);
+        final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos(SORT_ACCOUNT_PREFIX, List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), accountSort);
         final HtmlOptgroupDto urlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.urlaub.label", urlaubOptions);
 
-        final List<HtmlOptionDto> resturlaubOptions = htmlOptionDtos("account", List.of("entitlementRemaining", "vacationDaysLeftRemaining"), accountSort);
+        final List<HtmlOptionDto> resturlaubOptions = htmlOptionDtos(SORT_ACCOUNT_PREFIX, List.of("entitlementRemaining", "vacationDaysLeftRemaining"), accountSort);
         final HtmlOptgroupDto resturlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.resturlaub.label", resturlaubOptions);
 
         return new HtmlSelectDto(List.of(personOptgroup, urlaubOptgroup, resturlaubOptgroup));
