@@ -8,7 +8,7 @@ describe("observable", () => {
 
   test("subscribes to changes", () => {
     const sut = observable("initial");
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     sut.subscribe(callback);
     sut.value = "updated";
@@ -19,8 +19,8 @@ describe("observable", () => {
 
   test("notifies multiple subscribers", () => {
     const sut = observable(1);
-    const callback1 = jest.fn();
-    const callback2 = jest.fn();
+    const callback1 = vi.fn();
+    const callback2 = vi.fn();
 
     sut.subscribe(callback1);
     sut.subscribe(callback2);
@@ -32,7 +32,7 @@ describe("observable", () => {
 
   test("unsubscribes correctly", () => {
     const sut = observable("test");
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     const unsubscribe = sut.subscribe(callback);
     sut.value = "first update";
@@ -47,10 +47,10 @@ describe("observable", () => {
 
   test("subscriber errors don't affect other subscribers", () => {
     const sut = observable("test");
-    const callback1 = jest.fn().mockImplementation(() => {
+    const callback1 = vi.fn().mockImplementation(() => {
       throw new Error("Subscriber error");
     });
-    const callback2 = jest.fn();
+    const callback2 = vi.fn();
 
     sut.subscribe(callback1);
     sut.subscribe(callback2);

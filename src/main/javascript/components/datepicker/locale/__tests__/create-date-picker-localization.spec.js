@@ -19,7 +19,7 @@ describe("createDatepickerLocalization", () => {
       ["1.01.2020", ["2020", "01", "1"]],
       ["1.1.2020", ["2020", "1", "1"]],
     ])("parses: %s", (givenDateString, expectedValues) => {
-      const createDate = jest.fn().mockReturnValue(42);
+      const createDate = vi.fn().mockReturnValue(42);
 
       const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
       const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);
@@ -29,7 +29,7 @@ describe("createDatepickerLocalization", () => {
     });
 
     test.each([["2020.01.01"], ["01/01/2020"], ["2020-01-01"]])("does not parse: %s", (givenDateString) => {
-      const createDate = jest.fn().mockReturnValue(42);
+      const createDate = vi.fn().mockReturnValue(42);
 
       const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
       const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);
@@ -69,7 +69,7 @@ describe("createDatepickerLocalization", () => {
         ["1.01.2020", ["2020", "01", "1"]],
         ["1.1.2020", ["2020", "1", "1"]],
       ])("parses: %s", (givenDateString, expectedValues) => {
-        const createDate = jest.fn().mockReturnValue(42);
+        const createDate = vi.fn().mockReturnValue(42);
 
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
         const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);
@@ -79,7 +79,7 @@ describe("createDatepickerLocalization", () => {
       });
 
       test.each([["2020.01.01"], ["01/01/2020"], ["2020-01-01"]])("does not parse: %s", (givenDateString) => {
-        const createDate = jest.fn().mockReturnValue(42);
+        const createDate = vi.fn().mockReturnValue(42);
 
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
         const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);
@@ -120,7 +120,7 @@ describe("createDatepickerLocalization", () => {
         ["1.01.2020", ["2020", "01", "1"]],
         ["1.1.2020", ["2020", "1", "1"]],
       ])("parses: %s", (givenDateString, expectedValues) => {
-        const createDate = jest.fn().mockReturnValue(42);
+        const createDate = vi.fn().mockReturnValue(42);
 
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
         const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);
@@ -130,7 +130,7 @@ describe("createDatepickerLocalization", () => {
       });
 
       test.each([["2020.01.01"], ["01/01/2020"], ["2020-01-01"]])("does not parse: %s", (givenDateString) => {
-        const createDate = jest.fn().mockReturnValue(42);
+        const createDate = vi.fn().mockReturnValue(42);
 
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
         const actual = datepickerLocalization.dateAdapter.parse(givenDateString, createDate);

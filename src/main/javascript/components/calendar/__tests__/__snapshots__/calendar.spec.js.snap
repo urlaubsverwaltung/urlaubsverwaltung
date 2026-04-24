@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`calendar ensure correct rendering when clicking .datepicker-next  click 1`] = `
+exports[`calendar > ensure correct rendering when clicking .datepicker-next  > click 1`] = `
 <body
   class="mousedown"
 >
@@ -9242,7 +9242,7 @@ exports[`calendar ensure correct rendering when clicking .datepicker-next  click
 </body>
 `;
 
-exports[`calendar ensure correct rendering when clicking .datepicker-prev  click 1`] = `
+exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > click 1`] = `
 <body
   class="mousedown"
 >
@@ -18484,7 +18484,7 @@ exports[`calendar ensure correct rendering when clicking .datepicker-prev  click
 </body>
 `;
 
-exports[`calendar renders 1`] = `
+exports[`calendar > renders 1`] = `
 <body>
   <div
     class="unselectable"

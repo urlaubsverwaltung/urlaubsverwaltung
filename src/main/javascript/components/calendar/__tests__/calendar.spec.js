@@ -1,11 +1,3 @@
-/**
- * @jest-environment jest-fixed-jsdom
- *
- * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
- * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
- * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
- */
-
 import fetchMock from "fetch-mock";
 import { parseISO } from "date-fns";
 
@@ -42,11 +34,11 @@ describe("calendar", () => {
   });
 
   afterEach(() => {
-    jest.resetModules();
+    vi.resetModules();
   });
 
   beforeEach(() => {
-    globalThis.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn() });
   });
 
   afterEach(() => {
@@ -78,7 +70,7 @@ describe("calendar", () => {
     await calendarTestSetup();
 
     const holidayService = createHolidayService({ personId: 42 });
-    holidayService.bookHoliday = jest.fn();
+    holidayService.bookHoliday = vi.fn();
     // fetch personal holiday data and cache the (mocked) response
     // the response is used when the calendar renders
     await holidayService.fetchAbsences(2017);
@@ -117,7 +109,7 @@ describe("calendar", () => {
     await calendarTestSetup();
 
     const holidayService = createHolidayService({ personId: 42 });
-    holidayService.navigateToApplicationForLeave = jest.fn();
+    holidayService.navigateToApplicationForLeave = vi.fn();
     // fetch personal holiday data and cache the (mocked) response
     // the response is used when the calendar renders
     await holidayService.fetchAbsences(2017);

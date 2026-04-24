@@ -6,7 +6,7 @@ describe("nav-tabs", function () {
       document.body.firstChild.remove();
     }
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("is registered as a 'uv-nav-tabs' custom element", function () {
@@ -117,7 +117,7 @@ describe("nav-tabs", function () {
   });
 
   it("replaces the URL when nav-tab is clicked", function () {
-    jest.spyOn(globalThis.history, "replaceState");
+    vi.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `
@@ -151,19 +151,19 @@ describe("nav-tabs", function () {
     expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
       undefined,
       undefined,
-      "http://localhost/#content-bbb",
+      expect.stringContaining("/#content-bbb"),
     );
 
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
       undefined,
       undefined,
-      "http://localhost/#content-aaa",
+      expect.stringContaining("/#content-aaa"),
     );
   });
 
   it("does not replace the URL when the current active nav-tab is clicked", function () {
-    jest.spyOn(globalThis.history, "replaceState");
+    vi.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `

@@ -6,7 +6,7 @@ describe("copy-to-clipboard-input", () => {
   beforeEach(() => {
     delete globalThis.navigator.clipboard;
     globalThis.navigator.clipboard = {
-      writeText: jest.fn(() => Promise.resolve()),
+      writeText: vi.fn(() => Promise.resolve()),
     };
   });
 
@@ -17,7 +17,7 @@ describe("copy-to-clipboard-input", () => {
 
     globalThis.navigator.clipboard = clipboard;
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test("renders", () => {
@@ -40,7 +40,7 @@ describe("copy-to-clipboard-input", () => {
   });
 
   test("selects whole input text when input is focused", () => {
-    jest.spyOn(HTMLInputElement.prototype, "setSelectionRange");
+    vi.spyOn(HTMLInputElement.prototype, "setSelectionRange");
 
     document.body.innerHTML = `<div is="uv-copy-to-clipboard-input"><input type="text" value="awesome text"></div>`;
 
@@ -53,7 +53,7 @@ describe("copy-to-clipboard-input", () => {
   });
 
   test("selects whole input text when button is focused", () => {
-    jest.spyOn(HTMLInputElement.prototype, "setSelectionRange");
+    vi.spyOn(HTMLInputElement.prototype, "setSelectionRange");
 
     document.body.innerHTML = `<div is="uv-copy-to-clipboard-input"><input type="text" value="awesome text"></div>`;
 

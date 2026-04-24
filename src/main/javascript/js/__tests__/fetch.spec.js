@@ -1,11 +1,3 @@
-/**
- * @jest-environment jest-fixed-jsdom
- *
- * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
- * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
- * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
- */
-
 import fetchMock from "fetch-mock";
 import { getJSON, post } from "../fetch";
 
