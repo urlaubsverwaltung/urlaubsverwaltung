@@ -50,6 +50,7 @@ import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
+import static org.synyx.urlaubsverwaltung.person.PersonPageRequest.PERSON_PREFIX;
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 /**
@@ -228,7 +229,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             ApplicationForLeaveStatisticsSortProperty.LEFT_VACATION_DAYS_FOR_YEAR_KEY
         );
 
-        final List<HtmlOptionDto> personOptions = sortOptionGroupDto("person", sortablePersonProperties, originalPersonSort);
+        final List<HtmlOptionDto> personOptions = sortOptionGroupDto(PERSON_PREFIX, sortablePersonProperties, originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(ApplicationForLeaveStatisticsPageRequest.STATISTICS_PREFIX, sortableStatisticsProperties, originalPersonSort);
