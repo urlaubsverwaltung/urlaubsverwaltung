@@ -351,7 +351,7 @@ td.datepicker-day {
 .datepicker-day-today {
   /* define selection-box-width after `.datepicker-day` to override value */
   --uv-cal-selection-box-width: 2px;
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--shadow-color);
   @apply shadow-cyan-700;
   @apply dark:shadow-sky-400;
 }
@@ -363,7 +363,7 @@ td.datepicker-day {
 .datepicker-day-selected,
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--shadow-color);
   @apply shadow-cyan-600;
   @apply dark:shadow-sky-400;
 }
@@ -387,7 +387,7 @@ td.datepicker-day {
 .datepicker-day-weekend:not(.datepicker-day-past):hover,
 .datepicker-day-weekend.datepicker-day-today,
 .datepicker-day-weekend.datepicker-day-selected {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--shadow-color);
   @apply shadow-cyan-600;
   @apply dark:shadow-sky-400/80;
   --background-color-left: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
@@ -410,9 +410,196 @@ td.datepicker-day {
 }
 .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
 .datepicker-day-public-holiday-full.datepicker-day-selected {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--shadow-color);
   @apply shadow-cyan-600;
   @apply dark:shadow-sky-400/80;
   --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
+}
+
+.calendar-popover {
+  --arrow-size: 0.5rem;
+  --arrow-color: theme("colors.gray.300");
+
+  &:is(.dark *) {
+    --arrow-color: theme("colors.zinc.700");
+  }
+
+  width: 100vw;
+  @apply bg-gray-50;
+  @apply dark:bg-zinc-800;
+  /* avoid hard transition to lighter colors with blur shadow  */
+  box-shadow: 0 0 8px theme("colors.zinc.800");
+  @apply rounded-lg;
+  padding: 0.25rem;
+
+  /* screen md shows two months */
+  /* at this breakpoint the detail will be shown in a popover next to element, instead of centered modal */
+  @apply md:w-auto;
+  @apply md:shadow-none;
+
+  /* arrow is visible now */
+  /* since nothing overflows the dialog, the __content element now defines background */
+  /* and the padding between dialog and content shows the arrow */
+  @apply md:bg-transparent;
+  @apply md:dark:bg-transparent;
+  @apply md:p-2; /* arrow size */
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.41);
+    backdrop-filter: blur(3px);
+    @variant md {
+      background-color: transparent;
+      backdrop-filter: none;
+    }
+  }
+
+  /* inner element is required for visible and aligned arrow */
+  .calendar-popover__inner {
+    padding: 0.25rem;
+    @apply border;
+    @apply border-gray-300;
+    @apply dark:border-zinc-700;
+    @apply rounded-md;
+
+    @apply md:bg-gray-50;
+    @apply md:dark:bg-zinc-900;
+
+    @apply md:shadow-sm;
+    @apply md:dark:shadow-md;
+    @apply md:shadow-gray-300;
+    @apply md:dark:shadow-zinc-900;
+  }
+
+  [data-popper-arrow] {
+    @apply hidden;
+    @apply md:block;
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--arrow-size);
+  }
+
+  &[data-popper-placement="top"] [data-popper-arrow] {
+    bottom: calc(-1 * var(--arrow-size));
+    border-top-color: var(--arrow-color);
+  }
+
+  &[data-popper-placement="bottom"] [data-popper-arrow] {
+    top: calc(-1 * var(--arrow-size));
+    border-bottom-color: var(--arrow-color);
+  }
+
+  .calendar-popover__content-container {
+    @apply md:p-4;
+    @apply md:pt-0;
+  }
+
+  .calendar_popover__title {
+    @apply m-0;
+    @apply mt-2;
+    @apply text-base;
+    @apply text-center;
+    @apply md:hidden;
+  }
+
+  .calendar_popover__content {
+    @apply mt-8;
+    @apply flex;
+    @apply justify-center;
+    @apply gap-8;
+    @apply md:mt-4;
+    @apply md:gap-4;
+
+    .calendar-popover__entry {
+      --font-color: var(--uv-cal-default-color);
+      color: var(--font-color);
+      @apply tabular-nums;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      &::after {
+        /* override absence-bar positioning */
+        /* since we want the flex-container in action here */
+        position: static;
+      }
+    }
+  }
+
+  form {
+    @apply mt-8;
+    @apply text-right;
+    /* on larger screen: element is closed when another one is opened, or when clicked on body */
+    @apply md:hidden;
+  }
+}
+
+.absence-details {
+  overflow: hidden;
+  position: relative;
+}
+
+.absence-details::after {
+  content: "";
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.375rem;
+  right: 0.375rem;
+  height: 0.375rem;
+  border-radius: 99999px;
+}
+
+.absence-details.absence--outline::after {
+  border: solid 1px var(--absence-bar-color);
+}
+
+.absence-details.absence--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+}
+
+.absence-details.absence--outline-solid-second-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
+}
+
+.absence-details.absence--solid::after {
+  background: var(--absence-bar-color);
+}
+
+@media (max-width: theme("screens.sm")) {
+  .calendar_popover_entry {
+    float: none;
+  }
+
+  .calendar_popover_entry + .calendar_popover_entry {
+    float: none;
+  }
+
+  /* Using !important to override style attribute set by popper.js*/
+  .calendar_popover {
+    transform: none !important;
+    inset: unset !important;
+    justify-content: center !important;
+    z-index: 40 !important;
+  }
+
+  #arrow::before {
+    visibility: hidden !important;
+  }
+
+  .calendar_popover_content {
+    display: block;
+    position: fixed;
+    width: 100vw;
+    height: 30vh;
+    left: 0;
+    bottom: -30vh;
+    transition: bottom 0.7s;
+  }
+
+  /* Slide in animation*/
+  .calendar_popover .calendar_popover_content {
+    bottom: 0;
+  }
 }
