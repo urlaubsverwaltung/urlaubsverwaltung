@@ -175,8 +175,10 @@ public class PersonsViewController implements HasLaunchpad {
 
         for (Sort.Order order : pageable.getSort()) {
             final String propertyWithPrefix = order.getProperty();
-            final String property = propertyWithPrefix.replace("account.", "");
-            accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+            if (propertyWithPrefix.startsWith("account.")) {
+                final String property = propertyWithPrefix.replace("account.", "");
+                accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+            }
         }
 
         return accountSort;
