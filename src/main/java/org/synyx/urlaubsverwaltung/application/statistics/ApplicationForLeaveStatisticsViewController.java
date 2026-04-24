@@ -195,8 +195,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
 
         // sorting by persons AND statistics is not supported by the UI. either person OR statistics.
-        // PersonPageRequest is only paged, when the original pageable contains sorting info
-        if (personPageRequest.isPaged()) {
+        if (personPageRequest.getSort().isSorted()) {
             final PersonPageRequest request = allElements ? PersonPageRequest.of(0, MAX_VALUE, personPageRequest.getSort()) : personPageRequest;
             return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery);
         }
