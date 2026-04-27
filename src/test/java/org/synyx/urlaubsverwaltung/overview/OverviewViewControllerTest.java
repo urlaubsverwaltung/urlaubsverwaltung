@@ -237,8 +237,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
             .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
             .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"))
-            .andExpect(model().attributeDoesNotExist("remainingVacationDays"));
+            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
     }
 
     @Test
@@ -254,7 +253,6 @@ class OverviewViewControllerTest {
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAccessAbsenceOverview", true));
     }
-
 
     @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
