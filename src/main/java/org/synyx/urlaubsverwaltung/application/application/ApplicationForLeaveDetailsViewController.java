@@ -472,6 +472,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, application.getPerson());
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
+            model.addAttribute("account", account);
 
             final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson()).stream().toList();
             final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
@@ -479,14 +480,13 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
             final LocalDate now = LocalDate.now(clock);
-            final LocalDate expiryDate = account.getExpiryDate();
-            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, expiryDate);
-            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
-            model.addAttribute("doRemainingVacationDaysExpire", account.doRemainingVacationDaysExpire());
-            model.addAttribute("expiryDate", expiryDate);
 
-            model.addAttribute("account", account);
-            model.addAttribute("isBeforeExpiryDate", now.isBefore(expiryDate));
+            model.addAttribute("vacationDaysLeft", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+            model.addAttribute("remainingVacationDaysLeft", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
+            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays(now, account, expiredRemainingVacationDays));
+            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
         }
 
         // Signed in person is allowed to manage
@@ -570,5 +570,11 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             vacationType.getColor(),
             vacationType.isRequiresApprovalToCancel()
         );
+    }
+
+    private static boolean showExpiredVacationDays(LocalDate now, Account account, BigDecimal expiredRemainingVacationDays) {
+        final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
+        final boolean hasExpiredRemainingVacationDays = expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
+        return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 }

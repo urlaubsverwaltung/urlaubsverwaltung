@@ -191,27 +191,24 @@
                   </div>
                 </th:block>
                 <th:block th:ref="application-detail-remaining-box-body">
-                  <th:block
-                    th:if="${account != null}"
-                    th:with="remainingVacationDays=${!doRemainingVacationDaysExpire || isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
-                  >
+                  <th:block th:if="${account != null}">
                     <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{person.account.vacation.left.1}">
                       Es verbleiben
                     </span>
                     <span
                       class="my-1 text-lg font-medium"
-                      th:text="#{person.account.vacation.left.2(${vacationDaysLeft.vacationDays + remainingVacationDays})}"
+                      th:text="#{person.account.vacation.left.2(${vacationDaysLeft})}"
                     >
                       14 Urlaubstage
                     </span>
                     <span
                       class="text-sm text-black/75 dark:text-zinc-300"
-                      th:text="#{person.account.vacation.left.remaining(${remainingVacationDays})}"
+                      th:text="#{person.account.vacation.left.remaining(${remainingVacationDaysLeft})}"
                     >
                       davon 0 Tage Resturlaub
                     </span>
                     <span
-                      th:if="${doRemainingVacationDaysExpire && not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
+                      th:if="${showExpiredVacationDays}"
                       th:text="#{person.account.vacation.left.remainingExpired(${expiredRemainingVacationDays})}"
                       class="text-sm text-black/75 dark:text-zinc-300"
                     ></span>
