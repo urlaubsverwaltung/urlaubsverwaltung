@@ -33,6 +33,12 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
+import java.math.BigDecimal;
+import java.util.Map;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -1522,6 +1528,60 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/remind"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+    }
+
+    @Test
+    void showApplicationDetailAddsHolidayAccountRelatedAttributes() throws Exception {
+
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .messageKey("message-key")
+            .requiresApprovalToApply(true)
+            .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
+            .build();
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Application application = applicationOfPerson(person, vacationType);
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
+        when(personService.getSignedInUser()).thenReturn(somePerson());
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final int year = 2022;
+        final LocalDate now = LocalDate.now(clock);
+        final LocalDate expiryDate = now.minusDays(1);
+
+        final Account account = new Account(person, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31), true, expiryDate,
+            BigDecimal.valueOf(10), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "");
+
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(year + 1, person)).thenReturn(Optional.empty());
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(10))
+            .withRemainingVacation(BigDecimal.valueOf(5))
+            .notExpiring(BigDecimal.valueOf(1))
+            .withVacationDaysUsedNextYear(BigDecimal.ZERO)
+            .build();
+
+        final HolidayAccountVacationDays holidayAccountVacationDays = new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(any(), eq(Year.of(year)), any())).thenReturn(Map.of(account, holidayAccountVacationDays));
+
+        perform(
+            get("/web/application/" + APPLICATION_ID)
+                .locale(locale)
+                .param("year", Integer.toString(year))
+        )
+            .andExpect(model().attribute("account", account))
+            .andExpect(model().attribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
+            .andExpect(model().attribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
+            .andExpect(model().attribute("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate())))
+            .andExpect(model().attribute("showExpiredVacationDays", true));
     }
 
     private static Person somePerson() {
