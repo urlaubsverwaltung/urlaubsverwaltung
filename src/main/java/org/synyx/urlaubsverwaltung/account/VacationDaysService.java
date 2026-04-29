@@ -43,7 +43,11 @@ public class VacationDaysService {
     private final Clock clock;
 
     @Autowired
-    VacationDaysService(WorkingTimeCalendarService workingTimeCalendarService, ApplicationService applicationService, Clock clock) {
+    VacationDaysService(
+        WorkingTimeCalendarService workingTimeCalendarService,
+        ApplicationService applicationService,
+        Clock clock
+    ) {
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.applicationService = applicationService;
         this.clock = clock;
@@ -117,7 +121,11 @@ public class VacationDaysService {
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, DateRange dateRange, List<Account> holidayAccountsNextYear) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        List<Account> holidayAccountsNextYear
+    ) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -132,19 +140,27 @@ public class VacationDaysService {
         return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
-                final BigDecimal vacationDays = account.getActualVacationDays();
-                final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
-                final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
                 final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
                 final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
-
                 final BigDecimal vacationDaysUsedNextYear = holidayAccountsNextYear.stream()
                     .filter(holidayAccountNextYear -> holidayAccountNextYear.getPerson().equals(account.getPerson()))
                     .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
                     .findFirst()
                     .map(this::getUsedRemainingVacationDays)
                     .orElse(ZERO);
+
+                final BigDecimal vacationDays = account.getActualVacationDays();
+                final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+
+                final BigDecimal remainingVacationDaysNotExpiring;
+                final LocalDate today = LocalDate.now(clock);
+                if (!account.doRemainingVacationDaysExpire() || today.isBefore(account.getExpiryDate())) {
+                    remainingVacationDaysNotExpiring =  remainingVacationDays;
+                } else {
+                    // it's after expiry day - only the left not expiring remaining vacation days must be used
+                    remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
+                }
 
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
@@ -200,7 +216,11 @@ public class VacationDaysService {
         return ZERO;
     }
 
-    private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
+    ) {
 
         final LocalDate firstDayOfYear = dateRange.startDate().with(firstDayOfYear());
         final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
@@ -211,7 +231,12 @@ public class VacationDaysService {
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
     }
 
-    private Map<Account, UsedVacationDaysTuple> getUsedVacationDaysBetweenTwoMilestones(List<Account> holidayAccounts, List<Application> applications, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    private Map<Account, UsedVacationDaysTuple> getUsedVacationDaysBetweenTwoMilestones(
+        List<Account> holidayAccounts,
+        List<Application> applications,
+        DateRange dateRange,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
+    ) {
 
         final Map<Person, List<Application>> applicationsByPerson = applications.stream()
             .filter(application -> application.getVacationType().getCategory().equals(HOLIDAY))
@@ -314,8 +339,10 @@ public class VacationDaysService {
         T add(T toAdd);
     }
 
-    private record UsedVacationDaysTuple(UsedVacationDaysDateRange usedVacationDaysDateRange,
-                                         UsedVacationDaysYear usedVacationDaysYear) implements Addable<UsedVacationDaysTuple> {
+    private record UsedVacationDaysTuple(
+        UsedVacationDaysDateRange usedVacationDaysDateRange,
+        UsedVacationDaysYear usedVacationDaysYear
+    ) implements Addable<UsedVacationDaysTuple> {
 
         @Override
         public UsedVacationDaysTuple add(UsedVacationDaysTuple toAdd) {
@@ -330,8 +357,10 @@ public class VacationDaysService {
         }
     }
 
-    private record UsedVacationDaysYear(BigDecimal usedVacationDaysBeforeExpiryDate,
-                                        BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysYear> {
+    private record UsedVacationDaysYear(
+        BigDecimal usedVacationDaysBeforeExpiryDate,
+        BigDecimal usedVacationDaysAfterExpiryDate
+    ) implements Addable<UsedVacationDaysYear> {
 
         @Override
         public UsedVacationDaysYear add(UsedVacationDaysYear toAdd) {
@@ -342,8 +371,10 @@ public class VacationDaysService {
         }
     }
 
-    private record UsedVacationDaysDateRange(BigDecimal usedVacationDaysBeforeExpiryDate,
-                                             BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysDateRange> {
+    private record UsedVacationDaysDateRange(
+        BigDecimal usedVacationDaysBeforeExpiryDate,
+        BigDecimal usedVacationDaysAfterExpiryDate
+    ) implements Addable<UsedVacationDaysDateRange> {
 
         @Override
         public UsedVacationDaysDateRange add(UsedVacationDaysDateRange toAdd) {

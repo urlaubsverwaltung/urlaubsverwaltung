@@ -36,6 +36,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -237,8 +238,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
             .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
             .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"))
-            .andExpect(model().attributeDoesNotExist("remainingVacationDays"));
+            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
     }
 
     @Test

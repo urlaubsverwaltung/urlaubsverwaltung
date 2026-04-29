@@ -226,28 +226,28 @@ public class OverviewViewController implements HasLaunchpad {
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
+            model.addAttribute("account", account);
 
             final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
             final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
+            model.addAttribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+            model.addAttribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
+            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays(now, account, expiredRemainingVacationDays));
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
-            model.addAttribute("doRemainingVacationDaysExpire", account.doRemainingVacationDaysExpire());
-            model.addAttribute("expiryDate", account.getExpiryDate());
-
-            final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
-            final boolean showExpiredVacationDays = !isBeforeExpiryDate && expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
-            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays);
-            model.addAttribute("isBeforeExpiryDate", isBeforeExpiryDate);
-            model.addAttribute("remainingVacationDays", account.getRemainingVacationDays());
-
-            model.addAttribute("account", account);
-
         } else {
             model.addAttribute("showExpiredVacationDays", false);
         }
+    }
+
+    private static boolean showExpiredVacationDays(LocalDate now, Account account, BigDecimal expiredRemainingVacationDays) {
+        final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
+        final boolean hasExpiredRemainingVacationDays = expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
+        return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 
     private void prepareSettings(Model model) {
