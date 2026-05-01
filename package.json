@@ -52,7 +52,7 @@
     "autoprefixer": "10.5.0",
     "concurrently": "9.2.1",
     "cross-env": "10.1.0",
-    "cssnano": "7.1.5",
+    "cssnano": "7.1.7",
     "date-fns": "3.6.0",
     "esbuild": "0.28.0",
     "eslint": "9.39.2",
