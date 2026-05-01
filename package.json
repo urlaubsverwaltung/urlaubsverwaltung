@@ -41,7 +41,7 @@
     "idiomorph": "0.7.4"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.2",
+    "@eslint/js": "10.0.1",
     "@rollup/plugin-commonjs": "29.0.2",
     "@rollup/plugin-dynamic-import-vars": "2.1.5",
     "@rollup/plugin-inject": "5.0.5",
@@ -55,10 +55,10 @@
     "cssnano": "7.1.5",
     "date-fns": "3.6.0",
     "esbuild": "0.28.0",
-    "eslint": "9.39.2",
+    "eslint": "10.2.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
-    "eslint-plugin-unicorn": "62.0.0",
+    "eslint-plugin-unicorn": "64.0.0",
     "fast-glob": "3.3.3",
     "fetch-mock": "12.6.0",
     "globals": "17.5.0",
