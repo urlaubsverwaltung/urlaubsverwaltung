@@ -1,8 +1,7 @@
-package org.synyx.urlaubsverwaltung.application.application;
+package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

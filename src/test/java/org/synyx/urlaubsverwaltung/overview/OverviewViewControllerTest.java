@@ -34,6 +34,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -213,6 +214,47 @@ class OverviewViewControllerTest {
     }
 
     @Test
+    void showOverviewAddsHolidayAccountDetailedAttributes() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Year year = Year.now(clock);
+        final LocalDate now = LocalDate.now(clock);
+        final LocalDate expiryDate = now.minusDays(1);
+
+        final Account account = new Account(person, now.minusDays(10), now.plusDays(10), true, expiryDate,
+            BigDecimal.valueOf(10), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "");
+
+        when(accountService.getHolidaysAccount(year.getValue(), person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), person)).thenReturn(Optional.empty());
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(10))
+            .withRemainingVacation(BigDecimal.valueOf(5))
+            .notExpiring(BigDecimal.valueOf(1))
+            .withVacationDaysUsedNextYear(BigDecimal.ZERO)
+            .forUsedVacationDaysBeforeExpiry(BigDecimal.ZERO)
+            .forUsedVacationDaysAfterExpiry(BigDecimal.ZERO)
+            .build();
+
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of()))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
+
+        perform(get("/web/person/1/overview"))
+            .andExpect(model().attribute("account", account))
+            .andExpect(model().attribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
+            .andExpect(model().attribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
+            .andExpect(model().attribute("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate())))
+            .andExpect(model().attribute("showExpiredVacationDays", true));
+    }
+
+    @Test
     void showOverviewWithoutExistingAccount() throws Exception {
         final Person person = new Person();
         person.setId(1L);
@@ -228,8 +270,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
             .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
             .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"))
-            .andExpect(model().attributeDoesNotExist("remainingVacationDays"));
+            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
     }
 
     @Test
