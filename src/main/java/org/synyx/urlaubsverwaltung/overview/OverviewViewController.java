@@ -14,7 +14,9 @@ import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -54,12 +57,16 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 public class OverviewViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
+    public static final int NUMBER_OF_APPLICATION_ON_OVERVIEW = 5;
+    public static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
+    private static final int NUMBER_OF_SICK_NOTES_ON_OVERVIEW = 3;
+    private static final int NUMBER_OF_FUTURE_SICK_NOTES_ON_OVERVIEW = 1;
 
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final WorkDaysCountService workDaysCountService;
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -147,19 +154,69 @@ public class OverviewViewController implements HasLaunchpad {
 
     private void prepareApplicationSummary(Person person, int year, Model model, Locale locale) {
         // get the person's applications for the given year
-        final LocalDate startDate = Year.of(year).atDay(1);
+        final LocalDate startDate = Year.of(year).atDay(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW);
         final LocalDate endDate = startDate.with(lastDayOfYear());
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
+        final List<ApplicationDto> applicationsForLeave;
         final YearlyUsedDaysSummary usedDaysOverview;
 
         if (applications.isEmpty()) {
+            applicationsForLeave = List.of();
             usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
         } else {
+            final LocalDate today = LocalDate.now(clock);
+            final List<ApplicationForLeave> allForLeave = applications.stream()
+                .map(application -> new ApplicationForLeave(application, workDaysCountService))
+                .toList();
+            // always show 3 applications if no application is in the fill with future application
+            final List<ApplicationDto> pastApplicationDtos = allForLeave.stream()
+                .filter(a -> a.getStartDate().isBefore(today))
+                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
+                .limit(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW)
+                .map(a -> applicationDto(a, locale))
+                .toList();
+
+            final List<ApplicationDto> futureApplicationDtos = allForLeave.stream()
+                .filter(a -> !a.getStartDate().isBefore(today))
+                .sorted(comparing(ApplicationForLeave::getStartDate))
+                .limit((long) NUMBER_OF_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
+                .map(a -> applicationDto(a, locale))
+                .toList();
+
+            applicationsForLeave = Stream.concat(pastApplicationDtos.stream(), futureApplicationDtos.stream()).toList();
             usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
         }
 
+        model.addAttribute("applications", applicationsForLeave);
         model.addAttribute("usedDaysOverview", usedDaysOverview);
+    }
+
+    private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
+    }
+
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
+        final ApplicationDto dto = new ApplicationDto();
+        dto.setId(applicationForLeave.getId());
+        dto.setStatus(applicationForLeave.getStatus());
+        dto.setVacationType(applicationVacationTypDto(applicationForLeave.getVacationType(), locale));
+        dto.setApplicationDate(applicationForLeave.getApplicationDate());
+        dto.setStartDate(applicationForLeave.getStartDate());
+        dto.setEndDate(applicationForLeave.getEndDate());
+        dto.setStartTime(applicationForLeave.getStartTime());
+        dto.setEndTime(applicationForLeave.getEndTime());
+        dto.setStartDateWithTime(applicationForLeave.getStartDateWithTime());
+        dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
+        dto.setDayLength(applicationForLeave.getDayLength());
+        dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setPersonId(applicationForLeave.getPerson().getId());
+        dto.setHours(applicationForLeave.getHours());
+        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
+        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
+        dto.setEditedDate(applicationForLeave.getEditedDate());
+        dto.setCancelDate(applicationForLeave.getCancelDate());
+        return dto;
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {
@@ -169,10 +226,24 @@ public class OverviewViewController implements HasLaunchpad {
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, from, to);
 
-        final List<SickNote> sortedSickNotes = sickNotes.stream()
-            .sorted(comparing(SickNote::getStartDate).reversed())
+        final LocalDate today = LocalDate.now(clock);
+
+        // most of the time there are no future sick notes therefore we fill with past sick notes
+        final List<SickNote> futureSickNotes = sickNotes.stream()
+            .filter(s -> !s.getStartDate().isBefore(today))
+            .sorted(comparing(SickNote::getStartDate))
+            .limit(NUMBER_OF_FUTURE_SICK_NOTES_ON_OVERVIEW)
             .toList();
-        model.addAttribute("sickNotes", sortedSickNotes);
+
+
+        final List<SickNote> pastSickNotes = sickNotes.stream()
+            .filter(s -> s.getStartDate().isBefore(today))
+            .sorted(comparing(SickNote::getStartDate).reversed())
+            .limit((long) NUMBER_OF_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
+            .toList();
+
+
+        model.addAttribute("sickNotes", Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList());
 
         final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
@@ -186,7 +257,7 @@ public class OverviewViewController implements HasLaunchpad {
             final Account account = maybeAccount.get();
             model.addAttribute("account", account);
 
-            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW, person).stream().toList();
             final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
