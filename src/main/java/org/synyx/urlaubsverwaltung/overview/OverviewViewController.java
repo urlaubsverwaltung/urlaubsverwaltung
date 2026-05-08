@@ -40,9 +40,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
@@ -106,11 +109,10 @@ public class OverviewViewController implements HasLaunchpad {
         @RequestParam(value = "year", required = false) String year
     ) {
         final Person signedInUser = personService.getSignedInUser();
-        if (hasText(year)) {
-            return "redirect:/web/person/" + signedInUser.getId() + "/overview?year=" + year;
-        }
-
-        return "redirect:/web/person/" + signedInUser.getId() + "/overview";
+        return format("redirect:/web/person/%d/overview%s",
+            signedInUser.getId(),
+            hasText(year) ? "?year=" + encodeQueryParam(year, UTF_8) : ""
+        );
     }
 
     @GetMapping("/web/person/{personId}/overview")
