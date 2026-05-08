@@ -57,8 +57,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 public class OverviewViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
-    public static final int NUMBER_OF_APPLICATION_ON_OVERVIEW = 5;
-    public static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
+    private static final int NUMBER_OF_APPLICATION_ON_OVERVIEW = 5;
+    private static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
     private static final int NUMBER_OF_SICK_NOTES_ON_OVERVIEW = 3;
     private static final int NUMBER_OF_FUTURE_SICK_NOTES_ON_OVERVIEW = 1;
 
@@ -154,7 +154,7 @@ public class OverviewViewController implements HasLaunchpad {
 
     private void prepareApplicationSummary(Person person, int year, Model model, Locale locale) {
         // get the person's applications for the given year
-        final LocalDate startDate = Year.of(year).atDay(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW);
+        final LocalDate startDate = Year.of(year).atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
@@ -257,7 +257,7 @@ public class OverviewViewController implements HasLaunchpad {
             final Account account = maybeAccount.get();
             model.addAttribute("account", account);
 
-            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW, person).stream().toList();
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
             final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
