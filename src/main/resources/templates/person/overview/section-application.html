@@ -44,7 +44,7 @@
               </span>
               <span
                 class="my-1 text-lg font-medium"
-                th:text="#{overview.vacations.holidayLeave.2(${usedDaysOverview.holidayDays.sum})}"
+                th:text="#{overview.vacations.holidayLeave.2(${applicationOverviewInformation.usedDaysOverview.holidayDays.sum})}"
               >
                 18,5 Tage Erholungsurlaub
               </span>
@@ -54,7 +54,7 @@
                     <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                   </span>
                   <span
-                    th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
+                    th:text="#{overview.vacations.holidayLeaveAllowed(${applicationOverviewInformation.usedDaysOverview.holidayDaysAllowed.sum})}"
                   ></span>
                 </span>
               </span>
@@ -78,7 +78,7 @@
               </span>
               <span
                 class="my-1 text-lg font-medium"
-                th:text="#{overview.vacations.otherLeave.2(${usedDaysOverview.otherDays.sum})}"
+                th:text="#{overview.vacations.otherLeave.2(${applicationOverviewInformation.usedDaysOverview.otherDays.sum})}"
               >
                 2,5 Tage andere Abwesenheiten
               </span>
@@ -88,7 +88,7 @@
                     <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                   </span>
                   <span
-                    th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
+                    th:text="#{overview.vacations.otherLeaveAllowed(${applicationOverviewInformation.usedDaysOverview.otherDaysAllowed.sum})}"
                   ></span>
                 </span>
               </span>
@@ -100,7 +100,7 @@
         <table class="list-table selectable-table text-sm">
           <tbody>
             <tr
-              th:each="app, loopStatus : ${applications}"
+              th:each="app, loopStatus : ${applicationOverviewInformation.applications}"
               th:class="${app.status.name == 'CANCELLED' || app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'inactive' : 'active'}"
               th:onclick="|navigate('/web/application/${app.id}');|"
             >

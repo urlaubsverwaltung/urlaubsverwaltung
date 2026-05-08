@@ -32,10 +32,10 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -111,8 +111,6 @@ class OverviewViewControllerTest {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, clock);
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     @Test
@@ -157,6 +155,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -174,6 +174,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewUsesYearParamIfYearGiven() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -192,6 +194,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -218,6 +222,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewAddsHolidayAccountDetailedAttributes() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
 
         final Person person = new Person();
         person.setId(1L);
@@ -259,6 +265,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewWithoutExistingAccount() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
 
@@ -278,6 +286,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER));
@@ -292,6 +302,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewCanAccessCalendarShareAssOffice() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
@@ -306,6 +318,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewCanAccessCalendarShareAsBoss() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, BOSS));
@@ -320,6 +334,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfOffice() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, OFFICE));
@@ -334,6 +350,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
@@ -348,6 +366,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanNotViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS));
@@ -362,6 +382,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndSickNoteAddRoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person departmentHead = new Person();
         departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
@@ -378,6 +400,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person departmentHead = new Person();
         departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
@@ -395,6 +419,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndSickNoteAddRoleDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person ssa = new Person();
         ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
@@ -411,6 +437,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person ssa = new Person();
         ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
@@ -427,6 +455,8 @@ class OverviewViewControllerTest {
 
     @Test
     void ensureModelWhenThereAreNoApplications() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -437,11 +467,12 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("usedDaysOverview",
-                hasProperty("holidayDays",
-                    hasProperty("sum", equalTo(ZERO))
-                )
-            ));
+            .andExpect(model().attribute("applicationOverviewInformation",
+                hasProperty("usedDaysOverview",
+                    hasProperty("holidayDays",
+                        hasProperty("sum", equalTo(ZERO))
+                    )
+                )));
     }
 
     @Test
@@ -468,6 +499,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showPersonalOverview() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
 
         final Person person = new Person();
         person.setId(1L);

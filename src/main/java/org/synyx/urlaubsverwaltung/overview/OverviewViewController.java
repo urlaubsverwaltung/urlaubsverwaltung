@@ -185,11 +185,11 @@ public class OverviewViewController implements HasLaunchpad {
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
         final List<ApplicationDto> applicationsForLeave;
-        final YearlyUsedDaysSummary usedDaysOverview;
+        final ApplicationDaysUsedSummaryDto usedDaysOverview;
 
         if (applications.isEmpty()) {
             applicationsForLeave = List.of();
-            usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
+            usedDaysOverview = new ApplicationDaysUsedSummaryDto(List.of(), year, workDaysCountService);
         } else {
             final LocalDate today = LocalDate.now(clock);
             final List<ApplicationForLeave> allForLeave = applications.stream()
@@ -211,11 +211,10 @@ public class OverviewViewController implements HasLaunchpad {
                 .toList();
 
             applicationsForLeave = Stream.concat(pastApplicationDtos.stream(), futureApplicationDtos.stream()).toList();
-            usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
+            usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
 
-        model.addAttribute("applications", applicationsForLeave);
-        model.addAttribute("usedDaysOverview", usedDaysOverview);
+        model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(applicationsForLeave, usedDaysOverview));
     }
 
     private void prepareSickNoteInformation(Person person, int year, Model model) {
@@ -244,7 +243,7 @@ public class OverviewViewController implements HasLaunchpad {
 
         model.addAttribute("sickNotes", Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList());
 
-        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService, from, to);
+        final SickDaysOverviewDto sickDaysOverview = new SickDaysOverviewDto(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
