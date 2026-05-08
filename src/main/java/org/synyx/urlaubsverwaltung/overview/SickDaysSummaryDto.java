@@ -17,7 +17,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SIC
 /**
  * Build a sick days statistic for a certain year and person.
  */
-public class SickDaysSummaryDto {
+final class SickDaysSummaryDto {
 
     private final SickDaysDto sickDays;
     private final SickDaysDto childSickDays;

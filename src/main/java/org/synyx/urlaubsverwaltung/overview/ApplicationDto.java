@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
-public class ApplicationDto {
+final class ApplicationDto {
 
     private Long id;
     private Long personId;

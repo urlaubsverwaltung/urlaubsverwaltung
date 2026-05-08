@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
-public final class ApplicationVacationTypeDto {
+final class ApplicationVacationTypeDto {
 
     private final String label;
     private final VacationCategory category;
