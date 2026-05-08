@@ -139,8 +139,8 @@ public class OverviewViewController implements HasLaunchpad {
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
-        prepareApplicationInformation(person, yearToShow, model, locale);
         prepareHolidayAccountInformation(person, yearToShow, now, model);
+        prepareApplicationInformation(person, yearToShow, model, locale);
         prepareSickNoteInformation(person, yearToShow, model);
         prepareOvertimeInformation(overtimeService, person, yearToShow, model);
 
@@ -152,6 +152,30 @@ public class OverviewViewController implements HasLaunchpad {
         /* TODO Not used anymore - will be needed when adding the plus button back again model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));*/
 
         return "person/person-overview";
+    }
+
+    private void prepareHolidayAccountInformation(Person person, int year, LocalDate now, Model model) {
+
+        // get person's holidays account and entitlement for the given year
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
+        if (maybeAccount.isPresent()) {
+            final Account account = maybeAccount.get();
+            model.addAttribute("account", account);
+
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
+            final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
+            model.addAttribute("vacationDaysLeft", vacationDaysLeft);
+
+            model.addAttribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+            model.addAttribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
+            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays(now, account, expiredRemainingVacationDays));
+            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
+        } else {
+            model.addAttribute("showExpiredVacationDays", false);
+        }
     }
 
     private void prepareApplicationInformation(Person person, int year, Model model, Locale locale) {
@@ -194,33 +218,6 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("usedDaysOverview", usedDaysOverview);
     }
 
-    private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
-        return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
-    }
-
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
-        final ApplicationDto dto = new ApplicationDto();
-        dto.setId(applicationForLeave.getId());
-        dto.setStatus(applicationForLeave.getStatus());
-        dto.setVacationType(applicationVacationTypDto(applicationForLeave.getVacationType(), locale));
-        dto.setApplicationDate(applicationForLeave.getApplicationDate());
-        dto.setStartDate(applicationForLeave.getStartDate());
-        dto.setEndDate(applicationForLeave.getEndDate());
-        dto.setStartTime(applicationForLeave.getStartTime());
-        dto.setEndTime(applicationForLeave.getEndTime());
-        dto.setStartDateWithTime(applicationForLeave.getStartDateWithTime());
-        dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
-        dto.setDayLength(applicationForLeave.getDayLength());
-        dto.setWorkDays(applicationForLeave.getWorkDays());
-        dto.setPersonId(applicationForLeave.getPerson().getId());
-        dto.setHours(applicationForLeave.getHours());
-        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
-        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
-        dto.setEditedDate(applicationForLeave.getEditedDate());
-        dto.setCancelDate(applicationForLeave.getCancelDate());
-        return dto;
-    }
-
     private void prepareSickNoteInformation(Person person, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
@@ -251,36 +248,6 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
-    private void prepareHolidayAccountInformation(Person person, int year, LocalDate now, Model model) {
-
-        // get person's holidays account and entitlement for the given year
-        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
-        if (maybeAccount.isPresent()) {
-            final Account account = maybeAccount.get();
-            model.addAttribute("account", account);
-
-            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
-            final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
-            model.addAttribute("vacationDaysLeft", vacationDaysLeft);
-
-            model.addAttribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
-            model.addAttribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
-
-            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
-            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays(now, account, expiredRemainingVacationDays));
-            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
-        } else {
-            model.addAttribute("showExpiredVacationDays", false);
-        }
-    }
-
-    private static boolean showExpiredVacationDays(LocalDate now, Account account, BigDecimal expiredRemainingVacationDays) {
-        final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
-        final boolean hasExpiredRemainingVacationDays = expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
-        return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
-    }
-
     private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, int year, Model model) {
 
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
@@ -290,6 +257,39 @@ public class OverviewViewController implements HasLaunchpad {
         );
 
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
+    }
+
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
+        final ApplicationDto dto = new ApplicationDto();
+        dto.setId(applicationForLeave.getId());
+        dto.setStatus(applicationForLeave.getStatus());
+        dto.setVacationType(applicationVacationTypDto(applicationForLeave.getVacationType(), locale));
+        dto.setApplicationDate(applicationForLeave.getApplicationDate());
+        dto.setStartDate(applicationForLeave.getStartDate());
+        dto.setEndDate(applicationForLeave.getEndDate());
+        dto.setStartTime(applicationForLeave.getStartTime());
+        dto.setEndTime(applicationForLeave.getEndTime());
+        dto.setStartDateWithTime(applicationForLeave.getStartDateWithTime());
+        dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
+        dto.setDayLength(applicationForLeave.getDayLength());
+        dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setPersonId(applicationForLeave.getPerson().getId());
+        dto.setHours(applicationForLeave.getHours());
+        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
+        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
+        dto.setEditedDate(applicationForLeave.getEditedDate());
+        dto.setCancelDate(applicationForLeave.getCancelDate());
+        return dto;
+    }
+
+    private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
+    }
+
+    private static boolean showExpiredVacationDays(LocalDate now, Account account, BigDecimal expiredRemainingVacationDays) {
+        final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
+        final boolean hasExpiredRemainingVacationDays = expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
+        return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
