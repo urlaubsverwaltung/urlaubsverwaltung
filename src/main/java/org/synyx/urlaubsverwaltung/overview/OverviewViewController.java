@@ -75,12 +75,14 @@ public class OverviewViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public OverviewViewController(PersonService personService, AccountService accountService,
-                                  VacationDaysService vacationDaysService,
-                                  WorkDaysCountService workDaysCountService, ApplicationService applicationService,
-                                  SickNoteService sickNoteService, OvertimeService overtimeService,
-                                  SettingsService settingsService, DepartmentService departmentService,
-                                  VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
+    public OverviewViewController(
+        PersonService personService, AccountService accountService,
+        VacationDaysService vacationDaysService,
+        WorkDaysCountService workDaysCountService, ApplicationService applicationService,
+        SickNoteService sickNoteService, OvertimeService overtimeService,
+        SettingsService settingsService, DepartmentService departmentService,
+        VacationTypeViewModelService vacationTypeViewModelService, Clock clock
+    ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -100,7 +102,9 @@ public class OverviewViewController implements HasLaunchpad {
     }
 
     @GetMapping("/web/overview")
-    public String showOverview(@RequestParam(value = "year", required = false) String year) {
+    public String showOverview(
+        @RequestParam(value = "year", required = false) String year
+    ) {
         final Person signedInUser = personService.getSignedInUser();
         if (hasText(year)) {
             return "redirect:/web/person/" + signedInUser.getId() + "/overview?year=" + year;
@@ -110,9 +114,11 @@ public class OverviewViewController implements HasLaunchpad {
     }
 
     @GetMapping("/web/person/{personId}/overview")
-    public String showOverview(@PathVariable("personId") Long personId,
-                               @RequestParam(value = "year", required = false) Integer year, Model model, Locale locale)
-        throws UnknownPersonException {
+    public String showOverview(
+        @PathVariable("personId") Long personId,
+        @RequestParam(value = "year", required = false) Integer year,
+        Model model, Locale locale
+    ) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
