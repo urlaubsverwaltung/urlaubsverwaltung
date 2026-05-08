@@ -3,9 +3,7 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
-import java.util.Objects;
-
-public class ApplicationVacationTypeDto {
+public final class ApplicationVacationTypeDto {
 
     private final String label;
     private final VacationCategory category;
@@ -27,33 +25,5 @@ public class ApplicationVacationTypeDto {
 
     public VacationTypeColor getColor() {
         return color;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ApplicationVacationTypeDto that = (ApplicationVacationTypeDto) o;
-        return Objects.equals(label, that.label)
-            && category == that.category
-            && color == that.color;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(label, category, color);
-    }
-
-    @Override
-    public String toString() {
-        return "ApplicationVacationTypeDto{" +
-            "label='" + label + '\'' +
-            ", category=" + category +
-            ", color=" + color +
-            '}';
     }
 }
