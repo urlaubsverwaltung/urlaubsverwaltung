@@ -47,7 +47,7 @@
         <div th:replace="~{person/overview/section-sick-note::section}"></div>
       </div>
 
-      <div th:if="${settings.overtimeSettings.overtimeActive}" class="mb-12">
+      <div th:if="${overtimeOverviewInformation.isOvertimeActive}" class="mb-12">
         <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>
     </main>

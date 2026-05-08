@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -110,6 +111,8 @@ class OverviewViewControllerTest {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, clock);
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     @Test

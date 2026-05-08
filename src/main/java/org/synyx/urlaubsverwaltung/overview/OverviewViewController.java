@@ -48,7 +48,6 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 /**
@@ -143,13 +142,10 @@ public class OverviewViewController implements HasLaunchpad {
         prepareApplicationSummary(person, yearToShow, model, locale);
         prepareHolidayAccounts(person, yearToShow, now, model);
         prepareSickNoteList(person, yearToShow, model);
-        prepareSettings(model);
+        prepareOvertimeInformation(overtimeService, person, yearToShow, model);
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
-
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, yearToShow));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
         model.addAttribute("canViewSickNoteOfMyselfAndAnotherUser", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
@@ -285,8 +281,15 @@ public class OverviewViewController implements HasLaunchpad {
         return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 
-    private void prepareSettings(Model model) {
-        model.addAttribute("settings", settingsService.getSettings());
+    private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, int year, Model model) {
+
+        final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
+            settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, year),
+            overtimeService.getLeftOvertimeForPerson(person)
+        );
+
+        model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
