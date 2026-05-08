@@ -8,15 +8,23 @@ final class ApplicationOverviewDto {
     private final ApplicationDaysUsedSummaryDto usedDaysOverview;
     private final boolean canAddApplicationForLeaveForMyself;
     private final boolean canAddApplicationForLeaveForAnotherUser;
+    private final int numberOfShownApplications;
+    private final int numberOfTotalApplications;
 
     ApplicationOverviewDto(
         List<ApplicationDto> applications,
-        ApplicationDaysUsedSummaryDto usedDaysOverview, boolean canAddApplicationForLeaveForMyself, boolean canAddApplicationForLeaveForAnotherUser
+        ApplicationDaysUsedSummaryDto usedDaysOverview,
+        boolean canAddApplicationForLeaveForMyself,
+        boolean canAddApplicationForLeaveForAnotherUser,
+        int numberOfShownApplications,
+        int numberOfTotalApplications
     ) {
         this.applications = applications;
         this.usedDaysOverview = usedDaysOverview;
         this.canAddApplicationForLeaveForMyself = canAddApplicationForLeaveForMyself;
         this.canAddApplicationForLeaveForAnotherUser = canAddApplicationForLeaveForAnotherUser;
+        this.numberOfShownApplications = numberOfShownApplications;
+        this.numberOfTotalApplications = numberOfTotalApplications;
     }
 
     public List<ApplicationDto> getApplications() {
@@ -33,5 +41,13 @@ final class ApplicationOverviewDto {
 
     public boolean isCanAddApplicationForLeaveForAnotherUser() {
         return canAddApplicationForLeaveForAnotherUser;
+    }
+
+    public int getNumberOfShownApplications() {
+        return numberOfShownApplications;
+    }
+
+    public int getNumberOfTotalApplications() {
+        return numberOfTotalApplications;
     }
 }

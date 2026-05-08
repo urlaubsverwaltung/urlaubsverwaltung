@@ -23,14 +23,6 @@
               <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.overtime.new}"></span>
             </a>
-            <!--            <a
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              href="#"
-              th:href="@{/web/overtime (person=${person.id}, year=${selectedYear})}"
-            >
-              <svg th:replace="~{icon/clock::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.overtime.list}"></span>
-            </a>-->
           </div>
         </th:block>
       </div>
@@ -47,6 +39,16 @@
             th:replace="~{overtime/box::overtime-box-left(overtimeLeft=${overtimeOverviewInformation.overtimeLeft})}"
           ></div>
         </div>
+      </div>
+
+      <div class="flex items-center justify-end text-sm mt-4">
+        <a
+          class="icon-link @2xl/main:flex-row text-sm"
+          href="#"
+          th:href="@{/web/overtime (person=${person.id}, year=${selectedYear})}"
+        >
+          <span th:text="#{overview.overtime.showAll}">Alle anzeigen</span>
+        </a>
       </div>
     </th:block>
   </body>

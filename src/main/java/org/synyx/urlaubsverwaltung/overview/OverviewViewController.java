@@ -218,7 +218,9 @@ public class OverviewViewController implements HasLaunchpad {
             applicationsForLeave,
             usedDaysOverview,
             person.equals(signedInUser),
-            !person.equals(signedInUser) && (signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person))
+            !person.equals(signedInUser) && (signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)),
+            applicationsForLeave.size(),
+            applications.size()
         ));
     }
 
@@ -245,12 +247,15 @@ public class OverviewViewController implements HasLaunchpad {
             .limit((long) NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
             .toList();
 
+        final List<SickNote> shownSickNotes = Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList();
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList(),
+            shownSickNotes,
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
             signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person),
-            person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)
+            person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person),
+            shownSickNotes.size(),
+            sickNotes.size()
         ));
     }
 

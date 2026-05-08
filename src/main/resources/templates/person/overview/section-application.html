@@ -31,14 +31,6 @@
               <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
-            <!--            <a
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              href="#"
-              th:href="@{/web/persons/me/applications (year=${selectedYear})}"
-            >
-              <svg th:replace="~{icon/sun::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.applications.list}"></span>
-            </a>-->
           </div>
         </th:block>
       </div>
@@ -246,6 +238,30 @@
             </tr>
           </tbody>
         </table>
+
+        <div class="flex items-center justify-end text-sm -mt-4">
+          <div>
+            <span
+              class="text-gray-900 dark:text-gray-200 font-medium"
+              th:text="${applicationOverviewInformation.numberOfShownApplications}"
+              >6</span
+            >
+            <span th:text="#{overview.vacations.of}">von</span>
+            <span
+              class="text-gray-900 dark:text-gray-200 font-medium"
+              th:text="${applicationOverviewInformation.numberOfTotalApplications}"
+              >142</span
+            >
+          </div>
+          &nbsp;-&nbsp;
+          <a
+            class="icon-link @2xl/main:flex-row text-sm"
+            href="#"
+            th:href="@{/web/persons/me/applications (year=${selectedYear})}"
+          >
+            <span th:text="#{overview.vacations.showAll}">Alle anzeigen</span>
+          </a>
+        </div>
       </div>
     </th:block>
   </body>

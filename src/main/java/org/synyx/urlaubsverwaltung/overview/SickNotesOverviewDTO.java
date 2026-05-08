@@ -10,12 +10,23 @@ final class SickNotesOverviewDTO {
     private final SickDaysSummaryDto sickDaysSummary;
     private final boolean canAddSickNoteAnotherUser;
     private final boolean canViewSickNoteOfMyselfAndAnotherUser;
+    private final int numberOfShownSickNotes;
+    private final int numberOfTotalSickNotes;
 
-    SickNotesOverviewDTO(List<SickNote> sickNotes, SickDaysSummaryDto sickDaysSummary, boolean canAddSickNoteAnotherUser, boolean canViewSickNoteOfMyselfAndAnotherUser) {
+    SickNotesOverviewDTO(
+        List<SickNote> sickNotes,
+        SickDaysSummaryDto sickDaysSummary,
+        boolean canAddSickNoteAnotherUser,
+        boolean canViewSickNoteOfMyselfAndAnotherUser,
+        int numberOfShownSickNotes,
+        int numberOfTotalSickNotes
+    ) {
         this.sickNotes = sickNotes;
         this.sickDaysSummary = sickDaysSummary;
         this.canAddSickNoteAnotherUser = canAddSickNoteAnotherUser;
         this.canViewSickNoteOfMyselfAndAnotherUser = canViewSickNoteOfMyselfAndAnotherUser;
+        this.numberOfShownSickNotes = numberOfShownSickNotes;
+        this.numberOfTotalSickNotes = numberOfTotalSickNotes;
     }
 
     public SickDaysSummaryDto getSickDaysSummary() {
@@ -32,5 +43,13 @@ final class SickNotesOverviewDTO {
 
     public boolean isCanViewSickNoteOfMyselfAndAnotherUser() {
         return canViewSickNoteOfMyselfAndAnotherUser;
+    }
+
+    public int getNumberOfShownSickNotes() {
+        return numberOfShownSickNotes;
+    }
+
+    public int getNumberOfTotalSickNotes() {
+        return numberOfTotalSickNotes;
     }
 }
