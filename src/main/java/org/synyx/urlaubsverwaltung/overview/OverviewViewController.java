@@ -139,9 +139,9 @@ public class OverviewViewController implements HasLaunchpad {
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
-        prepareApplicationSummary(person, yearToShow, model, locale);
-        prepareHolidayAccounts(person, yearToShow, now, model);
-        prepareSickNoteList(person, yearToShow, model);
+        prepareApplicationInformation(person, yearToShow, model, locale);
+        prepareHolidayAccountInformation(person, yearToShow, now, model);
+        prepareSickNoteInformation(person, yearToShow, model);
         prepareOvertimeInformation(overtimeService, person, yearToShow, model);
 
         model.addAttribute("currentYear", now.getYear());
@@ -154,7 +154,7 @@ public class OverviewViewController implements HasLaunchpad {
         return "person/person-overview";
     }
 
-    private void prepareApplicationSummary(Person person, int year, Model model, Locale locale) {
+    private void prepareApplicationInformation(Person person, int year, Model model, Locale locale) {
         // get the person's applications for the given year
         final LocalDate startDate = Year.of(year).atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
@@ -221,7 +221,7 @@ public class OverviewViewController implements HasLaunchpad {
         return dto;
     }
 
-    private void prepareSickNoteList(Person person, int year, Model model) {
+    private void prepareSickNoteInformation(Person person, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
@@ -251,7 +251,7 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
-    private void prepareHolidayAccounts(Person person, int year, LocalDate now, Model model) {
+    private void prepareHolidayAccountInformation(Person person, int year, LocalDate now, Model model) {
 
         // get person's holidays account and entitlement for the given year
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
