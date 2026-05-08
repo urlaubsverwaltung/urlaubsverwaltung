@@ -57,10 +57,10 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 public class OverviewViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
-    private static final int NUMBER_OF_APPLICATION_ON_OVERVIEW = 5;
     private static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
-    private static final int NUMBER_OF_SICK_NOTES_ON_OVERVIEW = 3;
-    private static final int NUMBER_OF_FUTURE_SICK_NOTES_ON_OVERVIEW = 1;
+    private static final int NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW = 5;
+    private static final int NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW = 3;
+    private static final int NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW = 1;
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -186,7 +186,7 @@ public class OverviewViewController implements HasLaunchpad {
             final List<ApplicationDto> futureApplicationDtos = allForLeave.stream()
                 .filter(a -> !a.getStartDate().isBefore(today))
                 .sorted(comparing(ApplicationForLeave::getStartDate))
-                .limit((long) NUMBER_OF_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
+                .limit((long) NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
                 .map(a -> applicationDto(a, locale))
                 .toList();
 
@@ -238,14 +238,14 @@ public class OverviewViewController implements HasLaunchpad {
         final List<SickNote> futureSickNotes = sickNotes.stream()
             .filter(s -> !s.getStartDate().isBefore(today))
             .sorted(comparing(SickNote::getStartDate))
-            .limit(NUMBER_OF_FUTURE_SICK_NOTES_ON_OVERVIEW)
+            .limit(NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW)
             .toList();
 
 
         final List<SickNote> pastSickNotes = sickNotes.stream()
             .filter(s -> s.getStartDate().isBefore(today))
             .sorted(comparing(SickNote::getStartDate).reversed())
-            .limit((long) NUMBER_OF_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
+            .limit((long) NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
             .toList();
 
 
