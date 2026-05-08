@@ -241,10 +241,7 @@ public class OverviewViewController implements HasLaunchpad {
             .toList();
 
 
-        model.addAttribute("sickNotes", Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList());
-
-        final SickDaysOverviewDto sickDaysOverview = new SickDaysOverviewDto(sickNotes, workDaysCountService, from, to);
-        model.addAttribute("sickDaysOverview", sickDaysOverview);
+        model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList(), new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to)));
     }
 
     private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, int year, Model model) {

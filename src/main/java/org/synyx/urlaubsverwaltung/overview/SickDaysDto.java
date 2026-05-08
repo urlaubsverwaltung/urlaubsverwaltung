@@ -26,7 +26,7 @@ public class SickDaysDto {
         days.put(WITH_AUB.name(), ZERO);
     }
 
-    Map<String, BigDecimal> getDays() {
+    public Map<String, BigDecimal> getDays() {
         return days;
     }
 

@@ -17,12 +17,12 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SIC
 /**
  * Build a sick days statistic for a certain year and person.
  */
-public class SickDaysOverviewDto {
+public class SickDaysSummaryDto {
 
     private final SickDaysDto sickDays;
     private final SickDaysDto childSickDays;
 
-    SickDaysOverviewDto(List<SickNote> sickNotes, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
+    SickDaysSummaryDto(List<SickNote> sickNotes, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
 
         this.sickDays = new SickDaysDto();
         this.childSickDays = new SickDaysDto();

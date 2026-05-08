@@ -58,7 +58,7 @@ class SickDaysOverviewTest {
 
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2017, 12, 31);
-        final SickDaysOverviewDto sickDaysOverview = new SickDaysOverviewDto(List.of(sickNote), workDaysCountService, from, to);
+        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
         final SickDaysDto sickDays = sickDaysOverview.getSickDays();
         assertThat(sickDays.getDays())
             .containsEntry("TOTAL", workingDays)
@@ -100,7 +100,7 @@ class SickDaysOverviewTest {
 
         final LocalDate from = LocalDate.of(2026, 1, 1);
         final LocalDate to = LocalDate.of(2026, 12, 31);
-        final SickDaysOverviewDto sut = new SickDaysOverviewDto(List.of(sickNote), workDaysCountService, from, to);
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
 
         final SickDaysDto actual = sut.getSickDays();
 
@@ -201,7 +201,7 @@ class SickDaysOverviewTest {
         final List<SickNote> sickNotes = List.of(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
-        final SickDaysOverviewDto sickDaysOverview = new SickDaysOverviewDto(sickNotes, workDaysCountService,
+        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(sickNotes, workDaysCountService,
             LocalDate.of(2014, 10, 10), LocalDate.of(2014, 10, 18));
 
         final SickDaysDto sickDays = sickDaysOverview.getSickDays();

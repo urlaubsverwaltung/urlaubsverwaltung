@@ -44,7 +44,7 @@
               </span>
               <span
                 class="my-1 text-lg font-medium"
-                th:text="#{overview.sicknotes.sickdays.2(${sickDaysOverview.sickDays.days['TOTAL']})}"
+                th:text="#{overview.sicknotes.sickdays.2(${sickNotesOverview.sickDaysSummary.sickDays.days['TOTAL']})}"
               >
                 5,5 Krankheitstage
               </span>
@@ -54,7 +54,7 @@
                     <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                   </span>
                   <span
-                    th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.sickDays.days['WITH_AUB']})}"
+                    th:text="#{overview.sicknotes.sickdays.aub(${sickNotesOverview.sickDaysSummary.sickDays.days['WITH_AUB']})}"
                   ></span>
                 </span>
               </span>
@@ -80,7 +80,7 @@
               </span>
               <span
                 class="my-1 text-lg font-medium"
-                th:text="#{overview.sicknotes.sickdays.child.2(${sickDaysOverview.childSickDays.days['TOTAL']})}"
+                th:text="#{overview.sicknotes.sickdays.child.2(${sickNotesOverview.sickDaysSummary.childSickDays.days['TOTAL']})}"
               >
                 3.0 Kind-Krankheitstage
               </span>
@@ -90,7 +90,7 @@
                     <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                   </span>
                   <span
-                    th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.childSickDays.days['WITH_AUB']})}"
+                    th:text="#{overview.sicknotes.sickdays.aub(${sickNotesOverview.sickDaysSummary.childSickDays.days['WITH_AUB']})}"
                   ></span>
                 </span>
               </span>
@@ -102,7 +102,7 @@
       <table class="list-table selectable-table text-sm">
         <tbody>
           <tr
-            th:each="sickNote,loopStatus : ${sickNotes}"
+            th:each="sickNote,loopStatus : ${sickNotesOverview.sickNotes}"
             th:class="${(sickNote.status.name == 'ACTIVE' || sickNote.status.name == 'SUBMITTED') ? 'active' : 'inactive'}"
             th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
             th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
