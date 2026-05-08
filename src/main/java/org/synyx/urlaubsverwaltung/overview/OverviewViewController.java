@@ -147,13 +147,12 @@ public class OverviewViewController implements HasLaunchpad {
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
-        model.addAttribute("signedInUser", signedInUser);
 
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, yearToShow));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
-        model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
+        model.addAttribute("canViewSickNoteOfMyselfAndAnotherUser", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));
 
         return "person/person-overview";

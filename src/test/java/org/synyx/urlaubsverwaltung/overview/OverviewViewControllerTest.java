@@ -326,7 +326,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
     @Test
@@ -340,7 +340,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
     @Test
@@ -354,7 +354,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", false));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", false));
     }
 
     @Test
@@ -370,7 +370,7 @@ class OverviewViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
     @Test
@@ -386,7 +386,7 @@ class OverviewViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
 
@@ -403,7 +403,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
     @Test
@@ -419,7 +419,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
     }
 
     @Test
@@ -530,7 +530,6 @@ class OverviewViewControllerTest {
         )
             .andExpect(status().isOk())
             .andExpect(view().name("person/person-overview"))
-            .andExpect(model().attribute("signedInUser", person))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
     }
 
