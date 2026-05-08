@@ -147,7 +147,6 @@ public class OverviewViewController implements HasLaunchpad {
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
-        model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
 
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, yearToShow));
