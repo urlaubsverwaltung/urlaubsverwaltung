@@ -43,7 +43,7 @@
         <div th:replace="~{person/overview/section-application::section}"></div>
       </div>
 
-      <div th:if="${canViewSickNoteOfMyselfAndAnotherUser}" class="mb-12">
+      <div th:if="${sickNotesOverview.canViewSickNoteOfMyselfAndAnotherUser}" class="mb-12">
         <div th:replace="~{person/overview/section-sick-note::section}"></div>
       </div>
 

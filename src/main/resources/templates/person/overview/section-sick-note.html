@@ -14,13 +14,23 @@
         <th:block th:ref="absences-heading-actions">
           <div class="ml-auto flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
             <a
+              th:if="${sickNotesOverview.canAddSickNoteAnotherUser}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              href="#"
+              th:href="@{/web/sicknote/new (person=${person.id})}"
+            >
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.apply.sicknote}"></span>
+            </a>
+
+            <!--            <a
               class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/persons/me/sicknotes (year=${selectedYear})}"
             >
               <svg th:replace="~{icon/medkit::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.sicknote.list}"></span>
-            </a>
+            </a>-->
           </div>
         </th:block>
       </div>

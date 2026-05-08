@@ -46,8 +46,10 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 /**
@@ -140,16 +142,14 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
         prepareHolidayAccountInformation(person, yearToShow, now, model);
-        prepareApplicationInformation(person, yearToShow, model, locale);
-        prepareSickNoteInformation(person, yearToShow, model);
-        prepareOvertimeInformation(overtimeService, person, yearToShow, model);
+        prepareApplicationInformation(person, signedInUser, yearToShow, model, locale);
+        prepareSickNoteInformation(person, signedInUser, yearToShow, model);
+        prepareOvertimeInformation(overtimeService, person, signedInUser, yearToShow, model);
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
 
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
-        model.addAttribute("canViewSickNoteOfMyselfAndAnotherUser", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
-        /* TODO Not used anymore - will be needed when adding the plus button back again model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));*/
 
         return "person/person-overview";
     }
@@ -178,7 +178,7 @@ public class OverviewViewController implements HasLaunchpad {
         }
     }
 
-    private void prepareApplicationInformation(Person person, int year, Model model, Locale locale) {
+    private void prepareApplicationInformation(Person person, Person signedInUser, int year, Model model, Locale locale) {
         // get the person's applications for the given year
         final LocalDate startDate = Year.of(year).atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
@@ -214,10 +214,15 @@ public class OverviewViewController implements HasLaunchpad {
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
 
-        model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(applicationsForLeave, usedDaysOverview));
+        model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(
+            applicationsForLeave,
+            usedDaysOverview,
+            person.equals(signedInUser),
+            !person.equals(signedInUser) && (signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person))
+        ));
     }
 
-    private void prepareSickNoteInformation(Person person, int year, Model model) {
+    private void prepareSickNoteInformation(Person person, Person signedInUser, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
@@ -241,13 +246,19 @@ public class OverviewViewController implements HasLaunchpad {
             .toList();
 
 
-        model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList(), new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to)));
+        model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
+            Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList(),
+            new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
+            signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person),
+            person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)
+        ));
     }
 
-    private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, int year, Model model) {
+    private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, Person signedInUser, int year, Model model) {
 
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
             settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
+            overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person)
         );

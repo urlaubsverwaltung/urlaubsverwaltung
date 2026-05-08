@@ -14,13 +14,31 @@
         <th:block th:ref="applications-heading-actions">
           <div class="ml-auto flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
             <a
+              th:if="${applicationOverviewInformation.canAddApplicationForLeaveForMyself}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              href="#"
+              th:href="@{/web/application/new}"
+            >
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.apply.vacation}"></span>
+            </a>
+            <a
+              th:if="${applicationOverviewInformation.canAddApplicationForLeaveForAnotherUser}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              href="#"
+              th:href="@{/web/application/new (personId=${person.id})}"
+            >
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.apply.vacation}"></span>
+            </a>
+            <!--            <a
               class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/persons/me/applications (year=${selectedYear})}"
             >
               <svg th:replace="~{icon/sun::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.list}"></span>
-            </a>
+            </a>-->
           </div>
         </th:block>
       </div>

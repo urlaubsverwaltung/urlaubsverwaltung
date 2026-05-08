@@ -8,10 +8,14 @@ final class SickNotesOverviewDTO {
 
     private final List<SickNote> sickNotes;
     private final SickDaysSummaryDto sickDaysSummary;
+    private final boolean canAddSickNoteAnotherUser;
+    private final boolean canViewSickNoteOfMyselfAndAnotherUser;
 
-    SickNotesOverviewDTO(List<SickNote> sickNotes, SickDaysSummaryDto sickDaysSummary) {
+    SickNotesOverviewDTO(List<SickNote> sickNotes, SickDaysSummaryDto sickDaysSummary, boolean canAddSickNoteAnotherUser, boolean canViewSickNoteOfMyselfAndAnotherUser) {
         this.sickNotes = sickNotes;
         this.sickDaysSummary = sickDaysSummary;
+        this.canAddSickNoteAnotherUser = canAddSickNoteAnotherUser;
+        this.canViewSickNoteOfMyselfAndAnotherUser = canViewSickNoteOfMyselfAndAnotherUser;
     }
 
     public SickDaysSummaryDto getSickDaysSummary() {
@@ -20,5 +24,13 @@ final class SickNotesOverviewDTO {
 
     public List<SickNote> getSickNotes() {
         return sickNotes;
+    }
+
+    public boolean isCanAddSickNoteAnotherUser() {
+        return canAddSickNoteAnotherUser;
+    }
+
+    public boolean isCanViewSickNoteOfMyselfAndAnotherUser() {
+        return canViewSickNoteOfMyselfAndAnotherUser;
     }
 }

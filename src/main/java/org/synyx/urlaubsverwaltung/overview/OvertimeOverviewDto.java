@@ -4,6 +4,7 @@ import java.time.Duration;
 
 record OvertimeOverviewDto(
     boolean isOvertimeActive,
+    boolean userIsAllowedToCreateOvertime,
     Duration overtimeTotal,
     Duration overtimeLeft
 ) {
