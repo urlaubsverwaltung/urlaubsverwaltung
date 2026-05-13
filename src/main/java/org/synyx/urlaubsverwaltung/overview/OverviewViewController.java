@@ -272,6 +272,10 @@ public class OverviewViewController implements HasLaunchpad {
     }
 
     private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
+        final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
+            .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
+            .toList();
+
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
         dto.setStatus(applicationForLeave.getStatus());
@@ -291,6 +295,7 @@ public class OverviewViewController implements HasLaunchpad {
         dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());
+        dto.setHolidayReplacements(holidayReplacements);
         return dto;
     }
 

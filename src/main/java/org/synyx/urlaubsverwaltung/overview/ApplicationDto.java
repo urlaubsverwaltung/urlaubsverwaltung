@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 final class ApplicationDto {
 
@@ -31,6 +32,8 @@ final class ApplicationDto {
     private Duration hours;
     private LocalDate editedDate;
     private LocalDate cancelDate;
+
+    private List<PersonDto> holidayReplacements;
 
     public Long getId() {
         return id;
@@ -176,9 +179,17 @@ final class ApplicationDto {
         this.cancelDate = cancelDate;
     }
 
+    public List<PersonDto> getHolidayReplacements() {
+        return holidayReplacements;
+    }
+
+    public void setHolidayReplacements(List<PersonDto> holidayReplacements) {
+        this.holidayReplacements = holidayReplacements;
+    }
+
     @Override
     public String toString() {
-        return "OverviewApplicationDto{" +
+        return "ApplicationDto{" +
             "id=" + id +
             ", personId=" + personId +
             ", status=" + status +
@@ -197,6 +208,7 @@ final class ApplicationDto {
             ", hours=" + hours +
             ", editedDate=" + editedDate +
             ", cancelDate=" + cancelDate +
+            ", holidayReplacements=" + holidayReplacements +
             '}';
     }
 }
