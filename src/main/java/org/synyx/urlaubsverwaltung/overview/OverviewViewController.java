@@ -198,19 +198,19 @@ public class OverviewViewController implements HasLaunchpad {
             // always show 3 applications if no application is in the fill with future application
             final List<ApplicationDto> pastApplicationDtos = allForLeave.stream()
                 .filter(a -> a.getStartDate().isBefore(today))
-                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
+                .sorted(comparing(ApplicationForLeave::getStartDate))
                 .limit(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW)
                 .map(a -> applicationDto(a, locale))
                 .toList();
 
             final List<ApplicationDto> futureApplicationDtos = allForLeave.stream()
                 .filter(a -> !a.getStartDate().isBefore(today))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
+                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .limit((long) NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
                 .map(a -> applicationDto(a, locale))
                 .toList();
 
-            applicationsForLeave = Stream.concat(pastApplicationDtos.stream(), futureApplicationDtos.stream()).toList();
+            applicationsForLeave = Stream.concat(futureApplicationDtos.stream(), pastApplicationDtos.stream()).toList();
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
 
@@ -247,7 +247,7 @@ public class OverviewViewController implements HasLaunchpad {
             .limit((long) NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
             .toList();
 
-        final List<SickNote> shownSickNotes = Stream.concat(pastSickNotes.stream(), futureSickNotes.stream()).toList();
+        final List<SickNote> shownSickNotes = Stream.concat(futureSickNotes.stream(), pastSickNotes.stream()).toList();
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
             shownSickNotes,
