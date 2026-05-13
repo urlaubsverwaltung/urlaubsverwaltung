@@ -46,6 +46,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -200,14 +201,14 @@ public class OverviewViewController implements HasLaunchpad {
                 .filter(a -> a.getStartDate().isBefore(today))
                 .sorted(comparing(ApplicationForLeave::getStartDate))
                 .limit(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW)
-                .map(a -> applicationDto(a, locale))
+                .map(a -> applicationDto(a, signedInUser, locale))
                 .toList();
 
             final List<ApplicationDto> futureApplicationDtos = allForLeave.stream()
                 .filter(a -> !a.getStartDate().isBefore(today))
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .limit((long) NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
-                .map(a -> applicationDto(a, locale))
+                .map(a -> applicationDto(a, signedInUser, locale))
                 .toList();
 
             applicationsForLeave = Stream.concat(futureApplicationDtos.stream(), pastApplicationDtos.stream()).toList();
@@ -271,10 +272,13 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
+
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
@@ -296,6 +300,7 @@ public class OverviewViewController implements HasLaunchpad {
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());
         dto.setHolidayReplacements(holidayReplacements);
+        dto.setAllowedToEdit(isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
         return dto;
     }
 

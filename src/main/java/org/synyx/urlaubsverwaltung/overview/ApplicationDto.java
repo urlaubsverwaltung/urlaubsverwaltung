@@ -35,6 +35,8 @@ final class ApplicationDto {
 
     private List<PersonDto> holidayReplacements;
 
+    private boolean isAllowedToEdit;
+
     public Long getId() {
         return id;
     }
@@ -187,6 +189,14 @@ final class ApplicationDto {
         this.holidayReplacements = holidayReplacements;
     }
 
+    public boolean isAllowedToEdit() {
+        return isAllowedToEdit;
+    }
+
+    public void setAllowedToEdit(boolean allowedToEdit) {
+        isAllowedToEdit = allowedToEdit;
+    }
+
     @Override
     public String toString() {
         return "ApplicationDto{" +
@@ -209,6 +219,7 @@ final class ApplicationDto {
             ", editedDate=" + editedDate +
             ", cancelDate=" + cancelDate +
             ", holidayReplacements=" + holidayReplacements +
+            ", isAllowedToEdit=" + isAllowedToEdit +
             '}';
     }
 }

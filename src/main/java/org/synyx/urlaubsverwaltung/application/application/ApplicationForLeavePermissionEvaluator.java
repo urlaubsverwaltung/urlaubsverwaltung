@@ -13,7 +13,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-final class ApplicationForLeavePermissionEvaluator {
+public final class ApplicationForLeavePermissionEvaluator {
 
     private ApplicationForLeavePermissionEvaluator() {
         // ok
@@ -63,7 +63,7 @@ final class ApplicationForLeavePermissionEvaluator {
             && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)));
     }
 
-    static boolean isAllowedToEditApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+    public static boolean isAllowedToEditApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return (application.hasStatus(WAITING) && application.getPerson().equals(signedInUser))
             || signedInUser.hasRole(OFFICE)
             || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_EDIT));
