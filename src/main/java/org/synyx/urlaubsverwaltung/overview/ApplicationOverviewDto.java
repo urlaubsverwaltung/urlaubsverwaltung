@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.overview;
 
 import java.util.List;
 
-final class ApplicationOverviewDto {
+public final class ApplicationOverviewDto {
 
     private final List<ApplicationDto> applications;
     private final ApplicationDaysUsedSummaryDto usedDaysOverview;

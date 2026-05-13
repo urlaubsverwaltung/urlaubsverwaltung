@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.util.List;
 
-final class SickNotesOverviewDTO {
+public final class SickNotesOverviewDTO {
 
     private final List<SickNote> sickNotes;
     private final SickDaysSummaryDto sickDaysSummary;

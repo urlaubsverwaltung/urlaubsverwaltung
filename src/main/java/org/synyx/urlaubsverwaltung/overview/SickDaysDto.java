@@ -11,7 +11,7 @@ import static org.synyx.urlaubsverwaltung.overview.SickDaysDto.SickDayType.WITH_
 /**
  * Represents number of days for specific sick note types.
  */
-final class SickDaysDto {
+public final class SickDaysDto {
 
     enum SickDayType {
         TOTAL,

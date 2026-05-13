@@ -11,7 +11,7 @@ import static java.math.BigDecimal.ZERO;
 /**
  * Represents number of days for specific application states.
  */
-final class ApplicationDaysUsedDto {
+public final class ApplicationDaysUsedDto {
 
     private final Map<String, BigDecimal> days;
 

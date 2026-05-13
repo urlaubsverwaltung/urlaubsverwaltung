@@ -345,7 +345,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
     @Test
@@ -361,7 +361,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
     @Test
@@ -377,7 +377,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", false));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(false))));
     }
 
     @Test
@@ -395,7 +395,7 @@ class OverviewViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
     @Test
@@ -413,7 +413,7 @@ class OverviewViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
 
@@ -432,7 +432,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
     @Test
@@ -450,7 +450,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteOfMyselfAndAnotherUser", true));
+            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
     }
 
     @Test
@@ -467,12 +467,7 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("applicationOverviewInformation",
-                hasProperty("usedDaysOverview",
-                    hasProperty("holidayDays",
-                        hasProperty("sum", equalTo(ZERO))
-                    )
-                )));
+            .andExpect(model().attribute("applicationOverviewInformation", hasProperty("usedDaysOverview", hasProperty("holidayDays", hasProperty("sum", equalTo(ZERO))))));
     }
 
     @Test
