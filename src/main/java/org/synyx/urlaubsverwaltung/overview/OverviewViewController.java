@@ -57,6 +57,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 /**
@@ -258,10 +259,36 @@ public class OverviewViewController implements HasLaunchpad {
 
         final List<SickNote> shownSickNotes = Stream.concat(futureSickNotes.stream(), pastSickNotes.stream()).toList();
 
+        final boolean isSamePerson = person.equals(signedInUser);
+        final boolean userIsAllowedToSubmitSickNotes = isSamePerson && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+        final boolean userIsAllowedToAddSickNotes = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person);
+        final boolean isAllowedToAddOrSubmitSickNotes =
+            signedInUser.hasRole(OFFICE)
+                || userIsAllowedToAddSickNotes
+                || userIsAllowedToSubmitSickNotes;
+
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            shownSickNotes,
+            shownSickNotes.stream().map(sickNote -> {
+                final boolean isAllowedToEdit =
+                    signedInUser.hasRole(OFFICE)
+                        || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
+                        || (isSamePerson && sickNote.isSubmitted());
+
+                return new SickNoteDto(
+                    sickNote.getId(),
+                    sickNote.getStartDate(),
+                    sickNote.getEndDate(),
+                    sickNote.getDayLength(),
+                    sickNote.isAubPresent(),
+                    sickNote.getWorkDays(),
+                    sickNote.getWorkDaysWithAub(),
+                    sickNote.getStatus(),
+                    sickNote.getSickNoteType(),
+                    isAllowedToEdit
+                );
+            }).toList(),
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
-            signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person),
+            isAllowedToAddOrSubmitSickNotes,
             person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person),
             shownSickNotes.size(),
             sickNotes.size()

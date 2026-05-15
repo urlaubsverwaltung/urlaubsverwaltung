@@ -1,12 +1,10 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-
 import java.util.List;
 
 final class SickNotesOverviewDTO {
 
-    private final List<SickNote> sickNotes;
+    private final List<SickNoteDto> sickNotes;
     private final SickDaysSummaryDto sickDaysSummary;
     private final boolean canAddSickNoteAnotherUser;
     private final boolean canViewSickNoteOfMyselfAndAnotherUser;
@@ -14,7 +12,7 @@ final class SickNotesOverviewDTO {
     private final int numberOfTotalSickNotes;
 
     SickNotesOverviewDTO(
-        List<SickNote> sickNotes,
+        List<SickNoteDto> sickNotes,
         SickDaysSummaryDto sickDaysSummary,
         boolean canAddSickNoteAnotherUser,
         boolean canViewSickNoteOfMyselfAndAnotherUser,
@@ -33,7 +31,7 @@ final class SickNotesOverviewDTO {
         return sickDaysSummary;
     }
 
-    public List<SickNote> getSickNotes() {
+    public List<SickNoteDto> getSickNotes() {
         return sickNotes;
     }
 

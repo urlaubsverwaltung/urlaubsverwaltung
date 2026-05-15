@@ -132,6 +132,9 @@ public final class SickNote {
     }
 
     public BigDecimal getWorkDaysWithAub() {
+        if (!isAubPresent()) {
+            return BigDecimal.ZERO;
+        }
         return workingTime(workingTimeCalendar, new DateRange(getAubStartDate(), getAubEndDate()), getDayLength());
     }
 
