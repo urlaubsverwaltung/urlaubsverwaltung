@@ -170,6 +170,18 @@
               <div class="opacity-100! flex items-center justify-end">
                 <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                   <a
+                    class="button flex-1 justify-center"
+                    th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id}, action='cancel', shortcut=true)}"
+                    th:if="${sickNote.isAllowedToCancel}"
+                  >
+                    <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 shrink-0')}"></svg>
+                    <span
+                      th:text="#{action.delete}"
+                      class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
+                      >Cancel</span
+                    >
+                  </a>
+                  <a
                     th:if="${sickNote.isAllowedToEdit}"
                     class="button flex-1 justify-center"
                     th:href="@{/web/sicknote/{sickNote}/edit (sickNote=${sickNote.id})}"

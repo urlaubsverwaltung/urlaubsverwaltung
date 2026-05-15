@@ -57,6 +57,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
@@ -274,6 +275,10 @@ public class OverviewViewController implements HasLaunchpad {
                         || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
                         || (isSamePerson && sickNote.isSubmitted());
 
+                final boolean allowedToCancel =
+                    signedInUser.hasRole(OFFICE)
+                        || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person);
+
                 return new SickNoteDto(
                     sickNote.getId(),
                     sickNote.getStartDate(),
@@ -284,7 +289,8 @@ public class OverviewViewController implements HasLaunchpad {
                     sickNote.getWorkDaysWithAub(),
                     sickNote.getStatus(),
                     sickNote.getSickNoteType(),
-                    isAllowedToEdit
+                    isAllowedToEdit,
+                    allowedToCancel
                 );
             }).toList(),
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),

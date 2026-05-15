@@ -20,8 +20,10 @@ final class SickNoteDto {
     private final SickNoteType sickNoteType;
 
     private final boolean allowedToEdit;
+    private final boolean allowedToCancel;
 
-    SickNoteDto(Long id, LocalDate startDate, LocalDate endDate, DayLength dayLength, boolean isAubPresent, BigDecimal workDays, BigDecimal workDaysWithAub, SickNoteStatus status, SickNoteType sickNoteType, boolean allowedToEdit) {
+
+    SickNoteDto(Long id, LocalDate startDate, LocalDate endDate, DayLength dayLength, boolean isAubPresent, BigDecimal workDays, BigDecimal workDaysWithAub, SickNoteStatus status, SickNoteType sickNoteType, boolean allowedToEdit, boolean allowedToCancel) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -32,6 +34,7 @@ final class SickNoteDto {
         this.status = status;
         this.sickNoteType = sickNoteType;
         this.allowedToEdit = allowedToEdit;
+        this.allowedToCancel = allowedToCancel;
     }
 
     public Long getId() {
@@ -72,6 +75,10 @@ final class SickNoteDto {
 
     public SickNoteType getSickNoteType() {
         return sickNoteType;
+    }
+
+    public boolean isAllowedToCancel() {
+        return allowedToCancel;
     }
 }
 
