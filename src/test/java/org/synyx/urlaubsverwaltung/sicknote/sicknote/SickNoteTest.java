@@ -179,6 +179,15 @@ class SickNoteTest {
     }
 
     @Test
+    void ensureGetWorkDaysWithAubWithoutDateRangeWhenAubNotPresent() {
+
+        final SickNote sickNote = SickNote.builder().build();
+        final BigDecimal actual = sickNote.getWorkDaysWithAub();
+
+        assertThat(actual).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
     void ensureGetWorkDaysWithAubWhenDateRangeIsAfterAubDate() {
 
         final SickNote sickNote = SickNote.builder()
