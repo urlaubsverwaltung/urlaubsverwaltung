@@ -42,11 +42,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
@@ -118,13 +115,11 @@ public class OverviewViewController implements HasLaunchpad {
 
     @GetMapping("/web/overview")
     public String showOverview(
-        @RequestParam(value = "year", required = false) String year
+        @RequestParam(value = "year", required = false) Integer year
     ) {
         final Person signedInUser = personService.getSignedInUser();
-        return format("redirect:/web/person/%d/overview%s",
-            signedInUser.getId(),
-            hasText(year) ? "?year=" + encodeQueryParam(year, UTF_8) : ""
-        );
+        final String yearParam = year == null ? "" : "?year=" + year;
+        return format("redirect:/web/person/%d/overview%s", signedInUser.getId(), yearParam);
     }
 
     @GetMapping("/web/person/{personId}/overview")
