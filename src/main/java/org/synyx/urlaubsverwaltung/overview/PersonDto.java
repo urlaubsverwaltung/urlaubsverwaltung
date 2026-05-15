@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-public final class PersonDto {
+final class PersonDto {
 
     private final String gravatarUrl;
     private final String niceName;

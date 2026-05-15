@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -48,9 +49,8 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -58,7 +58,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -142,9 +141,12 @@ class OverviewViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(view().name("person/person-overview-reduced"))
-            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        actions.andExpect(view().name("person/person-overview-reduced"));
+
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("departmentsOfPerson", List.of(department));
 
         verify(personService).getSignedInUser();
         verify(personService).getPersonByID(SOME_PERSON_ID);
@@ -215,9 +217,12 @@ class OverviewViewControllerTest {
         when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
-        perform(get("/web/person/1/overview"))
-            .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
-            .andExpect(model().attribute("account", account));
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel())
+            .containsEntry("vacationDaysLeft", vacationDaysLeft)
+            .containsEntry("account", account);
     }
 
     @Test
@@ -255,12 +260,15 @@ class OverviewViewControllerTest {
         when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of()))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
-        perform(get("/web/person/1/overview"))
-            .andExpect(model().attribute("account", account))
-            .andExpect(model().attribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
-            .andExpect(model().attribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
-            .andExpect(model().attribute("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate())))
-            .andExpect(model().attribute("showExpiredVacationDays", true));
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel())
+            .containsEntry("account", account)
+            .containsEntry("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()))
+            .containsEntry("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()))
+            .containsEntry("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate()))
+            .containsEntry("showExpiredVacationDays", true);
     }
 
     @Test
@@ -276,12 +284,10 @@ class OverviewViewControllerTest {
 
         when(accountService.getHolidaysAccount(1984, person)).thenReturn(Optional.empty());
 
-        perform(get("/web/person/1/overview").param("year", "1984"))
-            .andExpect(model().attribute("showExpiredVacationDays", false))
-            .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
-            .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
-            .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "1984"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("showExpiredVacationDays", false).doesNotContainKeys("vacationDaysLeft", "expiredRemainingVacationDays", "expiryDate", "isBeforeExpiryDate");
     }
 
     @Test
@@ -296,8 +302,10 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
@@ -312,8 +320,10 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
@@ -328,8 +338,10 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
@@ -344,8 +356,11 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
@@ -360,8 +375,11 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
@@ -376,8 +394,11 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(false))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", false);
     }
 
     @Test
@@ -394,8 +415,11 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
@@ -412,8 +436,11 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
 
@@ -431,8 +458,13 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
@@ -449,8 +481,11 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("sickNotesOverview", hasProperty("canViewSickNoteOfMyselfAndAnotherUser", equalTo(true))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
@@ -466,8 +501,13 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("applicationOverviewInformation", hasProperty("usedDaysOverview", hasProperty("holidayDays", hasProperty("sum", equalTo(ZERO))))));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object applicationOverviewInformation = mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverviewInformation).isNotNull();
+        final ApplicationOverviewDto overviewDto = (ApplicationOverviewDto) applicationOverviewInformation;
+        assertThat(overviewDto.getUsedDaysOverview().getHolidayDays().getSum()).isEqualByComparingTo(ZERO);
     }
 
     @Test
@@ -560,8 +600,11 @@ class OverviewViewControllerTest {
                 .locale(GERMAN)
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("person/person-overview"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
+            .andExpect(view().name("person/person-overview"));
+
+        final ModelAndView mav = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN)).andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("vacationTypeColors", List.of(new VacationTypeDto(1L, ORANGE)));
     }
 
     private Person somePerson() {

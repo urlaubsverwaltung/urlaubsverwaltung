@@ -24,7 +24,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 /**
  * Object to abstract how many days have been used in a year.
  */
-public final class ApplicationDaysUsedSummaryDto {
+final class ApplicationDaysUsedSummaryDto {
 
     private final int year;
 
