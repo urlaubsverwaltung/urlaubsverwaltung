@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
-    <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
+    <title th:text="#{sicknote.me.header.title(${person.niceName}, ${selectedYear})}"></title>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_sicknotes.js')}" />
     </th:block>
