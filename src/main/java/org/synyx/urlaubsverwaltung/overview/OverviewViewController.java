@@ -47,7 +47,11 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -312,8 +316,16 @@ public class OverviewViewController implements HasLaunchpad {
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
+        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
         final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
         final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+
+        final boolean allowedToEdit = isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+
+        final boolean allowedToRevoke = isAllowedToRevokeApplication(applicationForLeave, signedInUser, requiresApprovalToCancel);
+        final boolean allowedToCancel = isAllowedToCancelApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+        final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
@@ -335,7 +347,11 @@ public class OverviewViewController implements HasLaunchpad {
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());
         dto.setHolidayReplacements(holidayReplacements);
-        dto.setAllowedToEdit(isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+        dto.setAllowedToEdit(allowedToEdit);
+        dto.setAllowedToRevoke(allowedToRevoke);
+        dto.setAllowedToCancel(allowedToCancel);
+        dto.setAllowedToCancelDirectly(allowedToCancelDirectly);
+        dto.setAllowedToStartCancellationRequest(allowedToStartCancellationRequest);
         return dto;
     }
 

@@ -37,6 +37,11 @@ final class ApplicationDto {
 
     private boolean isAllowedToEdit;
 
+    private boolean isAllowedToRevoke;
+    private boolean isAllowedToCancel;
+    private boolean isAllowedToCancelDirectly;
+    private boolean isAllowedToStartCancellationRequest;
+
     public Long getId() {
         return id;
     }
@@ -197,6 +202,38 @@ final class ApplicationDto {
         isAllowedToEdit = allowedToEdit;
     }
 
+    public boolean isAllowedToRevoke() {
+        return isAllowedToRevoke;
+    }
+
+    public void setAllowedToRevoke(boolean allowedToRevoke) {
+        isAllowedToRevoke = allowedToRevoke;
+    }
+
+    public boolean isAllowedToCancel() {
+        return isAllowedToCancel;
+    }
+
+    public void setAllowedToCancel(boolean allowedToCancel) {
+        isAllowedToCancel = allowedToCancel;
+    }
+
+    public boolean isAllowedToCancelDirectly() {
+        return isAllowedToCancelDirectly;
+    }
+
+    public void setAllowedToCancelDirectly(boolean allowedToCancelDirectly) {
+        isAllowedToCancelDirectly = allowedToCancelDirectly;
+    }
+
+    public boolean isAllowedToStartCancellationRequest() {
+        return isAllowedToStartCancellationRequest;
+    }
+
+    public void setAllowedToStartCancellationRequest(boolean allowedToStartCancellationRequest) {
+        isAllowedToStartCancellationRequest = allowedToStartCancellationRequest;
+    }
+
     @Override
     public String toString() {
         return "ApplicationDto{" +
@@ -220,6 +257,10 @@ final class ApplicationDto {
             ", cancelDate=" + cancelDate +
             ", holidayReplacements=" + holidayReplacements +
             ", isAllowedToEdit=" + isAllowedToEdit +
+            ", isAllowedToRevoke=" + isAllowedToRevoke +
+            ", isAllowedToCancel=" + isAllowedToCancel +
+            ", isAllowedToCancelDirectly=" + isAllowedToCancelDirectly +
+            ", isAllowedToStartCancellationRequest=" + isAllowedToStartCancellationRequest +
             '}';
     }
 }
