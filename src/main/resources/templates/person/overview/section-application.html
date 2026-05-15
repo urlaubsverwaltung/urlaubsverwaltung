@@ -215,18 +215,6 @@
               <div class="opacity-100! flex items-center justify-end">
                 <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                   <a
-                    th:if="${app.isAllowedToEdit}"
-                    class="button flex-1 justify-center"
-                    th:href="@{/web/application/{app}/edit (app=${app.id})}"
-                  >
-                    <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
-                    <span
-                      th:text="#{action.edit}"
-                      class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
-                      >Edit</span
-                    >
-                  </a>
-                  <a
                     class="button flex-1 justify-center"
                     th:href="@{/web/application/{app} (app=${app.id}, action='cancel', shortcut=true)}"
                     th:if="${app.isAllowedToRevoke || app.isAllowedToCancel || app.isAllowedToCancelDirectly || app.isAllowedToStartCancellationRequest}"
@@ -236,6 +224,18 @@
                       th:text="#{action.delete}"
                       class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
                       >Cancel</span
+                    >
+                  </a>
+                  <a
+                    th:if="${app.isAllowedToEdit}"
+                    class="button flex-1 justify-center"
+                    th:href="@{/web/application/{app}/edit (app=${app.id})}"
+                  >
+                    <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
+                    <span
+                      th:text="#{action.edit}"
+                      class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
+                      >Edit</span
                     >
                   </a>
                 </span>
