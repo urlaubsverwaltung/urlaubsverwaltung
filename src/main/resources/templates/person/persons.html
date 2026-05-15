@@ -85,9 +85,6 @@
             ></div>
           </th:block>
         </div>
-        <th:block th:fragment="persons-overview-heading-actions">
-          <button th:replace="~{fragments/print::button}"></button>
-        </th:block>
       </div>
 
       <div class="flex flex-col @3xl/main:flex-row gap-4">
@@ -199,16 +196,11 @@
         </turbo-stream>
         <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personsPagination.page.content)}">
-          <p class="hidden print:block">
-            <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
-              th:replace="~{fragments/date::date(${now})}"
-            ></span>
-          </p>
           <div class="mt-8 @3xl/main:mt-16">
             <div class="max-w-full overflow-x-auto">
               <table id="person-table" class="list-table person-table hoverable-table text-sm" data-test-id="persons">
                 <caption class="sr-only" th:text="#{persons.list.caption}"></caption>
-                <thead class="hidden @5xl/main:table-header-group print:table-header-group">
+                <thead class="hidden @5xl/main:table-header-group">
                   <tr>
                     <th scope="col"><!-- placeholder to ensure correct number of th --></th>
                     <th
@@ -241,7 +233,7 @@
                     th:data-test-id="|persons-row-${loopStatus.index}|"
                   >
                     <td class="text-center">
-                      <div class="print:hidden text-blue-50 dark:text-sky-800">
+                      <div class="text-blue-50 dark:text-sky-800">
                         <img
                           th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
                           alt=""
@@ -250,7 +242,7 @@
                     </td>
                     <td
                       th:if="${showPersonnelNumberColumn}"
-                      class="personnelNumber hidden @3xl/main:table-cell text-ellipsis overflow-hidden max-w-xs print:table-cell text-center"
+                      class="personnelNumber hidden @3xl/main:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
                       th:text="${person.personnelNumber}"
                     ></td>
                     <td class="firstname">
@@ -287,7 +279,7 @@
                         </li>
                       </ul>
                     </td>
-                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell">
                       <th:block th:if="${person.entitlementYear != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
                       </th:block>
@@ -296,7 +288,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell">
                       <th:block th:if="${person.entitlementActual != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
                       </th:block>
@@ -305,7 +297,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell">
                       <th:block th:if="${person.entitlementRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
                       </th:block>
@@ -314,7 +306,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell">
                       <th:block th:if="${person.vacationDaysLeft != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
                       </th:block>
@@ -323,7 +315,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell">
                       <th:block th:if="${person.vacationDaysLeftRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
                       </th:block>
@@ -333,7 +325,7 @@
                       ></th:block>
                     </td>
                     <td class="hidden @3xl/main:table-cell">
-                      <div class="print:hidden">
+                      <div>
                         <a
                           class="action-link"
                           data-turbo="false"

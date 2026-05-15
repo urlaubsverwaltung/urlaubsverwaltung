@@ -66,14 +66,13 @@
                 </li>
               </ul>
             </div>
-            <button th:replace="~{fragments/print::button}"></button>
           </div>
         </th:block>
       </div>
 
       <div class="flex flex-col @3xl/main:flex-row gap-4">
         <div
-          class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2 print:hidden"
+          class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2"
         >
           <button type="button" popovertarget="period-popover" class="popover-button-select">
             <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
@@ -262,12 +261,12 @@
           </caption>
           <thead class="hidden @5xl/main:table-header-group">
             <tr>
-              <th scope="col" class="print:hidden"></th>
+              <th scope="col"></th>
               <th
                 scope="col"
                 th:if="${showPersonnelNumberColumn}"
                 th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                class="hidden @5xl/main:table-cell print:table-cell"
+                class="hidden @5xl/main:table-cell"
               ></th>
               <th scope="col" th:text="#{person.data.firstName}"></th>
               <th scope="col" th:text="#{person.data.lastName}"></th>
@@ -281,7 +280,7 @@
           </thead>
           <tbody>
             <tr th:each="sickDaysStatistic : ${statisticsPagination.page.content}">
-              <td class="text-center print:hidden text-blue-50 dark:text-sky-800">
+              <td class="text-center text-blue-50 dark:text-sky-800">
                 <img
                   th:replace="~{fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},initials=${sickDaysStatistic.personInitials},width='40',height='40',personId=${sickDaysStatistic.personId})}"
                   alt=""
@@ -290,7 +289,7 @@
               <td
                 th:if="${showPersonnelNumberColumn}"
                 th:text="${sickDaysStatistic.personnelNumber}"
-                class="hidden @5xl/main:table-cell print:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
+                class="hidden @5xl/main:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
               ></td>
               <td class="hidden @3xl/main:table-cell">
                 <a

@@ -36,7 +36,7 @@
               <span class="flex justify-between gap-4 items-center my-1 text-lg font-medium">
                 <th:block th:text="${app.vacationType.label}"> Erholungsurlaub </th:block>
                 <span
-                  class="absence-type_color-box print:hidden mr-5"
+                  class="absence-type_color-box mr-5"
                   th:classappend="|
                   ${app.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
                   ${app.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
@@ -87,14 +87,6 @@
               </span>
             </th:block>
           </td>
-        </tr>
-        <tr class="hidden print:table-row">
-          <td th:text="#{application.data.status}"></td>
-          <td th:text="#{__${app.status.name}__}"></td>
-        </tr>
-        <tr>
-          <!--          needed for correct altering of table rows:
-          there is a problem because the only in print visible row is altered too -->
         </tr>
         <tr>
           <td th:text="#{application.data.time}"></td>

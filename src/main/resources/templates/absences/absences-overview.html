@@ -17,18 +17,13 @@
   <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main">
       <div class="content-container content--max-w">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
-        >
-          <th:block th:ref="person-basedata-heading-body">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::absence-overview-heading-body}, ~{})}">
+          <th:block th:ref="absence-overview-heading-body">
             <h1 th:text="#{absences.overview.title}">Absence Overview</h1>
-          </th:block>
-          <th:block th:ref="person-basedata-heading-actions">
-            <button th:replace="~{fragments/print::button}"></button>
           </th:block>
         </div>
         <div class="mt-4 @3xl/main:mt-6">
-          <form action="#" th:action="@{/web/absences}" id="absenceOverviewForm" class="print:hidden px-4">
+          <form action="#" th:action="@{/web/absences}" id="absenceOverviewForm" class="px-4">
             <div
               class="items-baseline @3xl/main:grid gap-x-8 gap-y-4"
               style="grid-template-columns: min-content minmax(0, 22rem) 1fr"
@@ -141,15 +136,14 @@
       </div>
 
       <div class="max-w-7xl px-8 mx-auto mt-8">
-        <hr class="print:hidden" />
-        <div th:each="month : ${absenceOverview.months}" class="mb-14 print:break-inside-avoid">
+        <hr />
+        <div th:each="month : ${absenceOverview.months}" class="mb-14">
           <h2
             th:id="${'absence-table-' + month.nameOfMonth}"
             class="text-2xl"
-            th:classappend="${#lists.size(absenceOverview.months) == 1 ? 'hidden print:block' : ''}"
+            th:classappend="${#lists.size(absenceOverview.months) == 1 ? 'hidden' : ''}"
           >
             <th:block th:text="${month.nameOfMonth}" />
-            <span class="hidden print:inline" th:text="${selectedYear}" />
           </h2>
           <table
             id="absence-table"
@@ -165,7 +159,7 @@
               <tr>
                 <th
                   scope="col"
-                  class="print:hidden cursor-default p-2 sticky -left-0.5 bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900"
+                  class="cursor-default p-2 sticky -left-0.5 bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900"
                 >
                   &nbsp;
                 </th>
@@ -190,16 +184,16 @@
               <tr role="row" th:each="person : ${month.persons}">
                 <th
                   scope="row"
-                  class="p-0.5 print:hidden sticky -left-px bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900 border-l-0 z-10"
+                  class="p-0.5 sticky -left-px bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900 border-l-0 z-10"
                 >
-                  <div class="print:hidden text-blue-50 dark:text-sky-800">
+                  <div class="text-blue-50 dark:text-sky-800">
                     <img
                       th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},initials=${person.initials},width='32',height='32',personId=${person.id})}"
                       alt=""
                     />
                   </div>
                 </th>
-                <th scope="row" class="py-0.5 pl-2 pr-4 print:py-1.5">
+                <th scope="row" class="py-0.5 pl-2 pr-4">
                   <a th:href="@{/web/person/__${person.id}__/overview}" class="icon-link" data-turbo="false">
                     <div class="flex flex-col justify-center leading-tight">
                       <th:block th:text="${person.firstName}" />&nbsp;
@@ -220,54 +214,14 @@
                     >
                       <svg th:replace="~{icon/slash::svg(className='no-workday-icon w-5 h-5 -translate-y-px')}"></svg>
                     </div>
-                    <span class="hidden print:inline print:font-mono">
-                      <th:block
-                        th:if="${absence.type.absenceMorning}"
-                        th:text="#{absences.overview.absence.morning.abbr}"
-                      >
-                      </th:block>
-                      <th:block
-                        th:if="${absence.type.absenceNoon}"
-                        th:text="#{absences.overview.absence.noon.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.absenceFull}"
-                        th:text="#{absences.overview.absence.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.waitingAbsenceMorning}"
-                        th:text="#{absences.overview.absence.morning.waiting.abbr}"
-                      >
-                      </th:block>
-                      <th:block
-                        th:if="${absence.type.waitingAbsenceNoon}"
-                        th:text="#{absences.overview.absence.noon.waiting.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.waitingAbsenceFull}"
-                        th:text="#{absences.overview.absence.waiting.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.activeSickNoteMorning}"
-                        th:text="#{absences.overview.sick.morning.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.activeSickNoteNoon}"
-                        th:text="#{absences.overview.sick.noon.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.activeSickNoteFull}"
-                        th:text="#{absences.overview.sick.abbr}"
-                      ></th:block>
-                    </span>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div id="vacationOverviewLegend" class="mb-8 print:break-inside-avoid">
-          <table aria-hidden="true" class="vacationOverview-legend-table sticky left-4 text-sm print:font-mono">
+        <div id="vacationOverviewLegend" class="mb-8">
+          <table aria-hidden="true" class="vacationOverview-legend-table sticky left-4 text-sm">
             <caption th:text="#{absences.overview.legendTitle}"></caption>
             <tbody>
               <tr>
@@ -294,14 +248,12 @@
                     class="cal-day absence-full absence-full--solid"
                     th:styleappend="|--absence-bar-color:var(--absence-color-${vacationTypeColor.color});|"
                   ></div>
-                  <span class="hidden print:inline" th:text="#{absences.overview.absence.abbr}"></span>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="${vacationTypeColor.label}"></td>
               </tr>
               <tr th:if="${sickNoteLegendVisible}">
                 <td class="vacationOverview-legend-colorbox">
                   <div class="cal-day sick-note-full absence-full--solid"></div>
-                  <span class="hidden print:inline" th:text="#{absences.overview.sick.abbr}"></span>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
               </tr>

@@ -53,9 +53,7 @@
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${statistics.year})}"
           ></div>
         </th:block>
-        <th:block th:ref="absences-statistics-heading-actions">
-          <a href="#" th:replace="~{fragments/print::button}"></a>
-        </th:block>
+        <th:block th:ref="absences-statistics-heading-actions"> </th:block>
       </div>
 
       <div>

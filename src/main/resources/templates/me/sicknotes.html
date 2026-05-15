@@ -112,9 +112,6 @@
               th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
               th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
             >
-              <td class="hidden print:table-cell">
-                <th:block th:text="${sickNoteStatusNameI18n}"></th:block>
-              </td>
               <td class="py-6 absence-type_color-box-parent">
                 <div
                   class="absence-type_color-box"
@@ -133,7 +130,7 @@
               <td class="text-center">
                 <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
               </td>
-              <td class="print:hidden">
+              <td>
                 <div class="flex items-center justify-end">
                   <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
                     <svg th:replace="~{icon/child::svg(className='w-6 h-6')}"></svg>
@@ -170,7 +167,7 @@
                   </span>
                 </a>
               </td>
-              <td class="hidden @3xl/main:table-cell print:hidden">
+              <td class="hidden @3xl/main:table-cell">
                 <div class="flex items-center justify-center">
                   <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                   <span>

@@ -29,7 +29,6 @@
               <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.department.create}"></span>
             </a>
-            <button th:replace="~{fragments/print::button}"></button>
           </div>
         </th:block>
       </div>
@@ -162,7 +161,7 @@
                 </form>
               </dialog>
 
-              <div class="flex gap-2 justify-end print:hidden">
+              <div class="flex gap-2 justify-end">
                 <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
                   <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
                   <th:block th:text="#{action.edit}" />

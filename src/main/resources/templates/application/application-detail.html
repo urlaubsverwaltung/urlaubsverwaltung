@@ -45,7 +45,6 @@
               ></th:block>
               <th:block th:replace="~{application/app-sections/action-remind::buttons}"></th:block>
               <th:block th:replace="~{application/app-sections/action-refer::buttons}"></th:block>
-              <button th:replace="~{fragments/print::button}"></button>
             </div>
           </th:block>
           <th:block th:ref="applications-details-heading-body">
@@ -118,7 +117,7 @@
         <th:block th:replace="~{application/app-sections/section-info::section}"></th:block>
         <th:block th:replace="~{application/app-sections/section-workingtime::section}"></th:block>
       </div>
-      <div class="print:hidden">
+      <div>
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::applications-details-account-heading-body}, ~{})}"
         >
@@ -230,7 +229,7 @@
       </div>
 
       <div th:replace="~{application/app-sections/section-progress::section}"></div>
-      <div class="print:hidden">
+      <div>
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::applications-details-department-heading-body}, ~{})}"
         >

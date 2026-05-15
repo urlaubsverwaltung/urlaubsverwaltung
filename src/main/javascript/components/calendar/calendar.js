@@ -121,9 +121,9 @@ const View = (function () {
     // {{0}}......{{6}}
     weekdays: `{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}`,
 
-    weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header print:hidden">{{text}}</li>`,
+    weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header">{{text}}</li>`,
 
-    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only print:hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 

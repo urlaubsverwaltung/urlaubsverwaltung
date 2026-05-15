@@ -86,14 +86,13 @@
                 </li>
               </ul>
             </div>
-            <button th:replace="~{fragments/print::button}"></button>
           </div>
         </th:block>
       </div>
 
       <div class="flex flex-col @3xl/main:flex-row gap-4">
         <div
-          class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2 print:hidden"
+          class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2"
         >
           <button type="button" popovertarget="period-popover" class="popover-button-select">
             <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
@@ -283,40 +282,20 @@
               <th
                 th:if="${showPersonnelNumberColumn}"
                 scope="col"
-                class="hidden @5xl/main:table-cell print:table-cell"
+                class="hidden @5xl/main:table-cell"
                 th:text="#{person.account.basedata.personnelNumber.abbreviation}"
               ></th>
+              <th scope="col" class="hidden @5xl/main:table-cell" th:text="#{person.data.firstName}"></th>
+              <th scope="col" class="hidden @5xl/main:table-cell" th:text="#{person.data.lastName}"></th>
+              <th scope="col" class="@5xl/main:hidden"></th>
+              <th scope="col" class="@3xl/main:hidden"></th>
+              <th scope="col" class="hidden @3xl/main:table-cell"></th>
+              <th scope="col" class="hidden @3xl/main:table-cell" th:text="#{applications.statistics.allowed}"></th>
+              <th scope="col" class="hidden @3xl/main:table-cell" th:text="#{applications.statistics.waiting}"></th>
+              <th scope="col" class="hidden @3xl/main:table-cell" th:text="#{applications.statistics.left}"></th>
               <th
                 scope="col"
-                class="hidden @5xl/main:table-cell print:table-cell"
-                th:text="#{person.data.firstName}"
-              ></th>
-              <th
-                scope="col"
-                class="hidden @5xl/main:table-cell print:table-cell"
-                th:text="#{person.data.lastName}"
-              ></th>
-              <th scope="col" class="@5xl/main:hidden print:hidden"></th>
-              <th scope="col" class="@3xl/main:hidden print:hidden"></th>
-              <th scope="col" class="hidden @3xl/main:table-cell print:table-cell"></th>
-              <th
-                scope="col"
-                class="hidden @3xl/main:table-cell print:table-cell"
-                th:text="#{applications.statistics.allowed}"
-              ></th>
-              <th
-                scope="col"
-                class="hidden @3xl/main:table-cell print:table-cell"
-                th:text="#{applications.statistics.waiting}"
-              ></th>
-              <th
-                scope="col"
-                class="hidden @3xl/main:table-cell print:table-cell"
-                th:text="#{applications.statistics.left}"
-              ></th>
-              <th
-                scope="col"
-                class="hidden @3xl/main:table-cell print:table-cell"
+                class="hidden @3xl/main:table-cell"
                 th:text="|#{applications.statistics.left} (${from.year})|"
               ></th>
             </tr>
@@ -324,7 +303,7 @@
           <tbody>
             <tr th:each="statistic : ${statisticsPagination.page.content}">
               <td class="text-center">
-                <div class="print:hidden text-blue-50 dark:text-sky-800">
+                <div class="text-blue-50 dark:text-sky-800">
                   <img
                     th:replace="~{fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},initials=${statistic.initials},width='60',height='60',personId=${statistic.id})}"
                     alt=""
@@ -335,9 +314,9 @@
               <td
                 th:if="${showPersonnelNumberColumn}"
                 th:text="${statistic.personnelNumber}"
-                class="hidden @5xl/main:table-cell print:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
+                class="hidden @5xl/main:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
               ></td>
-              <td class="hidden @5xl/main:table-cell print:table-cell">
+              <td class="hidden @5xl/main:table-cell">
                 <a
                   th:text="${statistic.firstName}"
                   th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -345,7 +324,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden @5xl/main:table-cell print:table-cell">
+              <td class="hidden @5xl/main:table-cell">
                 <a
                   th:text="${statistic.lastName}"
                   th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -353,7 +332,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="@5xl/main:hidden print:hidden">
+              <td class="@5xl/main:hidden">
                 <a
                   th:text="${statistic.niceName}"
                   th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -361,7 +340,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="@3xl/main:hidden print:hidden">
+              <td class="@3xl/main:hidden">
                 <div class="flex items-center">
                   <span class="w-6">
                     <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
@@ -379,7 +358,7 @@
                 </div>
               </td>
 
-              <td class="hidden @3xl/main:table-cell print:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <span th:text="|#{applications.statistics.total}:|" class="inline-block"></span>
                 <div
                   class="whitespace-nowrap"
@@ -390,7 +369,7 @@
                 </div>
               </td>
 
-              <td class="hidden @3xl/main:table-cell print:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <div class="whitespace-nowrap">
                   <span
                     class="font-bold"
@@ -410,7 +389,7 @@
                 </div>
               </td>
 
-              <td class="hidden @3xl/main:table-cell print:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <div class="whitespace-nowrap">
                   <span
                     class="font-bold"
@@ -430,7 +409,7 @@
                 </div>
               </td>
 
-              <td class="hidden @3xl/main:table-cell print:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <div>
                   <span
                     class="font-bold"
@@ -456,7 +435,7 @@
                 </div>
               </td>
 
-              <td class="hidden @3xl/main:table-cell print:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <div>
                   <span
                     class="font-bold"
