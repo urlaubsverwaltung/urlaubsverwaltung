@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -246,7 +247,6 @@ public class OverviewViewController implements HasLaunchpad {
             .limit(NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW)
             .toList();
 
-
         final List<SickNote> pastSickNotes = sickNotes.stream()
             .filter(s -> s.getStartDate().isBefore(today))
             .sorted(comparing(SickNote::getStartDate).reversed())
@@ -264,36 +264,33 @@ public class OverviewViewController implements HasLaunchpad {
                 || userIsAllowedToSubmitSickNotes;
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            shownSickNotes.stream().map(sickNote -> {
-                final boolean isAllowedToEdit =
-                    signedInUser.hasRole(OFFICE)
-                        || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
-                        || (isSamePerson && sickNote.isSubmitted());
-
-                final boolean allowedToCancel =
-                    signedInUser.hasRole(OFFICE)
-                        || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person);
-
-                return new SickNoteDto(
-                    sickNote.getId(),
-                    sickNote.getStartDate(),
-                    sickNote.getEndDate(),
-                    sickNote.getDayLength(),
-                    sickNote.isAubPresent(),
-                    sickNote.getWorkDays(),
-                    sickNote.getWorkDaysWithAub(),
-                    sickNote.getStatus(),
-                    sickNote.getSickNoteType(),
-                    isAllowedToEdit,
-                    allowedToCancel
-                );
-            }).toList(),
+            mapToSickNoteDtos(person, signedInUser, shownSickNotes, isSamePerson),
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
             isAllowedToAddOrSubmitSickNotes,
             person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person),
             shownSickNotes.size(),
             sickNotes.size()
         ));
+    }
+
+    private @NonNull List<SickNoteDto> mapToSickNoteDtos(Person person, Person signedInUser, List<SickNote> shownSickNotes, boolean isSamePerson) {
+        return shownSickNotes.stream()
+            .map(sickNote -> new SickNoteDto(
+                sickNote.getId(),
+                sickNote.getStartDate(),
+                sickNote.getEndDate(),
+                sickNote.getDayLength(),
+                sickNote.isAubPresent(),
+                sickNote.getWorkDays(),
+                sickNote.getWorkDaysWithAub(),
+                sickNote.getStatus(),
+                sickNote.getSickNoteType(),
+                signedInUser.hasRole(OFFICE)
+                    || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
+                    || (isSamePerson && sickNote.isSubmitted()),
+                signedInUser.hasRole(OFFICE)
+                    || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
+            )).toList();
     }
 
     private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, Person signedInUser, int year, Model model) {
@@ -323,24 +320,24 @@ public class OverviewViewController implements HasLaunchpad {
             overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person),
-            shownOvertimes.stream()
-                .map(overtime -> {
-                    final boolean isAllowedToEdit = overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
-
-                    return new OvertimeRecordDto(
-                        overtime.id().value(),
-                        overtime.startDate(),
-                        overtime.endDate(),
-                        overtime.duration(),
-                        overtime.type().equals(EXTERNAL),
-                        isAllowedToEdit
-                    );
-                }).toList(),
+            mapToShownOvertimesDto(overtimeService, person, signedInUser, shownOvertimes),
             shownOvertimes.size(),
             overtimes.size()
         );
 
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
+    }
+
+    private static @NonNull List<OvertimeRecordDto> mapToShownOvertimesDto(OvertimeService overtimeService, Person person, Person signedInUser, List<Overtime> shownOvertimes) {
+        return shownOvertimes.stream()
+            .map(overtime -> new OvertimeRecordDto(
+                overtime.id().value(),
+                overtime.startDate(),
+                overtime.endDate(),
+                overtime.duration(),
+                overtime.type().equals(EXTERNAL),
+                overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)
+            )).toList();
     }
 
     private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
