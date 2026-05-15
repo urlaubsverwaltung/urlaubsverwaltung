@@ -296,14 +296,18 @@ public class OverviewViewController implements HasLaunchpad {
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person),
             shownOvertimes.stream()
-                .map(overtime -> new OvertimeRecordDto(
-                    overtime.id().value(),
-                    overtime.startDate(),
-                    overtime.endDate(),
-                    overtime.duration(),
-                    overtime.type().equals(EXTERNAL),
-                    false
-                )).toList(),
+                .map(overtime -> {
+                    final boolean isAllowedToEdit = overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
+
+                    return new OvertimeRecordDto(
+                        overtime.id().value(),
+                        overtime.startDate(),
+                        overtime.endDate(),
+                        overtime.duration(),
+                        overtime.type().equals(EXTERNAL),
+                        isAllowedToEdit
+                    );
+                }).toList(),
             shownOvertimes.size(),
             overtimes.size()
         );
