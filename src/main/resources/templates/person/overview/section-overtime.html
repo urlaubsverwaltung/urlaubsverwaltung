@@ -61,17 +61,19 @@
                 <span th:text="${{record.duration}}"></span>
               </td>
               <td class="py-4">
-                <a
-                  th:text="#{overtime.link.overtime}"
-                  class="print:hidden text-lg mb-1"
-                  th:href="@{__${recordDetailsUrl}__}"
-                ></a>
-                <span
-                  th:if="${record.isExternal}"
-                  class="text-gray-400 dark:text-zinc-500"
-                  th:data-title="#{overtime.details.isExternal}"
-                >
-                  <span th:replace="~{icon/cloud-check::svg(className='w-4 h-4')}"></span>
+                <span class="flex items-center gap-2">
+                  <a
+                    th:text="#{overtime.link.overtime}"
+                    class="print:hidden text-lg mb-1"
+                    th:href="@{__${recordDetailsUrl}__}"
+                  ></a>
+                  <span
+                    th:if="${record.isExternal}"
+                    class="text-gray-400 dark:text-zinc-500"
+                    th:data-title="#{overtime.details.isExternal}"
+                  >
+                    <span th:replace="~{icon/cloud-check::svg(className='w-4 h-4')}"></span>
+                  </span>
                 </span>
                 <div>
                   <th:block th:text="#{absence.period.for}" />
