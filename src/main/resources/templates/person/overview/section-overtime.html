@@ -85,6 +85,12 @@
         </table>
 
         <p class="flex items-center justify-center gap-1">
+          <span class="text-sm text-gray-600 dark:text-zinc-400">
+            <th:block th:text="${overtimeOverviewInformation.numberOfShownOvertimes}">6</th:block>
+            <th:block th:text="#{overview.overtime.of}">von</th:block>
+            <th:block th:text="${overtimeOverviewInformation.numberOfTotalOvertimes}">142</th:block>
+          </span>
+          &nbsp;-&nbsp;
           <a
             class="underline text-sm text-gray-600 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-300"
             href="#"
