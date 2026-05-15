@@ -18,17 +18,14 @@
           ></div>
         </th:block>
         <th:block th:ref="overview-heading-actions">
-          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
-            <a
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              href="#"
-              th:href="@{/web/person/{personId} (personId=${person.id}, year=${selectedYear})}"
-            >
-              <svg th:replace="~{icon/user-circle::svg(className='h-5 w-5')}" />&nbsp;
-              <span th:text="#{action.account.title(${person.niceName})}"></span>
-            </a>
-            <a href="" th:replace="~{fragments/print::button}"></a>
-          </div>
+          <a
+            class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+            href="#"
+            th:href="@{/web/person/{personId} (personId=${person.id}, year=${selectedYear})}"
+          >
+            <svg th:replace="~{icon/user-circle::svg(className='h-5 w-5')}" />&nbsp;
+            <span th:text="#{action.account.title(${person.niceName})}"></span>
+          </a>
         </th:block>
       </div>
 

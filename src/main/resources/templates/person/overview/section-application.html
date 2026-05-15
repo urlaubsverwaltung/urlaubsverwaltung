@@ -114,9 +114,6 @@
             th:class="${app.status.name == 'CANCELLED' || app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'inactive' : 'active'}"
             th:onclick="|navigate('/web/application/${app.id}');|"
           >
-            <td class="hidden print:table-cell">
-              <th:block th:text="${#messages.msg(app.status)}"></th:block>
-            </td>
             <td class="py-4 absence-type_color-box-parent">
               <div
                 class="absence-type_color-box"
@@ -195,7 +192,7 @@
                 </span>
               </a>
             </td>
-            <td class="hidden @3xl/main:table-cell print:hidden">
+            <td class="hidden @3xl/main:table-cell">
               <div class="flex items-center gap-2 flex-wrap">
                 <th:block
                   th:if="${#lists.isEmpty(app.holidayReplacements)}"
@@ -219,7 +216,7 @@
                 </th:block>
               </div>
             </td>
-            <td class="hidden @3xl/main:table-cell print:hidden">
+            <td class="hidden @3xl/main:table-cell">
               <div class="opacity-100! flex items-center justify-end">
                 <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                   <a

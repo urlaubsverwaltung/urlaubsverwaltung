@@ -62,11 +62,7 @@
               </td>
               <td class="py-4">
                 <span class="flex items-center gap-2">
-                  <a
-                    th:text="#{overtime.link.overtime}"
-                    class="print:hidden text-lg mb-1"
-                    th:href="@{__${recordDetailsUrl}__}"
-                  ></a>
+                  <a th:text="#{overtime.link.overtime}" class="text-lg mb-1" th:href="@{__${recordDetailsUrl}__}"></a>
                   <span
                     th:if="${record.isExternal}"
                     class="text-gray-400 dark:text-zinc-500"
@@ -82,7 +78,7 @@
                   ></th:block>
                 </div>
               </td>
-              <td class="hidden @3xl/main:table-cell print:hidden">
+              <td class="hidden @3xl/main:table-cell">
                 <div class="opacity-100! flex items-center justify-end">
                   <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                     <a

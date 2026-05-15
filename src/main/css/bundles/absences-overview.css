@@ -23,13 +23,6 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-@media print {
-  th.vacationOverview-cal-head.today::before,
-  th.vacationOverview-cal-head.today::after {
-    display: none;
-  }
-}
-
 .vacationOverview-table th,
 .vacationOverview-table td {
   @apply text-zinc-600!;
@@ -189,13 +182,6 @@ th.vacationOverview-cal-head.today::after {
   background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, var(--absence-bar-color-noon) 50%);
 }
 
-@media print {
-  .cal-day {
-    --bg-left-lightness: 100%;
-    --bg-right-lightness: 100%;
-  }
-}
-
 svg.no-workday-icon {
   @apply stroke-neutral-200;
   @apply dark:stroke-neutral-700;
@@ -287,39 +273,5 @@ svg.no-workday-icon {
 
   .vacationOverview-tbody tr:hover svg.no-workday-icon {
     @apply stroke-zinc-600;
-  }
-}
-
-@media print {
-  .vacationOverview-table th,
-  .vacationOverview-table td {
-    border: 1px solid #e2e8f0 !important;
-  }
-
-  .vacationOverview-table thead th {
-    font-weight: 600 !important;
-    padding: 4pt 8pt;
-  }
-
-  .vacationOverview-table tbody th {
-    font-weight: 300 !important;
-    padding: 4pt 8pt;
-  }
-
-  .vacationOverview-table-legend th {
-    text-align: center;
-    padding: 0 12pt;
-    font-weight: 300 !important;
-  }
-
-  .public-holiday-morning {
-    --background-color-left: #ffffff;
-  }
-  .public-holiday-noon {
-    --background-color-right: #ffffff;
-  }
-  .public-holiday-full {
-    --background-color-left: #ffffff;
-    --background-color-right: #ffffff;
   }
 }
