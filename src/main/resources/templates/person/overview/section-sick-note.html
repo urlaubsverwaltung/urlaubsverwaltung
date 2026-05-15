@@ -180,20 +180,12 @@
           </tbody>
         </table>
 
-        <div class="flex items-center justify-end text-sm -mt-4">
-          <div>
-            <span
-              class="text-gray-900 dark:text-gray-200 font-medium"
-              th:text="${sickNotesOverview.numberOfShownSickNotes}"
-              >6</span
-            >
-            <span th:text="#{overview.sicknotes.of}">von</span>
-            <span
-              class="text-gray-900 dark:text-gray-200 font-medium"
-              th:text="${sickNotesOverview.numberOfTotalSickNotes}"
-              >142</span
-            >
-          </div>
+        <p class="flex items-center justify-end text-sm -mt-4">
+          <span class="text-gray-900 dark:text-gray-200 font-medium">
+            <th:block th:text="${sickNotesOverview.numberOfShownSickNotes}">6</th:block>
+            <th:block th:text="#{overview.sicknotes.of}">von</th:block>
+            <th:block th:text="${sickNotesOverview.numberOfTotalSickNotes}">142</th:block>
+          </span>
           &nbsp;-&nbsp;
           <a
             class="icon-link @2xl/main:flex-row text-sm"
@@ -202,7 +194,7 @@
           >
             <span th:text="#{overview.sicknotes.showAll}">Alle anzeigen</span>
           </a>
-        </div>
+        </p>
       </div>
     </th:block>
   </body>
