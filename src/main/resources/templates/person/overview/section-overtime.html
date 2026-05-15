@@ -27,7 +27,7 @@
         </th:block>
       </div>
 
-      <div class="mb-6 flex flex-wrap space-y-8 @5xl/main:space-y-0">
+      <div class="mb-6 flex flex-wrap space-y-8 @5xl/main:space-y-0 mb-6">
         <div class="w-full @5xl/main:w-1/3"></div>
         <div class="w-full @2xl/main:w-1/2 @5xl/main:w-1/3">
           <div
@@ -41,15 +41,59 @@
         </div>
       </div>
 
-      <p class="flex items-center justify-center gap-1">
-        <a
-          class="underline text-sm text-gray-600 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-300"
-          href="#"
-          th:href="@{/web/overtime (person=${person.id}, year=${selectedYear})}"
-        >
-          <span th:text="#{overview.overtime.showAll}">Alle anzeigen</span>
-        </a>
-      </p>
+      <div class="mb-4 @5xl/main:mb-12">
+        <table class="list-table selectable-table text-sm">
+          <tbody>
+            <tr
+              th:each="record,loopStatus : ${overtimeOverviewInformation.shownOvertimes}"
+              th:with="recordDetailsUrl=${'/web/overtime/__${record.id}__'}"
+              th:onclick="|navigate('__${recordDetailsUrl}__');|"
+            >
+              <td class="w-12 text-center">
+                <th:block th:if="${record.negative}">
+                  <span th:replace="~{icon/arrow-down::svg(className='w-5 h-5')}"></span>
+                </th:block>
+                <th:block th:if="${record.positive}">
+                  <span th:replace="~{icon/arrow-up::svg(className='w-5 h-5')}"></span>
+                </th:block>
+              </td>
+              <td class="w-30 text-center">
+                <span th:text="${{record.duration}}"></span>
+              </td>
+              <td class="py-4">
+                <a
+                  th:text="#{overtime.link.overtime}"
+                  class="print:hidden text-lg mb-1"
+                  th:href="@{__${recordDetailsUrl}__}"
+                ></a>
+                <span
+                  th:if="${record.isExternal}"
+                  class="text-gray-400 dark:text-zinc-500"
+                  th:data-title="#{overtime.details.isExternal}"
+                >
+                  <span th:replace="~{icon/cloud-check::svg(className='w-4 h-4')}"></span>
+                </span>
+                <div>
+                  <th:block th:text="#{absence.period.for}" />
+                  <th:block
+                    th:replace="~{fragments/date-range::date-range-all(from=${record.startDate}, to=${record.endDate})}"
+                  ></th:block>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="flex items-center justify-center gap-1">
+          <a
+            class="underline text-sm text-gray-600 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-300"
+            href="#"
+            th:href="@{/web/overtime (person=${person.id}, year=${selectedYear})}"
+          >
+            <span th:text="#{overview.overtime.showAll}">Alle anzeigen</span>
+          </a>
+        </p>
+      </div>
     </th:block>
   </body>
 </html>

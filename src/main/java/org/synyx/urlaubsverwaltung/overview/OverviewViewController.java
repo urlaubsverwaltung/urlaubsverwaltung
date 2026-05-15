@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -47,6 +48,7 @@ import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -66,6 +68,8 @@ public class OverviewViewController implements HasLaunchpad {
     private static final int NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW = 5;
     private static final int NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW = 3;
     private static final int NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW = 1;
+    private static final int NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW = 3;
+    private static final int NUMBER_OF_FUTR_OVERTIMES_ON_OVERVIEW = 1;
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -262,11 +266,42 @@ public class OverviewViewController implements HasLaunchpad {
 
     private void prepareOvertimeInformation(OvertimeService overtimeService, Person person, Person signedInUser, int year, Model model) {
 
+        final List<Overtime> overtimes = overtimeService.getOvertimeRecordsForPersonAndYear(person, year);
+
+        final LocalDate today = LocalDate.now(clock);
+
+        // most of the time there are no future sick notes therefore we fill with past sick notes
+        final List<Overtime> futureOvertimes = overtimes.stream()
+            .filter(s -> !s.startDate().isBefore(today))
+            .sorted(comparing(Overtime::startDate))
+            .limit(NUMBER_OF_FUTR_OVERTIMES_ON_OVERVIEW)
+            .toList();
+
+
+        final List<Overtime> pastOvertimes = overtimes.stream()
+            .filter(s -> s.startDate().isBefore(today))
+            .sorted(comparing(Overtime::startDate).reversed())
+            .limit((long) NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW - futureOvertimes.size())
+            .toList();
+
+        final List<Overtime> shownOvertimes = Stream.concat(futureOvertimes.stream(), pastOvertimes.stream()).toList();
+
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
             settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
             overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getLeftOvertimeForPerson(person)
+            overtimeService.getLeftOvertimeForPerson(person),
+            shownOvertimes.stream()
+                .map(overtime -> new OvertimeRecordDto(
+                    overtime.id().value(),
+                    overtime.startDate(),
+                    overtime.endDate(),
+                    overtime.duration(),
+                    overtime.type().equals(EXTERNAL),
+                    false
+                )).toList(),
+            shownOvertimes.size(),
+            overtimes.size()
         );
 
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
