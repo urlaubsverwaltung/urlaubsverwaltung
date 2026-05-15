@@ -25,7 +25,6 @@
 @import "../components/table.css" layer(components);
 @import "../components/tab-list.css" layer(components);
 @import "../components/topbar.css" layer(components);
-@import "../components/states.css" layer(utilities);
 @import "../components/section-heading.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);

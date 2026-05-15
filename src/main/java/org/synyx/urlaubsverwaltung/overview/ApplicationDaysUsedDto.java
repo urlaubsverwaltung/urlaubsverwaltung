@@ -11,11 +11,11 @@ import static java.math.BigDecimal.ZERO;
 /**
  * Represents number of days for specific application states.
  */
-public class UsedDays {
+final class ApplicationDaysUsedDto {
 
     private final Map<String, BigDecimal> days;
 
-    UsedDays(ApplicationStatus... status) {
+    ApplicationDaysUsedDto(ApplicationStatus... status) {
 
         days = new HashMap<>();
 

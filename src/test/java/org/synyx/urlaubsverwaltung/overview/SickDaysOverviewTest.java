@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -59,12 +58,13 @@ class SickDaysOverviewTest {
 
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2017, 12, 31);
-        final SickDaysOverview sickDaysOverview = new SickDaysOverview(List.of(sickNote), workDaysCountService, from, to);
-        final SickDays sickDays = sickDaysOverview.getSickDays();
+        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
+        final SickDaysDto sickDays = sickDaysOverview.getSickDays();
         assertThat(sickDays.getDays())
             .containsEntry("TOTAL", workingDays)
             .containsEntry("WITH_AUB", workingDaysAub);
     }
+
     @Test
     void ensureGeneratesCorrectSickDaysOverviewWithSickNoteSpanningMultipleYearsButAubEndsInLastYear() {
 
@@ -90,7 +90,7 @@ class SickDaysOverviewTest {
             .endDate(sickNoteEndDate)
             // aub must end before the start of the requested interval below
             .aubStartDate(sickNoteStartDate)
-            .aubEndDate(LocalDate.of(2025, 12,  31))
+            .aubEndDate(LocalDate.of(2025, 12, 31))
             .build();
 
         final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
@@ -100,9 +100,9 @@ class SickDaysOverviewTest {
 
         final LocalDate from = LocalDate.of(2026, 1, 1);
         final LocalDate to = LocalDate.of(2026, 12, 31);
-        final SickDaysOverview sut = new SickDaysOverview(List.of(sickNote), workDaysCountService, from, to);
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
 
-        final SickDays actual = sut.getSickDays();
+        final SickDaysDto actual = sut.getSickDays();
 
         assertThat(actual.getDays())
             .containsEntry("TOTAL", sickNoteWorkingDays)
@@ -201,16 +201,16 @@ class SickDaysOverviewTest {
         final List<SickNote> sickNotes = List.of(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
-        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService,
+        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(sickNotes, workDaysCountService,
             LocalDate.of(2014, 10, 10), LocalDate.of(2014, 10, 18));
 
-        final SickDays sickDays = sickDaysOverview.getSickDays();
+        final SickDaysDto sickDays = sickDaysOverview.getSickDays();
         assertThat(sickDays.getDays())
             .isNotNull()
             .containsEntry("TOTAL", new BigDecimal("4"))
             .containsEntry("WITH_AUB", ONE);
 
-        final SickDays childSickDays = sickDaysOverview.getChildSickDays();
+        final SickDaysDto childSickDays = sickDaysOverview.getChildSickDays();
         assertThat(childSickDays.getDays())
             .isNotNull()
             .containsEntry("TOTAL", new BigDecimal("4"))

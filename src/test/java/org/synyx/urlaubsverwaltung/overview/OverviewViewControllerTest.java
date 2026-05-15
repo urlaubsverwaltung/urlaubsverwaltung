@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -20,10 +22,14 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -31,10 +37,11 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +54,8 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -57,7 +63,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -66,6 +71,8 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -141,9 +148,12 @@ class OverviewViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(view().name("person/person-overview-reduced"))
-            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        actions.andExpect(view().name("person/person-overview-reduced"));
+
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("departmentsOfPerson", List.of(department));
 
         verify(personService).getSignedInUser();
         verify(personService).getPersonByID(SOME_PERSON_ID);
@@ -154,6 +164,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -171,6 +183,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewUsesYearParamIfYearGiven() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -189,6 +203,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -208,13 +224,18 @@ class OverviewViewControllerTest {
         when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
-        perform(get("/web/person/1/overview"))
-            .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
-            .andExpect(model().attribute("account", account));
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel())
+            .containsEntry("vacationDaysLeft", vacationDaysLeft)
+            .containsEntry("account", account);
     }
 
     @Test
     void showOverviewAddsHolidayAccountDetailedAttributes() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
 
         final Person person = new Person();
         person.setId(1L);
@@ -246,16 +267,21 @@ class OverviewViewControllerTest {
         when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of()))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
-        perform(get("/web/person/1/overview"))
-            .andExpect(model().attribute("account", account))
-            .andExpect(model().attribute("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
-            .andExpect(model().attribute("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate())))
-            .andExpect(model().attribute("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate())))
-            .andExpect(model().attribute("showExpiredVacationDays", true));
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel())
+            .containsEntry("account", account)
+            .containsEntry("vacationDaysLeftDays", vacationDaysLeft.getLeftVacationDays(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()))
+            .containsEntry("remainingVacationDaysLeftDays", vacationDaysLeft.getRemainingVacationDaysLeft(now, account.doRemainingVacationDaysExpire(), account.getExpiryDate()))
+            .containsEntry("expiredRemainingVacationDays", vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate()))
+            .containsEntry("showExpiredVacationDays", true);
     }
 
     @Test
     void showOverviewWithoutExistingAccount() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
 
@@ -265,16 +291,16 @@ class OverviewViewControllerTest {
 
         when(accountService.getHolidaysAccount(1984, person)).thenReturn(Optional.empty());
 
-        perform(get("/web/person/1/overview").param("year", "1984"))
-            .andExpect(model().attribute("showExpiredVacationDays", false))
-            .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
-            .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
-            .andExpect(model().attributeDoesNotExist("expiryDate"))
-            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"));
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "1984"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("showExpiredVacationDays", false).doesNotContainKeys("vacationDaysLeft", "expiredRemainingVacationDays", "expiryDate", "isBeforeExpiryDate");
     }
 
     @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER));
@@ -283,12 +309,16 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
     void showOverviewCanAccessCalendarShareAssOffice() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
@@ -297,12 +327,16 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
     void showOverviewCanAccessCalendarShareAsBoss() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, BOSS));
@@ -311,12 +345,16 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessCalendarShare", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("canAccessCalendarShare", true);
     }
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfOffice() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, OFFICE));
@@ -325,12 +363,17 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
@@ -339,12 +382,17 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
     void ensureOverviewCanNotViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person personWithRole = new Person();
         personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS));
@@ -353,12 +401,17 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", false));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", false);
     }
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndSickNoteAddRoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person departmentHead = new Person();
         departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
@@ -369,12 +422,17 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person departmentHead = new Person();
         departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
@@ -385,13 +443,18 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndSickNoteAddRoleDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person ssa = new Person();
         ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
@@ -402,12 +465,19 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person ssa = new Person();
         ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
@@ -418,12 +488,17 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
     }
 
     @Test
     void ensureModelWhenThereAreNoApplications() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -433,12 +508,13 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("usedDaysOverview",
-                hasProperty("holidayDays",
-                    hasProperty("sum", equalTo(ZERO))
-                )
-            ));
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object applicationOverviewInformation = mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverviewInformation).isNotNull();
+        final ApplicationOverviewDto overviewDto = (ApplicationOverviewDto) applicationOverviewInformation;
+        assertThat(overviewDto.usedDaysOverview().getHolidayDays().getSum()).isEqualByComparingTo(ZERO);
     }
 
     @Test
@@ -465,6 +541,8 @@ class OverviewViewControllerTest {
 
     @Test
     void showPersonalOverview() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
 
         final Person person = new Person();
         person.setId(1L);
@@ -529,9 +607,396 @@ class OverviewViewControllerTest {
                 .locale(GERMAN)
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("person/person-overview"))
-            .andExpect(model().attribute("signedInUser", person))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
+            .andExpect(view().name("person/person-overview"));
+
+        final ModelAndView mav = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN)).andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsEntry("vacationTypeColors", List.of(new VacationTypeDto(1L, ORANGE)));
+    }
+
+    // OVERTIME TESTS
+
+    @Test
+    void ensureOverviewAddsOvertimeInformationToModel() throws Exception {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        assertThat(mav.getModel()).containsKey("overtimeOverviewInformation");
+    }
+
+    @Test
+    void ensureOverviewOvertimeInformationIsAddedWithCorrectValues() throws Exception {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        final LocalDate startDate = LocalDate.of(2021, 6, 1);
+        final LocalDate endDate = LocalDate.of(2021, 6, 2);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            new PersonId(person.getId()),
+            new DateRange(startDate, endDate),
+            Duration.ofHours(5),
+            EXTERNAL,
+            java.time.Instant.now()
+        );
+
+        when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of(overtime));
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ofHours(10));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(3));
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+        assertThat(overtimeOverview).isNotNull();
+        assertThat(overtimeOverview.overtimeTotal()).isEqualTo(Duration.ofHours(10));
+        assertThat(overtimeOverview.overtimeLeft()).isEqualTo(Duration.ofHours(3));
+        assertThat(overtimeOverview.userIsAllowedToCreateOvertime()).isTrue();
+        assertThat(overtimeOverview.numberOfShownOvertimes()).isEqualTo(1);
+        assertThat(overtimeOverview.numberOfTotalOvertimes()).isEqualTo(1);
+    }
+
+    @Test
+    void ensureOverviewOvertimeInformationUserNotAllowedToCreateOvertime() throws Exception {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+        assertThat(overtimeOverview).isNotNull();
+        assertThat(overtimeOverview.userIsAllowedToCreateOvertime()).isFalse();
+    }
+
+    @Test
+    void ensureOverviewOvertimeInformationIsNotActive() throws Exception {
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+        assertThat(overtimeOverview).isNotNull();
+        assertThat(overtimeOverview.isOvertimeActive()).isFalse();
+    }
+
+    // APPLICATION PERMISSION TESTS
+
+    @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveForMyselfWhenPersonEqualsSignedInUser() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForMyself()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveForAnotherUserWhenOffice() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveForAnotherUserWhenDepartmentHeadAndApplicationAdd() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveForAnotherUserWhenSecondStageAuthorityAndApplicationAdd() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCannotAddApplicationForLeaveForAnotherUserWhenOnlyApplicationAdd() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isFalse();
+    }
+
+    @Test
+    void ensureApplicationOverviewCanAddForMyselfIsFalseWhenViewingAnotherPerson() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeaveForMyself()).isFalse();
+    }
+
+    // YEAR AND SELECTED YEAR MODEL ATTRIBUTES TESTS
+
+    @Test
+    void ensureOverviewAddsCurrentYearAndSelectedYearToModel() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final int currentYear = Year.now(clock).getValue();
+        assertThat(mav.getModel()).containsEntry("currentYear", currentYear);
+        assertThat(mav.getModel()).containsEntry("selectedYear", currentYear);
+    }
+
+    @Test
+    void ensureOverviewAddsSelectedYearDifferentFromCurrentYearToModel() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2019"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        assertThat(mav.getModel()).containsEntry("selectedYear", 2019);
+        final int currentYear = Year.now(clock).getValue();
+        assertThat(mav.getModel()).containsEntry("currentYear", currentYear);
+    }
+
+    // SICK NOTES OVERVIEW COUNT TESTS
+
+    @Test
+    void ensureSickNotesOverviewContainsCorrectCounts() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(BigDecimal.valueOf(2));
+
+
+        final LocalDate localDate = LocalDate.parse("2021-06-10");
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+
+        final SickNote sickNote1 = SickNote.builder()
+            .startDate(localDate.minusDays(5))
+            .endDate(localDate.minusDays(4))
+            .status(SickNoteStatus.ACTIVE)
+            .sickNoteType(sickNoteType)
+            .person(person)
+            .build();
+
+        final SickNote sickNote2 = SickNote.builder()
+            .startDate(localDate.plusDays(1))
+            .endDate(localDate.plusDays(2))
+            .status(SickNoteStatus.ACTIVE)
+            .sickNoteType(sickNoteType)
+            .person(person)
+            .build();
+
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(List.of(sickNote1, sickNote2));
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("numberOfShownSickNotes", 2)
+            .hasFieldOrPropertyWithValue("numberOfTotalSickNotes", 2);
+    }
+
+    // APPLICATION OVERVIEW COUNT TESTS
+
+    @Test
+    void ensureApplicationOverviewContainsCorrectCounts() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        final LocalDate localDate = LocalDate.parse("2021-06-10");
+
+        final Application application1 = new Application();
+        application1.setVacationType(mock(VacationType.class));
+        application1.setPerson(person);
+        application1.setStartDate(localDate.minusDays(5));
+        application1.setEndDate(localDate.minusDays(4));
+
+        final Application application2 = new Application();
+        application2.setVacationType(mock(VacationType.class));
+        application2.setPerson(person);
+        application2.setStartDate(localDate.plusDays(1));
+        application2.setEndDate(localDate.plusDays(2));
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
+            .thenReturn(List.of(application1, application2));
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.numberOfShownApplications()).isLessThanOrEqualTo(5);
+        assertThat(applicationOverview.numberOfTotalApplications()).isEqualTo(2);
     }
 
     private Person somePerson() {

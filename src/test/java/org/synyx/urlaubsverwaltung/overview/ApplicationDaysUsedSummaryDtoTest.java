@@ -35,7 +35,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 
 
 @ExtendWith(MockitoExtension.class)
-class YearlyUsedDaysSummaryTest {
+class ApplicationDaysUsedSummaryDtoTest {
 
     @Mock
     private WorkDaysCountService workDaysCountService;
@@ -54,8 +54,8 @@ class YearlyUsedDaysSummaryTest {
             any(LocalDate.class), any(Person.class)))
             .thenReturn(workingDays);
 
-        final YearlyUsedDaysSummary usedDaysOverview = new YearlyUsedDaysSummary(List.of(holidayAllowed), 2014, workDaysCountService);
-        final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
+        final ApplicationDaysUsedSummaryDto usedDaysOverview = new ApplicationDaysUsedSummaryDto(List.of(holidayAllowed), 2014, workDaysCountService);
+        final ApplicationDaysUsedDto holidayDays = usedDaysOverview.getHolidayDays();
         assertThat(holidayDays.getDays())
             .containsEntry("WAITING", ZERO)
             .containsEntry("ALLOWED", workingDays)
@@ -134,26 +134,26 @@ class YearlyUsedDaysSummaryTest {
             any(LocalDate.class), any(Person.class)))
             .thenReturn(ONE);
 
-        final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(applications, 2014, workDaysCountService);
+        final ApplicationDaysUsedSummaryDto yearlyUsedDaysSummary = new ApplicationDaysUsedSummaryDto(applications, 2014, workDaysCountService);
 
-        final UsedDays holidayDays = yearlyUsedDaysSummary.getHolidayDays();
+        final ApplicationDaysUsedDto holidayDays = yearlyUsedDaysSummary.getHolidayDays();
         assertThat(holidayDays.getDays())
             .containsEntry("WAITING", ONE)
             .containsEntry("ALLOWED", ONE)
             .containsEntry("ALLOWED_CANCELLATION_REQUESTED", ONE);
 
-        final UsedDays holidayDaysAllowed = yearlyUsedDaysSummary.getHolidayDaysAllowed();
+        final ApplicationDaysUsedDto holidayDaysAllowed = yearlyUsedDaysSummary.getHolidayDaysAllowed();
         assertThat(holidayDaysAllowed.getDays())
             .containsEntry("ALLOWED", ONE)
             .containsEntry("ALLOWED_CANCELLATION_REQUESTED", ONE);
 
-        final UsedDays otherDays = yearlyUsedDaysSummary.getOtherDays();
+        final ApplicationDaysUsedDto otherDays = yearlyUsedDaysSummary.getOtherDays();
         assertThat(otherDays.getDays())
             .containsEntry("WAITING", BigDecimal.valueOf(3))
             .containsEntry("ALLOWED", BigDecimal.valueOf(3))
             .containsEntry("ALLOWED_CANCELLATION_REQUESTED", ONE);
 
-        final UsedDays otherDaysAllowed = yearlyUsedDaysSummary.getOtherDaysAllowed();
+        final ApplicationDaysUsedDto otherDaysAllowed = yearlyUsedDaysSummary.getOtherDaysAllowed();
         assertThat(otherDaysAllowed.getDays())
             .containsEntry("ALLOWED", BigDecimal.valueOf(3))
             .containsEntry("ALLOWED_CANCELLATION_REQUESTED", ONE);
@@ -172,14 +172,14 @@ class YearlyUsedDaysSummaryTest {
         when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
-        final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(singletonList(holiday), 2014, workDaysCountService);
+        final ApplicationDaysUsedSummaryDto yearlyUsedDaysSummary = new ApplicationDaysUsedSummaryDto(singletonList(holiday), 2014, workDaysCountService);
 
-        final UsedDays holidayDays = yearlyUsedDaysSummary.getHolidayDays();
+        final ApplicationDaysUsedDto holidayDays = yearlyUsedDaysSummary.getHolidayDays();
         assertThat(holidayDays.getDays())
             .containsEntry("WAITING", BigDecimal.valueOf(2))
             .containsEntry("ALLOWED", ZERO);
 
-        final UsedDays otherDays = yearlyUsedDaysSummary.getOtherDays();
+        final ApplicationDaysUsedDto otherDays = yearlyUsedDaysSummary.getOtherDays();
         assertThat(otherDays.getDays())
             .containsEntry("WAITING", ZERO)
             .containsEntry("ALLOWED", ZERO);
@@ -212,7 +212,7 @@ class YearlyUsedDaysSummaryTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
-        final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(applications, 2014, workDaysCountService);
+        final ApplicationDaysUsedSummaryDto yearlyUsedDaysSummary = new ApplicationDaysUsedSummaryDto(applications, 2014, workDaysCountService);
         assertThat(yearlyUsedDaysSummary.getHolidayDays().getDays())
             .containsEntry("WAITING", ONE)
             .containsEntry("TEMPORARY_ALLOWED", ONE)

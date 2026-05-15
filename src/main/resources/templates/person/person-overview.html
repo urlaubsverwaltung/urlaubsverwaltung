@@ -39,16 +39,16 @@
         <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
 
-      <div class="mb-12">
-        <div th:replace="~{person/overview/section-application::section}"></div>
-      </div>
-
-      <div th:if="${settings.overtimeSettings.overtimeActive}" class="mb-12">
-        <div th:replace="~{person/overview/section-overtime::section}"></div>
-      </div>
-
-      <div th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}" class="mb-12">
-        <div th:replace="~{person/overview/section-sick-note::section}"></div>
+      <div class="flex flex-col gap-12">
+        <div>
+          <div th:replace="~{person/overview/section-application::section}"></div>
+        </div>
+        <div th:if="${sickNotesOverview.canViewSickNoteOfMyselfAndAnotherUser}">
+          <div th:replace="~{person/overview/section-sick-note::section}"></div>
+        </div>
+        <div th:if="${overtimeOverviewInformation.isOvertimeActive}">
+          <div th:replace="~{person/overview/section-overtime::section}"></div>
+        </div>
       </div>
     </main>
   </body>

@@ -24,26 +24,26 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 /**
  * Object to abstract how many days have been used in a year.
  */
-public class YearlyUsedDaysSummary {
+final class ApplicationDaysUsedSummaryDto {
 
     private final int year;
 
     // used days for vacation type HOLIDAY
-    private final UsedDays holidayDays;
-    private final UsedDays holidayDaysAllowed;
+    private final ApplicationDaysUsedDto holidayDays;
+    private final ApplicationDaysUsedDto holidayDaysAllowed;
 
     // used days for all the other vacation types except HOLIDAY
-    private final UsedDays otherDays;
-    private final UsedDays otherDaysAllowed;
+    private final ApplicationDaysUsedDto otherDays;
+    private final ApplicationDaysUsedDto otherDaysAllowed;
 
-    YearlyUsedDaysSummary(List<Application> applications, int year, WorkDaysCountService calendarService) {
+    ApplicationDaysUsedSummaryDto(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
-        this.holidayDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        this.holidayDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDays = new ApplicationDaysUsedDto(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDaysAllowed = new ApplicationDaysUsedDto(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
-        this.otherDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        this.otherDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDays = new ApplicationDaysUsedDto(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDaysAllowed = new ApplicationDaysUsedDto(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
         for (final Application application : applications) {
             if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
@@ -67,19 +67,19 @@ public class YearlyUsedDaysSummary {
         }
     }
 
-    public UsedDays getHolidayDays() {
+    public ApplicationDaysUsedDto getHolidayDays() {
         return holidayDays;
     }
 
-    public UsedDays getHolidayDaysAllowed() {
+    public ApplicationDaysUsedDto getHolidayDaysAllowed() {
         return holidayDaysAllowed;
     }
 
-    public UsedDays getOtherDays() {
+    public ApplicationDaysUsedDto getOtherDays() {
         return otherDays;
     }
 
-    public UsedDays getOtherDaysAllowed() {
+    public ApplicationDaysUsedDto getOtherDaysAllowed() {
         return otherDaysAllowed;
     }
 

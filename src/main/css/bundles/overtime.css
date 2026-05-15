@@ -13,14 +13,14 @@
     grid-template-columns: --spacing(3) auto --spacing(4) auto --spacing(4) 1fr --spacing(4) auto --spacing(4) auto;
   }
   @variant md {
-    grid-template-columns: --spacing(3) auto --spacing(12) auto --spacing(3) 1fr --spacing(8) auto --spacing(
-        8
-      ) auto --spacing(8) auto;
+    grid-template-columns:
+      --spacing(3) auto --spacing(12) auto --spacing(3) 1fr --spacing(8) auto --spacing(8)
+      auto --spacing(8) auto;
   }
   @variant lg {
-    grid-template-columns: --spacing(7) auto --spacing(7) auto --spacing(3) 1fr --spacing(12) auto --spacing(
-        12
-      ) auto --spacing(12) auto;
+    grid-template-columns:
+      --spacing(7) auto --spacing(7) auto --spacing(3) 1fr --spacing(12) auto --spacing(12)
+      auto --spacing(12) auto;
   }
 
   /* every element should inherit column subgrid of the grid container */
