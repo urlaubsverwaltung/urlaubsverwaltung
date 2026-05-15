@@ -122,6 +122,9 @@ public enum FederalState {
 
     POLAND("pl", "pl"),
 
+    FINLAND("fi", "fi"),
+    FINLAND_ALAND("fi", "01"),
+
     USA_MARYLAND("us", "md"),
     USA_VIRGINIA("us", "va"),
     USA_WASHINGTON_DC("us", "dc");
