@@ -514,7 +514,7 @@ class OverviewViewControllerTest {
         final Object applicationOverviewInformation = mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverviewInformation).isNotNull();
         final ApplicationOverviewDto overviewDto = (ApplicationOverviewDto) applicationOverviewInformation;
-        assertThat(overviewDto.getUsedDaysOverview().getHolidayDays().getSum()).isEqualByComparingTo(ZERO);
+        assertThat(overviewDto.usedDaysOverview().getHolidayDays().getSum()).isEqualByComparingTo(ZERO);
     }
 
     @Test
@@ -748,7 +748,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForMyself()).isTrue();
+        assertThat(applicationOverview.canAddApplicationForLeaveForMyself()).isTrue();
     }
 
     @Test
@@ -772,7 +772,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForAnotherUser()).isTrue();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
     }
 
     @Test
@@ -797,7 +797,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForAnotherUser()).isTrue();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
     }
 
     @Test
@@ -822,7 +822,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForAnotherUser()).isTrue();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isTrue();
     }
 
     @Test
@@ -846,7 +846,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForAnotherUser()).isFalse();
+        assertThat(applicationOverview.canAddApplicationForLeaveForAnotherUser()).isFalse();
     }
 
     @Test
@@ -870,7 +870,7 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.isCanAddApplicationForLeaveForMyself()).isFalse();
+        assertThat(applicationOverview.canAddApplicationForLeaveForMyself()).isFalse();
     }
 
     // YEAR AND SELECTED YEAR MODEL ATTRIBUTES TESTS
@@ -995,8 +995,8 @@ class OverviewViewControllerTest {
 
         final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
         assertThat(applicationOverview).isNotNull();
-        assertThat(applicationOverview.getNumberOfShownApplications()).isLessThanOrEqualTo(5);
-        assertThat(applicationOverview.getNumberOfTotalApplications()).isEqualTo(2);
+        assertThat(applicationOverview.numberOfShownApplications()).isLessThanOrEqualTo(5);
+        assertThat(applicationOverview.numberOfTotalApplications()).isEqualTo(2);
     }
 
     private Person somePerson() {

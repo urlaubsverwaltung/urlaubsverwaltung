@@ -348,6 +348,10 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
     }
 
+    private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
+    }
+
     private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
@@ -364,36 +368,32 @@ public class OverviewViewController implements HasLaunchpad {
         final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
         final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
 
-        final ApplicationDto dto = new ApplicationDto();
-        dto.setId(applicationForLeave.getId());
-        dto.setStatus(applicationForLeave.getStatus());
-        dto.setVacationType(applicationVacationTypDto(applicationForLeave.getVacationType(), locale));
-        dto.setApplicationDate(applicationForLeave.getApplicationDate());
-        dto.setStartDate(applicationForLeave.getStartDate());
-        dto.setEndDate(applicationForLeave.getEndDate());
-        dto.setStartTime(applicationForLeave.getStartTime());
-        dto.setEndTime(applicationForLeave.getEndTime());
-        dto.setStartDateWithTime(applicationForLeave.getStartDateWithTime());
-        dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
-        dto.setDayLength(applicationForLeave.getDayLength());
-        dto.setWorkDays(applicationForLeave.getWorkDays());
-        dto.setPersonId(applicationForLeave.getPerson().getId());
-        dto.setHours(applicationForLeave.getHours());
-        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
-        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
-        dto.setEditedDate(applicationForLeave.getEditedDate());
-        dto.setCancelDate(applicationForLeave.getCancelDate());
-        dto.setHolidayReplacements(holidayReplacements);
-        dto.setAllowedToEdit(allowedToEdit);
-        dto.setAllowedToRevoke(allowedToRevoke);
-        dto.setAllowedToCancel(allowedToCancel);
-        dto.setAllowedToCancelDirectly(allowedToCancelDirectly);
-        dto.setAllowedToStartCancellationRequest(allowedToStartCancellationRequest);
-        return dto;
-    }
-
-    private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {
-        return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
+        return new ApplicationDto(
+            applicationForLeave.getId(),
+            applicationForLeave.getPerson().getId(),
+            applicationForLeave.getStatus(),
+            applicationVacationTypDto(applicationForLeave.getVacationType(), locale),
+            applicationForLeave.getApplicationDate(),
+            applicationForLeave.getStartDate(),
+            applicationForLeave.getEndDate(),
+            applicationForLeave.getStartTime(),
+            applicationForLeave.getEndTime(),
+            applicationForLeave.getStartDateWithTime(),
+            applicationForLeave.getEndDateWithTime(),
+            applicationForLeave.getWeekDayOfStartDate(),
+            applicationForLeave.getWeekDayOfEndDate(),
+            applicationForLeave.getDayLength(),
+            applicationForLeave.getWorkDays(),
+            applicationForLeave.getHours(),
+            applicationForLeave.getEditedDate(),
+            applicationForLeave.getCancelDate(),
+            holidayReplacements,
+            allowedToEdit,
+            allowedToRevoke,
+            allowedToCancel,
+            allowedToCancelDirectly,
+            allowedToStartCancellationRequest
+        );
     }
 
     private static boolean showExpiredVacationDays(LocalDate now, Account account, BigDecimal expiredRemainingVacationDays) {

@@ -225,7 +225,7 @@
                   <a
                     class="button flex-1 justify-center"
                     th:href="@{/web/application/{app} (app=${app.id}, action='cancel', shortcut=true)}"
-                    th:if="${app.isAllowedToRevoke || app.isAllowedToCancel || app.isAllowedToCancelDirectly || app.isAllowedToStartCancellationRequest}"
+                    th:if="${app.allowedToRevoke || app.allowedToCancel || app.allowedToCancelDirectly || app.allowedToStartCancellationRequest}"
                   >
                     <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 shrink-0')}"></svg>
                     <span
@@ -235,7 +235,7 @@
                     >
                   </a>
                   <a
-                    th:if="${app.isAllowedToEdit}"
+                    th:if="${app.allowedToEdit}"
                     class="button flex-1 justify-center"
                     th:href="@{/web/application/{app}/edit (app=${app.id})}"
                   >

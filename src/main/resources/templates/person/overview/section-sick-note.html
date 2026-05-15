@@ -172,7 +172,7 @@
                   <a
                     class="button flex-1 justify-center"
                     th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id}, action='cancel', shortcut=true)}"
-                    th:if="${sickNote.isAllowedToCancel}"
+                    th:if="${sickNote.allowedToCancel}"
                   >
                     <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 shrink-0')}"></svg>
                     <span
@@ -182,7 +182,7 @@
                     >
                   </a>
                   <a
-                    th:if="${sickNote.isAllowedToEdit}"
+                    th:if="${sickNote.allowedToEdit}"
                     class="button flex-1 justify-center"
                     th:href="@{/web/sicknote/{sickNote}/edit (sickNote=${sickNote.id})}"
                   >
