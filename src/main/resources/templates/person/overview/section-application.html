@@ -19,7 +19,7 @@
               href="#"
               th:href="@{/web/application/new}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-square::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
             <a
@@ -28,7 +28,7 @@
               href="#"
               th:href="@{/web/application/new (personId=${person.id})}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-square::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
           </div>
