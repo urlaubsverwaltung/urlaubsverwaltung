@@ -17,10 +17,8 @@
   <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main">
       <div class="content-container content--max-w">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
-        >
-          <th:block th:ref="person-basedata-heading-body">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::absence-overview-heading-body}, ~{})}">
+          <th:block th:ref="absence-overview-heading-body">
             <h1 th:text="#{absences.overview.title}">Absence Overview</h1>
           </th:block>
         </div>
