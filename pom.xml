@@ -329,6 +329,9 @@
               <password>${docker-publish-registry-password}</password>
             </publishRegistry>
           </docker>
+          <jvmArguments>
+            -XX:+UseCompactObjectHeaders
+          </jvmArguments>
         </configuration>
         <executions>
           <execution>
