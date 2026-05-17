@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -43,6 +44,7 @@ class BackupCreateServiceIT {
     private static Path tempDir;
 
     @Container
+    @ServiceConnection
     private static final SingleTenantTestPostgreSQLContainer postgre = new SingleTenantTestPostgreSQLContainer();
 
     @Autowired
@@ -56,7 +58,6 @@ class BackupCreateServiceIT {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        postgre.configureSpringDataSource(registry);
         registry.add("uv.backup.backup-configuration.filesystem.backup-path", () -> tempDir.toString());
     }
 
