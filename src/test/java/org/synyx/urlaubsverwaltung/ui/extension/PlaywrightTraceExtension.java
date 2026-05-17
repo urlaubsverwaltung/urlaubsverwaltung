@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.extension;
 
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Tracing;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -13,7 +14,7 @@ import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrC
 class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
+    public void beforeEach(@NonNull ExtensionContext extensionContext) {
 
         final BrowserContext context = getOrCreateBrowserContext(extensionContext);
 
@@ -47,6 +48,6 @@ class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback 
     }
 
     private static String normalize(String original) {
-        return original.replaceAll(" ", "_");
+        return original.replace(" ", "_");
     }
 }

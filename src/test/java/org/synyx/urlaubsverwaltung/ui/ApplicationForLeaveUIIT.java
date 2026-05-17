@@ -5,9 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.session.config.SessionRepositoryCustomizer;
+import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
@@ -89,6 +94,15 @@ class ApplicationForLeaveUIIT {
     private SettingsService settingsService;
     @Autowired
     private MessageSource messageSource;
+
+    @TestConfiguration
+    static class TestSessionConfig {
+        @Bean
+        public SessionRepositoryCustomizer<JdbcIndexedSessionRepository> disableCleanupCustomizer() {
+            // Force-set the cleanup cron to the official disabled macro programmatically
+            return sessionRepository -> sessionRepository.setCleanupCron(Scheduled.CRON_DISABLED);
+        }
+    }
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is disabled then quick-add directly links to application-for-leave")

@@ -11,6 +11,9 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.session.config.SessionRepositoryCustomizer;
+import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
@@ -73,6 +76,12 @@ class SickNoteUIIT {
         public Clock clock() {
             // use a fixed clock to avoid weekends or public holidays while creating sick notes
             return Clock.fixed(Instant.parse("2022-02-01T00:00:00.00Z"), ZoneId.systemDefault());
+        }
+
+        @Bean
+        public SessionRepositoryCustomizer<JdbcIndexedSessionRepository> disableCleanupCustomizer() {
+            // Force-set the cleanup cron to the official disabled macro programmatically
+            return sessionRepository -> sessionRepository.setCleanupCron(Scheduled.CRON_DISABLED);
         }
     }
 
