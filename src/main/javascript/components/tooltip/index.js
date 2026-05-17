@@ -1,1 +1,3 @@
-import "./tooltip";
+import { setup } from "./tooltip";
+
+setup();
