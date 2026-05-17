@@ -1,5 +1,3 @@
-import { createPopper } from "@popperjs/core";
-
 /**
  * A tooltip is a brief, informative message that appears when a user interacts with an element in a
  * graphical user interface (GUI). Tooltips are usually initiated in one of two ways:
@@ -10,113 +8,167 @@ import { createPopper } from "@popperjs/core";
  * - Tooltips are mainly for Desktop
  * - While Popovers are for Touch Devices, too
  *
- * <p>
- * A popovers paired element is usually an info icon that can be clicked/touched to show a more detailed info.
- * While a tooltip only shows a quick info for a button without text for instance.
- *
  * https://www.nngroup.com/articles/tooltip-guidelines/
  */
 
-// using event delegation to catch dynamically added elements, too
-document.addEventListener("mouseover", maybeShow);
-document.addEventListener("mouseout", maybeHide);
-document.addEventListener("focusin", maybeShow);
-document.addEventListener("focusout", maybeHide);
+const HOVER_SHOW_DELAY_MS = 300;
+const FADE_OUT_MS = 100;
+const TOOLTIP_ID = "tooltip";
+const ACTIVE_ANCHOR_CLASS = "tooltip-anchor-active";
+const HIDING_CLASS = "is-hiding";
 
-/**
- * Showing the tooltip on :hover is delayed. This value is used to clear the timeout.
- * @type {number}
- */
-let tooltipDelayId;
+let tooltip;
+let showTimerId;
+let hideTimerId;
+let activeAnchor;
+let pendingAnchor;
+let state = "idle";
 
-const cache = new WeakMap();
-
-/**
- * @param {MouseEvent|FocusEvent} event
- */
-function maybeShow(event) {
-  const anchor = closestTooltipAnchor(event.target);
-  const isChildEvent = event.relatedTarget && anchor?.contains(event.relatedTarget);
-  if (anchor && !isChildEvent) {
-    const delay = event.type === "focusin" ? 0 : 500;
-    showTooltip(anchor, delay);
+export function setup() {
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.id = TOOLTIP_ID;
+    tooltip.setAttribute("role", "tooltip");
+    tooltip.setAttribute("popover", "hint");
+    document.body.append(tooltip);
   }
+  document.addEventListener("mouseover", onPointerEnter);
+  document.addEventListener("mouseout", onPointerLeave);
+  document.addEventListener("focusin", onPointerEnter);
+  document.addEventListener("focusout", onPointerLeave);
 }
 
-/**
- * @param {MouseEvent|FocusEvent} event
- */
-function maybeHide(event) {
-  const anchor = closestTooltipAnchor(event.target);
-  const isChildEvent = event.relatedTarget && anchor?.contains(event.relatedTarget);
-  if (anchor && !isChildEvent) {
-    hideTooltip(anchor);
+export function teardown() {
+  document.removeEventListener("mouseover", onPointerEnter);
+  document.removeEventListener("mouseout", onPointerLeave);
+  document.removeEventListener("focusin", onPointerEnter);
+  document.removeEventListener("focusout", onPointerLeave);
+  clearTimeout(showTimerId);
+  clearTimeout(hideTimerId);
+  showTimerId = undefined;
+  hideTimerId = undefined;
+  pendingAnchor = undefined;
+  if (activeAnchor) {
+    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.removeAttribute("aria-describedby");
+    activeAnchor = undefined;
   }
+  if (tooltip) {
+    tooltip.classList.remove(HIDING_CLASS);
+    tooltip.remove();
+    tooltip = undefined;
+  }
+  state = "idle";
 }
 
-/**
- * @param {HTMLElement} element
- * @return {HTMLElement|undefined}
- */
-function closestTooltipAnchor(element) {
-  if (!element) {
+function onPointerEnter(event) {
+  const anchor = closestTooltipAnchor(event.target);
+  if (!anchor || isInternalCrossing(event, anchor)) {
     return;
   }
-  // read title attribute instead of #hasAttribute since tooltip should only be created when title has a value
-  const title = element.getAttribute("title") || element.dataset.title;
-  if (title) {
-    return element;
+  if (anchor === activeAnchor && state !== "pendingHide") {
+    return;
   }
-  return closestTooltipAnchor(element.parentElement);
+  if (state === "open" || state === "pendingHide") {
+    handoffTo(anchor);
+    return;
+  }
+  clearTimeout(showTimerId);
+  pendingAnchor = anchor;
+  state = "pendingShow";
+  if (event.type === "focusin") {
+    showOn(anchor);
+  } else {
+    showTimerId = setTimeout(function () {
+      showOn(anchor);
+    }, HOVER_SHOW_DELAY_MS);
+  }
 }
 
-/**
- * @param {HTMLElement} anchor
- * @returns {HTMLElement} the tooltip, not part of DOM yet
- */
-function createTooltip(anchor) {
-  const tooltip = document.createElement("div");
-  tooltip.setAttribute("role", "tooltip");
-  tooltip.textContent = anchor.getAttribute("title") || anchor.dataset.title;
+function onPointerLeave(event) {
+  const anchor = closestTooltipAnchor(event.target);
+  if (!anchor || isInternalCrossing(event, anchor)) {
+    return;
+  }
+  if (anchor === pendingAnchor) {
+    clearTimeout(showTimerId);
+    showTimerId = undefined;
+    pendingAnchor = undefined;
+    state = "idle";
+    return;
+  }
+  if (anchor === activeAnchor) {
+    beginHide();
+  }
+}
 
-  // remove native title tooltip
+function isInternalCrossing(event, anchor) {
+  return event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget);
+}
+
+function handoffTo(anchor) {
+  clearTimeout(hideTimerId);
+  hideTimerId = undefined;
+  tooltip.classList.remove(HIDING_CLASS);
+  retargetTo(anchor);
+  state = "open";
+}
+
+function beginHide() {
+  clearTimeout(showTimerId);
+  if (state !== "open") {
+    return;
+  }
+  state = "pendingHide";
+  tooltip.classList.add(HIDING_CLASS);
+  hideTimerId = setTimeout(finalizeHide, FADE_OUT_MS);
+}
+
+function finalizeHide() {
+  hideTimerId = undefined;
+  tooltip.classList.remove(HIDING_CLASS);
+  tooltip.hidePopover();
+  if (activeAnchor) {
+    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.removeAttribute("aria-describedby");
+    activeAnchor = undefined;
+  }
+  state = "idle";
+}
+
+function showOn(anchor) {
+  pendingAnchor = undefined;
+  showTimerId = undefined;
+  retargetTo(anchor);
+  tooltip.showPopover();
+  state = "open";
+}
+
+function retargetTo(anchor) {
+  if (activeAnchor && activeAnchor !== anchor) {
+    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.removeAttribute("aria-describedby");
+  }
+  ensureMigratedTitle(anchor);
+  anchor.classList.add(ACTIVE_ANCHOR_CLASS);
+  anchor.setAttribute("aria-describedby", TOOLTIP_ID);
+  tooltip.textContent = anchor.dataset.title;
+  activeAnchor = anchor;
+}
+
+function ensureMigratedTitle(anchor) {
   if (anchor.hasAttribute("title")) {
     anchor.dataset.title = anchor.getAttribute("title");
     anchor.removeAttribute("title");
   }
-
-  return tooltip;
 }
 
-/**
- * @param {HTMLElement} anchor
- * @param {number} delay
- */
-function showTooltip(anchor, delay = 0) {
-  tooltipDelayId = setTimeout(function () {
-    const tooltip = createTooltip(anchor);
-    document.body.append(tooltip);
-
-    // using popper as long as CSS anchor positioning not widely supported
-    const popperInstance = createPopper(anchor, tooltip, {
-      placement: "bottom",
-    });
-    cache.set(anchor, {
-      destroy() {
-        popperInstance.destroy();
-        tooltip.remove();
-      },
-    });
-  }, delay);
-}
-
-/**
- * @param {HTMLElement} anchor
- */
-function hideTooltip(anchor) {
-  clearTimeout(tooltipDelayId);
-  if (cache.has(anchor)) {
-    cache.get(anchor).destroy();
-    cache.delete(anchor);
+function closestTooltipAnchor(element) {
+  if (!element) {
+    return;
   }
+  if (element.getAttribute && (element.getAttribute("title") || element.dataset?.title)) {
+    return element;
+  }
+  return closestTooltipAnchor(element.parentElement);
 }
