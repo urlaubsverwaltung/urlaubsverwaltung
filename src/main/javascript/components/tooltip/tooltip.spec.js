@@ -3,8 +3,12 @@ import { setup, teardown } from "./tooltip";
 describe("tooltip", function () {
   beforeEach(function () {
     vi.useFakeTimers();
-    globalThis.matchMedia = vi.fn(function () {
-      return { matches: true, addEventListener() {}, removeEventListener() {} };
+    globalThis.matchMedia = vi.fn(function (query) {
+      return {
+        matches: !query.includes("reduce"),
+        addEventListener() {},
+        removeEventListener() {},
+      };
     });
     setup();
   });
@@ -22,7 +26,10 @@ describe("tooltip", function () {
   function spyOnPopover(element) {
     element.showPopover = vi.fn();
     element.hidePopover = vi.fn();
-    return { show: element.showPopover, hide: element.hidePopover };
+    element.animate = vi.fn(function () {
+      return { cancel: vi.fn(), finished: Promise.resolve() };
+    });
+    return { show: element.showPopover, hide: element.hidePopover, animate: element.animate };
   }
 
   function anchorWith(title, ...children) {
@@ -196,6 +203,48 @@ describe("tooltip", function () {
     vi.advanceTimersByTime(1000);
 
     expect(show).not.toHaveBeenCalled();
+  });
+
+  test("handoff to another anchor animates the tooltip slide via WAAPI", function () {
+    const first = anchorWith("First");
+    const second = anchorWith("Second");
+    document.body.append(first, second);
+
+    const { animate } = spyOnPopover(singleton());
+
+    first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    vi.advanceTimersByTime(300);
+    expect(animate).not.toHaveBeenCalled();
+
+    second.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+
+    expect(animate).toHaveBeenCalledOnce();
+    const [keyframes, options] = animate.mock.calls[0];
+    expect(keyframes).toHaveLength(2);
+    expect(keyframes[0]).toHaveProperty("translate");
+    expect(keyframes[1]).toEqual({ translate: "0 0" });
+    expect(options).toMatchObject({ duration: 150, easing: "ease-out" });
+  });
+
+  test("handoff does not animate when prefers-reduced-motion is reduce", function () {
+    globalThis.matchMedia = vi.fn(function (query) {
+      return { matches: query.includes("reduce"), addEventListener() {}, removeEventListener() {} };
+    });
+    teardown();
+    setup();
+
+    const first = anchorWith("First");
+    const second = anchorWith("Second");
+    document.body.append(first, second);
+
+    const { animate } = spyOnPopover(singleton());
+
+    first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    vi.advanceTimersByTime(300);
+    second.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+
+    expect(animate).not.toHaveBeenCalled();
+    expect(second.classList.contains("tooltip-anchor-active")).toBe(true);
   });
 
   test("mouseout to a child within the same anchor does not begin hide", function () {

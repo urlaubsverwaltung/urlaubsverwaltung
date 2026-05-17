@@ -13,6 +13,7 @@
 
 const HOVER_SHOW_DELAY_MS = 300;
 const FADE_OUT_MS = 100;
+const SLIDE_MS = 150;
 const TOOLTIP_ID = "tooltip";
 const ACTIVE_ANCHOR_CLASS = "tooltip-anchor-active";
 const HIDING_CLASS = "is-hiding";
@@ -22,6 +23,7 @@ let showTimerId;
 let hideTimerId;
 let activeAnchor;
 let pendingAnchor;
+let slideAnim;
 let state = "idle";
 
 export function setup() {
@@ -48,6 +50,10 @@ export function teardown() {
   showTimerId = undefined;
   hideTimerId = undefined;
   pendingAnchor = undefined;
+  if (slideAnim) {
+    slideAnim.cancel();
+    slideAnim = undefined;
+  }
   if (activeAnchor) {
     activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
     activeAnchor.removeAttribute("aria-describedby");
@@ -145,7 +151,15 @@ function showOn(anchor) {
 }
 
 function retargetTo(anchor) {
-  if (activeAnchor && activeAnchor !== anchor) {
+  const isHandoff = activeAnchor && activeAnchor !== anchor;
+  const previousRect = isHandoff ? tooltip.getBoundingClientRect() : undefined;
+
+  if (slideAnim) {
+    slideAnim.cancel();
+    slideAnim = undefined;
+  }
+
+  if (isHandoff) {
     activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
     activeAnchor.removeAttribute("aria-describedby");
   }
@@ -154,6 +168,21 @@ function retargetTo(anchor) {
   anchor.setAttribute("aria-describedby", TOOLTIP_ID);
   tooltip.textContent = anchor.dataset.title;
   activeAnchor = anchor;
+
+  if (previousRect && !prefersReducedMotion()) {
+    const nextRect = tooltip.getBoundingClientRect();
+    const dx = previousRect.left - nextRect.left;
+    const dy = previousRect.top - nextRect.top;
+    slideAnim = tooltip.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0 0" }], {
+      duration: SLIDE_MS,
+      easing: "ease-out",
+      fill: "none",
+    });
+  }
+}
+
+function prefersReducedMotion() {
+  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 }
 
 function ensureMigratedTitle(anchor) {
