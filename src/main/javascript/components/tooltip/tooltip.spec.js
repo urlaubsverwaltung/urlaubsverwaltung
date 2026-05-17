@@ -19,8 +19,8 @@ describe("tooltip", function () {
     document.body.innerHTML = "";
   });
 
-  function singleton() {
-    return document.querySelector("#tooltip");
+  function sut() {
+    return document.querySelector("#uv-tooltip");
   }
 
   function spyOnPopover(element) {
@@ -43,7 +43,7 @@ describe("tooltip", function () {
     const button = anchorWith("Edit user");
     document.body.append(button);
 
-    const { show } = spyOnPopover(singleton());
+    const { show } = spyOnPopover(sut());
 
     button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(299);
@@ -51,9 +51,9 @@ describe("tooltip", function () {
 
     vi.advanceTimersByTime(1);
     expect(show).toHaveBeenCalledOnce();
-    expect(button.classList.contains("tooltip-anchor-active")).toBe(true);
-    expect(button.getAttribute("aria-describedby")).toBe("tooltip");
-    expect(singleton().textContent).toBe("Edit user");
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+    expect(button.getAttribute("aria-describedby")).toBe("uv-tooltip");
+    expect(sut().textContent).toBe("Edit user");
     expect(button.hasAttribute("title")).toBe(false);
     expect(button.dataset.title).toBe("Edit user");
   });
@@ -62,14 +62,14 @@ describe("tooltip", function () {
     const button = anchorWith("Submit");
     document.body.append(button);
 
-    const { show } = spyOnPopover(singleton());
+    const { show } = spyOnPopover(sut());
 
     button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
 
     expect(show).toHaveBeenCalledOnce();
-    expect(button.classList.contains("tooltip-anchor-active")).toBe(true);
-    expect(button.getAttribute("aria-describedby")).toBe("tooltip");
-    expect(singleton().textContent).toBe("Submit");
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+    expect(button.getAttribute("aria-describedby")).toBe("uv-tooltip");
+    expect(sut().textContent).toBe("Submit");
   });
 
   test("mouseover on another tooltip anchor while open retargets instantly without re-opening", function () {
@@ -77,7 +77,7 @@ describe("tooltip", function () {
     const second = anchorWith("Second");
     document.body.append(first, second);
 
-    const { show, hide } = spyOnPopover(singleton());
+    const { show, hide } = spyOnPopover(sut());
 
     first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(300);
@@ -87,18 +87,18 @@ describe("tooltip", function () {
 
     expect(show).toHaveBeenCalledOnce();
     expect(hide).not.toHaveBeenCalled();
-    expect(first.classList.contains("tooltip-anchor-active")).toBe(false);
+    expect(first.classList.contains("uv-tooltip-anchor--active")).toBe(false);
     expect(first.hasAttribute("aria-describedby")).toBe(false);
-    expect(second.classList.contains("tooltip-anchor-active")).toBe(true);
-    expect(second.getAttribute("aria-describedby")).toBe("tooltip");
-    expect(singleton().textContent).toBe("Second");
+    expect(second.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+    expect(second.getAttribute("aria-describedby")).toBe("uv-tooltip");
+    expect(sut().textContent).toBe("Second");
   });
 
   test("mouseout from an open tooltip anchor delays hidePopover until the fade-out completes", function () {
     const button = anchorWith("Edit user");
     document.body.append(button);
 
-    const { hide } = spyOnPopover(singleton());
+    const { hide } = spyOnPopover(sut());
 
     button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(300);
@@ -106,15 +106,15 @@ describe("tooltip", function () {
     button.dispatchEvent(new MouseEvent("mouseout", { bubbles: true }));
 
     expect(hide).not.toHaveBeenCalled();
-    expect(singleton().classList.contains("is-hiding")).toBe(true);
-    expect(button.classList.contains("tooltip-anchor-active")).toBe(true);
-    expect(button.getAttribute("aria-describedby")).toBe("tooltip");
+    expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(true);
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+    expect(button.getAttribute("aria-describedby")).toBe("uv-tooltip");
 
     vi.advanceTimersByTime(100);
 
     expect(hide).toHaveBeenCalledOnce();
-    expect(singleton().classList.contains("is-hiding")).toBe(false);
-    expect(button.classList.contains("tooltip-anchor-active")).toBe(false);
+    expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(false);
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(false);
     expect(button.hasAttribute("aria-describedby")).toBe(false);
   });
 
@@ -123,7 +123,7 @@ describe("tooltip", function () {
     const second = anchorWith("Second");
     document.body.append(first, second);
 
-    const { show, hide } = spyOnPopover(singleton());
+    const { show, hide } = spyOnPopover(sut());
 
     first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(300);
@@ -131,36 +131,36 @@ describe("tooltip", function () {
 
     first.dispatchEvent(new MouseEvent("mouseout", { bubbles: true }));
     expect(hide).not.toHaveBeenCalled();
-    expect(singleton().classList.contains("is-hiding")).toBe(true);
+    expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(true);
 
     vi.advanceTimersByTime(50);
     second.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
 
     expect(show).toHaveBeenCalledTimes(1);
     expect(hide).not.toHaveBeenCalled();
-    expect(singleton().classList.contains("is-hiding")).toBe(false);
-    expect(first.classList.contains("tooltip-anchor-active")).toBe(false);
+    expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(false);
+    expect(first.classList.contains("uv-tooltip-anchor--active")).toBe(false);
     expect(first.hasAttribute("aria-describedby")).toBe(false);
-    expect(second.classList.contains("tooltip-anchor-active")).toBe(true);
-    expect(second.getAttribute("aria-describedby")).toBe("tooltip");
-    expect(singleton().textContent).toBe("Second");
+    expect(second.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+    expect(second.getAttribute("aria-describedby")).toBe("uv-tooltip");
+    expect(sut().textContent).toBe("Second");
 
     vi.advanceTimersByTime(100);
     expect(hide).not.toHaveBeenCalled();
-    expect(second.classList.contains("tooltip-anchor-active")).toBe(true);
+    expect(second.classList.contains("uv-tooltip-anchor--active")).toBe(true);
   });
 
   test("mouseover on an element without title or data-title is a no-op", function () {
     const plain = document.createElement("div");
     document.body.append(plain);
 
-    const { show } = spyOnPopover(singleton());
+    const { show } = spyOnPopover(sut());
 
     plain.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(1000);
 
     expect(show).not.toHaveBeenCalled();
-    expect(plain.classList.contains("tooltip-anchor-active")).toBe(false);
+    expect(plain.classList.contains("uv-tooltip-anchor--active")).toBe(false);
     expect(plain.hasAttribute("aria-describedby")).toBe(false);
   });
 
@@ -169,7 +169,7 @@ describe("tooltip", function () {
     const button = anchorWith("Edit", svg);
     document.body.append(button);
 
-    const { show } = spyOnPopover(singleton());
+    const { show } = spyOnPopover(sut());
 
     button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, relatedTarget: document.body }));
     vi.advanceTimersByTime(200);
@@ -186,7 +186,7 @@ describe("tooltip", function () {
     const third = anchorWith("Third");
     document.body.append(first, second, third);
 
-    const { show } = spyOnPopover(singleton());
+    const { show } = spyOnPopover(sut());
 
     first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, relatedTarget: document.body }));
     vi.advanceTimersByTime(100);
@@ -210,7 +210,7 @@ describe("tooltip", function () {
     const second = anchorWith("Second");
     document.body.append(first, second);
 
-    const { animate } = spyOnPopover(singleton());
+    const { animate } = spyOnPopover(sut());
 
     first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(300);
@@ -237,14 +237,14 @@ describe("tooltip", function () {
     const second = anchorWith("Second");
     document.body.append(first, second);
 
-    const { animate } = spyOnPopover(singleton());
+    const { animate } = spyOnPopover(sut());
 
     first.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
     vi.advanceTimersByTime(300);
     second.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
 
     expect(animate).not.toHaveBeenCalled();
-    expect(second.classList.contains("tooltip-anchor-active")).toBe(true);
+    expect(second.classList.contains("uv-tooltip-anchor--active")).toBe(true);
   });
 
   test("mouseout to a child within the same anchor does not begin hide", function () {
@@ -252,7 +252,7 @@ describe("tooltip", function () {
     const button = anchorWith("Edit", svg);
     document.body.append(button);
 
-    const { hide } = spyOnPopover(singleton());
+    const { hide } = spyOnPopover(sut());
 
     button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, relatedTarget: document.body }));
     vi.advanceTimersByTime(300);
@@ -261,7 +261,7 @@ describe("tooltip", function () {
     vi.advanceTimersByTime(100);
 
     expect(hide).not.toHaveBeenCalled();
-    expect(singleton().classList.contains("is-hiding")).toBe(false);
-    expect(button.classList.contains("tooltip-anchor-active")).toBe(true);
+    expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(false);
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
   });
 });
