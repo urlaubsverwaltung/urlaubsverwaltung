@@ -14,9 +14,9 @@
 const HOVER_SHOW_DELAY_MS = 300;
 const FADE_OUT_MS = 100;
 const SLIDE_MS = 150;
-const TOOLTIP_ID = "tooltip";
-const ACTIVE_ANCHOR_CLASS = "tooltip-anchor-active";
-const HIDING_CLASS = "is-hiding";
+const TOOLTIP_ID = "uv-tooltip";
+const ANCHOR_ACTIVE_CLASS = "uv-tooltip-anchor--active";
+const TOOLTIP_HIDING_CLASS = "uv-tooltip--is-hiding";
 
 let tooltip;
 let showTimerId;
@@ -24,6 +24,8 @@ let hideTimerId;
 let activeAnchor;
 let pendingAnchor;
 let slideAnim;
+
+/** @type {"idle" | "open" | "pendingShow" | "pendingHide"} */
 let state = "idle";
 
 export function setup() {
@@ -55,12 +57,12 @@ export function teardown() {
     slideAnim = undefined;
   }
   if (activeAnchor) {
-    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.classList.remove(ANCHOR_ACTIVE_CLASS);
     activeAnchor.removeAttribute("aria-describedby");
     activeAnchor = undefined;
   }
   if (tooltip) {
-    tooltip.classList.remove(HIDING_CLASS);
+    tooltip.classList.remove(TOOLTIP_HIDING_CLASS);
     tooltip.remove();
     tooltip = undefined;
   }
@@ -115,7 +117,7 @@ function isInternalCrossing(event, anchor) {
 function handoffTo(anchor) {
   clearTimeout(hideTimerId);
   hideTimerId = undefined;
-  tooltip.classList.remove(HIDING_CLASS);
+  tooltip.classList.remove(TOOLTIP_HIDING_CLASS);
   retargetTo(anchor);
   state = "open";
 }
@@ -126,16 +128,16 @@ function beginHide() {
     return;
   }
   state = "pendingHide";
-  tooltip.classList.add(HIDING_CLASS);
+  tooltip.classList.add(TOOLTIP_HIDING_CLASS);
   hideTimerId = setTimeout(finalizeHide, FADE_OUT_MS);
 }
 
 function finalizeHide() {
   hideTimerId = undefined;
-  tooltip.classList.remove(HIDING_CLASS);
+  tooltip.classList.remove(TOOLTIP_HIDING_CLASS);
   tooltip.hidePopover();
   if (activeAnchor) {
-    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.classList.remove(ANCHOR_ACTIVE_CLASS);
     activeAnchor.removeAttribute("aria-describedby");
     activeAnchor = undefined;
   }
@@ -160,11 +162,11 @@ function retargetTo(anchor) {
   }
 
   if (isHandoff) {
-    activeAnchor.classList.remove(ACTIVE_ANCHOR_CLASS);
+    activeAnchor.classList.remove(ANCHOR_ACTIVE_CLASS);
     activeAnchor.removeAttribute("aria-describedby");
   }
   ensureMigratedTitle(anchor);
-  anchor.classList.add(ACTIVE_ANCHOR_CLASS);
+  anchor.classList.add(ANCHOR_ACTIVE_CLASS);
   anchor.setAttribute("aria-describedby", TOOLTIP_ID);
   tooltip.textContent = anchor.dataset.title;
   activeAnchor = anchor;
