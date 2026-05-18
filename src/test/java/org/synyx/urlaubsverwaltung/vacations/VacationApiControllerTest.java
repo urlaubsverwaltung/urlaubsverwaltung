@@ -8,7 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import static java.time.LocalDate.of;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -91,7 +94,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
 
@@ -101,7 +105,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-06-01")
             .param("to", "2016-01-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -109,7 +114,8 @@ class VacationApiControllerTest {
 
         perform(get("/api/persons/23/vacations")
             .param("to", "2016-12-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
@@ -118,7 +124,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("from", "foo")
             .param("to", "2016-12-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -126,7 +133,8 @@ class VacationApiControllerTest {
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
@@ -135,7 +143,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
             .param("to", "foo"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -144,7 +153,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/foo/vacations")
             .param("from", "2016-01-01")
             .param("to", "2016-02-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -264,7 +274,8 @@ class VacationApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-12-31")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -274,7 +285,8 @@ class VacationApiControllerTest {
             .param("from", "2016-06-01")
             .param("to", "2016-01-31")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -283,7 +295,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("to", "2016-12-31")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
@@ -293,7 +306,8 @@ class VacationApiControllerTest {
             .param("from", "foo")
             .param("to", "2016-12-31")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -302,7 +316,8 @@ class VacationApiControllerTest {
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
@@ -312,7 +327,8 @@ class VacationApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "foo")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -322,10 +338,11 @@ class VacationApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-02-01")
             .param("ofDepartmentMembers", "true"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder);
     }
 }

@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -21,6 +20,7 @@ import java.util.Optional;
 
 import static java.time.Month.JANUARY;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -100,7 +101,8 @@ class WorkingTimeCalendarApiControllerTest {
             .param("from", "foo")
             .param("to", "2016-01-06")
             .param("length", "FULL"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -119,7 +121,8 @@ class WorkingTimeCalendarApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "foo")
             .param("length", "FULL"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -139,7 +142,8 @@ class WorkingTimeCalendarApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-01-06")
             .param("length", "FULL"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -183,7 +187,8 @@ class WorkingTimeCalendarApiControllerTest {
             .param("from", "2016-01-01")
             .param("to", "2016-01-06")
             .param("length", "FOO"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -197,6 +202,6 @@ class WorkingTimeCalendarApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder);
     }
 }

@@ -7,8 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -88,7 +91,8 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -96,7 +100,8 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/public-holidays")
             .param("from", "invalid")
             .param("to", "2016-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -104,21 +109,24 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "invalid"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
     void getPublicHolidaysForMissingFrom() throws Exception {
         perform(get("/api/public-holidays")
             .param("to", "2015-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
     void getPublicHolidaysForMissingTo() throws Exception {
         perform(get("/api/public-holidays")
             .param("from", "2016-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
@@ -162,7 +170,8 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -170,7 +179,8 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test
@@ -178,7 +188,8 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "invalid")
             .param("to", "2016-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
@@ -186,21 +197,24 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
             .param("to", "invalid"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
     }
 
     @Test
     void personsPublicHolidaysForMissingFrom() throws Exception {
         perform(get("/api/persons/1/public-holidays")
             .param("to", "2015-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     @Test
     void personsPublicHolidaysForMissingTo() throws Exception {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(MissingServletRequestParameterException.class, result.getResolvedException()));
     }
 
     private static WorkingTimeSettings anyWorkingTimeSettings() {
@@ -215,6 +229,6 @@ class PublicHolidayApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder);
     }
 }
