@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toMap;
 @Configuration
 class PublicHolidayConfiguration {
 
-    private static final List<String> COUNTRIES = List.of("at", "be", "ch", "de", "es", "fi", "gb", "gr", "hr", "it", "lt", "mt", "nl", "pl", "us");
+    private static final List<String> COUNTRIES = List.of("at", "be", "ch", "de", "es", "fi", "gb", "gr", "hr", "it", "lt", "mt", "nl", "pl", "ro", "us");
 
     @Bean
     Map<String, HolidayManager> holidayManagerMap() {
