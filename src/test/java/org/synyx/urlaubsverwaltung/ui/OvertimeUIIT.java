@@ -4,7 +4,13 @@ import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.session.config.SessionRepositoryCustomizer;
+import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
@@ -56,13 +62,13 @@ class OvertimeUIIT {
     private int port;
 
     @Container
+    @ServiceConnection
     private static final SingleTenantTestPostgreSQLContainer postgre = new SingleTenantTestPostgreSQLContainer();
     @Container
     private static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
     @DynamicPropertySource
     static void containerProperties(DynamicPropertyRegistry registry) {
-        postgre.configureSpringDataSource(registry);
         keycloak.configureSpringDataSource(registry);
     }
 
@@ -72,6 +78,15 @@ class OvertimeUIIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
+
+    @TestConfiguration
+    static class TestSessionConfig {
+        @Bean
+        public SessionRepositoryCustomizer<JdbcIndexedSessionRepository> disableCleanupCustomizer() {
+            // Force-set the cleanup cron to the official disabled macro programmatically
+            return sessionRepository -> sessionRepository.setCleanupCron(Scheduled.CRON_DISABLED);
+        }
+    }
 
     @Test
     void ensureOvertimeCreation(Page page) {

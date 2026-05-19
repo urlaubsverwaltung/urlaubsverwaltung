@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -23,6 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
@@ -140,7 +142,8 @@ class UserSettingsViewControllerTest {
             .param("theme", "UNKNOWN_THEME")
             .locale(Locale.GERMANY)
         )
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
     }
 
     @Test

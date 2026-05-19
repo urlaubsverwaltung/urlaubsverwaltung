@@ -96,9 +96,10 @@ class MailSenderService {
             for (MailAttachment mailAttachment : mailAttachments) {
                 helper.addAttachment(mailAttachment.getName(), mailAttachment.getContent());
             }
+
+            mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             LOG.error("Sending email to {} failed", recipient, e);
         }
-        mailSender.send(mimeMessage);
     }
 }

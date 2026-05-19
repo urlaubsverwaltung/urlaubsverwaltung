@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung;
 
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.junit.jupiter.Container;
 
 public abstract class SingleTenantTestContainersBase {
 
+    @Container
+    @ServiceConnection
     static final SingleTenantTestPostgreSQLContainer postgre = new SingleTenantTestPostgreSQLContainer();
-
-    @DynamicPropertySource
-    static void registerProperties(DynamicPropertyRegistry registry) {
-        postgre.start();
-        postgre.configureSpringDataSource(registry);
-    }
 }

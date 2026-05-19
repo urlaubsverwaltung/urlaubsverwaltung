@@ -25,21 +25,21 @@ public class RestControllerAdviceExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public void handleException(MethodArgumentTypeMismatchException exception) {
-        LOG.error("An 'MethodArgumentTypeMismatchException' was thrown", exception);
+        LOG.debug("An 'MethodArgumentTypeMismatchException' was thrown", exception);
         throw new ResponseStatusException(BAD_REQUEST, exception.getMessage(), exception);
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public void handleException(MissingServletRequestParameterException exception) {
-        LOG.error("An 'MissingServletRequestParameterException' was thrown", exception);
+        LOG.debug("An 'MissingServletRequestParameterException' was thrown", exception);
         throw new ResponseStatusException(BAD_REQUEST, exception.getMessage(), exception);
     }
 
     @ResponseStatus(FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public void handleException(AccessDeniedException exception) {
-        LOG.error("An 'AccessDeniedException' was thrown", exception);
+        LOG.debug("An 'AccessDeniedException' was thrown", exception);
         throw new ResponseStatusException(FORBIDDEN, exception.getMessage(), exception);
     }
 }

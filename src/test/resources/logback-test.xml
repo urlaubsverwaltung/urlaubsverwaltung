@@ -1,4 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-  <root level="warn"/>
+  <!-- Include Spring Boot's default console logging configuration -->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+  <!-- Global root logger set to ERROR -->
+  <root level="ERROR">
+    <appender-ref ref="CONSOLE" />
+  </root>
+
+  <!-- Optional: If Spring Boot's startup noise is too quiet, -->
+  <!-- you can see what Spring is doing at INFO level while keeping everything else at ERROR -->
+  <!--
+  <logger name="org.springframework" level="INFO" />
+  -->
 </configuration>
