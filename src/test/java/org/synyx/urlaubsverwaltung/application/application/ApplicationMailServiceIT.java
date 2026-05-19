@@ -143,6 +143,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        greenMail.waitForIncomingEmail(4);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -301,6 +303,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -408,6 +412,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -509,6 +515,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRejectedNotification(application, comment);
 
+        greenMail.waitForIncomingEmail(3);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -590,6 +598,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipient.getEmail())).hasSize(1));
@@ -648,6 +658,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment, office);
+
+        greenMail.waitForIncomingEmail(3);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -733,6 +745,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancellationRequest(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -805,6 +819,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -865,6 +881,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectlyByApplicant(application, comment);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -951,6 +969,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -1025,6 +1045,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendDirectlyAllowedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1));
@@ -1081,6 +1103,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutDirectlyAllowedApplication(replacementEntity, application);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -1131,6 +1155,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementForApply(replacementEntity, application, person);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -1177,6 +1203,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(replacementEntity));
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1226,6 +1254,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application, canceller);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -1270,6 +1300,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(replacementEntity));
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1317,6 +1349,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -1353,6 +1387,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationByApplicant(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -1380,6 +1416,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
         sut.sendAppliedNotificationByApplicant(application, comment);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1434,6 +1472,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
         sut.sendAppliedNotificationByApplicant(application, comment);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1496,6 +1536,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationByApplicant(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -1548,6 +1590,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setApplier(office);
 
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1607,6 +1651,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         application.setApplier(office);
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1671,6 +1717,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setApplier(office);
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -1722,6 +1770,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1788,6 +1838,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1856,6 +1908,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipientOfInterest.getEmail())).hasSize(1));
@@ -1910,6 +1964,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1997,6 +2053,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -2082,6 +2140,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
+
+        greenMail.waitForIncomingEmail(3);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -2197,6 +2257,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -2297,6 +2359,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -2401,6 +2465,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -2502,6 +2568,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
@@ -2570,6 +2638,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
@@ -2634,6 +2704,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "");
 
         sut.sendAppliedNotificationToManagement(application, comment);
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -2702,6 +2774,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
@@ -2759,6 +2833,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -2858,6 +2934,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
+
+        greenMail.waitForIncomingEmail(2);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -2961,6 +3039,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3054,6 +3134,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3145,6 +3227,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3223,6 +3307,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindNotificationToManagement(application);
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3297,6 +3383,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(personC, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationAA, applicationA, applicationB, applicationC));
+
+        greenMail.waitForIncomingEmail(3);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -3404,6 +3492,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEditedNotification(application, editor);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3468,6 +3558,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEditedNotification(application, office);
 
+        greenMail.waitForIncomingEmail(2);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
@@ -3531,6 +3623,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3581,6 +3675,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3628,6 +3724,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3669,6 +3767,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3706,6 +3806,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setEndDate(LocalDate.now(clock).plusDays(1));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3744,6 +3847,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3781,6 +3886,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -3825,6 +3932,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -3877,6 +3986,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -3935,6 +4046,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -3990,6 +4103,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -4042,6 +4157,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
@@ -4092,6 +4209,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -4132,6 +4251,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -4174,6 +4295,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
+        greenMail.waitForIncomingEmail(1);
+
         await()
             .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
@@ -4213,6 +4336,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
+
+        greenMail.waitForIncomingEmail(1);
 
         await()
             .atMost(Duration.ofSeconds(3))
