@@ -8,7 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * Base configuration for UI tests.
  *
@@ -41,6 +40,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Tag("ui")
-public @interface UiTest {
+@Tag("a11y")
+public @interface A11YTest {
 }
