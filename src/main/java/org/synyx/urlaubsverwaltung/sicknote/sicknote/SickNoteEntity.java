@@ -29,7 +29,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "sick_note_generator")
-    @SequenceGenerator(name = "sick_note_generator", sequenceName = "sick_note_id_seq")
+    @SequenceGenerator(name = "sick_note_generator", sequenceName = "sick_note_id_seq", allocationSize = 10)
     private Long id;
 
     /**

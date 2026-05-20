@@ -24,7 +24,7 @@ public class AccountEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "account_generator")
-    @SequenceGenerator(name = "account_generator", sequenceName = "account_id_seq")
+    @SequenceGenerator(name = "account_generator", sequenceName = "account_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

@@ -22,7 +22,7 @@ public class AbsenceMapping extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "absence_mapping_generator")
-    @SequenceGenerator(name = "absence_mapping_generator", sequenceName = "absence_mapping_id_seq")
+    @SequenceGenerator(name = "absence_mapping_generator", sequenceName = "absence_mapping_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

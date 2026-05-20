@@ -17,7 +17,7 @@ public abstract class CalendarAccessible extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "calendar_accessible_generator")
-    @SequenceGenerator(name = "calendar_accessible_generator", sequenceName = "calendar_accessible_id_seq")
+    @SequenceGenerator(name = "calendar_accessible_generator", sequenceName = "calendar_accessible_id_seq", allocationSize = 1)
     private Long id;
 
     private boolean isAccessible = false;

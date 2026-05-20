@@ -31,7 +31,7 @@ public class SickNoteCommentEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "sick_note_comment_generator")
-    @SequenceGenerator(name = "sick_note_comment_generator", sequenceName = "sick_note_comment_id_seq")
+    @SequenceGenerator(name = "sick_note_comment_generator", sequenceName = "sick_note_comment_id_seq", allocationSize = 15)
     private Long id;
 
     @NotNull

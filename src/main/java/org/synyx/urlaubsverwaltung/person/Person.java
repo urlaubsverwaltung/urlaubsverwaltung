@@ -32,7 +32,7 @@ public class Person extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "person_generator")
-    @SequenceGenerator(name = "person_generator", sequenceName = "person_id_seq")
+    @SequenceGenerator(name = "person_generator", sequenceName = "person_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

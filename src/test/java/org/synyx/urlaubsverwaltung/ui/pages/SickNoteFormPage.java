@@ -22,8 +22,8 @@ public class SickNoteFormPage {
     private final Page page;
 
     private enum Type {
-        SICK_NOTE("1953"),
-        CHILD_SICK_NOTE("1954");
+        SICK_NOTE("2002"),
+        CHILD_SICK_NOTE("2003");
 
         final String value;
 
