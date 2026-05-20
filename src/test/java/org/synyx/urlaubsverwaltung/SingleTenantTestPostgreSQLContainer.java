@@ -4,7 +4,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 
 public class SingleTenantTestPostgreSQLContainer extends PostgreSQLContainer {
 
-    private static final String VERSION = "18.3";
+    private static final String VERSION = "18.4";
 
     public SingleTenantTestPostgreSQLContainer() {
         super(IMAGE + ":" + VERSION);
