@@ -34,7 +34,7 @@ public class ApplicationEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "application_generator")
-    @SequenceGenerator(name = "application_generator", sequenceName = "application_id_seq")
+    @SequenceGenerator(name = "application_generator", sequenceName = "application_id_seq", allocationSize = 10)
     private Long id;
 
     /**

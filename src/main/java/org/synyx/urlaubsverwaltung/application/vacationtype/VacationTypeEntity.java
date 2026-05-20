@@ -28,7 +28,7 @@ public class VacationTypeEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "vacation_type_generator")
-    @SequenceGenerator(name = "vacation_type_generator", sequenceName = "vacation_type_id_seq")
+    @SequenceGenerator(name = "vacation_type_generator", sequenceName = "vacation_type_id_seq", allocationSize = 1)
     private Long id;
 
     @NotNull

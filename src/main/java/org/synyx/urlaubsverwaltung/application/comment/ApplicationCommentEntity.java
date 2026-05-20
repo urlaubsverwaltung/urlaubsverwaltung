@@ -25,7 +25,7 @@ public class ApplicationCommentEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "application_comment_generator")
-    @SequenceGenerator(name = "application_comment_generator", sequenceName = "application_comment_id_seq")
+    @SequenceGenerator(name = "application_comment_generator", sequenceName = "application_comment_id_seq", allocationSize = 15)
     private Long id;
 
     private Long applicationId;

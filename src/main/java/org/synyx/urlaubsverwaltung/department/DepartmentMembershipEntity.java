@@ -29,7 +29,7 @@ public class DepartmentMembershipEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "department_membership_generator")
-    @SequenceGenerator(name = "department_membership_generator", sequenceName = "department_membership_id_seq")
+    @SequenceGenerator(name = "department_membership_generator", sequenceName = "department_membership_id_seq", allocationSize = 5)
     private Long id;
 
     @NotNull

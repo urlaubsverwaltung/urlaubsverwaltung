@@ -25,7 +25,7 @@ public class CompanyCalendar extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "company_calendar_generator")
-    @SequenceGenerator(name = "company_calendar_generator", sequenceName = "company_calendar_id_seq")
+    @SequenceGenerator(name = "company_calendar_generator", sequenceName = "company_calendar_id_seq", allocationSize = 1)
     private Long id;
 
     @NotNull

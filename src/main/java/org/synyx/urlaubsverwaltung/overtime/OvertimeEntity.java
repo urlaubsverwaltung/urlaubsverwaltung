@@ -29,7 +29,7 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "overtime_generator")
-    @SequenceGenerator(name = "overtime_generator", sequenceName = "overtime_id_seq")
+    @SequenceGenerator(name = "overtime_generator", sequenceName = "overtime_id_seq", allocationSize = 10)
     private Long id;
 
     @ManyToOne

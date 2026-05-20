@@ -1557,12 +1557,12 @@
   "sickNotes": {
     "sickNoteTypes": [
       {
-        "id": 1955,
+        "id": 2001,
         "category": "SICK_NOTE",
         "messageKey": "application.data.sicknotetype.sicknote"
       },
       {
-        "id": 1956,
+        "id": 2002,
         "category": "SICK_NOTE_CHILD",
         "messageKey": "application.data.sicknotetype.sicknotechild"
       }
@@ -1572,7 +1572,7 @@
         "id": 1,
         "externalIdOfPerson": "user",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1595,7 +1595,7 @@
         "id": 2,
         "externalIdOfPerson": "user",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1618,7 +1618,7 @@
         "id": 3,
         "externalIdOfPerson": "user",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1641,7 +1641,7 @@
         "id": 4,
         "externalIdOfPerson": "secondStageAuthority",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1664,7 +1664,7 @@
         "id": 5,
         "externalIdOfPerson": "secondStageAuthority",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1687,7 +1687,7 @@
         "id": 6,
         "externalIdOfPerson": "secondStageAuthority",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1710,7 +1710,7 @@
         "id": 7,
         "externalIdOfPerson": "boss",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1733,7 +1733,7 @@
         "id": 8,
         "externalIdOfPerson": "boss",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1756,7 +1756,7 @@
         "id": 9,
         "externalIdOfPerson": "boss",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1779,7 +1779,7 @@
         "id": 10,
         "externalIdOfPerson": "office",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1802,7 +1802,7 @@
         "id": 11,
         "externalIdOfPerson": "office",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1825,7 +1825,7 @@
         "id": 12,
         "externalIdOfPerson": "office",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1848,7 +1848,7 @@
         "id": 13,
         "externalIdOfPerson": "hdampf",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1871,7 +1871,7 @@
         "id": 14,
         "externalIdOfPerson": "hdampf",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1894,7 +1894,7 @@
         "id": 15,
         "externalIdOfPerson": "hdampf",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1917,7 +1917,7 @@
         "id": 16,
         "externalIdOfPerson": "nschmidt",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1956,
+        "sickNoteTypeId": 2002,
         "startDate": "2024-11-26",
         "endDate": "2024-11-28",
         "dayLength": "FULL",
@@ -1940,7 +1940,7 @@
         "id": 17,
         "externalIdOfPerson": "nschmidt",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2024-12-06",
         "endDate": "2024-12-11",
         "dayLength": "FULL",
@@ -1963,7 +1963,7 @@
         "id": 18,
         "externalIdOfPerson": "nschmidt",
         "externalIdOfApplier": "office",
-        "sickNoteTypeId": 1955,
+        "sickNoteTypeId": 2001,
         "startDate": "2025-01-03",
         "endDate": "2025-01-03",
         "dayLength": "FULL",
@@ -1987,7 +1987,7 @@
   "applications": {
     "vacationTypes": [
       {
-        "id": 9966,
+        "id": 10000,
         "active": true,
         "vacationTypeCategory": "HOLIDAY",
         "requiresApprovalToApply": true,
@@ -2004,7 +2004,7 @@
         }
       },
       {
-        "id": 9967,
+        "id": 10001,
         "active": true,
         "vacationTypeCategory": "SPECIALLEAVE",
         "requiresApprovalToApply": true,
@@ -2021,7 +2021,7 @@
         }
       },
       {
-        "id": 9968,
+        "id": 10002,
         "active": true,
         "vacationTypeCategory": "UNPAIDLEAVE",
         "requiresApprovalToApply": true,
@@ -2038,7 +2038,7 @@
         }
       },
       {
-        "id": 9969,
+        "id": 10003,
         "active": true,
         "vacationTypeCategory": "OVERTIME",
         "requiresApprovalToApply": true,
@@ -2055,7 +2055,7 @@
         }
       },
       {
-        "id": 9970,
+        "id": 10004,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2072,7 +2072,7 @@
         }
       },
       {
-        "id": 9971,
+        "id": 10005,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2089,7 +2089,7 @@
         }
       },
       {
-        "id": 9972,
+        "id": 10006,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2106,7 +2106,7 @@
         }
       },
       {
-        "id": 9973,
+        "id": 10007,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2123,7 +2123,7 @@
         }
       },
       {
-        "id": 9974,
+        "id": 10008,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2140,7 +2140,7 @@
         }
       },
       {
-        "id": 9975,
+        "id": 10009,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2157,7 +2157,7 @@
         }
       },
       {
-        "id": 9976,
+        "id": 10010,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2174,7 +2174,7 @@
         }
       },
       {
-        "id": 9977,
+        "id": 10011,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2191,7 +2191,7 @@
         }
       },
       {
-        "id": 9978,
+        "id": 10012,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2208,7 +2208,7 @@
         }
       },
       {
-        "id": 9979,
+        "id": 10013,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2225,7 +2225,7 @@
         }
       },
       {
-        "id": 9980,
+        "id": 10014,
         "active": false,
         "vacationTypeCategory": "OTHER",
         "requiresApprovalToApply": true,
@@ -2254,7 +2254,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2288,7 +2288,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2322,7 +2322,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2356,7 +2356,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2390,7 +2390,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2424,7 +2424,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2458,7 +2458,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2492,7 +2492,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2526,7 +2526,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2560,7 +2560,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2594,7 +2594,7 @@
         "endDate": "2025-01-11",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9967,
+        "vacationTypeId": 10001,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],
@@ -2628,7 +2628,7 @@
         "endDate": "2025-01-21",
         "startTime": null,
         "endTime": null,
-        "vacationTypeId": 9966,
+        "vacationTypeId": 10000,
         "dayLength": "FULL",
         "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
         "holidayReplacements": [],

@@ -1,0 +1,50 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+  <changeSet author="schneider" id="6.0.0-M4-adjust-allocation-sizes">
+    <preConditions onFail="MARK_RAN">
+      <sequenceExists sequenceName="absence_mapping_id_seq"/>
+      <sequenceExists sequenceName="account_id_seq"/>
+      <sequenceExists sequenceName="application_id_seq"/>
+      <sequenceExists sequenceName="application_comment_id_seq"/>
+      <sequenceExists sequenceName="calendar_accessible_id_seq"/>
+      <sequenceExists sequenceName="company_calendar_id_seq"/>
+      <sequenceExists sequenceName="department_calendar_id_seq"/>
+      <sequenceExists sequenceName="department_id_seq"/>
+      <sequenceExists sequenceName="overtime_id_seq"/>
+      <sequenceExists sequenceName="overtime_comment_id_seq"/>
+      <sequenceExists sequenceName="person_calendar_id_seq"/>
+      <sequenceExists sequenceName="person_id_seq"/>
+      <sequenceExists sequenceName="sick_note_id_seq"/>
+      <sequenceExists sequenceName="sick_note_comment_id_seq"/>
+      <sequenceExists sequenceName="special_leave_settings_id_seq"/>
+      <sequenceExists sequenceName="working_time_id_seq"/>
+      <sequenceExists sequenceName="vacation_type_id_seq"/>
+      <sequenceExists sequenceName="sick_note_type_id_seq"/>
+      <sequenceExists sequenceName="department_membership_id_seq"/>
+      <sequenceExists sequenceName="sick_note_extension_id_seq"/>
+    </preConditions>
+    <alterSequence sequenceName="absence_mapping_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="account_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="application_id_seq" incrementBy="10"/>
+    <alterSequence sequenceName="application_comment_id_seq" incrementBy="15"/>
+    <alterSequence sequenceName="calendar_accessible_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="company_calendar_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="department_calendar_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="department_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="overtime_id_seq" incrementBy="10"/>
+    <alterSequence sequenceName="overtime_comment_id_seq" incrementBy="15"/>
+    <alterSequence sequenceName="person_calendar_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="person_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="sick_note_id_seq" incrementBy="10"/>
+    <alterSequence sequenceName="sick_note_comment_id_seq" incrementBy="15"/>
+    <alterSequence sequenceName="special_leave_settings_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="working_time_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="vacation_type_id_seq" minValue="10000" incrementBy="1"/>
+    <alterSequence sequenceName="sick_note_type_id_seq" incrementBy="1"/>
+    <alterSequence sequenceName="department_membership_id_seq" incrementBy="5"/>
+    <alterSequence sequenceName="sick_note_extension_id_seq" incrementBy="5"/>
+  </changeSet>
+</databaseChangeLog>

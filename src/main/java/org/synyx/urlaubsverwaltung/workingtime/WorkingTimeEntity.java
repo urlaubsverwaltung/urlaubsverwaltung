@@ -28,7 +28,7 @@ public class WorkingTimeEntity extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "working_time_generator")
-    @SequenceGenerator(name = "working_time_generator", sequenceName = "working_time_id_seq")
+    @SequenceGenerator(name = "working_time_generator", sequenceName = "working_time_id_seq", allocationSize = 1)
     private Long id;
 
     @OneToOne

@@ -27,7 +27,7 @@ public class DepartmentCalendar extends AbstractTenantAwareEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "department_calendar_generator")
-    @SequenceGenerator(name = "department_calendar_generator", sequenceName = "department_calendar_id_seq")
+    @SequenceGenerator(name = "department_calendar_generator", sequenceName = "department_calendar_id_seq", allocationSize = 1)
     private Long id;
 
     @NotNull
