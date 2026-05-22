@@ -30,7 +30,7 @@
                     <span class="rounded p-1 bg-green-300 dark:bg-green-500 dark:text-zinc-900">
                       <svg th:replace="~{icon/plus::svg(className='w-3 h-3 stroke-4')}"></svg>
                     </span>
-                    <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                    <span class="nav-link-text" th:text="${#messages.msg(link.messageKey)}"></span>
                   </a>
                 </li>
               </ul>
@@ -48,7 +48,12 @@
                     th:href="@{__${link.href}__}"
                     th:data-test-id="${link.dataTestId}"
                   >
-                    <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                    <span
+                      class="nav-link-badge"
+                      aria-hidden="true"
+                      th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"
+                    ></span>
+                    <span class="nav-link-text" th:text="${#messages.msg(link.messageKey)}"></span>
                   </a>
                 </li>
               </ul>
@@ -66,7 +71,12 @@
                     th:id="${link.id}"
                     th:data-test-id="${link.dataTestId}"
                   >
-                    <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                    <span
+                      class="nav-link-badge"
+                      aria-hidden="true"
+                      th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"
+                    ></span>
+                    <span class="nav-link-text" th:text="${#messages.msg(link.messageKey)}"></span>
                   </a>
                   <ul th:if="${not #lists.isEmpty(link.subItems)}" class="subnav-group">
                     <li th:each="subLink : ${link.subItems}">
@@ -97,24 +107,39 @@
                     th:id="${link.id}"
                     th:data-test-id="${link.dataTestId}"
                   >
-                    <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                    <span
+                      class="nav-link-badge"
+                      aria-hidden="true"
+                      th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"
+                    ></span>
+                    <span class="nav-link-text" th:text="${#messages.msg(link.messageKey)}"></span>
                   </a>
                 </li>
               </ul>
             </div>
             <uv-sticky data-sticky="bottom" class="navigation-inner__bottom flex flex-col gap-2">
+              <button
+                id="nav-toggle"
+                class="nav-collapse-btn navigation-link flex items-center gap-2"
+                th:aria-label="#{nav.toggle.aria-label}"
+                aria-expanded="true"
+              >
+                <svg th:replace="~{icon/panel-left::svg(className='w-5 h-5')}" />
+                <span class="nav-link-text" th:text="#{nav.toggle.text}"></span>
+              </button>
               <a
                 class="navigation-link flex items-center gap-2"
                 th:href="${menuHelpUrl}"
                 target="_blank"
                 rel="noopener"
               >
+                <svg th:replace="~{icon/help-circle::svg(className='nav-help-icon h-5 w-5')}" />
                 <span
-                  class="whitespace-nowrap text-ellipsis overflow-hidden"
+                  class="nav-link-text whitespace-nowrap text-ellipsis overflow-hidden"
                   style="min-width: 0"
                   th:text="#{nav.help.title}"
                 ></span>
-                <svg th:replace="~{icon/external-link::svg(className='h-4 w-4')}"></svg>
+                <svg th:replace="~{icon/external-link::svg(className='nav-link-text h-4 w-4')}"></svg>
               </a>
             </uv-sticky>
           </div>

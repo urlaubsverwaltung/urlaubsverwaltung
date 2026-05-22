@@ -76,14 +76,30 @@
   @variant desktop {
     body {
       grid-template-rows: auto auto 1fr auto;
-      grid-template-columns: minmax(300px, auto) 1fr;
+      grid-template-columns: var(--nav-width) 1fr;
       grid-template-areas:
         "banner banner"
         "launchpad-app avatar"
         "navigation content";
     }
   }
+}
 
+@variant desktop {
+  html {
+    transition: --nav-width 200ms ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  html[data-nav-collapsed] {
+    --nav-width: 5rem;
+  }
+}
+
+@layer base {
   @font-face {
     font-family: "KaushanScript";
     src:

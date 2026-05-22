@@ -10,8 +10,10 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  navlink(target);
-  subnavlink(target);
+  if (target.closest('a')) {
+    navlink(target);
+    subnavlink(target);
+  }
 });
 
 document.addEventListener("turbo:before-cache", function () {
@@ -60,3 +62,36 @@ function subnavlink(element) {
     link.classList.add("navigation-sublink--loading");
   }
 }
+
+// Navigation collapse toggle
+const NAV_COLLAPSED_KEY = "nav-collapsed";
+const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.querySelector("#nav-toggle");
+  if (!toggleButton) return;
+
+  function applyState(collapsed) {
+    if (collapsed) {
+      document.documentElement.setAttribute(NAV_COLLAPSED_ATTR, "");
+      toggleButton.setAttribute("aria-expanded", "false");
+    } else {
+      document.documentElement.removeAttribute(NAV_COLLAPSED_ATTR);
+      toggleButton.setAttribute("aria-expanded", "true");
+    }
+  }
+
+  // sync aria-expanded on load
+  const isCollapsed = document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
+  toggleButton.setAttribute("aria-expanded", String(!isCollapsed));
+
+  toggleButton.addEventListener("click", function () {
+    const nowCollapsed = !document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
+    applyState(nowCollapsed);
+    if (nowCollapsed) {
+      localStorage.setItem(NAV_COLLAPSED_KEY, "true");
+    } else {
+      localStorage.removeItem(NAV_COLLAPSED_KEY);
+    }
+  });
+});

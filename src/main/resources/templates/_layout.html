@@ -93,6 +93,12 @@
         }
       })();
     </script>
+    <script>
+      // prevent FOUC (flash of uncollapsed nav) by applying collapsed state before page paint
+      if (localStorage.getItem("nav-collapsed") === "true") {
+        document.documentElement.setAttribute("data-nav-collapsed", "");
+      }
+    </script>
     <th:block th:replace="${scripts}"></th:block>
 
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicons/apple-touch-icon.png}" />

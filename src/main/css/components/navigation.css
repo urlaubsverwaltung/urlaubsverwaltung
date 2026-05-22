@@ -320,6 +320,24 @@
   }
 }
 
+/* Navigation sidebar collapse/expand states */
+.nav-link-badge {
+  display: none;
+}
+
+.nav-help-icon {
+  display: none;
+}
+
+/* Collapse button: visible only at desktop */
+.nav-collapse-btn {
+  display: none;
+
+  @variant desktop {
+    display: flex;
+  }
+}
+
 @variant desktop {
   .navigation-container {
     display: flex;
@@ -387,5 +405,88 @@
   .nav-launchpad-popover {
     left: --spacing(2);
     right: auto;
+  }
+
+  html[data-nav-collapsed] .navigation-container {
+    .navigation-inner {
+      padding: --spacing(4) --spacing(2);
+      align-items: center;
+    }
+
+    /* hide text labels and group labels */
+    .nav-link-text,
+    .nav-group-label {
+      display: none;
+    }
+
+    /* show badges, center them */
+    .nav-link-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      background-color: var(--color-blue-100);
+      color: var(--color-blue-700);
+
+      @variant dark {
+        background-color: var(--color-blue-900);
+        color: var(--color-blue-100);
+      }
+    }
+
+    /* active state: badge highlighted */
+    .navigation-link--active .nav-link-badge {
+      background-color: var(--color-blue-200);
+
+      @variant dark {
+        background-color: var(--color-blue-800);
+      }
+    }
+
+    /* flex layout for all nav links */
+    .navigation-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: --spacing(2) 0;
+    }
+
+    /* subnav: show as hover popover positioned to the right of icon */
+    .navigation-link ~ .subnav-group {
+      display: none; /* override expanded state rule */
+    }
+
+    li:hover .navigation-link ~ .subnav-group {
+      position: absolute;
+      left: 100%;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      gap: --spacing(3);
+      background: white;
+      border: 1px solid var(--color-gray-200);
+      border-radius: --spacing(2);
+      padding: --spacing(3);
+      margin-left: --spacing(2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: calc(var(--z-index-topbar) - 1);
+      min-width: 160px;
+
+      @variant dark {
+        background: var(--color-zinc-800);
+        border-color: var(--color-zinc-700);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    /* help link: show icon, hide text */
+    .nav-help-icon {
+      display: block;
+    }
   }
 }
