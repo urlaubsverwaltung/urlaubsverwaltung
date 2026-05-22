@@ -1,36 +1,36 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
-import eslintPluginUnicorn from 'eslint-plugin-unicorn';
-
+import eslintPluginUnicorn from "eslint-plugin-unicorn";
 
 export default [
   pluginJs.configs.recommended,
-  eslintPluginUnicorn.configs['flat/recommended'],
+  eslintPluginUnicorn.configs["flat/recommended"],
   {
     languageOptions: {
       globals: {
         ...globals.browser,
-        "Urlaubsverwaltung": true,
+        Urlaubsverwaltung: true,
       },
     },
     rules: {
       "no-restricted-globals": [
         "error",
         {
-          "name": "fetch",
-          "message": "Use 'js/fetch' instead."
+          name: "fetch",
+          message: "Use 'js/fetch' instead.",
         },
       ],
-      "no-restricted-imports": ["error",
+      "no-restricted-imports": [
+        "error",
         {
-          "name": "date-fns",
-          "importNames": ["format", "parse", "start-of-week"],
-          "message": "Please use our custom functions from 'lib/date-fns' instead."
+          name: "date-fns",
+          importNames: ["format", "parse", "start-of-week"],
+          message: "Please use our custom functions from 'lib/date-fns' instead.",
         },
         {
-          "name": "fetch",
-          "importNames": ["format", "parse", "start-of-week"],
-          "message": "Please use our custom functions from 'lib/date-fns' instead."
+          name: "fetch",
+          importNames: ["format", "parse", "start-of-week"],
+          message: "Please use our custom functions from 'lib/date-fns' instead.",
         },
       ],
 
@@ -48,12 +48,17 @@ export default [
     rules: {
       "no-restricted-imports": "off",
       "unicorn/consistent-function-scoping": "off",
-    }
+    },
   },
   {
-    files: ["rollup.config.mjs", "rollup-plugin-assets-manifest.mjs", "eslint.config.mjs", "postcss.config.js"],
+    files: [
+      "rollup.config.mjs",
+      "rollup-plugin-assets-manifest.mjs",
+      "eslint.config.mjs",
+      "postcss.config.js",
+    ],
     languageOptions: {
       globals: globals.node,
-    }
+    },
   },
 ];
