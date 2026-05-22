@@ -1,8 +1,17 @@
+import { post } from "../../js/fetch";
+
 document.addEventListener("click", function (event) {
   /** @type HTMLElement */
   const target = event.target;
 
-  if (event.shiftKey || event.metaKey || event.ctrlKey || event.altKey || target.getAttribute("target") === "_blank") {
+  if (
+    event.shiftKey ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.altKey ||
+    target.getAttribute("target") === "_blank" ||
+    target.closest("button")
+  ) {
     // shiftKey: new window
     // metaKey: new tab (macOS)
     // ctrlKey: new tab (not macOS)
@@ -10,10 +19,8 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  if (target.closest('a')) {
-    navlink(target);
-    subnavlink(target);
-  }
+  navlink(target);
+  subnavlink(target);
 });
 
 document.addEventListener("turbo:before-cache", function () {
@@ -64,7 +71,6 @@ function subnavlink(element) {
 }
 
 // Navigation collapse toggle
-const NAV_COLLAPSED_KEY = "nav-collapsed";
 const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -88,10 +94,12 @@ document.addEventListener("DOMContentLoaded", function () {
   toggleButton.addEventListener("click", function () {
     const nowCollapsed = !document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
     applyState(nowCollapsed);
-    if (nowCollapsed) {
-      localStorage.setItem(NAV_COLLAPSED_KEY, "true");
-    } else {
-      localStorage.removeItem(NAV_COLLAPSED_KEY);
-    }
+
+    post("/api/persons/me/settings", {
+      body: JSON.stringify({ navigationCollapsed: nowCollapsed }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   });
 });

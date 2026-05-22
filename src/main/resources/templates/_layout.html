@@ -3,6 +3,7 @@
   lang="en"
   th:lang="${language}"
   th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:asset="http://www.w3.org/1999/xhtml"
 >
@@ -92,12 +93,6 @@
           document.querySelector("meta[name='theme-color']").setAttribute("content", "#fafafa");
         }
       })();
-    </script>
-    <script>
-      // prevent FOUC (flash of uncollapsed nav) by applying collapsed state before page paint
-      if (localStorage.getItem("nav-collapsed") === "true") {
-        document.documentElement.setAttribute("data-nav-collapsed", "");
-      }
     </script>
     <th:block th:replace="${scripts}"></th:block>
 

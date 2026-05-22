@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +18,14 @@ import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -41,6 +47,8 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
 
     @MockitoBean
     private PersonService personService;
+    @MockitoBean
+    private UserSettingsService userSettingsService;
 
     @Test
     void ensureToReturnCurrentLoggedInPerson() throws Exception {
@@ -146,7 +154,6 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                 }
                 """, STRICT));
     }
-
 
     @Test
     void ensureReturnsAllActivePersons() throws Exception {
@@ -346,6 +353,63 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isConflict());
+    }
+
+    @Nested
+    class UpdateSettings {
+
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureToUpdateSettings(boolean navigationCollapsed) throws Exception {
+
+            final String username = "user@example.org";
+            final Person user = new Person(username, "last", "shane", username);
+            user.setId(100L);
+
+            when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
+
+            perform(
+                post("/api/persons/me/settings")
+                    .with(oidcLogin().idToken(builder -> builder.subject(username)).authorities(new SimpleGrantedAuthority("USER")))
+                    .content(asJsonString(new PersonSettingsDto(navigationCollapsed)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isOk());
+
+            verify(userSettingsService).updateNavigationState(user, navigationCollapsed);
+        }
+
+        @Test
+        void ensureToUpdateSettingsReturnsNotFoundWhenOidcUserIsNull() throws Exception {
+
+            perform(
+                post("/api/persons/me/settings")
+                    .with(oauth2Login().authorities(new SimpleGrantedAuthority("USER")))
+                    .content(asJsonString(new PersonSettingsDto(true)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNotFound());
+
+            verifyNoInteractions(userSettingsService);
+        }
+
+        @Test
+        void ensureToUpdateSettingsReturnsNotFoundWhenPersonNotFound() throws Exception {
+
+            final String username = "user@example.org";
+            final Person unknown = new Person(username, "last", "unknown", username);
+            unknown.setId(101L);
+
+            perform(
+                post("/api/persons/me/settings")
+                    .with(oidcLogin().idToken(builder -> builder.subject(username)).authorities(new SimpleGrantedAuthority("USER")))
+                    .content(asJsonString(new PersonSettingsDto(true)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNotFound());
+
+            verifyNoInteractions(userSettingsService);
+        }
     }
 
     public static String asJsonString(final Object obj) {
