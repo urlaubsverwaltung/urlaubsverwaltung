@@ -56,6 +56,7 @@ export default [
       "rollup-plugin-assets-manifest.mjs",
       "eslint.config.mjs",
       "postcss.config.js",
+      "vitest.config.mjs",
     ],
     languageOptions: {
       globals: globals.node,
