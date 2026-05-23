@@ -325,10 +325,6 @@
   display: none;
 }
 
-.nav-help-icon {
-  display: none;
-}
-
 /* Collapse button: visible only at desktop */
 .nav-collapse-btn {
   display: none;
@@ -503,11 +499,6 @@
         border-color: var(--color-zinc-700);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
-    }
-
-    /* help link: show icon, hide text */
-    .nav-help-icon {
-      display: block;
     }
   }
 }
