@@ -130,15 +130,6 @@
               </ul>
             </div>
             <uv-sticky data-sticky="bottom" class="navigation-inner__bottom flex flex-col gap-2">
-              <button
-                id="nav-toggle"
-                class="nav-collapse-btn navigation-link flex items-center gap-2"
-                th:aria-label="#{nav.toggle.aria-label}"
-                aria-expanded="true"
-              >
-                <svg th:replace="~{icon/panel-left::svg(className='w-5 h-5')}" />
-                <span class="nav-link-text" th:text="#{nav.toggle.text}"></span>
-              </button>
               <a
                 class="navigation-link flex items-center gap-2"
                 th:href="${menuHelpUrl}"
@@ -152,6 +143,15 @@
                   th:text="#{nav.help.title}"
                 ></span>
               </a>
+              <button
+                id="nav-toggle"
+                class="nav-collapse-btn navigation-link flex items-center gap-2"
+                th:aria-label="#{nav.toggle.aria-label}"
+                aria-expanded="true"
+              >
+                <svg th:replace="~{icon/panel-left::svg(className='w-5 h-5')}" />
+                <span class="nav-link-text" th:text="#{nav.toggle.text}"></span>
+              </button>
             </uv-sticky>
           </div>
         </nav>
