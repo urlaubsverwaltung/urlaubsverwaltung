@@ -18,7 +18,7 @@
               <span id="nav-group-quick-label" class="sr-only nav-group-label">
                 :<th:block th:text="#{nav.quick}">Einreichen</th:block>
               </span>
-              <ul aria-labelledby="nav-group-quick-label">
+              <ul aria-labelledby="nav-group-quick-label" class="gap-0">
                 <li th:each="link : ${navigation.favorites}">
                   <a
                     class="navigation-link flex items-center gap-2"
@@ -42,13 +42,17 @@
               <ul aria-labelledby="nav-group-basic-label">
                 <li th:each="link : ${navigation.basic}">
                   <a
-                    class="navigation-link"
+                    class="navigation-link flex items-center gap-2"
                     th:classappend="${link.active ? 'navigation-link--active' : ''}"
                     th:id="${link.id}"
                     th:href="@{__${link.href}__}"
                     th:data-test-id="${link.dataTestId}"
                   >
+                    <th:block th:if="${not #strings.isEmpty(link.iconName)}">
+                      <svg th:replace="~{'icon/' + __${link.iconName}__ :: svg(className='nav-link-badge w-5 h-5')}" />
+                    </th:block>
                     <span
+                      th:if="${#strings.isEmpty(link.iconName)}"
                       class="nav-link-badge"
                       aria-hidden="true"
                       th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"
@@ -65,13 +69,17 @@
               <ul aria-labelledby="nav-group-company-label">
                 <li th:each="link : ${navigation.company}">
                   <a
-                    class="navigation-link"
+                    class="navigation-link flex items-center gap-2"
                     th:classappend="${link.active ? 'navigation-link--active' : ''}"
                     th:href="@{__${link.href}__}"
                     th:id="${link.id}"
                     th:data-test-id="${link.dataTestId}"
                   >
+                    <th:block th:if="${not #strings.isEmpty(link.iconName)}">
+                      <svg th:replace="~{'icon/' + __${link.iconName}__ :: svg(className='nav-link-badge w-5 h-5')}" />
+                    </th:block>
                     <span
+                      th:if="${#strings.isEmpty(link.iconName)}"
                       class="nav-link-badge"
                       aria-hidden="true"
                       th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"
@@ -101,13 +109,17 @@
               <ul aria-labelledby="nav-group-settings-label">
                 <li th:each="link : ${navigation.settings}">
                   <a
-                    class="navigation-link"
+                    class="navigation-link flex items-center gap-2"
                     th:classappend="${link.active ? 'navigation-link--active' : ''}"
                     th:href="@{__${link.href}__}"
                     th:id="${link.id}"
                     th:data-test-id="${link.dataTestId}"
                   >
+                    <th:block th:if="${not #strings.isEmpty(link.iconName)}">
+                      <svg th:replace="~{'icon/' + __${link.iconName}__ :: svg(className='nav-link-badge w-5 h-5')}" />
+                    </th:block>
                     <span
+                      th:if="${#strings.isEmpty(link.iconName)}"
                       class="nav-link-badge"
                       aria-hidden="true"
                       th:text="${#strings.substring(#messages.msg(link.messageKey), 0, 1)}"

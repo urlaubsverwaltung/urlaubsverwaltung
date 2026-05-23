@@ -50,7 +50,7 @@
     ul {
       display: flex;
       flex-direction: column;
-      gap: calc(--spacing(1) / 2);
+      gap: --spacing(1);
     }
 
     .subnav-group {
@@ -321,7 +321,7 @@
 }
 
 /* Navigation sidebar collapse/expand states */
-.nav-link-badge {
+.nav-link-badge:not(svg) {
   display: none;
 }
 
@@ -384,6 +384,14 @@
           padding: --spacing(1) --spacing(2);
         }
 
+        svg.nav-link-badge {
+          stroke: var(--color-gray-400);
+
+          @variant dark {
+            stroke: var(--color-zinc-500);
+          }
+        }
+
         .navigation-link ~ .subnav-group {
           display: none;
         }
@@ -430,17 +438,30 @@
       font-size: 0.75rem;
       font-weight: 600;
       flex-shrink: 0;
-      background-color: var(--color-blue-100);
-      color: var(--color-blue-700);
 
-      @variant dark {
-        background-color: var(--color-blue-900);
-        color: var(--color-blue-100);
+      &:not(svg) {
+        background-color: var(--color-blue-100);
+        color: var(--color-blue-700);
+
+        @variant dark {
+          background-color: var(--color-blue-900);
+          color: var(--color-blue-100);
+        }
+      }
+    }
+
+    .navigation-inner {
+      svg.nav-link-badge {
+        stroke: var(--color-black-almost);
+
+        @variant dark {
+          stroke: var(--color-zinc-200);
+        }
       }
     }
 
     /* active state: badge highlighted */
-    .navigation-link--active .nav-link-badge {
+    .navigation-link--active .nav-link-badge:not(svg) {
       background-color: var(--color-blue-200);
 
       @variant dark {

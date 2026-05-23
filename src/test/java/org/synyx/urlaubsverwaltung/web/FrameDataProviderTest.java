@@ -493,7 +493,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createApplicationLink(boolean active) {
-        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", active, "create-application-link");
+        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", "", active, "create-application-link");
     }
 
     private static NavigationItemDto createSickNoteLink() {
@@ -501,7 +501,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createSickNoteLink(boolean active) {
-        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", active, "create-sicknote-link");
+        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", "", active, "create-sicknote-link");
     }
 
     private static NavigationItemDto createOvertimeLink() {
@@ -509,7 +509,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createOvertimeLink(boolean active) {
-        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active, "create-overtime-link");
+        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", "", active, "create-overtime-link");
     }
 
     private static NavigationItemDto basicOverviewLink(long userId) {
@@ -517,7 +517,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicOverviewLink(long userId, boolean active) {
-        return new NavigationItemDto("basic-overview-link", "/web/person/%d/overview".formatted(userId), "nav.basic.overview", active);
+        return new NavigationItemDto("basic-overview-link", "/web/person/%d/overview".formatted(userId), "nav.basic.overview", "house", active);
     }
 
     private static NavigationItemDto basicApplicationLink() {
@@ -525,7 +525,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicApplicationLink(boolean active) {
-        return new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos", active);
+        return new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos", "list-todo", active);
     }
 
     private static NavigationItemDto basicAbsenceOverviewLink() {
@@ -533,7 +533,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicAbsenceOverviewLink(boolean active) {
-        return new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview", active);
+        return new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview", "calendar-range", active);
     }
 
     private static NavigationItemDto basicAbsenceLink() {
@@ -541,7 +541,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicAbsenceLink(boolean active) {
-        return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", active);
+        return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", "sun", active);
     }
 
     private static NavigationItemDto basicSickNoteLink() {
@@ -549,7 +549,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicSickNoteLink(boolean active) {
-        return new NavigationItemDto("basic-sicknote-link", "/web/persons/me/sicknotes", "nav.basic.my-sicknotes", active);
+        return new NavigationItemDto("basic-sicknote-link", "/web/persons/me/sicknotes", "nav.basic.my-sicknotes", "briefcase-medical", active);
     }
 
     private static NavigationItemDto basicOvertimeLink() {
@@ -557,7 +557,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicOvertimeLink(boolean active) {
-        return new NavigationItemDto("basic-overtime-link", "/web/overtime", "nav.basic.my-overtimes", active);
+        return new NavigationItemDto("basic-overtime-link", "/web/overtime", "nav.basic.my-overtimes", "clock-arrow-up", active);
     }
 
     private static NavigationItemDto companyPersonLink() {
@@ -565,7 +565,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyPersonLink(boolean active) {
-        return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", active, "navigation-persons-link");
+        return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", "user", active, "navigation-persons-link");
     }
 
     private static NavigationItemDto companyApplicationsLink() {
@@ -573,7 +573,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyApplicationsLink(boolean active) {
-        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", active);
+        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", "sun", active);
     }
 
     private static NavigationItemDto companyDepartmentLink() {
@@ -581,7 +581,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyDepartmentLink(boolean active) {
-        return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", active);
+        return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", "users", active);
     }
 
     private static NavigationItemDto companySickNoteLink() {
@@ -589,25 +589,25 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companySickNoteLink(boolean active) {
-        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", active, "navigation-sick-notes-link")
+        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", "briefcase-medical", active, "navigation-sick-notes-link")
             .withSubItems(
                 List.of(
-                    new NavigationItemDto("company-sicknote-overview-link", "/web/sickdays", "nav.company.sicknotes.overview", active),
-                    new NavigationItemDto("company-sicknote-statistics-link", "/web/sicknote/statistics", "nav.company.sicknotes.statistics", false, "navigation-sick-notes-statistics-link")
+                    new NavigationItemDto("company-sicknote-overview-link", "/web/sickdays", "nav.company.sicknotes.overview", "", active),
+                    new NavigationItemDto("company-sicknote-statistics-link", "/web/sicknote/statistics", "nav.company.sicknotes.statistics", "", false, "navigation-sick-notes-statistics-link")
                 )
             );
     }
 
     private static List<NavigationItemDto> settingsLinks() {
         return List.of(
-            new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence", false, "settings-absence-link"),
-            new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes", false, "settings-absencetypes-link"),
-            new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime", false, "settings-overtime-link"),
-            new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays", false, "settings-public-holiday-link"),
-            new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account", false, "settings-holiday-account-link"),
-            new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar", false, "settings-avatar-link"),
-            new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar", false, "settings-calendar-link"),
-            new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync", false, "settings-calendar-sync-link")
+            new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence", "calendar-cog", false, "settings-absence-link"),
+            new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes", "calendar-cog", false, "settings-absencetypes-link"),
+            new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime", "clock-cog", false, "settings-overtime-link"),
+            new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays", "calendar-cog", false, "settings-public-holiday-link"),
+            new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account", "user-cog", false, "settings-holiday-account-link"),
+            new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar", "user-cog", false, "settings-avatar-link"),
+            new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar", "calendar-cog", false, "settings-calendar-link"),
+            new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync", "calendar-cog", false, "settings-calendar-sync-link")
         );
     }
 

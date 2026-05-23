@@ -99,16 +99,16 @@ public class FrameDataProvider implements DataProviderInterface {
         final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
 
         final String application = "/web/application/new";
-        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", url.equals(application), "create-application-link"));
+        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", "", url.equals(application), "create-application-link"));
 
         if (isAllowedToAddOrSubmitSickNote(user, sickNoteSettings)) {
             final String sickNote = "/web/sicknote/new";
-            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", url.equals(sickNote), "create-sicknote-link"));
+            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", "", url.equals(sickNote), "create-sicknote-link"));
         }
 
         if (isUserAllowedToWriteOvertime(user, overtimeSettings)) {
             final String overtime = "/web/overtime/new";
-            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", url.equals(overtime), "create-overtime-link"));
+            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", "", url.equals(overtime), "create-overtime-link"));
         }
 
         return elements;
@@ -126,14 +126,14 @@ public class FrameDataProvider implements DataProviderInterface {
         final String mySicknotes = MY_SICKNOTES_ANONYMOUS_PATH;
         final String overtime = "/web/overtime";
 
-        elements.add(new NavigationItemDto("basic-overview-link", overview, "nav.basic.overview", url.equals(overview)));
-        elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
-        elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", url.equals(absenceOverview)));
-        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$")));
-        elements.add(new NavigationItemDto("basic-sicknote-link", mySicknotes, "nav.basic.my-sicknotes", url.equals(mySicknotes) || url.matches("/web/persons/\\d+/sicknotes$")));
+        elements.add(new NavigationItemDto("basic-overview-link", overview, "nav.basic.overview", "house", url.equals(overview)));
+        elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", "list-todo", url.equals(application)));
+        elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", "calendar-range", url.equals(absenceOverview)));
+        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", "sun", url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$")));
+        elements.add(new NavigationItemDto("basic-sicknote-link", mySicknotes, "nav.basic.my-sicknotes", "briefcase-medical", url.equals(mySicknotes) || url.matches("/web/persons/\\d+/sicknotes$")));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", url.equals(overtime)));
+            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", "clock-arrow-up", url.equals(overtime)));
         }
 
         return elements;
@@ -147,19 +147,19 @@ public class FrameDataProvider implements DataProviderInterface {
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
             final String person = "/web/person";
-            elements.add(new NavigationItemDto("company-person-link", person, "nav.company.staff", url.equals(person), "navigation-persons-link"));
+            elements.add(new NavigationItemDto("company-person-link", person, "nav.company.staff", "user", url.equals(person), "navigation-persons-link"));
         }
 
         final boolean canViewDepartments = user.hasRole(OFFICE) || user.hasRole(BOSS);
         if (canViewDepartments) {
             final String department = "/web/department";
-            elements.add(new NavigationItemDto("company-department-link", department, "nav.company.departments", url.equals(department)));
+            elements.add(new NavigationItemDto("company-department-link", department, "nav.company.departments", "users", url.equals(department)));
         }
 
         final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewApplications) {
             final String applications = "/web/application/statistics";
-            elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", url.equals(applications)));
+            elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", "sun", url.equals(applications)));
         }
 
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
@@ -173,11 +173,11 @@ public class FrameDataProvider implements DataProviderInterface {
             final boolean rootActive = sickdaysActive || statisticsActive;
 
             final NavigationItemDto rootItem =
-                new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", rootActive, "navigation-sick-notes-link");
+                new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", "briefcase-medical", rootActive, "navigation-sick-notes-link");
 
             elements.add(rootItem.withSubItems(List.of(
-                new NavigationItemDto("company-sicknote-overview-link", sickdays, "nav.company.sicknotes.overview", sickdaysActive),
-                new NavigationItemDto("company-sicknote-statistics-link", statistics, "nav.company.sicknotes.statistics", statisticsActive, "navigation-sick-notes-statistics-link")
+                new NavigationItemDto("company-sicknote-overview-link", sickdays, "nav.company.sicknotes.overview", "", sickdaysActive),
+                new NavigationItemDto("company-sicknote-statistics-link", statistics, "nav.company.sicknotes.statistics", "", statisticsActive, "navigation-sick-notes-statistics-link")
             )));
         }
 
@@ -201,14 +201,14 @@ public class FrameDataProvider implements DataProviderInterface {
             final String calendar = "/web/settings/calendar";
             final String calendarSync = "/web/settings/calendar-sync";
 
-            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", url.equals(absences), "settings-absence-link"));
-            elements.add(new NavigationItemDto("settings-absencetypes-link", absenceTypes, "nav.settings.absenceTypes", url.equals(absenceTypes), "settings-absencetypes-link"));
-            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", url.equals(overtime), "settings-overtime-link"));
-            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", url.equals(publicHolidays), "settings-public-holiday-link"));
-            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", url.equals(account), "settings-holiday-account-link"));
-            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", url.equals(avatar), "settings-avatar-link"));
-            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", url.equals(calendar), "settings-calendar-link"));
-            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", url.equals(calendarSync), "settings-calendar-sync-link"));
+            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", "calendar-cog", url.equals(absences), "settings-absence-link"));
+            elements.add(new NavigationItemDto("settings-absencetypes-link", absenceTypes, "nav.settings.absenceTypes", "calendar-cog", url.equals(absenceTypes), "settings-absencetypes-link"));
+            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", "clock-cog", url.equals(overtime), "settings-overtime-link"));
+            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", "calendar-cog", url.equals(publicHolidays), "settings-public-holiday-link"));
+            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", "user-cog", url.equals(account), "settings-holiday-account-link"));
+            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", "user-cog", url.equals(avatar), "settings-avatar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", "calendar-cog", url.equals(calendar), "settings-calendar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", "calendar-cog", url.equals(calendarSync), "settings-calendar-sync-link"));
         }
 
         return elements;
