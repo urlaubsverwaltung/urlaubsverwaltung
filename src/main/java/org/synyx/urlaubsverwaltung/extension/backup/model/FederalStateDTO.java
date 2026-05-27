@@ -113,6 +113,8 @@ public enum FederalStateDTO {
     FINLAND,
     FINLAND_ALAND,
 
+    ROMANIA,
+
     USA_MARYLAND,
     USA_VIRGINIA,
     USA_WASHINGTON_DC;
