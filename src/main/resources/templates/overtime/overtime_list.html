@@ -79,7 +79,11 @@
               </span>
               <span data-grid-ref="title" class="flex items-center gap-2">
                 <th:block th:if="${record.type == 'OVERTIME'}">
-                  <a th:text="#{overtime.link.overtime}" class="text-lg mb-1" th:href="@{__${recordDetailsUrl}__}"></a>
+                  <a
+                    th:text="#{overtime.link.overtime}"
+                    class="text-lg @2xl/main:mb-1"
+                    th:href="@{__${recordDetailsUrl}__}"
+                  ></a>
                   <span
                     th:if="${record.isExternal}"
                     class="text-gray-400 dark:text-zinc-500"
@@ -91,7 +95,7 @@
                 <a
                   th:if="${record.type == 'ABSENCE'}"
                   th:text="#{overtime.link.absence}"
-                  class="text-lg mb-1"
+                  class="text-lg @2xl/main:mb-1"
                   th:href="@{__${recordDetailsUrl}__}"
                 ></a>
               </span>
@@ -146,7 +150,7 @@
             <span data-grid-ref="title">
               <a
                 th:text="#{overtime.link.last-year}"
-                class="text-lg mb-1"
+                class="text-lg @2xl/main:mb-1"
                 th:href="@{/web/overtime?person=__${person.id}__&year=__${lastYear}__}"
               ></a>
             </span>
