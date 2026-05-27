@@ -277,6 +277,10 @@
   }
 }
 
+[popovertarget="avatar-menu"] {
+  anchor-name: --avatar;
+}
+
 .nav-avatar-popover,
 .nav-launchpad-popover {
   margin: 0;
@@ -284,7 +288,7 @@
   /* we want it to be on the right of the screen instead of relative to the anchor. */
   position-area: unset !important;
   inset: unset;
-  top: calc(anchor(bottom) + --spacing(4));
+  top: calc(anchor(--avatar bottom) + --spacing(4));
   right: --spacing(2);
   bottom: --spacing(2);
   height: auto;
