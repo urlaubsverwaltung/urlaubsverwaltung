@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -21,6 +22,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import static java.math.BigDecimal.ONE;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -56,12 +60,14 @@ class SickNotesViewControllerTest {
     private SickNoteService sickNoteService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private SettingsService settingsService;
 
     private final Clock clock = Clock.fixed(ZonedDateTime.of(LocalDate.of(2022, 6, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
     @BeforeEach
     void setUp() {
-        sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService, clock);
+        sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService, settingsService, clock);
     }
 
     @Test
@@ -95,6 +101,7 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "5")))
             .andExpect(status().isOk())
@@ -111,6 +118,7 @@ class SickNotesViewControllerTest {
         when(personService.getPersonByID(6L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -137,6 +145,50 @@ class SickNotesViewControllerTest {
             .andExpect(model().attributeExists("sickDaysOverview"))
             .andExpect(model().attribute("sickNotes",
                 hasItem(hasProperty("id", is(42L)))));
+    }
+
+    @Test
+    void ensureThatUserIsAllowedToSubmitSickNotesIsSetToTrue() throws Exception {
+        final Person person = new Person();
+        person.setId(7L);
+
+        when(personService.getPersonByID(7L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(true);
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "7")))
+            .andExpect(status().isOk())
+            .andExpect(view().name("me/sicknotes"))
+            .andExpect(model().attribute("userIsAllowedToSubmitSickNotes", true));
+    }
+
+    @Test
+    void ensureThatUserIsAllowedToSubmitSickNotesIsSetToFalse() throws Exception {
+        final Person person = new Person();
+        person.setId(8L);
+
+        when(personService.getPersonByID(8L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(false);
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "8")))
+            .andExpect(status().isOk())
+            .andExpect(view().name("me/sicknotes"))
+            .andExpect(model().attribute("userIsAllowedToSubmitSickNotes", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

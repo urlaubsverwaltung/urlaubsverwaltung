@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -42,6 +43,7 @@ public class SickNotesViewController implements HasLaunchpad {
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
+    private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
@@ -50,12 +52,14 @@ public class SickNotesViewController implements HasLaunchpad {
         WorkDaysCountService workDaysCountService,
         SickNoteService sickNoteService,
         DepartmentService departmentService,
+        SettingsService settingsService,
         Clock clock
     ) {
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
+        this.settingsService = settingsService;
         this.clock = clock;
     }
 
@@ -87,6 +91,8 @@ public class SickNotesViewController implements HasLaunchpad {
         final int yearToShow = year == null ? now.getYear() : year;
 
         prepareSickNoteList(person, yearToShow, model);
+
+        model.addAttribute("userIsAllowedToSubmitSickNotes", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes());
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);

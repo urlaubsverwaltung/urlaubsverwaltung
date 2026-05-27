@@ -94,6 +94,18 @@
         </div>
       </div>
 
+      <div th:if="${applications == null || applications.isEmpty()}" class="flex flex-col items-center gap-4">
+        <span th:text="#{application.me.empty}">
+          Urlaubsanträge, Sonderurlaub oder Freizeitausgleich erscheinen hier, sobald du einen Antrag erstellt hast.
+        </span>
+        <a class="flex items-center gap-2" th:href="@{/web/application/new}">
+          <span class="rounded p-1 bg-green-300 dark:bg-green-500 dark:text-zinc-900">
+            <svg th:replace="~{icon/plus::svg(className='w-3 h-3 stroke-4')}"></svg>
+          </span>
+          <span th:text="#{application.me.new}">Abwesenheit</span>
+        </a>
+      </div>
+
       <div class="mb-4 @5xl/main:mb-12">
         <table class="list-table selectable-table text-sm">
           <caption class="sr-only" th:text="#{applications.title}">
