@@ -28,6 +28,11 @@ import java.util.Locale;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 
 @Controller
 @RequestMapping("/")
@@ -90,7 +95,7 @@ public class ApplicationsViewController implements HasLaunchpad {
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
-        prepareApplications(person, yearToShow, model, locale);
+        prepareApplications(person, signedInUser, yearToShow, model, locale);
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
@@ -99,7 +104,7 @@ public class ApplicationsViewController implements HasLaunchpad {
         return "me/applications";
     }
 
-    private void prepareApplications(Person person, int year, Model model, Locale locale) {
+    private void prepareApplications(Person person, Person signedInUser, int year, Model model, Locale locale) {
 
         // get the person's applications for the given year
         final LocalDate startDate = Year.of(year).atDay(1);
@@ -116,7 +121,7 @@ public class ApplicationsViewController implements HasLaunchpad {
             applicationsForLeave = applications.stream()
                 .map(application -> new ApplicationForLeave(application, workDaysCountService))
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(applicationForLeave -> applicationDto(applicationForLeave, locale))
+                .map(applicationForLeave -> applicationDto(applicationForLeave, signedInUser, locale))
                 .toList();
             usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
         }
@@ -129,7 +134,23 @@ public class ApplicationsViewController implements HasLaunchpad {
         return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
+
+        final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
+            .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
+            .toList();
+
+        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+
+        final boolean allowedToEdit = isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+
+        final boolean allowedToRevoke = isAllowedToRevokeApplication(applicationForLeave, signedInUser, requiresApprovalToCancel);
+        final boolean allowedToCancel = isAllowedToCancelApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+        final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
         dto.setStatus(applicationForLeave.getStatus());
@@ -149,6 +170,12 @@ public class ApplicationsViewController implements HasLaunchpad {
         dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());
+        dto.setHolidayReplacements(holidayReplacements);
+        dto.setAllowedToEdit(allowedToEdit);
+        dto.setAllowedToRevoke(allowedToRevoke);
+        dto.setAllowedToCancel(allowedToCancel);
+        dto.setAllowedToCancelDirectly(allowedToCancelDirectly);
+        dto.setAllowedToStartCancellationRequest(allowedToStartCancellationRequest);
         return dto;
     }
 }

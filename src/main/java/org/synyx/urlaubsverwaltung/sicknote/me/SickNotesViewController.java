@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 
@@ -90,7 +93,7 @@ public class SickNotesViewController implements HasLaunchpad {
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
-        prepareSickNoteList(person, yearToShow, model);
+        prepareSickNoteList(person, signedInUser, yearToShow, model);
 
         model.addAttribute("userIsAllowedToSubmitSickNotes", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes());
 
@@ -106,20 +109,42 @@ public class SickNotesViewController implements HasLaunchpad {
         return "me/sicknotes";
     }
 
-    private void prepareSickNoteList(Person person, int year, Model model) {
+    private void prepareSickNoteList(Person person, Person signedInUser, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, from, to);
 
-        final List<SickNote> sortedSickNotes = sickNotes.stream()
+        final boolean isSamePerson = person.equals(signedInUser);
+
+        final List<SickNoteDto> sortedSickNotes = sickNotes.stream()
             .sorted(comparing(SickNote::getStartDate).reversed())
+            .map(sickNote -> mapToSickNoteDtos(person, signedInUser, sickNote, isSamePerson))
             .toList();
         model.addAttribute("sickNotes", sortedSickNotes);
 
         final YearlySickDaysSummary yearlySickDaysSummary = new YearlySickDaysSummary(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", yearlySickDaysSummary);
+    }
+
+    private @NonNull SickNoteDto mapToSickNoteDtos(Person person, Person signedInUser, SickNote sickNote, boolean isSamePerson) {
+        return new SickNoteDto(
+            sickNote.getId(),
+            sickNote.getStartDate(),
+            sickNote.getEndDate(),
+            sickNote.getDayLength(),
+            sickNote.isAubPresent(),
+            sickNote.getWorkDays(),
+            sickNote.getWorkDaysWithAub(),
+            sickNote.getStatus(),
+            sickNote.getSickNoteType(),
+            signedInUser.hasRole(OFFICE)
+                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
+                || (isSamePerson && sickNote.isSubmitted()),
+            signedInUser.hasRole(OFFICE)
+                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
+        );
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
