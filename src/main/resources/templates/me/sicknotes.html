@@ -97,22 +97,22 @@
       </div>
 
       <div th:if="${sickNotes == null || sickNotes.isEmpty()}" class="flex flex-col items-center gap-4">
-          <span th:text="#{sicknote.me.empty}">
-            Sobald eine Krankmeldung erfasst wurde, findest du hier alle zugehörigen Informationen und Zeiträume.
+        <span th:text="#{sicknote.me.empty}">
+          Sobald eine Krankmeldung erfasst wurde, findest du hier alle zugehörigen Informationen und Zeiträume.
+        </span>
+        <a
+          th:if="${userIsAllowedToSubmitSickNotes}"
+          class="navigation-link flex items-center gap-2"
+          th:href="@{/web/sicknote/new}"
+        >
+          <span class="rounded p-1 bg-green-300 dark:bg-green-500 dark:text-zinc-900">
+            <svg th:replace="~{icon/plus::svg(className='w-3 h-3 stroke-4')}"></svg>
           </span>
-          <a
-            th:if="${userIsAllowedToSubmitSickNotes}"
-            class="navigation-link flex items-center gap-2"
-            th:href="@{/web/sicknote/new}"
-          >
-            <span class="rounded p-1 bg-green-300 dark:bg-green-500 dark:text-zinc-900">
-              <svg th:replace="~{icon/plus::svg(className='w-3 h-3 stroke-4')}"></svg>
-            </span>
-            <span th:text="#{sicknote.me.new}">Krankmeldung</span>
-          </a>
-        </div>
+          <span th:text="#{sicknote.me.new}">Krankmeldung</span>
+        </a>
+      </div>
 
-        <table th:if="${sickNotes != null && !sickNotes.isEmpty()}" class="list-table selectable-table text-sm">
+      <table th:if="${sickNotes != null && !sickNotes.isEmpty()}" class="list-table selectable-table text-sm">
         <tbody>
           <tr
             th:each="sickNote,loopStatus : ${sickNotes}"
@@ -176,11 +176,32 @@
               </a>
             </td>
             <td class="hidden @3xl/main:table-cell">
-              <div class="flex items-center justify-center">
-                <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
-                <span>
-                  <th:block th:text="#{sicknote.progress.lastEdited}"></th:block>
-                  <th:block th:replace="~{fragments/date::date(${sickNote.lastEdited})}"></th:block>
+              <div class="opacity-100! flex items-center justify-end">
+                <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
+                  <a
+                    th:if="${sickNote.allowedToCancel}"
+                    class="button flex-1 justify-center"
+                    th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id}, action='cancel', shortcut=true)}"
+                  >
+                    <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 shrink-0')}"></svg>
+                    <span
+                      th:text="#{action.delete}"
+                      class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
+                      >Cancel</span
+                    >
+                  </a>
+                  <a
+                    th:if="${sickNote.allowedToEdit}"
+                    class="button flex-1 justify-center"
+                    th:href="@{/web/sicknote/{sickNote}/edit (sickNote=${sickNote.id})}"
+                  >
+                    <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
+                    <span
+                      th:text="#{action.edit}"
+                      class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
+                      >Edit</span
+                    >
+                  </a>
                 </span>
               </div>
             </td>
