@@ -31,6 +31,11 @@ public class ApplicationDto {
     private Duration hours;
     private LocalDate editedDate;
     private LocalDate cancelDate;
+    private boolean allowedToEdit;
+    private boolean allowedToRevoke;
+    private boolean allowedToCancel;
+    private boolean allowedToCancelDirectly;
+    private boolean allowedToStartCancellationRequest;
 
     public Long getId() {
         return id;
@@ -176,9 +181,49 @@ public class ApplicationDto {
         this.cancelDate = cancelDate;
     }
 
+    public boolean isAllowedToEdit() {
+        return allowedToEdit;
+    }
+
+    public void setAllowedToEdit(boolean allowedToEdit) {
+        this.allowedToEdit = allowedToEdit;
+    }
+
+    public boolean isAllowedToRevoke() {
+        return allowedToRevoke;
+    }
+
+    public void setAllowedToRevoke(boolean allowedToRevoke) {
+        this.allowedToRevoke = allowedToRevoke;
+    }
+
+    public boolean isAllowedToCancel() {
+        return allowedToCancel;
+    }
+
+    public void setAllowedToCancel(boolean allowedToCancel) {
+        this.allowedToCancel = allowedToCancel;
+    }
+
+    public boolean isAllowedToCancelDirectly() {
+        return allowedToCancelDirectly;
+    }
+
+    public void setAllowedToCancelDirectly(boolean allowedToCancelDirectly) {
+        this.allowedToCancelDirectly = allowedToCancelDirectly;
+    }
+
+    public boolean isAllowedToStartCancellationRequest() {
+        return allowedToStartCancellationRequest;
+    }
+
+    public void setAllowedToStartCancellationRequest(boolean allowedToStartCancellationRequest) {
+        this.allowedToStartCancellationRequest = allowedToStartCancellationRequest;
+    }
+
     @Override
     public String toString() {
-        return "OverviewApplicationDto{" +
+        return "ApplicationDto{" +
             "id=" + id +
             ", personId=" + personId +
             ", status=" + status +
@@ -197,6 +242,11 @@ public class ApplicationDto {
             ", hours=" + hours +
             ", editedDate=" + editedDate +
             ", cancelDate=" + cancelDate +
+            ", allowedToEdit=" + allowedToEdit +
+            ", allowedToRevoke=" + allowedToRevoke +
+            ", allowedToCancel=" + allowedToCancel +
+            ", allowedToCancelDirectly=" + allowedToCancelDirectly +
+            ", allowedToStartCancellationRequest=" + allowedToStartCancellationRequest +
             '}';
     }
 }
