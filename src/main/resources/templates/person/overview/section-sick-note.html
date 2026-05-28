@@ -207,7 +207,7 @@
         <a
           class="underline text-sm text-gray-600 hover:text-gray-800 dark:text-zinc-400 dark:hover:text-zinc-300"
           href="#"
-          th:href="@{/web/persons/me/sicknotes (year=${selectedYear})}"
+          th:href="@{/web/persons/__${person.id}__/sicknotes (year=${selectedYear})}"
         >
           <span th:text="#{overview.sicknotes.showAll}">Alle anzeigen</span>
         </a>
