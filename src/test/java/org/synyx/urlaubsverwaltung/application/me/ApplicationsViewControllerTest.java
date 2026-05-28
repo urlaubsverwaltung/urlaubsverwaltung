@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -643,6 +644,141 @@ class ApplicationsViewControllerTest {
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
                 hasItem(hasProperty("allowedToStartCancellationRequest", is(false)))));
+    }
+
+    // ---- HOLIDAY REPLACEMENTS TESTS ----
+
+    @Test
+    void ensureHolidayReplacementsAreMappedToDto() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Person replacement = new Person();
+        replacement.setId(100L);
+        replacement.setFirstName("Max");
+        replacement.setLastName("Mustermann");
+        replacement.setEmail("max@example.com");
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+
+        final Application application = createApplication(1L, person, ALLOWED, false);
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(replacement);
+        application.setHolidayReplacements(List.of(holidayReplacement));
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(
+            any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(List.of(application));
+        when(workDaysCountService.getWorkDaysCount(
+            any(), any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(ONE);
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
+            .andExpect(model().attribute("applications", hasSize(1)))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements", hasSize(1)))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("niceName", is("Max Mustermann")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("initials", is("MM")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("gravatarUrl", is("https://gravatar.com/avatar/27f10ba42a2d1737f88318bdcfca0e62")))))));
+    }
+
+    @Test
+    void ensureHolidayReplacementsAreEmptyWhenNotSet() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+
+        final Application application = createApplication(1L, person, ALLOWED, false);
+        // No holiday replacements set, defaults to empty list
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(
+            any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(List.of(application));
+        when(workDaysCountService.getWorkDaysCount(
+            any(), any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(ONE);
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
+            .andExpect(model().attribute("applications", hasSize(1)))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements", hasSize(0)))));
+    }
+
+    @Test
+    void ensureMultipleHolidayReplacementsAreMappedToDto() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Person replacement1 = new Person();
+        replacement1.setId(100L);
+        replacement1.setFirstName("Anna");
+        replacement1.setLastName("Abc");
+        replacement1.setEmail("anna@example.com");
+
+        final Person replacement2 = new Person();
+        replacement2.setId(101L);
+        replacement2.setFirstName("Bob");
+        replacement2.setLastName("Bobson");
+        replacement2.setEmail("bob@example.com");
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+
+        final Application application = createApplication(1L, person, ALLOWED, false);
+
+        final HolidayReplacementEntity holidayReplacement1 = new HolidayReplacementEntity();
+        holidayReplacement1.setPerson(replacement1);
+
+        final HolidayReplacementEntity holidayReplacement2 = new HolidayReplacementEntity();
+        holidayReplacement2.setPerson(replacement2);
+
+        application.setHolidayReplacements(List.of(holidayReplacement1, holidayReplacement2));
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(
+            any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(List.of(application));
+        when(workDaysCountService.getWorkDaysCount(
+            any(), any(LocalDate.class), any(LocalDate.class), eq(person)
+        )).thenReturn(ONE);
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
+            .andExpect(model().attribute("applications", hasSize(1)))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements", hasSize(2)))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("niceName", is("Anna Abc")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("niceName", is("Bob Bobson")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("initials", is("AA")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("initials", is("BB")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("gravatarUrl", is("https://gravatar.com/avatar/4b9bb80620f03eb3719e0a061c14283d")))))))
+            .andExpect(model().attribute("applications",
+                hasItem(hasProperty("holidayReplacements",
+                    hasItem(hasProperty("gravatarUrl", is("https://gravatar.com/avatar/4b9bb80620f03eb3719e0a061c14283d")))))));
     }
 
     // ---- HELPER METHODS ----

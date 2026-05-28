@@ -218,6 +218,32 @@
                 </a>
               </td>
               <td class="hidden @3xl/main:table-cell">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <th:block
+                    th:if="${#lists.isEmpty(app.holidayReplacements)}"
+                    th:text="#{overview.vacations.replacement.none.label}"
+                  >
+                    keine Vertretung
+                  </th:block>
+                  <th:block th:if="${not #lists.isEmpty(app.holidayReplacements)}">
+                    <span class="whitespace-nowrap" th:text="#{overview.vacations.replacement.label}"
+                      >vertreten von</span
+                    >
+                    <ul class="flex flex-row gap-1">
+                      <li
+                        th:each="holidayReplacement : ${app.holidayReplacements}"
+                        class="text-blue-50 dark:text-sky-800"
+                      >
+                        <img
+                          th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.gravatarUrl + '?d=404&s=30'},niceName=${holidayReplacement.niceName},initials=${holidayReplacement.initials},width='30',height='30', personId=null)}"
+                          alt=""
+                        />
+                      </li>
+                    </ul>
+                  </th:block>
+                </div>
+              </td>
+              <td class="hidden @3xl/main:table-cell">
                 <div class="opacity-100! flex items-center justify-end">
                   <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                     <a

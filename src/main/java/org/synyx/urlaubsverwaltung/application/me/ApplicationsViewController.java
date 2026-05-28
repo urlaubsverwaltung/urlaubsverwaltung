@@ -136,6 +136,10 @@ public class ApplicationsViewController implements HasLaunchpad {
 
     private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
 
+        final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
+            .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
+            .toList();
+
         final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
         final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
         final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
@@ -166,6 +170,7 @@ public class ApplicationsViewController implements HasLaunchpad {
         dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());
+        dto.setHolidayReplacements(holidayReplacements);
         dto.setAllowedToEdit(allowedToEdit);
         dto.setAllowedToRevoke(allowedToRevoke);
         dto.setAllowedToCancel(allowedToCancel);

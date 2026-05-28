@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class ApplicationDto {
 
@@ -31,6 +32,7 @@ public class ApplicationDto {
     private Duration hours;
     private LocalDate editedDate;
     private LocalDate cancelDate;
+    private List<PersonDto> holidayReplacements;
     private boolean allowedToEdit;
     private boolean allowedToRevoke;
     private boolean allowedToCancel;
@@ -179,6 +181,14 @@ public class ApplicationDto {
 
     public void setCancelDate(LocalDate cancelDate) {
         this.cancelDate = cancelDate;
+    }
+
+    public List<PersonDto> getHolidayReplacements() {
+        return holidayReplacements;
+    }
+
+    public void setHolidayReplacements(List<PersonDto> holidayReplacements) {
+        this.holidayReplacements = holidayReplacements;
     }
 
     public boolean isAllowedToEdit() {
