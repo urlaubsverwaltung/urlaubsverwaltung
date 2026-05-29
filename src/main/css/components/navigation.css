@@ -330,12 +330,10 @@
   }
 }
 
-/* Navigation sidebar collapse/expand states */
 .nav-link-badge:not(svg) {
   display: none;
 }
 
-/* Collapse button: visible only at desktop */
 .nav-collapse-btn {
   display: none;
 
@@ -419,13 +417,11 @@
       align-items: center;
     }
 
-    /* hide text labels and group labels */
     .nav-link-text,
     .nav-group-label {
       display: none;
     }
 
-    /* show badges, center them */
     .nav-link-badge {
       display: flex;
       align-items: center;
@@ -458,7 +454,6 @@
       }
     }
 
-    /* active state: badge highlighted */
     .navigation-link--active .nav-link-badge:not(svg) {
       background-color: var(--color-blue-200);
 
@@ -467,7 +462,6 @@
       }
     }
 
-    /* flex layout for all nav links */
     .navigation-link {
       display: flex;
       align-items: center;
@@ -485,8 +479,6 @@
 
       li:hover .navigation-link ~ .subnav-group,
       li:focus-within .navigation-link ~ .subnav-group {
-        /* fixed + anchor: escape the navigation's overflow:auto clip so the */
-        /* navigation stays scrollable while the submenu pops out visibly */
         position: fixed;
         inset-inline-start: calc(anchor(right) - 2px);
         inset-block-start: anchor(top);
