@@ -24,14 +24,7 @@ document.addEventListener("click", function (event) {
   }
 
   if (target.closest("#nav-toggle")) {
-    const nowCollapsed = !document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
-    applyNavState(nowCollapsed);
-    post("/api/persons/me/settings", {
-      body: JSON.stringify({ navigationCollapsed: nowCollapsed }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    setNavCollapsed(!isNavCollapsed());
     return;
   }
 
@@ -96,6 +89,33 @@ function subnavlink(element) {
   }
 }
 
+function isNavCollapsed() {
+  return document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
+}
+
+/**
+ * Apply the collapsed state to the DOM (attribute, aria, tooltips) and persist
+ * it to the backend, but only when it actually changed.
+ *
+ * @param {boolean} collapsed
+ */
+function setNavCollapsed(collapsed) {
+  if (collapsed === isNavCollapsed()) {
+    return;
+  }
+  applyNavState(collapsed);
+  persistNavCollapsed(collapsed);
+}
+
+function persistNavCollapsed(collapsed) {
+  post("/api/persons/me/settings", {
+    body: JSON.stringify({ navigationCollapsed: collapsed }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 function applyNavState(collapsed) {
   const toggleButton = document.querySelector("#nav-toggle");
   if (!toggleButton) return;
@@ -128,7 +148,152 @@ document.addEventListener("DOMContentLoaded", function () {
   if (isCollapsed) {
     addTooltips();
   }
+
+  setupNavResizeHandle();
 });
+
+const NAV_WIDTH_EXPANDED = 300;
+const NAV_RESIZE_THRESHOLD = 4;
+const NAV_RESIZE_RESISTANCE = 0.3;
+const NAV_RESIZE_MAX_OVERSHOOT = 40;
+const NAV_RESIZE_HOVER_DELAY = 150;
+const NAV_RESIZE_VISIBLE_CLASS = "nav-resize-handle--visible";
+
+/**
+ * Adds a drag handle on the right edge of the navigation. Dragging follows the
+ * pointer to give live width feedback; on release the nav snaps to either the
+ * collapsed or expanded state based on the net drag direction (right expands,
+ * left collapses, no movement keeps the current state). A double-click toggles
+ * like the #nav-toggle button.
+ */
+function setupNavResizeHandle() {
+  const container = document.querySelector(".navigation-container");
+  if (!container) return;
+
+  const html = document.documentElement;
+  const remInPx = Number.parseFloat(getComputedStyle(html).fontSize) || 16;
+  // collapsed width mirrors `html[data-nav-collapsed] { --nav-width: 5rem }`
+  const collapsedWidth = remInPx * 5;
+  const midpoint = (collapsedWidth + NAV_WIDTH_EXPANDED) / 2;
+
+  const handle = document.createElement("div");
+  handle.className = "nav-resize-handle";
+  handle.setAttribute("aria-hidden", "true");
+  container.append(handle);
+
+  let startX = 0;
+  let lastX = 0;
+  let pointerId;
+  let startCollapsed = false;
+  let dragging = false;
+  let moved = false;
+  let revealTimer;
+
+  function reveal() {
+    handle.classList.add(NAV_RESIZE_VISIBLE_CLASS);
+  }
+
+  function hide() {
+    clearTimeout(revealTimer);
+    handle.classList.remove(NAV_RESIZE_VISIBLE_CLASS);
+  }
+
+  function widthForPointer(clientX) {
+    const left = container.getBoundingClientRect().left;
+    let width = clientX - left;
+    // rubber-band beyond the snap targets with diminishing resistance
+    if (width < collapsedWidth) {
+      width = collapsedWidth - Math.min(NAV_RESIZE_MAX_OVERSHOOT, (collapsedWidth - width) * NAV_RESIZE_RESISTANCE);
+    } else if (width > NAV_WIDTH_EXPANDED) {
+      width =
+        NAV_WIDTH_EXPANDED + Math.min(NAV_RESIZE_MAX_OVERSHOOT, (width - NAV_WIDTH_EXPANDED) * NAV_RESIZE_RESISTANCE);
+    }
+    return width;
+  }
+
+  handle.addEventListener("pointerdown", function (event) {
+    event.preventDefault();
+    // a drag may start before the hover delay elapsed: reveal immediately
+    clearTimeout(revealTimer);
+    reveal();
+    dragging = true;
+    moved = false;
+    startX = event.clientX;
+    lastX = event.clientX;
+    pointerId = event.pointerId;
+    startCollapsed = isNavCollapsed();
+    handle.setPointerCapture(event.pointerId);
+    html.classList.add("nav-resizing");
+  });
+
+  handle.addEventListener("pointermove", function (event) {
+    if (!dragging) return;
+    lastX = event.clientX;
+    // ignore sub-threshold jitter so a plain click neither resizes nor flips
+    if (!moved && Math.abs(event.clientX - startX) < NAV_RESIZE_THRESHOLD) return;
+    moved = true;
+
+    const width = widthForPointer(event.clientX);
+    html.style.setProperty("--nav-width", `${width}px`);
+    // flip the layout attribute at the midpoint for live feedback; tooltips are
+    // intentionally left untouched here and reconciled once on release
+    if (width < midpoint) {
+      html.setAttribute(NAV_COLLAPSED_ATTR, "");
+    } else {
+      html.removeAttribute(NAV_COLLAPSED_ATTR);
+    }
+  });
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    if (pointerId !== undefined && handle.hasPointerCapture(pointerId)) {
+      handle.releasePointerCapture(pointerId);
+    }
+    pointerId = undefined;
+
+    // net direction from the drag start decides the final state; lastX is used
+    // (not the event) so cleanup is correct even when pointer capture is lost
+    const finalCollapsed = moved ? lastX < startX : startCollapsed;
+
+    // reconcile DOM (attribute, aria, tooltips) for the final state
+    applyNavState(finalCollapsed);
+    html.classList.remove("nav-resizing");
+    // drop the inline width next frame so the attribute-driven target animates
+    // the snap (and any rubber-band overshoot) over the re-enabled transition
+    requestAnimationFrame(() => html.style.removeProperty("--nav-width"));
+
+    if (finalCollapsed !== startCollapsed) {
+      persistNavCollapsed(finalCollapsed);
+    }
+
+    // keep visible only while still hovering, otherwise reset
+    if (!handle.matches(":hover")) {
+      hide();
+    }
+  }
+
+  handle.addEventListener("pointerup", endDrag);
+  handle.addEventListener("pointercancel", endDrag);
+  // fast pointer movement can drop the implicit capture without a pointerup
+  // reaching the handle; this guarantees the drag state is always cleaned up
+  handle.addEventListener("lostpointercapture", endDrag);
+
+  // reveal the cursor + line only after a short hover, hide immediately on leave
+  handle.addEventListener("pointerenter", function () {
+    revealTimer = setTimeout(reveal, NAV_RESIZE_HOVER_DELAY);
+  });
+  handle.addEventListener("pointerleave", function () {
+    // keep it visible while dragging even when the pointer leaves the handle
+    if (!dragging) {
+      hide();
+    }
+  });
+
+  handle.addEventListener("dblclick", function () {
+    setNavCollapsed(!isNavCollapsed());
+  });
+}
 
 function addTooltips() {
   for (let element of document.querySelectorAll(".navigation-link")) {

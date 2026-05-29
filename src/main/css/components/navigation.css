@@ -342,14 +342,75 @@
   }
 }
 
+/* the resize handle only exists on desktop, where collapse applies */
+.nav-resize-handle {
+  display: none;
+}
+
+/* while dragging the resize handle */
+html.nav-resizing {
+  /* width follows the pointer 1:1, no easing lag */
+  transition: none;
+
+  &,
+  * {
+    user-select: none;
+    /* keep the resize cursor even when the pointer leaves the thin handle */
+    cursor: col-resize !important;
+  }
+
+  .nav-resize-handle::before {
+    /* keep the line visible for the whole drag */
+    opacity: 1;
+  }
+}
+
 @variant desktop {
   .navigation-container {
     display: flex;
     flex-direction: column;
     padding: 0;
+    /* anchor the absolutely positioned resize handle */
+    position: relative;
 
     .navigation-button {
       display: none;
+    }
+
+    .nav-resize-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      /* straddle the right edge of the nav column */
+      right: -4px;
+      width: 8px;
+      z-index: var(--z-index-topbar);
+      /* cursor + line stay hidden until armed (after a short hover) via JS */
+      display: flex;
+      justify-content: center;
+      touch-action: none;
+
+      &::before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        background-color: var(--color-blue-300);
+        opacity: 0;
+        transition: opacity 150ms;
+
+        @variant dark {
+          background-color: var(--color-sky-600);
+        }
+      }
+
+      /* revealed after the hover delay (or immediately while dragging) */
+      &.nav-resize-handle--visible {
+        cursor: col-resize;
+
+        &::before {
+          opacity: 1;
+        }
+      }
     }
 
     .navigation {
