@@ -188,6 +188,12 @@ function setupNavResizeHandle() {
   let dragging = false;
   let moved = false;
   let revealTimer;
+  // cached on pointerdown so pointermove never calls getBoundingClientRect()
+  // (a layout read after a style write thrashes layout, very slow in Safari)
+  let containerLeft = 0;
+  // coalesce style writes to one per frame
+  let rafId;
+  let pendingX = 0;
 
   function reveal() {
     handle.classList.add(NAV_RESIZE_VISIBLE_CLASS);
@@ -199,8 +205,7 @@ function setupNavResizeHandle() {
   }
 
   function widthForPointer(clientX) {
-    const left = container.getBoundingClientRect().left;
-    let width = clientX - left;
+    let width = clientX - containerLeft;
     // rubber-band beyond the snap targets with diminishing resistance
     if (width < collapsedWidth) {
       width = collapsedWidth - Math.min(NAV_RESIZE_MAX_OVERSHOOT, (collapsedWidth - width) * NAV_RESIZE_RESISTANCE);
@@ -222,18 +227,14 @@ function setupNavResizeHandle() {
     lastX = event.clientX;
     pointerId = event.pointerId;
     startCollapsed = isNavCollapsed();
+    containerLeft = container.getBoundingClientRect().left;
     handle.setPointerCapture(event.pointerId);
     html.classList.add("nav-resizing");
   });
 
-  handle.addEventListener("pointermove", function (event) {
-    if (!dragging) return;
-    lastX = event.clientX;
-    // ignore sub-threshold jitter so a plain click neither resizes nor flips
-    if (!moved && Math.abs(event.clientX - startX) < NAV_RESIZE_THRESHOLD) return;
-    moved = true;
-
-    const width = widthForPointer(event.clientX);
+  function applyWidth() {
+    rafId = undefined;
+    const width = widthForPointer(pendingX);
     html.style.setProperty("--nav-width", `${width}px`);
     // flip the layout attribute at the midpoint for live feedback; tooltips are
     // intentionally left untouched here and reconciled once on release
@@ -242,11 +243,30 @@ function setupNavResizeHandle() {
     } else {
       html.removeAttribute(NAV_COLLAPSED_ATTR);
     }
+  }
+
+  handle.addEventListener("pointermove", function (event) {
+    if (!dragging) return;
+    lastX = event.clientX;
+    // ignore sub-threshold jitter so a plain click neither resizes nor flips
+    if (!moved && Math.abs(event.clientX - startX) < NAV_RESIZE_THRESHOLD) return;
+    moved = true;
+
+    // coalesce: one layout-triggering write per frame, not per pointermove
+    pendingX = event.clientX;
+    if (rafId === undefined) {
+      rafId = requestAnimationFrame(applyWidth);
+    }
   });
 
   function endDrag() {
     if (!dragging) return;
     dragging = false;
+    // drop any frame still queued so it can't write width after release
+    if (rafId !== undefined) {
+      cancelAnimationFrame(rafId);
+      rafId = undefined;
+    }
     if (pointerId !== undefined && handle.hasPointerCapture(pointerId)) {
       handle.releasePointerCapture(pointerId);
     }
