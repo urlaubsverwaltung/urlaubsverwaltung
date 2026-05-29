@@ -68,11 +68,21 @@
     .navigation-link {
       padding: --spacing(2);
       @apply rounded;
+      background-color: transparent;
 
       --duration: 150ms;
       transition:
         color var(--duration),
         background-color var(--duration);
+
+      &:is(button) {
+        appearance: none;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        text-align: start;
+        width: 100%;
+      }
 
       &:hover {
         background-color: var(--color-blue-50);
@@ -473,31 +483,42 @@
       padding: --spacing(2) 0;
     }
 
-    /* subnav: show as hover popover positioned to the right of icon */
-    .navigation-link ~ .subnav-group {
-      display: none; /* override expanded state rule */
-    }
+    /* subnav: never visible inline in collapsed state, only as hover popover */
+    .navigation .navigation-inner {
+      .navigation-link ~ .subnav-group,
+      .navigation-link--active ~ .subnav-group,
+      .navigation-link--loading ~ .subnav-group {
+        display: none;
+      }
 
-    li:hover .navigation-link ~ .subnav-group {
-      position: absolute;
-      left: 100%;
-      top: 0;
-      display: flex;
-      flex-direction: column;
-      gap: --spacing(3);
-      background: white;
-      border: 1px solid var(--color-gray-200);
-      border-radius: --spacing(2);
-      padding: --spacing(3);
-      margin-left: --spacing(2);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      z-index: calc(var(--z-index-topbar) - 1);
-      min-width: 160px;
+      li:hover .navigation-link ~ .subnav-group,
+      li:focus-within .navigation-link ~ .subnav-group {
+        /* fixed + anchor: escape the navigation's overflow:auto clip so the */
+        /* navigation stays scrollable while the submenu pops out visibly */
+        position: fixed;
+        inset-inline-start: calc(anchor(right) - 2px);
+        inset-block-start: anchor(top);
+        /* flip upward when there is no room below the anchor */
+        position-try-fallbacks: flip-block;
+        /* never let a tall submenu spill past the viewport unreachable */
+        max-height: calc(100dvh - --spacing(4));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: --spacing(3);
+        background: white;
+        border: 1px solid var(--color-gray-200);
+        border-radius: --spacing(2);
+        padding: --spacing(3) --spacing(3) --spacing(3) --spacing(1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: calc(var(--z-index-topbar) - 1);
+        min-width: 160px;
 
-      @variant dark {
-        background: var(--color-zinc-800);
-        border-color: var(--color-zinc-700);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        @variant dark {
+          background: var(--color-zinc-800);
+          border-color: var(--color-zinc-700);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
       }
     }
   }

@@ -1,5 +1,7 @@
 import { post } from "../../js/fetch";
 
+const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
+
 document.addEventListener("click", function (event) {
   /** @type HTMLElement */
   const target = event.target;
@@ -10,12 +12,34 @@ document.addEventListener("click", function (event) {
     event.ctrlKey ||
     event.altKey ||
     target.getAttribute("target") === "_blank" ||
-    target.closest("button")
+    target.closest("button:not(.navigation-link)")
   ) {
     // shiftKey: new window
     // metaKey: new tab (macOS)
     // ctrlKey: new tab (not macOS)
     // altKey: download
+    return;
+  }
+
+  if (target.closest("#nav-toggle")) {
+    const nowCollapsed = !document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
+    applyNavState(nowCollapsed);
+    post("/api/persons/me/settings", {
+      body: JSON.stringify({ navigationCollapsed: nowCollapsed }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return;
+  }
+
+  const navLinkButton = target.closest("button.navigation-link[data-href]");
+  if (navLinkButton) {
+    const isCollapsed = document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
+    if (!isCollapsed) {
+      navLinkButton.classList.add("navigation-link--loading");
+      globalThis.location.href = navLinkButton.dataset.href;
+    }
     return;
   }
 
@@ -70,36 +94,51 @@ function subnavlink(element) {
   }
 }
 
-// Navigation collapse toggle
-const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
+function applyNavState(collapsed) {
+  const toggleButton = document.querySelector("#nav-toggle");
+  if (!toggleButton) return;
+  if (collapsed) {
+    document.documentElement.setAttribute(NAV_COLLAPSED_ATTR, "");
+    toggleButton.setAttribute("aria-expanded", "false");
+    addTooltips();
+  } else {
+    document.documentElement.removeAttribute(NAV_COLLAPSED_ATTR);
+    toggleButton.setAttribute("aria-expanded", "true");
+    removeTooltips();
+  }
+}
 
 document.addEventListener("DOMContentLoaded", function () {
+  // pair each collapsed submenu with its parent button via a unique anchor-name
+  // so the fixed-positioned subnav-group can anchor() to the right button
+  document.querySelectorAll(".navigation .subnav-group").forEach((subnavGroup, i) => {
+    const link = subnavGroup.closest("li").querySelector(".navigation-link");
+    const name = `--nav-subnav-${i}`;
+    link.style.anchorName = name;
+    subnavGroup.style.positionAnchor = name;
+  });
+
   const toggleButton = document.querySelector("#nav-toggle");
   if (!toggleButton) return;
 
-  function applyState(collapsed) {
-    if (collapsed) {
-      document.documentElement.setAttribute(NAV_COLLAPSED_ATTR, "");
-      toggleButton.setAttribute("aria-expanded", "false");
-    } else {
-      document.documentElement.removeAttribute(NAV_COLLAPSED_ATTR);
-      toggleButton.setAttribute("aria-expanded", "true");
-    }
-  }
-
-  // sync aria-expanded on load
   const isCollapsed = document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
   toggleButton.setAttribute("aria-expanded", String(!isCollapsed));
-
-  toggleButton.addEventListener("click", function () {
-    const nowCollapsed = !document.documentElement.hasAttribute(NAV_COLLAPSED_ATTR);
-    applyState(nowCollapsed);
-
-    post("/api/persons/me/settings", {
-      body: JSON.stringify({ navigationCollapsed: nowCollapsed }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  });
+  if (isCollapsed) {
+    addTooltips();
+  }
 });
+
+function addTooltips() {
+  for (let element of document.querySelectorAll(".navigation-link")) {
+    const li = element.closest("li");
+    if (li && !li.querySelector(".subnav-group")) {
+      element.setAttribute("title", element.querySelector(".nav-link-text").textContent);
+    }
+  }
+}
+
+function removeTooltips() {
+  for (let element of document.querySelectorAll(".navigation-link")) {
+    element.removeAttribute("title");
+  }
+}
