@@ -203,3 +203,27 @@ function closestTooltipAnchor(element) {
   }
   return closestTooltipAnchor(element.parentElement);
 }
+
+/**
+ * Prepares the given element to show a tooltip on hover.
+ *
+ * @param {HTMLElement} element
+ * @param {string} text
+ */
+export function prepareTooltip(element, text) {
+  if (element.dataset.title) {
+    element.dataset.title = text;
+  } else {
+    element.setAttribute("title", text);
+  }
+}
+
+/**
+ * Removes everything tooltip related from the given element.
+ *
+ * @param {HTMLElement} element
+ */
+export function disposeTooltip(element) {
+  element.removeAttribute("title");
+  delete element.dataset.title;
+}

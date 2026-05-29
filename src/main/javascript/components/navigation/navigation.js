@@ -1,4 +1,5 @@
 import { post } from "../../js/fetch";
+import { disposeTooltip, prepareTooltip } from "../tooltip/tooltip";
 
 const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
 
@@ -111,12 +112,12 @@ function applyNavState(collapsed) {
 document.addEventListener("DOMContentLoaded", function () {
   // pair each collapsed submenu with its parent button via a unique anchor-name
   // so the fixed-positioned subnav-group can anchor() to the right button
-  document.querySelectorAll(".navigation .subnav-group").forEach((subnavGroup, i) => {
+  for (const [index, subnavGroup] of document.querySelectorAll(".navigation .subnav-group").entries()) {
     const link = subnavGroup.closest("li").querySelector(".navigation-link");
-    const name = `--nav-subnav-${i}`;
+    const name = `--nav-subnav-${index}`;
     link.style.anchorName = name;
     subnavGroup.style.positionAnchor = name;
-  });
+  }
 
   const toggleButton = document.querySelector("#nav-toggle");
   if (!toggleButton) return;
@@ -132,13 +133,13 @@ function addTooltips() {
   for (let element of document.querySelectorAll(".navigation-link")) {
     const li = element.closest("li");
     if (li && !li.querySelector(".subnav-group")) {
-      element.setAttribute("title", element.querySelector(".nav-link-text").textContent);
+      prepareTooltip(element, element.querySelector(".nav-link-text").textContent);
     }
   }
 }
 
 function removeTooltips() {
   for (let element of document.querySelectorAll(".navigation-link")) {
-    element.removeAttribute("title");
+    disposeTooltip(element);
   }
 }
