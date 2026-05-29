@@ -431,6 +431,15 @@ html.nav-resizing {
 
         .navigation-link {
           padding: --spacing(1) --spacing(2);
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
+          flex-wrap: nowrap;
+          white-space: nowrap;
+
+          .nav-link-badge {
+            flex-shrink: 0;
+          }
         }
 
         svg.nav-link-badge {
