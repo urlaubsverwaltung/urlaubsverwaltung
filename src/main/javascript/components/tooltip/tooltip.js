@@ -87,9 +87,13 @@ function onPointerEnter(event) {
   if (event.type === "focusin") {
     showOn(anchor);
   } else {
-    showTimerId = setTimeout(function () {
-      showOn(anchor);
-    }, HOVER_SHOW_DELAY_MS);
+    const delay = anchor.dataset.tooltipDelay;
+    showTimerId = setTimeout(
+      function () {
+        showOn(anchor);
+      },
+      delay === undefined ? HOVER_SHOW_DELAY_MS : Number(delay),
+    );
   }
 }
 
@@ -211,12 +215,16 @@ function closestTooltipAnchor(element) {
  *
  * @param {HTMLElement} element
  * @param {string} text
+ * @param {number} [delay] hover show delay in ms; omit to leave the existing delay untouched
  */
-export function prepareTooltip(element, text) {
+export function prepareTooltip(element, text, delay) {
   if (element.dataset.title) {
     element.dataset.title = text;
   } else {
     element.setAttribute("title", text);
+  }
+  if (delay !== undefined) {
+    element.dataset.tooltipDelay = String(delay);
   }
 }
 
