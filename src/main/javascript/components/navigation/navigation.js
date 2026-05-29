@@ -131,11 +131,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function addTooltips() {
   for (let element of document.querySelectorAll(".navigation-link")) {
+    // ignore submenu groups
     const li = element.closest("li");
     if (li && !li.querySelector(".subnav-group")) {
       prepareTooltip(element, element.querySelector(".nav-link-text").textContent);
     }
   }
+
+  const helpButton = document.querySelector("#global-help-button.navigation-link");
+  prepareTooltip(helpButton, helpButton.querySelector(".nav-link-text").textContent);
+
+  const toggleButton = document.querySelector("#nav-toggle");
+  prepareTooltip(toggleButton, toggleButton.getAttribute("aria-label"));
 }
 
 function removeTooltips() {
