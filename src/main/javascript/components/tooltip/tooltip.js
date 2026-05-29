@@ -154,7 +154,7 @@ function showOn(anchor) {
 
 function retargetTo(anchor) {
   const isHandoff = activeAnchor && activeAnchor !== anchor;
-  const previousRect = isHandoff ? tooltip.getBoundingClientRect() : undefined;
+  const previousAnchorRect = isHandoff ? activeAnchor.getBoundingClientRect() : undefined;
 
   if (slideAnim) {
     slideAnim.cancel();
@@ -171,10 +171,12 @@ function retargetTo(anchor) {
   tooltip.textContent = anchor.dataset.title;
   activeAnchor = anchor;
 
-  if (previousRect && !prefersReducedMotion()) {
-    const nextRect = tooltip.getBoundingClientRect();
-    const dx = previousRect.left - nextRect.left;
-    const dy = previousRect.top - nextRect.top;
+  if (previousAnchorRect && !prefersReducedMotion()) {
+    const nextAnchorRect = anchor.getBoundingClientRect();
+    // tooltip is centered horizontally over the anchor and bottom-aligned above anchor.top
+    const dx =
+      previousAnchorRect.left + previousAnchorRect.width / 2 - (nextAnchorRect.left + nextAnchorRect.width / 2);
+    const dy = previousAnchorRect.top - nextAnchorRect.top;
     slideAnim = tooltip.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0 0" }], {
       duration: SLIDE_MS,
       easing: "ease-out",
