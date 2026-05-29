@@ -342,25 +342,20 @@
   }
 }
 
-/* the resize handle only exists on desktop, where collapse applies */
 .nav-resize-handle {
   display: none;
 }
 
-/* while dragging the resize handle */
 html.nav-resizing {
-  /* width follows the pointer 1:1, no easing lag */
   transition: none;
 
   &,
   * {
     user-select: none;
-    /* keep the resize cursor even when the pointer leaves the thin handle */
     cursor: col-resize !important;
   }
 
   .nav-resize-handle::before {
-    /* keep the line visible for the whole drag */
     opacity: 1;
   }
 }
@@ -381,11 +376,9 @@ html.nav-resizing {
       position: absolute;
       top: 0;
       bottom: 0;
-      /* straddle the right edge of the nav column */
       right: -4px;
       width: 8px;
       z-index: var(--z-index-topbar);
-      /* cursor + line stay hidden until armed (after a short hover) via JS */
       display: flex;
       justify-content: center;
       touch-action: none;
@@ -403,7 +396,6 @@ html.nav-resizing {
         }
       }
 
-      /* revealed after the hover delay (or immediately while dragging) */
       &.nav-resize-handle--visible {
         cursor: col-resize;
 
@@ -478,8 +470,7 @@ html.nav-resizing {
       align-items: center;
     }
 
-    /* while a subnav flyout is open, let the pointer cross the handle strip to
-       reach it instead of the handle stealing the hover and closing the flyout */
+    /* while a subnav flyout is open, the resize-handle should do nothing */
     &:has(li:hover .subnav-group),
     &:has(li:focus-within .subnav-group) {
       .nav-resize-handle {
@@ -552,9 +543,7 @@ html.nav-resizing {
         position: fixed;
         inset-inline-start: calc(anchor(right) - 2px);
         inset-block-start: anchor(top);
-        /* flip upward when there is no room below the anchor */
         position-try-fallbacks: flip-block;
-        /* never let a tall submenu spill past the viewport unreachable */
         max-height: calc(100dvh - --spacing(4));
         overflow-y: auto;
         display: flex;
