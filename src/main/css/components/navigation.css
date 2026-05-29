@@ -34,7 +34,7 @@
         transition: border-color 150ms;
 
         @variant dark {
-          background-color: var(--color-zinc-900);
+          background-color: var(--color-zinc-950);
         }
 
         &.uv-sticky--stuck {
@@ -375,10 +375,6 @@
         padding-bottom: --spacing(2);
 
         .navigation-inner__bottom {
-          @variant dark {
-            background-color: var(--color-zinc-950);
-          }
-
           .uv-sticky--stuck {
             @variant dark {
               border-top-color: var(--color-zinc-900);
