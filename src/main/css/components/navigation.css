@@ -478,6 +478,15 @@ html.nav-resizing {
       align-items: center;
     }
 
+    /* while a subnav flyout is open, let the pointer cross the handle strip to
+       reach it instead of the handle stealing the hover and closing the flyout */
+    &:has(li:hover .subnav-group),
+    &:has(li:focus-within .subnav-group) {
+      .nav-resize-handle {
+        pointer-events: none;
+      }
+    }
+
     .nav-link-text,
     .nav-group-label {
       display: none;
