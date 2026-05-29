@@ -131,7 +131,7 @@
     <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="~{_navigation::nav}">navigation block</nav>
 
-    <div class="topbar-cell flex items-center gap-2 py-2 px-4 lg:pl-6" style="grid-area: launchpad-app">
+    <div class="launchpad-app-cell topbar-cell flex items-center gap-2 py-2 px-4 lg:pl-6">
       <div th:replace="~{launchpad/launchpad::launchpad}"></div>
       <a
         href="/"
@@ -141,11 +141,7 @@
       </a>
     </div>
 
-    <div
-      th:fragment="row"
-      class="topbar-cell flex items-center gap-4 justify-end p-2 lg:pr-6"
-      style="grid-area: avatar"
-    >
+    <div th:fragment="row" class="avatar-cell topbar-cell flex items-center gap-4 justify-end p-2 lg:pr-6">
       <div th:replace="~{_top::avatar}"></div>
     </div>
 

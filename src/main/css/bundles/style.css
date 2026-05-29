@@ -73,6 +73,14 @@
     height: 100vh;
   }
 
+  .launchpad-app-cell {
+    grid-area: launchpad-app;
+  }
+
+  .avatar-cell {
+    grid-area: avatar;
+  }
+
   @variant desktop {
     body {
       grid-template-rows: auto auto 1fr auto;
@@ -81,6 +89,17 @@
         "banner banner"
         "launchpad-app avatar"
         "navigation content";
+    }
+
+    .launchpad-app-cell {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .avatar-cell {
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: end;
     }
   }
 }
