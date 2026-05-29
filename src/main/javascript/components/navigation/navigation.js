@@ -2,6 +2,7 @@ import { post } from "../../js/fetch";
 import { disposeTooltip, prepareTooltip } from "../tooltip/tooltip";
 
 const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
+const TOOLTIP_DELAY = 500;
 
 document.addEventListener("click", function (event) {
   /** @type HTMLElement */
@@ -134,15 +135,15 @@ function addTooltips() {
     // ignore submenu groups
     const li = element.closest("li");
     if (li && !li.querySelector(".subnav-group")) {
-      prepareTooltip(element, element.querySelector(".nav-link-text").textContent);
+      prepareTooltip(element, element.querySelector(".nav-link-text").textContent, TOOLTIP_DELAY);
     }
   }
 
   const helpButton = document.querySelector("#global-help-button.navigation-link");
-  prepareTooltip(helpButton, helpButton.querySelector(".nav-link-text").textContent);
+  prepareTooltip(helpButton, helpButton.querySelector(".nav-link-text").textContent, TOOLTIP_DELAY);
 
   const toggleButton = document.querySelector("#nav-toggle");
-  prepareTooltip(toggleButton, toggleButton.getAttribute("aria-label"));
+  prepareTooltip(toggleButton, toggleButton.getAttribute("aria-label"), TOOLTIP_DELAY);
 }
 
 function removeTooltips() {
