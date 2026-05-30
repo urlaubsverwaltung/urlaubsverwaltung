@@ -315,15 +315,27 @@ function addTooltips() {
     // ignore submenu groups
     const li = element.closest("li");
     if (li && !li.querySelector(".subnav-group")) {
-      prepareTooltip(element, element.querySelector(".nav-link-text").textContent, TOOLTIP_DELAY);
+      prepareTooltip(element, {
+        text: element.querySelector(".nav-link-text").textContent,
+        placement: "right",
+        delay: TOOLTIP_DELAY,
+      });
     }
   }
 
   const helpButton = document.querySelector("#global-help-button.navigation-link");
-  prepareTooltip(helpButton, helpButton.querySelector(".nav-link-text").textContent, TOOLTIP_DELAY);
+  prepareTooltip(helpButton, {
+    text: helpButton.querySelector(".nav-link-text").textContent,
+    placement: "right",
+    delay: TOOLTIP_DELAY,
+  });
 
   const toggleButton = document.querySelector("#nav-toggle");
-  prepareTooltip(toggleButton, toggleButton.getAttribute("aria-label"), TOOLTIP_DELAY);
+  prepareTooltip(toggleButton, {
+    text: toggleButton.getAttribute("aria-label"),
+    placement: "right",
+    delay: TOOLTIP_DELAY,
+  });
 }
 
 function removeTooltips() {

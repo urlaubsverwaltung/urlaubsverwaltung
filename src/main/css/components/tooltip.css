@@ -43,6 +43,12 @@
   }
 }
 
+[role="tooltip"][popover][data-placement="right"] {
+  position-area: right;
+  margin-bottom: 0;
+  margin-left: --spacing(2);
+}
+
 @starting-style {
   [role="tooltip"][popover]:popover-open {
     opacity: 0;

@@ -291,9 +291,51 @@ describe("tooltip", function () {
     const button = document.createElement("button");
     document.body.append(button);
 
-    prepareTooltip(button, "Edit user", 500);
+    prepareTooltip(button, { text: "Edit user", delay: 500 });
 
     expect(button.dataset.tooltipDelay).toBe("500");
+  });
+
+  test("prepareTooltip writes data-tooltip-placement when a placement is given", function () {
+    const button = document.createElement("button");
+    document.body.append(button);
+
+    prepareTooltip(button, { text: "Edit user", placement: "right" });
+
+    expect(button.dataset.tooltipPlacement).toBe("right");
+  });
+
+  test("prepareTooltip leaves data-tooltip-placement untouched when placement is omitted", function () {
+    const button = document.createElement("button");
+    button.dataset.tooltipPlacement = "right";
+    document.body.append(button);
+
+    prepareTooltip(button, { text: "Edit user" });
+
+    expect(button.dataset.tooltipPlacement).toBe("right");
+  });
+
+  test("showing a tooltip mirrors the anchor placement onto the tooltip element", function () {
+    const button = anchorWith("Edit user");
+    button.dataset.tooltipPlacement = "right";
+    document.body.append(button);
+
+    spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(sut().dataset.placement).toBe("right");
+  });
+
+  test("showing a tooltip without placement defaults the tooltip element to top", function () {
+    const button = anchorWith("Edit user");
+    document.body.append(button);
+
+    spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(sut().dataset.placement).toBe("top");
   });
 
   test("mouseout to a child within the same anchor does not begin hide", function () {

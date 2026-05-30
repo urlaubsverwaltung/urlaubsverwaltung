@@ -173,14 +173,24 @@ function retargetTo(anchor) {
   anchor.classList.add(ANCHOR_ACTIVE_CLASS);
   anchor.setAttribute("aria-describedby", TOOLTIP_ID);
   tooltip.textContent = anchor.dataset.title;
+  const placement = anchor.dataset.tooltipPlacement === "right" ? "right" : "top";
+  tooltip.dataset.placement = placement;
   activeAnchor = anchor;
 
   if (previousAnchorRect && !prefersReducedMotion()) {
     const nextAnchorRect = anchor.getBoundingClientRect();
-    // tooltip is centered horizontally over the anchor and bottom-aligned above anchor.top
-    const dx =
-      previousAnchorRect.left + previousAnchorRect.width / 2 - (nextAnchorRect.left + nextAnchorRect.width / 2);
-    const dy = previousAnchorRect.top - nextAnchorRect.top;
+    // both ends of a handoff share the same placement, so the reference point follows it
+    let dx;
+    let dy;
+    if (placement === "right") {
+      // tooltip is left-aligned right of anchor.right and vertically centered on the anchor
+      dx = previousAnchorRect.right - nextAnchorRect.right;
+      dy = previousAnchorRect.top + previousAnchorRect.height / 2 - (nextAnchorRect.top + nextAnchorRect.height / 2);
+    } else {
+      // tooltip is centered horizontally over the anchor and bottom-aligned above anchor.top
+      dx = previousAnchorRect.left + previousAnchorRect.width / 2 - (nextAnchorRect.left + nextAnchorRect.width / 2);
+      dy = previousAnchorRect.top - nextAnchorRect.top;
+    }
     slideAnim = tooltip.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0 0" }], {
       duration: SLIDE_MS,
       easing: "ease-out",
@@ -211,13 +221,20 @@ function closestTooltipAnchor(element) {
 }
 
 /**
+ * @typedef {Object} TooltipOptions
+ * @property {string} text the tooltip text
+ * @property {"top" | "right"} [placement] where the tooltip appears relative to the element;
+ *   omit to leave the existing placement untouched (defaults to "top" when never set)
+ * @property {number} [delay] hover show delay in ms; omit to leave the existing delay untouched
+ */
+
+/**
  * Prepares the given element to show a tooltip on hover.
  *
  * @param {HTMLElement} element
- * @param {string} text
- * @param {number} [delay] hover show delay in ms; omit to leave the existing delay untouched
+ * @param {TooltipOptions} options
  */
-export function prepareTooltip(element, text, delay) {
+export function prepareTooltip(element, { text, placement, delay }) {
   if (element.dataset.title) {
     element.dataset.title = text;
   } else {
@@ -225,6 +242,9 @@ export function prepareTooltip(element, text, delay) {
   }
   if (delay !== undefined) {
     element.dataset.tooltipDelay = String(delay);
+  }
+  if (placement !== undefined) {
+    element.dataset.tooltipPlacement = placement;
   }
 }
 
