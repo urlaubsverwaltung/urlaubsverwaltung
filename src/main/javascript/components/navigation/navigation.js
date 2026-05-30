@@ -1,4 +1,4 @@
-import { post } from "../../js/fetch";
+import { patchJson } from "../../js/fetch";
 import { disposeTooltip, prepareTooltip } from "../tooltip/tooltip";
 
 const NAV_COLLAPSED_ATTR = "data-nav-collapsed";
@@ -108,12 +108,7 @@ function setNavCollapsed(collapsed) {
 }
 
 function persistNavCollapsed(collapsed) {
-  post("/api/persons/me/settings", {
-    body: JSON.stringify({ navigationCollapsed: collapsed }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  void patchJson("/api/persons/me/settings", { navigationCollapsed: collapsed });
 }
 
 function applyNavState(collapsed) {

@@ -1,4 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-public record PersonSettingsDto(boolean navigationCollapsed) {
+import org.jspecify.annotations.Nullable;
+
+public record PersonSettingsDto(@Nullable Boolean navigationCollapsed) {
 }

@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.person.api.PersonMapper.mapToDto;
@@ -145,7 +147,7 @@ public class PersonApiController {
             * user
             """
     )
-    @PostMapping(path = "/me/settings", consumes = APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/me/settings", consumes = APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<Void> updateSettings(
         @AuthenticationPrincipal OidcUser oidcUser,
@@ -161,8 +163,10 @@ public class PersonApiController {
 
         final HttpStatus status = personService.getPersonByUsername(username)
             .map(person -> {
-                userSettingsService.updateNavigationState(person, personSettingsDto.navigationCollapsed());
-                return OK;
+                if (personSettingsDto.navigationCollapsed() != null) {
+                    userSettingsService.updateNavigationState(person, personSettingsDto.navigationCollapsed());
+                }
+                return NO_CONTENT;
             }).orElseGet(() -> {
                 LOG.info("could not update person settings. username {} not found.", username);
                 return NOT_FOUND;

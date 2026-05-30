@@ -1,5 +1,6 @@
 export async function getJSON(url) {
-  const response = await doGet(url, {
+  const response = await doFetch(url, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
@@ -10,24 +11,55 @@ export async function getJSON(url) {
   return response.json();
 }
 
+/**
+ * POST data
+ *
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @return {Promise<Response>}
+ */
 export function post(url, options = {}) {
-  // eslint-disable-next-line no-restricted-globals
-  return fetch(url, {
+  return doFetch(url, {
     ...options,
     method: "POST",
-    credentials: "include",
-    headers: {
-      "X-Requested-With": "ajax",
-      ...options.headers,
-    },
   });
 }
 
-export function doGet(url, options) {
+/**
+ * PATCH json
+ *
+ * @param {string} url
+ * @param {object} data
+ * @param {RequestInit} [options]
+ * @return {Promise<Response>}
+ */
+export function patchJson(url, data, options = {}) {
+  return doFetch(url, {
+    ...options,
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ *
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @return {Promise<Response>}
+ */
+function doFetch(url, options) {
   // eslint-disable-next-line no-restricted-globals
   return fetch(url, {
     ...options,
-    method: "GET",
+    credentials: "include",
+    headers: {
+      "X-Requested-With": "ajax",
+      ...options?.headers,
+    },
   });
 }
 
