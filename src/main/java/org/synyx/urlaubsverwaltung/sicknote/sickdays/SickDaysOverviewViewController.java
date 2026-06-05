@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -34,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.util.StringUtils.hasText;
@@ -46,11 +51,14 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  */
 @Controller
 @RequestMapping("/web")
-public class SickDaysOverviewViewController implements HasLaunchpad {
+public class SickDaysOverviewViewController implements HasLaunchpad, HasPersonSearch {
+
+    private static final String SEARCH_PARAM = "query";
 
     private final SickDaysStatisticsService sickDaysStatisticsService;
     private final PersonService personService;
     private final DateFormatAware dateFormatAware;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final DataWebProperties dataWebProperties;
     private final Clock clock;
 
@@ -58,14 +66,27 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         SickDaysStatisticsService sickDaysStatisticsService,
         PersonService personService,
         DateFormatAware dateFormatAware,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         DataWebProperties dataWebProperties,
         Clock clock
     ) {
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.dataWebProperties = dataWebProperties;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) ->
+            "/web/sickdays?%s=%s".formatted(SEARCH_PARAM, encode(suggestion.getNiceName(), UTF_8));
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
@@ -73,7 +94,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     public String periodsSickNotes(
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
-        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
@@ -107,7 +128,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), List.of(
             new QueryParam("from", from),
             new QueryParam("to", to),
-            new QueryParam("query", query)
+            new QueryParam(SEARCH_PARAM, query)
         ));
 
         model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix, dataWebProperties.getPageable()));

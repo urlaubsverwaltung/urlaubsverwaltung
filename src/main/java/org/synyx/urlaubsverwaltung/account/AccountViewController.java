@@ -20,6 +20,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
 import java.math.BigDecimal;
@@ -37,31 +40,44 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class AccountViewController implements HasLaunchpad {
+public class AccountViewController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final AccountFormValidator validator;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     @Autowired
     AccountViewController(PersonService personService, AccountService accountService,
                           AccountInteractionService accountInteractionService,
                           VacationTypeViewModelService vacationTypeViewModelService,
-                          AccountFormValidator validator, Clock clock) {
+                          AccountFormValidator validator, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+                          Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.validator = validator;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) -> "/web/person/%s/account".formatted(suggestion.getId());
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize(IS_OFFICE)

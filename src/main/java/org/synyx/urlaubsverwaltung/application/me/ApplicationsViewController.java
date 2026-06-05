@@ -17,6 +17,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -36,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 
 @Controller
 @RequestMapping("/")
-public class ApplicationsViewController implements HasLaunchpad {
+public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String PERSON_ATTRIBUTE = "person";
     public static final String MY_APPLICATIONS_ANONYMOUS_PATH = "/web/persons/me/applications";
@@ -47,14 +50,16 @@ public class ApplicationsViewController implements HasLaunchpad {
     private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
-    public ApplicationsViewController(
+    ApplicationsViewController(
         PersonService personService,
         DepartmentService departmentService,
         ApplicationService applicationService,
         WorkDaysCountService workDaysCountService,
         VacationTypeViewModelService vacationTypeViewModelService,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
@@ -62,7 +67,25 @@ public class ApplicationsViewController implements HasLaunchpad {
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            String url = "/web/persons/%s/applications".formatted(suggestion.getId());
+            final String year = context.getRequest().getParameter("year");
+            if (year != null) {
+                url += "?year=" + year;
+            }
+            return url;
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping(MY_APPLICATIONS_ANONYMOUS_PATH)

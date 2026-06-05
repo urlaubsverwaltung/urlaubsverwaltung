@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -21,6 +24,9 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -71,10 +77,68 @@ class PersonNotificationsViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService, settingsService);
+        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService,
+            departmentService, settingsService, personSearchUiFragmentSupplier);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToNotificationsOfPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/person/1/notifications");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/person/42/notifications");
+        }
+
+        @Test
+        void linksToDepartmentNotificationsOfPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/person/1/notifications/departments");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/person/42/notifications/departments");
+        }
+
+        @Test
+        void honoursContextPath() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setContextPath("/ctx");
+            request.setRequestURI("/ctx/web/person/1/notifications/departments");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/person/42/notifications/departments");
+        }
     }
 
     @ParameterizedTest
@@ -761,15 +825,19 @@ class PersonNotificationsViewControllerTest {
         return person;
     }
 
-    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
-    }
-
     private void userIsAllowedToSubmitSickNotes(boolean userIsAllowedToSubmit) {
         final Settings settings = new Settings();
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
         sickNoteSettings.setUserIsAllowedToSubmitSickNotes(userIsAllowedToSubmit);
         settings.setSickNoteSettings(sickNoteSettings);
         when(settingsService.getSettings()).thenReturn(settings);
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
+    }
+
+    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+        return standaloneSetup(sut).build().perform(builder);
     }
 }

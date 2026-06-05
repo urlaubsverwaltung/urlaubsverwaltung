@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.person.web;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +21,9 @@ import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
@@ -38,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.m
 
 @Controller
 @RequestMapping("/web")
-public class PersonNotificationsViewController implements HasLaunchpad {
+public class PersonNotificationsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -51,19 +53,37 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     private final UserNotificationSettingsService userNotificationSettingsService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    @Autowired
     PersonNotificationsViewController(
         PersonService personService,
         PersonNotificationsDtoValidator validator,
         UserNotificationSettingsService userNotificationSettingsService,
-        DepartmentService departmentService, SettingsService settingsService
+        DepartmentService departmentService,
+        SettingsService settingsService,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.personService = personService;
         this.validator = validator;
         this.userNotificationSettingsService = userNotificationSettingsService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            if (context.getRequestPath().endsWith("/departments")) {
+                return "/web/person/%s/notifications/departments".formatted(suggestion.getId());
+            }
+            return "/web/person/%s/notifications".formatted(suggestion.getId());
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/person/{personId}/notifications")

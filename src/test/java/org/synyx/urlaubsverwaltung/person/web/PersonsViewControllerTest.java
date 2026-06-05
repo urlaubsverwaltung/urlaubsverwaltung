@@ -30,6 +30,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
@@ -97,6 +100,8 @@ class PersonsViewControllerTest {
     @Mock
     private PersonBasedataService personBasedataService;
     @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    @Mock
     private DataWebProperties dataWebProperties;
 
     final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
@@ -109,7 +114,31 @@ class PersonsViewControllerTest {
         pageableProperties.setPageParameter("page");
         lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService,
+            personBasedataService, personSearchUiFragmentSupplier, dataWebProperties, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToPersonsWithPerson() {
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+            suggestion.setFirstName("Bruce");
+            suggestion.setLastName("Wayne");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
+            assertThat(actual).isEqualTo("/web/person?query=Bruce+Wayne");
+        }
     }
 
     @Test
@@ -565,7 +594,8 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesGivenYear() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService,
+            personBasedataService, personSearchUiFragmentSupplier, dataWebProperties, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -587,7 +617,8 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService,
+            personBasedataService, personSearchUiFragmentSupplier, dataWebProperties, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -784,7 +815,8 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreOnlyDisplayedIfTheyDoNotExpire(final boolean doExpire, final BigDecimal remainingVacationDays) throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService,
+            personBasedataService, personSearchUiFragmentSupplier, dataWebProperties, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);
@@ -838,7 +870,8 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreDisplayedIfBeforeExpireDate() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-03-31T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService,
+            personBasedataService, personSearchUiFragmentSupplier, dataWebProperties, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);
@@ -1165,5 +1198,9 @@ class PersonsViewControllerTest {
         person.setPermissions(Arrays.asList(role));
 
         return person;
+    }
+
+    private static SearchContext searchContext() {
+        return SearchContext.of(null, null);
     }
 }

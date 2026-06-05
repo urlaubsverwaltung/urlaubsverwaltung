@@ -1,11 +1,14 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,6 +32,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -107,6 +113,8 @@ class OverviewViewControllerTest {
     private OvertimeService overtimeService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @Mock
     private VacationTypeViewModelService vacationTypeViewModelService;
@@ -116,7 +124,58 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-            departmentService, vacationTypeViewModelService, clock);
+            departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToOverviewOfPerson() {
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
+            assertThat(actual).isEqualTo("/web/person/42/overview");
+        }
+
+        @Test
+        void preservesYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setParameter("year", "2026");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/person/42/overview?year=2026");
+        }
+
+        @Test
+        void ignoresBlankYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setParameter("year", "  ");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/person/42/overview");
+        }
     }
 
     @Test
@@ -1020,6 +1079,14 @@ class OverviewViewControllerTest {
             .withVacationDaysUsedNextYear(ZERO)
             .notExpiring(ZERO)
             .build();
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

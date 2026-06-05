@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendar;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +17,9 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 
 @Controller
 @RequestMapping("/web/calendars/share")
-public class CalendarSharingViewController implements HasLaunchpad {
+public class CalendarSharingViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS = "redirect:/web/calendars/share/persons/%d";
 
@@ -41,15 +43,18 @@ public class CalendarSharingViewController implements HasLaunchpad {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final CalendarAccessibleService calendarAccessibleService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    @Autowired
     CalendarSharingViewController(
         PersonCalendarService personCalendarService,
         DepartmentCalendarService departmentCalendarService,
         CompanyCalendarService companyCalendarService,
         PersonService personService,
         DepartmentService departmentService,
-        CalendarAccessibleService calendarAccessibleService
+        CalendarAccessibleService calendarAccessibleService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
@@ -57,11 +62,23 @@ public class CalendarSharingViewController implements HasLaunchpad {
         this.personService = personService;
         this.departmentService = departmentService;
         this.calendarAccessibleService = calendarAccessibleService;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
     }
 
     @GetMapping
     public String redirect() {
         return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personService.getSignedInUser().getId());
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/persons/{personId}")

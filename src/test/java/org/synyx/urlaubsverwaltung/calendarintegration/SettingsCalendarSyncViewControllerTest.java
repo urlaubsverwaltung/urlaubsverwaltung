@@ -9,6 +9,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,10 +57,20 @@ class SettingsCalendarSyncViewControllerTest {
     private CalendarSettingsService calendarSettingsService;
     @Mock
     private SettingsCalendarSyncValidator settingsValidator;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
+        sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+        assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
     }
 
     @Test

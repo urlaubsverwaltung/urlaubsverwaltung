@@ -26,6 +26,9 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -64,7 +67,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  */
 @Controller
 @RequestMapping("/web")
-public class OvertimeViewController implements HasLaunchpad {
+public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
@@ -74,6 +77,8 @@ public class OvertimeViewController implements HasLaunchpad {
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final SettingsService settingsService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     OvertimeViewController(
@@ -85,6 +90,8 @@ public class OvertimeViewController implements HasLaunchpad {
         WorkingTimeCalendarService workingTimeCalendarService,
         VacationTypeViewModelService vacationTypeViewModelService,
         SettingsService settingsService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.overtimeService = overtimeService;
@@ -95,6 +102,8 @@ public class OvertimeViewController implements HasLaunchpad {
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.settingsService = settingsService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.clock = clock;
     }
 
@@ -102,6 +111,32 @@ public class OvertimeViewController implements HasLaunchpad {
     public void initBinder(DataBinder binder, Locale locale) {
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            final String path = context.getRequestPath();
+            final long personId = suggestion.getId();
+            if (path.equals("/web/overtime")) {
+                String url = "/web/overtime?person=" + personId;
+                final String year = context.getRequest().getParameter("year");
+                if (year != null) {
+                    url += "&year=" + year;
+                }
+                return url;
+            }
+            if (path.equals("/web/overtime/new")) {
+                return "/web/overtime/new?person=" + personId;
+            }
+            // detail / edit page -> link to overview
+            return defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context);
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/overtime")

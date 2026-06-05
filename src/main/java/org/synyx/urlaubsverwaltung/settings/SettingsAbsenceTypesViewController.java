@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,6 +22,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,27 +38,42 @@ import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper
 
 @Controller
 @RequestMapping("/web/settings/absence-types")
-public class SettingsAbsenceTypesViewController implements HasLaunchpad {
+public class SettingsAbsenceTypesViewController implements HasLaunchpad, HasPersonSearch {
 
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
-    private final MessageSource messageSource;
     private final SettingsAbsenceTypesDtoValidator validator;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final MessageSource messageSource;
 
-    @Autowired
     SettingsAbsenceTypesViewController(
         SettingsService settingsService,
         VacationTypeService vacationTypeService,
         SpecialLeaveSettingsService specialLeaveService,
-        MessageSource messageSource,
-        SettingsAbsenceTypesDtoValidator validator
+        SettingsAbsenceTypesDtoValidator validator,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        MessageSource messageSource
     ) {
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.specialLeaveSettingsService = specialLeaveService;
-        this.messageSource = messageSource;
         this.validator = validator;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.messageSource = messageSource;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping

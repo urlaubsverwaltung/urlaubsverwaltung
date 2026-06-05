@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -24,6 +27,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -43,6 +49,7 @@ import java.util.Set;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -97,13 +104,145 @@ class OvertimeViewControllerTest {
     private VacationTypeViewModelService vacationTypeViewModelService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new OvertimeViewController(overtimeService, personService, validator, departmentService,
-            applicationService, workingTimeCalendarService, vacationTypeViewModelService, settingsService, clock);
+            applicationService, workingTimeCalendarService, vacationTypeViewModelService, settingsService,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void overviewPageLinksToOvertimeOfPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/overtime?person=42");
+        }
+
+        @Test
+        void overviewPagePreservesYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime");
+            request.setParameter("year", "2012");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/overtime?person=42&year=2012");
+        }
+
+        @Test
+        void overviewPageHonoursContextPath() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setContextPath("/ctx");
+            request.setRequestURI("/ctx/web/overtime");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/overtime?person=42");
+        }
+
+        @Test
+        void newPageLinksToNewOvertimeOfPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime/new");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/overtime/new?person=42");
+        }
+
+        @Test
+        void newPageIgnoresYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime/new");
+            request.setParameter("year", "2012");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/overtime/new?person=42");
+        }
+
+        @Test
+        void detailPageDelegatesToMainLinkStrategy() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime/7");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final SearchContext context = searchContext(request);
+            when(defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context)).thenReturn("/web/overtime?person=42");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, context);
+            assertThat(actual).isEqualTo("/web/overtime?person=42");
+        }
+
+        @Test
+        void editPageDelegatesToMainLinkStrategy() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/overtime/7/edit");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final SearchContext context = searchContext(request);
+            when(defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context)).thenReturn("/web/overtime?person=42");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, context);
+            assertThat(actual).isEqualTo("/web/overtime?person=42");
+        }
+
+        private static SearchContext searchContext(HttpServletRequest request) {
+            return SearchContext.of(request, null);
+        }
     }
 
     @Test

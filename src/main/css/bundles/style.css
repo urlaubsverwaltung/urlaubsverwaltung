@@ -28,6 +28,7 @@
 @import "../components/section-heading.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);
+@import "../components/person-search.css" layer(components);
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {
@@ -63,11 +64,12 @@
     min-height: 100vh;
     min-height: -webkit-fill-available;
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr;
     grid-template-columns: auto 1fr auto auto;
     grid-template-areas:
       "banner banner banner banner"
       "navigation _ launchpad-app avatar"
+      "search search search search"
       "content content content content";
     overflow: hidden;
     height: 100vh;
@@ -77,29 +79,22 @@
     grid-area: launchpad-app;
   }
 
+  .search-cell {
+    grid-area: search;
+  }
+
   .avatar-cell {
     grid-area: avatar;
   }
 
   @variant desktop {
     body {
-      grid-template-rows: auto auto 1fr auto;
-      grid-template-columns: var(--nav-width) 1fr;
+      grid-template-rows: auto auto 1fr;
+      grid-template-columns: var(--nav-width) 1fr auto;
       grid-template-areas:
-        "banner banner"
-        "launchpad-app avatar"
-        "navigation content";
-    }
-
-    .launchpad-app-cell {
-      grid-column: 1 / -1;
-      grid-row: 2;
-    }
-
-    .avatar-cell {
-      grid-column: 2;
-      grid-row: 2;
-      justify-self: end;
+        "banner banner banner"
+        "launchpad-app search avatar"
+        "navigation content content";
     }
   }
 }

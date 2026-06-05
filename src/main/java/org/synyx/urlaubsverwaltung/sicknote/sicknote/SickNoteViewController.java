@@ -27,6 +27,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
@@ -69,7 +72,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web")
-class SickNoteViewController implements HasLaunchpad {
+class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;
@@ -85,6 +88,8 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
     private final SettingsService settingsService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
     private final Clock clock;
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -104,6 +109,8 @@ class SickNoteViewController implements HasLaunchpad {
         SickNoteCommentFormValidator sickNoteCommentFormValidator,
         SickNoteConvertFormValidator sickNoteConvertFormValidator,
         SettingsService settingsService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
         Clock clock
     ) {
         this.sickNoteService = sickNoteService;
@@ -120,12 +127,30 @@ class SickNoteViewController implements HasLaunchpad {
         this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
         this.settingsService = settingsService;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchTemplateSupplier = personSearchTemplateSupplier;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder) {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            if (context.getRequestPath().equals("/web/sicknote/new")) {
+                return "/web/sicknote/new?person=" + suggestion.getId();
+            }
+            // detail / edit / convert page -> link to overview
+            return defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context);
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchTemplateSupplier;
     }
 
     @GetMapping("/sicknote/{id}")

@@ -12,7 +12,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
@@ -28,19 +31,18 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.math.BigDecimal;
-import java.util.Map;
-import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
-import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Locale.GERMAN;
@@ -104,6 +106,10 @@ class ApplicationForLeaveDetailsViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -111,7 +117,13 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, responsiblePersonService,
             accountService, applicationService, applicationInteractionService, commentService, workDaysCountService,
-            commentValidator, departmentService, workingTimeService, clock);
+            commentValidator, departmentService, workingTimeService, defaultPersonSuggestionUrlStrategy,
+            personSearchUiFragmentSupplier, clock);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+        assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
     }
 
     @Test

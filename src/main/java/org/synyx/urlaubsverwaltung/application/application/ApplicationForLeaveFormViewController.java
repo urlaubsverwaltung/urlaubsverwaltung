@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +30,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -73,7 +75,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  */
 @Controller
 @RequestMapping("/web")
-class ApplicationForLeaveFormViewController implements HasLaunchpad {
+class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -89,19 +91,21 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
     private final DateFormatAware dateFormatAware;
-    private final Clock clock;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final ApplicationMapper applicationMapper;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final Clock clock;
 
-    @Autowired
     ApplicationForLeaveFormViewController(
         PersonService personService, DepartmentService departmentService, AccountService accountService,
         VacationTypeService vacationTypeService,
         VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
         ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
         SettingsService settingsService, DateFormatAware dateFormatAware,
-        Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService,
-        ApplicationMapper applicationMapper
+        SpecialLeaveSettingsService specialLeaveSettingsService, ApplicationMapper applicationMapper,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        Clock clock
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -112,9 +116,11 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
         this.dateFormatAware = dateFormatAware;
-        this.clock = clock;
         this.specialLeaveSettingsService = specialLeaveSettingsService;
         this.applicationMapper = applicationMapper;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -122,6 +128,22 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         binder.registerCustomEditor(Time.class, new TimePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            if (context.getRequestPath().equals("/web/application/new")) {
+                return "/web/application/new?personId=%s".formatted(suggestion.getId());
+            }
+            // edit page -> link to overview
+            return defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context);
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/application/new")

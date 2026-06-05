@@ -18,7 +18,9 @@
   /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
   --info-banner-height: 0;
   --topbar-height: 3.5rem;
-  --top-content-start: calc(var(--info-banner-height) + var(--topbar-height));
+  --search-bar-height: 3.5rem;
+
+  --top-content-start: calc(var(--info-banner-height) + var(--topbar-height) + var(--search-bar-height));
 
   --frosted-glass-opacity: 80%;
 
@@ -79,6 +81,16 @@
     --absence-color-PINK: #f472b6;
     --sick-note-color: var(--color-red-800);
     --sick-note-child-color: var(--color-red-950);
+  }
+
+  @variant desktop {
+    --search-bar-height: auto;
+    --top-content-start: calc(var(--info-banner-height) + var(--topbar-height));
+  }
+
+  /* last to override above definitions! */
+  &:not(:has(.person-search-container > *)) {
+    --search-bar-height: 0px;
   }
 }
 

@@ -17,6 +17,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -34,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.map
 
 @Controller
 @RequestMapping("/web")
-public class PersonDetailsViewController implements HasLaunchpad {
+public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -42,20 +45,39 @@ public class PersonDetailsViewController implements HasLaunchpad {
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
     private final PersonBasedataService personBasedataService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     @Autowired
     public PersonDetailsViewController(PersonService personService, AccountService accountService,
                                        DepartmentService departmentService, WorkingTimeService workingTimeService,
                                        SettingsService settingsService, PersonBasedataService personBasedataService,
-                                       Clock clock) {
+                                       PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
         this.personBasedataService = personBasedataService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            String url = "/web/person/%s".formatted(suggestion.getId());
+            final String year = context.getRequest().getParameter("year");
+            if (year != null) {
+                url += "?year=" + year;
+            }
+            return url;
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/person/{personId}")

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -30,6 +29,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -78,7 +80,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  */
 @RequestMapping("/web/application")
 @Controller
-class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
+class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String ATTRIBUTE_ERRORS = "errors";
@@ -94,9 +96,10 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
     private final Clock clock;
 
-    @Autowired
     ApplicationForLeaveDetailsViewController(
         VacationDaysService vacationDaysService, PersonService personService,
         ResponsiblePersonService responsiblePersonService,
@@ -104,7 +107,9 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         ApplicationInteractionService applicationInteractionService,
         ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
         ApplicationCommentValidator commentValidator,
-        DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock
+        DepartmentService departmentService, WorkingTimeService workingTimeService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchTemplateSupplier, Clock clock
     ) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
@@ -117,7 +122,19 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchTemplateSupplier = personSearchTemplateSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchTemplateSupplier;
     }
 
     @GetMapping("/{applicationId}")

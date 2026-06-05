@@ -1,13 +1,6 @@
 import "../js/common";
-import * as Turbo from "@hotwired/turbo";
 import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 import { createDatepicker } from "../components/datepicker";
-import { initAutosubmit } from "../components/form";
-
-// opt-in to turbo with `data-turbo="true"`
-Turbo.session.drive = false;
-
-initAutosubmit();
 
 // duet-date-picker is client side only -> html snippet from backend contains a `input type=date`.
 // to avoid flickering and complex logic instantiating the duet-date-picker again

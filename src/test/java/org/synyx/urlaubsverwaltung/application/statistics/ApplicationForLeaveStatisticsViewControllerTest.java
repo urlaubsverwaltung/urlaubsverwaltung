@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,6 +27,9 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -71,9 +75,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
     @Mock
-    private MessageSource messageSource;
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     @Mock
     private DataWebProperties dataWebProperties;
+    @Mock
+    private MessageSource messageSource;
 
     final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
 
@@ -86,7 +92,31 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, messageSource, dataWebProperties, clock);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, personSearchUiFragmentSupplier,
+            dataWebProperties,  messageSource, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToApplicationForLeaveStatisticsWithPerson() {
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+            suggestion.setFirstName("Bruce");
+            suggestion.setLastName("Wayne");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
+            assertThat(actual).isEqualTo("/web/application/statistics?query=Bruce+Wayne");
+        }
     }
 
     @Test
@@ -853,6 +883,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         assertThat(selectedOption.value()).isEqualTo("leftVacationDaysForYear,desc");
         assertThat(selectedOption.selected()).isTrue();
+    }
+
+    private static SearchContext searchContext() {
+        return SearchContext.of(null, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

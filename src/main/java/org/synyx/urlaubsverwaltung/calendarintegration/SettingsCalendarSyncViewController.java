@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.List;
 import java.util.TimeZone;
@@ -25,21 +27,36 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web/settings/calendar-sync")
-public class SettingsCalendarSyncViewController implements HasLaunchpad {
+public class SettingsCalendarSyncViewController implements HasLaunchpad, HasPersonSearch {
 
     private final CalendarSettingsService calendarSettingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsCalendarSyncValidator calendarSyncValidator;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    @Autowired
     SettingsCalendarSyncViewController(
         CalendarSettingsService calendarSettingsService,
         List<CalendarProvider> calendarProviders,
-        SettingsCalendarSyncValidator calendarSyncValidator
+        SettingsCalendarSyncValidator calendarSyncValidator,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.calendarSettingsService = calendarSettingsService;
         this.calendarProviders = calendarProviders;
         this.calendarSyncValidator = calendarSyncValidator;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping

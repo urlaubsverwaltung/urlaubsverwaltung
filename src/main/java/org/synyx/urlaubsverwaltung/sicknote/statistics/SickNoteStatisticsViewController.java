@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -21,17 +23,36 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/web/sicknote/statistics")
-class SickNoteStatisticsViewController implements HasLaunchpad {
+class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
     private final SickNoteStatisticsService sickNoteStatisticsService;
     private final PersonService personService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
-    @Autowired
-    SickNoteStatisticsViewController(SickNoteStatisticsService sickNoteStatisticsService, PersonService personService, Clock clock) {
+    SickNoteStatisticsViewController(
+        SickNoteStatisticsService sickNoteStatisticsService,
+        PersonService personService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        Clock clock
+    ) {
         this.sickNoteStatisticsService = sickNoteStatisticsService;
         this.personService = personService;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")

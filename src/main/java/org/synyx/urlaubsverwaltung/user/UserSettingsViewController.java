@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,22 +29,44 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
 @RequestMapping("/web")
-class UserSettingsViewController implements HasLaunchpad {
+class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final UserSettingsService userSettingsService;
     private final SupportedLocaleService supportedLocaleService;
-    private final MessageSource messageSource;
     private final UserSettingsDtoValidator userSettingsDtoValidator;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final MessageSource messageSource;
 
-    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
+    UserSettingsViewController(
+        PersonService personService,
+        UserSettingsService userSettingsService,
+        SupportedLocaleService supportedLocaleService,
+        UserSettingsDtoValidator userSettingsDtoValidator,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        MessageSource messageSource
+    ) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
         this.supportedLocaleService = supportedLocaleService;
-        this.messageSource = messageSource;
         this.userSettingsDtoValidator = userSettingsDtoValidator;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.messageSource = messageSource;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping("/person/{personId}/settings")

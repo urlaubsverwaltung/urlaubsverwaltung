@@ -15,10 +15,13 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.emptyString;
@@ -57,10 +60,20 @@ class DepartmentViewControllerTest {
     private PersonService personService;
     @Mock
     private DepartmentViewValidator validator;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentViewController(departmentService, personService, validator);
+        sut = new DepartmentViewController(departmentService, personService, validator, defaultPersonSuggestionUrlStrategy,
+            personSearchUiFragmentSupplier);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+        assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -24,6 +23,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -60,40 +62,53 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @RequestMapping("/web/absences")
 @Controller
-public class AbsenceOverviewViewController implements HasLaunchpad {
+public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final VacationTypeColor ANONYMIZED_ABSENCE_COLOR = VacationTypeColor.YELLOW;
 
     private final PersonService personService;
     private final DepartmentService departmentService;
-    private final MessageSource messageSource;
-    private final Clock clock;
     private final PublicHolidaysService publicHolidaysService;
     private final AbsenceService absenceService;
     private final WorkingTimeService workingTimeService;
     private final VacationTypeService vacationTypeService;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final MessageSource messageSource;
+    private final Clock clock;
 
-    @Autowired
-    public AbsenceOverviewViewController(
+    AbsenceOverviewViewController(
         PersonService personService, DepartmentService departmentService,
-        MessageSource messageSource, Clock clock,
-        PublicHolidaysService publicHolidaysService,
-        AbsenceService absenceService, WorkingTimeService workingTimeService,
-        VacationTypeService vacationTypeService
+        PublicHolidaysService publicHolidaysService, AbsenceService absenceService,
+        WorkingTimeService workingTimeService, VacationTypeService vacationTypeService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        MessageSource messageSource, Clock clock
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
-        this.messageSource = messageSource;
-        this.clock = clock;
         this.publicHolidaysService = publicHolidaysService;
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
         this.vacationTypeService = vacationTypeService;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.messageSource = messageSource;
+        this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(List.class, new CustomCollectionEditor(List.class));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping
