@@ -5,6 +5,7 @@
   th:class="|theme-${theme}|"
   th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
 >
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
@@ -20,7 +21,7 @@
       <script defer type="module" asset:src="overtime_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main})}">
+  <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
       <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{})}">
         <th:block th:fragment="overtime-list-heading-body">

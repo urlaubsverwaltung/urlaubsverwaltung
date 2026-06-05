@@ -5,6 +5,7 @@
   th:class="|theme-${theme}|"
   th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
 >
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{settings.header.title}"></title>
@@ -15,7 +16,7 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content})}">
+  <body th:replace="~{_layout::body(content=~{::main})}">
     <th:block th:ref="content">
       <main class="content-container content--max-w">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
