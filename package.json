@@ -62,7 +62,7 @@
     "fetch-mock": "12.6.0",
     "globals": "17.6.0",
     "jsdom": "29.1.1",
-    "lint-staged": "17.0.6",
+    "lint-staged": "17.0.7",
     "node-fetch": "2.7.0",
     "onchange": "7.1.0",
     "postcss": "8.5.15",
