@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -128,6 +131,54 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         assertThat(filterChain.getRequest()).isEqualTo(request);
         assertThat(filterChain.getResponse()).isEqualTo(response);
         verifyNoInteractions(personService, sessionService, securityContextRepository, tenantContextHolder);
+    }
+
+    @Test
+    void doFilterInternalSkipsReloadWhenPrincipalIsNull() throws ServletException, IOException {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession().setAttribute("reloadAuthorities", true);
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockFilterChain filterChain = new MockFilterChain();
+
+        final OAuth2AuthenticationToken authentication = mock(OAuth2AuthenticationToken.class);
+        when(authentication.getPrincipal()).thenReturn(null);
+
+        final SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(authentication);
+
+        sut.doFilterInternal(request, response, filterChain);
+
+        // Verify that the filter chain was continued without updating authorities
+        assertThat(filterChain.getRequest()).isEqualTo(request);
+        assertThat(filterChain.getResponse()).isEqualTo(response);
+        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
+        verify(personService, never()).getSignedInUser();
+        verify(securityContextRepository, never()).saveContext(context, request, response);
+    }
+
+    @Test
+    void doFilterInternalSkipsReloadWhenAuthenticationIsNotOAuth2() throws ServletException, IOException {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession().setAttribute("reloadAuthorities", true);
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockFilterChain filterChain = new MockFilterChain();
+
+        // Use a non-OAuth2 authentication type (e.g., UsernamePasswordAuthenticationToken)
+        final Authentication nonOAuth2Auth = new UsernamePasswordAuthenticationToken("user", "password");
+
+        final SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(nonOAuth2Auth);
+
+        sut.doFilterInternal(request, response, filterChain);
+
+        // Verify that the filter chain was continued without updating authorities
+        assertThat(filterChain.getRequest()).isEqualTo(request);
+        assertThat(filterChain.getResponse()).isEqualTo(response);
+        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
+        verify(personService, never()).getSignedInUser();
+        verify(securityContextRepository, never()).saveContext(context, request, response);
     }
 
     private OAuth2AuthenticationToken prepareOAuth2Authentication() {

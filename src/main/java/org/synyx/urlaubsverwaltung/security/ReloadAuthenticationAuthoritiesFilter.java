@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -68,7 +69,17 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         final SecurityContext context = SecurityContextHolder.getContext();
         final Authentication authentication = context.getAuthentication();
 
-        final OAuth2AuthenticationToken oAuth2Auth = (OAuth2AuthenticationToken) authentication;
+        if (!(authentication instanceof OAuth2AuthenticationToken oAuth2Auth)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        final OAuth2User principal = oAuth2Auth.getPrincipal();
+        if (principal == null) {
+            LOG.warn("Skipping authorities reload: principal is null for session {}", session.getId());
+            chain.doFilter(request, response);
+            return;
+        }
 
         final String tenantId = oAuth2Auth.getAuthorizedClientRegistrationId();
 
@@ -76,7 +87,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
             tenantContextHolder.setTenantId(new TenantId(tenantId));
             final Person signedInUser = personService.getSignedInUser();
             final List<SimpleGrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
-            final Authentication updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
+            final Authentication updatedAuthentication = new OAuth2AuthenticationToken(principal, updatedAuthorities, tenantId);
 
             context.setAuthentication(updatedAuthentication);
             securityContextRepository.saveContext(context, request, response);
