@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.user;
 
+import org.jspecify.annotations.Nullable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
@@ -47,4 +48,33 @@ public interface UserSettingsService {
      * @return user settings of the user
      */
     UserSettings getUserSettingsForPerson(Person person);
+
+    /**
+     * Returns the user settings for the given username
+     *
+     * @param username to retrieve user settings for
+     * @return user settings of the user
+     */
+    UserSettings getUserSettingsForUsername(String username);
+
+    /**
+     * Updates the navigation collapsed state for the given person
+     *
+     * @param person              to update the navigation state for
+     * @param navigationCollapsed whether the navigation is collapsed
+     */
+    void updateNavigationState(Person person, boolean navigationCollapsed);
+
+    /**
+     * Updates the user settings of the person with the given attributes.
+     * <p>
+     * Also update the browser specific locale based on the given locale
+     * and if false with the locale from the request.
+     *
+     * @param person the person to update the {@link UserSettings} for.
+     * @param theme  the {@link Theme} for the person.
+     * @param locale the locale to set for the person. must be a {@link SupportedLocale} or {@code null} to use the user-agent as fallback.
+     * @return the updated {@link UserSettings}
+     */
+    UserSettings updateUserPreference(Person person, Theme theme, @Nullable Locale locale);
 }

@@ -73,17 +73,52 @@
     height: 100vh;
   }
 
+  .launchpad-app-cell {
+    grid-area: launchpad-app;
+  }
+
+  .avatar-cell {
+    grid-area: avatar;
+  }
+
   @variant desktop {
     body {
       grid-template-rows: auto auto 1fr auto;
-      grid-template-columns: minmax(300px, auto) 1fr;
+      grid-template-columns: var(--nav-width) 1fr;
       grid-template-areas:
         "banner banner"
         "launchpad-app avatar"
         "navigation content";
     }
+
+    .launchpad-app-cell {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .avatar-cell {
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: end;
+    }
+  }
+}
+
+@variant desktop {
+  html {
+    transition: --nav-width 200ms ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
+  html[data-nav-collapsed] {
+    --nav-width: 5rem;
+  }
+}
+
+@layer base {
   @font-face {
     font-family: "KaushanScript";
     src:

@@ -85,18 +85,26 @@ class UserSettingsServiceImpl implements UserSettingsService {
         return toUserSettings(entity);
     }
 
-    /**
-     * Updates the user settings of the person with the given attributes.
-     * <p>
-     * Also update the browser specific locale based on the given locale
-     * and if false with the locale from the request.
-     *
-     * @param person the person to update the {@link UserSettings} for.
-     * @param theme  the {@link Theme} for the person.
-     * @param locale the locale to set for the person. must be a {@link SupportedLocale} or {@code null} to use the user-agent as fallback.
-     * @return the updated {@link UserSettings}
-     */
-    UserSettings updateUserPreference(Person person, Theme theme, @Nullable Locale locale) {
+    @Override
+    public UserSettings getUserSettingsForUsername(String username) {
+        return userSettingsRepository.findByPersonUsername(username)
+            .map(UserSettingsServiceImpl::toUserSettings)
+            .orElse(UserSettings.DEFAULT);
+    }
+
+    @Override
+    public void updateNavigationState(Person person, boolean navigationCollapsed) {
+
+        final UserSettingsEntity entity = findForPersonOrGetDefault(person);
+        entity.setNavigationCollapsed(navigationCollapsed);
+
+        userSettingsRepository.save(entity);
+
+        LOG.info("updated navigation state of person {} to collapsed={}", person.getId(), navigationCollapsed);
+    }
+
+    @Override
+    public UserSettings updateUserPreference(Person person, Theme theme, @Nullable Locale locale) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
         entity.setPersonId(person.getId());
         entity.setTheme(theme);
@@ -123,8 +131,9 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     private UserSettingsEntity defaultUserSettingsEntity(Person person) {
         final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
-        userSettingsEntity.setTheme(Theme.SYSTEM);
         userSettingsEntity.setPersonId(person.getId());
+        userSettingsEntity.setTheme(Theme.SYSTEM);
+        userSettingsEntity.setNavigationCollapsed(false);
 
         LOG.debug("created (not persisted) default userSettingsEntity={}", userSettingsEntity);
 
@@ -132,7 +141,12 @@ class UserSettingsServiceImpl implements UserSettingsService {
     }
 
     private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity) {
-        return new UserSettings(userSettingsEntity.getTheme(), userSettingsEntity.getLocale(), userSettingsEntity.getLocaleBrowserSpecific());
+        return new UserSettings(
+            userSettingsEntity.getTheme(),
+            userSettingsEntity.isNavigationCollapsed(),
+            userSettingsEntity.getLocale(),
+            userSettingsEntity.getLocaleBrowserSpecific()
+        );
     }
 
     private void setLocale(Locale locale) {

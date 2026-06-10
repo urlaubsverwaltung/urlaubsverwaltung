@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.user;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,6 +21,8 @@ import java.util.Optional;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.user.Theme.LIGHT;
@@ -265,4 +268,123 @@ class UserSettingsServiceTest {
         verify(userSettingsRepository).deleteByPerson(person);
     }
 
+    @Nested
+    class UpdateLocaleBrowserSpecific {
+
+        @Test
+        void ensureSetsBrowserSpecificLocaleWhenEntityExistsAndLocaleIsNull() {
+
+            final Person person = new Person();
+            person.setId(42L);
+
+            final UserSettingsEntity entity = new UserSettingsEntity();
+            entity.setPersonId(42L);
+            entity.setTheme(Theme.DARK);
+            entity.setLocale(null);
+
+            when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(entity));
+
+            sut.updateLocaleBrowserSpecific(person, GERMAN);
+
+            final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+            verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+            assertThat(entityArgumentCaptor.getValue())
+                .satisfies(userSettingsEntity -> {
+                    assertThat(userSettingsEntity.getPersonId()).isEqualTo(42L);
+                    assertThat(userSettingsEntity.getTheme()).isEqualTo(Theme.DARK);
+                    assertThat(userSettingsEntity.getLocale()).isNull();
+                    assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(GERMAN);
+                });
+        }
+
+        @Test
+        void ensureDoesNothingWhenEntityExistsAndLocaleIsSet() {
+
+            final Person person = new Person();
+            person.setId(42L);
+
+            final UserSettingsEntity entity = new UserSettingsEntity();
+            entity.setPersonId(42L);
+            entity.setTheme(Theme.DARK);
+            entity.setLocale(ENGLISH);
+
+            when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(entity));
+
+            sut.updateLocaleBrowserSpecific(person, GERMAN);
+
+            verify(userSettingsRepository, never()).save(any());
+            assertThat(entity.getLocaleBrowserSpecific()).isNull();
+        }
+
+        @Test
+        void ensureCreatesDefaultEntityWithBrowserSpecificLocaleWhenNothingPersistedYet() {
+
+            final Person person = new Person();
+            person.setId(42L);
+
+            when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.empty());
+
+            sut.updateLocaleBrowserSpecific(person, GERMAN);
+
+            final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+            verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+            assertThat(entityArgumentCaptor.getValue())
+                .satisfies(userSettingsEntity -> {
+                    assertThat(userSettingsEntity.getPersonId()).isEqualTo(42L);
+                    assertThat(userSettingsEntity.getTheme()).isEqualTo(Theme.SYSTEM);
+                    assertThat(userSettingsEntity.isNavigationCollapsed()).isFalse();
+                    assertThat(userSettingsEntity.getLocale()).isNull();
+                    assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(GERMAN);
+                });
+        }
+    }
+
+    @Nested
+    class UpdateNavigationState {
+
+        @Test
+        void ensureUpdateNavigationStateForExistingEntity() {
+
+            final Person person = new Person();
+            person.setId(42L);
+
+            final UserSettingsEntity entity = new UserSettingsEntity();
+            entity.setPersonId(42L);
+            entity.setTheme(Theme.DARK);
+            entity.setNavigationCollapsed(false);
+
+            when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
+
+            sut.updateNavigationState(person, true);
+
+            final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+            verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+            assertThat(entityArgumentCaptor.getValue())
+                .satisfies(userSettingsEntity -> {
+                    assertThat(userSettingsEntity.getPersonId()).isEqualTo(42L);
+                    assertThat(userSettingsEntity.getTheme()).isEqualTo(Theme.DARK);
+                    assertThat(userSettingsEntity.isNavigationCollapsed()).isTrue();
+                });
+        }
+
+        @Test
+        void ensureUpdateNavigationStateWhenNothingHasBeenPersistedYet() {
+
+            final Person person = new Person();
+            person.setId(42L);
+
+            when(userSettingsRepository.findById(42L)).thenReturn(Optional.empty());
+
+            sut.updateNavigationState(person, true);
+
+            final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+            verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+            assertThat(entityArgumentCaptor.getValue())
+                .satisfies(userSettingsEntity -> {
+                    assertThat(userSettingsEntity.getPersonId()).isEqualTo(42L);
+                    assertThat(userSettingsEntity.getTheme()).isEqualTo(Theme.SYSTEM);
+                    assertThat(userSettingsEntity.isNavigationCollapsed()).isTrue();
+                });
+        }
+    }
 }

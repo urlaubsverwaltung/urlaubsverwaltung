@@ -8,14 +8,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.web.DataProviderInterface;
 
 import java.security.Principal;
-import java.util.Optional;
 
 @Component
 public class UserThemeDataProvider implements DataProviderInterface {
 
-    private final UserSettingsServiceImpl userSettingsService;
+    private final UserSettingsService userSettingsService;
 
-    UserThemeDataProvider(UserSettingsServiceImpl userSettingsService) {
+    UserThemeDataProvider(UserSettingsService userSettingsService) {
         this.userSettingsService = userSettingsService;
     }
 
@@ -25,15 +24,12 @@ public class UserThemeDataProvider implements DataProviderInterface {
 
             final Principal userPrincipal = request.getUserPrincipal();
 
-            final Theme theme = userPrincipal == null ? Theme.SYSTEM : getTheme(userPrincipal).orElse(Theme.SYSTEM);
-            final String themeValueLowerCase = theme.name().toLowerCase();
+            final UserSettings userSettings = userPrincipal == null
+                ? UserSettings.DEFAULT
+                : userSettingsService.getUserSettingsForUsername(userPrincipal.getName());
 
-            modelAndView.addObject("theme", themeValueLowerCase);
+            modelAndView.addObject("theme", userSettings.theme().name().toLowerCase());
+            modelAndView.addObject("navigationCollapsed", userSettings.navigationCollapsed());
         }
-    }
-
-    private Optional<Theme> getTheme(Principal principal) {
-        final String username = principal.getName();
-        return userSettingsService.findThemeForUsername(username);
     }
 }

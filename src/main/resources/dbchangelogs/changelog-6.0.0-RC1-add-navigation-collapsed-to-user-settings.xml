@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+  <changeSet author="seber" id="6.0.0-RC1-add-navigation-collapsed-to-user-settings">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="user_settings"/>
+    </preConditions>
+    <addColumn tableName="user_settings">
+      <column name="navigation_collapsed" type="BOOLEAN" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

@@ -1,4 +1,4 @@
-import { setup, teardown } from "./tooltip";
+import { prepareTooltip, setup, teardown } from "./tooltip";
 
 describe("tooltip", function () {
   beforeEach(function () {
@@ -70,6 +70,46 @@ describe("tooltip", function () {
     expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
     expect(button.getAttribute("aria-describedby")).toBe("uv-tooltip");
     expect(sut().textContent).toBe("Submit");
+  });
+
+  test("mouseover honors a custom data-tooltip-delay over the default 300ms", function () {
+    const button = anchorWith("Edit user");
+    button.dataset.tooltipDelay = "800";
+    document.body.append(button);
+
+    const { show } = spyOnPopover(sut());
+
+    button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    vi.advanceTimersByTime(799);
+    expect(show).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+    expect(show).toHaveBeenCalledOnce();
+  });
+
+  test("mouseover with data-tooltip-delay=0 shows the tooltip immediately", function () {
+    const button = anchorWith("Edit user");
+    button.dataset.tooltipDelay = "0";
+    document.body.append(button);
+
+    const { show } = spyOnPopover(sut());
+
+    button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    vi.advanceTimersByTime(0);
+
+    expect(show).toHaveBeenCalledOnce();
+  });
+
+  test("focusin shows immediately even when a custom data-tooltip-delay is set", function () {
+    const button = anchorWith("Submit");
+    button.dataset.tooltipDelay = "800";
+    document.body.append(button);
+
+    const { show } = spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(show).toHaveBeenCalledOnce();
   });
 
   test("mouseover on another tooltip anchor while open retargets instantly without re-opening", function () {
@@ -245,6 +285,57 @@ describe("tooltip", function () {
 
     expect(animate).not.toHaveBeenCalled();
     expect(second.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+  });
+
+  test("prepareTooltip writes data-tooltip-delay when a delay is given", function () {
+    const button = document.createElement("button");
+    document.body.append(button);
+
+    prepareTooltip(button, { text: "Edit user", delay: 500 });
+
+    expect(button.dataset.tooltipDelay).toBe("500");
+  });
+
+  test("prepareTooltip writes data-tooltip-placement when a placement is given", function () {
+    const button = document.createElement("button");
+    document.body.append(button);
+
+    prepareTooltip(button, { text: "Edit user", placement: "right" });
+
+    expect(button.dataset.tooltipPlacement).toBe("right");
+  });
+
+  test("prepareTooltip leaves data-tooltip-placement untouched when placement is omitted", function () {
+    const button = document.createElement("button");
+    button.dataset.tooltipPlacement = "right";
+    document.body.append(button);
+
+    prepareTooltip(button, { text: "Edit user" });
+
+    expect(button.dataset.tooltipPlacement).toBe("right");
+  });
+
+  test("showing a tooltip mirrors the anchor placement onto the tooltip element", function () {
+    const button = anchorWith("Edit user");
+    button.dataset.tooltipPlacement = "right";
+    document.body.append(button);
+
+    spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(sut().dataset.placement).toBe("right");
+  });
+
+  test("showing a tooltip without placement defaults the tooltip element to top", function () {
+    const button = anchorWith("Edit user");
+    document.body.append(button);
+
+    spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+
+    expect(sut().dataset.placement).toBe("top");
   });
 
   test("mouseout to a child within the same anchor does not begin hide", function () {

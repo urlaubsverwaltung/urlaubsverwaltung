@@ -3,6 +3,7 @@
   lang="en"
   th:lang="${language}"
   th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
   th:with="editMode=${sickNote.id != null}"
 >

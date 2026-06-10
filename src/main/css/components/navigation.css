@@ -34,7 +34,7 @@
         transition: border-color 150ms;
 
         @variant dark {
-          background-color: var(--color-zinc-900);
+          background-color: var(--color-zinc-950);
         }
 
         &.uv-sticky--stuck {
@@ -50,7 +50,7 @@
     ul {
       display: flex;
       flex-direction: column;
-      gap: calc(--spacing(1) / 2);
+      gap: --spacing(1);
     }
 
     .subnav-group {
@@ -68,11 +68,21 @@
     .navigation-link {
       padding: --spacing(2);
       @apply rounded;
+      background-color: transparent;
 
       --duration: 150ms;
       transition:
         color var(--duration),
         background-color var(--duration);
+
+      &:is(button) {
+        appearance: none;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        text-align: start;
+        width: 100%;
+      }
 
       &:hover {
         background-color: var(--color-blue-50);
@@ -320,18 +330,79 @@
   }
 }
 
+.nav-link-badge:not(svg) {
+  display: none;
+}
+
+.nav-collapse-btn {
+  display: none;
+
+  @variant desktop {
+    display: flex;
+  }
+}
+
+.nav-resize-handle {
+  display: none;
+}
+
+html.nav-resizing {
+  transition: none;
+
+  &,
+  * {
+    user-select: none;
+    cursor: col-resize !important;
+  }
+
+  .nav-resize-handle::before {
+    opacity: 1;
+  }
+}
+
 @variant desktop {
   .navigation-container {
     display: flex;
     flex-direction: column;
     padding: 0;
-
-    @variant dark {
-      /*background-color: var(--color-zinc-950);*/
-    }
+    /* anchor the absolutely positioned resize handle */
+    position: relative;
 
     .navigation-button {
       display: none;
+    }
+
+    .nav-resize-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -4px;
+      width: 8px;
+      z-index: var(--z-index-topbar);
+      display: flex;
+      justify-content: center;
+      touch-action: none;
+
+      &::before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        background-color: var(--color-blue-300);
+        opacity: 0;
+        transition: opacity 150ms;
+
+        @variant dark {
+          background-color: var(--color-sky-600);
+        }
+      }
+
+      &.nav-resize-handle--visible {
+        cursor: col-resize;
+
+        &::before {
+          opacity: 1;
+        }
+      }
     }
 
     .navigation {
@@ -351,10 +422,6 @@
         padding-bottom: --spacing(2);
 
         .navigation-inner__bottom {
-          @variant dark {
-            background-color: var(--color-zinc-950);
-          }
-
           .uv-sticky--stuck {
             @variant dark {
               border-top-color: var(--color-zinc-900);
@@ -364,6 +431,23 @@
 
         .navigation-link {
           padding: --spacing(1) --spacing(2);
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
+          flex-wrap: nowrap;
+          white-space: nowrap;
+
+          .nav-link-badge {
+            flex-shrink: 0;
+          }
+        }
+
+        svg.nav-link-badge {
+          stroke: var(--color-gray-400);
+
+          @variant dark {
+            stroke: var(--color-zinc-500);
+          }
         }
 
         .navigation-link ~ .subnav-group {
@@ -387,5 +471,107 @@
   .nav-launchpad-popover {
     left: --spacing(2);
     right: auto;
+  }
+
+  html[data-nav-collapsed] .navigation-container {
+    .navigation-inner {
+      padding: --spacing(4) --spacing(2);
+      align-items: center;
+    }
+
+    /* while a subnav flyout is open, the resize-handle should do nothing */
+    &:has(li:hover .subnav-group),
+    &:has(li:focus-within .subnav-group) {
+      .nav-resize-handle {
+        pointer-events: none;
+      }
+    }
+
+    .nav-link-text,
+    .nav-group-label {
+      display: none;
+    }
+
+    .nav-link-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+
+      &:not(svg) {
+        background-color: var(--color-blue-100);
+        color: var(--color-blue-700);
+
+        @variant dark {
+          background-color: var(--color-blue-900);
+          color: var(--color-blue-100);
+        }
+      }
+    }
+
+    .navigation-inner {
+      svg.nav-link-badge {
+        stroke: var(--color-black-almost);
+
+        @variant dark {
+          stroke: var(--color-zinc-200);
+        }
+      }
+    }
+
+    .navigation-link--active .nav-link-badge:not(svg) {
+      background-color: var(--color-blue-200);
+
+      @variant dark {
+        background-color: var(--color-blue-800);
+      }
+    }
+
+    .navigation-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: --spacing(2) 0;
+    }
+
+    /* subnav: never visible inline in collapsed state, only as hover popover */
+    .navigation .navigation-inner {
+      .navigation-link ~ .subnav-group,
+      .navigation-link--active ~ .subnav-group,
+      .navigation-link--loading ~ .subnav-group {
+        display: none;
+      }
+
+      li:hover .navigation-link ~ .subnav-group,
+      li:focus-within .navigation-link ~ .subnav-group {
+        position: fixed;
+        inset-inline-start: calc(anchor(right) - 2px);
+        inset-block-start: anchor(top);
+        position-try-fallbacks: flip-block;
+        max-height: calc(100dvh - --spacing(4));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: --spacing(3);
+        background: white;
+        border: 1px solid var(--color-gray-200);
+        border-radius: --spacing(2);
+        padding: --spacing(3) --spacing(3) --spacing(3) --spacing(1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: calc(var(--z-index-topbar) - 1);
+        min-width: 160px;
+
+        @variant dark {
+          background: var(--color-zinc-800);
+          border-color: var(--color-zinc-700);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
   }
 }

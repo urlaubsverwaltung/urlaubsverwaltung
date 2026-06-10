@@ -1,5 +1,5 @@
 import fetchMock from "fetch-mock";
-import { getJSON, post } from "../fetch";
+import { getJSON, post, patchJson } from "../fetch";
 
 describe("fetch", () => {
   beforeAll(function () {
@@ -122,6 +122,84 @@ describe("fetch", () => {
             "X-Requested-With": "ajax",
             Accept: "text/html",
           },
+        }),
+      );
+    });
+  });
+
+  describe("patchJson", () => {
+    it("does a PATCH", async () => {
+      fetchMock.patch("https://awesome-stuff.com/api/patch", {});
+
+      await patchJson("https://awesome-stuff.com/api/patch", {
+        field: 42,
+      });
+
+      const lastCall = fetchMock.callHistory.lastCall();
+      expect(lastCall.args[0]).toEqual("https://awesome-stuff.com/api/patch");
+      expect(lastCall.args[1]).toEqual(
+        expect.objectContaining({
+          method: "PATCH",
+          body: JSON.stringify({ field: 42 }),
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+          }),
+        }),
+      );
+    });
+
+    it("includes credentials", async () => {
+      fetchMock.route("https://awesome-stuff.com/api/patch", {});
+
+      await patchJson("https://awesome-stuff.com/api/patch", { some: "data" });
+
+      const lastCall = fetchMock.callHistory.lastCall();
+      expect(lastCall.args[0]).toEqual("https://awesome-stuff.com/api/patch");
+      expect(lastCall.args[1]).toEqual(
+        expect.objectContaining({
+          credentials: "include",
+        }),
+      );
+    });
+
+    it("includes 'X-Requested-Width=ajax' header", async () => {
+      fetchMock.route("https://awesome-stuff.com/api/patch", {});
+
+      await patchJson("https://awesome-stuff.com/api/patch", { some: "data" });
+
+      const lastCall = fetchMock.callHistory.lastCall();
+      expect(lastCall.args[0]).toEqual("https://awesome-stuff.com/api/patch");
+      expect(lastCall.args[1]).toEqual(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "X-Requested-With": "ajax",
+          }),
+        }),
+      );
+    });
+
+    it("merges headers", async () => {
+      fetchMock.route("https://awesome-stuff.com/api/patch", {});
+
+      await patchJson(
+        "https://awesome-stuff.com/api/patch",
+        { some: "data" },
+        {
+          headers: {
+            Accept: "text/html",
+            "Content-Type": "application/json+foo",
+          },
+        },
+      );
+
+      const lastCall = fetchMock.callHistory.lastCall();
+      expect(lastCall.args[1]).toEqual(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "X-Requested-With": "ajax",
+            "Content-Type": "application/json+foo",
+            Accept: "text/html",
+          }),
         }),
       );
     });

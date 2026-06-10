@@ -31,12 +31,12 @@ class UserSettingsViewController implements HasLaunchpad {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
-    private final UserSettingsServiceImpl userSettingsService;
+    private final UserSettingsService userSettingsService;
     private final SupportedLocaleService supportedLocaleService;
     private final MessageSource messageSource;
     private final UserSettingsDtoValidator userSettingsDtoValidator;
 
-    UserSettingsViewController(PersonService personService, UserSettingsServiceImpl userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
+    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
         this.supportedLocaleService = supportedLocaleService;

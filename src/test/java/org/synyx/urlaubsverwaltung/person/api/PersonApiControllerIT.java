@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +18,14 @@ import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -28,6 +34,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,11 +43,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class PersonApiControllerIT extends SingleTenantTestContainersBase {
 
+    private static final SimpleGrantedAuthority AUTH_USER = new SimpleGrantedAuthority("USER");
+
     @Autowired
     private WebApplicationContext context;
 
     @MockitoBean
     private PersonService personService;
+    @MockitoBean
+    private UserSettingsService userSettingsService;
 
     @Test
     void ensureToReturnCurrentLoggedInPerson() throws Exception {
@@ -52,7 +63,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
 
         perform(
             get("/api/persons/me")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER))
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isOk())
@@ -94,7 +105,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     void ensureToReturn404IfOidcIsNull() throws Exception {
         perform(
             get("/api/persons/me")
-                .with(oauth2Login().authorities(new SimpleGrantedAuthority("USER")))
+                .with(oauth2Login().authorities(AUTH_USER))
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isNotFound());
@@ -109,7 +120,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
 
         perform(get("/api/persons/1")
-            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("OFFICE")))
             .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isOk())
@@ -147,7 +158,6 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                 """, STRICT));
     }
 
-
     @Test
     void ensureReturnsAllActivePersons() throws Exception {
 
@@ -159,7 +169,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
 
         perform(get("/api/persons")
-            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("OFFICE")))
             .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isOk())
@@ -240,7 +250,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getInactivePersons()).thenReturn(List.of(carl));
 
         perform(get("/api/persons").queryParam("active", "false")
-            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("OFFICE")))
             .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isOk())
@@ -293,7 +303,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
 
         perform(
             post("/api/persons")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("PERSON_ADD")))
                 .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
                 .contentType(APPLICATION_JSON)
                 .accept(HAL_JSON_VALUE)
@@ -340,12 +350,89 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
 
         perform(
             post("/api/persons")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("PERSON_ADD")))
                 .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
                 .contentType(APPLICATION_JSON)
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isConflict());
+    }
+
+    @Nested
+    class UpdateSettings {
+
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureToUpdateSettings(boolean navigationCollapsed) throws Exception {
+
+            final String username = "user@example.org";
+            final Person user = new Person(username, "last", "shane", username);
+            user.setId(100L);
+
+            when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
+
+            perform(
+                patch("/api/persons/me/settings")
+                    .with(oidcLogin().idToken(builder -> builder.subject(username)).authorities(AUTH_USER))
+                    .content(asJsonString(new PersonSettingsDto(navigationCollapsed)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNoContent());
+
+            verify(userSettingsService).updateNavigationState(user, navigationCollapsed);
+        }
+
+        @Test
+        void ensureToUpdateSettingsWithoutNavigationCollapsed() throws Exception {
+
+            final String username = "user@example.org";
+            final Person user = new Person(username, "last", "shane", username);
+            user.setId(100L);
+
+            when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
+
+            perform(
+                patch("/api/persons/me/settings")
+                    .with(oidcLogin().idToken(builder -> builder.subject(username)).authorities(AUTH_USER))
+                    .content(asJsonString(new PersonSettingsDto(null)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNoContent());
+
+            verifyNoInteractions(userSettingsService);
+        }
+
+        @Test
+        void ensureToUpdateSettingsReturnsNotFoundWhenOidcUserIsNull() throws Exception {
+
+            perform(
+                patch("/api/persons/me/settings")
+                    .with(oauth2Login().authorities(AUTH_USER))
+                    .content(asJsonString(new PersonSettingsDto(true)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNotFound());
+
+            verifyNoInteractions(userSettingsService);
+        }
+
+        @Test
+        void ensureToUpdateSettingsReturnsNotFoundWhenPersonNotFound() throws Exception {
+
+            final String username = "user@example.org";
+            final Person unknown = new Person(username, "last", "unknown", username);
+            unknown.setId(101L);
+
+            perform(
+                patch("/api/persons/me/settings")
+                    .with(oidcLogin().idToken(builder -> builder.subject(username)).authorities(AUTH_USER))
+                    .content(asJsonString(new PersonSettingsDto(true)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNotFound());
+
+            verifyNoInteractions(userSettingsService);
+        }
     }
 
     public static String asJsonString(final Object obj) {

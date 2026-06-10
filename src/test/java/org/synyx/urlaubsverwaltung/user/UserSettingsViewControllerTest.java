@@ -45,7 +45,7 @@ class UserSettingsViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private UserSettingsServiceImpl userSettingsService;
+    private UserSettingsService userSettingsService;
     @Mock
     private SupportedLocaleService supportedLocaleService;
     @Mock
@@ -66,7 +66,7 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final UserSettings userSettings = new UserSettings(Theme.DARK, Locale.GERMAN, null);
+        final UserSettings userSettings = new UserSettings(Theme.DARK, false, Locale.GERMAN, null);
         when(userSettingsService.getUserSettingsForPerson(signedInPerson)).thenReturn(userSettings);
 
         when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN, Locale.ENGLISH));

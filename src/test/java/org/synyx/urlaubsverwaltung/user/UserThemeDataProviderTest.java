@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 import java.util.Locale;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -37,23 +36,25 @@ class UserThemeDataProviderTest {
     }
 
     @Test
-    void addTheme() {
-        when(userSettingsService.findThemeForUsername("batman")).thenReturn(Optional.of(Theme.LIGHT));
+    void ensureThemeAndNavigationCollapsed() {
+        final String username = "batman";
+        when(userSettingsService.getUserSettingsForUsername(username)).thenReturn(new UserSettings(Theme.DARK, true));
 
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("viewName");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setLocalName(Locale.GERMAN.getLanguage());
-        request.setUserPrincipal(anyPrincipal("batman"));
+        request.setUserPrincipal(anyPrincipal(username));
 
         sut.postHandle(request, null, null, modelAndView);
 
-        assertThat(modelAndView.getModelMap()).containsEntry("theme", "light");
+        assertThat(modelAndView.getModelMap()).containsEntry("theme", "dark");
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationCollapsed", true);
     }
 
     @Test
-    void addSystemDefaultTheme() {
+    void ensureDefaultWhenNoUserPrincipal() {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("viewName");
 
@@ -61,7 +62,11 @@ class UserThemeDataProviderTest {
         request.setLocalName(Locale.GERMAN.getLanguage());
 
         sut.postHandle(request, null, null, modelAndView);
+
         assertThat(modelAndView.getModelMap()).containsEntry("theme", "system");
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationCollapsed", false);
+
+        verifyNoInteractions(userSettingsService);
     }
 
     @ParameterizedTest

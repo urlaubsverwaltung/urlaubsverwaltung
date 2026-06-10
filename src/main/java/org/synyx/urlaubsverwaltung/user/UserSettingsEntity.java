@@ -37,6 +37,8 @@ public class UserSettingsEntity extends AbstractTenantAwareEntity {
 
     private Locale localeBrowserSpecific;
 
+    private boolean navigationCollapsed;
+
     public Long getPersonId() {
         return personId;
     }
@@ -71,6 +73,14 @@ public class UserSettingsEntity extends AbstractTenantAwareEntity {
 
     public void setLocaleBrowserSpecific(Locale localeBrowserSpecific) {
         this.localeBrowserSpecific = localeBrowserSpecific;
+    }
+
+    public boolean isNavigationCollapsed() {
+        return navigationCollapsed;
+    }
+
+    public void setNavigationCollapsed(boolean navigationCollapsed) {
+        this.navigationCollapsed = navigationCollapsed;
     }
 
     @Override
