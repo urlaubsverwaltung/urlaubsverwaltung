@@ -13,8 +13,7 @@ on:
       - "docker/**"
     branches:
       - main
-      - v3.x
-      - v4.x
+      - v5.x
   pull_request:
     paths-ignore:
       - "docs/**"
