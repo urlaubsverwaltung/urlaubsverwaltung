@@ -9,8 +9,8 @@ jobs:
   check-links-in-chglog:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
         # checks all markdown files from /.chglog including all subfolders
         with:
           use-quiet-mode: 'yes'
@@ -21,8 +21,8 @@ jobs:
   check-links-in-examples:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
         # checks all markdown files from /.examples including all subfolders
         with:
           use-quiet-mode: 'yes'
@@ -32,8 +32,8 @@ jobs:
   check-links-in-charts:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
         # checks all markdown files from /charts including all subfolders
         with:
           use-quiet-mode: 'yes'
@@ -43,8 +43,8 @@ jobs:
   check-links-in-root:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
-      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225
         # checks all markdown files from root but ignores subfolders
         with:
           use-quiet-mode: 'yes'

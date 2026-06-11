@@ -18,10 +18,10 @@ jobs:
     name: test docker compose example
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
       - name: Run docker compose
-        uses: hoverkraft-tech/compose-action@v3.0.0
+        uses: hoverkraft-tech/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4
         with:
           compose-file: "./.examples/with-docker-compose/docker-compose.yaml"
 
