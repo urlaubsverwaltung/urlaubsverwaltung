@@ -6,6 +6,7 @@ on:
     - cron: "15 23 * * *"
   push:
     paths-ignore:
+      - "**/*.md"
       - "docs/**"
       - ".examples/**"
       - ".githooks/**"
@@ -16,6 +17,7 @@ on:
       - v5.x
   pull_request:
     paths-ignore:
+      - "**/*.md"
       - "docs/**"
       - ".examples/**"
       - ".githooks/**"
