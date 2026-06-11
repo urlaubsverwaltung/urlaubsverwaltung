@@ -10,7 +10,11 @@
   top: 0;
   left: 0;
   right: 0;
-  height: calc(var(--topbar-height) + var(--info-banner-height));
+  height: calc(var(--topbar-height) + var(--info-banner-height) + var(--search-bar-height));
+
+  @variant desktop {
+    height: calc(var(--topbar-height) + var(--info-banner-height));
+  }
 }
 
 .topbar-backdrop--after {

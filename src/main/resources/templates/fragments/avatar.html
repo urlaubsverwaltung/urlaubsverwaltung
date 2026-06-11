@@ -5,7 +5,10 @@
     <title>avatar</title>
   </head>
   <body>
-    <th:block th:fragment="avatar(url,niceName,initials,width,height,personId)">
+    <th:block
+      th:fragment="avatar(url,niceName,initials,width,height,personId)"
+      th:with="gravatarEnabled=${#objects.nullSafe(gravatarEnabled, false)}"
+    >
       <th:block th:if="${personId != null}">
         <a
           th:href="@{/web/person/__${personId}__/overview}"
@@ -14,7 +17,7 @@
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">
-            <th:block th:if="${gravatarEnabled == true}" th:with="randomId=${#strings.randomAlphanumeric(25)}">
+            <th:block th:if="${gravatarEnabled}" th:with="randomId=${#strings.randomAlphanumeric(25)}">
               <img
                 src=""
                 th:src="${url}"
@@ -34,7 +37,7 @@
               </div>
             </th:block>
 
-            <th:block th:if="${gravatarEnabled == false}">
+            <th:block th:if="${not gravatarEnabled}">
               <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
             </th:block>
           </th:block>

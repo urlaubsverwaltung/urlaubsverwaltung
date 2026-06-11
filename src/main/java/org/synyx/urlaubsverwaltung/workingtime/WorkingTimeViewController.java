@@ -19,6 +19,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
@@ -35,7 +38,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web")
-public class WorkingTimeViewController implements HasLaunchpad {
+public class WorkingTimeViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String PERSON_ATTRIBUTE = "person";
 
@@ -45,6 +48,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final SettingsService settingsService;
     private final WorkingTimeValidator validator;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     @Autowired
@@ -55,6 +59,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
         VacationTypeViewModelService vacationTypeViewModelService,
         SettingsService settingsService,
         WorkingTimeValidator validator,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
@@ -63,12 +68,23 @@ public class WorkingTimeViewController implements HasLaunchpad {
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.settingsService = settingsService;
         this.validator = validator;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) -> "/web/person/%s/workingtime".formatted(suggestion.getId());
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize(IS_OFFICE)

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.person.basedata;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +16,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedata;
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedataDto;
@@ -24,15 +26,30 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web")
-public class PersonBasedataViewController implements HasLaunchpad {
+public class PersonBasedataViewController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonBasedataService personBasedataService;
     private final PersonService personService;
+    private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
 
-    @Autowired
-    public PersonBasedataViewController(PersonBasedataService personBasedataService, PersonService personService) {
+    PersonBasedataViewController(
+        PersonBasedataService personBasedataService,
+        PersonService personService,
+        PersonSearchUiFragmentSupplier personSearchTemplateSupplier
+    ) {
         this.personBasedataService = personBasedataService;
         this.personService = personService;
+        this.personSearchTemplateSupplier = personSearchTemplateSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) -> "/web/person/%s/basedata".formatted(suggestion.getId());
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchTemplateSupplier;
     }
 
     @PreAuthorize(IS_OFFICE)

@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -17,6 +20,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -28,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.MONDAY;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -70,10 +77,34 @@ class WorkingTimeViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private WorkingTimeValidator validator;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService, vacationTypeViewModelService, settingsService, validator, Clock.systemUTC());
+        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService,
+            vacationTypeViewModelService, settingsService, validator, personSearchUiFragmentSupplier, Clock.systemUTC());
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToWorkingTimeOfPerson() {
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
+            assertThat(actual).isEqualTo("/web/person/42/workingtime");
+        }
     }
 
     @Test
@@ -233,6 +264,14 @@ class WorkingTimeViewControllerTest {
             .andExpect(redirectedUrl("/web/person/1"));
 
         verify(workingTimeWriteService).touch(List.of(1, 2, 3, 4, 5), givenLocalDate, person, GERMANY_BADEN_WUERTTEMBERG);
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

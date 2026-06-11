@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -31,12 +34,31 @@ class SettingsPublicHolidayViewControllerTest {
     private SettingsPublicHolidayValidator settingsValidator;
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private SettingsPublicHolidayViewController sut;
 
     @BeforeEach
     void setup() {
-        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, applicationEventPublisher);
+        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, applicationEventPublisher,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,26 +12,44 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web/settings/overtime")
-public class SettingsOvertimeViewController implements HasLaunchpad {
+public class SettingsOvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
     private final SettingsService settingsService;
     private final OvertimeProperties overtimeProperties;
     private final SettingsOvertimeValidator settingsValidator;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    @Autowired
-    public SettingsOvertimeViewController(
+    SettingsOvertimeViewController(
         SettingsService settingsService,
         OvertimeProperties overtimeProperties,
-        SettingsOvertimeValidator settingsValidator
+        SettingsOvertimeValidator settingsValidator,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.settingsService = settingsService;
         this.overtimeProperties = overtimeProperties;
         this.settingsValidator = settingsValidator;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping

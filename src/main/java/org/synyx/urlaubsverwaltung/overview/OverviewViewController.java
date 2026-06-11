@@ -27,6 +27,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -45,6 +48,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
@@ -65,7 +69,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
  */
 @Controller
 @RequestMapping("/")
-public class OverviewViewController implements HasLaunchpad {
+public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String PERSON_ATTRIBUTE = "person";
     private static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
@@ -85,6 +89,7 @@ public class OverviewViewController implements HasLaunchpad {
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     @Autowired
@@ -94,7 +99,8 @@ public class OverviewViewController implements HasLaunchpad {
         WorkDaysCountService workDaysCountService, ApplicationService applicationService,
         SickNoteService sickNoteService, OvertimeService overtimeService,
         SettingsService settingsService, DepartmentService departmentService,
-        VacationTypeViewModelService vacationTypeViewModelService, Clock clock
+        VacationTypeViewModelService vacationTypeViewModelService, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        Clock clock
     ) {
         this.personService = personService;
         this.accountService = accountService;
@@ -106,7 +112,25 @@ public class OverviewViewController implements HasLaunchpad {
         this.settingsService = settingsService;
         this.departmentService = departmentService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            String url = "/web/person/%s/overview".formatted(suggestion.getId());
+            final String year = context.getRequest().getParameter("year");
+            if (hasText(year)) {
+                url += "?year=" + year;
+            }
+            return url;
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping

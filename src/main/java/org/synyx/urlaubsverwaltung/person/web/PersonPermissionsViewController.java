@@ -18,6 +18,9 @@ import org.synyx.urlaubsverwaltung.person.PersonMailService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.Collection;
@@ -34,13 +37,14 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web")
-public class PersonPermissionsViewController implements HasLaunchpad {
+public class PersonPermissionsViewController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final PersonMailService personMailService;
     private final PersonPermissionsDtoValidator validator;
     private final SessionService sessionService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @Autowired
     PersonPermissionsViewController(
@@ -48,13 +52,25 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         DepartmentService departmentService,
         PersonMailService personMailService,
         PersonPermissionsDtoValidator validator,
-        SessionService sessionService
+        SessionService sessionService,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.personMailService = personMailService;
         this.validator = validator;
         this.sessionService = sessionService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) -> "/web/person/%s/permissions".formatted(suggestion.getId());
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize(IS_OFFICE)

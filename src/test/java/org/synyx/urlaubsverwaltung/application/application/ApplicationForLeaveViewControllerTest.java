@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +18,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -34,6 +37,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -44,6 +48,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -84,6 +89,10 @@ class ApplicationForLeaveViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -92,8 +101,23 @@ class ApplicationForLeaveViewControllerTest {
 
         userIsAllowedToSubmitSickNotes(false);
 
-        sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService, workDaysCountService, departmentService,
-            personService, settingsService, clock, messageSource);
+        sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService, workDaysCountService,
+            departmentService, personService, settingsService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+            messageSource, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test
@@ -1742,6 +1766,6 @@ class ApplicationForLeaveViewControllerTest {
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
         sickNoteSettings.setUserIsAllowedToSubmitSickNotes(userIsAllowedToSubmit);
         settings.setSickNoteSettings(sickNoteSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        lenient().when(settingsService.getSettings()).thenReturn(settings);
     }
 }

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -27,6 +26,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -44,6 +46,7 @@ import java.util.Locale;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.MAX_VALUE;
+import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
@@ -58,32 +61,47 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  */
 @Controller
 @RequestMapping("/web/application/statistics")
-class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
+class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPersonSearch {
+
+    private static final String SEARCH_PARAM = "query";
 
     private final PersonService personService;
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
-    private final MessageSource messageSource;
+    private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
     private final DataWebProperties dataWebProperties;
+    private final MessageSource messageSource;
     private final Clock clock;
 
-    @Autowired
     ApplicationForLeaveStatisticsViewController(
         PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
-        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource,
-        DataWebProperties dataWebProperties, Clock clock
+        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware,
+        PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
+        DataWebProperties dataWebProperties, MessageSource messageSource, Clock clock
     ) {
         this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
         this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
-        this.messageSource = messageSource;
+        this.personSearchTemplateSupplier = personSearchTemplateSupplier;
         this.dataWebProperties = dataWebProperties;
+        this.messageSource = messageSource;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) ->
+            "/web/application/statistics?%s=%s".formatted(SEARCH_PARAM, encode(suggestion.getNiceName(), UTF_8));
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchTemplateSupplier;
     }
 
     @GetMapping
@@ -91,7 +109,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
-        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
     ) {
@@ -165,7 +183,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
-        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         Locale locale, HttpServletResponse response
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);

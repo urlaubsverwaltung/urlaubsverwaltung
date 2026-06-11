@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,12 +16,15 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.List;
 import java.util.Locale;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -60,11 +64,29 @@ class SettingsAbsenceTypesViewControllerTest {
     private MessageSource messageSource;
     @Mock
     private SettingsAbsenceTypesDtoValidator validator;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
         sut = new SettingsAbsenceTypesViewController(settingsService, vacationTypeService, specialLeaveSettingsService,
-            messageSource, validator);
+            validator, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test

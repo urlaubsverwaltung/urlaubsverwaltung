@@ -145,6 +145,12 @@
       <div th:replace="~{_top::avatar}"></div>
     </div>
 
+    <div class="search-cell person-search-container">
+      <th:block th:if="${personSearchFragment}">
+        <div th:replace="~{__${personSearchFragment}__}"></div>
+      </th:block>
+    </div>
+
     <div
       id="main"
       class="grid overflow-y-scroll bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"

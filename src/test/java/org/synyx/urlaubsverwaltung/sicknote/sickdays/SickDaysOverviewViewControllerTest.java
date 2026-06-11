@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,11 +18,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -71,6 +77,8 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
     @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    @Mock
     private DataWebProperties dataWebProperties;
 
     final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
@@ -83,7 +91,37 @@ class SickDaysOverviewViewControllerTest {
         pageableProperties.setPageParameter("page");
         lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
-        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware, dataWebProperties, clock);
+        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware,
+            personSearchUiFragmentSupplier, dataWebProperties, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToSickDaysOverviewWithPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+            suggestion.setFirstName("Bruce");
+            suggestion.setLastName("Wayne");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/sickdays?query=Bruce+Wayne");
+        }
+
+        private static SearchContext searchContext(HttpServletRequest request) {
+            return SearchContext.of(request, null);
+        }
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {

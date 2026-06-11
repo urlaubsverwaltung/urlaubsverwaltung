@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.me;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -17,6 +19,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -28,6 +33,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
@@ -72,6 +78,8 @@ class ApplicationsViewControllerTest {
     private WorkDaysCountService workDaysCountService;
     @Mock
     private VacationTypeViewModelService vacationTypeViewModelService;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(
         ZonedDateTime.of(LocalDate.of(2022, 6, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(),
@@ -82,8 +90,33 @@ class ApplicationsViewControllerTest {
     void setUp() {
         sut = new ApplicationsViewController(
             personService, departmentService, applicationService,
-            workDaysCountService, vacationTypeViewModelService, clock
+            workDaysCountService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock
         );
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+        assertThat(strategy.buildSuggestionMainLink(person, searchContext())).isEqualTo("/web/persons/1/applications");
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategyWithYear() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("year", "2026");
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+        assertThat(strategy.buildSuggestionMainLink(person, searchContext(request))).isEqualTo("/web/persons/1/applications?year=2026");
     }
 
     @Test
@@ -799,6 +832,14 @@ class ApplicationsViewControllerTest {
         application.setVacationType(vacationType);
 
         return application;
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

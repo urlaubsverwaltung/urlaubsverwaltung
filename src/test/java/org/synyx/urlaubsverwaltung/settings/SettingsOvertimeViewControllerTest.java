@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,6 +12,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -40,10 +43,29 @@ class SettingsOvertimeViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private SettingsOvertimeValidator settingsValidator;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsOvertimeViewController(settingsService, new OvertimeProperties(), settingsValidator);
+        sut = new SettingsOvertimeViewController(settingsService, new OvertimeProperties(), settingsValidator,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test

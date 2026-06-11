@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -31,6 +33,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -53,6 +58,7 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.SEPTEMBER;
 import static java.util.Locale.GERMAN;
 import static java.util.Locale.JAPANESE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -119,6 +125,10 @@ class ApplicationForLeaveFormViewControllerTest {
     private SpecialLeaveSettingsService specialLeaveSettingsService;
     @Mock
     private DateFormatAware dateFormatAware;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -126,7 +136,36 @@ class ApplicationForLeaveFormViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
-            dateFormatAware, clock, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService));
+            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), defaultPersonSuggestionUrlStrategy,
+            personSearchUiFragmentSupplier, clock);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+        final SearchContext context = searchContext();
+        when(defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(person, context)).thenReturn("awesome-url");
+
+        assertThat(strategy.buildSuggestionMainLink(person, context)).isEqualTo("awesome-url");
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategyForNewApplication() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/application/new");
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+        assertThat(strategy.buildSuggestionMainLink(person, searchContext(request))).isEqualTo("/web/application/new?personId=1");
     }
 
     @Test
@@ -2255,6 +2294,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
         return messageSource;
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

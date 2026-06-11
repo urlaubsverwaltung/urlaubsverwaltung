@@ -28,6 +28,9 @@ import org.synyx.urlaubsverwaltung.person.PersonPageable;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
@@ -48,6 +51,8 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
@@ -63,8 +68,9 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
 
 @Controller
 @RequestMapping("/web")
-public class PersonsViewController implements HasLaunchpad {
+public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
+    private static final String SEARCH_PARAM = "query";
     private static final String SORT_ACCOUNT_PREFIX = "account";
 
     private final PersonService personService;
@@ -72,6 +78,7 @@ public class PersonsViewController implements HasLaunchpad {
     private final VacationDaysService vacationDaysService;
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final DataWebProperties dataWebProperties;
     private final Clock clock;
 
@@ -79,15 +86,28 @@ public class PersonsViewController implements HasLaunchpad {
     public PersonsViewController(
         PersonService personService, AccountService accountService,
         VacationDaysService vacationDaysService, DepartmentService departmentService,
-        PersonBasedataService personBasedataService, DataWebProperties dataWebProperties, Clock clock
+        PersonBasedataService personBasedataService, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        DataWebProperties dataWebProperties, Clock clock
     ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.dataWebProperties = dataWebProperties;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) ->
+            "/web/person?%s=%s".formatted(SEARCH_PARAM, encode(suggestion.getNiceName(), UTF_8));
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -96,7 +116,7 @@ public class PersonsViewController implements HasLaunchpad {
         @RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
         @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
-        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         @SortDefault(sort = DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
@@ -147,7 +167,7 @@ public class PersonsViewController implements HasLaunchpad {
 
         final List<QueryParam> paginationLinkParameters = new ArrayList<>();
         paginationLinkParameters.add(new QueryParam("active", String.valueOf(active)));
-        paginationLinkParameters.add(new QueryParam("query", query));
+        paginationLinkParameters.add(new QueryParam(SEARCH_PARAM, query));
         requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.add(new QueryParam("department", String.valueOf(departmentId))));
         requestedYear.ifPresent(year -> paginationLinkParameters.add(new QueryParam("year", String.valueOf(year))));
 

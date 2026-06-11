@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -26,6 +29,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
@@ -116,6 +122,10 @@ class SickNoteViewControllerTest {
     private SickNoteConvertFormValidator sickNoteConvertFormValidator;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
@@ -123,7 +133,69 @@ class SickNoteViewControllerTest {
             sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService, sickNoteExtensionService,
             sickNoteExtensionInteractionService, vacationTypeService, vacationTypeViewModelService, personService,
             departmentService, sickNoteValidator, sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService,
-            Clock.systemUTC());
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, Clock.systemUTC());
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void newPageLinksToNewSickNoteOfPerson() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/sicknote/new");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/sicknote/new?person=42");
+        }
+
+        @Test
+        void newPageHonoursContextPath() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setContextPath("/ctx");
+            request.setRequestURI("/ctx/web/sicknote/new");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/sicknote/new?person=42");
+        }
+
+        @Test
+        void detailPageDelegatesToMainLinkStrategy() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI("/web/sicknote/7");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final SearchContext context = searchContext(request);
+            when(defaultPersonSuggestionUrlStrategy.buildSuggestionMainLink(suggestion, context)).thenReturn("/web/sicknote/7");
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, context);
+            assertThat(actual).isEqualTo("/web/sicknote/7");
+        }
+
+        private static SearchContext searchContext(HttpServletRequest request) {
+            return SearchContext.of(request, null);
+        }
     }
 
     @ParameterizedTest

@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +13,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -36,7 +38,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 @Controller
 @RequestMapping("/")
-public class SickNotesViewController implements HasLaunchpad {
+public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String PERSON_ATTRIBUTE = "person";
     public static final String MY_SICKNOTES_ANONYMOUS_PATH = "/web/persons/me/sicknotes";
@@ -47,15 +49,16 @@ public class SickNotesViewController implements HasLaunchpad {
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
-    @Autowired
-    public SickNotesViewController(
+    SickNotesViewController(
         PersonService personService,
         WorkDaysCountService workDaysCountService,
         SickNoteService sickNoteService,
         DepartmentService departmentService,
         SettingsService settingsService,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
@@ -63,7 +66,25 @@ public class SickNotesViewController implements HasLaunchpad {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, context) -> {
+            String url = "/web/persons/%s/sicknotes".formatted(suggestion.getId());
+            final String year = context.getRequest().getParameter("year");
+            if (hasText(year)) {
+                url += "?year=" + year;
+            }
+            return url;
+        };
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping(MY_SICKNOTES_ANONYMOUS_PATH)

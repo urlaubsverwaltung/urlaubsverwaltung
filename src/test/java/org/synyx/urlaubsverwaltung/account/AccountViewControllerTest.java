@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -15,6 +17,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -27,6 +32,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.MARCH;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -71,12 +77,26 @@ class AccountViewControllerTest {
     private VacationTypeViewModelService vacationTypeViewModelService;
     @Mock
     private AccountFormValidator validator;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new AccountViewController(personService, accountService, accountInteractionService, vacationTypeViewModelService, validator, clock);
+        sut = new AccountViewController(personService, accountService, accountInteractionService,
+            vacationTypeViewModelService, validator, personSearchUiFragmentSupplier, clock);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+        assertThat(strategy.buildSuggestionMainLink(person, searchContext())).isEqualTo("/web/person/1/account");
     }
 
     @Test
@@ -368,6 +388,14 @@ class AccountViewControllerTest {
 
     private Account someAccount() {
         return new Account();
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

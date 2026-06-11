@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +21,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,17 +47,36 @@ import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.TURBO_STREA
 
 @Controller
 @RequestMapping(value = "/web")
-public class DepartmentViewController implements HasLaunchpad {
+public class DepartmentViewController implements HasLaunchpad, HasPersonSearch {
 
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final DepartmentViewValidator validator;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    @Autowired
-    DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
+    DepartmentViewController(
+        DepartmentService departmentService,
+        PersonService personService,
+        DepartmentViewValidator validator,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
+    ) {
         this.departmentService = departmentService;
         this.personService = personService;
         this.validator = validator;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @InitBinder

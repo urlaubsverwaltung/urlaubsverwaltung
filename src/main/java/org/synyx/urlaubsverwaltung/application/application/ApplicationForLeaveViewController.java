@@ -11,6 +11,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -51,7 +54,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
  */
 @Controller
 @RequestMapping("/web")
-class ApplicationForLeaveViewController implements HasLaunchpad {
+class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch {
 
     private final ApplicationService applicationService;
     private final SubmittedSickNoteService sickNoteService;
@@ -59,13 +62,16 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final SettingsService settingsService;
-    private final Clock clock;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     ApplicationForLeaveViewController(
         ApplicationService applicationService, SubmittedSickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
-        DepartmentService departmentService, PersonService personService, SettingsService settingsService, Clock clock,
-        MessageSource messageSource
+        DepartmentService departmentService, PersonService personService, SettingsService settingsService,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
+        MessageSource messageSource, Clock clock
     ) {
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
@@ -73,8 +79,20 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         this.departmentService = departmentService;
         this.personService = personService;
         this.settingsService = settingsService;
-        this.clock = clock;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchTemplateSupplier = personSearchTemplateSupplier;
         this.messageSource = messageSource;
+        this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchTemplateSupplier;
     }
 
     @GetMapping("/application")

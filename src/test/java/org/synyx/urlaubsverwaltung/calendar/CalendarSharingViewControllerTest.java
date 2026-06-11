@@ -12,12 +12,15 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
@@ -54,10 +57,21 @@ class CalendarSharingViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private CalendarAccessibleService calendarAccessibleService;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     @BeforeEach
     void setUp() {
-        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService, companyCalendarService, personService, departmentService, calendarAccessibleService);
+        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService,
+            companyCalendarService, personService, departmentService, calendarAccessibleService,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionUrlStrategy() {
+        assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
     }
 
     @Test

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Document</title>
+  </head>
+  <body>
+    <th:block th:fragment="person-search">
+      <uv-person-search th:if="${personSearchEnabled}" class="person-search desktop:max-w-lg">
+        <!-- use relative action (URL) since this form is used on different pages which all allow searching for users -->
+        <form
+          action=""
+          method="get"
+          data-turbo="true"
+          data-turbo-frame="frame-persons-suggestions"
+          data-turbo-action="replace"
+          class="person-search__form"
+        >
+          <!-- preserve existing query params (e.g. paging/sort) on GET submit; skip 'q' which the search input owns -->
+          <th:block th:each="paramEntry : ${param}" th:if="${paramEntry.key != 'q'}">
+            <input
+              th:each="paramValue : ${paramEntry.value}"
+              type="hidden"
+              th:name="${paramEntry.key}"
+              th:value="${paramValue}"
+            />
+          </th:block>
+          <label for="person-search-input" class="sr-only" th:text="#{person-search.input.label}"></label>
+          <input
+            type="search"
+            id="person-search-input"
+            name="q"
+            th:value="${personSearchQuery}"
+            autocomplete="off"
+            th:placeholder="#{person-search.input.placeholder}"
+            data-auto-submit="person-search-submit"
+            data-auto-submit-delay="100"
+          />
+          <button id="person-search-submit" type="submit" th:text="#{form.button.search}">Suchen</button>
+        </form>
+        <div
+          popover="manual"
+          class="popover popover--slide-to-bottom popover--backdrop-content desktop:popover--backdrop-none"
+        >
+          <turbo-frame id="frame-persons-suggestions" refresh="morph">
+            <ul
+              th:if="${not #lists.isEmpty(personSearchSuggestions)}"
+              class="person-search__list"
+              data-testid="person-suggestions"
+            >
+              <li th:each="suggestion : ${personSearchSuggestions}" class="flex items-center gap-5">
+                <!-- @thymesVar id="suggestion" type="org.synyx.urlaubsverwaltung.search.PersonSuggestion" -->
+                <a
+                  data-turbo="false"
+                  th:href="@{__${suggestion.href}__}"
+                  class="flex items-center gap-2 no-underline text-inherit"
+                >
+                  <span class="text-blue-300 dark:text-sky-800">
+                    <span
+                      th:replace="~{fragments/avatar::avatar(url=${suggestion.email + '?d=404&s=128'},niceName=${suggestion.name},initials=${suggestion.initials},width='42',height='42',personId=${null})}"
+                    ></span>
+                  </span>
+                  <span class="flex flex-col gap-px dark:text-zinc-200">
+                    <span th:text="${suggestion.name}">Nice Name</span>
+                    <span class="text-xs text-gray-400 dark:text-zinc-400" th:text="${suggestion.email}">
+                      email@example.org
+                    </span>
+                  </span>
+                  &nbsp;
+                </a>
+                <ul th:if="${not #lists.isEmpty(suggestion.links)}" class="ml-auto flex flex-row gap-4">
+                  <li th:each="link : ${suggestion.links}">
+                    <a
+                      href="#"
+                      data-turbo="false"
+                      th:href="@{__${link.href}__}"
+                      class="flex items-center gap-2 rounded-full p-2 transition-colors text-gray-800 bg-transparent hover:bg-blue-200 hover:text-blue-800 dark:text-zinc-300 dark:hover:bg-sky-700 dark:hover:text-sky-100"
+                    >
+                      <th:block th:if="${link.icon().name() == 'ACCOUNT'}">
+                        <svg th:replace="~{icon/user-circle::svg(className='w-5 h-5')}" />
+                      </th:block>
+                      <span class="sr-only" th:text="${#messages.msg(link.messageKey)}"></span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(personSearchSuggestions)}" th:text="#{person-search.nothing-found}">
+              Nichts gefunden
+            </p>
+          </turbo-frame>
+        </div>
+      </uv-person-search>
+    </th:block>
+  </body>
+</html>

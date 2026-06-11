@@ -5,7 +5,7 @@
   th:class="|theme-${theme}|"
   th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
 >
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{user-settings.header.title}"></title>
@@ -16,7 +16,7 @@
       <script defer type="module" asset:src="user_settings.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main})}">
+  <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
       <div th:replace="~{fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{})}">
         <th:block th:ref="user-applications-heading-body">

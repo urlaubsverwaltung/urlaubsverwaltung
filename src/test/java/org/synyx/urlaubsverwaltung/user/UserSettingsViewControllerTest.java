@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,10 +15,13 @@ import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.util.Locale;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
@@ -49,13 +53,32 @@ class UserSettingsViewControllerTest {
     @Mock
     private SupportedLocaleService supportedLocaleService;
     @Mock
-    private MessageSource messageSource;
-    @Mock
     private UserSettingsDtoValidator userSettingsDtoValidator;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService, messageSource, userSettingsDtoValidator);
+        sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService,
+            userSettingsDtoValidator, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test

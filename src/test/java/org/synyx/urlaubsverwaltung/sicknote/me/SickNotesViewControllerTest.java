@@ -1,16 +1,22 @@
 package org.synyx.urlaubsverwaltung.sicknote.me;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -27,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
@@ -64,12 +71,66 @@ class SickNotesViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(ZonedDateTime.of(LocalDate.of(2022, 6, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
     @BeforeEach
     void setUp() {
-        sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService, settingsService, clock);
+        sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService,
+            settingsService, personSearchUiFragmentSupplier, clock);
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void personSearchUiFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void linksToSickNotesOfPerson() {
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
+            assertThat(actual).isEqualTo("/web/persons/42/sicknotes");
+        }
+
+        @Test
+        void preservesYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setParameter("year", "2026");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/persons/42/sicknotes?year=2026");
+        }
+
+        @Test
+        void ignoresBlankYear() {
+
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setParameter("year", "  ");
+
+            final Person suggestion = new Person();
+            suggestion.setId(42L);
+
+            final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
+            assertThat(actual).isEqualTo("/web/persons/42/sicknotes");
+        }
     }
 
     @Test
@@ -763,6 +824,14 @@ class SickNotesViewControllerTest {
                     hasProperty("allowedToEdit", is(true)),
                     hasProperty("allowedToCancel", is(true))
                 )));
+    }
+
+    private static SearchContext searchContext() {
+        return searchContext(new MockHttpServletRequest());
+    }
+
+    private static SearchContext searchContext(HttpServletRequest request) {
+        return SearchContext.of(request, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

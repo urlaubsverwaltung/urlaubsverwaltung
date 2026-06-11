@@ -16,6 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -48,7 +51,7 @@ import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURB
 
 @Controller
 @RequestMapping("/web/sicknote/extend")
-class SickNoteExtendViewController implements HasLaunchpad {
+class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
@@ -57,12 +60,17 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     private final SickNoteExtendValidator sickNoteExtendValidator;
     private final DateFormatAware dateFormatAware;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
                                  SickNoteService sickNoteService, SickNoteExtensionServiceImpl sickNoteExtensionService,
                                  SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
-                                 SickNoteExtendValidator sickNoteExtendValidator, DateFormatAware dateFormatAware, Clock clock) {
+                                 SickNoteExtendValidator sickNoteExtendValidator, DateFormatAware dateFormatAware,
+                                 PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+                                 PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+                                 Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
@@ -70,7 +78,19 @@ class SickNoteExtendViewController implements HasLaunchpad {
         this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
         this.sickNoteExtendValidator = sickNoteExtendValidator;
         this.dateFormatAware = dateFormatAware;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping
