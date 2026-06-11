@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: sleep 20s
         run: sleep 20
-      - uses: actions/github-script@v9
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         name: Add label 'status planned' to issue when milestoned
         with:
           github-token: ${{github.token}}
@@ -21,7 +21,7 @@ jobs:
               labels: ['status: planned']
             })
             .catch(e => { console.log(e.message) })
-      - uses: actions/github-script@v9
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         name: Remove label 'status new' to issue when milestoned
         with:
           github-token: ${{github.token}}
