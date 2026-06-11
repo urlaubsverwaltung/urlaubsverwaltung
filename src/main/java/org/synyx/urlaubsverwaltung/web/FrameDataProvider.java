@@ -123,13 +123,24 @@ public class FrameDataProvider implements DataProviderInterface {
         final String application = "/web/application";
         final String absenceOverview = "/web/absences";
         final String myApplications = MY_APPLICATIONS_ANONYMOUS_PATH;
+        final String myApplicationsStatistics = "/web/application/statistics";
         final String mySicknotes = MY_SICKNOTES_ANONYMOUS_PATH;
         final String overtime = "/web/overtime";
 
         elements.add(new NavigationItemDto("basic-overview-link", overview, "nav.basic.overview", "house", url.equals(overview)));
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", "list-todo", url.equals(application)));
         elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", "calendar-range", url.equals(absenceOverview)));
-        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", "sun", url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$")));
+
+        final boolean myApplicationsActive = url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$");
+        final boolean myApplicationsStatisticsActive = url.equals(myApplicationsStatistics);
+        final boolean myApplicationsRootActive = myApplicationsActive || myApplicationsStatisticsActive;
+
+        final NavigationItemDto applicationsRootLink = new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", "sun", myApplicationsRootActive);
+        elements.add(applicationsRootLink.withSubItems(List.of(
+            new NavigationItemDto("basic-absence-overview-link", myApplications, "nav.basic.my-absences.overview", "", myApplicationsActive),
+            new NavigationItemDto("basic-absence-statistics-link", myApplicationsStatistics, "nav.basic.my-absences.statistics", "", myApplicationsStatisticsActive)
+        )));
+
         elements.add(new NavigationItemDto("basic-sicknote-link", mySicknotes, "nav.basic.my-sicknotes", "briefcase-medical", url.equals(mySicknotes) || url.matches("/web/persons/\\d+/sicknotes$")));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {

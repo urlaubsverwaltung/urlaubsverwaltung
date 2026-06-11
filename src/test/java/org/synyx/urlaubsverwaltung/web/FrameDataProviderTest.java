@@ -488,6 +488,99 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap()).containsEntry("gravatarEnabled", gravatarEnabled);
     }
 
+    // Tests for applications navigation with sub-items (overview and statistics)
+    @Test
+    void ensureApplicationsRootAndOverviewActiveWhenMyApplicationsPath() {
+        mockSettings(true, false, true, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/persons/me/applications");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false));
+            });
+    }
+
+    @Test
+    void ensureApplicationsRootAndStatisticsActiveWhenStatisticsPath() {
+        mockSettings(true, false, true, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/application/statistics");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.basic()).contains(basicAbsenceLink(true, false, true));
+            });
+    }
+
+    @Test
+    void ensureApplicationsRootActiveWhenPersonApplicationsPath() {
+        mockSettings(true, false, true, false);
+
+        final Person person = new Person();
+        person.setId(42L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/persons/123/applications");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false));
+            });
+    }
+
+    @Test
+    void ensureApplicationsRootAndSubItemsInactiveWhenOtherPath() {
+        mockSettings(true, false, true, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/some-other-path");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.basic()).contains(basicAbsenceLink(false, false, false));
+            });
+    }
+
     private static NavigationItemDto createApplicationLink() {
         return createApplicationLink(false);
     }
@@ -537,11 +630,15 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicAbsenceLink() {
-        return basicAbsenceLink(false);
+        return basicAbsenceLink(false, false, false);
     }
 
-    private static NavigationItemDto basicAbsenceLink(boolean active) {
-        return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", "sun", active);
+    private static NavigationItemDto basicAbsenceLink(boolean rootActive, boolean overviewActive, boolean statisticsActive) {
+        return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", "sun", rootActive)
+            .withSubItems(List.of(
+                new NavigationItemDto("basic-absence-overview-link", "/web/persons/me/applications", "nav.basic.my-absences.overview", "", overviewActive),
+                new NavigationItemDto("basic-absence-statistics-link", "/web/application/statistics", "nav.basic.my-absences.statistics", "", statisticsActive)
+            ));
     }
 
     private static NavigationItemDto basicSickNoteLink() {
