@@ -1,4 +1,4 @@
-import { endOfMonth, formatISO, parseISO } from "date-fns";
+import { endOfMonth, formatISO, parseISO, startOfWeek, endOfWeek } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
@@ -116,7 +116,12 @@ function hydrateDatepicker(duetDateElement, options) {
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
-    const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
+    const firstDayOfDatepicker = formatISO(startOfWeek(parseISO(firstDayOfMonth), { weekStartsOn: 1 }), {
+      representation: "date",
+    });
+    const lastDayOfDatepicker = formatISO(endOfWeek(endOfMonth(parseISO(firstDayOfMonth)), { weekStartsOn: 1 }), {
+      representation: "date",
+    });
 
     const personId = getPersonId();
     if (!personId) {
@@ -124,11 +129,11 @@ function hydrateDatepicker(duetDateElement, options) {
     }
 
     Promise.allSettled([
-      getJSON(`${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
-        pick("publicHolidays"),
-      ),
       getJSON(
-        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}&absence-types=vacation,sick_note,no_workday`,
+        `${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+      ).then(pick("publicHolidays")),
+      getJSON(
+        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
       ).then(pick("absences")),
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
