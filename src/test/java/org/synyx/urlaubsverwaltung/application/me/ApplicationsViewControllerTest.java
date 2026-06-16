@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
@@ -41,6 +43,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -92,6 +95,9 @@ class ApplicationsViewControllerTest {
             personService, departmentService, applicationService,
             workDaysCountService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock
         );
+        // by default the signed-in user is allowed to access the requested person's data;
+        // the dedicated access-denied test overrides this stub
+        lenient().when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
     }
 
     @Test
@@ -199,6 +205,23 @@ class ApplicationsViewControllerTest {
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications",
                 hasItem(hasProperty("id", is(99L)))));
+    }
+
+    @Test
+    void ensureAccessIsDeniedWhenSignedInUserIsNotAllowedToAccessPersonData() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(2L);
+        signedInUser.setPermissions(List.of(USER));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
+
+        assertThatThrownBy(() -> perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1"))))
+            .hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     // ---- ALLOWED TO EDIT TESTS ----

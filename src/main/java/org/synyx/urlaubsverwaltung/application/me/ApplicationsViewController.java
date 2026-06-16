@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.me;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,11 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
+
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+            throw new AccessDeniedException(
+                "User '%s' has not the correct permissions to access the applications of user '%s'".formatted(signedInUser.getId(), person.getId()));
+        }
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));

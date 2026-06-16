@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.jspecify.annotations.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,11 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
+        if (!isAllowedToAccessSickNotesOf(signedInUser, person)) {
+            throw new AccessDeniedException(
+                "User '%s' has not the correct permissions to access the sick notes of user '%s'".formatted(signedInUser.getId(), person.getId()));
+        }
+
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
@@ -166,6 +172,16 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
             signedInUser.hasRole(OFFICE)
                 || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
         );
+    }
+
+    private boolean isAllowedToAccessSickNotesOf(Person signedInUser, Person person) {
+        return person.equals(signedInUser)
+            || signedInUser.hasRole(OFFICE)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
