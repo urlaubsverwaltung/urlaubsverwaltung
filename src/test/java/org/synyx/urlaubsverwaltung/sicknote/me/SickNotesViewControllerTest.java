@@ -390,14 +390,14 @@ class SickNotesViewControllerTest {
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsTrueForDepartmentHead() throws Exception {
+    void ensureCanViewSickNoteAnotherUserIsTrueForDepartmentHeadWithSickNoteViewRole() throws Exception {
         final Person person = new Person();
         person.setId(20L);
 
         final Person signedInUser = new Person();
         signedInUser.setId(21L);
         signedInUser.setUsername("departhead");
-        signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD));
+        signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD, Role.SICK_NOTE_VIEW));
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -413,14 +413,14 @@ class SickNotesViewControllerTest {
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsTrueForSecondStageAuthority() throws Exception {
+    void ensureCanViewSickNoteAnotherUserIsTrueForSecondStageAuthorityWithSickNoteViewRole() throws Exception {
         final Person person = new Person();
         person.setId(20L);
 
         final Person signedInUser = new Person();
         signedInUser.setId(21L);
         signedInUser.setUsername("secondstage");
-        signedInUser.setPermissions(List.of(Role.SECOND_STAGE_AUTHORITY));
+        signedInUser.setPermissions(List.of(Role.SECOND_STAGE_AUTHORITY, Role.SICK_NOTE_VIEW));
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -571,7 +571,7 @@ class SickNotesViewControllerTest {
 
         final Person signedInUser = new Person();
         signedInUser.setId(35L);
-        signedInUser.setPermissions(List.of(Role.SICK_NOTE_EDIT, Role.BOSS));
+        signedInUser.setPermissions(List.of(Role.SICK_NOTE_VIEW, Role.SICK_NOTE_EDIT, Role.BOSS));
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -591,8 +591,6 @@ class SickNotesViewControllerTest {
         when(personService.getPersonByID(34L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
         when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -651,7 +649,7 @@ class SickNotesViewControllerTest {
 
         final Person signedInUser = new Person();
         signedInUser.setId(39L);
-        signedInUser.setPermissions(List.of(Role.SICK_NOTE_CANCEL, Role.BOSS));
+        signedInUser.setPermissions(List.of(Role.SICK_NOTE_VIEW, Role.SICK_NOTE_CANCEL, Role.BOSS));
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -671,8 +669,6 @@ class SickNotesViewControllerTest {
         when(personService.getPersonByID(38L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
         when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
