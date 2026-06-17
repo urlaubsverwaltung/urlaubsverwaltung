@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
@@ -46,7 +47,8 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
 
         Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
-        if (optionalPerson.isEmpty()) {
+        // only if the email address has been verified by the IdP to prevent account takeover via unverified email claim
+        if (optionalPerson.isEmpty() && isEmailVerified(oidcUser)) {
             optionalPerson = personService.getPersonByMailAddress(emailAddress);
         }
 
@@ -54,9 +56,11 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
 
             final Person existentPerson = optionalPerson.get();
 
-            if (!userUniqueID.equals(existentPerson.getUsername())) {
-                LOG.info("No person with given userUniqueID was found. Falling back to matching mail address for " +
-                    "person lookup. Existing username '{}' is replaced with '{}'.", existentPerson.getUsername(), userUniqueID);
+            // Only rebind username during initial migration when it is null or empty.
+            // Never overwrite a populated username — if it differs from the current sub,
+            // it means the person was matched via email fallback and already has a valid identity binding.
+            if (existentPerson.getUsername() == null || existentPerson.getUsername().isBlank()) {
+                LOG.info("Person '{}' has no username set. Setting username to '{}'.", existentPerson.getId(), userUniqueID);
                 existentPerson.setUsername(userUniqueID);
             }
 
@@ -104,5 +108,11 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     private Optional<String> getClaimAsString(OidcUser oidcUser, Supplier<String> claimSupplier) {
         return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get()))
             .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get())));
+    }
+
+    private boolean isEmailVerified(OidcUser oidcUser) {
+        return getClaimAsString(oidcUser, () -> EMAIL_VERIFIED)
+            .map(Boolean::valueOf)
+            .orElse(false);
     }
 }
