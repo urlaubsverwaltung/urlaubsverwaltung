@@ -36,6 +36,7 @@
             th:placeholder="#{person-search.input.placeholder}"
             data-auto-submit="person-search-submit"
             data-auto-submit-delay="100"
+            aria-expanded="false"
           />
           <button id="person-search-submit" type="submit" th:text="#{form.button.search}">Suchen</button>
         </form>
@@ -53,6 +54,7 @@
                 <!-- @thymesVar id="suggestion" type="org.synyx.urlaubsverwaltung.search.PersonSuggestion" -->
                 <a
                   data-turbo="false"
+                  data-person-search-suggestion
                   th:href="@{__${suggestion.href}__}"
                   class="flex items-center gap-2 no-underline text-inherit"
                 >
@@ -75,7 +77,7 @@
                       href="#"
                       data-turbo="false"
                       th:href="@{__${link.href}__}"
-                      class="flex items-center gap-2 rounded-full p-2 transition-colors text-gray-800 bg-transparent hover:bg-blue-200 hover:text-blue-800 dark:text-zinc-300 dark:hover:bg-sky-700 dark:hover:text-sky-100"
+                      class="flex items-center gap-2 rounded-full p-2 transition-colors text-gray-800 bg-transparent hover:bg-blue-200 hover:text-blue-800 focus-visible:bg-blue-200 focus-visible:text-blue-800 focus-visible:outline-none dark:text-zinc-300 dark:hover:bg-sky-700 dark:hover:text-sky-100 dark:focus-visible:bg-sky-700 dark:focus-visible:text-sky-100"
                     >
                       <th:block th:if="${link.icon().name() == 'ACCOUNT'}">
                         <svg th:replace="~{icon/user-circle::svg(className='w-5 h-5')}" />
