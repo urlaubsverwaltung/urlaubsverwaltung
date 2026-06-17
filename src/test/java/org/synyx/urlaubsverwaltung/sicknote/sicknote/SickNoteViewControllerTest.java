@@ -59,6 +59,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -893,7 +894,7 @@ class SickNoteViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
-        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHeadPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
 
@@ -925,9 +926,7 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthority() throws Exception {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
+    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() throws Exception {
 
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
         secondStageAuthority.setId(1L);
@@ -939,8 +938,9 @@ class SickNoteViewControllerTest {
             .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
-        perform(get("/web/sicknote/15")).andExpect(status().isOk());
-    }
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/15"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);    }
 
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthorityAndSickNoteView() throws Exception {
@@ -1337,17 +1337,38 @@ class SickNoteViewControllerTest {
             .andExpect(redirectedUrl("/web/sicknote/42"));
     }
 
+    @Test
+    void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessfulAndSubmissionIsActiveAsOffice() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
+            .thenReturn(SickNote.builder().id(42L).build());
+
+        perform(post("/web/sicknote").param("person.id", "1"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/sicknote/42"));
+    }
+
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"OFFICE", "SICK_NOTE_ADD"})
+    @EnumSource(value = Role.class, names = {"BOSS", "SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
     void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessfulAndSubmissionIsActiveAndPersonHasRole(Role role) throws Exception {
 
         userIsAllowedToSubmitSickNotes(true);
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
-        signedInPerson.setPermissions(List.of(USER, role));
+        signedInPerson.setPermissions(List.of(USER, SICK_NOTE_ADD, role));
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        lenient().when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, personWithId(1))).thenReturn(true);
+        lenient().when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, personWithId(1))).thenReturn(true);
 
         when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
             .thenReturn(SickNote.builder().id(42L).build());
@@ -1363,7 +1384,7 @@ class SickNoteViewControllerTest {
         final SickNote sickNote = SickNote.builder().person(new Person()).status(SUBMITTED).build();
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
 
-        final Person signedInPerson = new Person();
+        final Person signedInPerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final SickNote acceptedSickNote = SickNote.builder().person(new Person()).status(ACTIVE).build();
