@@ -1,4 +1,4 @@
-name: Release ${{ steps.vars.outputs.version }}
+name: Release
 
 on:
   push:
