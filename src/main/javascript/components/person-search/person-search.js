@@ -1,6 +1,21 @@
+function focusSuggestion(element) {
+  element.focus();
+  element.closest("li").scrollIntoView({ block: "nearest" });
+}
+
 export class PersonSearch extends HTMLElement {
   #cleanup = () => {};
   #popoverVisible = false;
+
+  /** @type HTMLInputElement */
+  get #searchInput() {
+    return this.querySelector("input[type=search]");
+  }
+
+  /** @type HTMLButtonElement */
+  get #submitButton() {
+    return this.querySelector("[type=submit]");
+  }
 
   connectedCallback() {
     let loading = false;
@@ -9,7 +24,7 @@ export class PersonSearch extends HTMLElement {
       loading = true;
       setTimeout(() => {
         if (loading) {
-          this.querySelector("[type=submit]").classList.add("button--loading");
+          this.#submitButton.classList.add("button--loading");
         }
       }, 100);
     });
@@ -25,7 +40,7 @@ export class PersonSearch extends HTMLElement {
     // subsequent renders can be ignored since content is updated, not the popover itself.
     const handleFrameRender = (event) => {
       loading = false;
-      this.querySelector("[type=submit]").classList.remove("button--loading");
+      this.#submitButton.classList.remove("button--loading");
       if (!this.#popoverVisible && event.target.matches("[id=frame-persons-suggestions]")) {
         this.#showSuggestionsPopover();
       }
@@ -58,8 +73,46 @@ export class PersonSearch extends HTMLElement {
       }
     };
 
+    const handleThisKeydown = (event) => {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp" && event.key !== "Escape") {
+        return;
+      }
+
+      const input = this.#searchInput;
+      const suggestions = [...this.querySelectorAll("[data-person-search-suggestion]")];
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        this.#hideSuggestionsPopover();
+        input.focus();
+        return;
+      }
+
+      if (!this.#popoverVisible || suggestions.length === 0) {
+        return;
+      }
+
+      event.preventDefault();
+      const focusedIndex = suggestions.indexOf(document.activeElement);
+
+      if (event.key === "ArrowDown") {
+        if (focusedIndex === -1) {
+          focusSuggestion(suggestions[0]);
+        } else if (focusedIndex < suggestions.length - 1) {
+          focusSuggestion(suggestions[focusedIndex + 1]);
+        }
+      } else {
+        if (focusedIndex === 0) {
+          input.focus();
+        } else if (focusedIndex > 0) {
+          focusSuggestion(suggestions[focusedIndex - 1]);
+        }
+      }
+    };
+
     this.addEventListener("focusin", handleThisFocusin);
     this.addEventListener("focusout", handleThisFocusout);
+    this.addEventListener("keydown", handleThisKeydown);
     document.addEventListener("pointerdown", handleGlobalPointerdown);
     document.addEventListener("pointerup", handleGlobalPointerup);
     document.addEventListener("turbo:frame-render", handleFrameRender);
@@ -67,6 +120,7 @@ export class PersonSearch extends HTMLElement {
     this.#cleanup = function () {
       this.removeEventListener("focusin", handleThisFocusin);
       this.removeEventListener("focusout", handleThisFocusout);
+      this.removeEventListener("keydown", handleThisKeydown);
       document.removeEventListener("pointerdown", handleGlobalPointerdown);
       document.removeEventListener("pointerup", handleGlobalPointerup);
       document.removeEventListener("turbo:frame-render", handleFrameRender);
@@ -84,8 +138,8 @@ export class PersonSearch extends HTMLElement {
   #showSuggestionsPopover() {
     /** @type HTMLDialogElement */
     const popover = this.querySelector("[popover]");
-    console.log(popover, "show");
     popover.showPopover();
+    this.#searchInput.setAttribute("aria-expanded", "true");
     this.#popoverVisible = true;
   }
 
@@ -93,14 +147,14 @@ export class PersonSearch extends HTMLElement {
     /** @type HTMLDialogElement */
     const popover = this.querySelector("[popover]");
     popover.hidePopover();
+    this.#searchInput.setAttribute("aria-expanded", "false");
     this.#popoverVisible = false;
   }
 
   #submit() {
     // always query element, do not memoize it, could be rerendered!
     const form = this.querySelector("form");
-    const button = form?.querySelector("[type=submit]");
-    form?.requestSubmit(button);
+    form?.requestSubmit(this.#submitButton);
   }
 }
 
