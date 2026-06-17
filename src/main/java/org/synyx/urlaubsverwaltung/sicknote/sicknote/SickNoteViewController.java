@@ -171,7 +171,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
         if (isSamePerson
             || isOffice
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)) {
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
 
             final boolean isAllowedToEditSickNote = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson);
 

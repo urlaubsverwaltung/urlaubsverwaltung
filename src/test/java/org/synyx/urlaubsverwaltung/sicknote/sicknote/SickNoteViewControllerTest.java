@@ -889,7 +889,9 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsNotAccessibleForPersonWithRoleDepartmentHeadWithoutSickNoteView() {
+    void ensureGetSickNoteDetailsNotAccessibleForPersonWithRoleDepartmentHeadWithoutSickNoteView() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
@@ -904,9 +906,7 @@ class SickNoteViewControllerTest {
             .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
-        assertThatThrownBy(() ->
-            perform(get("/web/sicknote/15"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
+        perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
 
     @Test
@@ -926,7 +926,9 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() {
+    void ensureGetSickNoteDetailsIsAccessibleForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
         secondStageAuthority.setId(1L);
@@ -938,9 +940,8 @@ class SickNoteViewControllerTest {
             .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
-        assertThatThrownBy(() ->
-            perform(get("/web/sicknote/15"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);    }
+        perform(get("/web/sicknote/15")).andExpect(status().isOk());
+    }
 
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthorityAndSickNoteView() throws Exception {
