@@ -93,8 +93,19 @@ jobs:
           java-version-file: ".tool-versions"
           cache: 'maven'
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ matrix.browser }}-${{ hashFiles('**/pom.xml') }}
+
       - name: Install Playwright Browsers (UI tests)
-        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps ${{matrix.browser}}"
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install ${{matrix.browser}}"
+
+      - name: Install Playwright System Deps (UI tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install-deps ${{matrix.browser}}"
 
       - name: Test
         run: ./mvnw dependency:go-offline verify -Pui-test -Dbrowser=${{matrix.browser}}
