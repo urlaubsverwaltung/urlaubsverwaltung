@@ -177,7 +177,9 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
     private boolean isAllowedToAccessSickNotesOf(Person signedInUser, Person person) {
         return person.equals(signedInUser)
             || signedInUser.hasRole(OFFICE)
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person);
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
