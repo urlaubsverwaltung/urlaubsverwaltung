@@ -1,4 +1,4 @@
-name: Release ${{ github.event.inputs.releaseVersion }}
+name: Release ${{ steps.vars.outputs.version }}
 
 on:
   push:
