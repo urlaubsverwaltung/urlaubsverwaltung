@@ -93,15 +93,26 @@ jobs:
           java-version-file: ".tool-versions"
           cache: 'maven'
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ matrix.browser }}-${{ hashFiles('**/pom.xml') }}
+
       - name: Install Playwright Browsers (UI tests)
-        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps ${{matrix.browser}}"
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install ${{matrix.browser}}"
+
+      - name: Install Playwright System Deps (UI tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install-deps ${{matrix.browser}}"
 
       - name: Test
         run: ./mvnw dependency:go-offline verify -Pui-test -Dbrowser=${{matrix.browser}}
 
       - name: Upload artifacts of failed tests
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        if: ${{ always() && hashFiles('target/ui-test/**/FAILED-*') != '' }}
+        if: ${{ always() && hashFiles(format('target/ui-test/{0}/FAILED-*', matrix.browser)) != '' }}
         with:
           name: urlaubsverwaltung-failed-ui-tests-${{ matrix.browser }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: target/ui-test/**/FAILED-*
+          path: target/ui-test/${{matrix.browser}}/FAILED-*
