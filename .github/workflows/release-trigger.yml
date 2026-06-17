@@ -1,4 +1,4 @@
-name: Release Trigger
+name: Release Trigger ${{ github.event.inputs.releaseVersion }}
 
 on:
   workflow_dispatch:

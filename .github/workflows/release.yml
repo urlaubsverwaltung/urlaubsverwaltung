@@ -1,4 +1,4 @@
-name: Release
+name: Release ${{ github.event.inputs.releaseVersion }}
 
 on:
   push:
