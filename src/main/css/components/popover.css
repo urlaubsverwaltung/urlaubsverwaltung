@@ -320,11 +320,8 @@
 
 @utility popover--backdrop-content {
   &::backdrop {
-    position-anchor: --container-main-anchor;
-    position: absolute;
-    /* anchor positioning of this ::backdrop pseudo element does not work in safari :( */
-    /* you may should use a shadow to elevate the popover from content. */
-    top: anchor(top);
+    position: fixed;
+    top: var(--top-content-start);
     left: 0;
     right: 0;
     bottom: 0;
