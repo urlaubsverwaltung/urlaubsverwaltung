@@ -105,3 +105,38 @@ jobs:
         with:
           name: urlaubsverwaltung-failed-ui-tests-${{ matrix.browser }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: target/ui-test/**/FAILED-*
+
+  a11y-test:
+    name: Accessibility Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ["chromium", "firefox", "webkit"]
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-a11y-test-${{ matrix.browser }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK from .tool-versions
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'liberica'
+          java-version-file: ".tool-versions"
+          cache: 'maven'
+
+      - name: Install Playwright Browsers (A11Y tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps ${{matrix.browser}}"
+
+      - name: Test
+        run: ./mvnw dependency:go-offline verify -Pa11y-test -Dbrowser=${{matrix.browser}}
+
+      - name: Upload artifacts of failed tests
+        uses: actions/upload-artifact@v7
+        if: ${{ always() && hashFiles('target/a11y-test/**/FAILED-*') != '' }}
+        with:
+          name: failed-a11y-tests-${{ matrix.browser }}-${{ github.run_attempt }}
+          path: target/a11y-test/**/FAILED-*

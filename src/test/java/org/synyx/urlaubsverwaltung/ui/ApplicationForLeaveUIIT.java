@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.ui.extension.IntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
@@ -65,6 +66,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@IntegrationTest
 @UiTest
 class ApplicationForLeaveUIIT {
 
