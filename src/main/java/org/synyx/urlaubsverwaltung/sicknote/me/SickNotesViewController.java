@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.jspecify.annotations.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,11 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
+        if (!isAllowedToAccessSickNotesOf(signedInUser, person)) {
+            throw new AccessDeniedException(
+                "User '%s' has not the correct permissions to access the sick notes of user '%s'".formatted(signedInUser.getId(), person.getId()));
+        }
+
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
@@ -168,10 +174,18 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         );
     }
 
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
+    private boolean isAllowedToAccessSickNotesOf(Person signedInUser, Person sickNotePerson) {
+        return sickNotePerson.equals(signedInUser)
+            || signedInUser.hasRole(OFFICE)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson);
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
         final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, personToShowDetails)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, personToShowDetails);
+            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
         return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 }

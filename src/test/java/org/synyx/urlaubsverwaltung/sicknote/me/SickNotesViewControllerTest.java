@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
@@ -369,7 +371,7 @@ class SickNotesViewControllerTest {
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsFalseForSickNoteViewRoleWithoutBossOrDepartmentHead() throws Exception {
+    void ensureSickNoteViewRoleWithoutBossOrDepartmentHeadCanNotAccessAnotherPersonsSickNotes() {
         final Person person = new Person();
         person.setId(20L);
 
@@ -380,27 +382,22 @@ class SickNotesViewControllerTest {
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "20")))
-            .andExpect(status().isOk())
-            .andExpect(view().name("me/sicknotes"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", false));
+        assertThatThrownBy(() -> perform(get(MY_SICKNOTES_PATH.replace("{personId}", "20"))))
+            .hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsTrueForDepartmentHead() throws Exception {
+    void ensureCanViewSickNoteAnotherUserIsTrueForDepartmentHeadWithSickNoteViewRole() throws Exception {
         final Person person = new Person();
         person.setId(20L);
 
         final Person signedInUser = new Person();
         signedInUser.setId(21L);
         signedInUser.setUsername("departhead");
-        signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD));
+        signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD, Role.SICK_NOTE_VIEW));
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -416,14 +413,14 @@ class SickNotesViewControllerTest {
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsTrueForSecondStageAuthority() throws Exception {
+    void ensureCanViewSickNoteAnotherUserIsTrueForSecondStageAuthorityWithSickNoteViewRole() throws Exception {
         final Person person = new Person();
         person.setId(20L);
 
         final Person signedInUser = new Person();
         signedInUser.setId(21L);
         signedInUser.setUsername("secondstage");
-        signedInUser.setPermissions(List.of(Role.SECOND_STAGE_AUTHORITY));
+        signedInUser.setPermissions(List.of(Role.SECOND_STAGE_AUTHORITY, Role.SICK_NOTE_VIEW));
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -440,7 +437,7 @@ class SickNotesViewControllerTest {
     }
 
     @Test
-    void ensureCanViewSickNoteAnotherUserIsFalseForRegularUser() throws Exception {
+    void ensureRegularUserCanNotAccessAnotherPersonsSickNotes() {
         final Person person = new Person();
         person.setId(20L);
 
@@ -451,16 +448,11 @@ class SickNotesViewControllerTest {
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "20")))
-            .andExpect(status().isOk())
-            .andExpect(view().name("me/sicknotes"))
-            .andExpect(model().attribute("canViewSickNoteAnotherUser", false));
+        assertThatThrownBy(() -> perform(get(MY_SICKNOTES_PATH.replace("{personId}", "20"))))
+            .hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -579,7 +571,7 @@ class SickNotesViewControllerTest {
 
         final Person signedInUser = new Person();
         signedInUser.setId(35L);
-        signedInUser.setPermissions(List.of(Role.SICK_NOTE_EDIT, Role.BOSS));
+        signedInUser.setPermissions(List.of(Role.SICK_NOTE_VIEW, Role.SICK_NOTE_EDIT, Role.BOSS));
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -599,8 +591,6 @@ class SickNotesViewControllerTest {
         when(personService.getPersonByID(34L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
         when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -659,7 +649,7 @@ class SickNotesViewControllerTest {
 
         final Person signedInUser = new Person();
         signedInUser.setId(39L);
-        signedInUser.setPermissions(List.of(Role.SICK_NOTE_CANCEL, Role.BOSS));
+        signedInUser.setPermissions(List.of(Role.SICK_NOTE_VIEW, Role.SICK_NOTE_CANCEL, Role.BOSS));
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -679,8 +669,6 @@ class SickNotesViewControllerTest {
         when(personService.getPersonByID(38L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
         when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -697,10 +685,7 @@ class SickNotesViewControllerTest {
     void ensureSickNoteAllowedToCancelIsFalseWithoutPermission() throws Exception {
         final Person person = new Person();
         person.setId(40L);
-
-        final Person signedInUser = new Person();
-        signedInUser.setId(41L);
-        signedInUser.setPermissions(List.of(Role.USER));
+        person.setPermissions(List.of(Role.USER));
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setId(1L);
@@ -718,10 +703,8 @@ class SickNotesViewControllerTest {
             .build();
 
         when(personService.getPersonByID(40L)).thenReturn(Optional.of(person));
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(false);
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
         when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());

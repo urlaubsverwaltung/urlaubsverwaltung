@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
@@ -148,6 +150,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(13L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -170,6 +173,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(21L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
@@ -201,6 +205,23 @@ class ApplicationsViewControllerTest {
                 hasItem(hasProperty("id", is(99L)))));
     }
 
+    @Test
+    void ensureAccessIsDeniedWhenSignedInUserIsNotAllowedToAccessPersonData() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(2L);
+        signedInUser.setPermissions(List.of(USER));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
+
+        assertThatThrownBy(() -> perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1"))))
+            .hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
     // ---- ALLOWED TO EDIT TESTS ----
 
     @Test
@@ -212,6 +233,7 @@ class ApplicationsViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
         final Application application = createApplication(1L, person, WAITING, false);
@@ -235,6 +257,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -262,6 +285,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(applicationPerson));
         when(personService.getSignedInUser()).thenReturn(officeUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(officeUser, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -293,6 +317,7 @@ class ApplicationsViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(false);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(deptHead, applicationPerson)).thenReturn(true);
 
         final Application application = createApplication(1L, applicationPerson, WAITING, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -320,6 +345,7 @@ class ApplicationsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(deptHead);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(deptHead, applicationPerson)).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(true);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(false);
 
@@ -349,6 +375,7 @@ class ApplicationsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(ssa);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(ssa, applicationPerson)).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(ssa, applicationPerson)).thenReturn(false);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, applicationPerson)).thenReturn(true);
 
@@ -375,6 +402,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -399,6 +427,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -423,6 +452,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -450,6 +480,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(applicationPerson));
         when(personService.getSignedInUser()).thenReturn(officeUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(officeUser, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -479,6 +510,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(applicationPerson));
         when(personService.getSignedInUser()).thenReturn(boss);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(boss, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
@@ -510,6 +542,7 @@ class ApplicationsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(boss);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(boss, applicationPerson)).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
 
@@ -537,6 +570,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(applicationPerson));
         when(personService.getSignedInUser()).thenReturn(officeUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(officeUser, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(officeUser, applicationPerson)).thenReturn(false);
@@ -563,6 +597,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -589,6 +624,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -613,6 +649,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -639,6 +676,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -663,6 +701,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -695,6 +734,7 @@ class ApplicationsViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
         final Application application = createApplication(1L, person, ALLOWED, false);
@@ -732,6 +772,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 
@@ -770,6 +811,7 @@ class ApplicationsViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
 

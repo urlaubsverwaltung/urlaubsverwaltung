@@ -320,9 +320,10 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
         final boolean personIsApplier = sickNote.getPerson().equals(sickNote.getApplier());
         final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+        final boolean isAllowedToAdd = signedInUser.hasAnyRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, sickNote.getPerson());
 
         final SickNote updatedSickNote;
-        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || (personIsApplier && !allowedToSubmitSickNotes)) {
+        if (isAllowedToAdd || (personIsApplier && !allowedToSubmitSickNotes)) {
             updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
         } else {
             updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
@@ -417,6 +418,14 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             throw new UnknownSickNoteException(sickNoteId);
         }
 
+        final Person signedInUser = personService.getSignedInUser();
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
+
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, acceptedSickNote.getPerson())) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to accept the sick note of user '%s'".formatted(
+                signedInUser.getId(), acceptedSickNote.getPerson().getId()));
+        }
+
         comment.setMandatory(false);
         sickNoteCommentFormValidator.validate(comment, errors);
         if (errors.hasErrors()) {
@@ -424,8 +433,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
         }
 
-        final Person signedInUser = personService.getSignedInUser();
-        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
 
         if (SickNoteStatus.ACTIVE.equals(acceptedSickNote.getStatus())) {
             redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
