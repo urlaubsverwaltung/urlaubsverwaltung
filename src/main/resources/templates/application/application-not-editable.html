@@ -9,7 +9,7 @@
   <head th:replace="~{_layout::head(~{::title})}">
     <title th:text="#{application.error.notEditable.title}"></title>
   </head>
-  <body th:replace="~{_layout::body(~{::main})}">
+  <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w text-center">
       <p class="@3xl/main:text-2xl" th:text="#{application.error.notEditable.body}"></p>
     </main>
