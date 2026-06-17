@@ -29,9 +29,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
@@ -889,12 +889,10 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHead() throws Exception {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
+    void ensureGetSickNoteDetailsNotAccessibleForPersonWithRoleDepartmentHeadWithoutSickNoteView() {
 
         final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
-        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
+        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         departmentHeadPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
 
@@ -906,7 +904,9 @@ class SickNoteViewControllerTest {
             .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
-        perform(get("/web/sicknote/15")).andExpect(status().isOk());
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/15"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -926,7 +926,7 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() throws Exception {
+    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() {
 
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
         secondStageAuthority.setId(1L);
