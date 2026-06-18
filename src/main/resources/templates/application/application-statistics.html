@@ -369,8 +369,8 @@
                 <span th:text="|#{applications.statistics.total}:|" class="inline-block"></span>
                 <div
                   class="whitespace-nowrap"
-                  th:each="type : ${vacationTypes}"
                   th:if="${statistic.hasVacationType(type)}"
+                  th:each="type : ${vacationTypes}"
                 >
                   <span class="text-xs" th:text="|${type.label}:|"></span>
                 </div>
