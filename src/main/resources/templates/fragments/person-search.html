@@ -18,7 +18,7 @@
           class="person-search__form"
         >
           <!-- preserve existing query params (e.g. paging/sort) on GET submit; skip 'q' which the search input owns -->
-          <th:block th:each="paramEntry : ${param}" th:if="${paramEntry.key != 'q'}">
+          <th:block th:if="${paramEntry.key != 'q'}" th:each="paramEntry : ${param}">
             <input
               th:each="paramValue : ${paramEntry.value}"
               type="hidden"
