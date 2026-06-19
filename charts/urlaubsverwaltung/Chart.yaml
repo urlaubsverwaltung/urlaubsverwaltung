@@ -3,8 +3,8 @@ apiVersion: v2
 name: urlaubsverwaltung
 description: Helm Chart for the urlaubsverwaltung
 type: application
-version: "6.24.0"
-appVersion: 5.39.0
+version: "7.0.0"
+appVersion: 6.0.0
 keywords:
   - urlaub
 home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
@@ -15,8 +15,3 @@ maintainers:
     email: Johannes.Graf@focus-shift.de
   - name: Tobias Schneider
     email: Tobias.Schneider@focus-shift.de
-dependencies:
-  - name: postgresql
-    version: 12.12.10
-    repository: https://charts.bitnami.com/bitnami
-    condition: postgresql.enabled

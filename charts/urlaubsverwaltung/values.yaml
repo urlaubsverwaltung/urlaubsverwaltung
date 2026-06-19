@@ -157,10 +157,3 @@ serviceMonitor:
   path: /actuator/prometheus
   # The Service port at which metrics are served
   port: http
-
-postgresql:
-  # If `true`, the PostgreSQL dependency is enabled
-  enabled: true
-  auth:
-    database: urlaubsverwaltung
-    username: urlaubsverwaltung

@@ -18,13 +18,6 @@ using the [Helm](https://helm.sh) package manager. It provisions a fully feature
 For more information on Urlaubsverwaltung and its capabilities, see
 its [wiki](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki).
 
-## Prerequisites Details
-
-The chart has an optional dependency on
-the [PostgreSQL](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) chart.
-By default, the PostgreSQL chart requires PVC (persistent volume claim) support on underlying infrastructure (may be
-disabled).
-
 ## Installing the Chart
 
 To install the chart with the release name `urlaubsverwaltung`:
@@ -76,12 +69,6 @@ extraEnv: |
         -Djava.net.preferIPv4Stack=true
         -Djava.awt.headless=true
 ```
-
-### Database Setup
-
-By default, Bitnami's [PostgreSQL](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) chart is deployed
-and used as database.
-Please refer to this chart for additional PostgreSQL configuration options.
 
 #### Using external Database
 
