@@ -6,7 +6,8 @@ We will support the following version with security fixes.
 
 | Version | Supported          | End of Life (EOL) |
 |---------|--------------------|-------------------|
-| 5.x     | :white_check_mark: | -                 |
+| 6.x     | :white_check_mark: | -                 |
+| 5.x     | :white_check_mark: | 15.09.2026                 |
 | 4.x     | :x:                | 31.12.2023        |
 | 3.x     | :x:                | 31.12.2020        |
 | 2.x     | :x:                | 31.12.2019        |
