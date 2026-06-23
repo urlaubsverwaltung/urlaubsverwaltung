@@ -106,8 +106,7 @@ public class WorkDaysCountService {
         for (Map.Entry<DateRange, WorkingTime> entry : workingTimes.entrySet()) {
             final DateRange dateRange = entry.getKey();
             final WorkingTime workingTime = entry.getValue();
-            final FederalState federalState = workingTime.getFederalState();
-            publicHolidaysByFederalState.computeIfAbsent(federalState, k -> publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), k));
+            publicHolidaysByFederalState.computeIfAbsent(workingTime.getFederalState(), federalState -> publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), federalState));
         }
         return publicHolidaysByFederalState;
     }
