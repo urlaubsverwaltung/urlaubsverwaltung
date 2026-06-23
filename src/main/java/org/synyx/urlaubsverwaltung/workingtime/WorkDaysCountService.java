@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -10,9 +11,10 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -25,7 +27,10 @@ public class WorkDaysCountService {
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
+    public WorkDaysCountService(
+        PublicHolidaysService publicHolidaysService,
+        WorkingTimeService workingTimeService
+    ) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
     }
@@ -53,23 +58,31 @@ public class WorkDaysCountService {
                 + "' in period " + startDate.format(ofPattern(DD_MM_YYYY)) + " - " + endDate.format(ofPattern(DD_MM_YYYY)));
         }
 
-        final Map<LocalDate, WorkingTime> workingTimesByDate = toLocalDateWorkingTime(workingTimes);
+        // Build a map from date to WorkingTime for quick lookup
+        final Map<LocalDate, WorkingTime> workingTimesByDate = getLocalDateWorkingTime(workingTimes);
+        // Fetch all public holidays for the entire period at once, grouped by federal state
+        final Map<FederalState, List<PublicHoliday>> publicHolidaysByFederalState = getFederalStateListMap(workingTimes);
 
         BigDecimal vacationDays = BigDecimal.ZERO;
         LocalDate day = startDate;
         while (!day.isAfter(endDate)) {
-
             final WorkingTime workingTime = workingTimesByDate.get(day);
+            if (workingTime == null) {
+                day = day.plusDays(1);
+                continue;
+            }
 
-            // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(day, workingTime.getFederalState());
-            final BigDecimal duration = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getWorkingDuration() : BigDecimal.ONE;
+            // Check if this day is a public holiday
+            final List<PublicHoliday> publicHolidays = publicHolidaysByFederalState.get(workingTime.getFederalState());
+            final LocalDate finalDay = day;
+            final BigDecimal duration = publicHolidays.stream()
+                .filter(holiday -> holiday.date().isEqual(finalDay))
+                .map(PublicHoliday::getWorkingDuration)
+                .findFirst()
+                .orElse(BigDecimal.ONE);
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
-
-            final BigDecimal result = duration.multiply(workingDuration);
-
-            vacationDays = vacationDays.add(result);
+            vacationDays = vacationDays.add(duration.multiply(workingDuration));
 
             day = day.plusDays(1);
         }
@@ -82,9 +95,20 @@ public class WorkDaysCountService {
         return vacationDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
     }
 
-    private Map<LocalDate, WorkingTime> toLocalDateWorkingTime(Map<DateRange, WorkingTime> workingTimes) {
-        final Map<LocalDate, WorkingTime> localDateWorkingTimeMap = new HashMap<>();
-        workingTimes.forEach((key, value) -> key.iterator().forEachRemaining(localDate -> localDateWorkingTimeMap.put(localDate, value)));
-        return localDateWorkingTimeMap;
+    private static @NonNull Map<LocalDate, WorkingTime> getLocalDateWorkingTime(Map<DateRange, WorkingTime> workingTimes) {
+        final Map<LocalDate, WorkingTime> workingTimesByDate = new HashMap<>();
+        workingTimes.forEach((key, value) -> key.iterator().forEachRemaining(localDate -> workingTimesByDate.put(localDate, value)));
+        return workingTimesByDate;
+    }
+
+    private @NonNull Map<FederalState, List<PublicHoliday>> getFederalStateListMap(Map<DateRange, WorkingTime> workingTimes) {
+        final Map<FederalState, List<PublicHoliday>> publicHolidaysByFederalState = new EnumMap<>(FederalState.class);
+        for (Map.Entry<DateRange, WorkingTime> entry : workingTimes.entrySet()) {
+            final DateRange dateRange = entry.getKey();
+            final WorkingTime workingTime = entry.getValue();
+            final FederalState federalState = workingTime.getFederalState();
+            publicHolidaysByFederalState.computeIfAbsent(federalState, k -> publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), k));
+        }
+        return publicHolidaysByFederalState;
     }
 }
