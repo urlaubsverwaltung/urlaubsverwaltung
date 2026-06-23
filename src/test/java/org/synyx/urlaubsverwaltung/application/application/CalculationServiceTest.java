@@ -82,7 +82,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthReducesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -114,8 +113,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthStaysSameByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 19);
@@ -146,8 +143,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
@@ -194,8 +189,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeftWillBeTakenFromRemainingVacationDaysWhenApplicationLengthIncreasesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
@@ -372,8 +365,6 @@ class CalculationServiceTest {
 
     @Test
     void ensureApplicationSameYearAndAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
@@ -406,8 +397,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeft() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
 
@@ -447,8 +436,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndNotEnoughDaysLeft() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
 
@@ -487,7 +474,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndExactEnoughDaysLeft() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
@@ -527,8 +513,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationOneDayIsToMuch() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
 
@@ -571,8 +555,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationRemainingVacationDaysLeftNotUsedAfterApril() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationStartDate = LocalDate.of(2012, AUGUST, 6);
         final LocalDate applicationEndDate = LocalDate.of(2012, AUGUST, 20);
@@ -612,7 +594,6 @@ class CalculationServiceTest {
 
     @Test
     void testPersonWithoutHolidayAccount() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
@@ -630,8 +611,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationOneDayIsOkay() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
 
@@ -673,8 +652,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationLastYear() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2012, AUGUST, 20);
 
@@ -816,8 +793,6 @@ class CalculationServiceTest {
      */
     @Test
     void testCheckApplicationNextYearUsingRemainingAlready() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationStartDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate applicationEndDate = LocalDate.of(2012, AUGUST, 30);
@@ -868,8 +843,6 @@ class CalculationServiceTest {
     @Test
     void ensureApplicationBeforeExpiryDateIsValidWithVacationLeftBeforeExpiryDateAndNoVacationLeftAfterApril() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2022, FEBRUARY, 1);
 
@@ -906,9 +879,6 @@ class CalculationServiceTest {
 
     @Test
     void ensureApplicationBeforeExpiryDateIsValidWithNotEnoughRemainingVacationDaysAndOneDayAnnualVacation() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationStart = LocalDate.of(2022, FEBRUARY, 1);
         final LocalDate applicationEnd = LocalDate.of(2022, FEBRUARY, 2);
@@ -955,8 +925,6 @@ class CalculationServiceTest {
     @Test
     void ensureApplicationAfterAprilNotValidWithNoVacationLeftAfterApril() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2022, APRIL, 1);
 
@@ -1002,8 +970,6 @@ class CalculationServiceTest {
     @Test
     void ensureApplicationAfterAprilIsValidWithRemainingNotExpiringVacationDays() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationDate = LocalDate.of(2022, APRIL, 1);
 
@@ -1048,8 +1014,6 @@ class CalculationServiceTest {
 
     @Test
     void ensureApplicationBeforeAndAfterAprilIsValidWithVacationLeftBeforeExpiryDateAndVacationLeftAfterApril() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationStart = LocalDate.of(2022, MARCH, 31);
@@ -1097,8 +1061,6 @@ class CalculationServiceTest {
     @Test
     void ensureApplicationBeforeAndAfterAprilNotInvalidWithVacationLeftBeforeExpiryDateAndNoVacationLeftAfterApril() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate start = LocalDate.of(2022, MARCH, 31);
         final LocalDate end = LocalDate.of(2022, APRIL, 1);
@@ -1145,8 +1107,6 @@ class CalculationServiceTest {
     @Test
     void ensureApplicationBeforeAndAfterAprilNotValidWithNoVacationLeftBeforeExpiryDateAndVacationLeftAfterApril() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate start = LocalDate.of(2022, MARCH, 31);
         final LocalDate end = LocalDate.of(2022, APRIL, 1);
@@ -1192,8 +1152,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationSameYearAndWithExpiryDateOnFirstJanuaryIsOk() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate applicationStartDate = LocalDate.of(2012, AUGUST, 20);

@@ -102,8 +102,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2022, 1, 10);
         final LocalDate midDate = LocalDate.of(2022, 1, 17);
@@ -124,8 +122,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDayMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
         final LocalDate endDate = LocalDate.of(2011, 1, 4);
@@ -139,8 +135,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void getWorkDaysWithHalfDaysMorning() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
@@ -156,8 +150,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDayNoon() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
         final LocalDate endDate = LocalDate.of(2011, 1, 4);
@@ -171,8 +163,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void getWorkDaysWithHalfDaysNoon() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
@@ -189,8 +179,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithSundayToSaturday() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // start date is Sunday, end date Saturday
         final LocalDate startDate = LocalDate.of(2011, 1, 2);
@@ -205,8 +193,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void getWorkDaysWithPublicHolidaysOverLabourDay() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Labour Day (1st May)
@@ -273,8 +259,6 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysHalfDay() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         // monday
@@ -291,8 +275,6 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysZero() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         // saturday
@@ -308,8 +290,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void testGetWorkDaysHalfDayZero() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

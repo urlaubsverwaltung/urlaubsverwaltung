@@ -50,19 +50,13 @@ class PublicHolidaysServiceImplTest {
 
     @Test
     void ensureCorrectWorkingDurationForWorkDay() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
         final LocalDate localDate = of(2013, Month.NOVEMBER, 27);
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(localDate, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
     @Test
     void ensureCorrectWorkingDurationForPublicHoliday() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 25), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
     }
@@ -94,62 +88,42 @@ class PublicHolidaysServiceImplTest {
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), GERMANY_BERLIN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, DECEMBER, 15), GERMANY_BAYERN_MUENCHEN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
     @Test
     void ensureGetDayLengthReturnsFullForCorpusChristi() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, MAY, 30), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL));
     }
 
     @Test
     void ensureGetDayLengthReturnsFullForAssumptionDayInBayernMunich() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BAYERN_MUENCHEN);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL));
     }
 
     @Test
     void ensureGetDayLengthReturnsZeroForAssumptionDayInBerlin() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BERLIN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
     @Test
     void ensureGetDayLengthReturnsZeroForAssumptionDayInBadenWuerttemberg() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }

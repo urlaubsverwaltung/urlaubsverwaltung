@@ -5,6 +5,7 @@ import de.focus_shift.jollyday.core.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static de.focus_shift.jollyday.core.HolidayType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -49,35 +51,37 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     @Override
-    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, PublicHolidaysSettings publicHolidaysSettings) {
-        return getPublicHolidays(date, date, federalState, publicHolidaysSettings).stream().findFirst();
+    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
+        return getPublicHolidays(date, date, federalState, publicHolidaysSettingsSupplier).stream().findFirst();
     }
 
     @Override
     public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState) {
-        return getPublicHolidays(date, date, federalState).stream().findFirst();
+        final Supplier<PublicHolidaysSettings> holidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
+        return getPublicHolidays(date, date, federalState, holidaysSettingsSupplier).stream().findFirst();
     }
 
     @Override
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
-        return getPublicHolidays(from, to, federalState, getPublicHolidaysSettings());
+        final Supplier<PublicHolidaysSettings> holidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
+        return getPublicHolidays(from, to, federalState, holidaysSettingsSupplier);
     }
 
-    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, PublicHolidaysSettings publicHolidaysSettings) {
+    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
         final Locale locale = LocaleContextHolder.getLocale();
 
         return getHolidays(from, to, federalState).stream()
-            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(publicHolidaysSettings, holiday.getDate(), federalState), holiday.getDescription(locale)))
+            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(publicHolidaysSettingsSupplier, holiday.getDate(), federalState), holiday.getDescription(locale)))
             .toList();
     }
 
-    private DayLength getHolidayDayLength(PublicHolidaysSettings publicHolidaysSettings, LocalDate date, FederalState federalState) {
+    private DayLength getHolidayDayLength(Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {
-                workingTime = publicHolidaysSettings.getWorkingDurationForChristmasEve();
+                workingTime = publicHolidaysSettingsSupplier.get().getWorkingDurationForChristmasEve();
             } else if (isNewYearsEve(date)) {
-                workingTime = publicHolidaysSettings.getWorkingDurationForNewYearsEve();
+                workingTime = publicHolidaysSettingsSupplier.get().getWorkingDurationForNewYearsEve();
             } else {
                 workingTime = ZERO;
             }
