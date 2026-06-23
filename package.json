@@ -57,7 +57,7 @@
     "babel-jest": "30.4.1",
     "concurrently": "10.0.3",
     "cross-env": "10.1.0",
-    "cssnano": "8.0.1",
+    "cssnano": "8.0.2",
     "date-fns": "3.6.0",
     "esbuild": "0.28.0",
     "eslint": "9.39.2",
