@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
 import static java.time.Month.AUGUST;
@@ -78,11 +77,11 @@ class PublicHolidaysServiceImplTest {
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOf(String dayLength, double workingDuration) {
 
         final Settings settings = new Settings();
-        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
+        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(DayLength.valueOf(dayLength));
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ONE));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(workingDuration)));
     }
 
 
