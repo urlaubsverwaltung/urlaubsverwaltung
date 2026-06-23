@@ -10,15 +10,6 @@ import java.util.function.Supplier;
 public interface PublicHolidaysService {
 
     /**
-     * Check if the given {@link LocalDate} is a public holiday in the given {@link FederalState} or not.
-     *
-     * @param date         the date to check
-     * @param federalState the federal state to consider holiday settings for
-     * @return {@code true} when the date is a public holiday, {@code false} otherwise.
-     */
-    boolean isPublicHoliday(LocalDate date, FederalState federalState);
-
-    /**
      * Returns the public holiday information for a date and the federal state.
      *
      * <p>This variant accepts a {@link Supplier} for {@link PublicHolidaysSettings}, allowing callers to provide
