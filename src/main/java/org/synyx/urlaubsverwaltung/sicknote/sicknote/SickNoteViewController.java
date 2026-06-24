@@ -368,23 +368,18 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model
     ) throws UnknownSickNoteException {
 
-        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
-        if (maybeSickNote.isEmpty()) {
-            throw new UnknownSickNoteException(sickNoteId);
-        }
-
-        final SickNote persistedSickNote = maybeSickNote.get();
+        final SickNote sickNote = getSickNote(sickNoteId);
         final Person signedInUser = personService.getSignedInUser();
-        final Person sickNotePerson = persistedSickNote.getPerson();
+        final Person sickNotePerson = sickNote.getPerson();
 
         if (!signedInUser.hasRole(OFFICE)
             && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-            && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
+            && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to edit the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNotePerson.getId()));
         }
 
-        final SickNote editedSickNote = merge(persistedSickNote, sickNoteFormDto);
+        final SickNote editedSickNote = merge(sickNote, sickNoteFormDto);
         sickNoteValidator.validate(editedSickNote, errors);
 
         if (errors.hasErrors()) {
@@ -413,13 +408,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         RedirectAttributes redirectAttributes
     ) throws UnknownSickNoteException {
 
-        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
-        if (maybeSickNote.isEmpty()) {
-            throw new UnknownSickNoteException(sickNoteId);
-        }
-
+        final SickNote sickNote = getSickNote(sickNoteId);
         final Person signedInUser = personService.getSignedInUser();
-        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(sickNote, signedInUser, comment.getText());
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, acceptedSickNote.getPerson())) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to accept the sick note of user '%s'".formatted(
