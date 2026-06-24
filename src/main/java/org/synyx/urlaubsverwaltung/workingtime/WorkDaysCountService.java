@@ -11,13 +11,13 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.stream.Collectors.groupingBy;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
 @Service
@@ -60,8 +60,7 @@ public class WorkDaysCountService {
 
         // Build a map from date to WorkingTime for quick lookup
         final Map<LocalDate, WorkingTime> workingTimesByDate = getLocalDateWorkingTime(workingTimes);
-        // Fetch all public holidays for the entire period at once, grouped by federal state
-        final Map<FederalState, List<PublicHoliday>> publicHolidaysByFederalState = getFederalStateListMap(workingTimes);
+        final Map<LocalDate, List<PublicHoliday>> publicHolidaysByDate = getPublicHolidaysByDate(workingTimes);
 
         BigDecimal vacationDays = BigDecimal.ZERO;
         LocalDate day = startDate;
@@ -72,11 +71,8 @@ public class WorkDaysCountService {
                 continue;
             }
 
-            // Check if this day is a public holiday
-            final List<PublicHoliday> publicHolidays = publicHolidaysByFederalState.get(workingTime.getFederalState());
-            final LocalDate finalDay = day;
+            final List<PublicHoliday> publicHolidays = publicHolidaysByDate.getOrDefault(day, List.of());
             final BigDecimal duration = publicHolidays.stream()
-                .filter(holiday -> holiday.date().isEqual(finalDay))
                 .map(PublicHoliday::getWorkingDuration)
                 .findFirst()
                 .orElse(BigDecimal.ONE);
@@ -101,13 +97,12 @@ public class WorkDaysCountService {
         return workingTimesByDate;
     }
 
-    private @NonNull Map<FederalState, List<PublicHoliday>> getFederalStateListMap(Map<DateRange, WorkingTime> workingTimes) {
-        final Map<FederalState, List<PublicHoliday>> publicHolidaysByFederalState = new EnumMap<>(FederalState.class);
-        for (Map.Entry<DateRange, WorkingTime> entry : workingTimes.entrySet()) {
-            final DateRange dateRange = entry.getKey();
-            final WorkingTime workingTime = entry.getValue();
-            publicHolidaysByFederalState.computeIfAbsent(workingTime.getFederalState(), federalState -> publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), federalState));
-        }
-        return publicHolidaysByFederalState;
+    private @NonNull Map<LocalDate, List<PublicHoliday>> getPublicHolidaysByDate(Map<DateRange, WorkingTime> workingTimes) {
+        return workingTimes.entrySet().stream()
+            .flatMap(entry -> publicHolidaysService.getPublicHolidays(
+                    entry.getKey().startDate(),
+                    entry.getKey().endDate(),
+                    entry.getValue().getFederalState()
+                ).stream()).collect(groupingBy(PublicHoliday::date));
     }
 }
