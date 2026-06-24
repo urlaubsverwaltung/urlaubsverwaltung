@@ -101,6 +101,27 @@ class WorkDaysCountServiceTest {
     }
 
     @Test
+    void getWorkDaySkipsDayNotCoveredByAnyWorkingTime() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        // Mon Jan 8 to Fri Jan 12, 2024
+        final LocalDate startDate = LocalDate.of(2024, 1, 8);
+        final LocalDate endDate = LocalDate.of(2024, 1, 12);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        // Wed Jan 10 intentionally not covered by any DateRange
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class)))
+            .thenReturn(Map.of(
+                new DateRange(startDate, LocalDate.of(2024, 1, 9)), workingTime,
+                new DateRange(LocalDate.of(2024, 1, 11), endDate), workingTime
+            ));
+
+        // Mon, Tue, (Wed skipped — no WorkingTime), Thu, Fri = 4
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
+    }
+
+    @Test
     void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
