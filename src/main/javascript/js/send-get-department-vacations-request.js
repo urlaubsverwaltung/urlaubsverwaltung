@@ -59,7 +59,7 @@ function createHtmlForVacation(vacation, isNewPerson) {
     html += `<li class="flex items-center pt-2">${person}:</li>`;
   }
 
-  html += `<li class="flex items-center pl-5">`;
+  html += `<li class="flex items-center pl-5 relative">`;
   if (vacation.status === "ALLOWED") {
     html += `<span class="text-emerald-500 absolute -ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
   }
