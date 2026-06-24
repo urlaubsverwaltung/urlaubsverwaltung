@@ -47,7 +47,7 @@
             <th:block th:if="${editMode}" th:text="#{sicknote.edit.title}"> Krankmeldung bearbeiten </th:block>
             <th:block
               th:if="${not editMode}"
-              th:text="${canAddSickNote} ? #{sicknote.create.title} : #{sicknote.submit.title}"
+              th:text="${canAddOrEditSickNoteForAnotherPerson} ? #{sicknote.create.title} : #{sicknote.submit.title}"
             >
               Krankmeldung einreichen/erstellen
             </th:block>
@@ -66,7 +66,7 @@
             </p>
 
             <!-- Employee -->
-            <div th:if="${canAddSickNote}" class="uv-form__input-row">
+            <div th:if="${canAddOrEditSickNoteForAnotherPerson}" class="uv-form__input-row">
               <label th:text="|#{sicknote.data.person}:|" class="is-required" for="employee"></label>
               <div>
                 <th:block th:if="${not editMode}">
@@ -91,7 +91,7 @@
                 </th:block>
               </div>
             </div>
-            <th:block th:if="${!canAddSickNote}">
+            <th:block th:if="${!canAddOrEditSickNoteForAnotherPerson}">
               <input type="hidden" name="person" th:value="${person.id}" />
             </th:block>
 
@@ -282,7 +282,7 @@
               <button
                 type="submit"
                 class="button-main-green w-56"
-                th:text="${canAddSickNote} ? #{action.apply.sicknote} : #{action.apply.sicknote.submit}"
+                th:text="${canAddOrEditSickNoteForAnotherPerson} ? #{action.apply.sicknote} : #{action.apply.sicknote.submit}"
                 data-test-id="sicknote-submit-button"
               >
                 Krankmeldung einreichen/erstellen
