@@ -48,10 +48,7 @@
         th:if="${showAbsences or showAbsencesManagement or showSickNoteManagement or showOvertime or showOvertimeManagement or showPersons}"
       >
         <th:block th:if="${showAbsences}">
-          <dt
-            class="font-medium mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
-            th:text="#{person.notifications.section.absences.title}"
-          >
+          <dt class="font-medium mb-2 dark:py-0.5" th:text="#{person.notifications.section.absences.title}">
             Meine Abwesenheiten
           </dt>
           <th:block
@@ -75,7 +72,7 @@
         </th:block>
         <th:block th:if="${showAbsencesManagement}">
           <dt
-            class="font-medium mt-8 mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
+            class="font-medium mt-8 mb-2 dark:py-0.5"
             th:text="#{person.notifications.section.absences.management.title}"
           >
             Abwesenheiten meiner Kolleg:innen
@@ -104,7 +101,7 @@
         </th:block>
         <th:block th:if="${showSickNoteManagement}">
           <dt
-            class="font-medium mt-8 mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
+            class="font-medium mt-8 mb-2 dark:py-0.5"
             th:text="#{person.notifications.section.sicknote.management.title}"
           >
             Krankmeldungen meiner Kolleg:innen
@@ -120,10 +117,7 @@
           ></dd>
         </th:block>
         <th:block th:if="${showOvertime}">
-          <dt
-            class="font-medium mt-8 mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
-            th:text="#{person.notifications.section.overtime.title}"
-          >
+          <dt class="font-medium mt-8 mb-2 dark:py-0.5" th:text="#{person.notifications.section.overtime.title}">
             Überstunden
           </dt>
           <dd
@@ -135,7 +129,7 @@
         </th:block>
         <th:block th:if="${showOvertimeManagement}">
           <dt
-            class="font-medium mt-8 mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
+            class="font-medium mt-8 mb-2 dark:py-0.5"
             th:text="#{person.notifications.section.overtime.management.title}"
           >
             Überstunden meiner Kolleg:innen
@@ -145,10 +139,7 @@
           ></dd>
         </th:block>
         <th:block th:if="${showPersons}">
-          <dt
-            class="font-medium mt-8 mb-2 bg-white dark:bg-zinc-900 dark:py-0.5"
-            th:text="#{person.notifications.section.persons.title}"
-          >
+          <dt class="font-medium mt-8 mb-2 dark:py-0.5" th:text="#{person.notifications.section.persons.title}">
             Personen
           </dt>
           <dd
