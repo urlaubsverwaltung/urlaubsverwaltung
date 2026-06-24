@@ -114,7 +114,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
+        final CachedSupplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -145,7 +145,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysSettings));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysSettingsSupplier));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -159,7 +159,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, PublicHolidaysSettings publicHolidaysSettings) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
         final FederalState federalState = workingTime.getFederalState();
 
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
@@ -171,7 +171,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
 
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, publicHolidaysSettings);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, publicHolidaysSettingsSupplier);
 
             if (maybePublicHoliday.isPresent()) {
 
@@ -272,5 +272,14 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
     private FederalState getSystemDefaultFederalState() {
         return settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
+    }
+
+    /**
+     * Retrieves the public holiday settings from the system configuration.
+     *
+     * @return the current {@link PublicHolidaysSettings} from the system settings
+     */
+    private PublicHolidaysSettings getPublicHolidaysSettings() {
+        return settingsService.getSettings().getPublicHolidaysSettings();
     }
 }

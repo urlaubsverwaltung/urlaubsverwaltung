@@ -38,6 +38,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
 
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {
@@ -100,9 +101,28 @@ class WorkDaysCountServiceTest {
     }
 
     @Test
-    void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
+    void getWorkDaySkipsDayNotCoveredByAnyWorkingTime() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        // Mon Jan 8 to Fri Jan 12, 2024
+        final LocalDate startDate = LocalDate.of(2024, 1, 8);
+        final LocalDate endDate = LocalDate.of(2024, 1, 12);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        // Wed Jan 10 intentionally not covered by any DateRange
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class)))
+            .thenReturn(Map.of(
+                new DateRange(startDate, LocalDate.of(2024, 1, 9)), workingTime,
+                new DateRange(LocalDate.of(2024, 1, 11), endDate), workingTime
+            ));
+
+        // Mon, Tue, (Wed skipped — no WorkingTime), Thu, Fri = 4
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
+    }
+
+    @Test
+    void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2022, 1, 10);
@@ -122,9 +142,61 @@ class WorkDaysCountServiceTest {
     }
 
     @Test
-    void getWorkDaysWithHalfDayMorning() {
+    void getWorkDaysWithMultipleWorkingTimesAndDifferentFederalStates() {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        // Period: Dec 20, 2023 (Wednesday) - Jan 5, 2024 (Friday)
+        final LocalDate startDate = LocalDate.of(2023, 12, 20);
+        final LocalDate midDate = LocalDate.of(2024, 1, 1);
+        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+
+        // First period: Baden-Wuerttemberg (Dec 20, 2023 - Dec 31, 2023)
+        final WorkingTime workingTimeBW = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTimeBW.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+
+        // Second period: Bayern (Jan 1, 2024 - Jan 5, 2024)
+        final WorkingTime workingTimeBY = new WorkingTime(person, midDate, GERMANY_BAYERN, false);
+        workingTimeBY.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class)))
+            .thenReturn(Map.of(
+                new DateRange(startDate, midDate.minusDays(1)), workingTimeBW,
+                new DateRange(midDate, endDate), workingTimeBY
+            ));
+
+        // BW period (Dec 20-31, 2023):
+        //   Wed 20: workday (1)
+        //   Thu 21: workday (1)
+        //   Fri 22: workday (1)
+        //   Sat 23: weekend, skipped
+        //   Sun 24: weekend, skipped (Christmas Eve falls on Sunday)
+        //   Mon 25: Christmas 1st day - public holiday => 0 workdays
+        //   Tue 26: Christmas 2nd day - public holiday => 0 workdays
+        //   Wed 27: workday (1)
+        //   Thu 28: workday (1)
+        //   Fri 29: workday (1)
+        //   Sat 30: weekend, skipped
+        //   Sun 31: weekend, skipped (New Years Eve falls on Sunday)
+        //   BW subtotal: 6
+        //
+        // BY period (Jan 1-5, 2024):
+        //   Mon 1: New Year - full public holiday => 0 workdays
+        //   Tue 2: workday (1)
+        //   Wed 3: workday (1)
+        //   Thu 4: workday (1)
+        //   Fri 5: workday (1)
+        //   BY subtotal: 4
+        //
+        // Total: 6 + 4 = 10
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(10));
+    }
+
+    @Test
+    void getWorkDaysWithHalfDayMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
@@ -140,8 +212,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDaysMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
         final LocalDate endDate = LocalDate.of(2011, 1, 8);
@@ -156,8 +226,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDayNoon() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
         final LocalDate endDate = LocalDate.of(2011, 1, 4);
@@ -171,8 +239,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void getWorkDaysWithHalfDaysNoon() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2011, 1, 4);
@@ -189,8 +255,6 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithSundayToSaturday() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // start date is Sunday, end date Saturday
         final LocalDate startDate = LocalDate.of(2011, 1, 2);
@@ -205,8 +269,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void getWorkDaysWithPublicHolidaysOverLabourDay() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Labour Day (1st May)
@@ -273,8 +335,6 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysHalfDay() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         // monday
@@ -291,8 +351,6 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysZero() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         // saturday
@@ -308,8 +366,6 @@ class WorkDaysCountServiceTest {
 
     @Test
     void testGetWorkDaysHalfDayZero() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
