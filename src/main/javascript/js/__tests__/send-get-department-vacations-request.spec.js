@@ -90,7 +90,7 @@ describe("send-get-department-vacations-request", () => {
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 19), "dd.MM.yyyy");
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 21), "dd.MM.yyyy");
     expect(div.innerHTML).toBe(
-      '<p>1 i18n:application.applier.applicationsOfColleagues</p><ul class="m-0 p-0"><li class="flex items-center pt-2">Bruce Wayne:</li><li class="flex items-center pl-5"><span class="text-emerald-500 absolute -ml-5" title="undefined"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="w-4 h-4 stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></span>19.08.2020 - 21.08.2020</li></ul>',
+      '<p>1 i18n:application.applier.applicationsOfColleagues</p><ul class="m-0 p-0"><li class="flex items-center pt-2">Bruce Wayne:</li><li class="flex items-center pl-5 relative"><span class="text-emerald-500 absolute -ml-5" title="undefined"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="w-4 h-4 stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></span>19.08.2020 - 21.08.2020</li></ul>',
     );
   });
 
