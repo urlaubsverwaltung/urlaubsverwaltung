@@ -21,6 +21,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -78,8 +79,12 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
         return personService.getPersonByUsername(extractIdentifier(oidcUserAuthority))
             .or(() -> {
                 // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
-                final String emailAddress = extractMailAddress(oidcUserAuthority);
-                return personService.getPersonByMailAddress(emailAddress);
+                // only if the email address has been verified by the IdP to prevent account takeover via unverified email claim
+                if (isEmailVerified(oidcUserAuthority)) {
+                    final String emailAddress = extractMailAddress(oidcUserAuthority);
+                    return personService.getPersonByMailAddress(emailAddress);
+                }
+                return Optional.empty();
             });
     }
 
@@ -100,5 +105,11 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     private Optional<String> getClaimAsString(OidcUserAuthority authority, Supplier<String> claimAccessor) {
         return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimAccessor.get()))
             .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimAccessor.get())));
+    }
+
+    private boolean isEmailVerified(OidcUserAuthority authority) {
+        return getClaimAsString(authority, () -> EMAIL_VERIFIED)
+            .map(Boolean::valueOf)
+            .orElse(false);
     }
 }

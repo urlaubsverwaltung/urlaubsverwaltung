@@ -26,9 +26,13 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -88,13 +92,14 @@ class OidcPersonAuthoritiesMapperTest {
     }
 
     @Test
-    void mapAuthoritiesFromIdTokenByEmailFallback() {
+    void mapAuthoritiesFromIdTokenByEmailFallbackWithVerifiedEmail() {
         final String uniqueID = "uniqueID";
         final String email = "test.me@example.com";
 
         final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
             SUB, uniqueID,
-            EMAIL, email
+            EMAIL, email,
+            EMAIL_VERIFIED, true
         ));
 
         final Person personForLogin = new Person();
@@ -106,6 +111,42 @@ class OidcPersonAuthoritiesMapperTest {
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER");
+    }
+
+    @Test
+    void doesNotFallbackToEmailWhenNotVerified() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email,
+            EMAIL_VERIFIED, false
+        ));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+
+        sut.mapAuthorities(List.of(oidcUserAuthority));
+
+        verify(personService, never()).getPersonByMailAddress(anyString());
+    }
+
+    @Test
+    void doesNotFallbackToEmailWhenVerifiedClaimMissing() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        // email_verified claim is not present
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+
+        sut.mapAuthorities(List.of(oidcUserAuthority));
+
+        verify(personService, never()).getPersonByMailAddress(anyString());
     }
 
     @Test
@@ -188,7 +229,6 @@ class OidcPersonAuthoritiesMapperTest {
         );
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.getPersonByMailAddress(null)).thenReturn(Optional.empty());
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).contains(USER.name(), OFFICE.name());
