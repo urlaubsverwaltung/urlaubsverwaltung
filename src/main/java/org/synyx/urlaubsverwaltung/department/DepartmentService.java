@@ -152,6 +152,19 @@ public interface DepartmentService {
     boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
 
     /**
+     * Batch variant of {@link #isDepartmentHeadAllowedToManagePerson(Person, Person)}: returns the subset of the given
+     * department heads that manage a department the given person is a member of.
+     * <p>
+     * The memberships of all given department heads and the person are loaded with a single query instead of one query
+     * per department head.
+     *
+     * @param departmentHeads to be checked (typically the active persons with role {@code DEPARTMENT_HEAD})
+     * @param person          to be checked if managed by the department heads
+     * @return the given department heads that are allowed to manage the given person, preserving the input order
+     */
+    List<Person> getDepartmentHeadsAllowedToManagePerson(List<Person> departmentHeads, Person person);
+
+    /**
      * Check the role of the given person and return a {@link List} of all managed {@link Person}s.
      * Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
@@ -247,6 +260,19 @@ public interface DepartmentService {
      * assigned to, else {@code false}
      */
     boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person);
+
+    /**
+     * Batch variant of {@link #isSecondStageAuthorityAllowedToManagePerson(Person, Person)}: returns the subset of the
+     * given second stage authorities that are responsible for a department the given person is a member of.
+     * <p>
+     * The memberships of all given second stage authorities and the person are loaded with a single query instead of
+     * one query per second stage authority.
+     *
+     * @param secondStageAuthorities to be checked (typically the active persons with role {@code SECOND_STAGE_AUTHORITY})
+     * @param person                 to be checked if managed by the second stage authorities
+     * @return the given second stage authorities that are allowed to manage the given person, preserving the input order
+     */
+    List<Person> getSecondStageAuthoritiesAllowedToManagePerson(List<Person> secondStageAuthorities, Person person);
 
     /**
      * Get all distinct managed members of the second stage authority.
