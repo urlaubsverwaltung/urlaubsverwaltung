@@ -1,7 +1,6 @@
 .bottom-bar {
-  /* TODO hm... not sure... */
-  /* bottom bar has to be above "everything" else */
-  z-index: 999999;
+  /* above regular form elements, but below overlays like the duet date picker popup */
+  z-index: var(--z-index-sticky);
 
   /* position is set by javascript, as we need javascript to detect whether sticky or not. */
   /* as soon as firefox, safari supports "container-type: scroll-state" we can get rid of javascript. */
