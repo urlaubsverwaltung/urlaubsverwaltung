@@ -23,11 +23,13 @@ import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -147,8 +149,9 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             applicationsForLeave = List.of();
             usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
         } else {
+            final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
             applicationsForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
+                .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .map(applicationForLeave -> applicationDto(applicationForLeave, signedInUser, locale))
                 .toList();

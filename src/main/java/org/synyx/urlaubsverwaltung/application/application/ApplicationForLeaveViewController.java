@@ -347,10 +347,13 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
             }
         }
 
-        return cancellationRequests.stream()
+        final List<Application> relevantCancellationRequests = cancellationRequests.stream()
             .distinct()
             .filter(withoutApplicationsOf(signedInUser))
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .toList();
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(relevantCancellationRequests);
+        return relevantCancellationRequests.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }
@@ -382,8 +385,10 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
-        return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+        final List<Application> applications = applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED));
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }
@@ -391,25 +396,33 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         final List<ApplicationStatus> states = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
-        return applicationService.getForStatesAndPerson(states, List.of(user)).stream()
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+        final List<Application> applications = applicationService.getForStatesAndPerson(states, List.of(user));
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> membersOfDepartmentHead) {
-        return applicationService.getForStatesAndPerson(List.of(WAITING), membersOfDepartmentHead).stream()
+        final List<Application> applications = applicationService.getForStatesAndPerson(List.of(WAITING), membersOfDepartmentHead).stream()
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications(head))
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .toList();
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage, List<Person> membersOfSecondStageAuthority) {
-        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersOfSecondStageAuthority).stream()
+        final List<Application> applications = applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersOfSecondStageAuthority).stream()
             .filter(withoutApplicationsOf(secondStage))
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .toList();
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }

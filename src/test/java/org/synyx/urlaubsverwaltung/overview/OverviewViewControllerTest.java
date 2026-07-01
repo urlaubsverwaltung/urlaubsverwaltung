@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
@@ -48,6 +49,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,14 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -125,6 +131,21 @@ class OverviewViewControllerTest {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
+    }
+
+    private void stubWorkDaysCountForApplications(BigDecimal daysPerApplication) {
+        // sick notes still use the single-application variant
+        lenient().when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any(Person.class)))
+            .thenReturn(daysPerApplication);
+        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
+            .thenAnswer(invocation -> mapEachApplicationTo(invocation, daysPerApplication));
+        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
+            .thenAnswer(invocation -> mapEachApplicationTo(invocation, daysPerApplication));
+    }
+
+    private static Map<Application, BigDecimal> mapEachApplicationTo(InvocationOnMock invocation, BigDecimal value) {
+        final Collection<Application> applications = invocation.getArgument(0);
+        return applications.stream().collect(toMap(identity(), application -> value));
     }
 
     @Nested
@@ -610,7 +631,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
+        stubWorkDaysCountForApplications(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
@@ -983,7 +1004,7 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(BigDecimal.valueOf(2));
+        stubWorkDaysCountForApplications(BigDecimal.valueOf(2));
 
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
