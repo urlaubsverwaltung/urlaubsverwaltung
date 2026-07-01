@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -224,9 +225,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
+        // load the federal states of all persons with a single query instead of one query per person
+        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = workingTimeService.getFederalStatesByPersons(personList, dateRange);
+
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
-            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));
+            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(federalStatesByPerson.getOrDefault(person, Map.of())));
         }
 
         for (LocalDate date : dateRange) {
@@ -282,8 +286,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .orElse(false);
     }
 
-    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
-        return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, FederalState> federalStatesByDateRange) {
+        return federalStatesByDateRange
             .entrySet().stream()
             .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
             .flatMap(List::stream)

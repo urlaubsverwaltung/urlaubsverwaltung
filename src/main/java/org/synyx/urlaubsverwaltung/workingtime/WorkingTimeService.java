@@ -70,6 +70,22 @@ public interface WorkingTimeService {
     Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange);
 
     /**
+     * Returns, for each of the given persons, a map of date ranges and the associated federal state.
+     * <p>
+     * The working times of all persons are loaded with a single query, so this is the batch variant of
+     * {@link #getFederalStatesByPersonAndDateRange(Person, DateRange)} to avoid one query per person.
+     * <p>
+     * Note: The federal state of the {@link DateRange} is either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param persons   to get the federal states of
+     * @param dateRange to specify the
+     * @return map of persons and their associated date ranges and federal states
+     */
+    Map<Person, Map<DateRange, FederalState>> getFederalStatesByPersons(List<Person> persons, DateRange dateRange);
+
+    /**
      * Returns the federal state of a person.
      * <p>
      * Note: That the federal state is either
