@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -11,7 +13,9 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +53,76 @@ public class WorkDaysCountService {
      * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
-
         final DateRange dateRange = new DateRange(startDate, endDate);
-
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
+        return workDaysCount(dayLength, startDate, endDate, person, workingTimes);
+    }
+
+    /**
+     * Batch variant of {@link #getWorkDaysCount(DayLength, LocalDate, LocalDate, Person)} for many applications.
+     * <p>
+     * The working times of all involved persons are loaded with a single query (instead of one query per
+     * application), avoiding an N+1 query when the workdays of a whole list of applications are needed. Each
+     * application's workdays are calculated for the application's own date range.
+     *
+     * @param applications to calculate the workdays for
+     * @return the number of workdays per application
+     */
+    public Map<Application, BigDecimal> getWorkDaysCountForApplications(Collection<Application> applications) {
+        return getWorkDaysCountForApplications(applications, null);
+    }
+
+    /**
+     * Batch variant of {@link #getWorkDaysCount(DayLength, LocalDate, LocalDate, Person)} for many applications, where
+     * the calculated period of each application is limited to (clipped to) the given date range.
+     * <p>
+     * The working times of all involved persons are loaded with a single query (instead of one query per
+     * application), avoiding an N+1 query.
+     *
+     * @param applications        to calculate the workdays for
+     * @param limitedToDateRange  the date range each application's period is clipped to
+     * @return the number of workdays per application within the given date range
+     */
+    public Map<Application, BigDecimal> getWorkDaysCountForApplications(Collection<Application> applications, DateRange limitedToDateRange) {
+
+        if (applications.isEmpty()) {
+            return Map.of();
+        }
+
+        final List<Person> persons = applications.stream().map(Application::getPerson).distinct().toList();
+        final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeService.getByPersons(persons).stream()
+            .collect(groupingBy(WorkingTime::getPerson));
+
+        final Map<Application, BigDecimal> workDaysCountByApplication = new LinkedHashMap<>();
+        for (Application application : applications) {
+            final LocalDate startDate = clipStart(application.getStartDate(), limitedToDateRange);
+            final LocalDate endDate = clipEnd(application.getEndDate(), limitedToDateRange);
+            final List<WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(application.getPerson(), List.of());
+            final Map<DateRange, WorkingTime> workingTimes =
+                WorkingTimeServiceImpl.workingTimesByDateRange(personWorkingTimes, new DateRange(startDate, endDate));
+            workDaysCountByApplication.put(application,
+                workDaysCount(application.getDayLength(), startDate, endDate, application.getPerson(), workingTimes));
+        }
+
+        return workDaysCountByApplication;
+    }
+
+    private static LocalDate clipStart(LocalDate startDate, @Nullable DateRange limit) {
+        if (limit == null || !limit.startDate().isAfter(startDate)) {
+            return startDate;
+        }
+        return limit.startDate();
+    }
+
+    private static LocalDate clipEnd(LocalDate endDate, @Nullable DateRange limit) {
+        if (limit == null || !limit.endDate().isBefore(endDate)) {
+            return endDate;
+        }
+        return limit.endDate();
+    }
+
+    private BigDecimal workDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes) {
+
         if (workingTimes.isEmpty()) {
             throw new WorkDaysCountException("No working times found for user '" + person.getId()
                 + "' in period " + startDate.format(ofPattern(DD_MM_YYYY)) + " - " + endDate.format(ofPattern(DD_MM_YYYY)));
