@@ -2331,6 +2331,81 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureGetDepartmentHeadsAllowedToManagePersonReturnsOnlyManagingHeadsWithASingleQuery() {
+
+        final PersonId head1Id = new PersonId(1L);
+        final Person head1 = new Person();
+        head1.setId(head1Id.value());
+        head1.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final PersonId head2Id = new PersonId(2L);
+        final Person head2 = new Person();
+        head2.setId(head2Id.value());
+        head2.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final PersonId personId = new PersonId(3L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        person.setPermissions(List.of(USER));
+
+        // head1 is head of department 1 (which the person is a member of), head2 heads department 2 (person is not a member)
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(head1Id, head2Id, personId)))
+            .thenReturn(Map.of(
+                head1Id, List.of(new DepartmentMembership(head1Id, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock))),
+                head2Id, List.of(new DepartmentMembership(head2Id, 2L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock))),
+                personId, List.of(new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock)))
+            ));
+
+        final List<Person> allowed = sut.getDepartmentHeadsAllowedToManagePerson(List.of(head1, head2), person);
+
+        assertThat(allowed).containsExactly(head1);
+        verify(departmentMembershipService).getActiveMembershipsOfPersons(List.of(head1Id, head2Id, personId));
+    }
+
+    @Test
+    void ensureGetSecondStageAuthoritiesAllowedToManagePersonReturnsOnlyManagingAuthoritiesWithASingleQuery() {
+
+        final PersonId ssa1Id = new PersonId(1L);
+        final Person ssa1 = new Person();
+        ssa1.setId(ssa1Id.value());
+        ssa1.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final PersonId ssa2Id = new PersonId(2L);
+        final Person ssa2 = new Person();
+        ssa2.setId(ssa2Id.value());
+        ssa2.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final PersonId personId = new PersonId(3L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        person.setPermissions(List.of(USER));
+
+        // ssa1 is second stage authority of department 1 (which the person is a member of), ssa2 of department 2 (person is not a member)
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(ssa1Id, ssa2Id, personId)))
+            .thenReturn(Map.of(
+                ssa1Id, List.of(new DepartmentMembership(ssa1Id, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock))),
+                ssa2Id, List.of(new DepartmentMembership(ssa2Id, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock))),
+                personId, List.of(new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock)))
+            ));
+
+        final List<Person> allowed = sut.getSecondStageAuthoritiesAllowedToManagePerson(List.of(ssa1, ssa2), person);
+
+        assertThat(allowed).containsExactly(ssa1);
+        verify(departmentMembershipService).getActiveMembershipsOfPersons(List.of(ssa1Id, ssa2Id, personId));
+    }
+
+    @Test
+    void ensureGetDepartmentHeadsAllowedToManagePersonReturnsEmptyForNoHeadsWithoutQuery() {
+
+        final Person person = new Person();
+        person.setId(3L);
+
+        assertThat(sut.getDepartmentHeadsAllowedToManagePerson(List.of(), person)).isEmpty();
+
+        verifyNoInteractions(departmentMembershipService);
+    }
+
+    @Test
     void ensureGetApplicationsFromColleaguesOfReturnsEmptyApplicationsBecauseNoDepartmentsAssigned() {
 
         when(departmentRepository.count()).thenReturn(1L);
