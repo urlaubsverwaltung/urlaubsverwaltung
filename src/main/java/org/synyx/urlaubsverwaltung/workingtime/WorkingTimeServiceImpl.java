@@ -24,6 +24,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
@@ -106,6 +107,32 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         return workingTimesByDateRange(workingTimesByPerson, dateRange);
     }
 
+    @Override
+    public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
+        return toFederalStateByDateRange(getWorkingTimesByPersonAndDateRange(person, dateRange));
+    }
+
+    @Override
+    public Map<Person, Map<DateRange, FederalState>> getFederalStatesByPersons(List<Person> persons, DateRange dateRange) {
+
+        // load the working times of all persons with a single query instead of one query per person
+        final Map<Person, List<WorkingTime>> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonIn(persons)).stream()
+            .collect(groupingBy(WorkingTime::getPerson));
+
+        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = new HashMap<>();
+        for (Person person : persons) {
+            final List<WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(person, List.of());
+            federalStatesByPerson.put(person, toFederalStateByDateRange(workingTimesByDateRange(personWorkingTimes, dateRange)));
+        }
+
+        return federalStatesByPerson;
+    }
+
+    private static Map<DateRange, FederalState> toFederalStateByDateRange(Map<DateRange, WorkingTime> workingTimesByDateRange) {
+        return workingTimesByDateRange.entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, dateRangeWorkingTimeEntry -> dateRangeWorkingTimeEntry.getValue().getFederalState()));
+    }
+
     /**
      * Maps the given working times of a single person to the date ranges they apply to within the given date range.
      * <p>
@@ -146,12 +173,6 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
 
         return workingTimesOfPersonByDateRange;
-    }
-
-    @Override
-    public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
-        return getWorkingTimesByPersonAndDateRange(person, dateRange).entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, dateRangeWorkingTimeEntry -> dateRangeWorkingTimeEntry.getValue().getFederalState()));
     }
 
     @Override

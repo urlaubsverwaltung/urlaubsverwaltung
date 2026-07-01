@@ -25,7 +25,6 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.TEN;
@@ -73,7 +72,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         accountNextYear.setPerson(person);
         accountNextYear.setExpiryDateLocally(LocalDate.of(2023, APRIL, 10));
         accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
-        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(accountNextYear));
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(accountNextYear));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -114,7 +113,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
 
-        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of());
 
         sut.remindForCurrentlyLeftVacationDays();
 
