@@ -24,8 +24,11 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -249,6 +252,10 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
             throw new ResponseStatusException(BAD_REQUEST, "person=%s is not a member of department=%s".formatted(personId, activeDepartmentId));
         }
 
+        // load all department calendars of the person with a single query instead of one query per department
+        final Map<Long, DepartmentCalendar> departmentCalendarByDepartmentId = departmentCalendarService.getCalendarsForPerson(personId).stream()
+            .collect(toMap(DepartmentCalendar::getDepartmentId, identity(), (first, second) -> first));
+
         for (Department department : departments) {
 
             final var departmentId = department.getId();
@@ -258,7 +265,7 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
             departmentCalendarDto.setDepartmentName(department.getName());
             departmentCalendarDto.setActive(departmentId.equals(activeDepartmentId));
 
-            final var maybeDepartmentCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
+            final var maybeDepartmentCalendar = Optional.ofNullable(departmentCalendarByDepartmentId.get(departmentId));
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var path = "web/departments/%s/persons/%s/calendar?secret=%s".formatted(departmentId, personId, departmentCalendar.getSecret());

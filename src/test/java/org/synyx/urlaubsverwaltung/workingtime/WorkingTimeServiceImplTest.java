@@ -30,6 +30,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -366,6 +367,41 @@ class WorkingTimeServiceImplTest {
                 entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), GERMANY_BADEN_WUERTTEMBERG),
                 entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), GERMANY_RHEINLAND_PFALZ)
             );
+    }
+
+    @Test
+    void getFederalStatesByPersonsLoadsWorkingTimesOfAllPersonsWithASingleQuery() {
+
+        final Person marlene = new Person();
+        marlene.setId(1L);
+        final Person peter = new Person();
+        peter.setId(2L);
+
+        final WorkingTimeEntity marleneWorkingTime = new WorkingTimeEntity();
+        marleneWorkingTime.setId(1L);
+        marleneWorkingTime.setPerson(marlene);
+        marleneWorkingTime.setValidFrom(LocalDate.of(2020, 1, 1));
+        marleneWorkingTime.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity peterWorkingTime = new WorkingTimeEntity();
+        peterWorkingTime.setId(2L);
+        peterWorkingTime.setPerson(peter);
+        peterWorkingTime.setValidFrom(LocalDate.of(2020, 1, 1));
+        peterWorkingTime.setFederalStateOverride(GERMANY_BAYERN);
+
+        when(workingTimeRepository.findByPersonIn(List.of(marlene, peter)))
+            .thenReturn(List.of(marleneWorkingTime, peterWorkingTime));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 31));
+        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = sut.getFederalStatesByPersons(List.of(marlene, peter), dateRange);
+
+        assertThat(federalStatesByPerson).containsOnlyKeys(marlene, peter);
+        assertThat(federalStatesByPerson.get(marlene)).containsExactly(entry(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+        assertThat(federalStatesByPerson.get(peter)).containsExactly(entry(dateRange, GERMANY_BAYERN));
+
+        // batched: a single query for all persons instead of one query per person
+        verify(workingTimeRepository).findByPersonIn(List.of(marlene, peter));
+        verify(workingTimeRepository, never()).findByPersonOrderByValidFromDesc(any());
     }
 
     @Test
