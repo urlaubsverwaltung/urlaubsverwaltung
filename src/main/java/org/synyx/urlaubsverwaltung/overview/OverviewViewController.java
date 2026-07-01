@@ -223,8 +223,9 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(List.of(), year, workDaysCountService);
         } else {
             final LocalDate today = LocalDate.now(clock);
+            final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
             final List<ApplicationForLeave> allForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
+                .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
                 .toList();
             // always show 3 applications if no application is in the fill with future application
             final List<ApplicationDto> pastApplicationDtos = allForLeave.stream()
