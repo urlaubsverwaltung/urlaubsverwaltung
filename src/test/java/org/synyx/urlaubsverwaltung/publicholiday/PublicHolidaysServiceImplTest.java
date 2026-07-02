@@ -29,6 +29,7 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN_MUENCHEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
@@ -44,7 +45,10 @@ class PublicHolidaysServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
+        sut = new PublicHolidaysServiceImpl(settingsService, Map.of(
+            "de", getHolidayManager(HolidayCalendar.GERMANY),
+            "hr", getHolidayManager(HolidayCalendar.CROATIA)
+        ));
     }
 
     @Test
@@ -184,6 +188,20 @@ class PublicHolidaysServiceImplTest {
     }
 
     @Test
+    void ensureGetPublicHolidaysReturnsBothPublicHolidaysWhenTwoAreOnTheSameDay() {
+
+        // in croatia there are two public holidays on 2024-05-30 (statehood day and corpus christi)
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2024, MAY, 30), of(2024, MAY, 30), CROATIA);
+
+        assertThat(publicHolidays)
+            .hasSize(2)
+            .allSatisfy(publicHoliday -> assertThat(publicHoliday.date()).isEqualTo(of(2024, MAY, 30)))
+            .extracting(PublicHoliday::description)
+            .doesNotHaveDuplicates()
+            .doesNotContainNull();
+    }
+
+    @Test
     void ensureGetPublicHolidaysReturnsWhenPersonHasNoPublicHolidaysDefined() {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -196,7 +214,7 @@ class PublicHolidaysServiceImplTest {
             new PublicHoliday(LocalDate.of(2023, DECEMBER, 31), null, null));
     }
 
-    private HolidayManager getHolidayManager() {
-        return HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY));
+    private HolidayManager getHolidayManager(HolidayCalendar holidayCalendar) {
+        return HolidayManager.getInstance(ManagerParameters.create(holidayCalendar));
     }
 }

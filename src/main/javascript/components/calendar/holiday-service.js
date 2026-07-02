@@ -230,17 +230,11 @@ export const HolidayService = (function () {
     },
 
     getDescription: function (date) {
-      const year = getYear(date);
-      const formattedDate = format(date, "yyyy-MM-dd");
-
-      if (_CACHE["publicHoliday"] && _CACHE["publicHoliday"][year]) {
-        const publicHoliday = _CACHE["publicHoliday"][year].find((holiday) => holiday.date === formattedDate);
-        if (publicHoliday) {
-          return publicHoliday.description;
-        }
-      }
-
-      return "";
+      // there can be more than one public holiday on the same day (e.g. a fixed and a movable one
+      // falling on the same date in a special year), so join the descriptions of all of them.
+      return getPublicHolidaysForDate(date)
+        .map((publicHoliday) => publicHoliday.description)
+        .join(", ");
     },
 
     getAbsenceId: function (date) {
