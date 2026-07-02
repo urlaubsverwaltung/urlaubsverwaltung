@@ -181,11 +181,14 @@ function hydrateDatepicker(duetDateElement, options) {
   toggleButton.addEventListener("click", showAbsences);
   duetDateElement.addEventListener("duetChange", (event) => onSelect(event));
 
-  duetDateElement.querySelector(".duet-date__prev").addEventListener("click", showAbsences);
-  duetDateElement.querySelector(".duet-date__next").addEventListener("click", showAbsences);
-
-  monthElement.addEventListener("change", showAbsences);
-  yearElement.addEventListener("change", showAbsences);
+  // duet-date-picker updates this visually hidden heading ("<month> <year>") whenever the
+  // visible month changes. observing it covers every navigation variant.
+  const monthYearHeading = duetDateElement.querySelector(".duet-date__header h2");
+  new MutationObserver(showAbsences).observe(monthYearHeading, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
 }
 
 async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation) {
