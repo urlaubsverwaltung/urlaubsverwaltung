@@ -4,11 +4,14 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.Year;
@@ -37,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingFirstNameLastName;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -171,12 +175,12 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getActivePersons() {
-        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+        return sortedByName(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE));
     }
 
     @Override
     public List<Person> getInactivePersons() {
-        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+        return sortedByName(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE));
     }
 
     @Override
@@ -186,7 +190,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getAllPersonsByIds(Collection<PersonId> personIds) {
-        return personRepository.findAllByIdIsInOrderByFirstNameAscLastNameAsc(personIds.stream().map(PersonId::value).toList());
+        return sortedByName(personRepository.findAllByIdIsInOrderByFirstNameAscLastNameAsc(personIds.stream().map(PersonId::value).toList()));
     }
 
     @Override
@@ -196,22 +200,50 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Page<Person> getActivePersons(PersonPageable personPageable, String query) {
-        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, personPageable.toPageable());
+        final List<Person> persons = personRepository
+            .findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, Pageable.unpaged())
+            .getContent();
+        return sortedPage(persons, personPageable);
     }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
+        return sortedByName(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE));
     }
 
     @Override
     public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
-        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
+        return sortedByName(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification));
     }
 
     @Override
     public Page<Person> getInactivePersons(PersonPageable pageable, String query) {
-        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, pageable.toPageable());
+        final List<Person> persons = personRepository
+            .findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, Pageable.unpaged())
+            .getContent();
+        return sortedPage(persons, pageable);
+    }
+
+    /**
+     * The database {@code order by} depends on the database collation which does not necessarily handle umlauts,
+     * accents or apostrophes as expected. Therefore, persons are sorted in memory with a locale-aware comparator.
+     */
+    private static List<Person> sortedByName(List<Person> persons) {
+        return persons.stream().sorted(comparingFirstNameLastName()).toList();
+    }
+
+    private static Page<Person> sortedPage(List<Person> persons, PersonPageable personPageable) {
+        final Pageable pageable = personPageable.toPageable();
+
+        final List<Person> sorted = persons.stream()
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
+            .toList();
+
+        final List<Person> content = pageable.isPaged()
+            ? sorted.stream().skip(pageable.getOffset()).limit(pageable.getPageSize()).toList()
+            : sorted;
+
+        return new PageImpl<>(content, pageable, sorted.size());
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Collator;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 import static java.util.Comparator.reverseOrder;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 public class SortComparator<T> implements Comparator<T> {
 
@@ -26,7 +28,7 @@ public class SortComparator<T> implements Comparator<T> {
     private final Comparator<T> comparator;
 
     public SortComparator(Class<T> type, Sort sort) {
-        this.comparator = buildComparator(type, sort);
+        this.comparator = buildComparator(type, sort, StringComparators.collator(getLocale()));
     }
 
     @Override
@@ -34,31 +36,31 @@ public class SortComparator<T> implements Comparator<T> {
         return comparator.compare(o1, o2);
     }
 
-    private static <T> Comparator<T> buildComparator(Class<T> type, Sort sort) {
+    private static <T> Comparator<T> buildComparator(Class<T> type, Sort sort, Collator collator) {
         final Iterator<Sort.Order> orderIterator = sort.iterator();
         if (!orderIterator.hasNext()) {
             return comparing(_ -> 0);
         }
 
-        Comparator<T> comparator = sortComparable(type, orderIterator.next());
+        Comparator<T> comparator = sortComparable(type, orderIterator.next(), collator);
         while (orderIterator.hasNext()) {
-            comparator = comparator.thenComparing(sortComparable(type, orderIterator.next()));
+            comparator = comparator.thenComparing(sortComparable(type, orderIterator.next(), collator));
         }
 
         return comparator;
     }
 
-    private static <T> Comparator<T> sortComparable(Class<T> type, Sort.Order order) {
+    private static <T> Comparator<T> sortComparable(Class<T> type, Sort.Order order, Collator collator) {
 
         final Function<? super T, Comparable<? super Comparable>> valueExtractor =
-            (T entity) -> extractComparableValue(type, entity, List.of(order.getProperty().split("\\.")));
+            (T entity) -> extractComparableValue(type, entity, List.of(order.getProperty().split("\\.")), collator);
 
         return order.isDescending()
             ? comparing(valueExtractor, nullsLast(reverseOrder()))
             : comparing(valueExtractor, nullsLast(naturalOrder()));
     }
 
-    private static <T> Comparable<? super Comparable> extractComparableValue(Class<T> type, T entity, List<String> properties) {
+    private static <T> Comparable<? super Comparable> extractComparableValue(Class<T> type, T entity, List<String> properties, Collator collator) {
         if (properties.isEmpty()) {
             return null;
         }
@@ -81,11 +83,12 @@ public class SortComparator<T> implements Comparator<T> {
 
         if (properties.size() == 1) {
             if (value instanceof String string) {
-                value = string.toLowerCase();
+                // collation keys sort umlauts, accents and apostrophes next to their base letters
+                value = collator.getCollationKey(string);
             }
             return (Comparable<? super Comparable>) value;
         }
 
-        return extractComparableValue((Class<T>) readMethod.getReturnType(), (T) value, properties.subList(1, properties.size()));
+        return extractComparableValue((Class<T>) readMethod.getReturnType(), (T) value, properties.subList(1, properties.size()), collator);
     }
 }

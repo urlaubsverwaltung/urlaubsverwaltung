@@ -40,6 +40,7 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingNiceName;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -265,7 +266,7 @@ public class DepartmentViewController implements HasLaunchpad, HasPersonSearch {
 
         final List<Person> sortedDepartmentMembers = departmentMembers
             .stream()
-            .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
+            .sorted(comparingNiceName())
             .toList();
 
         // sort department members to the top of the list shown in ui.
