@@ -11,7 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -318,16 +319,18 @@ class PersonServiceImplTest {
     @Test
     void ensureGetActivePersonsPage() {
 
-        final Page<Person> expected = Page.empty();
+        final Person joe = new Person("joe", "Doe", "Joe", "joe@example.org");
+        final Person joel = new Person("joel", "Doe", "Joél", "joel@example.org");
+        final Person jof = new Person("jof", "Doe", "Jof", "jof@example.org");
 
-        final PageRequest repoPageRequest = PageRequest.of(1, 100);
-        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", repoPageRequest))
-            .thenReturn(expected);
+        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", Pageable.unpaged()))
+            .thenReturn(new PageImpl<>(List.of(jof, joel, joe)));
 
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.unsorted());
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 2, Sort.by("firstName"));
 
         final Page<Person> actual = sut.getActivePersons(personPageRequest, "name-query");
-        assertThat(actual).isSameAs(expected);
+        assertThat(actual.getContent()).containsExactly(joe, joel);
+        assertThat(actual.getTotalElements()).isEqualTo(3);
     }
 
     @Test
@@ -346,16 +349,18 @@ class PersonServiceImplTest {
     @Test
     void ensureGetInactivePersonsPage() {
 
-        final Page<Person> expected = Page.empty();
+        final Person joe = new Person("joe", "Doe", "Joe", "joe@example.org");
+        final Person joel = new Person("joel", "Doe", "Joél", "joel@example.org");
+        final Person jof = new Person("jof", "Doe", "Jof", "jof@example.org");
 
-        // currently a hard coded pageRequest is used in implementation
-        final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");
-        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(expected);
+        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", Pageable.unpaged()))
+            .thenReturn(new PageImpl<>(List.of(jof, joel, joe)));
 
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.by("firstName"));
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2, Sort.by("firstName"));
 
         final Page<Person> actual = sut.getInactivePersons(personPageRequest, "name-query");
-        assertThat(actual).isSameAs(expected);
+        assertThat(actual.getContent()).containsExactly(jof);
+        assertThat(actual.getTotalElements()).isEqualTo(3);
     }
 
     @Test
