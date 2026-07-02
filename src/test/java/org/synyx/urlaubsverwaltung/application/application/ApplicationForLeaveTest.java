@@ -11,13 +11,17 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.TEN;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -46,6 +50,44 @@ class ApplicationForLeaveTest {
         assertThat(sut.getWorkDays()).isEqualTo(TEN);
 
         verify(workDaysCountService).getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
+    }
+
+    @Test
+    void ensureWorkDaysByYearOfPeriodWithinOneYearWithoutFurtherCalculation() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application application = createApplication(person, of(2015, 3, 3), of(2015, 3, 6), FULL, new StaticMessageSource());
+
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(BigDecimal.valueOf(4));
+
+        final ApplicationForLeave sut = new ApplicationForLeave(application, workDaysCountService);
+        assertThat(sut.getWorkDaysByYear()).containsExactly(entry(2015, BigDecimal.valueOf(4)));
+
+        verify(workDaysCountService, never()).getWorkDaysCountByYear(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class));
+    }
+
+    @Test
+    void ensureWorkDaysByYearOfPeriodSpanningTwoYears() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application application = createApplication(person, of(2025, 12, 29), of(2026, 1, 2), FULL, new StaticMessageSource());
+
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(BigDecimal.valueOf(5));
+
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        workDaysByYear.put(2025, BigDecimal.valueOf(3));
+        workDaysByYear.put(2026, BigDecimal.valueOf(2));
+        when(workDaysCountService.getWorkDaysCountByYear(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(workDaysByYear);
+
+        final ApplicationForLeave sut = new ApplicationForLeave(application, workDaysCountService);
+        assertThat(sut.getWorkDaysByYear()).containsExactly(entry(2025, BigDecimal.valueOf(3)), entry(2026, BigDecimal.valueOf(2)));
+
+        verify(workDaysCountService).getWorkDaysCountByYear(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
     }
 
     @Test

@@ -193,6 +193,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
         dto.setDayLength(applicationForLeave.getDayLength());
         dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setWorkDaysByYear(applicationForLeave.getWorkDaysByYear());
         dto.setPersonId(applicationForLeave.getPerson().getId());
         dto.setHours(applicationForLeave.getHours());
         dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());

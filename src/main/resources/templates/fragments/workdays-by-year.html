@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>workdays-by-year</title>
+  </head>
+  <body>
+    <th:block th:fragment="workdays-by-year(workDaysByYear)"
+      >(<th:block th:each="workDaysOfYear, iterStat : ${workDaysByYear}"
+        ><th:block
+          th:if="${!iterStat.first}"
+          th:text="${iterStat.last ? ' ' + #messages.msg('application.data.days.byYear.and') + ' ' : ', '}"
+        ></th:block
+        ><th:block
+          th:text="#{application.data.days.byYear(${workDaysOfYear.value}, ${#strings.toString(workDaysOfYear.key)})}"
+        ></th:block></th:block
+      >)</th:block
+    >
+  </body>
+</html>

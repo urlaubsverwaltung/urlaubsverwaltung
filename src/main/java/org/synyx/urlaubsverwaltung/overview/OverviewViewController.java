@@ -400,6 +400,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationForLeave.getWeekDayOfEndDate(),
             applicationForLeave.getDayLength(),
             applicationForLeave.getWorkDays(),
+            applicationForLeave.getWorkDaysByYear(),
             applicationForLeave.getHours(),
             applicationForLeave.getEditedDate(),
             applicationForLeave.getCancelDate(),
