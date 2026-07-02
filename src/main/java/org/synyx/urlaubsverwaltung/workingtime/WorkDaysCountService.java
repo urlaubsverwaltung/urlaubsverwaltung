@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -50,6 +52,35 @@ public class WorkDaysCountService {
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
+        final BigDecimal vacationDays = getVacationDaysByYear(startDate, endDate, person).values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return applyDayLength(vacationDays, dayLength);
+    }
+
+    /**
+     * Calculates the workdays like {@link #getWorkDaysCount(DayLength, LocalDate, LocalDate, Person)}, but split
+     * into the years the given period spans. Every year of the period is present in the result,
+     * even when it contains no workdays.
+     *
+     * @param dayLength personal daily working time of the given person
+     * @param startDate start day of the period to calculate the working days
+     * @param endDate   last day of the period to calculate the working days, must be after <code>startDate</code>
+     * @param person    to calculate workdays in a certain time period
+     * @return number of workdays for each year of the period, sorted by year
+     * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
+     */
+    public SortedMap<Integer, BigDecimal> getWorkDaysCountByYear(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
+
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        getVacationDaysByYear(startDate, endDate, person)
+            .forEach((year, vacationDays) -> workDaysByYear.put(year, applyDayLength(vacationDays, dayLength)));
+
+        return workDaysByYear;
+    }
+
+    private SortedMap<Integer, BigDecimal> getVacationDaysByYear(LocalDate startDate, LocalDate endDate, Person person) {
+
         final DateRange dateRange = new DateRange(startDate, endDate);
 
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
@@ -62,7 +93,11 @@ public class WorkDaysCountService {
         final Map<LocalDate, WorkingTime> workingTimesByDate = getLocalDateWorkingTime(workingTimes);
         final Map<LocalDate, List<PublicHoliday>> publicHolidaysByDate = getPublicHolidaysByDate(workingTimes);
 
-        BigDecimal vacationDays = BigDecimal.ZERO;
+        final SortedMap<Integer, BigDecimal> vacationDaysByYear = new TreeMap<>();
+        for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
+            vacationDaysByYear.put(year, BigDecimal.ZERO);
+        }
+
         LocalDate day = startDate;
         while (!day.isAfter(endDate)) {
             final WorkingTime workingTime = workingTimesByDate.get(day);
@@ -78,10 +113,15 @@ public class WorkDaysCountService {
                 .orElse(BigDecimal.ONE);
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
-            vacationDays = vacationDays.add(duration.multiply(workingDuration));
+            vacationDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
 
             day = day.plusDays(1);
         }
+
+        return vacationDaysByYear;
+    }
+
+    private static BigDecimal applyDayLength(BigDecimal vacationDays, DayLength dayLength) {
 
         // vacation days < 1 day --> must not be divided, else an ArithmeticException is thrown
         if (vacationDays.compareTo(BigDecimal.ONE) < 0) {

@@ -74,9 +74,11 @@
               <th:block th:text="#{application.data.days(${app.workDays})}" />
             </strong>
             <th:block th:if="${app.startDate.year != app.endDate.year}">
-              <span class="text-gray-500 days">
-                <!--filled by javascript-->
-                <!--see app_info.js-->
+              <span class="text-gray-500">
+                <br />
+                <th:block
+                  th:replace="~{fragments/workdays-by-year::workdays-by-year(${app.workDaysByYear})}"
+                ></th:block>
               </span>
             </th:block>
             <th:block th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}">

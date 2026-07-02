@@ -569,6 +569,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
         dto.setDayLength(applicationForLeave.getDayLength());
         dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setWorkDaysByYear(applicationForLeave.getWorkDaysByYear());
         dto.setHours(applicationForLeave.getHours());
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());

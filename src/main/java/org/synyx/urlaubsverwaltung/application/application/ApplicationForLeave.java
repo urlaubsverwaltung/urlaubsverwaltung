@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Represents an extended {@link Application} with information about
@@ -13,6 +15,7 @@ import java.time.DayOfWeek;
 public class ApplicationForLeave extends Application {
 
     private final BigDecimal workDays;
+    private final SortedMap<Integer, BigDecimal> workDaysByYear;
 
     public ApplicationForLeave(Application application, WorkDaysCountService workDaysCountService) {
 
@@ -24,10 +27,27 @@ public class ApplicationForLeave extends Application {
 
         // calculate the work days
         this.workDays = workDaysCountService.getWorkDaysCount(getDayLength(), getStartDate(), getEndDate(), getPerson());
+        this.workDaysByYear = workDaysByYear(workDaysCountService);
     }
 
     public BigDecimal getWorkDays() {
         return workDays;
+    }
+
+    /**
+     * @return the work days split into the years the application spans, sorted by year
+     */
+    public SortedMap<Integer, BigDecimal> getWorkDaysByYear() {
+        return workDaysByYear;
+    }
+
+    private SortedMap<Integer, BigDecimal> workDaysByYear(WorkDaysCountService workDaysCountService) {
+        if (getStartDate().getYear() == getEndDate().getYear()) {
+            final SortedMap<Integer, BigDecimal> singleYear = new TreeMap<>();
+            singleYear.put(getStartDate().getYear(), workDays);
+            return singleYear;
+        }
+        return workDaysCountService.getWorkDaysCountByYear(getDayLength(), getStartDate(), getEndDate(), getPerson());
     }
 
     public DayOfWeek getWeekDayOfStartDate() {
