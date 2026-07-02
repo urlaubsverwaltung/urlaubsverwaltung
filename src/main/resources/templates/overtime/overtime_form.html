@@ -80,31 +80,36 @@
             </p>
 
             <div class="uv-form__input-row">
-              <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
+              <th:block th:if="${canAddOvertimeForAnotherUser}">
                 <th:block th:if="${overtime.id == null}">
-                  <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
-                  <select
-                    th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
-                    id="person-select"
-                  >
-                    <th:block th:fragment="person-select-options">
-                      <option
-                        th:each="p : ${persons}"
-                        th:text="${p.niceName}"
-                        th:value="${p.id}"
-                        th:selected="${person.id == p.id}"
-                      ></option>
-                    </th:block>
-                  </select>
+                  <th:block th:if="${not #lists.isEmpty(persons)}">
+                    <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
+                    <select
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
+                      id="person-select"
+                    >
+                      <th:block th:fragment="person-select-options">
+                        <option
+                          th:each="p : ${persons}"
+                          th:text="${p.niceName}"
+                          th:value="${p.id}"
+                          th:selected="${person.id == p.id}"
+                        ></option>
+                      </th:block>
+                    </select>
+                  </th:block>
+                  <th:block th:if="${#lists.isEmpty(persons)}">
+                    <input type="hidden" name="person" th:value="${person.id}" />
+                  </th:block>
                 </th:block>
 
                 <th:block th:if="${overtime.id != null}">
                   <p class="uv-form__label" th:text="|#{overtime.data.person}:|">Mitarbeiter</p>
-                  <p th:text="${overtime.person.niceName}">Person Nice Name</p>
+                  <p data-test-id="overtime-person" th:text="${overtime.person.niceName}">Person Nice Name</p>
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
               </th:block>
-              <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
+              <th:block th:if="${not canAddOvertimeForAnotherUser}">
                 <input type="hidden" name="person" th:value="${person.id}" />
               </th:block>
             </div>
