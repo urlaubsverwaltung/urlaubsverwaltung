@@ -170,6 +170,11 @@ duet-date-picker[disabled] input {
   z-index: 200;
 }
 
+.duet-date__table {
+  /* equal width for every weekday column, independent of cell content (e.g. weekend no-workday icon) */
+  table-layout: fixed;
+}
+
 .duet-date__table-header {
   padding-left: --spacing(2);
 }
