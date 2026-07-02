@@ -289,6 +289,21 @@
     }
   }
 
+  /* duet-date-picker renders its mobile dialog with `position: fixed` sliding in from the viewport bottom.
+   * transform and backdrop-filter (even identity values like `translate(0, 0)`) turn the popover into the
+   * containing block of fixed positioned descendants — the dialog would be placed at the popover
+   * instead of covering the viewport. */
+  .popover:has(duet-date-picker),
+  .popover-menu:has(duet-date-picker) {
+    transform: none;
+    backdrop-filter: none;
+
+    @variant dark {
+      /* solid background because the translucent one relies on backdrop-blur */
+      background-color: var(--color-zinc-900);
+    }
+  }
+
   .popover-menu.popover-menu-person-group {
     ul {
       display: grid;
