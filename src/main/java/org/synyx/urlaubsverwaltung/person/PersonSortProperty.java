@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.springframework.data.core.PropertyReference;
+
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Defines sortable attributes of {@link Person}.
@@ -21,14 +22,14 @@ public enum PersonSortProperty {
     private final String key;
 
     /**
-     * a {@link Person} function (e.g. <code>Person::getFirstName</code>)
+     * a {@link Person} property reference (e.g. <code>Person::getFirstName</code>)
      */
-    private final Function<Person, ?> propertyExtractor;
+    private final PropertyReference<Person, ?> propertyExtractor;
 
     public static final String FIRST_NAME_KEY = "firstName";
     public static final String LAST_NAME_KEY = "lastName";
 
-    PersonSortProperty(String key, Function<Person, ?> propertyExtractor) {
+    PersonSortProperty(String key, PropertyReference<Person, ?> propertyExtractor) {
         this.key = key;
         this.propertyExtractor = propertyExtractor;
     }
@@ -63,13 +64,13 @@ public enum PersonSortProperty {
      * Usage:
      *
      * <pre><code>
-     *     Sort.TypedSort<Person> typeSort = Sort.sort(Person.class);
-     *     typeSort.by(FIRST_NAME::propertyExtractor);
+     *     TypedPropertyPath&lt;Person, ?&gt; path = TypedPropertyPath.path(FIRST_NAME.propertyExtractor());
+     *     Sort sort = Sort.by(path);
      * </code></pre>
      *
      * @return the {@link Person} property extractor
      */
-    public Function<Person, ?> propertyExtractor() {
+    public PropertyReference<Person, ?> propertyExtractor() {
         return propertyExtractor;
     }
 }

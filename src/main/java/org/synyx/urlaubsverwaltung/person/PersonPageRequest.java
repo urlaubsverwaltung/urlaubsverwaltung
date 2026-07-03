@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.slf4j.Logger;
+import org.springframework.data.core.TypedPropertyPath;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.TypedSort;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Optional;
@@ -101,15 +101,14 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
 
         Sort sort = Sort.unsorted();
 
-        final TypedSort<Person> personSort = TypedSort.sort(Person.class);
-
         for (Sort.Order order : pageable.getSort()) {
             if (order.getProperty().startsWith(PERSON_PREFIX + ".")) {
                 final String property = order.getProperty().replace(PERSON_PREFIX + ".", "");
                 final Optional<PersonSortProperty> maybeSort = PersonSortProperty.byKey(property);
                 if (maybeSort.isPresent()) {
-                    final TypedSort<?> by = personSort.by(maybeSort.get().propertyExtractor());
-                    sort = sort.and(order.isAscending() ? by.ascending() : by.descending());
+                    final TypedPropertyPath<Person, ?> path = TypedPropertyPath.path(maybeSort.get().propertyExtractor());
+                    final Sort by = Sort.by(order.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC, path);
+                    sort = sort.and(by);
                 } else {
                     // error: this should not happen by our program flow (only when client is "experimenting")
                     LOG.error("Could not map person sort property '{}' to domain. Ignoring it.", property);
