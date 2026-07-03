@@ -525,7 +525,7 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/web/application/statistics");
+        request.setRequestURI("/web/persons/me/applications/statistics");
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -637,7 +637,7 @@ class FrameDataProviderTest {
         return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", "sun", rootActive)
             .withSubItems(List.of(
                 new NavigationItemDto("basic-absence-overview-link", "/web/persons/me/applications", "nav.basic.my-absences.overview", "", overviewActive),
-                new NavigationItemDto("basic-absence-statistics-link", "/web/application/statistics", "nav.basic.my-absences.statistics", "", statisticsActive)
+                new NavigationItemDto("basic-absence-statistics-link", "/web/persons/me/applications/statistics", "nav.basic.my-absences.statistics", "", statisticsActive)
             ));
     }
 

@@ -16,6 +16,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
@@ -27,9 +28,9 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -61,6 +62,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
+
+    private static final String ALL_STATS_URL = "/web/application/statistics";
+    private static final String ME_STATS_URL = "/web/persons/me/applications/statistics";
 
     private ApplicationForLeaveStatisticsViewController sut;
 
@@ -104,8 +108,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
         }
 
-        @Test
-        void linksToApplicationForLeaveStatisticsWithPerson() {
+        @ParameterizedTest
+        @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+        void linksToApplicationForLeaveStatisticsWithPerson(String givenRequestUrl) {
 
             final Person suggestion = new Person();
             suggestion.setId(42L);
@@ -114,13 +119,19 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
             final PersonSuggestionUrlStrategy strategy = sut.personSuggestionUrlStrategy();
 
-            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext());
-            assertThat(actual).isEqualTo("/web/application/statistics?query=Bruce+Wayne");
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRequestURI(givenRequestUrl);
+
+            final SearchContext searchContext = SearchContext.of(request, null);
+
+            final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext);
+            assertThat(actual).isEqualTo(givenRequestUrl + "?query=Bruce+Wayne");
         }
     }
 
-    @Test
-    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear(String givenRequestUrl) throws Exception {
 
         final Locale locale = Locale.GERMAN;
 
@@ -128,7 +139,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.08.2020", locale)).thenReturn(Optional.of(LocalDate.of(2020, 8, 1)));
 
         perform(
-            get("/web/application/statistics")
+            get(givenRequestUrl)
                 .locale(locale)
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2020")
@@ -139,8 +150,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(view().name("application/application-statistics"));
     }
 
-    @Test
-    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodInWrongOrder() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodInWrongOrder(String givenRequestUrl) throws Exception {
 
         final Locale locale = Locale.GERMAN;
 
@@ -148,7 +160,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
 
         perform(
-            get("/web/application/statistics")
+            get(givenRequestUrl)
                 .locale(locale)
                 .param("from", "01.12.2019")
                 .param("to", "01.01.2019")
@@ -159,8 +171,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(view().name("application/application-statistics"));
     }
 
-    @Test
-    void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
         when(messageSource.getMessage("vacation-type-label-message-key", new Object[]{}, locale)).thenReturn("vacation type label");
@@ -184,7 +197,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         final ResultActions resultActions = perform(
-            get("/web/application/statistics")
+            get(givenRequestUrl)
                 .locale(locale)
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2019")
@@ -202,8 +215,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(statisticsPagination.getPage().getContent()).isEmpty();
     }
 
-    @Test
-    void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatistics(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
         when(messageSource.getMessage("vacation-type-label-message-key", new Object[]{}, locale)).thenReturn("vacation type label");
@@ -241,7 +255,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         final ResultActions resultActions = perform(
-            get("/web/application/statistics")
+            get(givenRequestUrl)
                 .locale(locale)
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2019")
@@ -274,8 +288,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(dto.getLeftOvertime()).isEqualTo("10 Std.");
     }
 
-    @Test
-    void applicationForLeaveStatisticsWithSearchQuery() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsWithSearchQuery(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -291,7 +306,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("max")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("query", "max"));
 
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
@@ -321,7 +336,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(ALL_STATS_URL)
             .param("sort", sortQuery));
 
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
@@ -353,7 +368,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(ALL_STATS_URL)
             .param("sort", sortQuery));
 
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
@@ -383,7 +398,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(ALL_STATS_URL)
             .param("sort", sortQuery));
 
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
@@ -415,7 +430,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(ALL_STATS_URL)
             .param("sort", sortQuery));
 
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
@@ -425,8 +440,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
     }
 
-    @Test
-    void applicationForLeaveStatisticsSetsModelAndViewSortQuery() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSetsModelAndViewSortQuery(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -441,14 +457,15 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("sort", "person.lastName,DESC"));
 
         assertThat(resultActions.andReturn().getModelAndView().getModel()).containsEntry("sortQuery", "person.lastName,DESC");
     }
 
-    @Test
-    void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/statistics/download", "/web/persons/me/applications/statistics/download"})
+    void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear(String givenRequestUrl) throws Exception {
 
         final Locale locale = Locale.GERMAN;
 
@@ -456,7 +473,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
 
         perform(
-            get("/web/application/statistics/download")
+            get(givenRequestUrl)
                 .locale(locale)
                 .param("from", "01.01.2000")
                 .param("to", "01.01.2019")
@@ -489,8 +506,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(header().string("Content-Type", "text/csv;charset=UTF-8"));
     }
 
-    @Test
-    void ensureToDownloadCSVStatisticsForSelectionWithDefaultValues() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/statistics/download", "/web/persons/me/applications/statistics/download"})
+    void ensureToDownloadCSVStatisticsForSelectionWithDefaultValues(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -515,7 +533,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(get("/web/application/statistics/download")
+        perform(get(givenRequestUrl)
             .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
@@ -523,8 +541,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    @Test
-    void ensureToDownloadCSVStatisticsForSelectionWithGivenValues() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/statistics/download", "/web/persons/me/applications/statistics/download"})
+    void ensureToDownloadCSVStatisticsForSelectionWithGivenValues(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -549,7 +568,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(get("/web/application/statistics/download")
+        perform(get(givenRequestUrl)
             .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019")
@@ -559,8 +578,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    @Test
-    void ensureToDownloadCSVStatisticsForAll() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/statistics/download", "/web/persons/me/applications/statistics/download"})
+    void ensureToDownloadCSVStatisticsForAll(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -585,7 +605,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(get("/web/application/statistics/download")
+        perform(get(givenRequestUrl)
             .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019")
@@ -594,8 +614,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    @Test
-    void ensureToDownloadCSVStatisticsForAllWithSelectionParameterAndAllShouldWin() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/statistics/download", "/web/persons/me/applications/statistics/download"})
+    void ensureToDownloadCSVStatisticsForAllWithSelectionParameterAndAllShouldWin(String givenRequestUrl) throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -620,7 +641,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
         when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
-        perform(get("/web/application/statistics/download")
+        perform(get(givenRequestUrl)
             .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019")
@@ -632,8 +653,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectHasCorrectOptgroups() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectHasCorrectOptgroups(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -648,7 +670,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics"));
+        final ResultActions resultActions = perform(get(givenRequestUrl));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
         assertThat(sortSelect).isInstanceOf(HtmlSelectDto.class);
@@ -659,8 +681,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(optgroups.get(1).labelMessageKey()).isEqualTo("applications.sort.optgroup.statistics.label");
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectPersonOptgroupHasCorrectOptions() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectPersonOptgroupHasCorrectOptions(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -675,7 +698,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics"));
+        final ResultActions resultActions = perform(get(givenRequestUrl));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
         final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
@@ -702,8 +725,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .hasFieldOrPropertyWithValue("selected", false);
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectStatisticsOptgroupHasCorrectOptions() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectStatisticsOptgroupHasCorrectOptions(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -718,7 +742,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics"));
+        final ResultActions resultActions = perform(get(givenRequestUrl));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
         final HtmlOptgroupDto statisticsOptgroup = sortSelect.optgroups().get(1);
@@ -761,8 +785,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .hasFieldOrPropertyWithValue("selected", false);
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectPersonFirstNameAscIsSelectedWhenSortedByPersonFirstNameAsc() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectPersonFirstNameAscIsSelectedWhenSortedByPersonFirstNameAsc(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -777,7 +802,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("sort", "person.firstName,ASC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
@@ -792,8 +817,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(selectedOption.selected()).isTrue();
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectPersonLastNameDescIsSelectedWhenSortedByPersonLastNameDesc() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectPersonLastNameDescIsSelectedWhenSortedByPersonLastNameDesc(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -808,7 +834,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("sort", "person.lastName,DESC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
@@ -823,8 +849,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(selectedOption.selected()).isTrue();
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectStatisticsTotalAllowedVacationDaysAscIsSelectedWhenSortedByStatisticsTotalAllowedVacationDaysAsc() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectStatisticsTotalAllowedVacationDaysAscIsSelectedWhenSortedByStatisticsTotalAllowedVacationDaysAsc(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -839,7 +866,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("sort", "totalAllowedVacationDays,ASC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
@@ -854,8 +881,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(selectedOption.selected()).isTrue();
     }
 
-    @Test
-    void applicationForLeaveStatisticsSortSelectStatisticsLeftVacationDaysForYearDescIsSelectedWhenSortedByStatisticsLeftVacationDaysForYearDesc() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {ALL_STATS_URL, ME_STATS_URL})
+    void applicationForLeaveStatisticsSortSelectStatisticsLeftVacationDaysForYearDescIsSelectedWhenSortedByStatisticsLeftVacationDaysForYearDesc(String givenRequestUrl) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -870,7 +898,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
+        final ResultActions resultActions = perform(get(givenRequestUrl)
             .param("sort", "leftVacationDaysForYear,DESC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
@@ -883,10 +911,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         assertThat(selectedOption.value()).isEqualTo("leftVacationDaysForYear,desc");
         assertThat(selectedOption.selected()).isTrue();
-    }
-
-    private static SearchContext searchContext() {
-        return SearchContext.of(null, null);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
