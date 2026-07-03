@@ -440,6 +440,51 @@ describe("calendar", () => {
     expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
   });
 
+  test("ensure description of all public holidays on the same day is shown", async () => {
+    // today is 2024-06-15 (so may 2024 is within the rendered months)
+    mockDate(1_718_452_800_000);
+
+    fetchMock.route(
+      "/persons/42/absences?from=2024-01-01&to=2024-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [],
+      },
+    );
+
+    // croatia has two public holidays on 2024-05-30 (statehood day and corpus christi)
+    fetchMock.route(`/persons/42/public-holidays?from=2024-01-01&to=2024-12-31`, {
+      publicHolidays: [
+        {
+          date: "2024-05-30",
+          description: "Statehood Day",
+          dayLength: "1",
+          absencePeriodName: "FULL",
+        },
+        {
+          date: "2024-05-30",
+          description: "Corpus Christi",
+          dayLength: "1",
+          absencePeriodName: "FULL",
+        },
+      ],
+    });
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2024);
+    await holidayService.fetchPublicHolidays(2024);
+
+    renderCalendar(holidayService);
+
+    const $ = document.querySelector.bind(document);
+    const day = $('[data-datepicker-date="2024-05-30"]');
+    expect(day).toBeTruthy();
+    expect(day.getAttribute("title")).toBe("Statehood Day, Corpus Christi");
+  });
+
   function mockEmptyYear(personId, year) {
     fetchMock.route(
       `/persons/${personId}/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,
