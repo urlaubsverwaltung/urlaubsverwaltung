@@ -123,7 +123,7 @@ public class FrameDataProvider implements DataProviderInterface {
         final String application = "/web/application";
         final String absenceOverview = "/web/absences";
         final String myApplications = MY_APPLICATIONS_ANONYMOUS_PATH;
-        final String myApplicationsStatistics = "/web/application/statistics";
+        final String myApplicationsStatistics = "/web/persons/me/applications/statistics";
         final String mySicknotes = MY_SICKNOTES_ANONYMOUS_PATH;
         final String overtime = "/web/overtime";
 

@@ -111,10 +111,10 @@
             ></span>
           </button>
           <div id="period-popover" popover class="popover popover-menu p-4">
+            <!-- use relative action (URL) since this form is used for two different URLs -->
             <form
               method="get"
-              action="#"
-              th:action="@{/web/application/statistics}"
+              action=""
               data-turbo-frame="frame-statistics"
               data-turbo-action="advance"
               id="form-date-from-to"
@@ -153,14 +153,8 @@
               </div>
             </form>
           </div>
-          <form
-            action="#"
-            th:action="@{/web/application/statistics}"
-            method="get"
-            data-turbo-frame="frame-statistics"
-            data-turbo-action="advance"
-            class="flex"
-          >
+          <!-- use relative action (URL) since this form is used for two different URLs -->
+          <form action="#" method="get" data-turbo-frame="frame-statistics" data-turbo-action="advance" class="flex">
             <div id="statistics-form-query-inputs">
               <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
@@ -197,13 +191,8 @@
           </form>
         </div>
         <div class="@3xl/main:ml-auto">
-          <form
-            action="#"
-            th:action="@{/web/application/statistics}"
-            method="get"
-            data-turbo-frame="frame-statistics"
-            data-turbo-action="advance"
-          >
+          <!-- use relative action (URL) since this form is used for two different URLs -->
+          <form action="#" method="get" data-turbo-frame="frame-statistics" data-turbo-action="advance">
             <div id="statistics-form-sort-inputs">
               <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
@@ -476,9 +465,9 @@
             th:replace="~{fragments/pagination::pagination(pagination=${statisticsPagination}, label=#{applications.statistics.pagination.navigation.aria-label}, turboFrame='frame-statistics', testIdPrefix='statistics')}"
           ></nav>
         </div>
+        <!-- use relative action (URL) since this form is used for two different URLs -->
         <form
           action="#"
-          th:action="@{/web/application/statistics}"
           method="get"
           class="@3xl/main:ml-auto flex items-center"
           data-turbo-frame="frame-statistics"

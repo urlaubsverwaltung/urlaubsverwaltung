@@ -60,7 +60,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  * Controller to generate applications for leave statistics.
  */
 @Controller
-@RequestMapping("/web/application/statistics")
+@RequestMapping({"/web/application/statistics", "/web/persons/me/applications/statistics"})
 class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String SEARCH_PARAM = "query";
@@ -95,8 +95,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
 
     @Override
     public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
-        return (suggestion, request) ->
-            "/web/application/statistics?%s=%s".formatted(SEARCH_PARAM, encode(suggestion.getNiceName(), UTF_8));
+        return (suggestion, context) ->
+            "%s?%s=%s".formatted(context.getRequestPath(), SEARCH_PARAM, encode(suggestion.getNiceName(), UTF_8));
     }
 
     @Override
