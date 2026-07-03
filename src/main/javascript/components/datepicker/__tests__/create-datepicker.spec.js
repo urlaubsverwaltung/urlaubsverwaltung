@@ -172,6 +172,8 @@ describe("create-datepicker", () => {
 
         // duet datepicker must be opened to update month and year select-box values
         document.querySelector("button.duet-date__toggle").click();
+        // wait for re-rendering of the datepicker and eventually triggered fetches
+        await new Promise((resolve) => setTimeout(resolve, 10));
         fetchMock.clearHistory();
       });
 
@@ -204,7 +206,7 @@ describe("create-datepicker", () => {
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
       });
 
       test("after year has been changed", async () => {
@@ -226,7 +228,7 @@ describe("create-datepicker", () => {
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
       });
 
       test("after next button has been clicked", async () => {
@@ -246,7 +248,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         previousMonthButton.click();
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
       });
 
       test("after prev button has been clicked", async () => {
@@ -266,7 +268,31 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         nextMonthButton.click();
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+      });
+
+      test("after keyboard navigation to the next month", async () => {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-28&to=2021-01-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-12-28&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
+          {
+            absences: [],
+          },
+        );
+
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
+
+        // focused day is the 24. december. one week ahead is the 31. december, month does not change.
+        fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
+
+        // another week ahead is the 7. january, visible month changes.
+        fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
       });
     });
 
@@ -307,7 +333,7 @@ describe("create-datepicker", () => {
         fetchMock.clearHistory();
       });
 
-      test("after month has been changed", () => {
+      test("after month has been changed", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2019-12-30&to=2020-02-02`, {
           publicHolidays: [],
         });
@@ -326,10 +352,10 @@ describe("create-datepicker", () => {
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
+        await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull());
       });
 
-      test("after year has been changed", () => {
+      test("after year has been changed", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2019-11-25&to=2020-01-05`, {
           publicHolidays: [],
         });
@@ -348,10 +374,10 @@ describe("create-datepicker", () => {
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
+        await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull());
       });
 
-      test("after next button has been clicked", () => {
+      test("after next button has been clicked", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-10-26&to=2020-12-06`, {
           publicHolidays: [],
         });
@@ -368,10 +394,10 @@ describe("create-datepicker", () => {
         expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         previousMonthButton.click();
-        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
+        await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull());
       });
 
-      test("after prev button has been clicked", () => {
+      test("after prev button has been clicked", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-28&to=2021-01-31`, {
           publicHolidays: [],
         });
@@ -388,7 +414,29 @@ describe("create-datepicker", () => {
         expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         nextMonthButton.click();
-        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
+        await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull());
+      });
+
+      test("after keyboard navigation to the next month", async () => {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-28&to=2021-01-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-12-28&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
+          {
+            absences: [],
+          },
+        );
+
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
+
+        // focused day is the 24. december. two weeks ahead is the 7. january, visible month changes.
+        fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
+
+        await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull());
       });
     });
 
@@ -1097,4 +1145,11 @@ function fireEvent(element, event) {
 
 fireEvent.change = function (element) {
   fireEvent(element, new Event("change"));
+};
+
+fireEvent.arrowDown = function (element) {
+  const event = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true });
+  // jsdom does not support initializing the deprecated `keyCode` which is used by duet-date-picker
+  Object.defineProperty(event, "keyCode", { value: 40 });
+  fireEvent(element, event);
 };
