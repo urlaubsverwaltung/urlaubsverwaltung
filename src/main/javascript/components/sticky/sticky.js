@@ -9,6 +9,7 @@ export class Sticky extends HTMLElement {
 
     // set by JavaScript since we only know whether sticky or not with this IntersectionOberserver
     this.style.position = "sticky";
+    this.style.zIndex = "var(--z-index-sticky)";
 
     // kudos https://css-tricks.com/how-to-detect-when-a-sticky-element-gets-pinned/
     this.#intersectionObserver = new IntersectionObserver(
