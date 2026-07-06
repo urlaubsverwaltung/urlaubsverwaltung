@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.springframework.data.core.TypedPropertyPath;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.TypedSort;
 
 /**
  * Abstract interface for {@link Person} pagination information.
@@ -29,19 +29,17 @@ public interface PersonPageable {
         final Sort.Order firstNameOrder = requestedSort.getOrderFor(PersonSortProperty.FIRST_NAME_KEY);
         final Sort.Order lastNameOrder = requestedSort.getOrderFor(PersonSortProperty.LAST_NAME_KEY);
 
-        final TypedSort<Person> personSort = TypedSort.sort(Person.class);
-
         // e.g. if content should be sorted by firstName, use lastName as second sort criteria
         final Sort implicitSort;
 
         // actually we would have to check whether lastName is already in requestedSort or not.
         // however, practically only firstName OR lastName is sortable currently.
         if (firstNameOrder != null) {
-            final TypedSort<?> sort = personSort.by(PersonSortProperty.LAST_NAME.propertyExtractor());
-            implicitSort = requestedSort.and(firstNameOrder.isAscending() ? sort.ascending() : sort.descending());
+            final TypedPropertyPath<Person, ?> path = TypedPropertyPath.path(PersonSortProperty.LAST_NAME.propertyExtractor());
+            implicitSort = requestedSort.and(Sort.by(firstNameOrder.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC, path));
         } else if (lastNameOrder != null) {
-            final TypedSort<?> sort = personSort.by(PersonSortProperty.FIRST_NAME.propertyExtractor());
-            implicitSort = requestedSort.and(lastNameOrder.isAscending() ? sort.ascending() : sort.descending());
+            final TypedPropertyPath<Person, ?> path = TypedPropertyPath.path(PersonSortProperty.FIRST_NAME.propertyExtractor());
+            implicitSort = requestedSort.and(Sort.by(lastNameOrder.isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC, path));
         } else {
             implicitSort = requestedSort;
         }
