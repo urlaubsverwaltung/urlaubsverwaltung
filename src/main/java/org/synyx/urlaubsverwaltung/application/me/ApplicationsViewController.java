@@ -23,11 +23,13 @@ import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -147,8 +149,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             applicationsForLeave = List.of();
             usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
         } else {
-            applicationsForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            applicationsForLeave = toApplicationsForLeave(applications).stream()
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .map(applicationForLeave -> applicationDto(applicationForLeave, signedInUser, locale))
                 .toList();
@@ -157,6 +158,13 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
 
         model.addAttribute("applications", applicationsForLeave);
         model.addAttribute("usedDaysOverview", usedDaysOverview);
+    }
+
+    private List<ApplicationForLeave> toApplicationsForLeave(List<Application> applications) {
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
+            .toList();
     }
 
     private ApplicationVacationTypeDto applicationVacationTypDto(VacationType<?> vacationType, Locale locale) {

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -33,6 +35,9 @@ import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -471,6 +476,72 @@ class WorkDaysCountServiceTest {
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(2.5));
     }
 
+
+    @Test
+    void getWorkDaysCountForApplicationsBatchesWorkingTimeLoadingWithASingleQuery() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person marlene = new Person("marlene", "Muster", "Marlene", "marlene@example.org");
+        marlene.setId(1L);
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setId(2L);
+
+        final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
+        final LocalDate endDate = LocalDate.of(2013, DECEMBER, 31);
+
+        final Application marleneApplication = application(marlene, startDate, endDate, FULL);
+        final Application peterApplication = application(peter, startDate, endDate, FULL);
+
+        final WorkingTime marleneWorkingTime = createWorkingTime(marlene, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        final WorkingTime peterWorkingTime = createWorkingTime(peter, startDate, MONDAY, WEDNESDAY, FRIDAY, SATURDAY);
+        when(workingTimeService.getByPersons(List.of(marlene, peter))).thenReturn(List.of(marleneWorkingTime, peterWorkingTime));
+
+        final Map<Application, BigDecimal> workDaysCount = sut.getWorkDaysCountForApplications(List.of(marleneApplication, peterApplication));
+
+        assertThat(workDaysCount.get(marleneApplication)).isEqualByComparingTo(BigDecimal.valueOf(9));
+        assertThat(workDaysCount.get(peterApplication)).isEqualByComparingTo(BigDecimal.valueOf(8));
+
+        // the whole point: working times are loaded once, not once per application
+        verify(workingTimeService).getByPersons(List.of(marlene, peter));
+        verify(workingTimeService, never()).getWorkingTimesByPersonAndDateRange(any(), any());
+    }
+
+    @Test
+    void getWorkDaysCountForApplicationsLimitsPeriodToGivenDateRange() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        // application spans two years
+        final Application application = application(person, LocalDate.of(2013, DECEMBER, 16), LocalDate.of(2014, JANUARY, 15), FULL);
+
+        final WorkingTime workingTime = createWorkingTime(person, LocalDate.of(2013, DECEMBER, 16), MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getByPersons(List.of(person))).thenReturn(List.of(workingTime));
+
+        // clip to 2013 -> only 16.12.2013 - 31.12.2013 is counted -> 9 work days
+        final DateRange year2013 = new DateRange(LocalDate.of(2013, JANUARY, 1), LocalDate.of(2013, DECEMBER, 31));
+        final Map<Application, BigDecimal> workDaysCount = sut.getWorkDaysCountForApplications(List.of(application), year2013);
+
+        assertThat(workDaysCount.get(application)).isEqualByComparingTo(BigDecimal.valueOf(9));
+    }
+
+    @Test
+    void getWorkDaysCountForApplicationsReturnsEmptyMapAndDoesNotQueryForNoApplications() {
+        assertThat(sut.getWorkDaysCountForApplications(List.of())).isEmpty();
+        verifyNoInteractions(workingTimeService);
+    }
+
+    private static Application application(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(dayLength);
+        return application;
+    }
 
     private HolidayManager getHolidayManager() {
         return HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY));

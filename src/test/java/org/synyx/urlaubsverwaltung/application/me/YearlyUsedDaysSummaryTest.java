@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -13,13 +14,17 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.singletonList;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -50,9 +55,7 @@ class YearlyUsedDaysSummaryTest {
         holidayAllowed.setStatus(ALLOWED);
 
         final BigDecimal workingDays = BigDecimal.valueOf(499);
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
-            .thenReturn(workingDays);
+        stubWorkDaysCountForApplications(workingDays);
 
         final YearlyUsedDaysSummary usedDaysOverview = new YearlyUsedDaysSummary(List.of(holidayAllowed), 2014, workDaysCountService);
         final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
@@ -130,9 +133,7 @@ class YearlyUsedDaysSummaryTest {
             overtimeLeaveRequestCancellation);
 
         // just return 1 day for each application for leave
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
-            .thenReturn(ONE);
+        stubWorkDaysCountForApplications(ONE);
 
         final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(applications, 2014, workDaysCountService);
 
@@ -169,8 +170,7 @@ class YearlyUsedDaysSummaryTest {
         // 3 days in 2013, 2 days in 2014
         Application holiday = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()), startDate, endDate, DayLength.FULL);
 
-        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
-            .thenReturn(BigDecimal.valueOf(2));
+        stubWorkDaysCountForApplications(BigDecimal.valueOf(2));
 
         final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(singletonList(holiday), 2014, workDaysCountService);
 
@@ -209,13 +209,20 @@ class YearlyUsedDaysSummaryTest {
         List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);
 
         // just return 1 day for each application for leave
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        stubWorkDaysCountForApplications(ONE);
 
         final YearlyUsedDaysSummary yearlyUsedDaysSummary = new YearlyUsedDaysSummary(applications, 2014, workDaysCountService);
         assertThat(yearlyUsedDaysSummary.getHolidayDays().getDays())
             .containsEntry("WAITING", ONE)
             .containsEntry("TEMPORARY_ALLOWED", ONE)
             .containsEntry("ALLOWED", ONE);
+    }
+
+    private void stubWorkDaysCountForApplications(BigDecimal daysPerApplication) {
+        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
+            .thenAnswer(invocation -> {
+                final Collection<Application> applications = invocation.getArgument(0);
+                return applications.stream().collect(toMap(identity(), application -> daysPerApplication));
+            });
     }
 }

@@ -223,9 +223,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(List.of(), year, workDaysCountService);
         } else {
             final LocalDate today = LocalDate.now(clock);
-            final List<ApplicationForLeave> allForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .toList();
+            final List<ApplicationForLeave> allForLeave = toApplicationsForLeave(applications);
             // always show 3 applications if no application is in the fill with future application
             final List<ApplicationDto> pastApplicationDtos = allForLeave.stream()
                 .filter(a -> a.getStartDate().isBefore(today))
@@ -253,6 +251,13 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationsForLeave.size(),
             applications.size()
         ));
+    }
+
+    private List<ApplicationForLeave> toApplicationsForLeave(List<Application> applications) {
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
+            .toList();
     }
 
     private void prepareSickNoteInformation(Person person, Person signedInUser, int year, Model model) {
