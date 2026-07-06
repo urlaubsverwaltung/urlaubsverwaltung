@@ -69,7 +69,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -133,13 +132,19 @@ class OverviewViewControllerTest {
             departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
     }
 
+    private void stubSickNoteWorkDaysCount(BigDecimal daysPerSickNote) {
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any(Person.class)))
+            .thenReturn(daysPerSickNote);
+    }
+
     private void stubWorkDaysCountForApplications(BigDecimal daysPerApplication) {
-        // sick notes still use the single-application variant
-        lenient().when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any(Person.class)))
-            .thenReturn(daysPerApplication);
-        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
+        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
             .thenAnswer(invocation -> mapEachApplicationTo(invocation, daysPerApplication));
-        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
+    }
+
+    private void stubWorkDaysCountForApplicationsWithUsedDaysSummary(BigDecimal daysPerApplication) {
+        stubWorkDaysCountForApplications(daysPerApplication);
+        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
             .thenAnswer(invocation -> mapEachApplicationTo(invocation, daysPerApplication));
     }
 
@@ -631,7 +636,8 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        stubWorkDaysCountForApplications(ONE);
+        stubSickNoteWorkDaysCount(ONE);
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
@@ -1004,7 +1010,7 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        stubWorkDaysCountForApplications(BigDecimal.valueOf(2));
+        stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
 
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");

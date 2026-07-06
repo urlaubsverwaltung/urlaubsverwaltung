@@ -51,7 +51,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -106,9 +105,13 @@ class ApplicationsViewControllerTest {
     }
 
     private void stubWorkDaysCountForApplications() {
-        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
+        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
             .thenAnswer(this::oneDayPerApplication);
-        lenient().when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
+    }
+
+    private void stubWorkDaysCountForApplicationsWithUsedDaysSummary() {
+        stubWorkDaysCountForApplications();
+        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection(), any(DateRange.class)))
             .thenAnswer(this::oneDayPerApplication);
     }
 
@@ -259,7 +262,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -282,7 +285,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -308,7 +311,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -336,7 +339,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -364,7 +367,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -392,7 +395,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -417,7 +420,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -440,7 +443,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -463,7 +466,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -489,7 +492,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -519,7 +522,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -547,7 +550,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -575,7 +578,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(applicationPerson)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -598,7 +601,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -623,7 +626,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -646,7 +649,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -671,7 +674,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -694,7 +697,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications",
@@ -729,7 +732,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications", hasSize(1)))
@@ -763,7 +766,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications", hasSize(1)))
@@ -807,7 +810,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "1")).locale(Locale.GERMANY))
             .andExpect(model().attribute("applications", hasSize(1)))
