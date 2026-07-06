@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,8 +39,6 @@ class ApplicationForLeaveCsvExportServiceTest {
     private CSVWriter csvWriter;
     @Mock
     private MessageSource messageSource;
-    @Mock
-    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
@@ -78,9 +75,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
-
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
 
         final List<ApplicationForLeaveExport> applicationForLeaveExports = new ArrayList<>();
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", person.getFirstName(), person.getLastName(), List.of(applicationForLeave), List.of("departmentA"));

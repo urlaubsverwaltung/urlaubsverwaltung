@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
@@ -127,7 +128,7 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
         app.setId(1L);
         app.setPerson(departmentMember);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
@@ -188,7 +189,7 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
@@ -237,7 +238,7 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));

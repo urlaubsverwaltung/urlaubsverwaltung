@@ -14,10 +14,6 @@ public class ApplicationForLeave extends Application {
 
     private final BigDecimal workDays;
 
-    public ApplicationForLeave(Application application, WorkDaysCountService workDaysCountService) {
-        this(application, workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson()));
-    }
-
     /**
      * Creates an {@link ApplicationForLeave} with the already calculated number of work days.
      * <p>

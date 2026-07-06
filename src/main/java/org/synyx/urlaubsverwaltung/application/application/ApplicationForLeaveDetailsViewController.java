@@ -472,7 +472,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         model.addAttribute("lastComment", comments.getLast());
 
         // APPLICATION FOR LEAVE
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final BigDecimal workDaysCount = workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson());
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCount);
         model.addAttribute("app", applicationForLeaveDetailDto(applicationForLeave, locale));
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(

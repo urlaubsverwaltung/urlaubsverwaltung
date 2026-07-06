@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -53,8 +52,6 @@ class ApplicationForLeaveExportViewControllerTest {
     private ApplicationForLeaveExportService applicationForLeaveExportService;
     @Mock
     private ApplicationForLeaveCsvExportService applicationForLeaveCsvExportService;
-    @Mock
-    private WorkDaysCountService workDaysCountService;
     @Mock
     private DateFormatAware dateFormatAware;
 
@@ -112,8 +109,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -162,8 +158,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -217,8 +212,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -265,8 +259,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
