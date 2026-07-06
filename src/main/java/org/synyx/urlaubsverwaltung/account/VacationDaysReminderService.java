@@ -19,6 +19,8 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -53,12 +55,16 @@ public class VacationDaysReminderService {
         final Year nextYear = year.plusYears(1);
         final List<Person> persons = personService.getActivePersons();
 
+        // load next year's accounts of all persons with a single query instead of one query per person
+        final Map<Person, Account> nextYearAccountByPerson = accountService.getHolidaysAccount(nextYear.getValue(), persons).stream()
+            .collect(toMap(Account::getPerson, identity(), (first, second) -> first));
+
         accountService.getHolidaysAccount(year.getValue(), persons)
             .forEach(holidayAccountThisYear -> {
                 final BigDecimal vacationDaysLeft = vacationDaysService.getTotalLeftVacationDays(holidayAccountThisYear);
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
 
-                    final Optional<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(nextYear.getValue(), holidayAccountThisYear.getPerson());
+                    final Optional<Account> holidaysAccountsNextYear = Optional.ofNullable(nextYearAccountByPerson.get(holidayAccountThisYear.getPerson()));
                     final Account holidayAccountNextWithFallbackThisYear = holidaysAccountsNextYear.orElse(holidayAccountThisYear);
                     if (holidayAccountNextWithFallbackThisYear.doRemainingVacationDaysExpire()) {
                         final LocalDate expiryDate = holidayAccountNextWithFallbackThisYear.getExpiryDate().withYear(nextYear.getValue());
