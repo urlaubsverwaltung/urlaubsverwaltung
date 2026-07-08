@@ -14,6 +14,7 @@ public class OvertimePage {
     private static final String HOURS_SELECTOR = "[data-test-id=overtime-hours]";
     private static final String MINUTES_SELECTOR = "[data-test-id=overtime-minutes]";
     private static final String SUBMIT_SELECTOR = "[data-test-id=overtime-submit-button]";
+    private static final String PERSON_SELECTOR = "[data-test-id=overtime-person]";
 
     private final Page page;
 
@@ -49,5 +50,9 @@ public class OvertimePage {
     public void showsEndDate(LocalDate endDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(endDate);
         assertThat(page.locator(DUET_END_DATE_SELECTOR)).hasValue(expectedDateString);
+    }
+
+    public void showsPerson(String niceName) {
+        assertThat(page.locator(PERSON_SELECTOR)).hasText(niceName);
     }
 }

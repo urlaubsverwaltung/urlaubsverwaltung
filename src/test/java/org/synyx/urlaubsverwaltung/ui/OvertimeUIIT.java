@@ -126,6 +126,47 @@ class OvertimeUIIT {
         navigationPage.logout();
     }
 
+    @Test
+    void ensureEditingOvertimeOfAnotherPersonShowsPersonName(Page page) {
+        final Person office = createPerson("oOffice", "Olivia", List.of(USER, OFFICE));
+        final Person otherPerson = createPerson("mMember", "Max", List.of(USER));
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
+        final OvertimePage overtimePage = new OvertimePage(page);
+        final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
+
+        loginPage.login(new LoginPage.Credentials(office.getEmail(), office.getEmail()));
+
+        navigationPage.settingsMenu.clickOvertime();
+        settingsWorkingTimePage.enableOvertime();
+        settingsWorkingTimePage.submit();
+        page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
+
+        // create an overtime record for another person
+        page.navigate("http://localhost:" + port + "/web/overtime/new?person=" + otherPerson.getId());
+        overtimePage.waitForVisible();
+
+        final int currentYear = LocalDate.now().getYear();
+        overtimePage.setStartDate(LocalDate.of(currentYear, FEBRUARY, 23));
+        overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23));
+        overtimePage.setHours(2);
+        overtimePage.setMinutes(30);
+        overtimePage.submit();
+
+        overtimeDetailPage.showsOvertimeCreatedInfo();
+        overtimeDetailPage.isVisibleForPerson(otherPerson.getNiceName());
+        page.waitForURL(url -> url.matches(".*/web/overtime/\\d+$"));
+
+        // edit the created overtime record and ensure the person's name is displayed (#5732)
+        page.navigate(page.url() + "/edit");
+        overtimePage.waitForVisible();
+        overtimePage.showsPerson(otherPerson.getNiceName());
+
+        navigationPage.logout();
+    }
+
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
 
         final String email = "%s.%s@example.org".formatted(trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
