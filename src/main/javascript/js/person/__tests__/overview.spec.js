@@ -27,6 +27,7 @@ describe("person/overview", function () {
     return {
       fetchPublicHolidays: vi.fn(() => Promise.resolve()),
       fetchAbsences: vi.fn(() => Promise.resolve()),
+      fetchBlackoutPeriods: vi.fn(() => Promise.resolve()),
     };
   }
 
@@ -76,6 +77,8 @@ describe("person/overview", function () {
     expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2024);
     expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledTimes(1);
     expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2024);
+    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledTimes(1);
+    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2024);
   });
 
   it("snaps to January 1st of the requested year and fetches every spanned year", async function () {
@@ -88,6 +91,8 @@ describe("person/overview", function () {
     expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2020);
     expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2019);
     expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2020);
+    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2019);
+    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2020);
 
     const date = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][2];
     expect(date).toEqual(new Date(2020, 0, 1));

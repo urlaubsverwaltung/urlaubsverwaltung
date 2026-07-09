@@ -18,6 +18,9 @@ describe("create-datepicker", () => {
       },
     };
     setLocale(de);
+
+    // default fallback so tests not explicitly concerned with blackout periods still resolve.
+    fetchMock.route(/blackout-periods/, { blackoutPeriods: [] });
   });
 
   afterEach(async () => {
@@ -184,7 +187,7 @@ describe("create-datepicker", () => {
 
         button.click();
 
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(3);
       });
 
       test("after month has been changed", async () => {
@@ -206,7 +209,7 @@ describe("create-datepicker", () => {
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after year has been changed", async () => {
@@ -228,7 +231,7 @@ describe("create-datepicker", () => {
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after next button has been clicked", async () => {
@@ -248,7 +251,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         previousMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after prev button has been clicked", async () => {
@@ -268,7 +271,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         nextMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after keyboard navigation to the next month", async () => {
@@ -292,7 +295,7 @@ describe("create-datepicker", () => {
 
         // another week ahead is the 7. january, visible month changes.
         fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
     });
 

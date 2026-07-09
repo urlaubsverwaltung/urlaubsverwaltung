@@ -2,9 +2,11 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -93,6 +97,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
     private final DateFormatAware dateFormatAware;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final ApplicationMapper applicationMapper;
+    private final BlackoutPeriodService blackoutPeriodService;
+    private final MessageSource messageSource;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -104,6 +110,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
         SettingsService settingsService, DateFormatAware dateFormatAware,
         SpecialLeaveSettingsService specialLeaveSettingsService, ApplicationMapper applicationMapper,
+        BlackoutPeriodService blackoutPeriodService, MessageSource messageSource,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
@@ -118,6 +125,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         this.dateFormatAware = dateFormatAware;
         this.specialLeaveSettingsService = specialLeaveSettingsService;
         this.applicationMapper = applicationMapper;
+        this.blackoutPeriodService = blackoutPeriodService;
+        this.messageSource = messageSource;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -326,12 +335,13 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         }
 
         final Application app = applicationMapper.mapToApplication(appForm);
+        final Optional<String> comment = appendBlackoutOverrideNoteIfNeeded(app, applier, ofNullable(appForm.getComment()), locale);
 
         final Application savedApplicationForLeave;
         if (app.getVacationType().isRequiresApprovalToApply()) {
-            savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
+            savedApplicationForLeave = applicationInteractionService.apply(app, applier, comment);
         } else {
-            savedApplicationForLeave = applicationInteractionService.directAllow(app, applier, ofNullable(appForm.getComment()));
+            savedApplicationForLeave = applicationInteractionService.directAllow(app, applier, comment);
         }
         LOG.info("new application has been saved {}", savedApplicationForLeave);
 
@@ -419,9 +429,11 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         }
 
         final Application editedApplication = applicationMapper.merge(application, appForm);
+        final Optional<String> comment = appendBlackoutOverrideNoteIfNeeded(editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()), locale);
+
         final Application savedApplicationForLeave;
         try {
-            savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
+            savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, comment);
         } catch (EditApplicationForLeaveNotAllowedException _) {
             return "application/application-not-editable";
         }
@@ -431,6 +443,21 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         redirectAttributes.addFlashAttribute("editSuccess", true);
 
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
+    }
+
+    private Optional<String> appendBlackoutOverrideNoteIfNeeded(Application application, Person applier, Optional<String> comment, Locale locale) {
+
+        final Optional<BlackoutPeriod> overriddenBlackoutPeriod = blackoutPeriodService.findBlockingBlackoutPeriod(
+            application.getPerson(), application.getStartDate(), application.getEndDate(), application.getVacationType());
+
+        if (overriddenBlackoutPeriod.isEmpty()) {
+            return comment;
+        }
+
+        final String overrideNote = messageSource.getMessage("application.blackoutPeriod.overridden",
+            new Object[]{overriddenBlackoutPeriod.get().getTitle(), applier.getNiceName()}, locale);
+
+        return Optional.of(comment.filter(StringUtils::hasText).map(text -> text + "\n\n" + overrideNote).orElse(overrideNote));
     }
 
     private Optional<Person> getPersonByRequestParam(Long personId) {

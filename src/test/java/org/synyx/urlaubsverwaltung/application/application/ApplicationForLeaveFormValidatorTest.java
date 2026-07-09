@@ -15,11 +15,15 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -33,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -81,12 +86,17 @@ class ApplicationForLeaveFormValidatorTest {
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
+    private BlackoutPeriodService blackoutPeriodService;
+    @Mock
+    private PersonService personService;
+    @Mock
     private Errors errors;
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
-            settingsService, overtimeService, vacationTypeService, new ApplicationMapper(vacationTypeService), Clock.systemUTC());
+            settingsService, overtimeService, vacationTypeService, new ApplicationMapper(vacationTypeService),
+            blackoutPeriodService, personService, Clock.systemUTC());
     }
 
     // Supports --------------------------------------------------------------------------------------------------------
@@ -673,6 +683,73 @@ class ApplicationForLeaveFormValidatorTest {
         verify(errors).reject("application.error.overlap");
 
         verifyNoInteractions(calculationService);
+    }
+
+    // Validate blackout period ------------------------------------------------------------------------------------
+    @Test
+    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsNotValidForRegularUser() {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+            any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setTitle("Jahresabschluss");
+        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class), any()))
+            .thenReturn(Optional.of(blackoutPeriod));
+
+        final Person applier = new Person("applier", "Applier", "App", "applier@example.org");
+        when(personService.getSignedInUser()).thenReturn(applier);
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
+
+        sut.validate(appForm, errors);
+
+        verify(errors).reject("application.error.blackoutPeriod", new Object[]{"Jahresabschluss"}, null);
+        verifyNoInteractions(calculationService);
+    }
+
+    @Test
+    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForOffice() {
+        ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role.OFFICE);
+    }
+
+    @Test
+    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForBoss() {
+        ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role.BOSS);
+    }
+
+    private void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role role) {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
+            any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(true);
+
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setTitle("Jahresabschluss");
+        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class), any()))
+            .thenReturn(Optional.of(blackoutPeriod));
+
+        final Person applier = new Person("office", "Office", "Ines", "office@example.org");
+        applier.setPermissions(List.of(role));
+        when(personService.getSignedInUser()).thenReturn(applier);
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
+
+        sut.validate(appForm, errors);
+
+        verify(errors, never()).reject(eq("application.error.blackoutPeriod"), any(Object[].class), any());
     }
 
     // Validate overtime reduction -------------------------------------------------------------------------------------
