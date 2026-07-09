@@ -113,6 +113,7 @@ class FrameDataProviderTest {
                     companyOverviewLink(),
                     companyPersonLink(),
                     companyDepartmentLink(),
+                    companyBlackoutPeriodLink(),
                     companyApplicationsLink(),
                     companySickNoteLink(),
                     companyOvertimeLink()
@@ -332,6 +333,7 @@ class FrameDataProviderTest {
                     companyOverviewLink(),
                     companyPersonLink(),
                     companyDepartmentLink(),
+                    companyBlackoutPeriodLink(),
                     companyApplicationsLink(),
                     companySickNoteLink(),
                     companyOvertimeLink()
@@ -853,6 +855,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto companyDepartmentLink(boolean active) {
         return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", "users", active);
+    }
+
+    private static NavigationItemDto companyBlackoutPeriodLink() {
+        return companyBlackoutPeriodLink(false);
+    }
+
+    private static NavigationItemDto companyBlackoutPeriodLink(boolean active) {
+        return new NavigationItemDto("company-blackoutperiod-link", "/web/blackoutperiod", "nav.company.blackoutperiods", "slash", active);
     }
 
     private static NavigationItemDto companyOvertimeLink() {
