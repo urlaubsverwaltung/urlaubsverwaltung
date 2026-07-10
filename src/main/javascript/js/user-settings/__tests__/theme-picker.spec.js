@@ -51,6 +51,8 @@ describe("theme-picker", function () {
   }
 
   function selectTheme(form, value) {
+    // value is a fixed test constant (never user input), and jsdom does not implement CSS.escape
+    // eslint-disable-next-line unicorn/require-css-escape
     const radio = form.querySelector(`input[value='${CSS.escape(value)}']`);
     radio.checked = true;
     radio.dispatchEvent(new Event("change", { bubbles: true }));
