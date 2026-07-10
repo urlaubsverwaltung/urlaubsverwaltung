@@ -27,33 +27,33 @@ describe("checkbox-all", function () {
 
   it("checks all other checkboxes in the same form when checked", function () {
     renderForm();
-    const [selectAll, cb1, cb2, cb3] = checkboxes("select-all", "cb1", "cb2", "cb3");
+    const [selectAll, checkbox1, checkbox2, checkbox3] = checkboxes("select-all", "cb1", "cb2", "cb3");
 
     selectAll.click();
 
-    expect(cb1.checked).toBe(true);
-    expect(cb2.checked).toBe(true);
-    expect(cb3.checked).toBe(true);
+    expect(checkbox1.checked).toBe(true);
+    expect(checkbox2.checked).toBe(true);
+    expect(checkbox3.checked).toBe(true);
   });
 
   it("unchecks all other checkboxes in the same form when unchecked", function () {
     renderForm();
-    const [selectAll, cb1, cb2, cb3] = checkboxes("select-all", "cb1", "cb2", "cb3");
+    const [selectAll, checkbox1, checkbox2, checkbox3] = checkboxes("select-all", "cb1", "cb2", "cb3");
 
     selectAll.click(); // check all
     selectAll.click(); // uncheck all
 
-    expect(cb1.checked).toBe(false);
-    expect(cb2.checked).toBe(false);
-    expect(cb3.checked).toBe(false);
+    expect(checkbox1.checked).toBe(false);
+    expect(checkbox2.checked).toBe(false);
+    expect(checkbox3.checked).toBe(false);
   });
 
   it("dispatches a change event on every checkbox it toggles", function () {
     renderForm();
-    const [selectAll, cb1, cb2, cb3] = checkboxes("select-all", "cb1", "cb2", "cb3");
+    const [selectAll, checkbox1, checkbox2, checkbox3] = checkboxes("select-all", "cb1", "cb2", "cb3");
 
     const changeHandler = vi.fn();
-    for (const checkbox of [cb1, cb2, cb3]) {
+    for (const checkbox of [checkbox1, checkbox2, checkbox3]) {
       checkbox.addEventListener("change", changeHandler);
     }
 
@@ -64,24 +64,24 @@ describe("checkbox-all", function () {
 
   it("becomes checked once every other checkbox in the form is checked", function () {
     renderForm();
-    const [selectAll, cb1, cb2, cb3] = checkboxes("select-all", "cb1", "cb2", "cb3");
+    const [selectAll, checkbox1, checkbox2, checkbox3] = checkboxes("select-all", "cb1", "cb2", "cb3");
 
-    cb1.click();
-    cb2.click();
+    checkbox1.click();
+    checkbox2.click();
     expect(selectAll.checked).toBe(false);
 
-    cb3.click();
+    checkbox3.click();
     expect(selectAll.checked).toBe(true);
   });
 
   it("becomes unchecked once any other checkbox in the form is unchecked", function () {
     renderForm();
-    const [selectAll, cb1, cb2, cb3] = checkboxes("select-all", "cb1", "cb2", "cb3");
+    const [selectAll, , checkbox2] = checkboxes("select-all", "cb1", "cb2", "cb3");
 
     selectAll.click(); // check all, selectAll is now checked
     expect(selectAll.checked).toBe(true);
 
-    cb2.click(); // uncheck one
+    checkbox2.click(); // uncheck one
 
     expect(selectAll.checked).toBe(false);
   });
@@ -103,14 +103,14 @@ describe("checkbox-all", function () {
       const selectAll = document.querySelector("#select-all");
       selectAll.dataset.ignore = "ignored";
       const ignored = document.querySelector("#ignored");
-      const [cb1, cb2, cb3] = checkboxes("cb1", "cb2", "cb3");
+      const [checkbox1, checkbox2, checkbox3] = checkboxes("cb1", "cb2", "cb3");
 
       selectAll.click();
 
       expect(ignored.checked).toBe(false);
-      expect(cb1.checked).toBe(true);
-      expect(cb2.checked).toBe(true);
-      expect(cb3.checked).toBe(true);
+      expect(checkbox1.checked).toBe(true);
+      expect(checkbox2.checked).toBe(true);
+      expect(checkbox3.checked).toBe(true);
     });
 
     it("does not react at all when the ignored checkbox itself changes", function () {
@@ -118,12 +118,12 @@ describe("checkbox-all", function () {
       const selectAll = document.querySelector("#select-all");
       selectAll.dataset.ignore = "ignored";
       const ignored = document.querySelector("#ignored");
-      const [cb1, cb2, cb3] = checkboxes("cb1", "cb2", "cb3");
+      const [checkbox1, checkbox2, checkbox3] = checkboxes("cb1", "cb2", "cb3");
 
       // check every other checkbox first, so "all checked" would be true if evaluated
-      cb1.click();
-      cb2.click();
-      cb3.click();
+      checkbox1.click();
+      checkbox2.click();
+      checkbox3.click();
       expect(selectAll.checked).toBe(false);
 
       ignored.click();
@@ -136,17 +136,17 @@ describe("checkbox-all", function () {
       const selectAll = document.querySelector("#select-all");
       selectAll.dataset.ignore = "ignored";
       const ignored = document.querySelector("#ignored");
-      const [cb1, cb2, cb3] = checkboxes("cb1", "cb2", "cb3");
+      const [checkbox1, checkbox2, checkbox3] = checkboxes("cb1", "cb2", "cb3");
 
-      cb1.click();
-      cb2.click();
-      cb3.click();
+      checkbox1.click();
+      checkbox2.click();
+      checkbox3.click();
       expect(selectAll.checked).toBe(false); // ignored is still unchecked
 
       // set the ignored checkbox without going through its own (early-returning) change handling
       ignored.checked = true;
-      cb3.click(); // uncheck ...
-      cb3.click(); // ... and recheck to trigger the "all checked" evaluation again
+      checkbox3.click(); // uncheck ...
+      checkbox3.click(); // ... and recheck to trigger the "all checked" evaluation again
 
       expect(selectAll.checked).toBe(true);
     });
@@ -172,10 +172,10 @@ describe("checkbox-all", function () {
     expect(addSpy).toHaveBeenCalledWith("change", expect.any(Function));
 
     const selectAll = document.querySelector("#select-all");
-    const [cb1, cb2, cb3] = checkboxes("cb1", "cb2", "cb3");
-    cb1.click();
-    cb2.click();
-    cb3.click();
+    const [checkbox1, checkbox2, checkbox3] = checkboxes("cb1", "cb2", "cb3");
+    checkbox1.click();
+    checkbox2.click();
+    checkbox3.click();
 
     // only one active listener after remove+reconnect -> reacts exactly once per click
     expect(selectAll.checked).toBe(true);

@@ -39,8 +39,8 @@ describe("sticky", function () {
     FakeIntersectionObserver.instances = [];
   });
 
-  function renderSticky(attrs = "") {
-    document.body.innerHTML = `<uv-sticky ${attrs}></uv-sticky>`;
+  function renderSticky(attributes = "") {
+    document.body.innerHTML = `<uv-sticky ${attributes}></uv-sticky>`;
     return document.querySelector("uv-sticky");
   }
 
@@ -104,7 +104,7 @@ describe("sticky", function () {
     it("switching from bottom to top clears the bottom offset", function () {
       const sticky = renderSticky(`data-sticky="bottom"`);
 
-      sticky.setAttribute("data-sticky", "top");
+      sticky.dataset.sticky = "top";
 
       expect(sticky.style.top).toBe("-1px");
       expect(sticky.style.bottom).toBe("");
@@ -113,7 +113,7 @@ describe("sticky", function () {
     it("clears both offsets for any other value", function () {
       const sticky = renderSticky(`data-sticky="top"`);
 
-      sticky.removeAttribute("data-sticky");
+      delete sticky.dataset.sticky;
 
       expect(sticky.style.top).toBe("");
       expect(sticky.style.bottom).toBe("");

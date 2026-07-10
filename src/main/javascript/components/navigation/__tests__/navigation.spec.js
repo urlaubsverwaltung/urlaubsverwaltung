@@ -13,13 +13,13 @@ describe("navigation", function () {
     while (document.body.firstElementChild) {
       document.body.firstElementChild.remove();
     }
-    document.documentElement.removeAttribute("data-nav-collapsed");
+    delete document.documentElement.dataset.navCollapsed;
     vi.clearAllMocks();
   });
 
   function renderNav({ collapsed = false } = {}) {
     if (collapsed) {
-      document.documentElement.setAttribute("data-nav-collapsed", "");
+      document.documentElement.dataset.navCollapsed = "";
     }
 
     document.body.innerHTML = `
@@ -62,8 +62,8 @@ describe("navigation", function () {
     };
   }
 
-  function click(element, opts = {}) {
-    const event = new MouseEvent("click", { bubbles: true, cancelable: true, ...opts });
+  function click(element, options = {}) {
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true, ...options });
     element.dispatchEvent(event);
     return event;
   }
@@ -74,7 +74,7 @@ describe("navigation", function () {
 
       click(navToggle);
 
-      expect(document.documentElement.hasAttribute("data-nav-collapsed")).toBe(true);
+      expect(Object.hasOwn(document.documentElement.dataset, "navCollapsed")).toBe(true);
       expect(navToggle.getAttribute("aria-expanded")).toBe("false");
       expect(patchJson).toHaveBeenCalledWith("/api/persons/me/settings", { navigationCollapsed: true });
 
@@ -91,7 +91,7 @@ describe("navigation", function () {
 
       click(navToggle);
 
-      expect(document.documentElement.hasAttribute("data-nav-collapsed")).toBe(false);
+      expect(Object.hasOwn(document.documentElement.dataset, "navCollapsed")).toBe(false);
       expect(navToggle.getAttribute("aria-expanded")).toBe("true");
       expect(patchJson).toHaveBeenCalledWith("/api/persons/me/settings", { navigationCollapsed: false });
 
@@ -106,7 +106,7 @@ describe("navigation", function () {
 
       click(navToggle, { shiftKey: true });
 
-      expect(document.documentElement.hasAttribute("data-nav-collapsed")).toBe(false);
+      expect(Object.hasOwn(document.documentElement.dataset, "navCollapsed")).toBe(false);
       expect(patchJson).not.toHaveBeenCalled();
     });
   });
@@ -118,17 +118,17 @@ describe("navigation", function () {
       click(link2);
 
       expect(link2.classList.contains("navigation-link--loading")).toBe(true);
-      expect(window.location.href.endsWith("#target2")).toBe(true);
+      expect(globalThis.location.href.endsWith("#target2")).toBe(true);
     });
 
     it("does nothing while the navigation is collapsed", function () {
       const { link2 } = renderNav({ collapsed: true });
-      const hrefBefore = window.location.href;
+      const hrefBefore = globalThis.location.href;
 
       click(link2);
 
       expect(link2.classList.contains("navigation-link--loading")).toBe(false);
-      expect(window.location.href).toBe(hrefBefore);
+      expect(globalThis.location.href).toBe(hrefBefore);
     });
   });
 
@@ -182,7 +182,7 @@ describe("navigation", function () {
       const { link1 } = renderNav();
       link1.classList.add("navigation-link--loading");
 
-      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+      globalThis.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
 
       expect(link1.classList.contains("navigation-link--loading")).toBe(false);
     });
@@ -191,7 +191,7 @@ describe("navigation", function () {
       const { link1 } = renderNav();
       link1.classList.add("navigation-link--loading");
 
-      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
+      globalThis.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
 
       expect(link1.classList.contains("navigation-link--loading")).toBe(true);
     });

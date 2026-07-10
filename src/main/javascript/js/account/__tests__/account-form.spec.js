@@ -21,7 +21,7 @@ describe("account-form", function () {
       await setupHtml({ globallyEnabled: true });
 
       setOverrideChecked(false);
-      checkLocally(undefined);
+      checkLocally();
       dispatchChange("overrideVacationDaysExpire");
 
       expect(fieldset().hasAttribute("disabled")).toBe(false);
@@ -31,7 +31,7 @@ describe("account-form", function () {
       await setupHtml({ globallyEnabled: false });
 
       setOverrideChecked(false);
-      checkLocally(undefined);
+      checkLocally();
       dispatchChange("overrideVacationDaysExpire");
 
       expect(fieldset().hasAttribute("disabled")).toBe(true);
@@ -61,7 +61,7 @@ describe("account-form", function () {
       await setupHtml({ globallyEnabled: true });
 
       setOverrideChecked(true);
-      checkLocally(undefined);
+      checkLocally();
       dispatchChange("overrideVacationDaysExpire");
 
       expect(fieldset().hasAttribute("disabled")).toBe(true);

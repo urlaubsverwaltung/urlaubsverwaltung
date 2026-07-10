@@ -47,7 +47,7 @@ describe("info-banner", function () {
     expect(style.textContent).toBe(":root { --info-banner-height: 42px; }");
 
     getBoundingClientRectSpy.mockReturnValue({ height: 84 });
-    window.dispatchEvent(new Event("resize"));
+    globalThis.dispatchEvent(new Event("resize"));
 
     expect(style.textContent).toBe(":root { --info-banner-height: 84px; }");
   });

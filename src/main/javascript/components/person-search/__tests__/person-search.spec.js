@@ -15,7 +15,7 @@ describe("person-search", function () {
   function renderPersonSearch({ suggestionCount = 2 } = {}) {
     const suggestions = Array.from(
       { length: suggestionCount },
-      (_, i) => `<li><a href="#suggestion-${i}" data-person-search-suggestion>Suggestion ${i}</a></li>`,
+      (_, index) => `<li><a href="#suggestion-${index}" data-person-search-suggestion>Suggestion ${index}</a></li>`,
     ).join("");
 
     document.body.innerHTML = `
@@ -148,7 +148,7 @@ describe("person-search", function () {
       frameRender(frame);
 
       dispatch("pointerdown", suggestions[0]);
-      dispatchFocusout(widget, null);
+      dispatchFocusout(widget);
 
       expect(popover.hidePopover).not.toHaveBeenCalled();
     });
@@ -159,7 +159,7 @@ describe("person-search", function () {
 
       dispatch("pointerdown", suggestions[0]);
       document.dispatchEvent(new Event("pointerup", { bubbles: true }));
-      dispatchFocusout(widget, null);
+      dispatchFocusout(widget);
 
       expect(popover.hidePopover).toHaveBeenCalledTimes(1);
     });
@@ -261,11 +261,11 @@ describe("person-search", function () {
     it("stays on the last suggestion when ArrowDown is pressed again", function () {
       const { widget, frame, suggestions } = renderPersonSearch();
       frameRender(frame);
-      suggestions[suggestions.length - 1].focus();
+      suggestions.at(-1).focus();
 
       dispatchKey("keydown", widget, "ArrowDown");
 
-      expect(document.activeElement).toBe(suggestions[suggestions.length - 1]);
+      expect(document.activeElement).toBe(suggestions.at(-1));
     });
 
     it("moves back to the search input on ArrowUp from the first suggestion", function () {

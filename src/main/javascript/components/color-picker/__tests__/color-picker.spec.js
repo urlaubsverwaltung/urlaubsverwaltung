@@ -45,8 +45,8 @@ describe("color-picker", function () {
     };
   }
 
-  function click(element, opts = {}) {
-    const event = new MouseEvent("click", { bubbles: true, cancelable: true, ...opts });
+  function click(element, options = {}) {
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true, ...options });
     element.dispatchEvent(event);
     return event;
   }
