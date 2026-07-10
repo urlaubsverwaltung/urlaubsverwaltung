@@ -1,25 +1,35 @@
 @reference "../config.css";
 
-th.vacationOverview-cal-head.today {
-  --vacation-overview-rows: 0;
-  position: relative;
+.vacationOverview-table th.vacationOverview-cal-head.today,
+.vacationOverview-table td.today {
+  @apply border-l-3 border-r-3;
+  @apply border-l-(--uv-cal-today-border-color)/40;
+  @apply border-r-(--uv-cal-today-border-color)/40;
 }
-th.vacationOverview-cal-head.today::after {
-  content: "";
-  @apply border-3;
-  @apply border-(--uv-cal-today-border-color)/40;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  /* head row height + (x * person height)  */
-  height: calc(100% + (var(--vacation-overview-rows) * 2.8125rem));
-  z-index: 1;
+
+.vacationOverview-table thead th.vacationOverview-cal-head.today {
+  @apply border-t-3;
+  @apply border-t-(--uv-cal-today-border-color)/40;
+}
+
+.vacationOverview-table tbody tr:last-child td.today {
+  @apply border-b-3;
+  @apply border-b-(--uv-cal-today-border-color)/40;
 }
 
 @variant dark {
-  th.vacationOverview-cal-head.today::after {
-    @apply border-(--uv-cal-today-border-color)/80;
+  .vacationOverview-table th.vacationOverview-cal-head.today,
+  .vacationOverview-table td.today {
+    @apply border-l-(--uv-cal-today-border-color)/80;
+    @apply border-r-(--uv-cal-today-border-color)/80;
+  }
+
+  .vacationOverview-table thead th.vacationOverview-cal-head.today {
+    @apply border-t-(--uv-cal-today-border-color)/80;
+  }
+
+  .vacationOverview-table tbody tr:last-child td.today {
+    @apply border-b-(--uv-cal-today-border-color)/80;
   }
 }
 
