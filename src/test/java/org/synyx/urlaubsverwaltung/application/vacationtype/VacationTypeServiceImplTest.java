@@ -22,6 +22,7 @@ import static java.util.Locale.GERMAN;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -254,8 +255,7 @@ class VacationTypeServiceImplTest {
                 .build()
         ));
 
-        @SuppressWarnings("unchecked")
-        final ArgumentCaptor<List<VacationTypeEntity>> captor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("unchecked") final ArgumentCaptor<List<VacationTypeEntity>> captor = ArgumentCaptor.forClass(List.class);
 
         verify(vacationTypeRepository).saveAll(captor.capture());
 
@@ -348,5 +348,84 @@ class VacationTypeServiceImplTest {
             assertThat(vacationType.getLabel(GERMAN)).isEqualTo("familientag");
             assertThat(vacationType.getLabel(ENGLISH)).isEqualTo("family day");
         });
+    }
+
+    @Test
+    void ensureInsertsAllDefaultVacationTypesWhenNoneExist() {
+
+        when(vacationTypeRepository.findAll()).thenReturn(emptyList());
+        when(vacationTypeRepository.saveAll(anyList())).thenReturn(emptyList());
+
+        sut.insertDefaultVacationTypes();
+
+        @SuppressWarnings("unchecked") final ArgumentCaptor<List<VacationTypeEntity>> captor = ArgumentCaptor.forClass(List.class);
+        verify(vacationTypeRepository).saveAll(captor.capture());
+
+        assertThat(captor.getValue())
+            .extracting(VacationTypeEntity::getMessageKey)
+            .contains("application.data.vacationType.mobileOffice");
+    }
+
+    @Test
+    void ensureInsertsOnlyMissingDefaultVacationType() {
+
+        when(vacationTypeRepository.findAll()).thenReturn(existingProvidedDefaultsExcept("application.data.vacationType.mobileOffice"));
+        when(vacationTypeRepository.saveAll(anyList())).thenReturn(emptyList());
+
+        sut.insertDefaultVacationTypes();
+
+        @SuppressWarnings("unchecked") final ArgumentCaptor<List<VacationTypeEntity>> captor = ArgumentCaptor.forClass(List.class);
+        verify(vacationTypeRepository).saveAll(captor.capture());
+
+        assertThat(captor.getValue()).hasSize(1);
+        assertThat(captor.getValue().getFirst()).satisfies(entity -> {
+            assertThat(entity.getMessageKey()).isEqualTo("application.data.vacationType.mobileOffice");
+            assertThat(entity.getCategory()).isEqualTo(OTHER);
+            assertThat(entity.getColor()).isEqualTo(YELLOW);
+            assertThat(entity.isActive()).isFalse();
+            assertThat(entity.isRequiresApprovalToApply()).isTrue();
+            assertThat(entity.isRequiresApprovalToCancel()).isTrue();
+            assertThat(entity.isVisibleToEveryone()).isFalse();
+            assertThat(entity.isCustom()).isFalse();
+        });
+    }
+
+    @Test
+    void ensureInsertsNothingWhenAllDefaultVacationTypesExist() {
+
+        when(vacationTypeRepository.findAll()).thenReturn(existingProvidedDefaultsExcept("none"));
+
+        sut.insertDefaultVacationTypes();
+
+        verify(vacationTypeRepository, never()).saveAll(anyList());
+    }
+
+    private List<VacationTypeEntity> existingProvidedDefaultsExcept(String excludedMessageKey) {
+        return List.of(
+                "application.data.vacationType.holiday",
+                "application.data.vacationType.specialleave",
+                "application.data.vacationType.unpaidleave",
+                "application.data.vacationType.overtime",
+                "application.data.vacationType.parentalLeave",
+                "application.data.vacationType.maternityProtection",
+                "application.data.vacationType.sabbatical",
+                "application.data.vacationType.paidLeave",
+                "application.data.vacationType.cure",
+                "application.data.vacationType.education",
+                "application.data.vacationType.homeOffice",
+                "application.data.vacationType.mobileOffice",
+                "application.data.vacationType.outOfOffice",
+                "application.data.vacationType.training",
+                "application.data.vacationType.employmentBan",
+                "application.data.vacationType.educationalLeave"
+            ).stream()
+            .filter(messageKey -> !messageKey.equals(excludedMessageKey))
+            .map(messageKey -> {
+                final VacationTypeEntity entity = new VacationTypeEntity();
+                entity.setMessageKey(messageKey);
+                entity.setCustom(false);
+                return entity;
+            })
+            .toList();
     }
 }
