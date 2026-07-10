@@ -9,7 +9,7 @@ class UVFeedbackBox extends HTMLDivElement {
     });
   }
 
-  async remove() {
+  async #fadeOutAndRemove() {
     // wait for finished transition or a max value
     // THEN remove the element from DOM.
 
@@ -43,6 +43,12 @@ class UVFeedbackBox extends HTMLDivElement {
     await Promise.race([transitionEnded, wait(duration + 50)]);
 
     super.remove();
+  }
+
+  remove() {
+    // `remove()` must stay a synchronous `void` method to match the `Element` interface;
+    // the actual (async) fade-out + removal happens in `#fadeOutAndRemove`.
+    this.#fadeOutAndRemove();
   }
 }
 
