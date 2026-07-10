@@ -166,12 +166,13 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         final ProvidedVacationType cure = createProvidedVacationType(false, OTHER, "application.data.vacationType.cure", true, true, YELLOW, false);
         final ProvidedVacationType education = createProvidedVacationType(false, OTHER, "application.data.vacationType.education", true, true, YELLOW, false);
         final ProvidedVacationType homeOffice = createProvidedVacationType(false, OTHER, "application.data.vacationType.homeOffice", true, true, YELLOW, false);
+        final ProvidedVacationType mobileOffice = createProvidedVacationType(false, OTHER, "application.data.vacationType.mobileOffice", true, true, YELLOW, false);
         final ProvidedVacationType outOfOffice = createProvidedVacationType(false, OTHER, "application.data.vacationType.outOfOffice", true, true, YELLOW, false);
         final ProvidedVacationType training = createProvidedVacationType(false, OTHER, "application.data.vacationType.training", true, true, YELLOW, false);
         final ProvidedVacationType employmentBan = createProvidedVacationType(false, OTHER, "application.data.vacationType.employmentBan", true, true, YELLOW, false);
         final ProvidedVacationType educationalLeave = createProvidedVacationType(false, OTHER, "application.data.vacationType.educationalLeave", true, true, YELLOW, false);
 
-        return List.of(holiday, specialleave, unpaidleave, overtime, parentalLeave, maternityProtection, sabbatical, paidLeave, cure, education, homeOffice, outOfOffice, training, employmentBan, educationalLeave);
+        return List.of(holiday, specialleave, unpaidleave, overtime, parentalLeave, maternityProtection, sabbatical, paidLeave, cure, education, homeOffice, mobileOffice, outOfOffice, training, employmentBan, educationalLeave);
     }
 
     private ProvidedVacationType createProvidedVacationType(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
