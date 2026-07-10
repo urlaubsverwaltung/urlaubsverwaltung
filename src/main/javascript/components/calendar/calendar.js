@@ -134,7 +134,7 @@ const View = (function () {
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
       if (typeof data === "function") {
-        return Reflect.apply(data, this, arguments);
+        return Reflect.apply(data, undefined, arguments);
       }
 
       const value = data[type];
@@ -390,14 +390,14 @@ const Controller = (function () {
   let holidayService;
 
   const datepickerHandlers = {
-    mousedown: function (event) {
+    mousedown: function (element, event) {
       if (event.button !== mouseButtons.left) {
         return;
       }
 
       document.body.classList.add(CSS.mousedown);
 
-      const dateThis = getDateFromElement(this);
+      const dateThis = getDateFromElement(element);
 
       const start = selectionFrom();
       const end = selectionTo();
@@ -415,12 +415,12 @@ const Controller = (function () {
       document.body.classList.remove(CSS.mousedown);
     },
 
-    mouseover: function () {
+    mouseover: function (element) {
       if (!document.body.classList.contains(CSS.mousedown)) {
         return;
       }
 
-      const dateThis = getDateFromElement(this);
+      const dateThis = getDateFromElement(element);
       const dateSelected = new Date(view.getRootElement().dataset[DATA.selected]);
 
       const isThisBefore = isBefore(dateThis, dateSelected);
@@ -429,15 +429,15 @@ const Controller = (function () {
       selectionTo(isThisBefore ? dateSelected : dateThis);
     },
 
-    click: function () {
+    click: function (element) {
       const dateFrom = selectionFrom();
       const dateTo = selectionTo();
 
-      const dateThis = getDateFromElement(this);
+      const dateThis = getDateFromElement(element);
 
-      const isSelectable = this.dataset.datepickerSelectable;
-      const absenceId = this.dataset.datepickerAbsenceId;
-      const absenceType = this.dataset.datepickerAbsenceType;
+      const isSelectable = element.dataset.datepickerSelectable;
+      const absenceId = element.dataset.datepickerAbsenceId;
+      const absenceType = element.dataset.datepickerAbsenceType;
 
       if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
         holidayService.navigateToApplicationForLeave(absenceId);
@@ -555,25 +555,25 @@ const Controller = (function () {
       view.getRootElement().addEventListener("mousedown", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.mousedown.call(element, event);
+          datepickerHandlers.mousedown(element, event);
         }
       });
 
       view.getRootElement().addEventListener("mouseover", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.mouseover.call(element, event);
+          datepickerHandlers.mouseover(element, event);
         }
       });
 
       view.getRootElement().addEventListener("click", function (event) {
         let element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.click.call(element, event);
+          datepickerHandlers.click(element, event);
         } else if ((element = matches(event.target, `.${CSS.previous}`))) {
-          datepickerHandlers.clickPrevious.call(element, event);
+          datepickerHandlers.clickPrevious(element, event);
         } else if ((element = matches(event.target, `.${CSS.next}`))) {
-          datepickerHandlers.clickNext.call(element, event);
+          datepickerHandlers.clickNext(element, event);
         }
       });
 

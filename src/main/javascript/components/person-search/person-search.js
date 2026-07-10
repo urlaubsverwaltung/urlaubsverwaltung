@@ -140,7 +140,7 @@ class PersonSearch extends HTMLElement {
     document.addEventListener("pointerup", handleGlobalPointerup);
     document.addEventListener("turbo:frame-render", handleFrameRender);
 
-    this.#cleanup = function () {
+    this.#cleanup = () => {
       this.removeEventListener("focusin", handleThisFocusin);
       this.removeEventListener("focusout", handleThisFocusout);
       this.removeEventListener("keydown", handleThisKeydown);

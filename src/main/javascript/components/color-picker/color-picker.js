@@ -225,7 +225,7 @@ class ColorPicker extends HTMLDivElement {
     this.addEventListener("click", handleClick);
     this.addEventListener("keydown", handleKeyDown);
 
-    this.cleanup = function () {
+    this.cleanup = () => {
       this.#dialogToggleButton.removeEventListener("click", handleDialogToggleButtonClick);
       this.#dialog.removeEventListener("click", handleColorSelectionClick);
       this.removeEventListener("click", handleClick);
