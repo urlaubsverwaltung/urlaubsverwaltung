@@ -1,4 +1,5 @@
 import { onTurboBeforeRenderRestore } from "../on-turbo-before-render-restore";
+import "../turbo-restore-listeners";
 
 describe("on-turbo-before-render-restore", function () {
   let unsubscribes = [];
