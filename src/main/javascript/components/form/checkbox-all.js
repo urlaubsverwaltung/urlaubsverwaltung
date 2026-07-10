@@ -35,7 +35,7 @@ export class CheckboxAll extends HTMLInputElement {
 
     globalThis.addEventListener("change", handleChange);
 
-    this.cleanup = () => {
+    this.#cleanup = () => {
       globalThis.removeEventListener("change", handleChange);
     };
   }

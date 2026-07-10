@@ -25,13 +25,13 @@ export class Sticky extends HTMLElement {
     if (name === "data-sticky") {
       if (newValue === "bottom") {
         this.style.bottom = "-1px";
-        delete this.style.top;
+        this.style.removeProperty("top");
       } else if (newValue === "top") {
         this.style.top = "-1px";
-        delete this.style.bottom;
+        this.style.removeProperty("bottom");
       } else {
-        delete this.style.top;
-        delete this.style.bottom;
+        this.style.removeProperty("top");
+        this.style.removeProperty("bottom");
       }
     }
   }
