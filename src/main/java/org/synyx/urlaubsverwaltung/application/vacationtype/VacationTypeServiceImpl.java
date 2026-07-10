@@ -12,11 +12,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OTHER;
@@ -144,13 +147,21 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     @Override
     public void insertDefaultVacationTypes() {
-        final long count = vacationTypeRepository.count();
 
-        if (count == 0) {
-            LOG.info("No initial vacation types exists - going to create them.");
-            final List<VacationType<?>> vacationTypes = getInitialVacationTypes();
-            createVacationTypes(vacationTypes);
-            LOG.info("Saved {} initial vacation types", vacationTypes.size());
+        final Set<String> existingMessageKeys = vacationTypeRepository.findAll().stream()
+            .map(VacationTypeEntity::getMessageKey)
+            .filter(Objects::nonNull)
+            .collect(toSet());
+
+        final List<VacationType<?>> missingVacationTypes = getInitialVacationTypes().stream()
+            .filter(vacationType -> vacationType instanceof ProvidedVacationType providedVacationType
+                && !existingMessageKeys.contains(providedVacationType.getMessageKey()))
+            .toList();
+
+        if (!missingVacationTypes.isEmpty()) {
+            LOG.info("Found {} missing default vacation type(s) - going to create them.", missingVacationTypes.size());
+            createVacationTypes(missingVacationTypes);
+            LOG.info("Saved {} missing default vacation type(s)", missingVacationTypes.size());
         }
     }
 
