@@ -1,14 +1,4 @@
 class UVFeedbackBox extends HTMLDivElement {
-  connectedCallback() {
-    // `command="close"` is only a native no-op for non-<dialog> elements (no "command" event is even
-    // dispatched), so the close button is wired up manually here instead.
-    this.addEventListener("click", (event) => {
-      if (event.target.closest("[command='close']")) {
-        this.remove();
-      }
-    });
-  }
-
   async #fadeOutAndRemove() {
     // wait for finished transition or a max value
     // THEN remove the element from DOM.
@@ -49,6 +39,16 @@ class UVFeedbackBox extends HTMLDivElement {
     // `remove()` must stay a synchronous `void` method to match the `Element` interface;
     // the actual (async) fade-out + removal happens in `#fadeOutAndRemove`.
     this.#fadeOutAndRemove();
+  }
+
+  connectedCallback() {
+    // `command="close"` is only a native no-op for non-<dialog> elements (no "command" event is even
+    // dispatched), so the close button is wired up manually here instead.
+    this.addEventListener("click", (event) => {
+      if (event.target.closest("[command='close']")) {
+        this.remove();
+      }
+    });
   }
 }
 
