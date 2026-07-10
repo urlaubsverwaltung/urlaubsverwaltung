@@ -25,12 +25,13 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -83,10 +84,11 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
 
         final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
         when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
@@ -128,10 +130,11 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(departmentMember);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
 
         final PersonBasedata personBasedata = new PersonBasedata(departmentMemberId, "personnelNumber", "");
         when(personBasedataService.getBasedataByPersonId(List.of(departmentMember.getId()))).thenReturn(Map.of(departmentMemberId, personBasedata));
@@ -189,10 +192,11 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
 
         final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
         when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
@@ -238,10 +242,11 @@ class ApplicationForLeaveExportServiceTest {
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), BigDecimal.ZERO);
+        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
 
         final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
         when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));

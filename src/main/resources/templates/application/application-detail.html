@@ -15,12 +15,8 @@
       <script th:inline="javascript">
         /*<![CDATA[*/
         window.uv = window.uv || {};
-        window.uv.personId = /*[[${app.person.id}]]*/ "personId";
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
-        window.uv.dayLength = /*[[${app.dayLength}]]*/ "dayLength";
-        window.uv.startDate = /*[[${#temporals.format(app.startDate, 'yyyy/MM/dd')}]]*/ "startDate";
-        window.uv.endDate = /*[[${#temporals.format(app.endDate, 'yyyy/MM/dd')}]]*/ "endDate";
         /*]]>*/
       </script>
     </th:block>

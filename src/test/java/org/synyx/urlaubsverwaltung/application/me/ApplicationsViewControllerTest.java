@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.ONE;
 import static java.util.function.Function.identity;
@@ -51,6 +53,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -98,6 +101,9 @@ class ApplicationsViewControllerTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(workDaysCountService.getWorkDaysCountByYearForApplications(anyCollection()))
+            .thenAnswer(this::oneDayPerApplicationByYear);
+
         sut = new ApplicationsViewController(
             personService, departmentService, applicationService,
             workDaysCountService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock
@@ -105,8 +111,8 @@ class ApplicationsViewControllerTest {
     }
 
     private void stubWorkDaysCountForApplications() {
-        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
-            .thenAnswer(this::oneDayPerApplication);
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(anyCollection()))
+            .thenAnswer(this::oneDayPerApplicationByYear);
     }
 
     private void stubWorkDaysCountForApplicationsWithUsedDaysSummary() {
@@ -118,6 +124,15 @@ class ApplicationsViewControllerTest {
     private Map<Application, BigDecimal> oneDayPerApplication(InvocationOnMock invocation) {
         final Collection<Application> applications = invocation.getArgument(0);
         return applications.stream().collect(toMap(identity(), application -> ONE));
+    }
+
+    private Map<Application, SortedMap<Integer, BigDecimal>> oneDayPerApplicationByYear(InvocationOnMock invocation) {
+        final Collection<Application> applications = invocation.getArgument(0);
+        return applications.stream().collect(toMap(identity(), application -> {
+            final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+            workDaysByYear.put(application.getStartDate().getYear(), ONE);
+            return workDaysByYear;
+        }));
     }
 
     @Test

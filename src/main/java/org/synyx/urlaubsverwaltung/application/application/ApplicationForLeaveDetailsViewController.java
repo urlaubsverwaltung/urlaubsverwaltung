@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -472,8 +473,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         model.addAttribute("lastComment", comments.getLast());
 
         // APPLICATION FOR LEAVE
-        final BigDecimal workDaysCount = workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson());
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCount);
+        final SortedMap<Integer, BigDecimal> workDaysCountByYear = workDaysCountService.getWorkDaysCountByYear(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson());
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountByYear);
         model.addAttribute("app", applicationForLeaveDetailDto(applicationForLeave, locale));
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
@@ -570,6 +571,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
         dto.setDayLength(applicationForLeave.getDayLength());
         dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setWorkDaysByYear(applicationForLeave.getWorkDaysByYear());
         dto.setHours(applicationForLeave.getHours());
         dto.setEditedDate(applicationForLeave.getEditedDate());
         dto.setCancelDate(applicationForLeave.getCancelDate());

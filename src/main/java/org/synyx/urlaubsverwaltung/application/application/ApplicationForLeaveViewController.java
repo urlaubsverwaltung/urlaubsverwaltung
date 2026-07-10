@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -405,9 +406,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     }
 
     private List<ApplicationForLeave> toSortedApplicationsForLeave(List<Application> applications) {
-        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
         return applications.stream()
-            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
+            .map(application -> new ApplicationForLeave(application, workDaysByYearByApplication.get(application)))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
     }

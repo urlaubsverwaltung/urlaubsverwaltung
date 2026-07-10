@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.util.SortedMap;
 
 /**
  * Represents an extended {@link Application} with information about
@@ -13,18 +14,20 @@ import java.time.DayOfWeek;
 public class ApplicationForLeave extends Application {
 
     private final BigDecimal workDays;
+    private final SortedMap<Integer, BigDecimal> workDaysByYear;
 
     /**
-     * Creates an {@link ApplicationForLeave} with the already calculated number of work days.
+     * Creates an {@link ApplicationForLeave} with the already calculated work days, split by the years the
+     * application spans.
      * <p>
-     * Prefer this constructor together with {@link WorkDaysCountService#getWorkDaysCountForApplications(java.util.Collection)}
+     * Prefer this constructor together with {@link WorkDaysCountService#getWorkDaysCountByYearForApplications(java.util.Collection)}
      * when creating an {@link ApplicationForLeave} for each element of a collection, to avoid one working-time query per
      * application.
      *
-     * @param application the application to extend
-     * @param workDays    the number of work days of the application
+     * @param application    the application to extend
+     * @param workDaysByYear the number of work days of the application, split by year and sorted by year
      */
-    public ApplicationForLeave(Application application, BigDecimal workDays) {
+    public ApplicationForLeave(Application application, SortedMap<Integer, BigDecimal> workDaysByYear) {
 
         // copy all the properties from the given application for leave
         BeanUtils.copyProperties(application, this);
@@ -32,11 +35,19 @@ public class ApplicationForLeave extends Application {
         // not copied, must be set explicitly
         setId(application.getId());
 
-        this.workDays = workDays;
+        this.workDaysByYear = workDaysByYear;
+        this.workDays = workDaysByYear.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public BigDecimal getWorkDays() {
         return workDays;
+    }
+
+    /**
+     * @return the work days split into the years the application spans, sorted by year
+     */
+    public SortedMap<Integer, BigDecimal> getWorkDaysByYear() {
+        return workDaysByYear;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {

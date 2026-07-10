@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.SortedMap;
 
 class ApplicationForLeaveDetailDto {
 
@@ -27,6 +28,7 @@ class ApplicationForLeaveDetailDto {
     private DayOfWeek weekDayOfEndDate;
     private DayLength dayLength;
     private BigDecimal workDays;
+    private SortedMap<Integer, BigDecimal> workDaysByYear;
     private Duration hours;
     private LocalDate editedDate;
     private LocalDate cancelDate;
@@ -138,6 +140,14 @@ class ApplicationForLeaveDetailDto {
 
     public void setWorkDays(BigDecimal workDays) {
         this.workDays = workDays;
+    }
+
+    public SortedMap<Integer, BigDecimal> getWorkDaysByYear() {
+        return workDaysByYear;
+    }
+
+    public void setWorkDaysByYear(SortedMap<Integer, BigDecimal> workDaysByYear) {
+        this.workDaysByYear = workDaysByYear;
     }
 
     public Duration getHours() {

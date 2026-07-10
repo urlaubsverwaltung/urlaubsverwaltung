@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -254,9 +255,9 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     private List<ApplicationForLeave> toApplicationsForLeave(List<Application> applications) {
-        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
         return applications.stream()
-            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
+            .map(application -> new ApplicationForLeave(application, workDaysByYearByApplication.get(application)))
             .toList();
     }
 
@@ -405,6 +406,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationForLeave.getWeekDayOfEndDate(),
             applicationForLeave.getDayLength(),
             applicationForLeave.getWorkDays(),
+            applicationForLeave.getWorkDaysByYear(),
             applicationForLeave.getHours(),
             applicationForLeave.getEditedDate(),
             applicationForLeave.getCancelDate(),

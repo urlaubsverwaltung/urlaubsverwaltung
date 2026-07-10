@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,9 +35,14 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
@@ -101,9 +107,21 @@ class ApplicationForLeaveViewControllerTest {
 
         userIsAllowedToSubmitSickNotes(false);
 
+        lenient().when(workDaysCountService.getWorkDaysCountByYearForApplications(any()))
+            .thenAnswer(ApplicationForLeaveViewControllerTest::oneDayPerApplicationByYear);
+
         sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService, workDaysCountService,
             departmentService, personService, settingsService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, clock);
+    }
+
+    private static Map<Application, SortedMap<Integer, BigDecimal>> oneDayPerApplicationByYear(InvocationOnMock invocation) {
+        final Collection<Application> applications = invocation.getArgument(0);
+        return applications.stream().collect(toMap(identity(), application -> {
+            final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+            workDaysByYear.put(application.getStartDate().getYear(), BigDecimal.ONE);
+            return workDaysByYear;
+        }));
     }
 
     @Nested

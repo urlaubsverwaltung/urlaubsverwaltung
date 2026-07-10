@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -92,11 +93,11 @@ class ApplicationForLeaveExportService {
 
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
         final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
-        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
 
         Stream<ApplicationForLeaveExport> exportsStream = applicationsByPerson.entrySet()
             .stream()
-            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId, workDaysByApplication));
+            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId, workDaysByYearByApplication));
 
         if (relevantMembersPage.getPageable().isUnpaged()) {
             // we don't have to restrict the statistics if persons page is paged and or sorted already.
@@ -113,7 +114,7 @@ class ApplicationForLeaveExportService {
         return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
     }
 
-    private Function<Map.Entry<Person, List<Application>>, ApplicationForLeaveExport> toApplicationForLeaveExport(Map<PersonId, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons, Map<Application, BigDecimal> workDaysByApplication) {
+    private Function<Map.Entry<Person, List<Application>>, ApplicationForLeaveExport> toApplicationForLeaveExport(Map<PersonId, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons, Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication) {
         return personListEntry ->
         {
             final Person person = personListEntry.getKey();
@@ -121,7 +122,7 @@ class ApplicationForLeaveExportService {
             final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).personnelNumber();
             final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
             final List<ApplicationForLeave> applicationForLeaves = personListEntry.getValue().stream()
-                .map(app -> new ApplicationForLeave(app, workDaysByApplication.get(app))).toList();
+                .map(app -> new ApplicationForLeave(app, workDaysByYearByApplication.get(app))).toList();
             return new ApplicationForLeaveExport(personnelNumber, person.getFirstName(), person.getLastName(), applicationForLeaves, departments);
         };
     }
