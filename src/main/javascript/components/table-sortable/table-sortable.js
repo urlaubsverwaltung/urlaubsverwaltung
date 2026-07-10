@@ -99,7 +99,7 @@ function getSortValue(cell, sortType) {
   return value;
 }
 
-export class TableSortable extends HTMLTableElement {
+class TableSortable extends HTMLTableElement {
   connectedCallback() {
     initTableSortable(this);
   }

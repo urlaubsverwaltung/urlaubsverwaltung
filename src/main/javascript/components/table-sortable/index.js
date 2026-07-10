@@ -1,1 +1,1 @@
-export * from "./table-sortable";
+import "./table-sortable";

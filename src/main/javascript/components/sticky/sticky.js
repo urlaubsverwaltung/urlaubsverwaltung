@@ -1,4 +1,4 @@
-export class Sticky extends HTMLElement {
+class Sticky extends HTMLElement {
   static observedAttributes = ["data-sticky"];
 
   /** @type IntersectionObserver */

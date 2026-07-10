@@ -1,4 +1,4 @@
-export class UVFeedbackBox extends HTMLDivElement {
+class UVFeedbackBox extends HTMLDivElement {
   connectedCallback() {
     // `command="close"` is only a native no-op for non-<dialog> elements (no "command" event is even
     // dispatched), so the close button is wired up manually here instead.

@@ -1,1 +1,1 @@
-export * from "./feedback-box";
+import "./feedback-box";
