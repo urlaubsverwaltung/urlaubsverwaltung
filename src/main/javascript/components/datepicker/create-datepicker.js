@@ -57,12 +57,10 @@ onTurboBeforeRenderRestore(function (event) {
     // the cached turbo snapshot does not contain the "previous" value but the already changed one.
     // (form submit and rendering happens on submit-click AFTER selecting a date. snapshot is created on form submit.)
     const name = duetDatePicker.getAttribute("name");
-    const value = new URLSearchParams(globalThis.location.search).get(name) ?? initialValues.get(name) ?? "";
+    const value = new URLSearchParams(location.search).get(name) ?? initialValues.get(name) ?? "";
     duetDatePicker.setAttribute("value", value);
 
-    waitForDatePickerHydration(duetDatePicker).then(() => {
-      hydrateDatepicker(duetDatePicker, optionsByName.get(name));
-    });
+    hydrateAfterRehydration(duetDatePicker, name);
   }
 });
 
@@ -97,17 +95,13 @@ function hydrateDatepicker(duetDateElement, options) {
   mutation(duetDateElement.querySelector(".duet-date__input"))
     .attributeChanged(["readonly"])
     .subscribe(function (event) {
-      if (event.target.hasAttribute("readonly")) {
-        duetDateElement.setAttribute("readonly", "");
-      } else {
-        duetDateElement.removeAttribute("readonly");
-      }
+      duetDateElement.toggleAttribute("readonly", event.target.hasAttribute("readonly"));
     });
 
   const monthElement = duetDateElement.querySelector(".duet-date__select--month");
   const yearElement = duetDateElement.querySelector(".duet-date__select--year");
 
-  const showAbsences = () => {
+  const showAbsences = async () => {
     // clear all days
     for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
       element.querySelector("[data-uv-icon]")?.remove();
@@ -119,7 +113,8 @@ function hydrateDatepicker(duetDateElement, options) {
     const firstDayOfDatepicker = formatISO(startOfWeek(parseISO(firstDayOfMonth), { weekStartsOn: 1 }), {
       representation: "date",
     });
-    const lastDayOfDatepicker = formatISO(endOfWeek(endOfMonth(parseISO(firstDayOfMonth)), { weekStartsOn: 1 }), {
+    const lastDayOfMonth = endOfMonth(parseISO(firstDayOfMonth));
+    const lastDayOfDatepicker = formatISO(endOfWeek(lastDayOfMonth, { weekStartsOn: 1 }), {
       representation: "date",
     });
 
@@ -128,58 +123,64 @@ function hydrateDatepicker(duetDateElement, options) {
       return;
     }
 
-    Promise.allSettled([
-      getJSON(
-        `${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
-      ).then(pick("publicHolidays")),
-      getJSON(
-        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
-      ).then(pick("absences")),
-    ]).then(([publicHolidays, absences]) => {
-      const selectedMonth = Number(monthElement.value);
-      const selectedYear = Number(yearElement.value);
-      for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
-        const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
-        const date = parse(dayAndMonthString, dateFormatShort, new Date());
-        // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.
-        // therefore the parsed date will always be assigned to the current year and we have to adjust it when:
-        if (selectedMonth === 0 && date.getMonth() === 11) {
-          // datepicker selected month is january, but the rendered day item is december of the previous year
-          // (e.g. december 31) to fill the week row.
-          date.setFullYear(selectedYear - 1);
-        } else if (selectedMonth === 11 && date.getMonth() === 0) {
-          // datepicker selected month is december, but the rendered day item is january of the next year
-          // (e.g. january 1) to fill the week row.
-          date.setFullYear(selectedYear + 1);
-        } else {
-          date.setFullYear(selectedYear);
-        }
+    const [publicHolidays, absences] = await Promise.allSettled([
+      fetchAndPick(
+        getJSON(
+          `${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+        ),
+        "publicHolidays",
+      ),
+      fetchAndPick(
+        getJSON(
+          `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
+        ),
+        "absences",
+      ),
+    ]);
 
-        const absencesForDate = findByDate(absences.value, date);
-        const publicHolidaysForDate = findByDate(publicHolidays.value, date);
-        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
-        addAbsenceTypeStyleToNode(dayElement, absencesForDate);
-
-        let icon;
-
-        if (isNoWorkday(absencesForDate)) {
-          const temporary = document.createElement("span");
-          temporary.innerHTML = `<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
-          icon = temporary.firstChild;
-        } else {
-          icon = document.createElement("span");
-          icon.classList.add("w-3", "h-3", "inline-block");
-        }
-
-        // toggle click and heading mutation observer can both trigger `showAbsences` for the same
-        // "open datepicker" interaction, so the removal at the top of `showAbsences` alone is not
-        // enough to prevent two icons ending up appended for the same day.
-        dayElement.querySelector("[data-uv-icon]")?.remove();
-
-        icon.dataset.uvIcon = "";
-        dayElement.append(icon);
+    const selectedMonth = Number(monthElement.value);
+    const selectedYear = Number(yearElement.value);
+    for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
+      const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
+      const date = parse(dayAndMonthString, dateFormatShort, new Date());
+      // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.
+      // therefore the parsed date will always be assigned to the current year and we have to adjust it when:
+      if (selectedMonth === 0 && date.getMonth() === 11) {
+        // datepicker selected month is january, but the rendered day item is december of the previous year
+        // (e.g. december 31) to fill the week row.
+        date.setFullYear(selectedYear - 1);
+      } else if (selectedMonth === 11 && date.getMonth() === 0) {
+        // datepicker selected month is december, but the rendered day item is january of the next year
+        // (e.g. january 1) to fill the week row.
+        date.setFullYear(selectedYear + 1);
+      } else {
+        date.setFullYear(selectedYear);
       }
-    });
+
+      const absencesForDate = findByDate(absences.value, date);
+      const publicHolidaysForDate = findByDate(publicHolidays.value, date);
+      addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
+      addAbsenceTypeStyleToNode(dayElement, absencesForDate);
+
+      let icon;
+
+      if (isNoWorkday(absencesForDate)) {
+        const temporary = document.createElement("span");
+        temporary.innerHTML = `<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
+        icon = temporary.firstChild;
+      } else {
+        icon = document.createElement("span");
+        icon.classList.add("w-3", "h-3", "inline-block");
+      }
+
+      // toggle click and heading mutation observer can both trigger `showAbsences` for the same
+      // "open datepicker" interaction, so the removal at the top of `showAbsences` alone is not
+      // enough to prevent two icons ending up appended for the same day.
+      dayElement.querySelector("[data-uv-icon]")?.remove();
+
+      icon.dataset.uvIcon = "";
+      dayElement.append(icon);
+    }
   };
 
   const toggleButton = duetDateElement.querySelector("button.duet-date__toggle");
@@ -188,12 +189,17 @@ function hydrateDatepicker(duetDateElement, options) {
 
   // duet-date-picker updates this visually hidden heading ("<month> <year>") whenever the
   // visible month changes. observing it covers every navigation variant.
-  const monthYearHeading = duetDateElement.querySelector(".duet-date__header h2");
+  const monthYearHeading = duetDateElement.querySelector(":scope .duet-date__header h2");
   new MutationObserver(showAbsences).observe(monthYearHeading, {
     childList: true,
     characterData: true,
     subtree: true,
   });
+}
+
+async function hydrateAfterRehydration(duetDatePicker, name) {
+  await waitForDatePickerHydration(duetDatePicker);
+  hydrateDatepicker(duetDatePicker, optionsByName.get(name));
 }
 
 async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation) {
@@ -280,6 +286,10 @@ function pick(name) {
   return function (object) {
     return object[name];
   };
+}
+
+async function fetchAndPick(promise, name) {
+  return pick(name)(await promise);
 }
 
 function twoDigit(nr) {

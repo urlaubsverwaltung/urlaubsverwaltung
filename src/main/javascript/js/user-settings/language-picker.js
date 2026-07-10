@@ -1,7 +1,7 @@
 const userSettingsForm = document.querySelector("#user-settings-form");
 
-let languageGroupFocused = false;
-let languageGroupFocusedWithKeyboard = false;
+let isLanguageGroupFocused = false;
+let isLanguageGroupFocusedWithKeyboard = false;
 
 const focusManager = createFocusManager();
 const languageFieldset = userSettingsForm.querySelector("#fieldset-language");
@@ -13,18 +13,18 @@ if (focusManager.shouldFocusAfterReload()) {
 // `focusin` event listener is called before `keyup`
 languageFieldset.addEventListener("focusin", function (event) {
   if (event.target.matches("[name='locale']")) {
-    languageGroupFocused = true;
+    isLanguageGroupFocused = true;
   }
 });
 
 languageFieldset.addEventListener("focusout", function (event) {
   if (event.target.matches("[name='locale']")) {
-    languageGroupFocused = false;
+    isLanguageGroupFocused = false;
   }
 });
 
 userSettingsForm.addEventListener("change", function (event) {
-  if (languageGroupFocusedWithKeyboard) {
+  if (isLanguageGroupFocusedWithKeyboard) {
     focusManager.memoize();
   }
   if (event.target.name === "locale") {
@@ -32,27 +32,26 @@ userSettingsForm.addEventListener("change", function (event) {
   }
 });
 
-globalThis.addEventListener("keyup", function (event) {
-  if (!languageGroupFocused) {
+addEventListener("keyup", function (event) {
+  if (!isLanguageGroupFocused) {
     focusManager.clean();
   }
-  languageGroupFocusedWithKeyboard = languageGroupFocused && event.key === "Tab";
+  isLanguageGroupFocusedWithKeyboard = isLanguageGroupFocused && event.key === "Tab";
 });
 
-globalThis.addEventListener("click", function (event) {
+addEventListener("click", function (event) {
   if (!childOfLanguage(event.target)) {
     focusManager.clean();
   }
 });
 
 function childOfLanguage(element) {
-  if (!element) {
-    return false;
+  for (let current = element; current; current = current.parentElement) {
+    if (current.matches("#fieldset-language")) {
+      return true;
+    }
   }
-  if (element.matches("#fieldset-language")) {
-    return true;
-  }
-  return childOfLanguage(element.parentElement);
+  return false;
 }
 
 function createFocusManager() {

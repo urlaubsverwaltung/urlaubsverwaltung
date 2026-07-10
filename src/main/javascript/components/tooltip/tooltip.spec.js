@@ -16,7 +16,7 @@ describe("tooltip", function () {
   afterEach(function () {
     teardown();
     vi.useRealTimers();
-    document.body.innerHTML = "";
+    document.body.replaceChildren();
   });
 
   function sut() {

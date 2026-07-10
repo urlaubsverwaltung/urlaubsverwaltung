@@ -17,9 +17,7 @@ describe("send-get-days-request", function () {
   });
 
   afterEach(function () {
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
     fetchMock.removeRoutes();
     fetchMock.clearHistory();
     vi.clearAllMocks();

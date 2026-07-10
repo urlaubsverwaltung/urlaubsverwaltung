@@ -12,7 +12,7 @@ export function initAutosubmit() {
 
   document.addEventListener("change", function (event) {
     const { defaultPrevented, target } = event;
-    if (defaultPrevented || textInput(target) || target.closest("duet-date-picker")) {
+    if (defaultPrevented || isTextInput(target) || target.closest("duet-date-picker")) {
       // `change` is not of interest for text inputs which are triggered by `keyup`
       // and due-date-picker change is handled with 'duetChange'
       return;
@@ -22,7 +22,7 @@ export function initAutosubmit() {
 
   document.addEventListener("duetChange", function (event) {
     const { defaultPrevented, target } = event;
-    if (defaultPrevented || textInput(target) || !event.target.value) {
+    if (defaultPrevented || isTextInput(target) || !event.target.value) {
       // `change` is not of interest for text inputs which are triggered by `keyup`
       return;
     }
@@ -51,7 +51,7 @@ function submit(event) {
   }
 }
 
-function textInput(element) {
+function isTextInput(element) {
   return [
     "input[type='text']",
     "input[type='mail']",

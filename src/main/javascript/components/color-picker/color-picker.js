@@ -11,6 +11,56 @@ class ColorPicker extends HTMLDivElement {
   #colorOptions;
   #focusedElementIndex;
 
+  #addListboxHint() {
+    this.classList.add("flex", "items-center");
+
+    const span = document.createElement("span");
+    span.classList.add("dropdown-caret", "cursor-pointer", "-mt-px", "ml-1.5");
+
+    this.#dialogToggleButton.classList.add("flex", "items-center");
+    this.#dialogToggleButton.append(span);
+  }
+
+  #repositionDialog() {
+    // dialog could overflow on x-axis -> move dialog to the left if this is the case to avoid horizontal scrolling
+    const { left } = this.getBoundingClientRect();
+    const { width } = getComputedStyle(this.#dialog);
+    const widthValue = Number(width.slice(0, Math.max(0, width.length - 2))); // omit `"px"`
+    const windowWidth = window.innerWidth;
+    if (left + widthValue > windowWidth) {
+      this.#dialog.style.setProperty("left", `-${left + widthValue - windowWidth}px`);
+    } else {
+      this.#dialog.style.removeProperty("left");
+    }
+  }
+
+  #renderSelectedColor() {
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const colorOption = this.#colorOptions[index];
+      const isSelected = colorOption.querySelector("input").value === this.#value;
+      if (isSelected) {
+        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
+        break;
+      }
+    }
+
+    this.#dialogToggleButton
+      .querySelector(".color-picker-button-color")
+      .style.setProperty("background-color", `var(--absence-color-${this.#value})`);
+  }
+
+  #renderFocusedElement() {
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const colorOption = this.#colorOptions[index];
+      if (index === this.#focusedElementIndex) {
+        colorOption.classList.add("active");
+        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
+      } else {
+        colorOption.classList.remove("active");
+      }
+    }
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) {
       return;
@@ -124,48 +174,48 @@ class ColorPicker extends HTMLDivElement {
     };
 
     const handleKeyDown = (event) => {
-      if (document.activeElement === this) {
-        // toggle dialog with keyboard
-        // closing it with 'Escape' is handled globally
-        if (event.key === "Enter") {
-          if (this.#open) {
-            // update selected color
-            for (let index = 0; index < this.#colorOptions.length; index++) {
-              const colorOption = this.#colorOptions[index];
-              const colorInput = colorOption.querySelector("input");
-              const selected = index === this.#focusedElementIndex;
-              colorInput.checked = selected;
-              if (selected) {
-                this.#value = colorInput.value;
-                this.#renderSelectedColor();
-              }
-            }
-            // close dialog
-            delete this.dataset.open;
-          } else {
-            this.dataset.open = "";
-          }
-        }
+      if (document.activeElement !== this) {
+        return;
+      }
 
-        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-          event.preventDefault();
-          if (this.#open) {
-            // enable keyboard navigation through color options
-            // only when dialog has been opened before
-            if (event.key === "ArrowDown") {
-              if (this.#focusedElementIndex < this.#colorOptions.length - 1) {
-                this.#focusedElementIndex++;
-                this.#renderFocusedElement();
-              }
-            } else if (event.key === "ArrowUp" && this.#focusedElementIndex > 0) {
-              this.#focusedElementIndex--;
+      // toggle dialog with keyboard
+      // closing it with 'Escape' is handled globally
+      if (event.key === "Enter") {
+        if (this.#open) {
+          // update selected color
+          for (let index = 0; index < this.#colorOptions.length; index++) {
+            const colorOption = this.#colorOptions[index];
+            const colorInput = colorOption.querySelector("input");
+            const isSelected = index === this.#focusedElementIndex;
+            colorInput.checked = isSelected;
+            if (isSelected) {
+              this.#value = colorInput.value;
+              this.#renderSelectedColor();
+            }
+          }
+          // close dialog
+          delete this.dataset.open;
+        } else {
+          this.dataset.open = "";
+        }
+      } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        if (this.#open) {
+          // enable keyboard navigation through color options
+          // only when dialog has been opened before
+          if (event.key === "ArrowDown") {
+            if (this.#focusedElementIndex < this.#colorOptions.length - 1) {
+              this.#focusedElementIndex++;
               this.#renderFocusedElement();
             }
-          } else {
-            // open dialog with arrow keys
-            this.dataset.open = "";
+          } else if (event.key === "ArrowUp" && this.#focusedElementIndex > 0) {
+            this.#focusedElementIndex--;
             this.#renderFocusedElement();
           }
+        } else {
+          // open dialog with arrow keys
+          this.dataset.open = "";
+          this.#renderFocusedElement();
         }
       }
     };
@@ -185,56 +235,6 @@ class ColorPicker extends HTMLDivElement {
 
   disconnectedCallback() {
     this.cleanup();
-  }
-
-  #addListboxHint() {
-    this.classList.add("flex", "items-center");
-
-    const span = document.createElement("span");
-    span.classList.add("dropdown-caret", "cursor-pointer", "-mt-px", "ml-1.5");
-
-    this.#dialogToggleButton.classList.add("flex", "items-center");
-    this.#dialogToggleButton.append(span);
-  }
-
-  #repositionDialog() {
-    // dialog could overflow on x-axis -> move dialog to the left if this is the case to avoid horizontal scrolling
-    const { left } = this.getBoundingClientRect();
-    const { width } = globalThis.getComputedStyle(this.#dialog);
-    const widthValue = Number(width.slice(0, Math.max(0, width.length - 2))); // omit `"px"`
-    const windowWidth = window.innerWidth;
-    if (left + widthValue > windowWidth) {
-      this.#dialog.style.setProperty("left", `-${left + widthValue - windowWidth}px`);
-    } else {
-      this.#dialog.style.removeProperty("left");
-    }
-  }
-
-  #renderSelectedColor() {
-    for (let index = 0; index < this.#colorOptions.length; index++) {
-      const colorOption = this.#colorOptions[index];
-      const selected = colorOption.querySelector("input").value === this.#value;
-      if (selected) {
-        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
-        break;
-      }
-    }
-
-    this.#dialogToggleButton
-      .querySelector(".color-picker-button-color")
-      .style.setProperty("background-color", `var(--absence-color-${this.#value})`);
-  }
-
-  #renderFocusedElement() {
-    for (let index = 0; index < this.#colorOptions.length; index++) {
-      const colorOption = this.#colorOptions[index];
-      if (index === this.#focusedElementIndex) {
-        colorOption.classList.add("active");
-        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
-      } else {
-        colorOption.classList.remove("active");
-      }
-    }
   }
 }
 

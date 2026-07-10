@@ -6,7 +6,7 @@ import { observable } from "./observable";
  * @return {{matches: observable}}
  */
 export function useMedia(query) {
-  const media = globalThis.matchMedia(query);
+  const media = matchMedia(query);
   const matches = observable(media.matches);
 
   try {

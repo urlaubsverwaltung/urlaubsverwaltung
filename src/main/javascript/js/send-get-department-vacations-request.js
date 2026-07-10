@@ -64,11 +64,8 @@ function createHtmlForVacation(vacation, isNewPerson) {
     html += `<span class="text-emerald-500 absolute -ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
   }
 
-  let dateInformation = `${startDate} - ${endDate}`;
-  if (startDate === endDate) {
-    dateInformation = `${startDate}`;
-  }
-  html += `${dateInformation}`;
+  const dateInformation = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+  html += dateInformation;
 
   return html + "</li>";
 }
