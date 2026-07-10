@@ -34,8 +34,6 @@ export default [
         },
       ],
 
-      /* conflicts with our established module-level singleton state pattern (tooltip, theme-picker, ...) */
-      "unicorn/no-top-level-assignment-in-function": "off",
       /* we intentionally expose bundle entry points on globalThis and mock globals in tests */
       "unicorn/no-global-object-property-assignment": "off",
       /* __tests__ is our established test directory convention */

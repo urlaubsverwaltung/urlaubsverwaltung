@@ -40,39 +40,41 @@ const initialValues = new Map();
 // date-picker configuration stuff required for rehydration on history.popstate
 const optionsByName = new Map();
 
-let isInitialized = false;
-
 // registers the @duet/datepicker custom element and the turbo restore handler exactly once,
 // lazily on first use (rather than as an import-time side effect).
-function ensureInitialized() {
-  if (isInitialized) {
-    return;
-  }
-  isInitialized = true;
+const ensureInitialized = (function () {
+  let isInitialized = false;
 
-  defineCustomElements(globalThis);
-
-  onTurboBeforeRenderRestore(function (event) {
-    const { newBody } = event.detail;
-
-    for (const duetDatePicker of newBody.querySelectorAll("duet-date-picker")) {
-      // remove all children which are rendered again by <duet-date-picker> stencil implementation.
-      // otherwise there would be two `input[date]`.
-      while (duetDatePicker.firstElementChild) {
-        duetDatePicker.firstElementChild.remove();
-      }
-
-      // after history.popstate we have to update the value to match the URL or initial one.
-      // the cached turbo snapshot does not contain the "previous" value but the already changed one.
-      // (form submit and rendering happens on submit-click AFTER selecting a date. snapshot is created on form submit.)
-      const name = duetDatePicker.getAttribute("name");
-      const value = new URLSearchParams(location.search).get(name) ?? initialValues.get(name) ?? "";
-      duetDatePicker.setAttribute("value", value);
-
-      hydrateAfterRehydration(duetDatePicker, name);
+  return function ensureInitialized() {
+    if (isInitialized) {
+      return;
     }
-  });
-}
+    isInitialized = true;
+
+    defineCustomElements(globalThis);
+
+    onTurboBeforeRenderRestore(function (event) {
+      const { newBody } = event.detail;
+
+      for (const duetDatePicker of newBody.querySelectorAll("duet-date-picker")) {
+        // remove all children which are rendered again by <duet-date-picker> stencil implementation.
+        // otherwise there would be two `input[date]`.
+        while (duetDatePicker.firstElementChild) {
+          duetDatePicker.firstElementChild.remove();
+        }
+
+        // after history.popstate we have to update the value to match the URL or initial one.
+        // the cached turbo snapshot does not contain the "previous" value but the already changed one.
+        // (form submit and rendering happens on submit-click AFTER selecting a date. snapshot is created on form submit.)
+        const name = duetDatePicker.getAttribute("name");
+        const value = new URLSearchParams(location.search).get(name) ?? initialValues.get(name) ?? "";
+        duetDatePicker.setAttribute("value", value);
+
+        hydrateAfterRehydration(duetDatePicker, name);
+      }
+    });
+  };
+})();
 
 export async function createDatepicker(selector, options) {
   ensureInitialized();
