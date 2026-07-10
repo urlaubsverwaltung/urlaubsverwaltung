@@ -1,4 +1,4 @@
-export class CheckboxCard extends HTMLElement {
+class CheckboxCard extends HTMLElement {
   #cleanup = () => {};
 
   connectedCallback() {

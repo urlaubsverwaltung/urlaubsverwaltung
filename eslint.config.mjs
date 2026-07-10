@@ -44,8 +44,6 @@ export default [
       "unicorn/filename-case": "off",
       /* default replacement list clashes with our domain vocabulary (e.g. "application" -> "app") */
       "unicorn/name-replacements": "off",
-      /* conflicts with our established self-initializing component pattern (side effects on import) */
-      "unicorn/no-top-level-side-effects": "off",
     },
   },
   {

@@ -3,7 +3,7 @@ function focusSuggestion(element) {
   element.closest("li").scrollIntoView({ block: "nearest" });
 }
 
-export class PersonSearch extends HTMLElement {
+class PersonSearch extends HTMLElement {
   #cleanup = () => {};
   #popoverVisible = false;
 

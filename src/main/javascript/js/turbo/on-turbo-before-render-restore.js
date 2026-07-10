@@ -1,11 +1,13 @@
 let callbacks = [];
 let isRestoreRender = false;
 
-document.addEventListener("turbo:visit", function (event) {
-  isRestoreRender = event.detail.action === "restore";
-});
+// used by "./turbo-restore-listeners" to feed real `document` turbo events into this module,
+// kept separate so this module itself has no top-level side effects.
+export function markRestoreRender(isRestore) {
+  isRestoreRender = isRestore;
+}
 
-document.addEventListener("turbo:before-render", function (event) {
+export function runRestoreCallbacks(event) {
   if (isRestoreRender) {
     for (let callback of callbacks) {
       try {
@@ -15,7 +17,7 @@ document.addEventListener("turbo:before-render", function (event) {
       }
     }
   }
-});
+}
 
 export function onTurboBeforeRenderRestore(callback) {
   callbacks.push(callback);

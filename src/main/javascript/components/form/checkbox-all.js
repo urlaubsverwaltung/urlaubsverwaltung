@@ -1,4 +1,4 @@
-export class CheckboxAll extends HTMLInputElement {
+class CheckboxAll extends HTMLInputElement {
   #cleanup;
 
   connectedCallback() {
