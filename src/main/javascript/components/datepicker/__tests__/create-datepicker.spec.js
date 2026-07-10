@@ -1058,6 +1058,44 @@ describe("create-datepicker", () => {
         expect(element.classList).toContain("datepicker-day");
         expect(element.closest("button").querySelector("svg")).toBeTruthy();
       });
+
+      test("no-workday icon is rendered only once when the initial value's month differs from the current one", async () => {
+        // opening the datepicker for a value whose month is not the current one makes duet-date-picker
+        // navigate its visible month right away. this fires the toggle click handler and the month/year
+        // heading mutation observer for the very same "open" interaction (see create-datepicker.js).
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-11-30&to=2021-01-03&absence-types=vacation,sick_note,no_workday`,
+          {
+            absences: [
+              {
+                date: "2020-12-24",
+                absent: "FULL",
+                absenceType: "NO_WORKDAY",
+              },
+            ],
+          },
+        );
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        const urlPrefix = "my-url-prefix";
+        const getPersonId = () => 42;
+
+        await createDatepicker("input", { urlPrefix, getPersonId });
+
+        document.querySelector("button.duet-date__toggle").click();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+
+        const element = getDatepickerDayElement("24. Dezember");
+        expect(element.querySelectorAll("[data-uv-icon]")).toHaveLength(1);
+        expect(element.querySelectorAll("svg")).toHaveLength(1);
+      });
     });
   });
 
