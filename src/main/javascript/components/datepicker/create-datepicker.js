@@ -171,6 +171,11 @@ function hydrateDatepicker(duetDateElement, options) {
           icon.classList.add("w-3", "h-3", "inline-block");
         }
 
+        // toggle click and heading mutation observer can both trigger `showAbsences` for the same
+        // "open datepicker" interaction, so the removal at the top of `showAbsences` alone is not
+        // enough to prevent two icons ending up appended for the same day.
+        dayElement.querySelector("[data-uv-icon]")?.remove();
+
         icon.dataset.uvIcon = "";
         dayElement.append(icon);
       }
