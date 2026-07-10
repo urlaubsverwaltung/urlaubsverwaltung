@@ -8,8 +8,8 @@ describe("theme-picker", function () {
   });
 
   afterEach(function () {
-    document.body.innerHTML = "";
-    document.head.innerHTML = "";
+    document.body.replaceChildren();
+    document.head.replaceChildren();
     document.documentElement.className = "";
     delete globalThis.matchMedia;
     vi.clearAllMocks();
@@ -51,7 +51,7 @@ describe("theme-picker", function () {
   }
 
   function selectTheme(form, value) {
-    const radio = form.querySelector(`input[value='${value}']`);
+    const radio = form.querySelector(`input[value='${CSS.escape(value)}']`);
     radio.checked = true;
     radio.dispatchEvent(new Event("change", { bubbles: true }));
   }

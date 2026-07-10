@@ -22,13 +22,50 @@ export class PersonSearch extends HTMLElement {
     return this.querySelector("[data-person-search-status]");
   }
 
+  #announceResultCount() {
+    const count = this.querySelectorAll("[data-person-search-suggestion]").length;
+
+    let message;
+    if (count === 0) {
+      message = this.dataset.messageNothingFound ?? "";
+    } else if (count === 1) {
+      message = this.dataset.messageResultsOne ?? "";
+    } else {
+      message = (this.dataset.messageResultsOther ?? "").replace("{0}", () => String(count));
+    }
+
+    this.#statusRegion.textContent = message;
+  }
+
+  #showSuggestionsPopover() {
+    /** @type HTMLDialogElement */
+    const popover = this.querySelector("[popover]");
+    popover.showPopover();
+    this.#searchInput.setAttribute("aria-expanded", "true");
+    this.#popoverVisible = true;
+  }
+
+  #hideSuggestionsPopover() {
+    /** @type HTMLDialogElement */
+    const popover = this.querySelector("[popover]");
+    popover.hidePopover();
+    this.#searchInput.setAttribute("aria-expanded", "false");
+    this.#popoverVisible = false;
+  }
+
+  #submit() {
+    // always query element, do not memoize it, could be rerendered!
+    const form = this.querySelector("form");
+    form?.requestSubmit(this.#submitButton);
+  }
+
   connectedCallback() {
-    let loading = false;
+    let isLoading = false;
 
     this.addEventListener("submit", () => {
-      loading = true;
+      isLoading = true;
       setTimeout(() => {
-        if (loading) {
+        if (isLoading) {
           this.#submitButton.classList.add("button--loading");
         }
       }, 100);
@@ -44,7 +81,7 @@ export class PersonSearch extends HTMLElement {
     // show popover on initial submit.
     // subsequent renders can be ignored since content is updated, not the popover itself.
     const handleFrameRender = (event) => {
-      loading = false;
+      isLoading = false;
       this.#submitButton.classList.remove("button--loading");
       if (event.target.matches("[id=frame-persons-suggestions]")) {
         if (!this.#popoverVisible) {
@@ -56,7 +93,7 @@ export class PersonSearch extends HTMLElement {
 
     // suggestion popover should not be closed
     // when a suggestion link is supposed to be clicked
-    let pointerdownSuggestionLink = false;
+    let isPointerdownSuggestionLink = false;
 
     /**
      *
@@ -65,18 +102,18 @@ export class PersonSearch extends HTMLElement {
     const handleGlobalPointerdown = (event) => {
       /** @type HTMLElement */
       const target = event.target;
-      pointerdownSuggestionLink = Boolean(target.closest("a") && this.contains(target));
+      isPointerdownSuggestionLink = Boolean(target.closest("a") && this.contains(target));
     };
 
     const handleGlobalPointerup = () => {
-      pointerdownSuggestionLink = false;
+      isPointerdownSuggestionLink = false;
     };
 
     /**
      * @param {FocusEvent} event
      */
     const handleThisFocusout = (event) => {
-      if (!pointerdownSuggestionLink && !this.contains(event.relatedTarget)) {
+      if (!isPointerdownSuggestionLink && !this.contains(event.relatedTarget)) {
         this.#hideSuggestionsPopover();
       }
     };
@@ -87,7 +124,6 @@ export class PersonSearch extends HTMLElement {
       }
 
       const input = this.#searchInput;
-      const suggestions = [...this.querySelectorAll("[data-person-search-suggestion]")];
 
       if (event.key === "Escape") {
         event.preventDefault();
@@ -95,6 +131,8 @@ export class PersonSearch extends HTMLElement {
         input.focus();
         return;
       }
+
+      const suggestions = [...this.querySelectorAll("[data-person-search-suggestion]")];
 
       if (!this.#popoverVisible || suggestions.length === 0) {
         return;
@@ -141,42 +179,6 @@ export class PersonSearch extends HTMLElement {
 
   connectedMoveCallback() {
     // prevent connected/disconnected callbacks to be called when element is moved
-  }
-
-  #showSuggestionsPopover() {
-    /** @type HTMLDialogElement */
-    const popover = this.querySelector("[popover]");
-    popover.showPopover();
-    this.#popoverVisible = true;
-  }
-
-  #hideSuggestionsPopover() {
-    /** @type HTMLDialogElement */
-    const popover = this.querySelector("[popover]");
-    popover.hidePopover();
-    this.#popoverVisible = false;
-    this.#statusRegion.textContent = "";
-  }
-
-  #announceResultCount() {
-    const count = this.querySelectorAll("[data-person-search-suggestion]").length;
-
-    let message;
-    if (count === 0) {
-      message = this.dataset.messageNothingFound ?? "";
-    } else if (count === 1) {
-      message = this.dataset.messageResultsOne ?? "";
-    } else {
-      message = (this.dataset.messageResultsOther ?? "").replace("{0}", String(count));
-    }
-
-    this.#statusRegion.textContent = message;
-  }
-
-  #submit() {
-    // always query element, do not memoize it, could be rerendered!
-    const form = this.querySelector("form");
-    form?.requestSubmit(this.#submitButton);
   }
 }
 

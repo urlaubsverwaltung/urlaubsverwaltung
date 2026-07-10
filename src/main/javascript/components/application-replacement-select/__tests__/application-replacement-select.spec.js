@@ -40,9 +40,7 @@ describe("application-replacement-select", function () {
   afterEach(function () {
     vi.clearAllTimers();
 
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
 
     vi.clearAllMocks();
   });
@@ -164,12 +162,12 @@ describe("application-replacement-select", function () {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(document.body.querySelectorAll("#replacement-section-container ul li")).toHaveLength(0);
+    expect(document.body.querySelectorAll(":scope #replacement-section-container ul li")).toHaveLength(0);
 
     // await response.text
     await Promise.resolve();
 
-    expect(document.body.querySelector("#replacement-section-container ul").innerHTML).toBe(
+    expect(document.body.querySelector(":scope #replacement-section-container ul").innerHTML).toBe(
       "<li>awesome response</li>",
     );
   });
@@ -192,7 +190,7 @@ describe("application-replacement-select", function () {
     // await response.text
     await Promise.resolve();
 
-    expect(document.body.querySelectorAll("#replacement-section-container ul li")).toHaveLength(0);
+    expect(document.body.querySelectorAll(":scope #replacement-section-container ul li")).toHaveLength(0);
 
     vi.advanceTimersToNextTimer();
 
@@ -202,7 +200,7 @@ describe("application-replacement-select", function () {
     // await response.text
     await Promise.resolve();
 
-    expect(document.body.querySelectorAll("#replacement-section-container ul li")).toHaveLength(1);
+    expect(document.body.querySelectorAll(":scope #replacement-section-container ul li")).toHaveLength(1);
   });
 
   it.each([[true], [false]])(

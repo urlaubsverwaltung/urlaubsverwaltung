@@ -118,17 +118,17 @@ describe("navigation", function () {
       click(link2);
 
       expect(link2.classList.contains("navigation-link--loading")).toBe(true);
-      expect(globalThis.location.href.endsWith("#target2")).toBe(true);
+      expect(location.href.endsWith("#target2")).toBe(true);
     });
 
     it("does nothing while the navigation is collapsed", function () {
       const { link2 } = renderNav({ collapsed: true });
-      const hrefBefore = globalThis.location.href;
+      const hrefBefore = location.href;
 
       click(link2);
 
       expect(link2.classList.contains("navigation-link--loading")).toBe(false);
-      expect(globalThis.location.href).toBe(hrefBefore);
+      expect(location.href).toBe(hrefBefore);
     });
   });
 
@@ -182,7 +182,7 @@ describe("navigation", function () {
       const { link1 } = renderNav();
       link1.classList.add("navigation-link--loading");
 
-      globalThis.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+      dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
 
       expect(link1.classList.contains("navigation-link--loading")).toBe(false);
     });
@@ -191,7 +191,7 @@ describe("navigation", function () {
       const { link1 } = renderNav();
       link1.classList.add("navigation-link--loading");
 
-      globalThis.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
+      dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
 
       expect(link1.classList.contains("navigation-link--loading")).toBe(true);
     });

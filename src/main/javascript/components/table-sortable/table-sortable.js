@@ -12,7 +12,7 @@ function initTableSortable(table) {
   let tbody = table.querySelector("tbody"); // we only have tables with one tbody. there is no list to consider.
   let currentSortedColumn;
 
-  const ths = table.querySelectorAll("thead > tr > th");
+  const ths = table.querySelectorAll(":scope thead > tr > th");
 
   for (const [index, th] of ths.entries()) {
     const sortType = th.dataset.sortType ?? "string";
@@ -29,17 +29,17 @@ function initTableSortable(table) {
         return [tr, getSortValue(cell, sortType)];
       });
 
-      const sorted = Boolean(th.dataset.sorted === "true");
-      const nextDirection = sorted ? (th.dataset.sortDirection === "asc" ? "desc" : "asc") : "asc";
+      const isSorted = th.dataset.sorted === "true";
+      const nextDirection = isSorted && th.dataset.sortDirection === "asc" ? "desc" : "asc";
 
       if (currentSortedColumn === index) {
         rows.reverse();
       } else {
-        const desc = nextDirection === "desc";
+        const isDesc = nextDirection === "desc";
         rows.sort((a, b) => {
           let valueA = a[1];
           let valueB = b[1];
-          return desc ? comparator(valueB, valueA) : comparator(valueA, valueB);
+          return isDesc ? comparator(valueB, valueA) : comparator(valueA, valueB);
         });
       }
 
@@ -91,6 +91,9 @@ function getSortValue(cell, sortType) {
     return new Date(value);
   }
   if (sortType === "numeric") {
+    // cell text can carry trailing non-numeric content (e.g. "3 active members"), Number() (no leading-number
+    // extraction) doesn't apply here
+    // eslint-disable-next-line unicorn/prefer-number-coercion
     return Number.parseFloat(value.replaceAll(",", "."));
   }
   return value;

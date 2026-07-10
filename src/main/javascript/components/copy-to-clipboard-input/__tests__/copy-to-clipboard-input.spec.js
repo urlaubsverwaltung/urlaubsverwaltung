@@ -1,11 +1,11 @@
 import "..";
 
 describe("copy-to-clipboard-input", () => {
-  const { clipboard } = globalThis.navigator;
+  const { clipboard } = navigator;
 
   beforeEach(() => {
-    delete globalThis.navigator.clipboard;
-    globalThis.navigator.clipboard = {
+    delete navigator.clipboard;
+    navigator.clipboard = {
       writeText: vi.fn(() => Promise.resolve()),
     };
   });
@@ -15,7 +15,7 @@ describe("copy-to-clipboard-input", () => {
       document.body.firstElementChild.remove();
     }
 
-    globalThis.navigator.clipboard = clipboard;
+    navigator.clipboard = clipboard;
 
     vi.clearAllMocks();
   });

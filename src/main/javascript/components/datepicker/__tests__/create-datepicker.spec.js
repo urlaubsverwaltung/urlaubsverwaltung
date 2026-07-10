@@ -145,7 +145,7 @@ describe("create-datepicker", () => {
 
   describe.each([["en"], ["de"], ["de-de"]])("with browser locale '%s'", (givenLanguage) => {
     beforeEach(() => {
-      vi.spyOn(globalThis.navigator, "language", "get").mockReturnValue(givenLanguage);
+      vi.spyOn(navigator, "language", "get").mockReturnValue(givenLanguage);
     });
 
     describe("fetches absences and public-holidays when datepicker is opened", () => {
@@ -1100,7 +1100,7 @@ describe("create-datepicker", () => {
   });
 
   test.each([["en"], ["de"]])("formats date with 'dd.MM.yyyy' for browser locale=%s", async (givenLanguage) => {
-    vi.spyOn(globalThis.navigator, "language", "get").mockReturnValue(givenLanguage);
+    vi.spyOn(navigator, "language", "get").mockReturnValue(givenLanguage);
 
     document.body.innerHTML = `
       <input value="24.12.2020" data-iso-value="2020-12-24" />

@@ -5,7 +5,7 @@ const VERSION = new Date("2024-01-01T00:00:00Z");
 describe("apexOptionsWithPersistence", () => {
   beforeEach(() => {
     globalThis.uv = { userId: "user-1" };
-    globalThis.localStorage.clear();
+    localStorage.clear();
   });
 
   test("throws for unsupported chart types", () => {
@@ -37,7 +37,7 @@ describe("apexOptionsWithPersistence", () => {
   });
 
   test("marks series hidden based on persisted ids", () => {
-    globalThis.localStorage.setItem(
+    localStorage.setItem(
       "uv:chart-series-visibility:user-1:my-chart",
       JSON.stringify({ version: VERSION, hiddenIds: ["b"] }),
     );
@@ -52,7 +52,7 @@ describe("apexOptionsWithPersistence", () => {
   });
 
   test("ignores persisted data with a different version", () => {
-    globalThis.localStorage.setItem(
+    localStorage.setItem(
       "uv:chart-series-visibility:user-1:my-chart",
       JSON.stringify({ version: new Date("2023-01-01T00:00:00Z"), hiddenIds: ["b"] }),
     );
@@ -67,7 +67,7 @@ describe("apexOptionsWithPersistence", () => {
   });
 
   test("falls back to nothing hidden when persisted entry is corrupt", () => {
-    globalThis.localStorage.setItem("uv:chart-series-visibility:user-1:my-chart", "not-json");
+    localStorage.setItem("uv:chart-series-visibility:user-1:my-chart", "not-json");
     const apexOptions = buildOptions();
 
     const result = apexOptionsWithPersistence(apexOptions, buildPersistenceOptions());
@@ -80,7 +80,7 @@ describe("apexOptionsWithPersistence", () => {
 
   test("keys persisted state by userId and storage key", () => {
     const apexOptions = buildOptions();
-    globalThis.localStorage.setItem(
+    localStorage.setItem(
       "uv:chart-series-visibility:other-user:my-chart",
       JSON.stringify({ version: VERSION, hiddenIds: ["a", "b"] }),
     );
@@ -99,7 +99,7 @@ describe("apexOptionsWithPersistence", () => {
 
     result.chart.events.legendClick({}, 1);
 
-    const stored = JSON.parse(globalThis.localStorage.getItem("uv:chart-series-visibility:user-1:my-chart"));
+    const stored = JSON.parse(localStorage.getItem("uv:chart-series-visibility:user-1:my-chart"));
     expect(stored.hiddenIds).toEqual(["b"]);
   });
 
@@ -110,7 +110,7 @@ describe("apexOptionsWithPersistence", () => {
     result.chart.events.legendClick({}, 1);
     result.chart.events.legendClick({}, 1);
 
-    const stored = JSON.parse(globalThis.localStorage.getItem("uv:chart-series-visibility:user-1:my-chart"));
+    const stored = JSON.parse(localStorage.getItem("uv:chart-series-visibility:user-1:my-chart"));
     expect(stored.hiddenIds).toEqual([]);
   });
 

@@ -1,11 +1,12 @@
 import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
+const getUrlParameter = (name) => new URL(location).searchParams.get(name);
+
 document.addEventListener("DOMContentLoaded", async () => {
   const { personId, webPrefix, apiPrefix, i18n: i18nMessages } = globalThis.uv;
 
   const i18n = (key) => i18nMessages?.[key] ?? `/i18n:${key}/`;
-  const getUrlParameter = (name) => new URL(globalThis.location).searchParams.get(name);
 
   const initCalendar = async () => {
     const yearParameter = getUrlParameter("year");

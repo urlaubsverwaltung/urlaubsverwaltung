@@ -219,9 +219,8 @@ const chart = new ApexCharts(
       if (isSickDaysCountElement) {
         if (name.includes(dataseriesNames[1])) {
           return isComparison ? "sick-count-child-compare" : "sick-count-child";
-        } else {
-          return isComparison ? "sick-count-compare" : "sick-count";
         }
+        return isComparison ? "sick-count-compare" : "sick-count";
       }
 
       return "";

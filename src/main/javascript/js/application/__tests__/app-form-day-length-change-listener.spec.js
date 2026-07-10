@@ -44,7 +44,7 @@ describe("app-form-day-length-change-listener", function () {
   }
 
   function changeDayLength(value) {
-    const radio = document.querySelector(`input[name='dayLength'][value='${value}']`);
+    const radio = document.querySelector(`input[name='dayLength'][value='${CSS.escape(value)}']`);
     radio.checked = true;
     radio.dispatchEvent(new Event("change", { bubbles: true }));
   }

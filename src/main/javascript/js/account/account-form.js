@@ -13,9 +13,9 @@ createDatepicker("#expiryDate", { urlPrefix, getPersonId });
 
 const form = document.querySelector("#holiday-account-settings-form");
 const fieldset = document.querySelector("#remaining-vacation-days-expire-fieldset");
-const fieldsetGloballyEnabled = fieldset.dataset.globallyEnabled === "true";
+const isFieldsetGloballyEnabled = fieldset.dataset.globallyEnabled === "true";
 
-form.addEventListener("change", function enabledDisableVacationDaysExpireElements(event) {
+form.addEventListener("change", function isEnabledDisableVacationDaysExpireElements(event) {
   const { target } = event;
   if (
     target.matches("[name=overrideVacationDaysExpire]") ||
@@ -25,19 +25,12 @@ form.addEventListener("change", function enabledDisableVacationDaysExpireElement
     const override = formData.get("overrideVacationDaysExpire");
     const locally = formData.get("doRemainingVacationDaysExpireLocally");
 
-    if ((override === "true" && locally === "true") || (override !== "true" && fieldsetGloballyEnabled)) {
-      fieldset.removeAttribute("disabled");
-    } else {
-      fieldset.setAttribute("disabled", "");
-    }
+    const isEnabled = (override === "true" && locally === "true") || (override !== "true" && isFieldsetGloballyEnabled);
+    fieldset.toggleAttribute("disabled", !isEnabled);
 
     const radioButtons = document.querySelectorAll("[name='doRemainingVacationDaysExpireLocally']");
     for (const button of radioButtons) {
-      if (override === "true") {
-        button.removeAttribute("disabled");
-      } else {
-        button.setAttribute("disabled", "");
-      }
+      button.toggleAttribute("disabled", override !== "true");
     }
   }
 });

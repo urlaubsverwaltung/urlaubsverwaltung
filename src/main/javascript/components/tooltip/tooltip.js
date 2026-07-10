@@ -204,20 +204,20 @@ function prefersReducedMotion() {
 }
 
 function ensureMigratedTitle(anchor) {
-  if (anchor.hasAttribute("title")) {
-    anchor.dataset.title = anchor.getAttribute("title");
-    anchor.removeAttribute("title");
+  if (!anchor.hasAttribute("title")) {
+    return;
   }
+
+  anchor.dataset.title = anchor.getAttribute("title");
+  anchor.removeAttribute("title");
 }
 
 function closestTooltipAnchor(element) {
-  if (!element) {
-    return;
+  for (let current = element; current; current = current.parentElement) {
+    if (current.getAttribute && (current.getAttribute("title") || current.dataset?.title)) {
+      return current;
+    }
   }
-  if (element.getAttribute && (element.getAttribute("title") || element.dataset?.title)) {
-    return element;
-  }
-  return closestTooltipAnchor(element.parentElement);
 }
 
 /**

@@ -2,7 +2,7 @@ import "../js/common";
 import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 
 const frame = document.querySelector("#frame-company-overview");
-const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let loadingTimer;
 let requestId = 0;
@@ -107,8 +107,8 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
 }
 
 function parseLocaleNumber(text) {
-  const decimals = (text.split(/[.,]/)[1] ?? "").length;
-  return { value: Number.parseFloat(text.replace(",", ".")), decimals };
+  const decimals = (text.split(/[.,]/, 2)[1] ?? "").length;
+  return { value: Number(text.replace(",", ".")), decimals };
 }
 
 function easeInOutQuad(t) {

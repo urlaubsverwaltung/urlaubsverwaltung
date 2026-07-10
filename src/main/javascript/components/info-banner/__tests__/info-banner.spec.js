@@ -20,7 +20,7 @@ describe("info-banner", function () {
   });
 
   it("injects a height of 0 when there is no #info-banner element", async function () {
-    document.body.innerHTML = ``;
+    document.body.replaceChildren();
 
     await import("../info-banner");
 
@@ -47,7 +47,7 @@ describe("info-banner", function () {
     expect(style.textContent).toBe(":root { --info-banner-height: 42px; }");
 
     getBoundingClientRectSpy.mockReturnValue({ height: 84 });
-    globalThis.dispatchEvent(new Event("resize"));
+    dispatchEvent(new Event("resize"));
 
     expect(style.textContent).toBe(":root { --info-banner-height: 84px; }");
   });

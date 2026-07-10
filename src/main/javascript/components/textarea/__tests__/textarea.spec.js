@@ -2,9 +2,7 @@ import "..";
 
 describe("textarea", function () {
   afterEach(function () {
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
   });
 
   it("sets 'rows' attribute to 4 when textarea element is focused", function () {

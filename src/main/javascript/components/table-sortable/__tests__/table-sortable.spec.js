@@ -2,9 +2,7 @@ import "..";
 
 describe("table-sortable", () => {
   afterEach(function () {
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
 
     vi.clearAllMocks();
   });

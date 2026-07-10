@@ -69,8 +69,7 @@ describe("useTheme", () => {
   test("initializes with explicitly set dark theme", async () => {
     mockHtmlElement.classList.contains.mockImplementation((className) => {
       if (className === "theme-system") return false;
-      if (className === "theme-dark") return true;
-      return false;
+      return className === "theme-dark";
     });
 
     const themeModule = await import("../use-theme");

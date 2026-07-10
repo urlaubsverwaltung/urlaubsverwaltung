@@ -3,10 +3,12 @@ const expandedNumberOfRows = "4";
 const textareas = new WeakMap();
 
 document.addEventListener("focusin", function (event) {
-  if (event.target.tagName === "TEXTAREA") {
-    textareas.set(event.target, event.target.getAttribute("rows"));
-    event.target.setAttribute("rows", expandedNumberOfRows);
+  if (event.target.tagName !== "TEXTAREA") {
+    return;
   }
+
+  textareas.set(event.target, event.target.getAttribute("rows"));
+  event.target.setAttribute("rows", expandedNumberOfRows);
 });
 
 document.addEventListener("focusout", function (event) {

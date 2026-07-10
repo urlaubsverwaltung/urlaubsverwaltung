@@ -2,9 +2,7 @@ import "..";
 
 describe("nav-tabs", function () {
   afterEach(function () {
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
 
     vi.clearAllMocks();
   });
@@ -117,7 +115,7 @@ describe("nav-tabs", function () {
   });
 
   it("replaces the URL when nav-tab is clicked", function () {
-    vi.spyOn(globalThis.history, "replaceState");
+    vi.spyOn(history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `
@@ -148,14 +146,14 @@ describe("nav-tabs", function () {
     const navTabBLink = document.querySelector("li[data-content='#content-bbb'] a");
 
     navTabBLink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
+    expect(history.replaceState).toHaveBeenLastCalledWith(
       undefined,
       undefined,
       expect.stringContaining("/#content-bbb"),
     );
 
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
+    expect(history.replaceState).toHaveBeenLastCalledWith(
       undefined,
       undefined,
       expect.stringContaining("/#content-aaa"),
@@ -163,7 +161,7 @@ describe("nav-tabs", function () {
   });
 
   it("does not replace the URL when the current active nav-tab is clicked", function () {
-    vi.spyOn(globalThis.history, "replaceState");
+    vi.spyOn(history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `
@@ -185,6 +183,6 @@ describe("nav-tabs", function () {
     const navTabALink = document.querySelector("li[data-content='#content-aaa'] a");
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(globalThis.history.replaceState).not.toHaveBeenCalled();
+    expect(history.replaceState).not.toHaveBeenCalled();
   });
 });

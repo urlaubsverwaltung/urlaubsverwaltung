@@ -18,7 +18,7 @@ describe("app-form", function () {
       document.body.firstElementChild.remove();
     }
     vi.clearAllMocks();
-    globalThis.history.pushState({}, "", "/web/application/new");
+    history.pushState({}, "", "/web/application/new");
   });
 
   function flushMicrotasks() {
@@ -175,7 +175,7 @@ describe("app-form", function () {
 
   describe("preset dates from the URL (calendar day click)", function () {
     it("fetches days/department vacations for 'from' and 'to' query params", async function () {
-      globalThis.history.pushState({}, "", "/web/application/new?from=2024-05-10&to=2024-05-12");
+      history.pushState({}, "", "/web/application/new?from=2024-05-10&to=2024-05-12");
 
       await renderAndLoad();
 
@@ -197,7 +197,7 @@ describe("app-form", function () {
     });
 
     it("defaults 'to' to 'from' when only 'from' is present in the URL", async function () {
-      globalThis.history.pushState({}, "", "/web/application/new?from=2024-05-10");
+      history.pushState({}, "", "/web/application/new?from=2024-05-10");
 
       await renderAndLoad();
 

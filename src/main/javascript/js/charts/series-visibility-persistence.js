@@ -34,14 +34,16 @@ export function apexOptionsWithPersistence(apexOptions, options) {
   }));
 
   function toggleVisibility(id) {
-    if (id) {
-      if (hiddenIds.has(id)) {
-        hiddenIds.delete(id);
-      } else {
-        hiddenIds.add(id);
-      }
-      saveHiddenIds(options.key, options.version, hiddenIds);
+    if (!id) {
+    	return;
     }
+
+    if (hiddenIds.has(id)) {
+      hiddenIds.delete(id);
+    } else {
+      hiddenIds.add(id);
+    }
+    saveHiddenIds(options.key, options.version, hiddenIds);
   }
 
   return {
@@ -81,12 +83,12 @@ function buildStorageKey(storageKey) {
 function loadHiddenIds(storageKey, version) {
   const key = buildStorageKey(storageKey);
   try {
-    const raw = globalThis.localStorage.getItem(key);
+    const raw = localStorage.getItem(key);
     const parsed = raw ? JSON.parse(raw) : undefined;
     const persistedVersion = parsed?.version ? new Date(parsed.version) : undefined;
     if (!persistedVersion || version.getTime() !== persistedVersion.getTime()) {
       // no entry yet, or version differs from persisted -> use default - everything visible
-      globalThis.localStorage.removeItem(key);
+      localStorage.removeItem(key);
       return new Set();
     }
     return new Set(Array.isArray(parsed?.hiddenIds) ? parsed.hiddenIds : []);
@@ -104,7 +106,7 @@ function loadHiddenIds(storageKey, version) {
  */
 function saveHiddenIds(storageKey, version, hiddenIds) {
   try {
-    globalThis.localStorage.setItem(
+    localStorage.setItem(
       buildStorageKey(storageKey),
       JSON.stringify({ version, hiddenIds: [...hiddenIds] }),
     );

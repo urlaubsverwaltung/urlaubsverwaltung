@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/prevent-abbreviations */
-
 export const localisation = {
   /**
    * Regex used to parse the user input into a date object.

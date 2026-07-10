@@ -8,8 +8,6 @@ describe("calendar", () => {
   // mocking Date with overridden instanceof operator o_O phew°°°
   // required since datefn verifies with foo instanceof Date
   function mockDate(isoDate) {
-    /* eslint-disable unicorn/prevent-abbreviations */
-
     globalThis.Date = class extends RealDate {
       static [Symbol.hasInstance](instance) {
         return instance[dateInstanceIdentifier];
@@ -499,19 +497,14 @@ describe("calendar", () => {
   }
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
-    return globalThis.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
+    return Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
   }
 
   function renderCalendar(holidayService) {
     // note: Date is mocked in calendarTestSetup to return a fixed date value
     const referenceDate = new Date();
     const i18n = (messageKey) => `i18n:${messageKey}`;
-    globalThis.Urlaubsverwaltung.Calendar.init(
-      document.querySelector("#datepicker"),
-      holidayService,
-      referenceDate,
-      i18n,
-    );
+    Urlaubsverwaltung.Calendar.init(document.querySelector("#datepicker"), holidayService, referenceDate, i18n);
   }
 
   async function calendarTestSetup() {

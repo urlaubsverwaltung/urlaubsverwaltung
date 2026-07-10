@@ -72,7 +72,7 @@ describe("settings-form", function () {
   });
 
   it("does not throw when neither element exists", function () {
-    document.body.innerHTML = ``;
+    document.body.replaceChildren();
 
     expect(() => domContentLoaded()).not.toThrow();
   });

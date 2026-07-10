@@ -51,10 +51,11 @@ export const HolidayService = (function () {
   }
 
   function cacheAbsences(year) {
-    const absenceCache = (_CACHE["absences"] = _CACHE["absences"] || {});
+    _CACHE["absences"] ||= {};
+    const absenceCache = _CACHE["absences"];
 
     return function (data) {
-      absenceCache[year] = absenceCache[year] || [];
+      absenceCache[year] ||= [];
 
       for (let absence of data.absences) {
         absenceCache[year].push(absence);
@@ -63,10 +64,11 @@ export const HolidayService = (function () {
   }
 
   function cachePublicHoliday(year) {
-    const publicHolidayCache = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
+    _CACHE["publicHoliday"] ||= {};
+    const publicHolidayCache = _CACHE["publicHoliday"];
 
     return function (data) {
-      publicHolidayCache[year] = publicHolidayCache[year] || [];
+      publicHolidayCache[year] ||= [];
 
       for (let publicHoliday of data.publicHolidays) {
         publicHolidayCache[year].push(publicHoliday);
@@ -303,21 +305,19 @@ export const HolidayService = (function () {
      * @param {Function} cacheHandler
      * @returns {Promise}
      */
-    fetchAndCache: function (endpoint, year, parameters, cacheKey, cacheHandler) {
-      _CACHE[cacheKey] = _CACHE[cacheKey] || {};
+    fetchAndCache: async function (endpoint, year, parameters, cacheKey, cacheHandler) {
+      _CACHE[cacheKey] ||= {};
 
-      if (_CACHE[cacheKey][year]) {
-        return Promise.resolve(_CACHE[cacheKey][year]);
+      if (Object.hasOwn(_CACHE[cacheKey], year)) {
+        return _CACHE[cacheKey][year];
       }
 
-      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
+      const yearDate = parse(year.toString(), "yyyy", new Date());
+      const firstDayOfYear = formatISO(startOfYear(yearDate), { representation: "date" });
+      const lastDayOfYear = formatISO(endOfYear(yearDate), { representation: "date" });
 
-      return fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters }).then(cacheHandler(year));
+      const data = await fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters });
+      return cacheHandler(year)(data);
     },
 
     /**

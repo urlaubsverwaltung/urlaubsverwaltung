@@ -45,10 +45,8 @@ describe("mutation", () => {
             expect(event.target.getAttribute("disabled")).toBe("");
             setTimeout(function () {
               element.setAttribute("disabled", "disabled");
-            });
-          }
-
-          if (callCount === 2) {
+            }, 0);
+          } else if (callCount === 2) {
             expect(event.data.oldValue).toBe("");
             expect(event.target.getAttribute("disabled")).toBe("disabled");
             resolve();

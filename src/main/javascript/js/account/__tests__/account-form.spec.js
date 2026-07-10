@@ -136,7 +136,7 @@ describe("account-form", function () {
   }
 
   function dispatchChange(name) {
-    document.querySelector(`[name='${name}']`).dispatchEvent(new Event("change", { bubbles: true }));
+    document.querySelector(`[name='${CSS.escape(name)}']`).dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   async function setupHtml({ globallyEnabled, fieldsetDisabledInitially = false }) {

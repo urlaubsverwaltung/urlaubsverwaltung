@@ -107,6 +107,8 @@ describe("vacation-type-select", function () {
 });
 
 function setVacationType(vacationType) {
+  // vacationType is a fixed test constant (never user input), and jsdom does not implement CSS.escape
+  // eslint-disable-next-line unicorn/require-css-escape
   const value = document.querySelector(`option[data-vacationtype-category='${vacationType}']`).value;
   const selectElement = document.querySelector("#vacationType");
   selectElement.value = value;

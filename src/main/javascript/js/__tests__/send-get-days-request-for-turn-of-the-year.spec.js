@@ -7,9 +7,7 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
   });
 
   afterEach(function () {
-    while (document.body.firstChild) {
-      document.body.firstChild.remove();
-    }
+    document.body.replaceChildren();
     fetchMock.removeRoutes();
     fetchMock.clearHistory();
     vi.clearAllMocks();

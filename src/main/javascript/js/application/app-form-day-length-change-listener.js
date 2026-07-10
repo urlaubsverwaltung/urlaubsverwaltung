@@ -19,11 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
       // while the value of the input[type=date] would be a string representation of the browser specific date format
       // (e.g. `dd.MM.yyyy` or `yyyy-MM-dd` or ...)
       const startDateString = document.querySelector("#from").closest("duet-date-picker").value;
-      const toDateString = document.querySelector("#to").closest("duet-date-picker").value;
 
       if (!startDateString) {
         return;
       }
+
+      const toDateString = document.querySelector("#to").closest("duet-date-picker").value;
 
       const startDate = parseISO(startDateString);
       const toDate = toDateString ? parseISO(toDateString) : startDate;

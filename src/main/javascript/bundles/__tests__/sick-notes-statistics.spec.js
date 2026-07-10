@@ -44,7 +44,7 @@ describe("sick-notes-statistics", function () {
   });
 
   afterEach(function () {
-    document.body.innerHTML = "";
+    document.body.replaceChildren();
     delete globalThis.sicknoteStatistic;
     delete globalThis.uv;
     globalThis.localStorage.clear();
