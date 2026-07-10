@@ -47,7 +47,7 @@ describe("language-picker", function () {
     }
 
     function keyup(key) {
-      globalThis.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true, key }));
+      dispatchEvent(new KeyboardEvent("keyup", { bubbles: true, key }));
     }
 
     function click(element) {
@@ -138,7 +138,7 @@ describe("language-picker", function () {
     });
 
     afterEach(function () {
-      document.body.innerHTML = "";
+      document.body.replaceChildren();
       sessionStorage.clear();
     });
 

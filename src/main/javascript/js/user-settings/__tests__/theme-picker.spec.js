@@ -8,8 +8,8 @@ describe("theme-picker", function () {
   });
 
   afterEach(function () {
-    document.body.innerHTML = "";
-    document.head.innerHTML = "";
+    document.body.replaceChildren();
+    document.head.replaceChildren();
     document.documentElement.className = "";
     delete globalThis.matchMedia;
     vi.clearAllMocks();
@@ -51,6 +51,8 @@ describe("theme-picker", function () {
   }
 
   function selectTheme(form, value) {
+    // value is a fixed test constant (never user input), and jsdom does not implement CSS.escape
+    // eslint-disable-next-line unicorn/require-css-escape
     const radio = form.querySelector(`input[value='${value}']`);
     radio.checked = true;
     radio.dispatchEvent(new Event("change", { bubbles: true }));

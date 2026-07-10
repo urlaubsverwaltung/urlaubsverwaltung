@@ -136,6 +136,8 @@ describe("account-form", function () {
   }
 
   function dispatchChange(name) {
+    // name is a fixed test constant (never user input), and jsdom does not implement CSS.escape
+    // eslint-disable-next-line unicorn/require-css-escape
     document.querySelector(`[name='${name}']`).dispatchEvent(new Event("change", { bubbles: true }));
   }
 
