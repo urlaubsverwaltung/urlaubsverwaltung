@@ -4,7 +4,7 @@ class NavTabs extends HTMLUListElement {
   connectedCallback() {
     this[activeSymbol] = this.querySelector("li[data-active]");
 
-    function handleClick(event) {
+    const handleClick = (event) => {
       if (event.target.tagName !== "A") {
         return;
       }
@@ -32,11 +32,11 @@ class NavTabs extends HTMLUListElement {
         this[activeSymbol] = clickedItem;
         history.replaceState(undefined, undefined, event.target.href);
       }
-    }
+    };
 
     this.addEventListener("click", handleClick);
 
-    this.cleanup = function () {
+    this.cleanup = () => {
       this.removeEventListener("click", handleClick);
     };
   }

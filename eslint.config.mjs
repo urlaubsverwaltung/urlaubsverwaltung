@@ -34,8 +34,6 @@ export default [
         },
       ],
 
-      /* would require rewriting object-literal components (calendar, nav-tabs, ...) as ES6 classes */
-      "unicorn/no-this-outside-of-class": "off",
       /* conflicts with our established module-level singleton state pattern (tooltip, theme-picker, ...) */
       "unicorn/no-top-level-assignment-in-function": "off",
       /* we intentionally expose bundle entry points on globalThis and mock globals in tests */
