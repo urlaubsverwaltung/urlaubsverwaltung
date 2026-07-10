@@ -1,4 +1,14 @@
 export class UVFeedbackBox extends HTMLDivElement {
+  connectedCallback() {
+    // `command="close"` is only a native no-op for non-<dialog> elements (no "command" event is even
+    // dispatched), so the close button is wired up manually here instead.
+    this.addEventListener("click", (event) => {
+      if (event.target.closest("[command='close']")) {
+        this.remove();
+      }
+    });
+  }
+
   remove() {
     // wait for finished transition or a max value
     // THEN remove the element from DOM.
