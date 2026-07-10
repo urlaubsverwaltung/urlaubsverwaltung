@@ -17,6 +17,11 @@
   @apply border-b-(--uv-cal-today-border-color)/40;
 }
 
+.vacationOverview-table:not(:has(tbody tr)) thead th.vacationOverview-cal-head.today {
+  @apply border-b-3;
+  @apply border-b-(--uv-cal-today-border-color)/40;
+}
+
 @variant dark {
   .vacationOverview-table th.vacationOverview-cal-head.today,
   .vacationOverview-table td.today {
@@ -29,6 +34,10 @@
   }
 
   .vacationOverview-table tbody tr:last-child td.today {
+    @apply border-b-(--uv-cal-today-border-color)/80;
+  }
+
+  .vacationOverview-table:not(:has(tbody tr)) thead th.vacationOverview-cal-head.today {
     @apply border-b-(--uv-cal-today-border-color)/80;
   }
 }
