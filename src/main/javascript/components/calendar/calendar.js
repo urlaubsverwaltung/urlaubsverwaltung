@@ -134,7 +134,7 @@ const View = (function () {
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
       if (typeof data === "function") {
-        return data.apply(this, arguments);
+        return Reflect.apply(data, this, arguments);
       }
 
       const value = data[type];
