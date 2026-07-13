@@ -54,6 +54,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -138,8 +140,8 @@ class OverviewViewControllerTest {
     }
 
     private void stubWorkDaysCountForApplications(BigDecimal daysPerApplication) {
-        when(workDaysCountService.getWorkDaysCountForApplications(anyCollection()))
-            .thenAnswer(invocation -> mapEachApplicationTo(invocation, daysPerApplication));
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(anyCollection()))
+            .thenAnswer(invocation -> mapEachApplicationToWorkDaysByYear(invocation, daysPerApplication));
     }
 
     private void stubWorkDaysCountForApplicationsWithUsedDaysSummary(BigDecimal daysPerApplication) {
@@ -151,6 +153,15 @@ class OverviewViewControllerTest {
     private static Map<Application, BigDecimal> mapEachApplicationTo(InvocationOnMock invocation, BigDecimal value) {
         final Collection<Application> applications = invocation.getArgument(0);
         return applications.stream().collect(toMap(identity(), application -> value));
+    }
+
+    private static Map<Application, SortedMap<Integer, BigDecimal>> mapEachApplicationToWorkDaysByYear(InvocationOnMock invocation, BigDecimal value) {
+        final Collection<Application> applications = invocation.getArgument(0);
+        return applications.stream().collect(toMap(identity(), application -> {
+            final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+            workDaysByYear.put(application.getStartDate().getYear(), value);
+            return workDaysByYear;
+        }));
     }
 
     @Nested
@@ -1074,6 +1085,7 @@ class OverviewViewControllerTest {
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(List.of(application1, application2));
+        stubWorkDaysCountForApplications(ONE);
 
         final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN));
         final ModelAndView mav = actions.andReturn().getModelAndView();

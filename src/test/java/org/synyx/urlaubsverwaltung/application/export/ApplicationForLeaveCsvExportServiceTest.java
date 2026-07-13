@@ -15,10 +15,13 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.TEN;
 import static java.util.Locale.JAPANESE;
@@ -75,7 +78,9 @@ class ApplicationForLeaveCsvExportServiceTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        workDaysByYear.put(startDate.getYear(), TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear);
 
         final List<ApplicationForLeaveExport> applicationForLeaveExports = new ArrayList<>();
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", person.getFirstName(), person.getLastName(), List.of(applicationForLeave), List.of("departmentA"));

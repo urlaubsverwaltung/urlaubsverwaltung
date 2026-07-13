@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,9 +35,14 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
@@ -106,6 +112,20 @@ class ApplicationForLeaveViewControllerTest {
             messageSource, clock);
     }
 
+    private void stubWorkDaysCountByYear() {
+        when(workDaysCountService.getWorkDaysCountByYearForApplications(any()))
+            .thenAnswer(ApplicationForLeaveViewControllerTest::oneDayPerApplicationByYear);
+    }
+
+    private static Map<Application, SortedMap<Integer, BigDecimal>> oneDayPerApplicationByYear(InvocationOnMock invocation) {
+        final Collection<Application> applications = invocation.getArgument(0);
+        return applications.stream().collect(toMap(identity(), application -> {
+            final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+            workDaysByYear.put(application.getStartDate().getYear(), BigDecimal.ONE);
+            return workDaysByYear;
+        }));
+    }
+
     @Nested
     class PersonSearch {
 
@@ -122,6 +142,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForUser() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person userPerson = new Person();
@@ -176,6 +197,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForBoss() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -267,6 +289,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForBossWithCancellationRequested() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -376,6 +399,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForOffice() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -474,6 +498,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForDepartmentHead() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -560,6 +585,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForDepartmentHeadWithCancellationRequested() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -664,6 +690,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForSecondStage() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -761,6 +788,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForSecondStageWithCancellationRequested() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -876,6 +904,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplications() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person departmentHeadAndSecondStageAuth = new Person();
@@ -966,6 +995,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplicationsWithCancellationRequested() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person departmentHeadAndSecondStageAuth = new Person();
@@ -1044,6 +1074,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void ensureDistinctCancellationRequests() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person departmentHeadAndSecondStageAuth = new Person();
@@ -1094,6 +1125,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void departmentHeadAndSecondStageAuthorityOfSameDepartmentsGrantsApplications() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person departmentHeadAndSecondStageAuth = new Person();
@@ -1154,6 +1186,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void ensureOvertimeMoreThan24hAreDisplayedCorrectly() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person userPerson = new Person();
@@ -1186,6 +1219,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForDepartmentHeadAndOfficeRoleAndNotAllAreInHisDepartment() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -1267,6 +1301,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getApplicationForSecondStageAuthorityAndOfficeRoleAndNotAllAreInHisDepartment() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person person = new Person();
@@ -1349,6 +1384,7 @@ class ApplicationForLeaveViewControllerTest {
     @ValueSource(strings = {"/web/application", "/web/application/replacement"})
     @ParameterizedTest
     void ensureReplacementItem(String path) throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person signedInUser = new Person();
@@ -1394,6 +1430,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void ensureSecondStageAuthorityViewsAllowButton() throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person departmentHeadAndSecondStageAuth = new Person();
@@ -1450,6 +1487,7 @@ class ApplicationForLeaveViewControllerTest {
     @ParameterizedTest
     @EnumSource(value = ApplicationStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
     void ensureReplacementItemIsPendingForApplicationStatus(ApplicationStatus status) throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person signedInUser = new Person();
@@ -1488,6 +1526,7 @@ class ApplicationForLeaveViewControllerTest {
     @ParameterizedTest
     @EnumSource(value = ApplicationStatus.class, names = {"ALLOWED", "ALLOWED_CANCELLATION_REQUESTED", "REJECTED", "CANCELLED", "REVOKED"})
     void ensureReplacementItemIsNotPendingForApplicationStatus(ApplicationStatus status) throws Exception {
+        stubWorkDaysCountByYear();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
         final Person signedInUser = new Person();
@@ -1529,6 +1568,7 @@ class ApplicationForLeaveViewControllerTest {
     @ValueSource(strings = {"/web/application", "/web/sicknote/submitted"})
     @ParameterizedTest
     void getSubmittedSickNotesForOffice(String path) throws Exception {
+        stubWorkDaysCountByYear();
 
         final Person person = new Person();
         person.setFirstName("Hans");
@@ -1583,6 +1623,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getSubmittedSickNotesForDepartmentHeadWithSickNoteEdit() throws Exception {
+        stubWorkDaysCountByYear();
 
         final Person person = new Person();
         person.setFirstName("Hans");
@@ -1637,6 +1678,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getSubmittedSickNotesForSecondStageAuthorityWithSickNoteEdit() throws Exception {
+        stubWorkDaysCountByYear();
 
         final Person person = new Person();
         person.setFirstName("Hans");
@@ -1691,6 +1733,7 @@ class ApplicationForLeaveViewControllerTest {
 
     @Test
     void getSubmittedSickNotesForBossWithSickNoteEdit() throws Exception {
+        stubWorkDaysCountByYear();
 
         final Person person = new Person();
         person.setFirstName("Hans");

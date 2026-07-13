@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -53,9 +55,39 @@ public class WorkDaysCountService {
      * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
+
+        final BigDecimal workDays = getWorkDaysByYear(startDate, endDate, person).values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return applyDayLength(workDays, dayLength);
+    }
+
+    /**
+     * Calculates the workdays like {@link #getWorkDaysCount(DayLength, LocalDate, LocalDate, Person)}, but split
+     * into the years the given period spans. Every year of the period is present in the result,
+     * even when it contains no workdays.
+     *
+     * @param dayLength personal daily working time of the given person
+     * @param startDate start day of the period to calculate the working days
+     * @param endDate   last day of the period to calculate the working days, must be after <code>startDate</code>
+     * @param person    to calculate workdays in a certain time period
+     * @return number of workdays for each year of the period, sorted by year
+     * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
+     */
+    public SortedMap<Integer, BigDecimal> getWorkDaysCountByYear(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
+
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        getWorkDaysByYear(startDate, endDate, person)
+            .forEach((year, workDays) -> workDaysByYear.put(year, applyDayLength(workDays, dayLength)));
+
+        return workDaysByYear;
+    }
+
+    private SortedMap<Integer, BigDecimal> getWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person) {
+
         final DateRange dateRange = new DateRange(startDate, endDate);
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
-        return workDaysCount(dayLength, startDate, endDate, person, workingTimes);
+        return calculateWorkDaysByYear(startDate, endDate, person, workingTimes);
     }
 
     /**
@@ -85,6 +117,38 @@ public class WorkDaysCountService {
      */
     public Map<Application, BigDecimal> getWorkDaysCountForApplications(Collection<Application> applications, DateRange limitedToDateRange) {
 
+        final Map<Application, BigDecimal> workDaysCountByApplication = new LinkedHashMap<>();
+        batchWorkDaysByYear(applications, limitedToDateRange).forEach((application, workDaysByYear) -> {
+            final BigDecimal workDays = workDaysByYear.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+            workDaysCountByApplication.put(application, applyDayLength(workDays, application.getDayLength()));
+        });
+
+        return workDaysCountByApplication;
+    }
+
+    /**
+     * Batch variant of {@link #getWorkDaysCountByYear(DayLength, LocalDate, LocalDate, Person)} for many applications.
+     * <p>
+     * The working times of all involved persons are loaded with a single query (instead of one query per
+     * application), avoiding an N+1 query when the workdays of a whole list of applications are needed.
+     *
+     * @param applications to calculate the workdays for
+     * @return the number of workdays per application, split by year and sorted by year
+     */
+    public Map<Application, SortedMap<Integer, BigDecimal>> getWorkDaysCountByYearForApplications(Collection<Application> applications) {
+
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = new LinkedHashMap<>();
+        batchWorkDaysByYear(applications, null).forEach((application, rawWorkDaysByYear) -> {
+            final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+            rawWorkDaysByYear.forEach((year, workDays) -> workDaysByYear.put(year, applyDayLength(workDays, application.getDayLength())));
+            workDaysByYearByApplication.put(application, workDaysByYear);
+        });
+
+        return workDaysByYearByApplication;
+    }
+
+    private Map<Application, SortedMap<Integer, BigDecimal>> batchWorkDaysByYear(Collection<Application> applications, @Nullable DateRange limitedToDateRange) {
+
         if (applications.isEmpty()) {
             return Map.of();
         }
@@ -93,18 +157,18 @@ public class WorkDaysCountService {
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeService.getByPersons(persons).stream()
             .collect(groupingBy(WorkingTime::getPerson));
 
-        final Map<Application, BigDecimal> workDaysCountByApplication = new LinkedHashMap<>();
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = new LinkedHashMap<>();
         for (Application application : applications) {
             final LocalDate startDate = clipStart(application.getStartDate(), limitedToDateRange);
             final LocalDate endDate = clipEnd(application.getEndDate(), limitedToDateRange);
             final List<WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(application.getPerson(), List.of());
             final Map<DateRange, WorkingTime> workingTimes =
                 WorkingTimeServiceImpl.workingTimesByDateRange(personWorkingTimes, new DateRange(startDate, endDate));
-            workDaysCountByApplication.put(application,
-                workDaysCount(application.getDayLength(), startDate, endDate, application.getPerson(), workingTimes));
+            workDaysByYearByApplication.put(application,
+                calculateWorkDaysByYear(startDate, endDate, application.getPerson(), workingTimes));
         }
 
-        return workDaysCountByApplication;
+        return workDaysByYearByApplication;
     }
 
     private static LocalDate clipStart(LocalDate startDate, @Nullable DateRange limit) {
@@ -121,7 +185,7 @@ public class WorkDaysCountService {
         return limit.endDate();
     }
 
-    private BigDecimal workDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes) {
+    private SortedMap<Integer, BigDecimal> calculateWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes) {
 
         if (workingTimes.isEmpty()) {
             throw new WorkDaysCountException("No working times found for user '" + person.getId()
@@ -132,7 +196,11 @@ public class WorkDaysCountService {
         final Map<LocalDate, WorkingTime> workingTimesByDate = getLocalDateWorkingTime(workingTimes);
         final Map<LocalDate, List<PublicHoliday>> publicHolidaysByDate = getPublicHolidaysByDate(workingTimes);
 
-        BigDecimal vacationDays = BigDecimal.ZERO;
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
+            workDaysByYear.put(year, BigDecimal.ZERO);
+        }
+
         LocalDate day = startDate;
         while (!day.isAfter(endDate)) {
             final WorkingTime workingTime = workingTimesByDate.get(day);
@@ -148,17 +216,22 @@ public class WorkDaysCountService {
                 .orElse(BigDecimal.ONE);
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
-            vacationDays = vacationDays.add(duration.multiply(workingDuration));
+            workDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
 
             day = day.plusDays(1);
         }
 
-        // vacation days < 1 day --> must not be divided, else an ArithmeticException is thrown
-        if (vacationDays.compareTo(BigDecimal.ONE) < 0) {
-            return vacationDays.setScale(1, UNNECESSARY);
+        return workDaysByYear;
+    }
+
+    private static BigDecimal applyDayLength(BigDecimal workDays, DayLength dayLength) {
+
+        // work days < 1 day --> must not be divided, else an ArithmeticException is thrown
+        if (workDays.compareTo(BigDecimal.ONE) < 0) {
+            return workDays.setScale(1, UNNECESSARY);
         }
 
-        return vacationDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
+        return workDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
     }
 
     private static @NonNull Map<LocalDate, WorkingTime> getLocalDateWorkingTime(Map<DateRange, WorkingTime> workingTimes) {

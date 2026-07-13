@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.SortedMap;
 
 record ApplicationDto(
     Long id,
@@ -27,6 +28,7 @@ record ApplicationDto(
     DayOfWeek weekDayOfEndDate,
     DayLength dayLength,
     BigDecimal workDays,
+    SortedMap<Integer, BigDecimal> workDaysByYear,
     Duration hours,
     LocalDate editedDate,
     LocalDate cancelDate,

@@ -30,6 +30,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -161,9 +162,9 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
     }
 
     private List<ApplicationForLeave> toApplicationsForLeave(List<Application> applications) {
-        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
         return applications.stream()
-            .map(application -> new ApplicationForLeave(application, workDaysByApplication.get(application)))
+            .map(application -> new ApplicationForLeave(application, workDaysByYearByApplication.get(application)))
             .toList();
     }
 
@@ -201,6 +202,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
         dto.setDayLength(applicationForLeave.getDayLength());
         dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setWorkDaysByYear(applicationForLeave.getWorkDaysByYear());
         dto.setPersonId(applicationForLeave.getPerson().getId());
         dto.setHours(applicationForLeave.getHours());
         dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());

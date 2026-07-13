@@ -21,6 +21,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import static java.math.BigDecimal.TEN;
 import static java.time.DayOfWeek.FRIDAY;
@@ -33,6 +34,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -534,6 +536,35 @@ class WorkDaysCountServiceTest {
         verifyNoInteractions(workingTimeService);
     }
 
+    @Test
+    void getWorkDaysCountByYearForApplicationsBatchesWorkingTimeLoadingWithASingleQuery() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        // application spans two years
+        final Application application = application(person, LocalDate.of(2013, DECEMBER, 23), LocalDate.of(2014, JANUARY, 2), FULL);
+
+        final WorkingTime workingTime = createWorkingTime(person, LocalDate.of(2013, DECEMBER, 23), MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getByPersons(List.of(person))).thenReturn(List.of(workingTime));
+
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYear = sut.getWorkDaysCountByYearForApplications(List.of(application));
+
+        assertThat(workDaysByYear.get(application)).containsExactly(entry(2013, BigDecimal.valueOf(4.0)), entry(2014, BigDecimal.valueOf(1.0)));
+
+        // the whole point: working times are loaded once, not once per application
+        verify(workingTimeService).getByPersons(List.of(person));
+        verify(workingTimeService, never()).getWorkingTimesByPersonAndDateRange(any(), any());
+    }
+
+    @Test
+    void getWorkDaysCountByYearForApplicationsReturnsEmptyMapAndDoesNotQueryForNoApplications() {
+        assertThat(sut.getWorkDaysCountByYearForApplications(List.of())).isEmpty();
+        verifyNoInteractions(workingTimeService);
+    }
+
     private static Application application(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
         final Application application = new Application();
         application.setPerson(person);
@@ -541,6 +572,75 @@ class WorkDaysCountServiceTest {
         application.setEndDate(endDate);
         application.setDayLength(dayLength);
         return application;
+    }
+
+    @Test
+    void getWorkDaysCountByYearForPeriodWithinOneYear() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2010, DECEMBER, 17);
+        final LocalDate endDate = LocalDate.of(2010, DECEMBER, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final SortedMap<Integer, BigDecimal> workDaysByYear = sut.getWorkDaysCountByYear(FULL, startDate, endDate, person);
+        assertThat(workDaysByYear).containsExactly(entry(2010, BigDecimal.valueOf(10.0)));
+    }
+
+    @Test
+    void getWorkDaysCountByYearForPeriodSpanningTwoYears() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
+        final LocalDate endDate = LocalDate.of(2014, JANUARY, 2);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        // 2013: 23.12. (Mon) = 1, 24.12. = 0.5, 25./26.12. public holidays, 27.12. (Fri) = 1,
+        //       28./29.12. weekend, 30.12. (Mon) = 1, 31.12. = 0.5 => 4
+        // 2014: 01.01. public holiday, 02.01. (Thu) = 1 => 1
+        final SortedMap<Integer, BigDecimal> workDaysByYear = sut.getWorkDaysCountByYear(FULL, startDate, endDate, person);
+        assertThat(workDaysByYear).containsExactly(entry(2013, BigDecimal.valueOf(4.0)), entry(2014, BigDecimal.valueOf(1.0)));
+    }
+
+    @Test
+    void getWorkDaysCountByYearForPeriodSpanningTwoYearsDayLengthMorning() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
+        final LocalDate endDate = LocalDate.of(2014, JANUARY, 2);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final SortedMap<Integer, BigDecimal> workDaysByYear = sut.getWorkDaysCountByYear(MORNING, startDate, endDate, person);
+        assertThat(workDaysByYear).containsExactly(entry(2013, BigDecimal.valueOf(2.0)), entry(2014, BigDecimal.valueOf(0.5)));
+    }
+
+    @Test
+    void getWorkDaysCountByYearContainsYearWithoutWorkDays() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2021, DECEMBER, 25);
+        final LocalDate endDate = LocalDate.of(2022, JANUARY, 1);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        // 2021: 25./26.12. weekend, 27.12.-30.12. (Mon-Thu) = 4, 31.12. = 0.5 => 4.5
+        // 2022: 01.01. public holiday on saturday => 0
+        final SortedMap<Integer, BigDecimal> workDaysByYear = sut.getWorkDaysCountByYear(FULL, startDate, endDate, person);
+        assertThat(workDaysByYear).containsExactly(entry(2021, BigDecimal.valueOf(4.5)), entry(2022, BigDecimal.valueOf(0.0)));
     }
 
     private HolidayManager getHolidayManager() {

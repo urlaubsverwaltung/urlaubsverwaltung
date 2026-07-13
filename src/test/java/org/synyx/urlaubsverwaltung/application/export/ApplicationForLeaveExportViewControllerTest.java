@@ -25,11 +25,14 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.TEN;
 import static java.util.Locale.JAPANESE;
@@ -109,7 +112,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -158,7 +161,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -212,7 +215,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -259,7 +262,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -288,5 +291,11 @@ class ApplicationForLeaveExportViewControllerTest {
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
             .build()
             .perform(builder);
+    }
+
+    private static SortedMap<Integer, BigDecimal> workDaysByYear(int year, BigDecimal workDays) {
+        final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
+        workDaysByYear.put(year, workDays);
+        return workDaysByYear;
     }
 }

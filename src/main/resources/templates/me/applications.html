@@ -163,26 +163,12 @@
               <td class="text-center">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
-                  <span th:class="|text-gray-500 days-${loopStatus.index}|">
-                    <!-- is filled by javascript-->
+                  <span class="text-gray-500">
+                    <br />
+                    <th:block
+                      th:replace="~{fragments/workdays-by-year::workdays-by-year(${app.workDaysByYear})}"
+                    ></th:block>
                   </span>
-                  <script type="text/javascript" th:inline="javascript">
-                    document.addEventListener("DOMContentLoaded", function () {
-                      const dayLength = /*[[${app.dayLength}]]*/ 1;
-                      const personId = /*[[${app.personId}]]*/ 1;
-                      const startDate = /*[[${#temporals.format(app.startDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
-                      const endDate = /*[[${#temporals.format(app.endDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
-
-                      sendGetDaysRequestForTurnOfTheYear(
-                        /*[[@{/api}]]*/ "",
-                        new Date(startDate),
-                        new Date(endDate),
-                        dayLength,
-                        personId,
-                        /*[[${'.days-' + loopStatus.index}]]*/ "",
-                      );
-                    });
-                  </script>
                 </th:block>
                 <span
                   th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}"
