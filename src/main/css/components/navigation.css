@@ -212,7 +212,7 @@
     @apply font-mono;
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-gray-400);
+    color: var(--color-gray-500);
 
     @variant dark {
       color: var(--color-zinc-500);
