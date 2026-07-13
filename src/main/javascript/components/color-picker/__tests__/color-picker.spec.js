@@ -89,6 +89,14 @@ describe("color-picker", function () {
       }
     });
 
+    it("hides the option radio inputs from assistive tech since the option itself carries the state", function () {
+      const { options } = renderColorPicker();
+
+      for (const option of options) {
+        expect(option.querySelector("input").getAttribute("aria-hidden")).toBe("true");
+      }
+    });
+
     it("makes the picker itself focusable", function () {
       const { picker } = renderColorPicker();
 
