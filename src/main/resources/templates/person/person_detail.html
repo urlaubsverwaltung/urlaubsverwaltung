@@ -37,12 +37,7 @@
                 <h2 th:text="#{person.account.basedata.title}">Stammdaten</h2>
               </th:block>
               <th:block th:ref="person-details-basedata-actions">
-                <a
-                  th:if="${canEditBasedata}"
-                  th:href="@{/web/person/__${person.id}__/basedata}"
-                  class="icon-link"
-                  aria-hidden="true"
-                >
+                <a th:if="${canEditBasedata}" th:href="@{/web/person/__${person.id}__/basedata}" class="icon-link">
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
@@ -200,7 +195,6 @@
                   th:if="${canEditPermissions}"
                   th:href="@{/web/person/__${person.id}__/permissions}"
                   class="icon-link"
-                  aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
@@ -247,7 +241,6 @@
                   th:if="${canEditNotifications}"
                   th:href="@{/web/person/__${person.id}__/notifications}"
                   class="icon-link"
-                  aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
@@ -289,7 +282,6 @@
                   th:if="${canEditAccounts}"
                   th:href="@{/web/person/__${person.id}__/account?year=__${selectedYear}__}"
                   class="icon-link"
-                  aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
@@ -362,7 +354,6 @@
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
                   class="icon-link"
-                  aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
@@ -492,7 +483,6 @@
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
                   class="icon-link"
-                  aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
