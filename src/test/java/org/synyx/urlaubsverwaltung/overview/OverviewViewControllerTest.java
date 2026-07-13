@@ -71,7 +71,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -130,9 +129,6 @@ class OverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(workDaysCountService.getWorkDaysCountByYearForApplications(anyCollection()))
-            .thenAnswer(invocation -> mapEachApplicationToWorkDaysByYear(invocation, ZERO));
-
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
@@ -1089,6 +1085,7 @@ class OverviewViewControllerTest {
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(List.of(application1, application2));
+        stubWorkDaysCountForApplications(ONE);
 
         final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN));
         final ModelAndView mav = actions.andReturn().getModelAndView();
