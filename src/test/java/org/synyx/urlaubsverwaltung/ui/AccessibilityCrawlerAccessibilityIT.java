@@ -136,11 +136,15 @@ class AccessibilityCrawlerAccessibilityIT {
                             final URI absoluteUri = URI.create(baseUrl).resolve(href).normalize();
                             final String absoluteUrl = absoluteUri.toString();
 
-                            // Ensure it's internal, not visited, not already queued, and skip destructive paths like /logout
+                            // Ensure it's internal, not visited, not already queued, and skip destructive paths like
+                            // /logout as well as file downloads (/download, /export) - these don't navigate to an
+                            // HTML document at all, so there's nothing for axe to meaningfully audit there
                             if (absoluteUrl.startsWith(baseUrl)
                                 && !visitedLinks.contains(absoluteUrl)
                                 && !linksToVisit.contains(absoluteUrl)
-                                && !absoluteUrl.contains("/logout")) {
+                                && !absoluteUrl.contains("/logout")
+                                && !absoluteUrl.contains("/download")
+                                && !absoluteUrl.contains("/export")) {
 
                                 linksToVisit.add(absoluteUrl);
                             }
