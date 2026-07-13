@@ -175,6 +175,7 @@ class AccessibilityCrawlerAccessibilityIT {
                                     LOG.warn("   │  │  Fail: {} - {}", check.getId(), check.getImpact());
                                 }
                             }
+                            LOG.warn("   │  │  Summary: {}", node.getFailureSummary());
                             if (i < violation.getNodes().size() - 1) {
                                 LOG.warn("   │  └─");
                             }
