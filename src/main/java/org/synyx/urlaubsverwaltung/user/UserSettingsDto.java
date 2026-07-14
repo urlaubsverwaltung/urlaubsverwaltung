@@ -8,6 +8,8 @@ public class UserSettingsDto {
 
     private Locale locale;
 
+    private boolean gravatarEnabled;
+
     public String getTheme() {
         return theme;
     }
@@ -22,5 +24,13 @@ public class UserSettingsDto {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public boolean isGravatarEnabled() {
+        return gravatarEnabled;
+    }
+
+    public void setGravatarEnabled(boolean gravatarEnabled) {
+        this.gravatarEnabled = gravatarEnabled;
     }
 }

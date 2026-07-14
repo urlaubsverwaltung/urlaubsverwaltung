@@ -239,6 +239,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("Firstname");
         person.setLastName("Lastname");
         person.setEmail("firstname.lastname@example.org");
+        person.setGravatarEnabled(true);
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         statistic.setPersonBasedata(new PersonBasedata(new PersonId(1L), "42", "some additional information"));

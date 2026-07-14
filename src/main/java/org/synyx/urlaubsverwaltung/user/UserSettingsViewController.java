@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +41,7 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final MessageSource messageSource;
+    private final SettingsService settingsService;
 
     UserSettingsViewController(
         PersonService personService,
@@ -48,7 +50,8 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
         UserSettingsDtoValidator userSettingsDtoValidator,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
-        MessageSource messageSource
+        MessageSource messageSource,
+        SettingsService settingsService
     ) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
@@ -57,6 +60,7 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.messageSource = messageSource;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -78,9 +82,14 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser);
-        model.addAttribute("userSettings", userSettingsToDto(userSettings));
+        final UserSettingsDto userSettingsDto = userSettingsToDto(userSettings);
+        userSettingsDto.setGravatarEnabled(signedInUser.isGravatarEnabled());
+
+        model.addAttribute("userSettings", userSettingsDto);
         model.addAttribute("supportedLocales", getSupportedLocales());
         model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
+        model.addAttribute("globalGravatarEnabled", settingsService.getSettings().getAvatarSettings().isGravatarEnabled());
+        model.addAttribute("personInitials", signedInUser.getInitials());
 
         return "user/user-settings";
     }
@@ -94,17 +103,24 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
+        final boolean globalGravatarEnabled = settingsService.getSettings().getAvatarSettings().isGravatarEnabled();
+
         userSettingsDtoValidator.validate(userSettingsDto, errors);
         if (errors.hasErrors()) {
             model.addAttribute("userSettings", userSettingsDto);
             model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
             model.addAttribute("supportedLocales", getSupportedLocales());
+            model.addAttribute("globalGravatarEnabled", globalGravatarEnabled);
+            model.addAttribute("personInitials", signedInUser.getInitials());
             return "user/user-settings";
         }
 
         final Theme theme = themeNameToTheme(userSettingsDto.getTheme());
         final Locale userLocale = userSettingsDto.getLocale();
         userSettingsService.updateUserPreference(signedInUser, theme, userLocale);
+
+        signedInUser.setGravatarEnabled(globalGravatarEnabled && userSettingsDto.isGravatarEnabled());
+        personService.update(signedInUser);
 
         return "redirect:/web/person/%s/settings".formatted(personId);
     }

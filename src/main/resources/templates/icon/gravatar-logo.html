@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>gravatar</title>
+  </head>
+  <body>
+    <svg
+      th:fragment="svg(height, width)"
+      class="rounded-full block"
+      th:height="${height == null ? '42' : height}"
+      th:width="${width == null ? '42' : width}"
+      viewBox="0 0 64 64"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-hidden="true"
+      focusable="false"
+      preserveAspectRatio="xMidYMid meet"
+      th:classappend="${className}"
+    >
+      <circle cx="32" cy="32" r="32" fill="#1e8cbe"></circle>
+      <text
+        x="32"
+        y="33"
+        text-anchor="middle"
+        dominant-baseline="central"
+        font-size="2rem"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        fill="#ffffff"
+      >
+        g
+      </text>
+    </svg>
+  </body>
+</html>
