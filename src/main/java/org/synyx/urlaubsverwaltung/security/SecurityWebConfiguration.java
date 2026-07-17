@@ -16,6 +16,7 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.authentication.TenantIdProvider;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -87,7 +88,7 @@ class SecurityWebConfiguration {
 
     @Bean
     @Order(4)
-    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder) {
+    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder, TenantIdProvider tenantIdProvider) {
         return http
             .authorizeHttpRequests(requests ->
                 requests
@@ -132,7 +133,7 @@ class SecurityWebConfiguration {
             .securityContext(
                 securityContext -> securityContext.securityContextRepository(securityContextRepository)
             )
-            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder), BasicAuthenticationFilter.class)
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder, tenantIdProvider), BasicAuthenticationFilter.class)
             .build();
     }
 

@@ -17,11 +17,13 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.authentication.TenantIdProvider;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantId;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -36,12 +38,14 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
     private final SessionService sessionService;
     private final DelegatingSecurityContextRepository securityContextRepository;
     private final TenantContextHolder tenantContextHolder;
+    private final TenantIdProvider tenantIdProvider;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService sessionService, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService sessionService, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder, TenantIdProvider tenantIdProvider) {
         this.personService = personService;
         this.sessionService = sessionService;
         this.securityContextRepository = securityContextRepository;
         this.tenantContextHolder = tenantContextHolder;
+        this.tenantIdProvider = tenantIdProvider;
     }
 
     @Override
@@ -81,13 +85,19 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String tenantId = oAuth2Auth.getAuthorizedClientRegistrationId();
+        final String authorizedClientRegistrationId = oAuth2Auth.getAuthorizedClientRegistrationId();
+        final Optional<TenantId> resolvedTenantId = tenantIdProvider.resolve(oAuth2Auth);
+        if (resolvedTenantId.isEmpty()) {
+            LOG.warn("Could not resolve tenant from authentication; skipping authorities reload");
+            chain.doFilter(request, response);
+            return;
+        }
 
         try {
-            tenantContextHolder.setTenantId(new TenantId(tenantId));
+            tenantContextHolder.setTenantId(resolvedTenantId.get());
             final Person signedInUser = personService.getSignedInUser();
             final List<SimpleGrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
-            final Authentication updatedAuthentication = new OAuth2AuthenticationToken(principal, updatedAuthorities, tenantId);
+            final Authentication updatedAuthentication = new OAuth2AuthenticationToken(principal, updatedAuthorities, authorizedClientRegistrationId);
 
             context.setAuthentication(updatedAuthentication);
             securityContextRepository.saveContext(context, request, response);
