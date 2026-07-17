@@ -9,7 +9,7 @@ createDatepicker("#to-date-input", { urlPrefix, getPersonId });
 
 onTurboBeforeRenderRestore(function (event) {
   // enable submit buttons which has been disabled by 'hotwire/turbo' after submitting the form.
-  event.detail.newBody.querySelector("form#form-date-from-to button[type='submit']").removeAttribute("disabled");
+  event.detail.newBody.querySelector(":scope form#form-date-from-to button[type='submit']").removeAttribute("disabled");
 });
 
 // close `popover` on advancing client side navigation.

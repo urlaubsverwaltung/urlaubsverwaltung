@@ -31,9 +31,11 @@ export function initApplicationReplacementSelect() {
     submitButton.addEventListener("click", preventDefault);
     submitButton.setAttribute("aria-disabled", "true");
 
+    const form = event.target.closest("form");
+
     const [{ value: response }] = await Promise.allSettled([
       post(`${formaction}/replacements`, {
-        body: new FormData(event.target.closest("form")),
+        body: new FormData(form),
         headers: {
           Accept: "text/html",
         },

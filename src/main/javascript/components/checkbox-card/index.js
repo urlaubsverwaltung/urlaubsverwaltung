@@ -1,1 +1,1 @@
-export * from "./checkbox-card";
+import "./checkbox-card";

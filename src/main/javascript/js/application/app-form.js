@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   document.querySelector("#person-select")?.addEventListener("change", function (event) {
     const parameters = new URLSearchParams();
     parameters.set("personId", event.currentTarget.value);
-    globalThis.location.href = globalThis.location.pathname + "?" + parameters.toString();
+    location.assign(location.pathname + "?" + parameters.toString());
   });
 
   const apiPrefix = globalThis.uv.apiPrefix;
@@ -20,15 +20,17 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function updateSelectionHints() {
-    if (fromDateElement.value && toDateElement.value) {
-      const dayLength = document.querySelector("input[name='dayLength']").value;
-      const startDate = parseISO(fromDateElement.value);
-      const toDate = parseISO(toDateElement.value);
-
-      const personId = getPersonId();
-      sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, personId, ".days");
-      sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, personId, "#departmentVacations");
+    if (!(fromDateElement.value && toDateElement.value)) {
+      return;
     }
+
+    const dayLength = document.querySelector("input[name='dayLength']").value;
+    const startDate = parseISO(fromDateElement.value);
+    const toDate = parseISO(toDateElement.value);
+
+    const personId = getPersonId();
+    sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, personId, ".days");
+    sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, personId, "#departmentVacations");
   }
 
   function setDefaultToDateValue() {
@@ -51,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   toDateElement = toDateResult.value;
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
-  const { from, to } = Object.fromEntries(new URLSearchParams(globalThis.location.search));
+  const { from, to } = Object.fromEntries(new URLSearchParams(location.search));
   if (from) {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
@@ -63,15 +65,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     sendGetDepartmentVacationsRequest(apiPrefix, startDate, endDate, personId, "#departmentVacations");
   }
 
-  let applicationSubmitPressed = false;
+  let isApplicationSubmitPressed = false;
   document.querySelector("#apply-application").addEventListener("click", (event) => {
     event.preventDefault();
 
     const button = event.target || event.srcElement;
-    if (!applicationSubmitPressed) {
+    if (!isApplicationSubmitPressed) {
       button.form.submit();
     }
-    applicationSubmitPressed = true;
+    isApplicationSubmitPressed = true;
   });
 });
 

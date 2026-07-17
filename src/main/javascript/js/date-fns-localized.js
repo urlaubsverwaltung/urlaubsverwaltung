@@ -6,20 +6,24 @@ const subtag = globalThis.uv.language.slice(3);
 switch (language) {
   case "de": {
     if (subtag.startsWith("AT")) {
-      import("date-fns/locale/de-AT").then(({ deAT }) => setLocale(deAT));
+      const { deAT } = await import("date-fns/locale/de-AT");
+      setLocale(deAT);
     } else {
-      import("date-fns/locale/de").then(({ de }) => setLocale(de));
+      const { de } = await import("date-fns/locale/de");
+      setLocale(de);
     }
     break;
   }
   case "en": {
     if (subtag.startsWith("GB")) {
-      import("date-fns/locale/en-GB").then(({ enGB }) => setLocale(enGB));
+      const { enGB } = await import("date-fns/locale/en-GB");
+      setLocale(enGB);
     }
     break;
   }
   case "el": {
-    import("date-fns/locale/el").then(({ el }) => setLocale(el));
+    const { el } = await import("date-fns/locale/el");
+    setLocale(el);
     break;
   }
   // No default

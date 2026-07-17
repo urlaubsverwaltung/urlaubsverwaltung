@@ -3,7 +3,7 @@ function focusSuggestion(element) {
   element.closest("li").scrollIntoView({ block: "nearest" });
 }
 
-export class PersonSearch extends HTMLElement {
+class PersonSearch extends HTMLElement {
   #cleanup = () => {};
   #popoverVisible = false;
 
@@ -17,13 +17,35 @@ export class PersonSearch extends HTMLElement {
     return this.querySelector("[type=submit]");
   }
 
+  #showSuggestionsPopover() {
+    /** @type HTMLDialogElement */
+    const popover = this.querySelector("[popover]");
+    popover.showPopover();
+    this.#searchInput.setAttribute("aria-expanded", "true");
+    this.#popoverVisible = true;
+  }
+
+  #hideSuggestionsPopover() {
+    /** @type HTMLDialogElement */
+    const popover = this.querySelector("[popover]");
+    popover.hidePopover();
+    this.#searchInput.setAttribute("aria-expanded", "false");
+    this.#popoverVisible = false;
+  }
+
+  #submit() {
+    // always query element, do not memoize it, could be rerendered!
+    const form = this.querySelector("form");
+    form?.requestSubmit(this.#submitButton);
+  }
+
   connectedCallback() {
-    let loading = false;
+    let isLoading = false;
 
     this.addEventListener("submit", () => {
-      loading = true;
+      isLoading = true;
       setTimeout(() => {
-        if (loading) {
+        if (isLoading) {
           this.#submitButton.classList.add("button--loading");
         }
       }, 100);
@@ -39,7 +61,7 @@ export class PersonSearch extends HTMLElement {
     // show popover on initial submit.
     // subsequent renders can be ignored since content is updated, not the popover itself.
     const handleFrameRender = (event) => {
-      loading = false;
+      isLoading = false;
       this.#submitButton.classList.remove("button--loading");
       if (!this.#popoverVisible && event.target.matches("[id=frame-persons-suggestions]")) {
         this.#showSuggestionsPopover();
@@ -48,7 +70,7 @@ export class PersonSearch extends HTMLElement {
 
     // suggestion popover should not be closed
     // when a suggestion link is supposed to be clicked
-    let pointerdownSuggestionLink = false;
+    let isPointerdownSuggestionLink = false;
 
     /**
      *
@@ -57,18 +79,18 @@ export class PersonSearch extends HTMLElement {
     const handleGlobalPointerdown = (event) => {
       /** @type HTMLElement */
       const target = event.target;
-      pointerdownSuggestionLink = Boolean(target.closest("a") && this.contains(target));
+      isPointerdownSuggestionLink = Boolean(target.closest("a") && this.contains(target));
     };
 
     const handleGlobalPointerup = () => {
-      pointerdownSuggestionLink = false;
+      isPointerdownSuggestionLink = false;
     };
 
     /**
      * @param {FocusEvent} event
      */
     const handleThisFocusout = (event) => {
-      if (!pointerdownSuggestionLink && !this.contains(event.relatedTarget)) {
+      if (!isPointerdownSuggestionLink && !this.contains(event.relatedTarget)) {
         this.#hideSuggestionsPopover();
       }
     };
@@ -79,7 +101,6 @@ export class PersonSearch extends HTMLElement {
       }
 
       const input = this.#searchInput;
-      const suggestions = [...this.querySelectorAll("[data-person-search-suggestion]")];
 
       if (event.key === "Escape") {
         event.preventDefault();
@@ -87,6 +108,8 @@ export class PersonSearch extends HTMLElement {
         input.focus();
         return;
       }
+
+      const suggestions = [...this.querySelectorAll("[data-person-search-suggestion]")];
 
       if (!this.#popoverVisible || suggestions.length === 0) {
         return;
@@ -117,7 +140,7 @@ export class PersonSearch extends HTMLElement {
     document.addEventListener("pointerup", handleGlobalPointerup);
     document.addEventListener("turbo:frame-render", handleFrameRender);
 
-    this.#cleanup = function () {
+    this.#cleanup = () => {
       this.removeEventListener("focusin", handleThisFocusin);
       this.removeEventListener("focusout", handleThisFocusout);
       this.removeEventListener("keydown", handleThisKeydown);
@@ -133,28 +156,6 @@ export class PersonSearch extends HTMLElement {
 
   connectedMoveCallback() {
     // prevent connected/disconnected callbacks to be called when element is moved
-  }
-
-  #showSuggestionsPopover() {
-    /** @type HTMLDialogElement */
-    const popover = this.querySelector("[popover]");
-    popover.showPopover();
-    this.#searchInput.setAttribute("aria-expanded", "true");
-    this.#popoverVisible = true;
-  }
-
-  #hideSuggestionsPopover() {
-    /** @type HTMLDialogElement */
-    const popover = this.querySelector("[popover]");
-    popover.hidePopover();
-    this.#searchInput.setAttribute("aria-expanded", "false");
-    this.#popoverVisible = false;
-  }
-
-  #submit() {
-    // always query element, do not memoize it, could be rerendered!
-    const form = this.querySelector("form");
-    form?.requestSubmit(this.#submitButton);
   }
 }
 

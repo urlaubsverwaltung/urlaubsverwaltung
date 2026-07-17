@@ -51,10 +51,11 @@ export const HolidayService = (function () {
   }
 
   function cacheAbsences(year) {
-    const absenceCache = (_CACHE["absences"] = _CACHE["absences"] || {});
+    _CACHE["absences"] ||= {};
+    const absenceCache = _CACHE["absences"];
 
     return function (data) {
-      absenceCache[year] = absenceCache[year] || [];
+      absenceCache[year] ||= [];
 
       for (let absence of data.absences) {
         absenceCache[year].push(absence);
@@ -63,10 +64,11 @@ export const HolidayService = (function () {
   }
 
   function cachePublicHoliday(year) {
-    const publicHolidayCache = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
+    _CACHE["publicHoliday"] ||= {};
+    const publicHolidayCache = _CACHE["publicHoliday"];
 
     return function (data) {
-      publicHolidayCache[year] = publicHolidayCache[year] || [];
+      publicHolidayCache[year] ||= [];
 
       for (let publicHoliday of data.publicHolidays) {
         publicHolidayCache[year].push(publicHoliday);
@@ -92,168 +94,168 @@ export const HolidayService = (function () {
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
   }
 
-  const HolidayService = {
+  class HolidayServiceImpl {
     isNoWorkday(date) {
       return isNoWorkday(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayFull(date) {
       return isSickNoteFull(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayFullWaiting(date) {
       return isSickNoteWaitingFull(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayFullActive(date) {
       return isSickNoteActiveFull(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayMorning(date) {
       return isSickNoteMorning(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayMorningWaiting(date) {
       return isSickNoteWaitingMorning(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayMorningActive(date) {
       return isSickNoteActiveMorning(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayNoon(date) {
       return isSickNoteNoon(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayNoonWaiting(date) {
       return isSickNoteWaitingNoon(getAbsencesForDate(date));
-    },
+    }
 
     isSickDayNoonActive(date) {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
-    },
+    }
 
-    isPersonalHolidayFull: function (date) {
+    isPersonalHolidayFull(date) {
       return (
         this.isPersonalHolidayFullWaiting(date) ||
         this.isPersonalHolidayFullTemporaryApproved(date) ||
         this.isPersonalHolidayFullApproved(date) ||
         this.isPersonalHolidayFullCancellationRequest(date)
       );
-    },
+    }
 
     isPersonalHolidayFullWaiting(date) {
       return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayFullTemporaryApproved(date) {
       return isPersonalHolidayTemporaryFull(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayFullApproved(date) {
       return isPersonalHolidayApprovedFull(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayFullCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
-    },
+    }
 
-    isHalfDayAbsence: function (date) {
+    isHalfDayAbsence(date) {
       return (
         this.isPersonalHolidayMorning(date) ||
         this.isPersonalHolidayNoon(date) ||
         this.isSickDayMorning(date) ||
         this.isSickDayNoon(date)
       );
-    },
+    }
 
-    isPersonalHolidayMorning: function (date) {
+    isPersonalHolidayMorning(date) {
       return (
         this.isPersonalHolidayMorningWaiting(date) ||
         this.isPersonalHolidayMorningTemporaryApproved(date) ||
         this.isPersonalHolidayMorningApproved(date) ||
         this.isPersonalHolidayMorningCancellationRequest(date)
       );
-    },
+    }
 
     isPersonalHolidayMorningWaiting(date) {
       return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayMorningTemporaryApproved(date) {
       return isPersonalHolidayTemporaryMorning(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayMorningApproved(date) {
       return isPersonalHolidayApprovedMorning(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayMorningCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
-    },
+    }
 
-    isPersonalHolidayNoon: function (date) {
+    isPersonalHolidayNoon(date) {
       return (
         this.isPersonalHolidayNoonWaiting(date) ||
         this.isPersonalHolidayNoonTemporaryApproved(date) ||
         this.isPersonalHolidayNoonApproved(date) ||
         this.isPersonalHolidayNoonCancellationRequest(date)
       );
-    },
+    }
 
     isPersonalHolidayNoonWaiting(date) {
       return isPersonalHolidayWaitingNoon(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayNoonTemporaryApproved(date) {
       return isPersonalHolidayTemporaryNoon(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayNoonApproved(date) {
       return isPersonalHolidayApprovedNoon(getAbsencesForDate(date));
-    },
+    }
 
     isPersonalHolidayNoonCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedNoon(getAbsencesForDate(date));
-    },
+    }
 
     isPublicHolidayFull(date) {
       return isPublicHoliday(getPublicHolidaysForDate(date));
-    },
+    }
 
     isPublicHolidayMorning(date) {
       return isPublicHolidayMorning(getPublicHolidaysForDate(date));
-    },
+    }
 
     isPublicHolidayNoon(date) {
       return isPublicHolidayNoon(getPublicHolidaysForDate(date));
-    },
+    }
 
-    getDescription: function (date) {
+    getDescription(date) {
       // there can be more than one public holiday on the same day (e.g. a fixed and a movable one
       // falling on the same date in a special year), so join the descriptions of all of them.
       return getPublicHolidaysForDate(date)
         .map((publicHoliday) => publicHoliday.description)
         .join(", ");
-    },
+    }
 
-    getAbsenceId: function (date) {
+    getAbsenceId(date) {
       const absences = getAbsencesForDate(date);
       if (absences[0]) {
         return absences[0].id;
       }
       return "-1";
-    },
+    }
 
-    getAbsenceType: function (date) {
+    getAbsenceType(date) {
       const absences = getAbsencesForDate(date);
       if (absences[0]) {
         return absences[0].absenceType;
       }
       return "";
-    },
+    }
 
-    getTypeId: function (date) {
+    getTypeId(date) {
       let morningOrFull;
       let noon;
 
@@ -269,14 +271,14 @@ export const HolidayService = (function () {
       }
 
       return [morningOrFull, noon];
-    },
+    }
 
     /**
      *
      * @param {Date} from
      * @param {Date} [to]
      */
-    bookHoliday: function (from, to) {
+    bookHoliday(from, to) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
@@ -284,15 +286,15 @@ export const HolidayService = (function () {
       };
 
       document.location.href = webPrefix + "/application/new" + paramize(parameters);
-    },
+    }
 
-    navigateToApplicationForLeave: function (applicationId) {
+    navigateToApplicationForLeave(applicationId) {
       document.location.href = webPrefix + "/application/" + applicationId;
-    },
+    }
 
-    navigateToSickNote: function (sickNoteId) {
+    navigateToSickNote(sickNoteId) {
       document.location.href = webPrefix + "/sicknote/" + sickNoteId;
-    },
+    }
 
     /**
      * Shared function to fetch and cache data for a given endpoint and cache key.
@@ -303,29 +305,27 @@ export const HolidayService = (function () {
      * @param {Function} cacheHandler
      * @returns {Promise}
      */
-    fetchAndCache: function (endpoint, year, parameters, cacheKey, cacheHandler) {
-      _CACHE[cacheKey] = _CACHE[cacheKey] || {};
+    async fetchAndCache(endpoint, year, parameters, cacheKey, cacheHandler) {
+      _CACHE[cacheKey] ||= {};
 
-      if (_CACHE[cacheKey][year]) {
-        return Promise.resolve(_CACHE[cacheKey][year]);
+      if (Object.hasOwn(_CACHE[cacheKey], year)) {
+        return _CACHE[cacheKey][year];
       }
 
-      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
+      const yearDate = parse(year.toString(), "yyyy", new Date());
+      const firstDayOfYear = formatISO(startOfYear(yearDate), { representation: "date" });
+      const lastDayOfYear = formatISO(endOfYear(yearDate), { representation: "date" });
 
-      return fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters }).then(cacheHandler(year));
-    },
+      const data = await fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters });
+      return cacheHandler(year)(data);
+    }
 
     /**
      *
      * @param {number} year
      * @returns {Promise}
      */
-    fetchPublicHolidays: function (year) {
+    fetchPublicHolidays(year) {
       return this.fetchAndCache(
         "/persons/" + personId + "/public-holidays",
         year,
@@ -333,9 +333,9 @@ export const HolidayService = (function () {
         "publicHoliday",
         cachePublicHoliday,
       );
-    },
+    }
 
-    fetchAbsences: function (year) {
+    fetchAbsences(year) {
       return this.fetchAndCache(
         "/persons/" + personId + "/absences",
         year,
@@ -343,8 +343,10 @@ export const HolidayService = (function () {
         "absences",
         cacheAbsences,
       );
-    },
-  };
+    }
+  }
+
+  const HolidayService = new HolidayServiceImpl();
 
   return {
     create: function (_webPrefix, _apiPrefix, _personId) {

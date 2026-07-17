@@ -51,15 +51,15 @@ describe("checkbox-card", function () {
     const checkbox = document.querySelector("input");
     const clickMe = document.querySelector("span");
 
-    let eventDispatched = false;
+    let isEventDispatched = false;
 
     checkbox.addEventListener("change", () => {
-      eventDispatched = true;
+      isEventDispatched = true;
     });
 
-    expect(eventDispatched).toBe(false);
+    expect(isEventDispatched).toBe(false);
 
     clickMe.click();
-    expect(eventDispatched).toBe(true);
+    expect(isEventDispatched).toBe(true);
   });
 });

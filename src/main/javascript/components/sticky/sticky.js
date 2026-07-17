@@ -1,4 +1,4 @@
-export class Sticky extends HTMLElement {
+class Sticky extends HTMLElement {
   static observedAttributes = ["data-sticky"];
 
   /** @type IntersectionObserver */
@@ -14,8 +14,8 @@ export class Sticky extends HTMLElement {
     // kudos https://css-tricks.com/how-to-detect-when-a-sticky-element-gets-pinned/
     this.#intersectionObserver = new IntersectionObserver(
       ([event]) => {
-        const sticky = event.intersectionRatio < 1;
-        event.target.classList.toggle("uv-sticky--stuck", sticky);
+        const isSticky = event.intersectionRatio < 1;
+        event.target.classList.toggle("uv-sticky--stuck", isSticky);
       },
       { threshold: [1] },
     );

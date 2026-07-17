@@ -34,10 +34,12 @@ export default [
         },
       ],
 
-      "unicorn/no-fn-reference-in-iterator": "off",
-      "unicorn/prefer-reflect-apply": "off",
-      /* our webpack build cannot handle top-level-await atm */
-      "unicorn/prefer-top-level-await": "off",
+      /* we intentionally expose bundle entry points on globalThis and mock globals in tests */
+      "unicorn/no-global-object-property-assignment": "off",
+      /* __tests__ is our established test directory convention */
+      "unicorn/filename-case": "off",
+      /* default replacement list clashes with our domain vocabulary (e.g. "application" -> "app") */
+      "unicorn/name-replacements": "off",
     },
   },
   {

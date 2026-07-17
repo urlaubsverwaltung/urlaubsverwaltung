@@ -67,7 +67,7 @@ const options = {
 const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
 chart.render();
 
-const seriesForAtLeastOneSickNote = Number.parseFloat(globalThis.sicknoteStatistic.atLeastOneSickNotePercent) || 0;
+const seriesForAtLeastOneSickNote = Number(globalThis.sicknoteStatistic.atLeastOneSickNotePercent) || 0;
 
 const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote-statistic-verteilung"), {
   chart: {
@@ -147,10 +147,10 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
 atLeastOneSickNoteChart.render();
 
 theme.subscribe(async function (nextTheme) {
-  const nextDark = nextTheme === "dark";
+  const isNextDark = nextTheme === "dark";
   await chart.updateOptions({
     theme: {
-      mode: nextDark ? "dark" : "light",
+      mode: isNextDark ? "dark" : "light",
     },
   });
 });

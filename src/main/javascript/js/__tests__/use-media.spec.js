@@ -1,7 +1,7 @@
 import { useMedia } from "../use-media";
 
 describe("useMedia", () => {
-  const originalMatchMedia = globalThis.matchMedia;
+  const originalMatchMedia = matchMedia;
 
   let mockMatchMedia;
   let mockMediaQueryList;

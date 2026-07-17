@@ -80,7 +80,7 @@ function getDateFromElement(element) {
 
 function parseISO(dateStringValue) {
   // date-fns v2.x returned Date(NaN) previously. so just keep using this for falsy argument...
-  return dateStringValue ? dateFnsParseISO(dateStringValue) : new Date(Number.NaN);
+  return dateStringValue ? dateFnsParseISO(dateStringValue) : new Date(NaN);
 }
 
 const Assertion = (function () {
@@ -134,7 +134,7 @@ const View = (function () {
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
       if (typeof data === "function") {
-        return data.apply(this, arguments);
+        return Reflect.apply(data, undefined, arguments);
       }
 
       const value = data[type];
@@ -311,10 +311,9 @@ const View = (function () {
         // when first of month is sunday -> col_start == 7 otherwise the day value. monday is the first column
         const gridColumnStart = date.getDate() === 1 ? (day === 0 ? 7 : day) : 0;
         return `grid-column-start: ${gridColumnStart};`;
-      } else {
-        // every other day just follows the flow
-        return ``;
       }
+      // every other day just follows the flow
+      return ``;
     }
 
     return render(TMPL.day, {
@@ -391,14 +390,14 @@ const Controller = (function () {
   let holidayService;
 
   const datepickerHandlers = {
-    mousedown: function (event) {
+    mousedown: function (element, event) {
       if (event.button !== mouseButtons.left) {
         return;
       }
 
       document.body.classList.add(CSS.mousedown);
 
-      const dateThis = getDateFromElement(this);
+      const dateThis = getDateFromElement(element);
 
       const start = selectionFrom();
       const end = selectionTo();
@@ -416,27 +415,29 @@ const Controller = (function () {
       document.body.classList.remove(CSS.mousedown);
     },
 
-    mouseover: function () {
-      if (document.body.classList.contains(CSS.mousedown)) {
-        const dateThis = getDateFromElement(this);
-        const dateSelected = new Date(view.getRootElement().dataset[DATA.selected]);
-
-        const isThisBefore = isBefore(dateThis, dateSelected);
-
-        selectionFrom(isThisBefore ? dateThis : dateSelected);
-        selectionTo(isThisBefore ? dateSelected : dateThis);
+    mouseover: function (element) {
+      if (!document.body.classList.contains(CSS.mousedown)) {
+        return;
       }
+
+      const dateThis = getDateFromElement(element);
+      const dateSelected = new Date(view.getRootElement().dataset[DATA.selected]);
+
+      const isThisBefore = isBefore(dateThis, dateSelected);
+
+      selectionFrom(isThisBefore ? dateThis : dateSelected);
+      selectionTo(isThisBefore ? dateSelected : dateThis);
     },
 
-    click: function () {
+    click: function (element) {
       const dateFrom = selectionFrom();
       const dateTo = selectionTo();
 
-      const dateThis = getDateFromElement(this);
+      const dateThis = getDateFromElement(element);
 
-      const isSelectable = this.dataset.datepickerSelectable;
-      const absenceId = this.dataset.datepickerAbsenceId;
-      const absenceType = this.dataset.datepickerAbsenceType;
+      const isSelectable = element.dataset.datepickerSelectable;
+      const absenceId = element.dataset.datepickerAbsenceId;
+      const absenceType = element.dataset.datepickerAbsenceType;
 
       if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
         holidayService.navigateToApplicationForLeave(absenceId);
@@ -455,7 +456,7 @@ const Controller = (function () {
       }
     },
 
-    clickNext: function () {
+    clickNext: async function () {
       // last month of calendar
       const monthElement = [...view.getRootElement().querySelectorAll("." + CSS.month)][numberOfMonths - 1];
 
@@ -465,13 +466,14 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
+      await Promise.all([
         holidayService.fetchPublicHolidays(getYear(date)),
         holidayService.fetchAbsences(getYear(date)),
-      ]).then(view.displayNext);
+      ]);
+      view.displayNext();
     },
 
-    clickPrevious: function () {
+    clickPrevious: async function () {
       // first month of calendar
       const monthElement = [...view.getRootElement().querySelectorAll("." + CSS.month)][0];
 
@@ -481,10 +483,11 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
+      await Promise.all([
         holidayService.fetchPublicHolidays(getYear(date)),
         holidayService.fetchAbsences(getYear(date)),
-      ]).then(view.displayPrevious);
+      ]);
+      view.displayPrevious();
     },
   };
 
@@ -530,7 +533,7 @@ const Controller = (function () {
   }
 
   function select(element, select) {
-    if (!element.dataset[DATA.selectable]) {
+    if (!Object.hasOwn(element.dataset, DATA.selectable)) {
       return;
     }
 
@@ -552,25 +555,25 @@ const Controller = (function () {
       view.getRootElement().addEventListener("mousedown", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.mousedown.call(element, event);
+          datepickerHandlers.mousedown(element, event);
         }
       });
 
       view.getRootElement().addEventListener("mouseover", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.mouseover.call(element, event);
+          datepickerHandlers.mouseover(element, event);
         }
       });
 
       view.getRootElement().addEventListener("click", function (event) {
         let element = matches(event.target, `.${CSS.day}`);
         if (element) {
-          datepickerHandlers.click.call(element, event);
+          datepickerHandlers.click(element, event);
         } else if ((element = matches(event.target, `.${CSS.previous}`))) {
-          datepickerHandlers.clickPrevious.call(element, event);
+          datepickerHandlers.clickPrevious(element, event);
         } else if ((element = matches(event.target, `.${CSS.next}`))) {
-          datepickerHandlers.clickNext.call(element, event);
+          datepickerHandlers.clickNext(element, event);
         }
       });
 
@@ -584,7 +587,7 @@ const Controller = (function () {
         document.body.classList.remove(CSS.mousedown);
       });
 
-      const smScreenQuery = globalThis.matchMedia("(max-width: 640px)");
+      const smScreenQuery = matchMedia("(max-width: 640px)");
       if (smScreenQuery.matches) {
         for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.add("button");

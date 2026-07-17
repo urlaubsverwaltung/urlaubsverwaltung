@@ -1,25 +1,33 @@
-let callbacks = [];
-let isRestoreRender = false;
+// used by "./turbo-restore-listeners" to feed real `document` turbo events into this module,
+// kept separate so this module itself has no top-level side effects.
+const { markRestoreRender, runRestoreCallbacks, onTurboBeforeRenderRestore } = (function () {
+  let callbacks = [];
+  let isRestoreRender = false;
 
-document.addEventListener("turbo:visit", function (event) {
-  isRestoreRender = event.detail.action === "restore";
-});
+  function markRestoreRender(isRestore) {
+    isRestoreRender = isRestore;
+  }
 
-document.addEventListener("turbo:before-render", function (event) {
-  if (isRestoreRender) {
-    for (let callback of callbacks) {
-      try {
-        callback(event);
-      } catch (error) {
-        console.error("swallowed error to continue with other turbo:before-render callbacks.", error);
+  function runRestoreCallbacks(event) {
+    if (isRestoreRender) {
+      for (let callback of callbacks) {
+        try {
+          callback(event);
+        } catch (error) {
+          console.error("swallowed error to continue with other turbo:before-render callbacks.", error);
+        }
       }
     }
   }
-});
 
-export function onTurboBeforeRenderRestore(callback) {
-  callbacks.push(callback);
-  return function unsubscribe() {
-    callbacks = callbacks.filter((c) => c !== callback);
-  };
-}
+  function onTurboBeforeRenderRestore(callback) {
+    callbacks.push(callback);
+    return function unsubscribe() {
+      callbacks = callbacks.filter((c) => c !== callback);
+    };
+  }
+
+  return { markRestoreRender, runRestoreCallbacks, onTurboBeforeRenderRestore };
+})();
+
+export { markRestoreRender, runRestoreCallbacks, onTurboBeforeRenderRestore };

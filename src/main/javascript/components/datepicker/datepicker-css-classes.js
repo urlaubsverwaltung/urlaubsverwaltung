@@ -81,7 +81,7 @@ function getCssClassesForDate(date, absences, publicHolidays) {
   return [
     css.day,
     isToday(date) && css.today,
-    isPast(date) && css.past,
+    isPast() && css.past,
     isWeekend(date) && css.weekend,
     isPublicHoliday(publicHolidays) && css.publicHolidayFull,
     isPublicHolidayMorning(publicHolidays) && css.publicHolidayMorning,

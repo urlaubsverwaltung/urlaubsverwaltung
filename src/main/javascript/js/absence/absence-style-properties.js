@@ -75,8 +75,7 @@ function getVacationTypeColors(absences) {
   for (let absence of absences) {
     if (absence.absent === "FULL" || absence.absent === "MORNING") {
       typeIdMorningOrFull = absence.typeId;
-    }
-    if (absence.absent === "NOON") {
+    } else if (absence.absent === "NOON") {
       typeIdNoon = absence.typeId;
     }
   }

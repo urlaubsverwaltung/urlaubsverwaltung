@@ -1,4 +1,4 @@
-(function () {
+{
   /**
    * updates config section 'calendar sync'
    * shows dependent on Kalenderanbindung
@@ -25,4 +25,4 @@
       });
     }
   });
-})();
+}

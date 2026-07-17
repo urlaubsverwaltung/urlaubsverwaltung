@@ -1,75 +1,76 @@
-const userSettingsForm = document.querySelector("#user-settings-form");
+{
+  const userSettingsForm = document.querySelector("#user-settings-form");
 
-let languageGroupFocused = false;
-let languageGroupFocusedWithKeyboard = false;
+  let isLanguageGroupFocused = false;
+  let isLanguageGroupFocusedWithKeyboard = false;
 
-const focusManager = createFocusManager();
-const languageFieldset = userSettingsForm.querySelector("#fieldset-language");
+  const focusManager = createFocusManager();
+  const languageFieldset = userSettingsForm.querySelector("#fieldset-language");
 
-if (focusManager.shouldFocusAfterReload()) {
-  languageFieldset.querySelector("input[name='locale']:checked").focus();
-}
-
-// `focusin` event listener is called before `keyup`
-languageFieldset.addEventListener("focusin", function (event) {
-  if (event.target.matches("[name='locale']")) {
-    languageGroupFocused = true;
+  if (focusManager.shouldFocusAfterReload()) {
+    languageFieldset.querySelector("input[name='locale']:checked").focus();
   }
-});
 
-languageFieldset.addEventListener("focusout", function (event) {
-  if (event.target.matches("[name='locale']")) {
-    languageGroupFocused = false;
-  }
-});
+  // `focusin` event listener is called before `keyup`
+  languageFieldset.addEventListener("focusin", function (event) {
+    if (event.target.matches("[name='locale']")) {
+      isLanguageGroupFocused = true;
+    }
+  });
 
-userSettingsForm.addEventListener("change", function (event) {
-  if (languageGroupFocusedWithKeyboard) {
-    focusManager.memoize();
-  }
-  if (event.target.name === "locale") {
-    userSettingsForm.submit();
-  }
-});
+  languageFieldset.addEventListener("focusout", function (event) {
+    if (event.target.matches("[name='locale']")) {
+      isLanguageGroupFocused = false;
+    }
+  });
 
-globalThis.addEventListener("keyup", function (event) {
-  if (!languageGroupFocused) {
-    focusManager.clean();
-  }
-  languageGroupFocusedWithKeyboard = languageGroupFocused && event.key === "Tab";
-});
+  userSettingsForm.addEventListener("change", function (event) {
+    if (isLanguageGroupFocusedWithKeyboard) {
+      focusManager.memoize();
+    }
+    if (event.target.name === "locale") {
+      userSettingsForm.submit();
+    }
+  });
 
-globalThis.addEventListener("click", function (event) {
-  if (!childOfLanguage(event.target)) {
-    focusManager.clean();
-  }
-});
+  addEventListener("keyup", function (event) {
+    if (!isLanguageGroupFocused) {
+      focusManager.clean();
+    }
+    isLanguageGroupFocusedWithKeyboard = isLanguageGroupFocused && event.key === "Tab";
+  });
 
-function childOfLanguage(element) {
-  if (!element) {
+  addEventListener("click", function (event) {
+    if (!childOfLanguage(event.target)) {
+      focusManager.clean();
+    }
+  });
+
+  function childOfLanguage(element) {
+    for (let current = element; current; current = current.parentElement) {
+      if (current.matches("#fieldset-language")) {
+        return true;
+      }
+    }
     return false;
   }
-  if (element.matches("#fieldset-language")) {
-    return true;
+
+  function createFocusManager() {
+    const focusSessionKey = "uv--focus-language-after-reload";
+    const yep = "true";
+
+    return {
+      memoize() {
+        sessionStorage.setItem(focusSessionKey, yep);
+      },
+
+      shouldFocusAfterReload() {
+        return sessionStorage.getItem(focusSessionKey) === yep;
+      },
+
+      clean() {
+        sessionStorage.removeItem(focusSessionKey);
+      },
+    };
   }
-  return childOfLanguage(element.parentElement);
-}
-
-function createFocusManager() {
-  const focusSessionKey = "uv--focus-language-after-reload";
-  const yep = "true";
-
-  return {
-    memoize() {
-      sessionStorage.setItem(focusSessionKey, yep);
-    },
-
-    shouldFocusAfterReload() {
-      return sessionStorage.getItem(focusSessionKey) === yep;
-    },
-
-    clean() {
-      sessionStorage.removeItem(focusSessionKey);
-    },
-  };
 }

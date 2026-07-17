@@ -1,6 +1,6 @@
 import format from "../../../lib/date-fns/format";
 import { localisation as de } from "./de";
-// eslint-disable-next-line unicorn/prevent-abbreviations
+
 import { localisation as el } from "./el";
 import { localisation as en } from "./en";
 import { localisation as enGB } from "./en-gb";

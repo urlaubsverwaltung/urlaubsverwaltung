@@ -7,7 +7,7 @@ import { getJSON } from "./fetch";
 
 export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
   const element = document.querySelector(elementSelector);
-  element.innerHTML = "";
+  element.replaceChildren();
 
   if ((!personId && !startDate && !toDate) || isAfter(startDate, toDate)) {
     return;
