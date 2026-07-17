@@ -108,6 +108,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.totalNumberOfSickDaysAllCategories}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (21)
               </span>
@@ -134,6 +135,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.totalNumberOfSickDays}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (21)
               </span>
@@ -160,6 +162,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.totalNumberOfChildSickDays}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (21)
               </span>
@@ -198,6 +201,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPerson}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (1337)
               </span>
@@ -225,6 +229,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPersonAndSick}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (42)
               </span>
@@ -252,6 +257,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPersonAndChildSick}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (21)
               </span>
@@ -290,6 +296,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfAllSickNotes}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (42)
               </span>
@@ -317,6 +324,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfSickNote}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (42)
               </span>
@@ -344,6 +352,7 @@
                 class="statistic-summary-card__content-previous"
                 th:with="value=${previousSelectedYearStatistics.averageDurationOfChildSickNote}"
                 th:text="|(${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (21)
               </span>
@@ -372,6 +381,7 @@
               <span
                 class="statistic-summary-card__content-previous"
                 th:text="|(${previousSelectedYearStatistics.totalNumberOfAllSickNotes})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (6)
               </span>
@@ -392,6 +402,7 @@
               <span
                 class="statistic-summary-card__content-previous"
                 th:text="|(${previousSelectedYearStatistics.totalNumberOfSickNotes})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (6)
               </span>
@@ -412,6 +423,7 @@
               <span
                 class="statistic-summary-card__content-previous"
                 th:text="|(${previousSelectedYearStatistics.totalNumberOfChildSickNotes})|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
               >
                 (5)
               </span>
