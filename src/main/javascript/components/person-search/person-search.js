@@ -3,12 +3,9 @@ function focusSuggestion(element) {
   element.closest("li").scrollIntoView({ block: "nearest" });
 }
 
-const ANNOUNCE_DEBOUNCE_MS = 500;
-
 export class PersonSearch extends HTMLElement {
   #cleanup = () => {};
   #popoverVisible = false;
-  #announceTimer = 0;
 
   /** @type HTMLInputElement */
   get #searchInput() {
@@ -139,7 +136,6 @@ export class PersonSearch extends HTMLElement {
   }
 
   disconnectedCallback() {
-    clearTimeout(this.#announceTimer);
     this.#cleanup();
   }
 
@@ -159,26 +155,22 @@ export class PersonSearch extends HTMLElement {
     const popover = this.querySelector("[popover]");
     popover.hidePopover();
     this.#popoverVisible = false;
-    clearTimeout(this.#announceTimer);
     this.#statusRegion.textContent = "";
   }
 
   #announceResultCount() {
-    clearTimeout(this.#announceTimer);
-    this.#announceTimer = globalThis.setTimeout(() => {
-      const count = this.querySelectorAll("[data-person-search-suggestion]").length;
+    const count = this.querySelectorAll("[data-person-search-suggestion]").length;
 
-      let message;
-      if (count === 0) {
-        message = this.dataset.messageNothingFound ?? "";
-      } else if (count === 1) {
-        message = this.dataset.messageResultsOne ?? "";
-      } else {
-        message = (this.dataset.messageResultsOther ?? "").replace("{0}", String(count));
-      }
+    let message;
+    if (count === 0) {
+      message = this.dataset.messageNothingFound ?? "";
+    } else if (count === 1) {
+      message = this.dataset.messageResultsOne ?? "";
+    } else {
+      message = (this.dataset.messageResultsOther ?? "").replace("{0}", String(count));
+    }
 
-      this.#statusRegion.textContent = message;
-    }, ANNOUNCE_DEBOUNCE_MS);
+    this.#statusRegion.textContent = message;
   }
 
   #submit() {
