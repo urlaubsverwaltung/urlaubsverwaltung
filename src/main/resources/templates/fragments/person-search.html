@@ -7,7 +7,13 @@
   </head>
   <body>
     <th:block th:fragment="person-search">
-      <uv-person-search th:if="${personSearchEnabled}" class="person-search desktop:max-w-lg">
+      <uv-person-search
+        th:if="${personSearchEnabled}"
+        class="person-search desktop:max-w-lg"
+        th:data-message-nothing-found="#{person-search.nothing-found}"
+        th:data-message-results-one="#{person-search.results-found.one}"
+        th:data-message-results-other="#{person-search.results-found.other}"
+      >
         <!-- use relative action (URL) since this form is used on different pages which all allow searching for users -->
         <form
           action=""
@@ -36,9 +42,10 @@
             th:placeholder="#{person-search.input.placeholder}"
             data-auto-submit="person-search-submit"
             data-auto-submit-delay="100"
-            aria-expanded="false"
+            aria-describedby="person-search-hint"
           />
           <button id="person-search-submit" type="submit" th:text="#{form.button.search}">Suchen</button>
+          <span id="person-search-hint" class="sr-only" th:text="#{person-search.input.hint}"></span>
         </form>
         <div
           popover="manual"
@@ -65,7 +72,11 @@
                   </span>
                   <span class="flex flex-col gap-px dark:text-zinc-200">
                     <span th:text="${suggestion.name}">Nice Name</span>
-                    <span class="text-xs text-gray-400 dark:text-zinc-400" th:text="${suggestion.email}">
+                    <span
+                      class="text-xs text-gray-400 dark:text-zinc-400"
+                      aria-hidden="true"
+                      th:text="${suggestion.email}"
+                    >
                       email@example.org
                     </span>
                   </span>
@@ -93,6 +104,8 @@
             </p>
           </turbo-frame>
         </div>
+        <!-- persistent live region (outside turbo-frame so morph does not replace it) announcing async result count to screen readers -->
+        <div class="sr-only" role="status" data-person-search-status></div>
       </uv-person-search>
     </th:block>
   </body>

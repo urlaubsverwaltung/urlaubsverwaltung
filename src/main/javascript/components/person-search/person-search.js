@@ -17,6 +17,11 @@ export class PersonSearch extends HTMLElement {
     return this.querySelector("[type=submit]");
   }
 
+  /** @type HTMLElement */
+  get #statusRegion() {
+    return this.querySelector("[data-person-search-status]");
+  }
+
   connectedCallback() {
     let loading = false;
 
@@ -41,8 +46,11 @@ export class PersonSearch extends HTMLElement {
     const handleFrameRender = (event) => {
       loading = false;
       this.#submitButton.classList.remove("button--loading");
-      if (!this.#popoverVisible && event.target.matches("[id=frame-persons-suggestions]")) {
-        this.#showSuggestionsPopover();
+      if (event.target.matches("[id=frame-persons-suggestions]")) {
+        if (!this.#popoverVisible) {
+          this.#showSuggestionsPopover();
+        }
+        this.#announceResultCount();
       }
     };
 
@@ -139,7 +147,6 @@ export class PersonSearch extends HTMLElement {
     /** @type HTMLDialogElement */
     const popover = this.querySelector("[popover]");
     popover.showPopover();
-    this.#searchInput.setAttribute("aria-expanded", "true");
     this.#popoverVisible = true;
   }
 
@@ -147,8 +154,23 @@ export class PersonSearch extends HTMLElement {
     /** @type HTMLDialogElement */
     const popover = this.querySelector("[popover]");
     popover.hidePopover();
-    this.#searchInput.setAttribute("aria-expanded", "false");
     this.#popoverVisible = false;
+    this.#statusRegion.textContent = "";
+  }
+
+  #announceResultCount() {
+    const count = this.querySelectorAll("[data-person-search-suggestion]").length;
+
+    let message;
+    if (count === 0) {
+      message = this.dataset.messageNothingFound ?? "";
+    } else if (count === 1) {
+      message = this.dataset.messageResultsOne ?? "";
+    } else {
+      message = (this.dataset.messageResultsOther ?? "").replace("{0}", String(count));
+    }
+
+    this.#statusRegion.textContent = message;
   }
 
   #submit() {

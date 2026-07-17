@@ -12,14 +12,23 @@ describe("person-search", function () {
     vi.useRealTimers();
   });
 
-  function renderPersonSearch({ suggestionCount = 2 } = {}) {
+  function renderPersonSearch({
+    suggestionCount = 2,
+    messageNothingFound = "Nichts gefunden",
+    messageResultsOne = "1 Ergebnis",
+    messageResultsOther = "{0} Ergebnisse",
+  } = {}) {
     const suggestions = Array.from(
       { length: suggestionCount },
       (_, index) => `<li><a href="#suggestion-${index}" data-person-search-suggestion>Suggestion ${index}</a></li>`,
     ).join("");
 
     document.body.innerHTML = `
-      <uv-person-search>
+      <uv-person-search
+        data-message-nothing-found="${messageNothingFound}"
+        data-message-results-one="${messageResultsOne}"
+        data-message-results-other="${messageResultsOther}"
+      >
         <form>
           <input type="search" id="person-search-input" />
           <button id="person-search-submit" type="submit">Suchen</button>
@@ -31,6 +40,7 @@ describe("person-search", function () {
             </ul>
           </turbo-frame>
         </div>
+        <div class="sr-only" role="status" data-person-search-status></div>
       </uv-person-search>
     `;
 
@@ -47,6 +57,7 @@ describe("person-search", function () {
       submitButton: document.querySelector("#person-search-submit"),
       popover,
       frame: document.querySelector("#frame-persons-suggestions"),
+      statusRegion: document.querySelector("[data-person-search-status]"),
       suggestions: [...document.querySelectorAll("[data-person-search-suggestion]")],
     };
   }
@@ -97,12 +108,11 @@ describe("person-search", function () {
 
   describe("suggestions popover", function () {
     it("opens once the suggestions frame renders", function () {
-      const { frame, popover, input } = renderPersonSearch();
+      const { frame, popover } = renderPersonSearch();
 
       frameRender(frame);
 
       expect(popover.showPopover).toHaveBeenCalledTimes(1);
-      expect(input.getAttribute("aria-expanded")).toBe("true");
     });
 
     it("does not open for renders of a different frame", function () {
@@ -162,6 +172,59 @@ describe("person-search", function () {
       dispatchFocusout(widget);
 
       expect(popover.hidePopover).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("result count announcement", function () {
+    it("announces the 'nothing found' message when there are no suggestions", function () {
+      const { frame, statusRegion } = renderPersonSearch({
+        suggestionCount: 0,
+        messageNothingFound: "Nichts gefunden",
+      });
+
+      frameRender(frame);
+
+      expect(statusRegion.textContent).toBe("Nichts gefunden");
+    });
+
+    it("announces the singular results message for one suggestion", function () {
+      const { frame, statusRegion } = renderPersonSearch({
+        suggestionCount: 1,
+        messageResultsOne: "1 Ergebnis",
+      });
+
+      frameRender(frame);
+
+      expect(statusRegion.textContent).toBe("1 Ergebnis");
+    });
+
+    it("announces the plural results message with the count for multiple suggestions", function () {
+      const { frame, statusRegion } = renderPersonSearch({
+        suggestionCount: 3,
+        messageResultsOther: "{0} Ergebnisse",
+      });
+
+      frameRender(frame);
+
+      expect(statusRegion.textContent).toBe("3 Ergebnisse");
+    });
+
+    it("re-announces the result count on subsequent renders while the popover stays open", function () {
+      const { frame, statusRegion } = renderPersonSearch({ suggestionCount: 2 });
+
+      frameRender(frame);
+      frameRender(frame);
+
+      expect(statusRegion.textContent).toBe("{0} Ergebnisse".replace("{0}", "2"));
+    });
+
+    it("clears the announcement once the popover closes", function () {
+      const { widget, frame, statusRegion } = renderPersonSearch();
+      frameRender(frame);
+
+      dispatchFocusout(widget, document.body);
+
+      expect(statusRegion.textContent).toBe("");
     });
   });
 
