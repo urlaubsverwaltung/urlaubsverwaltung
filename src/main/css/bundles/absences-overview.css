@@ -364,21 +364,18 @@ svg.no-workday-icon {
     justify-content: center;
   }
 
-  /* the swatch border-color variable defaults to white (it's meant to
-     separate an on-screen colored fill from the page background), which is
-     invisible on white paper for rows without their own colored fill */
-  .vacationOverview-legend-table {
-    --uv-cal-border-color: #94a3b8;
+  /* the border is only there to mark the swatch's boundary on screen -
+     colors now print, so the fill itself does that job; drop the border */
+  .vacationOverview-legend-colorbox {
+    border-color: transparent;
   }
 
-  /* today has no abbreviation letter and no colored fill of its own (just a
-     box-shadow on screen) - give it a distinct border-style so it stays
-     recognizable next to public-holiday and the colored absence/sick rows */
-  .vacationOverview-day-today-legend {
-    border-style: double;
-  }
-
-  .vacationOverview-legend-colorbox:has(.public-holiday-full) {
-    border-style: dashed;
+  /* on screen, the type color is just a small dot at the bottom of the
+     swatch (mirroring a full-day mark in the calendar), leaving the
+     abbreviation letter mostly over blank space above it. Fill the whole
+     legend swatch with that color instead, so the letter always sits above
+     a solid color block instead of next to/behind a sliver of it. */
+  .vacationOverview-legend-colorbox .cal-day.absence-full--solid {
+    background: var(--absence-bar-color) !important;
   }
 }
