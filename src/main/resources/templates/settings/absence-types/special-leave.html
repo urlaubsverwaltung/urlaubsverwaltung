@@ -66,6 +66,12 @@
               </td>
 
               <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
+                <label
+                  th:text="#{settings.specialleave.table.head.days}"
+                  th:for="|specialLeave-days-${loop.index}|"
+                  class="sr-only"
+                  >Tage</label
+                >
                 <input
                   th:id="|specialLeave-days-${loop.index}|"
                   class="w-1/2 @2xl/main:w-full"

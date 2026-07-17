@@ -8,10 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Marks a test as belonging to the general "ui" suite of browser-driven tests, so it can be selected or
- * excluded via JUnit/Maven's {@code ui} tag (e.g. {@code -Dgroups=ui}).
+ * Marks a test as belonging to the "a11y" suite of accessibility checks, so it can be selected or excluded
+ * via JUnit/Maven's {@code a11y} tag (e.g. {@code -Dgroups=a11y}). Typically used for tests that crawl
+ * pages with axe-core (via Playwright) to assert they are free of accessibility violations.
  *
  * <p>This annotation is a plain tag — it does not configure any test infrastructure by itself. Combine it
  * with {@link UiIntegrationTest} to also get a Spring context and a Playwright browser.</p>
@@ -20,21 +20,22 @@ import java.lang.annotation.Target;
  * <pre>{@code
  * @SpringBootTest(webEnvironment = RANDOM_PORT)
  * @UiIntegrationTest
- * @UiTest
- * class TestExampleUIIT {
+ * @A11yTest
+ * class TestExampleAccessibilityIT {
  *   @Test
- *   void shouldProvidePage(Page page) {
- *     page.navigate("https://playwright.dev");
- *     assertThat(page).hasURL("https://playwright.dev/");
+ *   void shouldHaveNoAccessibilityViolations(Page page) {
+ *     page.navigate("/");
+ *     final AxeResults results = new AxeBuilder(page).analyze();
+ *     assertThat(results.getViolations()).isEmpty();
  *   }
  * }
  * }</pre>
  *
- * @see A11yTest
+ * @see UiTest
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Tag("ui")
-public @interface UiTest {
+@Tag("a11y")
+public @interface A11yTest {
 }

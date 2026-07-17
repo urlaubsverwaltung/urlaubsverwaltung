@@ -68,6 +68,11 @@ class ColorPicker extends HTMLDivElement {
       option.setAttribute("role", "option");
       option.setAttribute("aria-selected", optionInput.checked ? "true" : "false");
       option.setAttribute("aria-label", optionInput.value.toLowerCase());
+      // the option's own role/aria-selected/aria-label already fully convey its state to
+      // assistive tech. tabindex="-1" alone doesn't stop the native radio from still being
+      // focusable/reachable by assistive tech, so mark it inert - role="option" isn't allowed
+      // to have focusable content
+      optionInput.inert = true;
       if (optionInput.checked) {
         selectedId = id;
         this.#focusedElementIndex = index;

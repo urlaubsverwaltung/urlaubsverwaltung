@@ -77,8 +77,8 @@ a.button-main-green,
 .button-main-green:hover:not(:disabled),
 .button-main-green:active,
 .button-main-green:focus {
-  @apply border-bootstrap-green-dark;
-  @apply bg-bootstrap-green;
+  @apply border-green-800;
+  @apply bg-green-700;
   @apply text-white;
   @apply transition-colors;
   @apply dark:bg-green-700;
@@ -89,7 +89,7 @@ a.button-main-green,
 .button-main-green:hover:not(:disabled),
 .button-main-green:active,
 .button-main-green:focus {
-  @apply bg-bootstrap-green-dark;
+  @apply bg-green-800;
   @apply dark:bg-green-600;
   @apply dark:border-green-600;
 }
@@ -118,8 +118,8 @@ a.button-main,
 .button-main:hover:not(:disabled),
 .button-main:active,
 .button-main:focus {
-  @apply border-sky-600;
-  @apply bg-sky-600;
+  @apply border-sky-700;
+  @apply bg-sky-700;
   @apply text-sky-50;
   @apply dark:bg-sky-700;
   @apply dark:border-sky-700;
@@ -128,8 +128,8 @@ a.button-main,
 .button-main:hover:not(:disabled),
 .button-main:active,
 .button-main:focus {
-  @apply border-sky-700;
-  @apply bg-sky-700;
+  @apply border-sky-800;
+  @apply bg-sky-800;
   @apply dark:bg-sky-600;
   @apply dark:border-sky-600;
 }

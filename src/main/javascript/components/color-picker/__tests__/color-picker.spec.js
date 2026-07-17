@@ -89,6 +89,14 @@ describe("color-picker", function () {
       }
     });
 
+    it("makes the option radio inputs inert since the option itself carries the state", function () {
+      const { options } = renderColorPicker();
+
+      for (const option of options) {
+        expect(option.querySelector("input").inert).toBe(true);
+      }
+    });
+
     it("makes the picker itself focusable", function () {
       const { picker } = renderColorPicker();
 

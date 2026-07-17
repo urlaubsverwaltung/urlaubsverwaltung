@@ -159,7 +159,7 @@
   }
 
   .absence-type-card[data-enabled="false"] {
-    @apply text-zinc-500;
+    @apply text-zinc-600;
     @apply dark:text-zinc-300;
   }
 

@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
@@ -66,6 +67,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
+@UiIntegrationTest
 @UiTest
 class SickNoteUIIT {
 
