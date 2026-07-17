@@ -19,12 +19,17 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.authentication.TenantIdProvider;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantId;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -46,10 +51,12 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     private DelegatingSecurityContextRepository securityContextRepository;
     @Mock
     private TenantContextHolder tenantContextHolder;
+    @Mock
+    private TenantIdProvider tenantIdProvider;
 
     @BeforeEach
     void setUp() {
-        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder);
+        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder, tenantIdProvider);
     }
 
     @Test
@@ -68,6 +75,8 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         final SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(prepareOAuth2Authentication());
 
+        when(tenantIdProvider.resolve(any(OAuth2AuthenticationToken.class))).thenReturn(Optional.of(new TenantId("myTenantId")));
+
         sut.doFilterInternal(request, response, filterChain);
 
         final List<String> updatedAuthorities = context.getAuthentication().getAuthorities().stream()
@@ -75,6 +84,10 @@ class ReloadAuthenticationAuthoritiesFilterTest {
             .toList();
         assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
 
+        assertThat(context.getAuthentication())
+            .asInstanceOf(type(OAuth2AuthenticationToken.class))
+            .extracting(OAuth2AuthenticationToken::getAuthorizedClientRegistrationId)
+            .isEqualTo("authorizedClientRegistrationId");
         verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
         verify(securityContextRepository).saveContext(context, request, response);
     }
@@ -130,7 +143,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
 
         assertThat(filterChain.getRequest()).isEqualTo(request);
         assertThat(filterChain.getResponse()).isEqualTo(response);
-        verifyNoInteractions(personService, sessionService, securityContextRepository, tenantContextHolder);
+        verifyNoInteractions(personService, sessionService, securityContextRepository, tenantContextHolder, tenantIdProvider);
     }
 
     @Test
@@ -179,6 +192,30 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
         verify(personService, never()).getSignedInUser();
         verify(securityContextRepository, never()).saveContext(context, request, response);
+    }
+
+    @Test
+    void doFilterInternalSkipsReloadWhenTenantIdCannotBeResolved() throws ServletException, IOException {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession().setAttribute("reloadAuthorities", true);
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockFilterChain filterChain = new MockFilterChain();
+
+        final SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(prepareOAuth2Authentication());
+
+        when(tenantIdProvider.resolve(any(OAuth2AuthenticationToken.class))).thenReturn(Optional.empty());
+
+        sut.doFilterInternal(request, response, filterChain);
+
+        // Verify that the filter chain was continued without updating authorities
+        assertThat(filterChain.getRequest()).isEqualTo(request);
+        assertThat(filterChain.getResponse()).isEqualTo(response);
+        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
+        verify(personService, never()).getSignedInUser();
+        verify(securityContextRepository, never()).saveContext(context, request, response);
+        verifyNoInteractions(tenantContextHolder);
     }
 
     private OAuth2AuthenticationToken prepareOAuth2Authentication() {

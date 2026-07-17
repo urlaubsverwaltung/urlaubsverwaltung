@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.tenancy.tenant;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface TenantContextHolder {
 
@@ -34,6 +35,15 @@ public interface TenantContextHolder {
         try {
             setTenantId(tenantId);
             function.run();
+        } finally {
+            clear();
+        }
+    }
+
+    default <T> T runInTenantIdContext(TenantId tenantId, Supplier<T> function) {
+        try {
+            setTenantId(tenantId);
+            return function.get();
         } finally {
             clear();
         }
