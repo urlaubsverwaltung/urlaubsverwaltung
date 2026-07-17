@@ -208,13 +208,6 @@
   background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, var(--absence-bar-color-noon) 50%);
 }
 
-@media print {
-  .cal-day {
-    --bg-left-lightness: 100%;
-    --bg-right-lightness: 100%;
-  }
-}
-
 svg.no-workday-icon {
   @apply stroke-neutral-200;
   @apply dark:stroke-neutral-700;
@@ -316,8 +309,12 @@ svg.no-workday-icon {
     size: landscape;
   }
 
+  /* border-collapse merges adjacent cell borders into a single line instead
+     of each cell painting its own - avoids sub-pixel rounding making a
+     shared border disappear in some renderers */
   .vacationOverview-table {
     font-size: 8pt;
+    border-collapse: collapse;
   }
 
   .vacationOverview-table th,
@@ -368,32 +365,20 @@ svg.no-workday-icon {
   }
 
   /* the swatch border-color variable defaults to white (it's meant to
-     separate an on-screen colored fill from the page background) and the
-     fill itself - background, box-shadow - is stripped globally for print,
-     so every legend swatch would otherwise be an invisible blank square */
+     separate an on-screen colored fill from the page background), which is
+     invisible on white paper for rows without their own colored fill */
   .vacationOverview-legend-table {
     --uv-cal-border-color: #94a3b8;
   }
 
-  /* today and public-holiday have no abbreviation letter and normally rely
-     on box-shadow/background, both gone in print - use border-style, which
-     print.css's reset does not touch, to keep them visually distinct */
+  /* today has no abbreviation letter and no colored fill of its own (just a
+     box-shadow on screen) - give it a distinct border-style so it stays
+     recognizable next to public-holiday and the colored absence/sick rows */
   .vacationOverview-day-today-legend {
     border-style: double;
   }
 
   .vacationOverview-legend-colorbox:has(.public-holiday-full) {
     border-style: dashed;
-  }
-
-  .public-holiday-morning {
-    --background-color-left: #ffffff;
-  }
-  .public-holiday-noon {
-    --background-color-right: #ffffff;
-  }
-  .public-holiday-full {
-    --background-color-left: #ffffff;
-    --background-color-right: #ffffff;
   }
 }

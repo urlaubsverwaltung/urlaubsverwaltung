@@ -1,11 +1,33 @@
 @media print {
+  /* dark-mode text would otherwise print invisibly light on white paper, so
+     text color still gets forced to black regardless. background/box-shadow
+     are also stripped by default (ink-saving) - except on the calendar's own
+     color-coded absence/sick-note/holiday marks (.cal-day and the legend's
+     today swatch), which should print in color alongside their abbreviation
+     letters instead of as blank squares. */
   *,
   *:before,
   *:after {
-    color: #000 !important; /*Black prints faster: h5bp.com/s*/
+    color: #000 !important;
     text-shadow: none !important;
+  }
+
+  *:not(.cal-day):not(.vacationOverview-day-today-legend),
+  *:not(.cal-day):not(.vacationOverview-day-today-legend)::before,
+  *:not(.cal-day):not(.vacationOverview-day-today-legend)::after {
     background: transparent !important;
     box-shadow: none !important;
+  }
+
+  /* browsers default print dialogs to not printing background colors at
+     all - without this, the marks exempted above would still be blank
+     regardless of any of our own background/box-shadow CSS */
+  .cal-day,
+  .cal-day::before,
+  .cal-day::after,
+  .vacationOverview-day-today-legend {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
 
   a,
@@ -92,10 +114,5 @@
 
   th {
     font-weight: bold !important;
-  }
-
-  .cal-day::after {
-    background-color: transparent !important;
-    border-color: transparent !important;
   }
 }
