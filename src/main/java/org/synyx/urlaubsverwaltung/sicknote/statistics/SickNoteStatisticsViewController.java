@@ -77,6 +77,10 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
                 new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
             ),
             List.of(
+                new DataSeries(selectedYear.getValue(), selectedYearStatistics.getSickRateByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getSickRateByMonth())
+            ),
+            List.of(
                 selectedYearStatistics.getAtLeastOneSickNotePercent(),
                 previousSelectedYearStatistics.getAtLeastOneSickNotePercent()
             )
@@ -88,7 +92,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         return "sicknote/sick_notes_statistics";
     }
 
-    record GraphDto(List<DataSeries> dataSeries, List<BigDecimal> dataSeriesRadial) {
+    record GraphDto(List<DataSeries> dataSeries, List<DataSeries> sickRateDataSeries, List<BigDecimal> dataSeriesRadial) {
     }
 
     record DataSeries(int year, List<BigDecimal> data) {

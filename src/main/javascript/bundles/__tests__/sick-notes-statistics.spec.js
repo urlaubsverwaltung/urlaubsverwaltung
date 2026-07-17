@@ -3,6 +3,7 @@ import { observable } from "../../js/observable";
 vi.mock("../../js/common", () => ({}));
 vi.mock("apexcharts/radialBar", () => ({}));
 vi.mock("apexcharts/bar", () => ({}));
+vi.mock("apexcharts/line", () => ({}));
 vi.mock("apexcharts/features/legend", () => ({}));
 vi.mock("apexcharts/features/keyboard", () => ({}));
 
@@ -53,6 +54,12 @@ describe("sick-notes-statistics", function () {
       ],
       xaxisLabels: ["Jan", "Feb", "Mar"],
       yaxisTitle: "Tage",
+      sickRateName: "Krankenquote",
+      sickRateYaxisTitle: "Krankenquote in %",
+      sickRateValues: [
+        { year: 2024, data: [10, 12, 14] },
+        { year: 2023, data: [8, 9, 10] },
+      ],
       dataseriesValuesForAtLeastOneSickNotePercent: [42, 37],
       ...overrides,
     };
@@ -73,6 +80,8 @@ describe("sick-notes-statistics", function () {
         { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6] },
         { name: "Krank 2024", group: "currentYear", data: [7, 8, 9] },
         { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12] },
+        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14] },
+        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10] },
       ]);
     });
 
@@ -93,6 +102,8 @@ describe("sick-notes-statistics", function () {
         { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6] },
         { name: "Krank 2024", group: "currentYear", data: [7, 8, 9] },
         { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12] },
+        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14] },
+        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10] },
       ]);
     });
 
@@ -115,16 +126,17 @@ describe("sick-notes-statistics", function () {
       expect(options.legend).toEqual({ position: "top", horizontalAlign: "right" });
     });
 
-    it("uses the backend-provided x-axis categories and y-axis title", async function () {
+    it("uses the backend-provided x-axis categories and y-axis titles", async function () {
       setSicknoteStatistic();
       await loadModule();
 
       const { options } = chartInstances[0];
       expect(options.xaxis.categories).toEqual(["Jan", "Feb", "Mar"]);
-      expect(options.yaxis.title.text).toBe("Tage");
+      expect(options.yaxis[0].title.text).toBe("Tage");
+      expect(options.yaxis[1].title.text).toBe("Krankenquote in %");
     });
 
-    it("orders colors as [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick]", async function () {
+    it("orders colors as [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick, currentYearSickRate, previousYearSickRate]", async function () {
       setSicknoteStatistic();
       await loadModule();
 
@@ -134,6 +146,8 @@ describe("sick-notes-statistics", function () {
         "var(--sick-note-child-color-light)",
         "var(--sick-note-color)",
         "var(--sick-note-child-color)",
+        "var(--sick-rate-color)",
+        "var(--sick-rate-color-light)",
       ]);
     });
 
@@ -159,16 +173,25 @@ describe("sick-notes-statistics", function () {
 
   describe("tooltip custom rendering", function () {
     function callTooltip(seriesValues, dataPointIndex = 0) {
+      // pad with dummy sick-rate series values (indices 4/5) when a test only cares about the bar rows
+      const values = seriesValues.length === 4 ? [...seriesValues, [20], [15]] : seriesValues;
       return chartInstances[0].options.tooltip.custom({
-        series: seriesValues,
+        series: values,
         dataPointIndex,
         w: {
           globals: {
             labels: ["Jan", "Feb", "Mar"],
-            seriesNames: ["Krank 2023", "Kind krank 2023", "Krank 2024", "Kind krank 2024"],
+            seriesNames: [
+              "Krank 2023",
+              "Kind krank 2023",
+              "Krank 2024",
+              "Kind krank 2024",
+              "Krankenquote 2024",
+              "Krankenquote 2023",
+            ],
           },
           config: {
-            colors: ["light-sick", "light-child", "sick", "child"],
+            colors: ["light-sick", "light-child", "sick", "child", "rate", "rate-light"],
           },
         },
       });

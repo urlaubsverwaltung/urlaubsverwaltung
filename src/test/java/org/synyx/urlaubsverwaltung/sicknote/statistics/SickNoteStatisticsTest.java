@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
@@ -480,6 +481,136 @@ class SickNoteStatisticsTest {
             final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of());
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(valueOf(1), valueOf(2), ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
+        }
+    }
+
+    @Nested
+    class SickRateByMonth {
+
+        @ParameterizedTest
+        @EnumSource(Month.class)
+        void ensureForMonth(Month givenMonth) {
+            final Person person = anyPerson();
+
+            final LocalDate startDate = of(2025, givenMonth.getValue(), 1);
+            final LocalDate endDate = of(2025, givenMonth.getValue(), 2);
+
+            // only the two sick note dates are target work days --> target work days == sick days in givenMonth
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
+                LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
+                date -> date.equals(startDate) || date.equals(endDate));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person), Map.of(person, workingTimeCalendar));
+
+            // two sick days and two target work days in givenMonth --> (2 / 2) * 100 = 100%, zero elsewhere
+            assertThat(sut.getSickRateByMonth())
+                .isEqualTo(stream(Month.values()).map(month -> month.equals(givenMonth) ? valueOf(100).setScale(3, HALF_UP) : ZERO).toList());
+        }
+
+        @Test
+        void ensureSumsSickAndChildSickDays() {
+            final Person person = anyPerson();
+            final Person person2 = new Person("master", "Master", "Marlon", "master@example.org");
+
+            // person only has target work days on Jan 1-2, person2 only on Jan 3-5
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
+                LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
+                date -> !date.isBefore(of(2025, 1, 1)) && !date.isAfter(of(2025, 1, 2)));
+            final WorkingTimeCalendar workingTimeCalendar2 = workingTimeCalendarMondayToSunday(
+                LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
+                date -> !date.isBefore(of(2025, 1, 3)) && !date.isAfter(of(2025, 1, 5)));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2025, 1, 1))
+                .endDate(of(2025, 1, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final SickNote childSickNote = SickNote.builder()
+                .person(person2)
+                .startDate(of(2025, 1, 3))
+                .endDate(of(2025, 1, 5))
+                .dayLength(FULL)
+                .sickNoteType(childSickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar2)
+                .build();
+
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = Map.of(person, workingTimeCalendar, person2, workingTimeCalendar2);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, childSickNote), List.of(person, person2), workingTimeCalendarsByPerson);
+
+            // 2 sick days + 3 child sick days = 5 days, target work days = 2 + 3 = 5 --> (5 / 5) * 100 = 100%
+            assertThat(sut.getSickRateByMonth().get(0)).isEqualByComparingTo(valueOf(100));
+        }
+
+        @Test
+        void ensureIgnoresPersonsMissingFromWorkingTimeCalendarMap() {
+            final Person person = anyPerson();
+            final Person personWithoutCalendar = new Person("master", "Master", "Marlon", "master@example.org");
+
+            // only person has target work days on Jan 1-2, personWithoutCalendar has no entry in the map at all
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
+                LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
+                date -> !date.isBefore(of(2025, 1, 1)) && !date.isAfter(of(2025, 1, 2)));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2025, 1, 1))
+                .endDate(of(2025, 1, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = Map.of(person, workingTimeCalendar);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person, personWithoutCalendar), workingTimeCalendarsByPerson);
+
+            // personWithoutCalendar contributes zero target work days --> (2 / 2) * 100 = 100%
+            assertThat(sut.getSickRateByMonth().get(0)).isEqualByComparingTo(valueOf(100));
+        }
+
+        @Test
+        void ensureDivisionByZeroWhenNoPersonsToConsider() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2025, 1, 1))
+                .endDate(of(2025, 1, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of());
+
+            assertThat(sut.getSickRateByMonth()).allMatch(rate -> rate.compareTo(ZERO) == 0);
         }
     }
 

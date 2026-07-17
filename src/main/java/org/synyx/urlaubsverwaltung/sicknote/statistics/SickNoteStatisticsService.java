@@ -7,11 +7,14 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Collections.emptyList;
@@ -32,17 +35,20 @@ public class SickNoteStatisticsService {
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
     private final PersonService personService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     SickNoteStatisticsService(
         SickNoteService sickNoteService,
         DepartmentService departmentService,
         PersonService personService,
+        WorkingTimeCalendarService workingTimeCalendarService,
         Clock clock
     ) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personService = personService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -65,8 +71,9 @@ public class SickNoteStatisticsService {
 
         final List<Person> persons = getStatisticRelevantPersons(year, person);
         final List<SickNote> sickNotes = getSickNotes(persons, firstDayOfYear, lastDayOfYear);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = getWorkingTimeCalendarsByPerson(persons, year);
 
-        return new SickNoteStatistics(year, today, sickNotes, persons);
+        return new SickNoteStatistics(year, today, sickNotes, persons, workingTimeCalendarsByPerson);
     }
 
     private List<Person> getStatisticRelevantPersons(Year year, Person person) {
@@ -100,5 +107,12 @@ public class SickNoteStatisticsService {
             return List.of();
         }
         return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), persons, from, to);
+    }
+
+    private Map<Person, WorkingTimeCalendar> getWorkingTimeCalendarsByPerson(List<Person> persons, Year year) {
+        if (persons.isEmpty()) {
+            return Map.of();
+        }
+        return workingTimeCalendarService.getWorkingTimesByPersons(persons, year);
     }
 }

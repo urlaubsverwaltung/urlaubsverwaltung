@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,8 +46,13 @@ public class SickNoteStatistics {
     private final Long numberOfPersonsWithoutSickNote;
     private final List<BigDecimal> numberOfSickDaysByMonth;
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
+    private final List<BigDecimal> targetWorkDaysByMonth;
 
     SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons) {
+        this(year, asOfDate, sickNotes, persons, Map.of());
+    }
+
+    SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
         this.year = year.getValue();
         this.asOfDate = asOfDate;
 
@@ -64,6 +70,7 @@ public class SickNoteStatistics {
 
         this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, sickNotes, SICK_NOTE);
         this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, sickNotes, SICK_NOTE_CHILD);
+        this.targetWorkDaysByMonth = calculateTargetWorkDaysByMonth(year, persons, workingTimeCalendarsByPerson);
     }
 
     public List<BigDecimal> getNumberOfSickDaysByMonth() {
@@ -72,6 +79,32 @@ public class SickNoteStatistics {
 
     public List<BigDecimal> getNumberOfChildSickDaysByMonth() {
         return numberOfChildSickDaysByMonth;
+    }
+
+    /**
+     * Sick rate per month, i.e. sick days and child sick days per month in relation to the target
+     * (expected) work days of all considered persons in that month, as a percentage.
+     *
+     * @return one value per month (January to December)
+     */
+    public List<BigDecimal> getSickRateByMonth() {
+        final List<BigDecimal> sickRateByMonth = new ArrayList<>();
+
+        for (int month = 0; month < numberOfSickDaysByMonth.size(); month++) {
+            final BigDecimal targetWorkDaysInMonth = targetWorkDaysByMonth.get(month);
+            if (targetWorkDaysInMonth.compareTo(ZERO) == 0) {
+                sickRateByMonth.add(ZERO);
+                continue;
+            }
+
+            final BigDecimal sickDaysInMonth = numberOfSickDaysByMonth.get(month).add(numberOfChildSickDaysByMonth.get(month));
+            final BigDecimal sickRate = sickDaysInMonth
+                .divide(targetWorkDaysInMonth, 3, HALF_UP)
+                .multiply(valueOf(100));
+            sickRateByMonth.add(sickRate);
+        }
+
+        return sickRateByMonth;
     }
 
     public int getTotalNumberOfAllSickNotes() {
@@ -213,6 +246,30 @@ public class SickNoteStatistics {
 
     private BigDecimal calculateTotalNumberOfSickDaysAllCategories(Map<SickNoteCategory, BigDecimal> totalNumberOfSickDaysByCategory) {
         return totalNumberOfSickDaysByCategory.values().stream().reduce(ZERO, BigDecimal::add);
+    }
+
+    private List<BigDecimal> calculateTargetWorkDaysByMonth(Year year, List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+
+        final List<BigDecimal> values = new ArrayList<>();
+
+        for (final Month month : Month.values()) {
+
+            final LocalDate firstDateOfMonth = year.atMonth(month).atDay(1);
+            final LocalDate lastDateOfMonth = year.atMonth(month).atEndOfMonth();
+
+            BigDecimal targetWorkDaysInMonth = ZERO;
+
+            for (Person person : persons) {
+                final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
+                if (workingTimeCalendar != null) {
+                    targetWorkDaysInMonth = targetWorkDaysInMonth.add(workingTimeCalendar.workingTime(firstDateOfMonth, lastDateOfMonth));
+                }
+            }
+
+            values.add(targetWorkDaysInMonth);
+        }
+
+        return values;
     }
 
     private List<BigDecimal> calculateTotalNumberOfSickDaysAllCategories(Year year, List<SickNote> sickNotes, SickNoteCategory category) {
