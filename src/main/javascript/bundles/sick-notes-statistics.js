@@ -103,6 +103,9 @@ const options = {
   tooltip: {
     shared: true,
     intersect: false,
+    // without this, ApexCharts anchors the tooltip on the hovered bar segment itself
+    // (vertically centered on it), so it renders on top of the bar instead of beside it.
+    followCursor: true,
     // custom row order (top to bottom): sick current, sick previous, child-sick current,
     // child-sick previous - independent of the series' internal render/group order.
     custom: function ({ series: seriesValues, dataPointIndex, w }) {
