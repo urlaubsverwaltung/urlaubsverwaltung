@@ -1,0 +1,188 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <!--  TODO text + i18n-->
+    <title>Unternehmen - Übersicht</title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('company_overview.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="company_overview.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div>
+        <div th:replace="~{fragments/section-heading::section-heading(~{::company-overview-heading-body}, ~{})}">
+          <th:block th:ref="company-overview-heading-body">
+            <h1 th:text="#{company.overview.title}">Mehrarbeit - gesamtes Unternehmen</h1>
+          </th:block>
+        </div>
+        <p
+          class="mt-8 font-bold text-base"
+          th:with="from=${#temporals.format(statistics.from, 'dd.MM.yyyy')}, to=${#temporals.format(statistics.to, 'dd.MM.yyyy')}"
+          th:text="#{company.overview.description(${from}, ${to})}"
+        >
+          Aggregierte Auswertung ohne Personenbezug - $von $bis
+        </p>
+        <div class="mt-4 flex flex-col gap-2">
+          <p
+            class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+            th:text="#{company.overview.range-select.label}"
+          >
+            Zeitraum auswählen
+          </p>
+          <ul class="flex gap-2">
+            <li>
+              <a
+                th:href="@{/web/company/overview}"
+                class="button"
+                th:classappend="${mode == 'month' ? 'button-main' : ''}"
+                th:text="#{company.overview.range-select.month}"
+              >
+                Monat
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/web/company/overview (year)}"
+                class="button"
+                th:classappend="${mode == 'year' ? 'button-main' : ''}"
+                th:text="#{company.overview.range-select.year-to-date}"
+              >
+                Lfd. Jahr
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-8">
+          <h3 class="flex flex-row gap-2 items-center">
+            <span
+              class="text-xs uppercase font-bold text-gray-400 dark:text-zinc-400"
+              th:text="#{company.overview.metrics.title}"
+            >
+              Kennzahl
+            </span>
+            <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
+          </h3>
+          <div class="mt-4 grid grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
+            <div
+              class="flex flex-col gap-2 bg-(--uv-chart-container-background) border border-(--uv-chart-border) p-4 rounded-lg shadow-2xs dark:shadow-none"
+            >
+              <span
+                class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                th:text="#{company.overview.metrics.overtime.avg}"
+              >
+                Ø Mehrarbeit / Kopf
+              </span>
+              <span
+                class="text-3xl font-bold"
+                th:text="${#numbers.formatDecimal(statistics.averageOvertime(), 1, 1) + ' h'}"
+                >14,2h</span
+              >
+              <span
+                class="text-sm text-yellow-600 dark:text-yellow-600"
+                th:switch="${statistics.averageOvertimeGrowth.signum}"
+              >
+                <th:block
+                  th:case="'-1'"
+                  th:text="#{company.overview.metrics.overtime.compare.decreased(${statistics.averageOvertimeGrowth})}"
+                ></th:block>
+                <th:block
+                  th:case="'0'"
+                  th:text="#{company.overview.metrics.overtime.compare.neutral(${statistics.averageOvertimeGrowth})}"
+                ></th:block>
+                <th:block
+                  th:case="'1'"
+                  th:text="#{company.overview.metrics.overtime.compare.increased(${statistics.averageOvertimeGrowth})}"
+                ></th:block>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8">
+          <h3 class="flex flex-row gap-2 items-center">
+            <span
+              class="text-xs uppercase font-bold text-gray-400 dark:text-zinc-400"
+              th:text="#{company.overview.distribution.title}"
+            >
+              Verteilung
+            </span>
+            <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
+          </h3>
+          <div class="mt-4 grid @3xl/main:grid-cols-2">
+            <div
+              class="flex flex-col gap-2 bg-(--uv-chart-container-background) border border-(--uv-chart-border) rounded-lg shadow-2xs dark:shadow-none"
+            >
+              <div class="p-4 border-b border-b-(--uv-chart-border) flex justify-between">
+                <span
+                  class="text-sm font-bold dark:text-zinc-400"
+                  th:text="#{company.overview.distribution.overtime.title}"
+                >
+                  Mehrarbeit - wie verteilt?
+                </span>
+                <span
+                  class="text-sm text-gray-500 dark:text-zinc-400"
+                  th:text="#{company.overview.distribution.overtime.amountEmployees(${statistics.overtimeDistribution.personCount})}"
+                >
+                  1337 Mitarbeitende
+                </span>
+              </div>
+              <div
+                class="p-4"
+                th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}"
+              >
+                <div>
+                  <svg viewBox="0 0 480 200" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <g
+                      th:each="entry, stat : ${entries}"
+                      th:with="barSlotWidth=${480 / #lists.size(entries)}, barWidth=${barSlotWidth * 0.5}, barX=${stat.index * barSlotWidth + (barSlotWidth - barWidth) / 2}, barHeight=${entry.value() == 0 ? 3 : entry.value() * 152.0 / max}, barY=${176 - barHeight}"
+                    >
+                      <rect
+                        class="fill-teal-800 dark:fill-teal-600"
+                        rx="2"
+                        th:attr="x=${barX},y=${barY},width=${barWidth},height=${barHeight}"
+                      ></rect>
+                      <text
+                        class="text-xs fill-teal-800 dark:fill-teal-600"
+                        text-anchor="middle"
+                        th:attr="x=${barX + barWidth / 2},y=${barY - 8}"
+                        th:text="${entry.value()}"
+                      >
+                        0
+                      </text>
+                      <text
+                        class="text-xs fill-teal-800 dark:fill-teal-600"
+                        text-anchor="middle"
+                        th:attr="x=${barX + barWidth / 2}"
+                        y="196"
+                        th:text="${entry.rangeEnd() == null ? '>' + entry.rangeStart() + 'h' : entry.rangeStart() + '-' + entry.rangeEnd() + 'h'}"
+                      >
+                        0h
+                      </text>
+                    </g>
+                  </svg>
+                </div>
+                <p
+                  class="mt-4 text-sm"
+                  th:with="last=${statistics.overtimeDistribution.entries.last}"
+                  th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
+                >
+                  Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last
+                  verteilt ist, wird hier sichtbar - einzelne Personen sind daraus nicht ableitbar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

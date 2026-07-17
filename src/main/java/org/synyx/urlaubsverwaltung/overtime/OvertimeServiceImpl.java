@@ -33,8 +33,10 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Duration.ZERO;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
@@ -92,6 +94,31 @@ class OvertimeServiceImpl implements OvertimeService {
             .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
             .map(OvertimeServiceImpl::entityToOvertime)
             .toList();
+    }
+
+    @Override
+    public Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, LocalDate from, LocalDate to) {
+
+        final Collection<Person> persons = personService.getAllPersonsByIds(personIds);
+        final DateRange dateRange = new DateRange(from, to);
+
+        final Map<PersonId, List<Overtime>> overtimesByPersonId = overtimeRepository
+            .findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)
+            .stream()
+            .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .map(overtime -> clipToDateRange(overtime, dateRange))
+            .collect(groupingBy(Overtime::personId));
+
+        return personIds.stream()
+            .collect(toMap(identity(), personId -> overtimesByPersonId.getOrDefault(personId, List.of()).stream()
+                .sorted(comparing(Overtime::startDate))
+                .toList()));
+    }
+
+    private static Overtime clipToDateRange(Overtime overtime, DateRange dateRange) {
+        final DateRange clippedRange = overtime.dateRange().overlap(dateRange).orElseThrow();
+        return new Overtime(overtime.id(), overtime.personId(), clippedRange, overtime.durationForDateRange(dateRange), overtime.type(), overtime.lastModification());
     }
 
     @Override

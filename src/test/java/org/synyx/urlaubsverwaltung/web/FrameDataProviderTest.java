@@ -103,6 +103,7 @@ class FrameDataProviderTest {
                     basicOvertimeLink()
                 );
                 assertThat(dto.company()).containsExactly(
+                    companyOverviewLink(),
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
@@ -173,6 +174,7 @@ class FrameDataProviderTest {
                     basicOvertimeLink()
                 );
                 assertThat(dto.company()).containsExactly(
+                    companyOverviewLink(),
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
@@ -655,6 +657,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto basicOvertimeLink(boolean active) {
         return new NavigationItemDto("basic-overtime-link", "/web/overtime", "nav.basic.my-overtimes", "clock-arrow-up", active);
+    }
+
+    private static NavigationItemDto companyOverviewLink() {
+        return companyOverviewLink(false);
+    }
+
+    private static NavigationItemDto companyOverviewLink(boolean active) {
+        return new NavigationItemDto("company-overview-link", "/web/company/overview", "nav.company.overview", "activity", active);
     }
 
     private static NavigationItemDto companyPersonLink() {

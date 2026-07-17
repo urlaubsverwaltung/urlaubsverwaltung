@@ -1494,6 +1494,97 @@ class OvertimeServiceImplTest {
             .doesNotContain(tuple(EXTERNAL, Duration.ZERO));
     }
 
+    @Nested
+    class GetOvertimeForPersonsInDateRange {
+
+        @Test
+        void ensureReturnsOvertimeClippedToDateRangeGroupedByPersonAndSortedByStartDate() {
+
+            final LocalDate from = LocalDate.of(2024, 6, 10);
+            final LocalDate to = LocalDate.of(2024, 6, 20);
+
+            final PersonId personId = new PersonId(1L);
+            final Person person = new Person();
+            person.setId(1L);
+
+            final OvertimeEntity laterOvertime = new OvertimeEntity(person, from.plusDays(8), from.plusDays(15), Duration.ofHours(8));
+            laterOvertime.setId(1L);
+            laterOvertime.setLastModificationDate(LocalDate.now());
+
+            final OvertimeEntity earlierOvertime = new OvertimeEntity(person, from.plusDays(2), from.plusDays(4), Duration.ofHours(6));
+            earlierOvertime.setId(2L);
+            earlierOvertime.setLastModificationDate(LocalDate.now());
+
+            when(personService.getAllPersonsByIds(List.of(personId))).thenReturn(List.of(person));
+            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
+                .thenReturn(List.of(laterOvertime, earlierOvertime));
+
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from, to);
+
+            assertThat(actual).hasSize(1).containsKey(personId);
+            assertThat(actual.get(personId))
+                .extracting(Overtime::dateRange, Overtime::duration)
+                .containsExactly(
+                    tuple(new DateRange(from.plusDays(2), from.plusDays(4)), Duration.ofHours(6)),
+                    tuple(new DateRange(from.plusDays(8), to), Duration.ofHours(3))
+                );
+        }
+
+        @Test
+        void ensureFiltersOutExternalOvertimeWithZeroDuration() {
+
+            final LocalDate from = LocalDate.of(2024, 6, 10);
+            final LocalDate to = LocalDate.of(2024, 6, 20);
+
+            final PersonId personId = new PersonId(1L);
+            final Person person = new Person();
+            person.setId(1L);
+
+            final OvertimeEntity externalZero = new OvertimeEntity(person, from, to, Duration.ZERO, true);
+            externalZero.setId(1L);
+            externalZero.setLastModificationDate(LocalDate.now());
+
+            final OvertimeEntity externalNonZero = new OvertimeEntity(person, from, to, Duration.ofHours(2), true);
+            externalNonZero.setId(2L);
+            externalNonZero.setLastModificationDate(LocalDate.now());
+
+            when(personService.getAllPersonsByIds(List.of(personId))).thenReturn(List.of(person));
+            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
+                .thenReturn(List.of(externalZero, externalNonZero));
+
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from, to);
+
+            assertThat(actual.get(personId))
+                .extracting(Overtime::type, Overtime::duration)
+                .containsExactly(tuple(EXTERNAL, Duration.ofHours(2)));
+        }
+
+        @Test
+        void ensureReturnsEmptyListForEveryRequestedPersonWithoutThrowingWhenPersonOrOvertimeIsMissing() {
+
+            final LocalDate from = LocalDate.of(2024, 6, 10);
+            final LocalDate to = LocalDate.of(2024, 6, 20);
+
+            final PersonId personIdWithoutOvertime = new PersonId(1L);
+            final Person personWithoutOvertime = new Person();
+            personWithoutOvertime.setId(1L);
+
+            final PersonId unknownPersonId = new PersonId(2L);
+
+            when(personService.getAllPersonsByIds(List.of(personIdWithoutOvertime, unknownPersonId)))
+                .thenReturn(List.of(personWithoutOvertime));
+            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(personWithoutOvertime), from, to))
+                .thenReturn(List.of());
+
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime, unknownPersonId), from, to);
+
+            assertThat(actual)
+                .hasSize(2)
+                .containsEntry(personIdWithoutOvertime, List.of())
+                .containsEntry(unknownPersonId, List.of());
+        }
+    }
+
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly, boolean overtimeActive, boolean overtimeSyncActive) {
 
         final Settings settings = new Settings();
