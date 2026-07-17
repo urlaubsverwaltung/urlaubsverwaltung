@@ -1,0 +1,118 @@
+@media print {
+  /* dark-mode text would otherwise print invisibly light on white paper, so
+     text color still gets forced to black regardless. background/box-shadow
+     are also stripped by default (ink-saving) - except on the calendar's own
+     color-coded absence/sick-note/holiday marks (.cal-day and the legend's
+     today swatch), which should print in color alongside their abbreviation
+     letters instead of as blank squares. */
+  *,
+  *:before,
+  *:after {
+    color: #000 !important;
+    text-shadow: none !important;
+  }
+
+  *:not(.cal-day):not(.vacationOverview-day-today-legend),
+  *:not(.cal-day):not(.vacationOverview-day-today-legend)::before,
+  *:not(.cal-day):not(.vacationOverview-day-today-legend)::after {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* browsers default print dialogs to not printing background colors at
+     all - without this, the marks exempted above would still be blank
+     regardless of any of our own background/box-shadow CSS */
+  .cal-day,
+  .cal-day::before,
+  .cal-day::after,
+  .vacationOverview-day-today-legend {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: none;
+  }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  /*Don't show links that are fragment identifiers,*/
+  /*or use the `javascript:` pseudo protocol*/
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  .button,
+  [role="tooltip"],
+  .topbar-backdrop,
+  .topbar-backdrop--after,
+  .info-banner,
+  .navigation-container,
+  .launchpad-app-cell,
+  .avatar-cell,
+  .search-cell,
+  footer {
+    display: none !important;
+  }
+
+  /* the app shell fixes body to one viewport (height: 100vh; overflow:
+     hidden) and lets #main be the only scroll container - Chrome tolerates
+     that during print and paginates #main's content across pages anyway,
+     but Firefox clips everything past the first page to that fixed height.
+     Release both ancestors so content can flow across pages in every browser. */
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #main {
+    overflow: visible !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Do not show sort icons in tables */
+  .tablesorter-header-inner:after {
+    content: "";
+  }
+
+  th {
+    font-weight: bold !important;
+  }
+}

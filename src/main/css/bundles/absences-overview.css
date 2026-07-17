@@ -42,6 +42,13 @@
   }
 }
 
+@media print {
+  th.vacationOverview-cal-head.today::before,
+  th.vacationOverview-cal-head.today::after {
+    display: none;
+  }
+}
+
 .vacationOverview-table th,
 .vacationOverview-table td {
   @apply text-zinc-600!;
@@ -292,5 +299,83 @@ svg.no-workday-icon {
 
   .vacationOverview-tbody tr:hover svg.no-workday-icon {
     @apply stroke-zinc-600;
+  }
+}
+
+@media print {
+  /* the calendar table has one column per day - a full month needs all
+     the horizontal room it can get, and portrait would just clip it */
+  @page {
+    size: landscape;
+  }
+
+  /* border-collapse merges adjacent cell borders into a single line instead
+     of each cell painting its own - avoids sub-pixel rounding making a
+     shared border disappear in some renderers */
+  .vacationOverview-table {
+    font-size: 8pt;
+    border-collapse: collapse;
+  }
+
+  .vacationOverview-table th,
+  .vacationOverview-table td {
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .vacationOverview-cal-head > div {
+    padding: 1pt;
+  }
+
+  .vacationOverview-table thead th {
+    font-weight: 600 !important;
+    padding: 2pt 4pt;
+  }
+
+  /* a month has up to 31 of these columns - the 4pt horizontal padding above
+     is only meant for the name column; kept on every day column it adds up
+     to enough extra width to push the last few days off the printable page */
+  .vacationOverview-table thead th.vacationOverview-cal-head {
+    padding: 2pt 0;
+  }
+
+  .vacationOverview-table tbody th {
+    font-weight: 300 !important;
+    padding: 2pt 4pt;
+  }
+
+  /* sticky has no scrolling ancestor once paginated - pin it back down */
+  .vacationOverview-legend-table {
+    position: static;
+    left: auto;
+  }
+
+  /* the abbreviation letter is a sibling of the color swatch div - without
+     this it drops to a second line below the swatch, making rows with a
+     letter (absence/sick) taller than rows without (today/holiday/no-workday) */
+  .vacationOverview-legend-colorbox {
+    position: relative;
+  }
+
+  .vacationOverview-legend-colorbox > span {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* the border is only there to mark the swatch's boundary on screen -
+     colors now print, so the fill itself does that job; drop the border */
+  .vacationOverview-legend-colorbox {
+    border-color: transparent;
+  }
+
+  /* on screen, the type color is just a small dot at the bottom of the
+     swatch (mirroring a full-day mark in the calendar), leaving the
+     abbreviation letter mostly over blank space above it. Fill the whole
+     legend swatch with that color instead, so the letter always sits above
+     a solid color block instead of next to/behind a sliver of it. */
+  .vacationOverview-legend-colorbox .cal-day.absence-full--solid {
+    background: var(--absence-bar-color) !important;
   }
 }
