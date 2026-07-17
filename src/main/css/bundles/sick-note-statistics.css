@@ -95,10 +95,14 @@
         font-weight: 600;
         @apply text-black;
         @apply dark:text-zinc-100;
-        display: inline-grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: 100%;
-        gap: --spacing(2);
+      }
+
+      .statistic-summary-card__content-previous {
+        margin-left: --spacing(1);
+        font-weight: 400;
+        @apply text-sm;
+        @apply text-gray-500;
+        @apply dark:text-zinc-400;
       }
     }
   }
