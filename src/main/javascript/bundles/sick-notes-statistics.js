@@ -203,11 +203,11 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
       hollow: {
         margin: 0,
         size: "30%",
-        background: "#fff",
+        background: "var(--uv-chart-container-background)",
         position: "front",
       },
       track: {
-        background: "#bfe3fd",
+        background: "var(--uv-chart-border)",
       },
       dataLabels: {
         name: {
@@ -227,7 +227,8 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
       },
     },
   },
-  colors: ["#1e9dfc", "#9fbed6"],
+  // dataseriesValuesForAtLeastOneSickNotePercent is [currentYear, previousYear]
+  colors: ["var(--sick-note-color)", "var(--sick-note-color-light)"],
   stroke: {
     lineCap: "round",
   },
