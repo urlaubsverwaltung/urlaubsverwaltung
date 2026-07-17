@@ -454,14 +454,14 @@
                 </div>
                 <div class="flex-1 flex flex-col gap-1 text-sm">
                   <p
-                    th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${previousSelectedYearStatistics.numberOfPersonsWithMinimumOneSickNote})}"
+                    th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with.previous-year(${previousSelectedYearStatistics.numberOfPersonsWithMinimumOneSickNote}, ${previousSelectedYearStatistics.year})}"
                   >
-                    4 Mitarbeitende mit mindestens einer Krankmeldung
+                    4 Mitarbeitende mit mindestens einer Krankmeldung im Vorjahr 2025
                   </p>
                   <p
-                    th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without(${previousSelectedYearStatistics.numberOfPersonsWithoutSickNote})}"
+                    th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without.previous-year(${previousSelectedYearStatistics.numberOfPersonsWithoutSickNote}, ${previousSelectedYearStatistics.year})}"
                   >
-                    10 Mitarbeitende ohne Krankmeldung
+                    10 Mitarbeitende ohne Krankmeldung im Vorjahr 2025
                   </p>
                 </div>
               </div>
