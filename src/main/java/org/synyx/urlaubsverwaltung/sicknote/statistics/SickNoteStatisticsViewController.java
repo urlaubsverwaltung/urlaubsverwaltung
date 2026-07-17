@@ -71,10 +71,10 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
 
         final GraphDto graphDto = new GraphDto(
             List.of(
-                new DataSeries(selectedYearStatistics.getNumberOfSickDaysByMonth()),
-                new DataSeries(selectedYearStatistics.getNumberOfChildSickDaysByMonth()),
-                new DataSeries(previousSelectedYearStatistics.getNumberOfSickDaysByMonth()),
-                new DataSeries(previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
+                new DataSeries(selectedYear.getValue(), selectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(selectedYear.getValue(), selectedYearStatistics.getNumberOfChildSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
             ),
             List.of(
                 selectedYearStatistics.getAtLeastOneSickNotePercent(),
@@ -91,6 +91,6 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
     record GraphDto(List<DataSeries> dataSeries, List<BigDecimal> dataSeriesRadial) {
     }
 
-    record DataSeries(List<BigDecimal> data) {
+    record DataSeries(int year, List<BigDecimal> data) {
     }
 }

@@ -7,10 +7,64 @@ import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 
-const series = globalThis.sicknoteStatistic.dataseriesNames.map((name, index) => ({
-  name,
-  data: globalThis.sicknoteStatistic.dataseriesValues[index].data,
-}));
+// backend sends [currentYearSick, currentYearChildSick, previousYearSick, previousYearChildSick];
+// entries of the same category (sick / child-sick) are at the same index modulo 2.
+const dataseriesValues = globalThis.sicknoteStatistic.dataseriesValues;
+const dataseriesNames = globalThis.sicknoteStatistic.dataseriesNames;
+const CATEGORY_COUNT = dataseriesNames.length;
+
+// build one [previousYear, currentYear] pair per category (sick / child-sick).
+const categoryPairs = dataseriesNames.map((name, categoryIndex) => {
+  const pair = dataseriesValues.filter((_, index) => index % 2 === categoryIndex).toSorted((a, b) => a.year - b.year);
+  return { name, previousYear: pair[0], currentYear: pair[1] };
+});
+
+// two grouped-stacked bars per month: previous year (sick + child-sick stacked, on the left)
+// and current year (sick + child-sick stacked, on the right). ApexCharts groups bar series by
+// their `group` value, positioning each unique group side by side in first-appearance order -
+// so all "previousYear" series must come before the "currentYear" series in this array.
+const series = [
+  ...categoryPairs.map(({ name, previousYear }) => ({
+    name: `${name} ${previousYear.year}`,
+    group: "previousYear",
+    data: previousYear.data,
+  })),
+  ...categoryPairs.map(({ name, currentYear }) => ({
+    name: `${name} ${currentYear.year}`,
+    group: "currentYear",
+    data: currentYear.data,
+  })),
+];
+
+function round1(number) {
+  return Math.round(number * 10) / 10;
+}
+
+function formatTooltipValue(value, previousYearValue) {
+  if (previousYearValue === undefined) {
+    return `${round1(value)}`;
+  }
+
+  const difference = round1(value - previousYearValue);
+  const sign = difference > 0 ? "+" : "";
+  if (previousYearValue === 0) {
+    return `${round1(value)} (${sign}${difference})`;
+  }
+
+  const percentage = Math.round((difference / previousYearValue) * 100);
+  const percentageSign = percentage > 0 ? "+" : "";
+  return `${round1(value)} (${sign}${difference} / ${percentageSign}${percentage}%)`;
+}
+
+// series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
+// the current/previous counterpart of a series is offset by CATEGORY_COUNT.
+function pairSeriesIndex(seriesIndex) {
+  return seriesIndex < CATEGORY_COUNT ? seriesIndex + CATEGORY_COUNT : seriesIndex - CATEGORY_COUNT;
+}
+
+function isPreviousYearSeriesIndex(seriesIndex) {
+  return seriesIndex < CATEGORY_COUNT;
+}
 
 const { theme } = useTheme();
 const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
@@ -18,7 +72,7 @@ const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 const options = {
   chart: {
     type: "bar",
-    stacked: false,
+    stacked: true,
     height: 320,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
@@ -47,16 +101,48 @@ const options = {
     horizontalAlign: "right",
   },
   tooltip: {
-    enabled: false,
+    shared: true,
+    intersect: false,
+    // custom row order (top to bottom): sick current, sick previous, child-sick current,
+    // child-sick previous - independent of the series' internal render/group order.
+    custom: function ({ series: seriesValues, dataPointIndex, w }) {
+      const categoryLabel = w.globals.labels[dataPointIndex];
+
+      const rowSeriesIndexes = categoryPairs.flatMap((_, categoryIndex) => [
+        CATEGORY_COUNT + categoryIndex,
+        categoryIndex,
+      ]);
+
+      const rows = rowSeriesIndexes
+        .map((seriesIndex) => {
+          const value = seriesValues[seriesIndex][dataPointIndex];
+          const valueText = isPreviousYearSeriesIndex(seriesIndex)
+            ? `${round1(value)}`
+            : formatTooltipValue(value, seriesValues[pairSeriesIndex(seriesIndex)]?.[dataPointIndex]);
+          const name = w.globals.seriesNames[seriesIndex];
+          const color = w.config.colors[seriesIndex];
+
+          return `
+            <div class="sicknote-statistics-tooltip-row">
+              <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
+              <span>${name}: ${valueText}</span>
+            </div>
+          `;
+        })
+        .join("");
+
+      return `<div class="sicknote-statistics-tooltip-title">${categoryLabel}</div>${rows}`;
+    },
   },
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
+  // series order is [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick]
   colors: [
-    "var(--sick-note-color)",
-    "var(--sick-note-child-color)",
     "var(--sick-note-color-light)",
     "var(--sick-note-child-color-light)",
+    "var(--sick-note-color)",
+    "var(--sick-note-child-color)",
   ],
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
@@ -88,6 +174,9 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
       enabled: !reducedMotion.value,
       speed: 200,
     },
+  },
+  theme: {
+    mode: theme.value === "dark" ? "dark" : "light",
   },
   series: dataseriesValuesForAtLeastOneSickNotePercent,
   states: {
@@ -129,8 +218,8 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
         enabled: true,
         offsetX: -8,
         fontSize: "16px",
-        formatter: function (seriesName, options_) {
-          return options_.w.globals.series[options_.seriesIndex] + "%";
+        formatter: function (seriesName, { seriesIndex, w }) {
+          return w.globals.series[seriesIndex] + "%";
         },
       },
     },
@@ -149,10 +238,9 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
 atLeastOneSickNoteChart.render();
 
 theme.subscribe(async function (nextTheme) {
-  const nextDark = nextTheme === "dark";
-  await chart.updateOptions({
-    theme: {
-      mode: nextDark ? "dark" : "light",
-    },
-  });
+  const mode = nextTheme === "dark" ? "dark" : "light";
+  await Promise.all([
+    chart.updateOptions({ theme: { mode } }),
+    atLeastOneSickNoteChart.updateOptions({ theme: { mode } }),
+  ]);
 });
