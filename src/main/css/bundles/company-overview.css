@@ -1,14 +1,16 @@
 @reference "../config.css";
 
 .overtime-chart {
-  --color: var(--color-teal-800);
+  --color: var(--color-teal-900);
+  --color-secondary: var(--color-teal-700);
 
   display: flex;
   justify-content: space-between;
   padding-inline: --spacing(8);
 
   @variant dark {
-    --color: var(--color-teal-600);
+    --color: var(--color-emerald-600);
+    --color-secondary: var(--color-emerald-600);
   }
 
   .overtime-chart-column {
@@ -19,14 +21,14 @@
     justify-content: flex-end;
 
     .overtime-chart-column__person-count {
+      color: var(--color);
       font-size: var(--text-sm);
       font-variant-numeric: tabular-nums;
-      color: var(--color);
     }
 
     .overtime-chart-column__bar {
       display: block;
-      background-color: var(--color);
+      background: linear-gradient(var(--color-secondary), var(--color));
       border-top-left-radius: 6px;
       border-top-right-radius: 6px;
 
