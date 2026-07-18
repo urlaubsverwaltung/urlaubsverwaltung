@@ -1,0 +1,160 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:text="#{overtime.statistics.header.title(${statistics.year})}">Überstundenstatistik</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/overtime-statistics.css}" />
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('overtime_statistics.js')}" />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.overtimeStatistic = {};
+        window.overtimeStatistic.xaxisLabels = [
+          /*[[#{month.january}]]*/ "Januar",
+          /*[[#{month.february}]]*/ "Februar",
+          /*[[#{month.march}]]*/ "März",
+          /*[[#{month.april}]]*/ "April",
+          /*[[#{month.may}]]*/ "Mai",
+          /*[[#{month.june}]]*/ "Juni",
+          /*[[#{month.july}]]*/ "Juli",
+          /*[[#{month.august}]]*/ "August",
+          /*[[#{month.september}]]*/ "September",
+          /*[[#{month.october}]]*/ "Oktober",
+          /*[[#{month.november}]]*/ "November",
+          /*[[#{month.december}]]*/ "Dezember",
+        ];
+        window.overtimeStatistic.yaxisTitle = /*[[#{overtime.statistics.chart.y-axis-label}]]*/ "Stunden";
+        window.overtimeStatistic.dataseriesName = /*[[#{overtime.statistics.chart.series.title}]]*/ "Überstunden";
+        window.overtimeStatistic.dataseriesValues = /*[[${statistics.totalOvertimeHoursByMonth}]]*/ [];
+        /*]]>*/
+      </script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="overtime_statistics.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::overtime-statistics-heading-body}, ~{::overtime-statistics-heading-actions})}"
+      >
+        <th:block th:ref="overtime-statistics-heading-body">
+          <h1 th:text="#{overtime.statistics.title}">Überstundenstatistik für das Jahr</h1>
+          <div
+            th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${statistics.year})}"
+          ></div>
+        </th:block>
+        <th:block th:ref="overtime-statistics-heading-actions"> </th:block>
+      </div>
+
+      <div class="mt-8 statistic-summary-container">
+        <h3 class="statistic-summary-container-title" th:text="#{overtime.statistics.summary.title}">
+          Überstunden im Überblick
+        </h3>
+        <p class="text-sm" th:text="#{overtime.statistics.summary.description}">
+          Unternehmensweite Kennzahlen für den aktuellen Monat.
+        </p>
+        <div class="statistic-summary-card-box">
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{overtime.statistics.summary.current-month.label}">
+              Überstunden im aktuellen Monat
+            </span>
+            <span class="statistic-summary-card__content">
+              <span
+                th:with="value=${statistics.currentMonthTotalHours}"
+                th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
+              >
+                42
+              </span>
+              <span class="text-sm" th:text="#{hours.abbr}">Std.</span>
+            </span>
+          </p>
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{overtime.statistics.summary.delta.label}">
+              Veränderung zum Vormonat
+            </span>
+            <span class="statistic-summary-card__content">
+              <th:block th:if="${statistics.deltaToPreviousMonthPercent == null}">
+                <span th:text="#{overtime.statistics.delta.no-data}">–</span>
+              </th:block>
+              <th:block
+                th:if="${statistics.deltaToPreviousMonthPercent != null}"
+                th:with="value=${statistics.deltaToPreviousMonthPercent}"
+              >
+                <span th:text="${value.signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(value, 1, 2)} + '%'"
+                  >+3,50%</span
+                >
+              </th:block>
+            </span>
+          </p>
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{overtime.statistics.summary.rolling-average.label}">
+              Ø Überstunden je Mitarbeitende (30 Tage)
+            </span>
+            <span class="statistic-summary-card__content">
+              <span class="text-lg">ø</span>
+              <span
+                th:with="value=${statistics.rolling30DayAveragePerPerson}"
+                th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
+              >
+                3
+              </span>
+              <span class="text-sm" th:text="#{hours.abbr}">Std.</span>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
+          <h2 class="font-bold text-base" th:text="#{overtime.statistics.chart.title}">Überstunden je Monat</h2>
+        </div>
+
+        <div class="mt-4 overtime-statistics-chart-container">
+          <div id="overtime-statistic-chart" class="overtime-statistics-chart"></div>
+        </div>
+      </div>
+
+      <div class="mt-8 statistic-summary-container">
+        <h3 class="statistic-summary-container-title" th:text="#{overtime.statistics.delta.title}">
+          Veränderung zum Vormonat
+        </h3>
+        <p class="text-sm" th:text="#{overtime.statistics.delta.description}">
+          Entwicklung der monatlichen Überstunden im Vergleich zum jeweiligen Vormonat.
+        </p>
+        <ul class="overtime-delta-list">
+          <li
+            class="overtime-delta-list__item"
+            th:each="monthDelta : ${monthlyDeltas}"
+            th:classappend="${monthDelta.trend().getCssClass()}"
+          >
+            <span class="overtime-delta-list__month" th:text="#{${monthDelta.monthMessageKey()}}">Januar</span>
+            <span class="overtime-delta-list__value">
+              <th:block th:if="${monthDelta.deltaHours() == null}" th:text="#{overtime.statistics.delta.no-data}">
+                –
+              </th:block>
+              <th:block th:if="${monthDelta.deltaHours() != null}">
+                <span
+                  th:text="${monthDelta.deltaHours().signum() > 0 ? '+' : ''} + ${#numbers.formatDecimal(monthDelta.deltaHours(), 1, 2)} + ' ' + #{hours.abbr}"
+                >
+                  +1,50 Std.
+                </span>
+              </th:block>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </body>
+</html>

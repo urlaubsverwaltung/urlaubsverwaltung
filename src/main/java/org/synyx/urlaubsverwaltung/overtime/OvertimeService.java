@@ -41,6 +41,15 @@ public interface OvertimeService {
     Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, Instant from, Instant to);
 
     /**
+     * Fetch all the overtime records for the given persons overlapping the given date range.
+     *
+     * @param persons   to fetch the overtime records for
+     * @param dateRange to fetch the overtime records for
+     * @return list of matching overtime records
+     */
+    List<Overtime> getOvertimeRecordsForPersonsAndDateRange(Collection<Person> persons, DateRange dateRange);
+
+    /**
      * Creates a new internal overtime entry.
      *
      * @param overtimePersonId {@link PersonId} of the overtime owner

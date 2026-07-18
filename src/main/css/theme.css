@@ -58,6 +58,10 @@
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
   --sick-rate-color: var(--color-black);
   --sick-rate-color-light: color-mix(in srgb, var(--color-black) 50%, white);
+  --overtime-color: var(--color-emerald-500);
+  --overtime-delta-decrease-color: var(--color-emerald-500);
+  --overtime-delta-increase-color: var(--color-orange-500);
+  --overtime-delta-neutral-color: var(--color-gray-400);
 
   @variant dark {
     --uv-cal-border-color: var(--color-neutral-900);
@@ -89,6 +93,10 @@
     --sick-note-child-color-light: color-mix(in srgb, var(--color-red-900) 50%, white);
     --sick-rate-color: var(--color-pink-300);
     --sick-rate-color-light: color-mix(in srgb, var(--color-pink-300) 50%, white);
+    --overtime-color: var(--color-green-500);
+    --overtime-delta-decrease-color: var(--color-emerald-400);
+    --overtime-delta-increase-color: var(--color-orange-400);
+    --overtime-delta-neutral-color: var(--color-gray-500);
   }
 
   @variant desktop {
