@@ -31,7 +31,7 @@ record OvertimeStatistic(Map<PersonId, List<Overtime>> overtimesByPerson) {
             .map(Overtime::duration)
             .reduce(Duration.ZERO, Duration::plus);
 
-        return total.dividedBy(overtimesByPerson.size());
+        return total.dividedBy(personCount());
     }
 
     /**

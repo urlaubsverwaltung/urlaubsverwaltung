@@ -17,7 +17,7 @@ record CompanyStatisticsDto(
     record OvertimeDistribution(int personCount, List<OvertimeDistributionEntry> entries) {
 
         public int max() {
-            return entries.stream().mapToInt(OvertimeDistributionEntry::value).max().orElse(1);
+            return Math.max(personCount, 1);
         }
     }
 
