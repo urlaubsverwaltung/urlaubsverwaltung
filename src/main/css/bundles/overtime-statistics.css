@@ -1,0 +1,72 @@
+@reference "../config.css";
+
+.overtime-statistics-chart-container {
+  padding: --spacing(2);
+  @apply rounded-lg;
+  background-color: var(--uv-chart-container-background);
+}
+
+.overtime-statistics-chart {
+  @apply rounded-md;
+  overflow: hidden;
+  padding: --spacing(1);
+  background-color: var(--uv-chart-background);
+}
+
+.overtime-delta-list {
+  margin: --spacing(4) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+
+  .overtime-delta-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: --spacing(4);
+    padding: --spacing(2) --spacing(4);
+    background-color: var(--uv-chart-container-background);
+    @apply rounded-md;
+  }
+
+  .overtime-delta-list__month {
+    @apply text-sm;
+  }
+
+  .overtime-delta-list__value {
+    font-weight: 600;
+    @apply text-sm;
+  }
+
+  .overtime-delta--decrease .overtime-delta-list__value {
+    color: var(--overtime-delta-decrease-color);
+  }
+
+  .overtime-delta--increase .overtime-delta-list__value {
+    color: var(--overtime-delta-increase-color);
+  }
+
+  .overtime-delta--neutral .overtime-delta-list__value,
+  .overtime-delta--none .overtime-delta-list__value {
+    color: var(--overtime-delta-neutral-color);
+  }
+}
+
+@variant sm {
+  .overtime-statistics-chart-container {
+    padding: --spacing(4);
+    border: 1px solid var(--uv-chart-border);
+  }
+}
+
+@variant md {
+  .overtime-statistics-chart-container {
+    padding: --spacing(5);
+  }
+
+  .overtime-statistics-chart {
+    padding: --spacing(4);
+  }
+}

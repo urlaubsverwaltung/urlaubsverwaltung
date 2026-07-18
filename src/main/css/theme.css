@@ -54,6 +54,10 @@
   --absence-color-PINK: #ec4899;
   --sick-note-color: var(--color-red-500);
   --sick-note-child-color: var(--color-red-700);
+  --overtime-color: var(--color-emerald-500);
+  --overtime-delta-decrease-color: var(--color-emerald-500);
+  --overtime-delta-increase-color: var(--color-orange-500);
+  --overtime-delta-neutral-color: var(--color-gray-400);
 
   @variant dark {
     --uv-cal-border-color: var(--color-neutral-900);
@@ -81,6 +85,10 @@
     --absence-color-PINK: #f472b6;
     --sick-note-color: var(--color-red-800);
     --sick-note-child-color: var(--color-red-950);
+    --overtime-color: var(--color-green-500);
+    --overtime-delta-decrease-color: var(--color-emerald-400);
+    --overtime-delta-increase-color: var(--color-orange-400);
+    --overtime-delta-neutral-color: var(--color-gray-500);
   }
 
   @variant desktop {

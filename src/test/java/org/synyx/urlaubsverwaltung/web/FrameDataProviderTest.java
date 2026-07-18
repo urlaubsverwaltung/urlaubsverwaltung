@@ -106,7 +106,8 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeStatisticsLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -176,7 +177,8 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeStatisticsLink()
                 );
                 assertThat(dto.settings()).containsExactlyElementsOf(settingsLinks());
             });
@@ -693,6 +695,14 @@ class FrameDataProviderTest {
                     new NavigationItemDto("company-sicknote-statistics-link", "/web/sicknote/statistics", "nav.company.sicknotes.statistics", "", false, "navigation-sick-notes-statistics-link")
                 )
             );
+    }
+
+    private static NavigationItemDto companyOvertimeStatisticsLink() {
+        return companyOvertimeStatisticsLink(false);
+    }
+
+    private static NavigationItemDto companyOvertimeStatisticsLink(boolean active) {
+        return new NavigationItemDto("company-overtime-statistics-link", "/web/overtime/statistics", "nav.company.overtimes", "clock-arrow-up", active);
     }
 
     private static List<NavigationItemDto> settingsLinks() {

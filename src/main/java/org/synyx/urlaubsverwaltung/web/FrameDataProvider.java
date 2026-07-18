@@ -192,6 +192,12 @@ public class FrameDataProvider implements DataProviderInterface {
             )));
         }
 
+        final boolean canViewOvertimeStatistics = user.hasRole(OFFICE) || user.hasRole(BOSS);
+        if (canViewOvertimeStatistics) {
+            final String overtimeStatistics = "/web/overtime/statistics";
+            elements.add(new NavigationItemDto("company-overtime-statistics-link", overtimeStatistics, "nav.company.overtimes", "clock-arrow-up", url.equals(overtimeStatistics)));
+        }
+
         return elements;
     }
 
