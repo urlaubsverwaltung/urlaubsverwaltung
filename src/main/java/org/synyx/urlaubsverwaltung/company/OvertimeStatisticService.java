@@ -42,12 +42,6 @@ class OvertimeStatisticService {
      */
     OvertimeStatistic getOvertimeStatistics(Person viewer, Instant from, Instant to) {
 
-        if (!viewer.isPrivileged()) {
-            // TODO create statistics for viewer?
-            LOG.info("person id={} is not privileged. Returning empty overtime statistics.", viewer.getId());
-            return OvertimeStatistic.empty();
-        }
-
         final List<Person> persons = getRelevantPersons(viewer);
         final List<PersonId> personIds = persons.stream().map(Person::getIdAsPersonId).toList();
 
@@ -66,6 +60,6 @@ class OvertimeStatisticService {
             ? departmentService.getManagedActiveMembersOfPerson(viewer)
             : List.of();
 
-        return Stream.concat(persons.stream(), Stream.of(viewer)).toList();
+        return Stream.concat(persons.stream(), Stream.of(viewer)).distinct().toList();
     }
 }
