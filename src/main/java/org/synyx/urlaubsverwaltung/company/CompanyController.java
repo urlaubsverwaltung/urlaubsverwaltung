@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,8 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @RequestMapping("/web/company")
 @PreAuthorize(IS_BOSS_OR_OFFICE)
 class CompanyController implements HasLaunchpad, HasPersonSearch {
+
+    private static final ZoneId USER_ZONE = ZoneId.of("Europe/Berlin");
 
     private final PersonService personService;
     private final OvertimeStatisticService overtimeStatisticService;
@@ -92,8 +95,9 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     }
 
     private DateRange getRequestedDateRange(ViewMode viewMode) {
-        final YearMonth month = YearMonth.now(clock);
-        final Instant now = toInstant(LocalDate.now(clock));
+        final Clock userClock = clock.withZone(USER_ZONE);
+        final YearMonth month = YearMonth.now(userClock);
+        final Instant now = toInstant(LocalDate.now(userClock));
         return switch (viewMode) {
             case YEAR -> new DateRange(toInstant(Year.of(month.getYear()).atDay(1)), now);
             case QUARTER -> new DateRange(toInstant(month.minusMonths(2).atDay(1)), now);

@@ -151,6 +151,32 @@ class CompanyControllerTest {
     }
 
     @Test
+    void ensureOverviewUsesBerlinDateNearUtcMidnightBoundary() {
+
+        // 2026-01-14T23:30:00Z is already 2026-01-15T00:30 in Europe/Berlin (CET, UTC+1)
+        final Clock nearMidnightUtcClock = Clock.fixed(Instant.parse("2026-01-14T23:30:00Z"), UTC);
+        final CompanyController sutAtBerlinMidnight = new CompanyController(personService, overtimeStatisticService,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, nearMidnightUtcClock);
+
+        final Person signedInUser = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate berlinToday = LocalDate.of(2026, 1, 15);
+        final LocalDate monthStart = LocalDate.of(2026, 1, 1);
+        stubCurrentAndPreviousRange(signedInUser, monthStart, berlinToday, OvertimeStatistic.empty());
+
+        final Model model = new ConcurrentModel();
+        sutAtBerlinMidnight.overview(model, Optional.empty());
+
+        assertThat(model.getAttribute("statistics"))
+            .asInstanceOf(type(CompanyStatisticsDto.class))
+            .satisfies(statistics -> {
+                assertThat(statistics.from()).isEqualTo(monthStart);
+                assertThat(statistics.to()).isEqualTo(berlinToday);
+            });
+    }
+
+    @Test
     void ensureOverviewComputesAverageGrowthAndDistribution() {
 
         final Person signedInUser = new Person();
