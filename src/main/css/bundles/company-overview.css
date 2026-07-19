@@ -50,6 +50,28 @@
   }
 }
 
+.statistic-card--is-loading {
+  animation: is-loading-blink 1300ms ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    filter: blur(2px);
+  }
+}
+
+@keyframes is-loading-blink {
+  0%,
+  100% {
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  50% {
+    filter: blur(1px);
+    opacity: 0.6;
+  }
+}
+
 .overtime-growth-arrow {
   display: inline-block;
   will-change: rotate;

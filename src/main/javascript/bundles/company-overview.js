@@ -4,6 +4,28 @@ import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 const frame = document.querySelector("#frame-company-overview");
 const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const LOADING_CARD_IDS = ["company-overview-card-overtime-average", "company-overview-card-overtime-distribution"];
+let loadingTimer;
+
+frame?.addEventListener("turbo:before-fetch-request", function () {
+  clearTimeout(loadingTimer);
+  loadingTimer = setTimeout(() => {
+    for (const id of LOADING_CARD_IDS) {
+      document.querySelector(`#${id}`)?.classList.add("statistic-card--is-loading");
+    }
+  }, 300);
+});
+
+frame?.addEventListener("turbo:before-fetch-response", clearLoadingIndicator);
+frame?.addEventListener("turbo:fetch-request-error", clearLoadingIndicator);
+
+function clearLoadingIndicator() {
+  clearTimeout(loadingTimer);
+  for (const id of LOADING_CARD_IDS) {
+    document.querySelector(`#${id}`)?.classList.remove("statistic-card--is-loading");
+  }
+}
+
 frame?.addEventListener("turbo:before-frame-render", (event) => {
   event.detail.render = function (currentElement, newElement) {
     const pendingHeights = [];
