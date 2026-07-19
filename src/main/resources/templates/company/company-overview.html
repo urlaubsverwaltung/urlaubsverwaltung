@@ -50,19 +50,31 @@
                 <a
                   th:href="@{/web/company/overview}"
                   class="button"
-                  th:classappend="${mode == 'month' ? 'button-main' : ''}"
+                  th:classappend="${viewMode == 'month' ? 'button-main' : ''}"
                   th:text="#{company.overview.range-select.month}"
                   data-turbo-frame="frame-company-overview"
                   data-turbo-action="replace"
                 >
-                  Monat
+                  Aktueller Monat
                 </a>
               </li>
               <li>
                 <a
-                  th:href="@{/web/company/overview (year)}"
+                  th:href="@{/web/company/overview (view='quarter')}"
                   class="button"
-                  th:classappend="${mode == 'year' ? 'button-main' : ''}"
+                  th:classappend="${viewMode == 'quarter' ? 'button-main' : ''}"
+                  th:text="#{company.overview.range-select.recent-months}"
+                  data-turbo-frame="frame-company-overview"
+                  data-turbo-action="replace"
+                >
+                  3 Monate
+                </a>
+              </li>
+              <li>
+                <a
+                  th:href="@{/web/company/overview (view='year')}"
+                  class="button"
+                  th:classappend="${viewMode == 'year' ? 'button-main' : ''}"
                   th:text="#{company.overview.range-select.year-to-date}"
                   data-turbo-frame="frame-company-overview"
                   data-turbo-action="replace"

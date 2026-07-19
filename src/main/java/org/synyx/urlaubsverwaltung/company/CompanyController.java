@@ -24,7 +24,6 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.Month.DECEMBER;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
@@ -59,25 +58,12 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     }
 
     @GetMapping("/overview")
-    public String overview(Model model, @RequestParam("year") Optional<String> yearMode) {
+    public String overview(Model model, @RequestParam("view") Optional<String> view) {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final DateRange dateRange;
-        if (yearMode.isPresent()) {
-            final Year year = Year.now(clock);
-            dateRange = new DateRange(year.atDay(1), year.atMonth(DECEMBER).atEndOfMonth());
-        } else {
-            final YearMonth month = YearMonth.now(clock);
-            dateRange = new DateRange(month.atDay(1), month.atEndOfMonth());
-        }
-
-        final String mode;
-        if (yearMode.isPresent()) {
-            mode = "year";
-        } else {
-            mode = "month";
-        }
+        final ViewMode viewMode = view.flatMap(ViewMode::of).orElse(ViewMode.MONTH);
+        final DateRange dateRange = getRequestedDateRange(viewMode);
 
         final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
 
@@ -97,10 +83,20 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
             ))
         ));
 
-        model.addAttribute("mode", mode);
+        model.addAttribute("viewMode", viewMode.name().toLowerCase());
         model.addAttribute("statistics", statisticsDto);
 
         return "company/company-overview";
+    }
+
+    private DateRange getRequestedDateRange(ViewMode viewMode) {
+        final YearMonth month = YearMonth.now(clock);
+        final LocalDate now = LocalDate.now(clock);
+        return switch (viewMode) {
+            case YEAR -> new DateRange(Year.of(month.getYear()).atDay(1), now);
+            case QUARTER -> new DateRange(month.minusMonths(2).atDay(1), now);
+            case MONTH -> new DateRange(month.atDay(1), now);
+        };
     }
 
     @Override
@@ -111,6 +107,23 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     @Override
     public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
         return personSearchUiFragmentSupplier;
+    }
+
+    enum ViewMode {
+        MONTH,
+        QUARTER,
+        YEAR;
+
+        static Optional<ViewMode> of(String value) {
+            if (value == null) {
+                return Optional.empty();
+            }
+            try {
+                return Optional.of(ViewMode.valueOf(value.toUpperCase()));
+            } catch(IllegalArgumentException e) {
+                return Optional.empty();
+            }
+        }
     }
 
     record DateRange(LocalDate start, LocalDate end) {}
