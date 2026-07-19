@@ -143,15 +143,15 @@
                   class="stat-card__body"
                   th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
-                  <ol class="overtime-chart">
-                    <li th:each="entry, stat : ${entries}" class="overtime-chart-column pt-4">
-                      <span class="flex flex-col justify-end" th:style="|height: ${maxBarHeight}px|">
+                  <ol class="bar-chart">
+                    <li th:each="entry, stat : ${entries}" class="bar-chart__item">
+                      <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
                         <span
-                          class="overtime-chart-column__bar relative"
+                          class="bar-chart__bar"
                           th:style="|height:${entry.value() == 0 ? minBarHeight : entry.value() * maxBarHeight / max}px;|"
                         >
                           <span
-                            class="absolute -translate-y-full pb-1 block w-full text-center overtime-chart-column__person-count"
+                            class="bar-chart__value"
                             th:aria-label="#{company.overview.distribution.overtime.amountEmployees(${entry.value()})}"
                             th:text="${entry.value()}"
                             >42</span
@@ -159,7 +159,7 @@
                         </span>
                       </span>
                       <span
-                        class="overtime-chart-column__range"
+                        class="bar-chart__label"
                         th:text="${entry.rangeEnd() == null ? '>' + entry.rangeStart() + 'h' : entry.rangeStart() + '-' + entry.rangeEnd() + 'h'}"
                       >
                         0h bis 5h

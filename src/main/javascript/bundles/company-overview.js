@@ -34,9 +34,9 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
     Idiomorph.morph(currentElement, newElement, {
       callbacks: {
         beforeNodeMorphed(oldNode, newNode) {
-          if (oldNode.matches?.(".overtime-chart-column__bar")) {
-            const oldPersonCountNode = oldNode.querySelector(".overtime-chart-column__person-count");
-            const newPersonCountNode = newNode.querySelector(".overtime-chart-column__person-count");
+          if (oldNode.matches?.(".bar-chart__bar")) {
+            const oldPersonCountNode = oldNode.querySelector(".bar-chart__value");
+            const newPersonCountNode = newNode.querySelector(".bar-chart__value");
             oldPersonCountNode.setAttribute("aria-label", newPersonCountNode.getAttribute("aria-label"));
 
             pendingHeights.push([oldNode, newNode.style.height]);

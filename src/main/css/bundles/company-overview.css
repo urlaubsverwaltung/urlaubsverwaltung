@@ -76,7 +76,7 @@
   }
 }
 
-.overtime-chart {
+.bar-chart {
   --color: var(--color-teal-900);
   --color-secondary: var(--color-teal-700);
 
@@ -89,20 +89,26 @@
     --color-secondary: var(--color-emerald-600);
   }
 
-  .overtime-chart-column {
+  .bar-chart__item {
     display: flex;
     flex-direction: column;
     gap: --spacing(2);
     align-items: center;
     justify-content: flex-end;
 
-    .overtime-chart-column__person-count {
-      color: var(--color);
-      font-size: var(--text-sm);
-      font-variant-numeric: tabular-nums;
+    &:has(.bar-chart__label) {
+      /* label is positioned absolute within the bar moved with negative translateY. */
+      /* therefore padding-top on the item to create space for the label. */
+      padding-top: --spacing(4);
     }
 
-    .overtime-chart-column__bar {
+    .bar-chart__bar-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .bar-chart__bar {
       display: block;
       background: linear-gradient(var(--color-secondary), var(--color));
       border-top-left-radius: 6px;
@@ -117,9 +123,25 @@
       @media (prefers-reduced-motion: reduce) {
         transition: none;
       }
+
+      &:has(.bar-chart__value) {
+        position: relative;
+      }
+
+      .bar-chart__value {
+        color: var(--color);
+        font-size: var(--text-sm);
+        font-variant-numeric: tabular-nums;
+
+        position: absolute;
+        transform: translateY(-100%);
+        padding-bottom: --spacing(1);
+        width: 100%;
+        text-align: center;
+      }
     }
 
-    .overtime-chart-column__range {
+    .bar-chart__label {
       font-size: var(--text-sm);
       color: var(--color);
     }
