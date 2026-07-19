@@ -18,12 +18,14 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
@@ -74,7 +76,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final BigDecimal averagePrev = toBigDecimalHours(prevStats.average());
 
         final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
-            dateRange.start, dateRange.end, average, average.subtract(averagePrev),
+            toLocalDate(dateRange.start), toLocalDate(dateRange.end), average, average.subtract(averagePrev),
             new OvertimeDistribution(stats.personCount(), List.of(
                 new OvertimeDistributionEntry(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
                 new OvertimeDistributionEntry(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
@@ -91,11 +93,11 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
     private DateRange getRequestedDateRange(ViewMode viewMode) {
         final YearMonth month = YearMonth.now(clock);
-        final LocalDate now = LocalDate.now(clock);
+        final Instant now = toInstant(LocalDate.now(clock));
         return switch (viewMode) {
-            case YEAR -> new DateRange(Year.of(month.getYear()).atDay(1), now);
-            case QUARTER -> new DateRange(month.minusMonths(2).atDay(1), now);
-            case MONTH -> new DateRange(month.atDay(1), now);
+            case YEAR -> new DateRange(toInstant(Year.of(month.getYear()).atDay(1)), now);
+            case QUARTER -> new DateRange(toInstant(month.minusMonths(2).atDay(1)), now);
+            case MONTH -> new DateRange(toInstant(month.atDay(1)), now);
         };
     }
 
@@ -126,13 +128,21 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         }
     }
 
-    record DateRange(LocalDate start, LocalDate end) {}
+    record DateRange(Instant start, Instant end) {}
 
     private static DateRange toPreviousRange(DateRange dateRange) {
         final long days = DAYS.between(dateRange.start, dateRange.end) + 1;
-        final LocalDate previousEnd = dateRange.start.minusDays(1);
-        final LocalDate previousStart = previousEnd.minusDays(days - 1);
+        final Instant previousEnd = dateRange.start.minus(1, DAYS);
+        final Instant previousStart = previousEnd.minus(days - 1, DAYS);
         return new DateRange(previousStart, previousEnd);
+    }
+
+    private static Instant toInstant(LocalDate date) {
+        return date.atStartOfDay().toInstant(UTC);
+    }
+
+    private static LocalDate toLocalDate(Instant instant) {
+        return LocalDate.ofInstant(instant, UTC);
     }
 
     private static Duration hours(int value) {

@@ -163,8 +163,8 @@ class CompanyControllerTest {
         final LocalDate end = today;
         final LocalDate[] previousRange = toPreviousRange(start, end);
 
-        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, start, end)).thenReturn(current);
-        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, previousRange[0], previousRange[1])).thenReturn(previous);
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(current);
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(previous);
 
         final Model model = new ConcurrentModel();
         sut.overview(model, Optional.of("month"));
@@ -185,10 +185,10 @@ class CompanyControllerTest {
     }
 
     private void stubCurrentAndPreviousRange(Person signedInUser, LocalDate start, LocalDate end, OvertimeStatistic statistic) {
-        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, start, end)).thenReturn(statistic);
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(statistic);
 
         final LocalDate[] previousRange = toPreviousRange(start, end);
-        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, previousRange[0], previousRange[1])).thenReturn(statistic);
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(statistic);
     }
 
     private static LocalDate[] toPreviousRange(LocalDate start, LocalDate end) {
@@ -196,6 +196,10 @@ class CompanyControllerTest {
         final LocalDate previousEnd = start.minusDays(1);
         final LocalDate previousStart = previousEnd.minusDays(days - 1);
         return new LocalDate[]{previousStart, previousEnd};
+    }
+
+    private static Instant toInstant(LocalDate date) {
+        return date.atStartOfDay().toInstant(UTC);
     }
 
     private static Duration hours(int value) {

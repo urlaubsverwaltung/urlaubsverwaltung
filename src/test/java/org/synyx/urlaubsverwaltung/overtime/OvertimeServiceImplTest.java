@@ -42,6 +42,7 @@ import java.util.Set;
 
 import static java.time.Month.AUGUST;
 import static java.time.Month.JANUARY;
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -1519,7 +1520,7 @@ class OvertimeServiceImplTest {
             when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
                 .thenReturn(List.of(laterOvertime, earlierOvertime));
 
-            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from, to);
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
 
             assertThat(actual).hasSize(1).containsKey(personId);
             assertThat(actual.get(personId))
@@ -1552,7 +1553,7 @@ class OvertimeServiceImplTest {
             when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
                 .thenReturn(List.of(externalZero, externalNonZero));
 
-            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from, to);
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
 
             assertThat(actual.get(personId))
                 .extracting(Overtime::type, Overtime::duration)
@@ -1576,7 +1577,7 @@ class OvertimeServiceImplTest {
             when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(personWithoutOvertime), from, to))
                 .thenReturn(List.of());
 
-            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime, unknownPersonId), from, to);
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime, unknownPersonId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
 
             assertThat(actual)
                 .hasSize(2)

@@ -9,7 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -40,7 +40,7 @@ class OvertimeStatisticService {
      * @param from from date
      * @param to to date, inclusive
      */
-    OvertimeStatistic getOvertimeStatistics(Person viewer, LocalDate from, LocalDate to) {
+    OvertimeStatistic getOvertimeStatistics(Person viewer, Instant from, Instant to) {
 
         if (!viewer.isPrivileged()) {
             // TODO create statistics for viewer?

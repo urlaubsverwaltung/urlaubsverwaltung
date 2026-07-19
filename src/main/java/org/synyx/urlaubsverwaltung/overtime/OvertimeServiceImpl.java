@@ -19,9 +19,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +31,7 @@ import java.util.Set;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Duration.ZERO;
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -97,13 +98,16 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, LocalDate from, LocalDate to) {
+    public Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, Instant from, Instant to) {
+
+        final LocalDate fromDate = LocalDate.ofInstant(from, UTC);
+        final LocalDate toDate = LocalDate.ofInstant(to, UTC);
 
         final Collection<Person> persons = personService.getAllPersonsByIds(personIds);
-        final DateRange dateRange = new DateRange(from, to);
+        final DateRange dateRange = new DateRange(fromDate, toDate);
 
         final Map<PersonId, List<Overtime>> overtimesByPersonId = overtimeRepository
-            .findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)
+            .findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, fromDate, toDate)
             .stream()
             .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
             .map(OvertimeServiceImpl::entityToOvertime)
@@ -331,7 +335,7 @@ class OvertimeServiceImpl implements OvertimeService {
             new DateRange(entity.getStartDate(), entity.getEndDate()),
             entity.getDuration(),
             entity.isExternal() ? EXTERNAL : UV_INTERNAL,
-            entity.getLastModificationDate().atStartOfDay().toInstant(ZoneOffset.UTC)
+            entity.getLastModificationDate().atStartOfDay().toInstant(UTC)
         );
     }
 
