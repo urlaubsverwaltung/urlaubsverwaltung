@@ -11,7 +11,7 @@ frame?.addEventListener("turbo:before-fetch-request", function () {
   clearTimeout(loadingTimer);
   loadingTimer = setTimeout(() => {
     for (const id of LOADING_CARD_IDS) {
-      document.querySelector(`#${id}`)?.classList.add("statistic-card--is-loading");
+      document.querySelector(`#${id}`)?.classList.add("stat-card--is-loading");
     }
   }, 300);
 });
@@ -22,7 +22,7 @@ frame?.addEventListener("turbo:fetch-request-error", clearLoadingIndicator);
 function clearLoadingIndicator() {
   clearTimeout(loadingTimer);
   for (const id of LOADING_CARD_IDS) {
-    document.querySelector(`#${id}`)?.classList.remove("statistic-card--is-loading");
+    document.querySelector(`#${id}`)?.classList.remove("stat-card--is-loading");
   }
 }
 

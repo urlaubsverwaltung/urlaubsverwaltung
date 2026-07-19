@@ -83,39 +83,38 @@
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
             <div class="mt-4 grid grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
-              <div
-                id="company-overview-card-overtime-average"
-                class="flex flex-col gap-2 bg-(--uv-chart-container-background) border border-(--uv-chart-border) p-4 rounded-lg shadow-2xs dark:shadow-none"
-              >
-                <span
-                  class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
-                  th:text="#{company.overview.metrics.overtime.avg}"
-                >
-                  Ø Mehrarbeit / Kopf
-                </span>
-                <span class="text-3xl font-bold tabular-nums">
+              <div id="company-overview-card-overtime-average" class="stat-card stat-card--kpi">
+                <div class="stat-card__header stat-card__header--no-border">
                   <span
-                    class="company-overtime-average-value"
-                    th:text="${#numbers.formatDecimal(statistics.averageOvertime(), 1, 2)}"
-                    >14,2</span
-                  >&nbsp;h</span
-                >
-                <span
-                  class="text-sm text-yellow-600 dark:text-yellow-600"
-                  th:with="growth=${statistics.averageOvertimeGrowth.signum}"
-                >
-                  <span
-                    class="inline-block transition-transform"
-                    th:classappend="${growth == 0 ? 'rotate-90' : (growth == -1 ? 'rotate-180' : '')}"
-                    >▲</span
-                  >&nbsp;
-                  <span
-                    class="company-overtime-growth-value tabular-nums"
-                    th:text="${(statistics.averageOvertimeGrowth > 0 ? '+' : '') + #numbers.formatDecimal(statistics.averageOvertimeGrowth, 2, 2)}"
-                    >+3,1</span
-                  >&nbsp;
-                  <span th:text="#{company.overview.metrics.overtime.compare.suffix}"> h gegenüber Vorzeitraum </span>
-                </span>
+                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                    th:text="#{company.overview.metrics.overtime.avg}"
+                  >
+                    Ø Mehrarbeit / Kopf
+                  </span>
+                </div>
+                <div class="stat-card__body">
+                  <span class="stat-card__value">
+                    <span
+                      class="company-overtime-average-value"
+                      th:text="${#numbers.formatDecimal(statistics.averageOvertime(), 1, 2)}"
+                    >
+                      14,2 </span
+                    >&nbsp;h
+                  </span>
+                  <span class="stat-card__trend" th:with="growth=${statistics.averageOvertimeGrowth.signum}">
+                    <span
+                      class="inline-block transition-transform"
+                      th:classappend="${growth == 0 ? 'rotate-90' : (growth == -1 ? 'rotate-180' : '')}"
+                      >▲</span
+                    >&nbsp;
+                    <span
+                      class="company-overtime-growth-value tabular-nums"
+                      th:text="${(statistics.averageOvertimeGrowth > 0 ? '+' : '') + #numbers.formatDecimal(statistics.averageOvertimeGrowth, 2, 2)}"
+                      >+3,1</span
+                    >&nbsp;
+                    <span th:text="#{company.overview.metrics.overtime.compare.suffix}"> h gegenüber Vorzeitraum </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -130,26 +129,18 @@
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
             <div class="mt-4 grid @3xl/main:grid-cols-2">
-              <div
-                id="company-overview-card-overtime-distribution"
-                class="flex flex-col gap-2 bg-(--uv-chart-container-background) border border-(--uv-chart-border) rounded-lg shadow-2xs dark:shadow-none"
-              >
-                <div class="p-4 border-b border-b-(--uv-chart-border) flex justify-between">
+              <div id="company-overview-card-overtime-distribution" class="stat-card">
+                <div class="stat-card__header stat-card__header--bordered">
+                  <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
                   <span
-                    class="text-sm font-bold dark:text-zinc-400"
-                    th:text="#{company.overview.distribution.overtime.title}"
-                  >
-                    Mehrarbeit - wie verteilt?
-                  </span>
-                  <span
-                    class="text-sm text-gray-500 dark:text-zinc-400"
+                    class="font-normal"
                     th:text="#{company.overview.distribution.overtime.amountEmployees(${statistics.overtimeDistribution.personCount})}"
                   >
                     1337 Mitarbeitende
                   </span>
                 </div>
                 <div
-                  class="p-4"
+                  class="stat-card__body"
                   th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
                   <ol class="overtime-chart">
