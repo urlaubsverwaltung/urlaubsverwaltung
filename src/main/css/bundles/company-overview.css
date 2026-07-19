@@ -125,21 +125,3 @@
     }
   }
 }
-
-.overtime-growth-arrow {
-  display: inline-block;
-  will-change: rotate;
-  transition: rotate 300ms ease-in-out;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-
-  &.overtime-growth-arrow--neutral {
-    rotate: 90deg;
-  }
-
-  &.overtime-growth-arrow--decreased {
-    rotate: 180deg;
-  }
-}
