@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonCreatedEvent;
@@ -33,8 +34,11 @@ class PersonEventHandlerExtension {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    // PersonServiceImpl.create()/update() publish these events from within a transaction; since these
+    // listeners read the person back from the DB on a separate (@Async) thread, they must wait until
+    // that transaction has committed, otherwise the person may not be visible yet.
     @Async
-    @EventListener
+    @TransactionalEventListener(fallbackExecution = true)
     void on(PersonCreatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
@@ -44,7 +48,7 @@ class PersonEventHandlerExtension {
     }
 
     @Async
-    @EventListener
+    @TransactionalEventListener(fallbackExecution = true)
     void on(PersonUpdatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
@@ -54,7 +58,7 @@ class PersonEventHandlerExtension {
     }
 
     @Async
-    @EventListener
+    @TransactionalEventListener(fallbackExecution = true)
     void on(PersonDisabledEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
