@@ -74,4 +74,21 @@
       ) inactive_person ON inactive_person.person_id = person.id;
     </sql>
   </changeSet>
+
+  <!--
+    Enforces at application-data level what PersonActivePeriodServiceImpl only checks-then-inserts:
+    a person must never have more than one open (valid_to IS NULL) active period at the same time.
+    Without this, two concurrent openPeriod() calls for the same person could both pass the
+    "no open period exists yet" check before either commits, producing two open rows.
+  -->
+  <changeSet author="schneider" id="add-person-active-period--unique-open-period">
+    <sql>
+      CREATE UNIQUE INDEX idx_person_active_period_open_unique
+      ON person_active_period (person_id)
+      WHERE valid_to IS NULL;
+    </sql>
+    <rollback>
+      <sql>DROP INDEX idx_person_active_period_open_unique;</sql>
+    </rollback>
+  </changeSet>
 </databaseChangeLog>
