@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -49,6 +51,51 @@ class PersonActivePeriodRepositoryIT extends SingleTenantTestContainersBase {
             sut.save(closedPeriod);
 
             assertThat(sut.findByPersonIdAndValidToIsNull(person.getId())).isEmpty();
+        }
+    }
+
+    @Nested
+    class UniqueOpenPeriodConstraint {
+
+        @Test
+        void ensureOnlyOneOpenPeriodIsAllowedPerPerson() {
+
+            final Person person = createPerson();
+
+            final PersonActivePeriodEntity firstOpenPeriod = newEntity(person.getId(), Instant.now().minus(Duration.ofDays(10)), null);
+            sut.saveAndFlush(firstOpenPeriod);
+
+            final PersonActivePeriodEntity secondOpenPeriod = newEntity(person.getId(), Instant.now(), null);
+
+            final DataIntegrityViolationException exception =
+                assertThrows(DataIntegrityViolationException.class, () -> sut.saveAndFlush(secondOpenPeriod));
+            assertThat(exception.getMessage()).contains("idx_person_active_period_open_unique");
+        }
+
+        @Test
+        void ensureDifferentPersonsMayEachHaveAnOpenPeriod() {
+
+            final Person personOne = createPerson();
+            final Person personTwo = personRepository.save(new Person("sam", "Smith", "Sam", "sam@example.org"));
+
+            sut.saveAndFlush(newEntity(personOne.getId(), Instant.now(), null));
+            sut.saveAndFlush(newEntity(personTwo.getId(), Instant.now(), null));
+
+            assertThat(sut.findAll()).hasSize(2);
+        }
+
+        @Test
+        void ensureAPersonMayReopenAPeriodAfterTheOpenOneWasClosed() {
+
+            final Person person = createPerson();
+
+            final PersonActivePeriodEntity closedPeriod = newEntity(person.getId(), Instant.now().minus(Duration.ofDays(10)), Instant.now().minus(Duration.ofDays(5)));
+            sut.saveAndFlush(closedPeriod);
+
+            final PersonActivePeriodEntity newOpenPeriod = newEntity(person.getId(), Instant.now(), null);
+            sut.saveAndFlush(newOpenPeriod);
+
+            assertThat(sut.findAll()).hasSize(2);
         }
     }
 
