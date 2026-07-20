@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,7 +133,7 @@ class PersonActivePeriodServiceTest {
         }
 
         @Test
-        void ensureDoesNotOpenNewPeriodWhenOneIsAlreadyOpen() {
+        void ensureThrowsWhenOneIsAlreadyOpen() {
 
             final PersonActivePeriodEntity existingOpenPeriod = new PersonActivePeriodEntity();
             existingOpenPeriod.setPersonId(1L);
@@ -141,9 +141,10 @@ class PersonActivePeriodServiceTest {
 
             when(repository.findByPersonIdAndValidToIsNull(1L)).thenReturn(Optional.of(existingOpenPeriod));
 
-            sut.openPeriod(new PersonId(1L), Instant.now());
+            assertThatThrownBy(() -> sut.openPeriod(new PersonId(1L), Instant.now()))
+                .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
 
-            verify(repository, never()).save(eq(existingOpenPeriod));
+            verify(repository, never()).save(any());
         }
     }
 
@@ -168,11 +169,12 @@ class PersonActivePeriodServiceTest {
         }
 
         @Test
-        void ensureDoesNothingWhenNoOpenPeriodExists() {
+        void ensureThrowsWhenNoOpenPeriodExists() {
 
             when(repository.findByPersonIdAndValidToIsNull(1L)).thenReturn(Optional.empty());
 
-            sut.closeOpenPeriod(new PersonId(1L), Instant.now());
+            assertThatThrownBy(() -> sut.closeOpenPeriod(new PersonId(1L), Instant.now()))
+                .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
 
             verify(repository, never()).save(any());
         }
