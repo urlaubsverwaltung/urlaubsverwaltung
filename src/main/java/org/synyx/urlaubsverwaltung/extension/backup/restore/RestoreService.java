@@ -26,6 +26,7 @@ class RestoreService {
     private final DepartmentMembershipRestoreService departmentMembershipRestoreService;
     private final ApplicationRestoreService applicationRestoreService;
     private final CalendarIntegrationRestoreService calendarIntegrationRestoreService;
+    private final PersonActivePeriodRestoreService personActivePeriodRestoreService;
 
     RestoreService(
         SettingsRestoreService settingsRestoreService,
@@ -36,7 +37,8 @@ class RestoreService {
         DepartmentRestoreService departmentRestoreService,
         DepartmentMembershipRestoreService departmentMembershipRestoreService,
         ApplicationRestoreService applicationRestoreService,
-        CalendarIntegrationRestoreService calendarIntegrationRestoreService
+        CalendarIntegrationRestoreService calendarIntegrationRestoreService,
+        PersonActivePeriodRestoreService personActivePeriodRestoreService
     ) {
         this.settingsRestoreService = settingsRestoreService;
         this.personRestoreService = personRestoreService;
@@ -47,12 +49,14 @@ class RestoreService {
         this.departmentMembershipRestoreService = departmentMembershipRestoreService;
         this.applicationRestoreService = applicationRestoreService;
         this.calendarIntegrationRestoreService = calendarIntegrationRestoreService;
+        this.personActivePeriodRestoreService = personActivePeriodRestoreService;
     }
 
     void restoreData(UrlaubsverwaltungBackupDTO backupToRestore) {
         LOG.info("Starting to restore data...");
         settingsRestoreService.restore(backupToRestore.settings());
         personRestoreService.restore(backupToRestore.persons());
+        personActivePeriodRestoreService.restore(backupToRestore.personActivePeriods());
         overtimeRestoreService.restore(backupToRestore.overtimes());
 
         final List<ImportedIdTuple> createdApplications = applicationRestoreService.restore(backupToRestore.applications());

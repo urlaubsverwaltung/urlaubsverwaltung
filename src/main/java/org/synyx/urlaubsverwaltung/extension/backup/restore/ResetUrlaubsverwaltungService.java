@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarIntegrationSettin
 import org.synyx.urlaubsverwaltung.department.DepartmentImportService;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsImportService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeImportService;
+import org.synyx.urlaubsverwaltung.person.PersonActivePeriodImportService;
 import org.synyx.urlaubsverwaltung.person.PersonImportService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBaseDataImportService;
 import org.synyx.urlaubsverwaltung.settings.SettingsImportService;
@@ -49,6 +50,7 @@ class ResetUrlaubsverwaltungService {
     private final WorkingTimeImportService workingTimeImportService;
     private final AbsenceMappingImportService absenceMappingImportService;
     private final PersonImportService personImportService;
+    private final PersonActivePeriodImportService personActivePeriodImportService;
     private final UserSettingsImportService userSettingsImportService;
     private final PersonBaseDataImportService personBaseDataImportService;
     private final SickNoteExtensionImportService sickNoteExtensionImportService;
@@ -72,6 +74,7 @@ class ResetUrlaubsverwaltungService {
                                   WorkingTimeImportService workingTimeImportService,
                                   AbsenceMappingImportService absenceMappingImportService,
                                   PersonImportService personImportService,
+                                  PersonActivePeriodImportService personActivePeriodImportService,
                                   UserSettingsImportService userSettingsImportService,
                                   PersonBaseDataImportService personBaseDataImportService,
                                   SickNoteExtensionImportService sickNoteExtensionImportService,
@@ -95,6 +98,7 @@ class ResetUrlaubsverwaltungService {
         this.workingTimeImportService = workingTimeImportService;
         this.absenceMappingImportService = absenceMappingImportService;
         this.personImportService = personImportService;
+        this.personActivePeriodImportService = personActivePeriodImportService;
         this.userSettingsImportService = userSettingsImportService;
         this.personBaseDataImportService = personBaseDataImportService;
         this.sickNoteExtensionImportService = sickNoteExtensionImportService;
@@ -125,6 +129,7 @@ class ResetUrlaubsverwaltungService {
         userPaginationSettingsImportService.deleteAll();
         userNotificationSettingsImportService.deleteAll();
         userSettingsImportService.deleteAll();
+        personActivePeriodImportService.deleteAll();
         personImportService.deleteAll();
         calendarIntegrationSettingsImportService.deleteAll();
         absenceMappingImportService.deleteAll();

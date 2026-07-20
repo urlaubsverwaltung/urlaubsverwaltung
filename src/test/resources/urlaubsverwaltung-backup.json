@@ -2851,5 +2851,77 @@
     "avatarSettings": {
       "gravatarEnabled": false
     }
-  }
+  },
+  "personActivePeriods": [
+    {
+      "personExternalId": "user",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "boss",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "office",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "admin",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "hdampf",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "fbaier",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "eschneider",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "bhaendel",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "nschmidt",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "heinz",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "horst-active-0",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "horst-inactive-0",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    }
+  ]
 }
