@@ -46,6 +46,13 @@ class PersonActivePeriodServiceImpl implements PersonActivePeriodService {
         return map;
     }
 
+    @Override
+    public List<PersonActivePeriod> getAllActivePeriods() {
+        return repository.findAll().stream()
+            .map(PersonActivePeriodServiceImpl::toPersonActivePeriod)
+            .toList();
+    }
+
     /**
      * Opens a new active period for the given person, unless one is already open.
      *

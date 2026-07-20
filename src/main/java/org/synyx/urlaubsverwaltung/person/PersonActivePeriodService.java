@@ -28,4 +28,11 @@ public interface PersonActivePeriodService {
      *     persons without an overlapping active period
      */
     Map<PersonId, List<PersonActivePeriod>> getActivePeriodsOverlapping(Collection<PersonId> personIds, Instant from, Instant to);
+
+    /**
+     * Returns all active periods of all persons, regardless of person. Intended for bulk consumers such as backups.
+     *
+     * @return all {@link PersonActivePeriod}
+     */
+    List<PersonActivePeriod> getAllActivePeriods();
 }

@@ -60,6 +60,34 @@ class PersonActivePeriodServiceTest {
     }
 
     @Nested
+    class GetAllActivePeriods {
+
+        @Test
+        void ensureReturnsAllActivePeriodsOfAllPersons() {
+
+            final Instant validFrom = Instant.now().minus(Duration.ofDays(10));
+            final Instant validTo = Instant.now().minus(Duration.ofDays(5));
+
+            final PersonActivePeriodEntity entityOne = new PersonActivePeriodEntity();
+            entityOne.setPersonId(1L);
+            entityOne.setValidFrom(validFrom);
+            entityOne.setValidTo(validTo);
+
+            final PersonActivePeriodEntity entityTwo = new PersonActivePeriodEntity();
+            entityTwo.setPersonId(2L);
+            entityTwo.setValidFrom(validFrom);
+
+            when(repository.findAll()).thenReturn(List.of(entityOne, entityTwo));
+
+            final List<PersonActivePeriod> actual = sut.getAllActivePeriods();
+            assertThat(actual).containsExactlyInAnyOrder(
+                new PersonActivePeriod(new PersonId(1L), validFrom, Optional.of(validTo)),
+                new PersonActivePeriod(new PersonId(2L), validFrom)
+            );
+        }
+    }
+
+    @Nested
     class GetActivePeriodsOverlapping {
 
         @Test
