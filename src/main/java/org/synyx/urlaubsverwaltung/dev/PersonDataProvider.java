@@ -71,31 +71,39 @@ class PersonDataProvider {
             final Person savedPerson = personService.update(person);
             personBasedataService.update(new PersonBasedata(savedPerson.getIdAsPersonId(), String.valueOf(personnelNumber), ""));
 
-            final int currentYear = Year.now(clock).getValue();
-            final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
-            final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+            final Year currentYear = Year.now(clock);
+            final Year lastYear = currentYear.minusYears(1);
 
             final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY)
                 .map(DayOfWeek::getValue)
                 .toList();
-            workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
+            workingTimeWriteService.touch(workingDays, lastYear.atDay(1), savedPerson);
 
-            accountInteractionService.updateOrCreateHolidaysAccount(
-                savedPerson,
-                firstDayOfYear,
-                lastDayOfYear,
-                null,
-                null,
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(5),
-                ZERO,
-                null);
+            createHolidaysAccountForYear(savedPerson, lastYear);
+            createHolidaysAccountForYear(savedPerson, currentYear);
 
             return savedPerson;
         }
 
         return null;
+    }
+
+    private void createHolidaysAccountForYear(Person person, Year year) {
+
+        final LocalDate firstDayOfYear = year.atDay(1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        accountInteractionService.updateOrCreateHolidaysAccount(
+            person,
+            firstDayOfYear,
+            lastDayOfYear,
+            null,
+            null,
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(5),
+            ZERO,
+            null);
     }
 
     void createTestPerson(String username, String firstName, String lastName, String email) {
