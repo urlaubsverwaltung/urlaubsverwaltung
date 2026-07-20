@@ -54,18 +54,19 @@ class PersonActivePeriodServiceImpl implements PersonActivePeriodService {
     }
 
     /**
-     * Opens a new active period for the given person, unless one is already open.
+     * Opens a new active period for the given person.
      *
      * @param personId the ID of the person becoming active
      * @param validFrom the point in time the person became active
+     * @throws PersonActivePeriodInconsistentStateException if the person already has an open active period
      */
     void openPeriod(PersonId personId, Instant validFrom) {
 
         final Optional<PersonActivePeriodEntity> existingOpenPeriod = repository.findByPersonIdAndValidToIsNull(personId.value());
         if (existingOpenPeriod.isPresent()) {
-            LOG.warn("Person with id={} already has an open active period starting at {}. Not opening a new one at {}.",
-                personId.value(), existingOpenPeriod.get().getValidFrom(), validFrom);
-            return;
+            throw new PersonActivePeriodInconsistentStateException(
+                "Person with id=%d already has an open active period starting at %s. Cannot open a new one at %s."
+                    .formatted(personId.value(), existingOpenPeriod.get().getValidFrom(), validFrom));
         }
 
         final PersonActivePeriodEntity entity = new PersonActivePeriodEntity();
@@ -81,13 +82,14 @@ class PersonActivePeriodServiceImpl implements PersonActivePeriodService {
      *
      * @param personId the ID of the person becoming inactive
      * @param validTo the point in time the person became inactive
+     * @throws PersonActivePeriodInconsistentStateException if the person has no open active period
      */
     void closeOpenPeriod(PersonId personId, Instant validTo) {
 
         final Optional<PersonActivePeriodEntity> existingOpenPeriod = repository.findByPersonIdAndValidToIsNull(personId.value());
         if (existingOpenPeriod.isEmpty()) {
-            LOG.warn("Person with id={} has no open active period to close at {}.", personId.value(), validTo);
-            return;
+            throw new PersonActivePeriodInconsistentStateException(
+                "Person with id=%d has no open active period to close at %s.".formatted(personId.value(), validTo));
         }
 
         final PersonActivePeriodEntity entity = existingOpenPeriod.get();
