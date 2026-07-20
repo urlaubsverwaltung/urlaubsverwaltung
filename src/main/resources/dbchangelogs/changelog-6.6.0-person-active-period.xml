@@ -1,0 +1,99 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-person-active-period--table">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="5" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="person_active_period_id_seq" startValue="1"/>
+
+    <createTable tableName="person_active_period">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="person_active_period_pkey"/>
+      </column>
+      <column name="person_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_from" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_to" type="timestamptz"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableName="person_active_period"
+                             baseColumnNames="person_id"
+                             constraintName="fk_person_active_period_person"
+                             referencedTableName="person"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createIndex tableName="person_active_period" indexName="idx_person_active_period_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <!--
+    Backfill one active period per existing person, since Person itself has no creation timestamp:
+    - valid_from is the earliest date found across application.start_date, sick_note.start_date,
+      working_time.valid_from and overtime.start_date (the closest available proxy for "start of
+      activity" for persons that already existed before this table was introduced). Persons with none
+      of these records get no backfilled period.
+    - valid_to is NULL for persons currently without the INACTIVE role (still active). For persons
+      currently holding the INACTIVE role, valid_to is the latest date found across the same four
+      sources, the closest available proxy for their deactivation date.
+  -->
+  <changeSet author="schneider" id="add-person-active-period--migrate-existing-persons">
+    <preConditions>
+      <tableExists tableName="person_active_period"/>
+    </preConditions>
+    <sql>
+      INSERT INTO person_active_period (
+        tenant_id,
+        id,
+        person_id,
+        valid_from,
+        valid_to
+      )
+      SELECT
+        person.tenant_id,
+        nextval('person_active_period_id_seq') as id,
+        person.id as person_id,
+        earliest_activity.start_date::timestamptz as valid_from,
+        CASE WHEN inactive_person.person_id IS NOT NULL THEN latest_activity.start_date::timestamptz ELSE NULL END as valid_to
+      FROM person
+      JOIN (
+        SELECT person_id, MIN(start_date) as start_date
+        FROM (
+          SELECT person_id, start_date FROM application
+          UNION ALL
+          SELECT person_id, start_date FROM sick_note
+          UNION ALL
+          SELECT person_id, valid_from as start_date FROM working_time
+          UNION ALL
+          SELECT person_id, start_date FROM overtime
+        ) activity
+        GROUP BY person_id
+      ) earliest_activity ON earliest_activity.person_id = person.id
+      JOIN (
+        SELECT person_id, MAX(start_date) as start_date
+        FROM (
+          SELECT person_id, start_date FROM application
+          UNION ALL
+          SELECT person_id, start_date FROM sick_note
+          UNION ALL
+          SELECT person_id, valid_from as start_date FROM working_time
+          UNION ALL
+          SELECT person_id, start_date FROM overtime
+        ) activity
+        GROUP BY person_id
+      ) latest_activity ON latest_activity.person_id = person.id
+      LEFT JOIN (
+        SELECT DISTINCT person_id
+        FROM person_permissions
+        WHERE permissions = 'INACTIVE'
+      ) inactive_person ON inactive_person.person_id = person.id;
+    </sql>
+  </changeSet>
+</databaseChangeLog>
