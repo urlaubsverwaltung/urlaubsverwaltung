@@ -30,6 +30,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
@@ -134,7 +135,10 @@ class AccessibilityCrawlerAccessibilityIT {
                         try {
                             // Resolve relative URLs against the current BASE_URL context
                             final URI absoluteUri = URI.create(baseUrl).resolve(href).normalize();
-                            final String absoluteUrl = absoluteUri.toString();
+                            // Ignore query parameters (e.g. ?year=2025) so the same page isn't crawled
+                            // repeatedly with different parameter values
+                            final String absoluteUrl = new URI(absoluteUri.getScheme(), null, absoluteUri.getHost(),
+                                absoluteUri.getPort(), absoluteUri.getPath(), null, null).toString();
 
                             // Ensure it's internal, not visited, not already queued, and skip destructive paths like
                             // /logout as well as file downloads (/download, /export) - these don't navigate to an
@@ -148,7 +152,7 @@ class AccessibilityCrawlerAccessibilityIT {
 
                                 linksToVisit.add(absoluteUrl);
                             }
-                        } catch (IllegalArgumentException _) {
+                        } catch (IllegalArgumentException | URISyntaxException _) {
                             // Ignore unparseable/malformed URIs (e.g., mailto:, javascript:void(0))
                         }
                     }
