@@ -552,7 +552,7 @@
                 <phase>none</phase>
               </execution>
             </executions>
-            <version>2.0.0</version>
+            <version>2.0.1</version>
           </plugin>
           <!-- skip unit tests -->
           <plugin>
