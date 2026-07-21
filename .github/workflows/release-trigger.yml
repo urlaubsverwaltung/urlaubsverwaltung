@@ -73,11 +73,47 @@ jobs:
           name: failed-ui-tests
           path: target/ui-test/**/FAILED-*
 
+  run-a11y-test:
+    name: Accessibility Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ["chromium", "firefox", "webkit"]
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-a11y-test-${{ matrix.browser }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+      - name: Set up JDK from .tool-versions
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a
+        with:
+          distribution: 'liberica'
+          java-version-file: ".tool-versions"
+          cache: 'maven'
+
+      - name: Install Playwright Browsers (A11Y tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps ${{matrix.browser}}"
+
+      - name: Test
+        run: ./mvnw dependency:go-offline verify -Pa11y-test -Dbrowser=${{matrix.browser}}
+
+      - name: Upload artifacts of failed tests
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: ${{ always() && hashFiles('target/a11y-test/**/FAILED-*') != '' }}
+        with:
+          name: failed-a11y-tests-${{ matrix.browser }}-${{ github.run_attempt }}
+          path: target/a11y-test/**/FAILED-*
+
   create-tag-and-release-notes:
     name: "Create tag and release notes"
     needs:
       - run-unit-and-integration-tests
       - run-ui-test
+      - run-a11y-test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
