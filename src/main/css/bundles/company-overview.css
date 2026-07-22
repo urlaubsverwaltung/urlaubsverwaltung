@@ -1,0 +1,149 @@
+@reference "../config.css";
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+  background-color: var(--uv-chart-container-background);
+  border: 1px solid var(--uv-chart-border);
+  border-radius: var(--radius-lg);
+  @apply shadow-2xs;
+
+  @variant dark {
+    @apply shadow-none;
+  }
+
+  .stat-card__header {
+    display: flex;
+    justify-content: space-between;
+
+    padding: --spacing(4);
+    border-bottom: 1px solid var(--uv-chart-border);
+
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+    font-weight: bold;
+
+    @variant dark {
+      color: var(--color-zinc-400);
+    }
+
+    &.stat-card__header--no-border {
+      border: none;
+      padding-bottom: 0;
+    }
+  }
+
+  .stat-card__body {
+    padding: --spacing(4);
+    display: flex;
+    flex-direction: column;
+    gap: --spacing(2);
+
+    .stat-card__value {
+      font-size: var(--text-3xl);
+      line-height: var(--text-3xl--line-height);
+      font-weight: bold;
+      font-variant: tabular-nums;
+    }
+  }
+}
+
+.stat-card--is-loading {
+  animation: is-loading-blink 1300ms ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    filter: blur(2px);
+  }
+}
+
+@keyframes is-loading-blink {
+  0%,
+  100% {
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  50% {
+    filter: blur(1px);
+    opacity: 0.6;
+  }
+}
+
+.bar-chart {
+  --color: var(--color-teal-900);
+  --color-secondary: var(--color-teal-700);
+
+  display: flex;
+  gap: --spacing(2);
+  padding-inline: --spacing(8);
+
+  @variant dark {
+    --color: var(--color-emerald-600);
+    --color-secondary: var(--color-emerald-600);
+  }
+
+  .bar-chart__item {
+    display: flex;
+    flex-direction: column;
+    gap: --spacing(2);
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 0;
+    min-width: 0;
+
+    &:has(.bar-chart__label) {
+      /* label is positioned absolute within the bar moved with negative translateY. */
+      /* therefore padding-top on the item to create space for the label. */
+      padding-top: --spacing(4);
+    }
+
+    .bar-chart__bar-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      width: 100%;
+    }
+
+    .bar-chart__bar {
+      display: block;
+      background: linear-gradient(var(--color-secondary), var(--color));
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+
+      width: 100%;
+      max-width: --spacing(24);
+      margin-inline: auto;
+      min-height: 3px;
+
+      will-change: height;
+      transition: height 300ms ease-in-out;
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+
+      &:has(.bar-chart__value) {
+        position: relative;
+      }
+
+      .bar-chart__value {
+        color: var(--color);
+        font-size: var(--text-sm);
+        font-variant-numeric: tabular-nums;
+
+        position: absolute;
+        transform: translateY(-100%);
+        padding-bottom: --spacing(1);
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    .bar-chart__label {
+      font-size: var(--text-sm);
+      color: var(--color);
+    }
+  }
+}

@@ -19,9 +19,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -31,10 +31,13 @@ import java.util.Set;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Duration.ZERO;
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
@@ -92,6 +95,34 @@ class OvertimeServiceImpl implements OvertimeService {
             .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
             .map(OvertimeServiceImpl::entityToOvertime)
             .toList();
+    }
+
+    @Override
+    public Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, Instant from, Instant to) {
+
+        final LocalDate fromDate = LocalDate.ofInstant(from, UTC);
+        final LocalDate toDate = LocalDate.ofInstant(to, UTC);
+
+        final List<Long> personIdValues = personIds.stream().map(PersonId::value).toList();
+        final DateRange dateRange = new DateRange(fromDate, toDate);
+
+        final Map<PersonId, List<Overtime>> overtimesByPersonId = overtimeRepository
+            .findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(personIdValues, fromDate, toDate)
+            .stream()
+            .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .map(overtime -> clipToDateRange(overtime, dateRange))
+            .collect(groupingBy(Overtime::personId));
+
+        return personIds.stream()
+            .collect(toMap(identity(), personId -> overtimesByPersonId.getOrDefault(personId, List.of()).stream()
+                .sorted(comparing(Overtime::startDate))
+                .toList()));
+    }
+
+    private static Overtime clipToDateRange(Overtime overtime, DateRange dateRange) {
+        final DateRange clippedRange = overtime.dateRange().overlap(dateRange).orElseThrow();
+        return new Overtime(overtime.id(), overtime.personId(), clippedRange, overtime.durationForDateRange(dateRange), overtime.type(), overtime.lastModification());
     }
 
     @Override
@@ -304,7 +335,7 @@ class OvertimeServiceImpl implements OvertimeService {
             new DateRange(entity.getStartDate(), entity.getEndDate()),
             entity.getDuration(),
             entity.isExternal() ? EXTERNAL : UV_INTERNAL,
-            entity.getLastModificationDate().atStartOfDay().toInstant(ZoneOffset.UTC)
+            entity.getLastModificationDate().atStartOfDay().toInstant(UTC)
         );
     }
 

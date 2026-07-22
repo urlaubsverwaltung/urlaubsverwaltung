@@ -1,0 +1,181 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:text="#{company.overview.meta.title}">Unternehmen Statistiken</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" type="text/css" th:href="@{/css/company-overview.css}" />
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('company_overview.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="company_overview.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w" data-turbo="true">
+      <div>
+        <div th:replace="~{fragments/section-heading::section-heading(~{::company-overview-heading-body}, ~{})}">
+          <th:block th:ref="company-overview-heading-body">
+            <h1 th:text="#{company.overview.title}">Mehrarbeit - gesamtes Unternehmen</h1>
+          </th:block>
+        </div>
+        <turbo-frame id="frame-company-overview">
+          <p
+            class="mt-8 font-bold text-base"
+            th:with="from=${#temporals.format(statistics.from, 'dd.MM.yyyy')}, to=${#temporals.format(statistics.to, 'dd.MM.yyyy')}"
+            th:text="#{company.overview.description(${from}, ${to})}"
+          >
+            Aggregierte Auswertung ohne Personenbezug - $von $bis
+          </p>
+          <div class="mt-4 flex flex-col gap-2">
+            <p
+              class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+              th:text="#{company.overview.range-select.label}"
+            >
+              Zeitraum auswählen
+            </p>
+            <ul class="flex gap-2">
+              <li>
+                <a
+                  th:href="@{/web/company/overview}"
+                  class="button"
+                  th:classappend="${viewMode == 'month' ? 'button-main' : ''}"
+                  th:text="#{company.overview.range-select.month}"
+                  data-turbo-frame="frame-company-overview"
+                  data-turbo-action="replace"
+                >
+                  Aktueller Monat
+                </a>
+              </li>
+              <li>
+                <a
+                  th:href="@{/web/company/overview (view='quarter')}"
+                  class="button"
+                  th:classappend="${viewMode == 'quarter' ? 'button-main' : ''}"
+                  th:text="#{company.overview.range-select.recent-months}"
+                  data-turbo-frame="frame-company-overview"
+                  data-turbo-action="replace"
+                >
+                  3 Monate
+                </a>
+              </li>
+              <li>
+                <a
+                  th:href="@{/web/company/overview (view='year')}"
+                  class="button"
+                  th:classappend="${viewMode == 'year' ? 'button-main' : ''}"
+                  th:text="#{company.overview.range-select.year-to-date}"
+                  data-turbo-frame="frame-company-overview"
+                  data-turbo-action="replace"
+                >
+                  Lfd. Jahr
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8">
+            <h3 class="flex flex-row gap-2 items-center">
+              <span
+                class="text-xs uppercase font-bold text-gray-400 dark:text-zinc-400"
+                th:text="#{company.overview.metrics.title}"
+              >
+                Kennzahl
+              </span>
+              <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
+            </h3>
+            <div class="mt-4 grid grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
+              <div class="stat-card stat-card--kpi">
+                <div class="stat-card__header stat-card__header--no-border">
+                  <span
+                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                    th:text="#{company.overview.metrics.overtime.avg}"
+                  >
+                    Ø Mehrarbeit / Kopf
+                  </span>
+                </div>
+                <div class="stat-card__body">
+                  <span class="stat-card__value">
+                    <span
+                      class="company-overtime-average-hours-value"
+                      th:text="${statistics.averageOvertime().negative()} ? '-' + ${statistics.averageOvertime().hours()} : ${statistics.averageOvertime().hours()}"
+                      >-3</span
+                    >&nbsp;<span th:text="#{hours.abbr}">h</span>
+                    <span
+                      class="company-overtime-average-minutes-value"
+                      th:text="${statistics.averageOvertime().minutes()}"
+                      >30</span
+                    >&nbsp;<span th:text="#{minutes.abbr}">min</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8">
+            <h3 class="flex flex-row gap-2 items-center">
+              <span
+                class="text-xs uppercase font-bold text-gray-400 dark:text-zinc-400"
+                th:text="#{company.overview.distribution.title}"
+              >
+                Verteilung
+              </span>
+              <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
+            </h3>
+            <div class="mt-4 grid @3xl/main:grid-cols-2">
+              <div class="stat-card">
+                <div class="stat-card__header stat-card__header--bordered">
+                  <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
+                </div>
+                <div
+                  class="stat-card__body"
+                  th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}, maxBarHeight=150, minBarHeight=3"
+                >
+                  <ol class="bar-chart">
+                    <li th:each="entry, stat : ${entries}" class="bar-chart__item">
+                      <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
+                        <span
+                          class="bar-chart__bar"
+                          th:style="|height:${entry.value() == 0 ? minBarHeight : entry.value() * maxBarHeight / max}px;|"
+                        >
+                          <span
+                            class="bar-chart__value"
+                            th:aria-label="#{company.overview.distribution.overtime.amountEmployees(${entry.value()})}"
+                            th:text="${entry.value()}"
+                            >42</span
+                          >
+                        </span>
+                      </span>
+                      <span
+                        class="bar-chart__label"
+                        th:text="${entry.rangeEnd() == null ? '>' + entry.rangeStart() + 'h' : entry.rangeStart() + '-' + entry.rangeEnd() + 'h'}"
+                      >
+                        0h bis 5h
+                      </span>
+                    </li>
+                  </ol>
+                  <p
+                    class="mt-4 text-sm"
+                    th:with="last=${statistics.overtimeDistribution.entries.last}"
+                    th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
+                  >
+                    Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last
+                    verteilt ist, wird hier sichtbar - einzelne Personen sind daraus nicht ableitbar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </turbo-frame>
+      </div>
+    </main>
+  </body>
+</html>

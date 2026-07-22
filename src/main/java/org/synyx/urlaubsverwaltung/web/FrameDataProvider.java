@@ -155,6 +155,12 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final String url = request.getRequestURI();
 
+        final boolean canViewOverview = user.hasAnyRole(OFFICE, BOSS);
+        if (canViewOverview) {
+            final String overview = "/web/company/overview";
+            elements.add(new NavigationItemDto("company-overview-link", overview, "nav.company.overview", "activity", url.equals(overview)));
+        }
+
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
             final String person = "/web/person";

@@ -83,6 +83,8 @@
       padding: --spacing(2) --spacing(4);
       margin: 0;
       @apply rounded-md;
+      @apply shadow-2xs;
+      @apply dark:shadow-none;
 
       .statistic-summary-card__label {
         @apply text-sm;

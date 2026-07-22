@@ -7,7 +7,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +29,16 @@ public interface OvertimeService {
      * @return list of matching overtime records
      */
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
+
+    /**
+     * Get overtime durations for persons and date range.
+     *
+     * @param personIds person ids
+     * @param from date range start
+     * @param to date range end, inclusive
+     * @return overtime durations for persons and date range
+     */
+    Map<PersonId, List<Overtime>> getOvertimeForPersonsInDateRange(Collection<PersonId> personIds, Instant from, Instant to);
 
     /**
      * Creates a new internal overtime entry.
