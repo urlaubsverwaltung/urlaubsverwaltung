@@ -73,12 +73,13 @@ public @interface UiIntegrationTest {
 
             // webkit | firefox | chromium (playwright-default)
             final String browser = System.getProperty("browser", "chromium");
+            // set e.g. -Dplaywright.slowmo=200 to slow down test steps and follow them with your own eyes.
+            final double slowMo = Double.parseDouble(System.getProperty("playwright.slowmo", "0"));
 
             return new Options()
                 .setBrowserName(browser)
                 .setConnectOptions(new BrowserType.ConnectOptions()
-                    // increase to make test steps slower and be able to follow it with your own eyes.
-                    .setSlowMo(200)
+                    .setSlowMo(slowMo)
                 )
                 .setContextOptions(new Browser.NewContextOptions()
                     .setRecordVideoDir(Path.of("target/ui-test", browser))
