@@ -1494,6 +1494,37 @@ class OvertimeServiceImplTest {
             .doesNotContain(tuple(EXTERNAL, Duration.ZERO));
     }
 
+    @Test
+    void ensureGetOvertimeRecordsForPersonsAndDateRange() {
+
+        final Person person1 = new Person();
+        person1.setId(1L);
+        final Person person2 = new Person();
+        person2.setId(2L);
+
+        final LocalDate start = LocalDate.of(2024, 1, 1);
+        final LocalDate end = LocalDate.of(2024, 12, 31);
+        final DateRange dateRange = new DateRange(start, end);
+
+        final OvertimeEntity overtimeEntity1 = new OvertimeEntity(person1, start, start, Duration.ofHours(2), false);
+        overtimeEntity1.setId(1L);
+        final OvertimeEntity overtimeEntity2 = new OvertimeEntity(person2, end, end, Duration.ofHours(3), false);
+        overtimeEntity2.setId(2L);
+
+        final List<Person> persons = List.of(person1, person2);
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end))
+            .thenReturn(List.of(overtimeEntity1, overtimeEntity2));
+
+        final List<Overtime> overtimes = sut.getOvertimeRecordsForPersonsAndDateRange(persons, dateRange);
+
+        assertThat(overtimes)
+            .extracting(Overtime::personId, Overtime::duration)
+            .containsExactlyInAnyOrder(
+                tuple(person1.getIdAsPersonId(), Duration.ofHours(2)),
+                tuple(person2.getIdAsPersonId(), Duration.ofHours(3))
+            );
+    }
+
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly, boolean overtimeActive, boolean overtimeSyncActive) {
 
         final Settings settings = new Settings();

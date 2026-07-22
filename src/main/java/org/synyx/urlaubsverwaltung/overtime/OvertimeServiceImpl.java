@@ -95,6 +95,14 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public List<Overtime> getOvertimeRecordsForPersonsAndDateRange(Collection<Person> persons, DateRange dateRange) {
+        return overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, dateRange.startDate(), dateRange.endDate())
+            .stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .toList();
+    }
+
+    @Override
     @Transactional
     public Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, @Nullable String comment) {
         return createOvertime(overtimePersonId, dateRange, duration, authorId, UV_INTERNAL, comment);
