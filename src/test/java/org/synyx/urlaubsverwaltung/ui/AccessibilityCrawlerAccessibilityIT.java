@@ -4,7 +4,6 @@ import com.deque.html.axecore.playwright.AxeBuilder;
 import com.deque.html.axecore.results.AxeResults;
 import com.deque.html.axecore.results.CheckedNode;
 import com.deque.html.axecore.results.Rule;
-import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitUntilState;
 import org.junit.jupiter.api.Test;
@@ -127,10 +126,10 @@ class AccessibilityCrawlerAccessibilityIT {
                 page.navigate(currentUrl, new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
 
                 // 2. Discover new internal links on this page
-                final List<ElementHandle> anchors = page.querySelectorAll("a[href]");
-                for (ElementHandle anchor : anchors) {
-                    final String href = anchor.getAttribute("href");
-
+                @SuppressWarnings("unchecked")
+                final List<String> hrefs = (List<String>) page.evalOnSelectorAll("a[href]",
+                    "els => els.map(el => el.getAttribute('href'))");
+                for (String href : hrefs) {
                     if (href != null && !href.trim().isEmpty()) {
                         try {
                             // Resolve relative URLs against the current BASE_URL context
