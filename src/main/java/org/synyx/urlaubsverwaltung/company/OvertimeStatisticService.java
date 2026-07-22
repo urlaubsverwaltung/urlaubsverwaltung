@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.company;
 
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
@@ -14,15 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Component
 class OvertimeStatisticService {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
