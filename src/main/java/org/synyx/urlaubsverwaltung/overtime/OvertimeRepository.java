@@ -31,6 +31,8 @@ interface OvertimeRepository extends CrudRepository<OvertimeEntity, Long> {
 
     List<OvertimeEntity> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);
 
+    List<OvertimeEntity> findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Long> personIds, LocalDate start, LocalDate end);
+
     List<OvertimeEntity> findByPersonIsInAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate until);
 
     List<OvertimeEntity> findByPersonAndStartDateIsBefore(Person person, LocalDate before);

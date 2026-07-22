@@ -103,11 +103,11 @@ class OvertimeServiceImpl implements OvertimeService {
         final LocalDate fromDate = LocalDate.ofInstant(from, UTC);
         final LocalDate toDate = LocalDate.ofInstant(to, UTC);
 
-        final Collection<Person> persons = personService.getAllPersonsByIds(personIds);
+        final List<Long> personIdValues = personIds.stream().map(PersonId::value).toList();
         final DateRange dateRange = new DateRange(fromDate, toDate);
 
         final Map<PersonId, List<Overtime>> overtimesByPersonId = overtimeRepository
-            .findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, fromDate, toDate)
+            .findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(personIdValues, fromDate, toDate)
             .stream()
             .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
             .map(OvertimeServiceImpl::entityToOvertime)

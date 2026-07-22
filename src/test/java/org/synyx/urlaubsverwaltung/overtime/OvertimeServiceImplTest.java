@@ -1516,8 +1516,7 @@ class OvertimeServiceImplTest {
             earlierOvertime.setId(2L);
             earlierOvertime.setLastModificationDate(LocalDate.now());
 
-            when(personService.getAllPersonsByIds(List.of(personId))).thenReturn(List.of(person));
-            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
+            when(overtimeRepository.findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person.getId()), from, to))
                 .thenReturn(List.of(laterOvertime, earlierOvertime));
 
             final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
@@ -1549,8 +1548,7 @@ class OvertimeServiceImplTest {
             externalNonZero.setId(2L);
             externalNonZero.setLastModificationDate(LocalDate.now());
 
-            when(personService.getAllPersonsByIds(List.of(personId))).thenReturn(List.of(person));
-            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person), from, to))
+            when(overtimeRepository.findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(person.getId()), from, to))
                 .thenReturn(List.of(externalZero, externalNonZero));
 
             final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
@@ -1570,19 +1568,12 @@ class OvertimeServiceImplTest {
             final Person personWithoutOvertime = new Person();
             personWithoutOvertime.setId(1L);
 
-            final PersonId unknownPersonId = new PersonId(2L);
-
-            when(personService.getAllPersonsByIds(List.of(personIdWithoutOvertime, unknownPersonId)))
-                .thenReturn(List.of(personWithoutOvertime));
-            when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(personWithoutOvertime), from, to))
+            when(overtimeRepository.findByPersonIdIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(personWithoutOvertime.getId()), from, to))
                 .thenReturn(List.of());
 
-            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime, unknownPersonId), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
+            final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
 
-            assertThat(actual)
-                .hasSize(2)
-                .containsEntry(personIdWithoutOvertime, List.of())
-                .containsEntry(unknownPersonId, List.of());
+            assertThat(actual).containsExactly(Map.entry(personIdWithoutOvertime, List.of()));
         }
     }
 
