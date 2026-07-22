@@ -70,14 +70,19 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
+        final SickNoteStatistics selectedYearStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(selectedYearStatistics);
+
+        final Year previousSelectedYear = year.minusYears(1);
+        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
 
         perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(year.getValue()))
         )
             .andExpect(status().isOk())
-            .andExpect(model().attribute("statistics", sickNoteStatistics))
+            .andExpect(model().attribute("selectedYearStatistics", selectedYearStatistics))
+            .andExpect(model().attribute("previousSelectedYearStatistics", previousSelectedYearStatistics))
             .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
@@ -92,9 +97,14 @@ class SickNoteStatisticsViewControllerTest {
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
+        final Year previousSelectedYear = year.minusYears(1);
+        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
+
         perform(get("/web/sicknote/statistics"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("statistics", sickNoteStatistics))
+            .andExpect(model().attribute("selectedYearStatistics", sickNoteStatistics))
+            .andExpect(model().attribute("previousSelectedYearStatistics", previousSelectedYearStatistics))
             .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }

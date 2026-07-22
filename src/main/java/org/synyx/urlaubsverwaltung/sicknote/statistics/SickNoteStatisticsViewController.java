@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -57,28 +58,39 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping
-    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYearValue, Model model) {
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Optional<Year> userRequestedYear, Model model) {
 
-        final Year year = requestedYearValue == null ? Year.now(clock) : Year.of(requestedYearValue);
-
+        final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
         final Person signedInUser = personService.getSignedInUser();
-        final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(year, signedInUser);
 
-        model.addAttribute("statistics", statistics);
-        model.addAttribute("currentYear", Year.now(clock).getValue());
+        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear, signedInUser);
+        model.addAttribute("selectedYearStatistics", selectedYearStatistics);
+
+        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear.minusYears(1), signedInUser);
+        model.addAttribute("previousSelectedYearStatistics", previousSelectedYearStatistics);
 
         final GraphDto graphDto = new GraphDto(
             List.of(
-                new DataSeries(statistics.getNumberOfSickDaysByMonth()),
-                new DataSeries(statistics.getNumberOfChildSickDaysByMonth())
+                new DataSeries(selectedYear.getValue(), selectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(selectedYear.getValue(), selectedYearStatistics.getNumberOfChildSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getYear(), previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
+            ),
+            List.of(
+                selectedYearStatistics.getAtLeastOneSickNotePercent(),
+                previousSelectedYearStatistics.getAtLeastOneSickNotePercent()
             )
         );
         model.addAttribute("sickNoteGraphStatistic", graphDto);
 
+        model.addAttribute("currentYear", Year.now(clock).getValue());
+
         return "sicknote/sick_notes_statistics";
     }
 
-    record GraphDto(List<DataSeries> dataSeries) {}
+    record GraphDto(List<DataSeries> dataSeries, List<BigDecimal> dataSeriesRadial) {
+    }
 
-    record DataSeries(List<BigDecimal> data) {}
+    record DataSeries(int year, List<BigDecimal> data) {
+    }
 }

@@ -53,7 +53,9 @@
   --absence-color-VIOLET: #8b5cf6;
   --absence-color-PINK: #ec4899;
   --sick-note-color: var(--color-red-500);
+  --sick-note-color-light: color-mix(in srgb, var(--color-red-500) 50%, white);
   --sick-note-child-color: var(--color-red-700);
+  --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
 
   @variant dark {
     --uv-cal-border-color: var(--color-neutral-900);
@@ -80,7 +82,9 @@
     --absence-color-VIOLET: #a78bfa;
     --absence-color-PINK: #f472b6;
     --sick-note-color: var(--color-red-800);
+    --sick-note-color-light: color-mix(in srgb, var(--color-red-800) 50%, white);
     --sick-note-child-color: var(--color-red-950);
+    --sick-note-child-color-light: color-mix(in srgb, var(--color-red-950) 50%, white);
   }
 
   @variant desktop {

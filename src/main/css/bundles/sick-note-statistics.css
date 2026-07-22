@@ -11,6 +11,49 @@
   overflow: hidden;
   padding: --spacing(1);
   background-color: var(--uv-chart-background);
+
+  /* ApexCharts injects its own theme-aware background/border/shadow for
+     .apexcharts-tooltip - only the content layout needs styling here. */
+  .sicknote-statistics-tooltip-title {
+    padding: --spacing(2) --spacing(3) --spacing(1);
+    font-weight: 600;
+  }
+
+  .sicknote-statistics-tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: --spacing(2);
+    padding: --spacing(1) --spacing(3);
+  }
+
+  .sicknote-statistics-tooltip-swatch {
+    flex-shrink: 0;
+    width: --spacing(2.5);
+    height: --spacing(2.5);
+    @apply rounded-xs;
+  }
+
+  /*
+   * legend items default to series order (rel = seriesIndex + 1), which is
+   * [previousYear sick, previousYear child-sick, currentYear sick, currentYear child-sick] -
+   * grouped by year. Reorder them (via CSS `order`, .apexcharts-legend is a flex container)
+   * so sick notes are grouped above child sick notes instead.
+   */
+  .apexcharts-legend-series[rel="1"] {
+    order: 0;
+  }
+
+  .apexcharts-legend-series[rel="3"] {
+    order: 1;
+  }
+
+  .apexcharts-legend-series[rel="2"] {
+    order: 2;
+  }
+
+  .apexcharts-legend-series[rel="4"] {
+    order: 3;
+  }
 }
 
 .statistic-summary-container {
@@ -52,8 +95,15 @@
         font-weight: 600;
         @apply text-black;
         @apply dark:text-zinc-100;
-        display: flex;
-        gap: --spacing(2);
+      }
+
+      .statistic-summary-card__content-previous {
+        margin-left: --spacing(1);
+        font-weight: 400;
+        cursor: help;
+        @apply text-sm;
+        @apply text-gray-500;
+        @apply dark:text-zinc-400;
       }
     }
   }

@@ -264,14 +264,18 @@ public class DemoDataCreationService {
         if (sickNoteDataProvider.personHasNoSickNotes(person)) {
 
             final LocalDate now = LocalDate.now(clock);
+            final LocalDate lastYear = now.minusYears(1);
 
             // SICK NOTES
             sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
             sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
             sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
+            sickNoteDataProvider.createSickNote(person, office, FULL, lastYear.minusDays(6), lastYear.minusDays(1), SICK_NOTE, false);
+            sickNoteDataProvider.createSickNote(person, office, FULL, lastYear.minusDays(30), lastYear.minusDays(19), SICK_NOTE, true);
 
             // CHILD SICK NOTES
             sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
+            sickNoteDataProvider.createSickNote(person, office, FULL, lastYear.minusDays(40), lastYear.minusDays(38), SICK_NOTE_CHILD, false);
         }
     }
 
