@@ -47,13 +47,12 @@ class OvertimeStatisticService {
 
         final Map<PersonId, List<Overtime>> overtimeByPerson = overtimeService.getOvertimeForPersonsInDateRange(personIds, from, to);
 
-        // TODO how to handle active/inactive considering the date range?
         return new OvertimeStatistic(overtimeByPerson);
     }
 
     private List<Person> getRelevantPersons(Person viewer) {
         if (viewer.hasAnyRole(OFFICE, BOSS)) {
-            return personService.getAllPersons();
+            return personService.getActivePersons();
         }
 
         final List<Person> persons = viewer.isDepartmentPrivileged()

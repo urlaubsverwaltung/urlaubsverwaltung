@@ -62,7 +62,7 @@ class OvertimeStatisticServiceTest {
             final Person otherPerson = createPerson("other");
             otherPerson.setId(2L);
 
-            when(personService.getAllPersons()).thenReturn(List.of(viewer, otherPerson));
+            when(personService.getActivePersons()).thenReturn(List.of(viewer, otherPerson));
 
             final Instant from = Instant.parse("2026-01-01T00:00:00.00Z");
             final Instant to = Instant.parse("2026-01-31T00:00:00.00Z");
@@ -87,7 +87,7 @@ class OvertimeStatisticServiceTest {
             final Person viewer = createPerson("viewer", BOSS);
             viewer.setId(1L);
 
-            when(personService.getAllPersons()).thenReturn(List.of(viewer));
+            when(personService.getActivePersons()).thenReturn(List.of(viewer));
 
             final Instant from = Instant.parse("2026-01-01T00:00:00.00Z");
             final Instant to = Instant.parse("2026-01-31T00:00:00.00Z");
