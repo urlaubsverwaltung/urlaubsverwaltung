@@ -147,6 +147,11 @@ const options = {
     "var(--sick-note-color)",
     "var(--sick-note-child-color)",
   ],
+  stroke: {
+    show: true,
+    width: 2,
+    colors: ["transparent"],
+  },
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
   },
