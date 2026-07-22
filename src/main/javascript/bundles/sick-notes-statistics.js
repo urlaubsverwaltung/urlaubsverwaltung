@@ -175,7 +175,7 @@ const options = {
   // previous / current year); the rate series get an actual stroke to render as a smooth line.
   stroke: {
     show: true,
-    width: [2, 2, 2, 2, 3, 3],
+    width: [2, 2, 2, 2, 1, 1],
     colors: [
       "transparent",
       "transparent",
@@ -186,9 +186,9 @@ const options = {
     ],
     curve: "smooth",
   },
-  markers: {
-    size: [0, 0, 0, 0, 4, 4],
-    strokeWidth: 0,
+  // suppress the per-point value labels on the sick-rate line series; bar segments keep their default labels.
+  dataLabels: {
+    enabledOnSeries: [0, 1, 2, 3],
   },
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
