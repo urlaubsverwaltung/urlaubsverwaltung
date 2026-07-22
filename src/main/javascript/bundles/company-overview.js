@@ -51,7 +51,7 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
 
             return false;
           }
-          if (oldNode.matches?.(".company-overtime-average-value")) {
+          if (oldNode.matches?.(".company-overtime-average-hours-value, .company-overtime-average-minutes-value")) {
             pendingNumbers.push([oldNode, oldNode.textContent, newNode.textContent]);
             return false;
           }

@@ -7,15 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistribution;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntry;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionDto;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntryDto;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -75,16 +75,18 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final DateRange previousDateRange = toPreviousRange(dateRange);
         final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
 
-        final BigDecimal average = toBigDecimalHours(stats.average());
-        final BigDecimal averagePrev = toBigDecimalHours(prevStats.average());
+        final Duration average = stats.average();
+        final Duration averagePrev = prevStats.average();
+        final Duration averageGrowth = average.minus(averagePrev);
 
         final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
-            toLocalDate(dateRange.start), toLocalDate(dateRange.end), average, average.subtract(averagePrev),
-            new OvertimeDistribution(stats.personCount(), List.of(
-                new OvertimeDistributionEntry(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
-                new OvertimeDistributionEntry(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
-                new OvertimeDistributionEntry(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
-                new OvertimeDistributionEntry(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
+            toLocalDate(dateRange.start), toLocalDate(dateRange.end),
+            toOvertimeDurationDto(average), toOvertimeDurationDto(averageGrowth),
+            new OvertimeDistributionDto(stats.personCount(), List.of(
+                new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
+                new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
+                new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
+                new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
             ))
         ));
 
@@ -153,7 +155,9 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         return Duration.ofHours(value);
     }
 
-    private static BigDecimal toBigDecimalHours(Duration duration) {
-        return BigDecimal.valueOf((double) duration.toMinutes() / 60);
+    private static OvertimeDurationDto toOvertimeDurationDto(Duration duration) {
+        final boolean negative = duration.isNegative();
+        final Duration abs = duration.abs();
+        return new OvertimeDurationDto(negative, (int) abs.toHours(), abs.toMinutesPart());
     }
 }

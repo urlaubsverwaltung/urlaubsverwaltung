@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -198,14 +197,14 @@ class CompanyControllerTest {
         assertThat(model.getAttribute("statistics"))
             .asInstanceOf(type(CompanyStatisticsDto.class))
             .satisfies(statistics -> {
-                assertThat(statistics.averageOvertime()).isEqualByComparingTo(BigDecimal.valueOf(15.75));
-                assertThat(statistics.averageOvertimeGrowth()).isEqualByComparingTo(BigDecimal.valueOf(10.75));
+                assertThat(statistics.averageOvertime()).isEqualTo(new CompanyStatisticsDto.OvertimeDurationDto(false, 15, 45));
+                assertThat(statistics.averageOvertimeGrowth()).isEqualTo(new CompanyStatisticsDto.OvertimeDurationDto(false, 10, 45));
                 assertThat(statistics.overtimeDistribution().personCount()).isEqualTo(4);
                 assertThat(statistics.overtimeDistribution().entries()).containsExactly(
-                    new CompanyStatisticsDto.OvertimeDistributionEntry(0, 5, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntry(5, 15, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntry(15, 25, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntry(25, null, 1)
+                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(0, 5, 1),
+                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(5, 15, 1),
+                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(15, 25, 1),
+                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(25, null, 1)
                 );
             });
     }

@@ -106,11 +106,15 @@
                 <div class="stat-card__body">
                   <span class="stat-card__value">
                     <span
-                      class="company-overtime-average-value"
-                      th:text="${#numbers.formatDecimal(statistics.averageOvertime(), 1, 2)}"
-                    >
-                      14,2 </span
-                    >&nbsp;h
+                      class="company-overtime-average-hours-value"
+                      th:text="${statistics.averageOvertime().negative()} ? '-' + ${statistics.averageOvertime().hours()} : ${statistics.averageOvertime().hours()}"
+                      >-3</span
+                    >&nbsp;<span th:text="#{hours.abbr}">h</span>
+                    <span
+                      class="company-overtime-average-minutes-value"
+                      th:text="${statistics.averageOvertime().minutes()}"
+                      >30</span
+                    >&nbsp;<span th:text="#{minutes.abbr}">min</span>
                   </span>
                 </div>
               </div>
