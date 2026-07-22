@@ -51,7 +51,7 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
 
             return false;
           }
-          if (oldNode.matches?.(".company-overtime-average-value, .company-overtime-growth-value")) {
+          if (oldNode.matches?.(".company-overtime-average-value")) {
             pendingNumbers.push([oldNode, oldNode.textContent, newNode.textContent]);
             return false;
           }
@@ -66,8 +66,7 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
     }
 
     for (const [element, oldValue, newValue] of pendingNumbers) {
-      const signed = element.matches(".company-overtime-growth-value");
-      animateNumber(element, oldValue, newValue, signed);
+      animateNumber(element, oldValue, newValue);
     }
   };
 });
@@ -77,10 +76,9 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
  * @param {HTMLElement} element
  * @param {string} oldValue
  * @param {string} toValue
- * @param {boolean} [signed]
  * @param {number} [duration]
  */
-function animateNumber(element, oldValue, toValue, signed = false, duration = 300) {
+function animateNumber(element, oldValue, toValue, duration = 300) {
   const from = parseLocaleNumber(oldValue);
   const to = parseLocaleNumber(toValue);
 
@@ -97,7 +95,7 @@ function animateNumber(element, oldValue, toValue, signed = false, duration = 30
     element.textContent = new Intl.NumberFormat(document.documentElement.lang, {
       minimumFractionDigits: to.decimals,
       maximumFractionDigits: to.decimals,
-      signDisplay: signed ? "exceptZero" : "auto",
+      signDisplay: "auto",
     }).format(value);
 
     if (progress < 1) {

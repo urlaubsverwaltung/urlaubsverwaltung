@@ -113,19 +113,6 @@
                       14,2 </span
                     >&nbsp;h
                   </span>
-                  <span class="stat-card__trend" th:with="growth=${statistics.averageOvertimeGrowth.signum}">
-                    <span
-                      class="inline-block transition-transform"
-                      th:classappend="${growth == 0 ? 'rotate-90' : (growth == -1 ? 'rotate-180' : '')}"
-                      >▲</span
-                    >&nbsp;
-                    <span
-                      class="company-overtime-growth-value tabular-nums"
-                      th:text="${(statistics.averageOvertimeGrowth > 0 ? '+' : '') + #numbers.formatDecimal(statistics.averageOvertimeGrowth, 2, 2)}"
-                      >+3,1</span
-                    >&nbsp;
-                    <span th:text="#{company.overview.metrics.overtime.compare.suffix}"> h gegenüber Vorzeitraum </span>
-                  </span>
                 </div>
               </div>
             </div>

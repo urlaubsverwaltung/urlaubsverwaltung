@@ -46,11 +46,6 @@
       font-weight: bold;
       font-variant: tabular-nums;
     }
-
-    .stat-card__trend {
-      font-size: var(--text-sm);
-      color: var(--color-yellow-600);
-    }
   }
 }
 
