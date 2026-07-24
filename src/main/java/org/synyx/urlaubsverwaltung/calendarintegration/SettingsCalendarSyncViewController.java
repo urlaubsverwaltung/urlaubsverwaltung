@@ -155,10 +155,14 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad, HasPers
         if (storedGoogleSettings != null && settingsUpdate != null) {
             final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getGoogleCalendarSettings();
             updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
+            updateGoogleSettings.setAccessToken(storedGoogleSettings.getAccessToken());
+            updateGoogleSettings.setAccessTokenExpirationMillis(storedGoogleSettings.getAccessTokenExpirationMillis());
 
             if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
-                // refresh token is invalid if settings changed
+                // tokens are invalid if settings changed
                 updateGoogleSettings.setRefreshToken(null);
+                updateGoogleSettings.setAccessToken(null);
+                updateGoogleSettings.setAccessTokenExpirationMillis(null);
             }
         }
         return settingsUpdate;

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
@@ -11,14 +12,23 @@ public class GoogleCalendarSettings {
     @Column(name = "google_client_id")
     private String clientId = null;
 
+    @Convert(converter = EncryptedSecretConverter.class)
     @Column(name = "google_client_secret")
     private String clientSecret = null;
 
     @Column(name = "google_calendar_id")
     private String calendarId = null;
 
+    @Convert(converter = EncryptedSecretConverter.class)
     @Column(name = "google_refresh_token")
     private String refreshToken = null;
+
+    @Convert(converter = EncryptedSecretConverter.class)
+    @Column(name = "google_access_token")
+    private String accessToken = null;
+
+    @Column(name = "google_access_token_expiration")
+    private Long accessTokenExpirationMillis = null;
 
     public String getRefreshToken() {
         return refreshToken;
@@ -26,6 +36,22 @@ public class GoogleCalendarSettings {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public Long getAccessTokenExpirationMillis() {
+        return accessTokenExpirationMillis;
+    }
+
+    public void setAccessTokenExpirationMillis(Long accessTokenExpirationMillis) {
+        this.accessTokenExpirationMillis = accessTokenExpirationMillis;
     }
 
     public String getClientId() {
@@ -60,6 +86,8 @@ public class GoogleCalendarSettings {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        // the access token is deliberately not part of equals/hashCode -
+        // equality is used to detect configuration changes that invalidate the oauth tokens
         GoogleCalendarSettings that = (GoogleCalendarSettings) o;
         return Objects.equals(getClientId(), that.getClientId()) &&
             Objects.equals(getClientSecret(), that.getClientSecret()) &&

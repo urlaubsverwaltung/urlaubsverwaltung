@@ -27,8 +27,10 @@ public class GoogleAuthorizationCodeFlowFactory {
         final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
         clientSecrets.setWeb(web);
 
+        // access type "offline" is required to receive a refresh token.
+        // the consent prompt is set on the authorization url (see GoogleCalendarOAuthHandshakeViewController)
+        // because google's oauth server no longer supports the deprecated approval_prompt=force parameter.
         return new GoogleAuthorizationCodeFlow.Builder(netHttpTransport, jsonFactory, clientSecrets, singleton(CALENDAR))
-            .setApprovalPrompt("force")
             .setAccessType("offline")
             .build();
     }

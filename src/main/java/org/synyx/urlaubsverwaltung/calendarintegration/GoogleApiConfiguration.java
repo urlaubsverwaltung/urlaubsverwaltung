@@ -2,10 +2,12 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(CalendarIntegrationProperties.class)
 public class GoogleApiConfiguration {
 
     @Bean

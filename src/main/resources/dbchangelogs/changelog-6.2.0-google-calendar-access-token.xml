@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+  <changeSet author="schneider" id="6.2.0-google-calendar-access-token">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="calendar_integration_settings"/>
+    </preConditions>
+    <addColumn tableName="calendar_integration_settings">
+      <column name="google_access_token" type="text"/>
+      <column name="google_access_token_expiration" type="bigint"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>
