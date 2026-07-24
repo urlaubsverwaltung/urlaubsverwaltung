@@ -7,6 +7,7 @@ import "apexcharts/line";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
+import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 
 // backend sends [currentYearSick, currentYearChildSick, previousYearSick, previousYearChildSick];
 // entries of the same category (sick / child-sick) are at the same index modulo 2.
@@ -214,8 +215,44 @@ const options = {
   series,
 };
 
-const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
-chart.render();
+const chart = new ApexCharts(
+  document.querySelector("#sicknote-statistic-chart"),
+  apexOptionsWithPersistence(options, {
+    key: "sicknote-statistics",
+
+    // keep the local state clean:
+    // - increase version when elements are added or removed from series
+    // - this will reset the persisted state
+    //   as we don't have control over the users browser/local-storage
+    version: 1,
+
+    // map series element to id.
+    // the id is used as key in persist layer to be independent of the array order.
+    // so the order of the chart elements can be changed safely.
+    getId({ name }) {
+      const year = currentYearSickRate.year;
+      const isComparison = !name.includes(year);
+
+      const isSickRateElement = name.includes(sickRateName);
+      if (isSickRateElement) {
+        return isComparison ? "sick-rate-compare" : "sick-rate";
+      }
+
+      const isSickDaysCountElement = dataseriesNames.some((label) => name.includes(label));
+      if (isSickDaysCountElement) {
+        if (name.includes(dataseriesNames[1])) {
+          return isComparison ? "sick-count-child-compare" : "sick-count-child";
+        } else {
+          return isComparison ? "sick-count-compare" : "sick-count";
+        }
+      }
+
+      return "";
+    },
+  }),
+);
+
+void chart.render();
 
 const dataseriesValuesForAtLeastOneSickNotePercent = globalThis.sicknoteStatistic
   .dataseriesValuesForAtLeastOneSickNotePercent || [0, 0];
