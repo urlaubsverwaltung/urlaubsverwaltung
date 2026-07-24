@@ -92,6 +92,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         return "sicknote/sick_notes_statistics";
     }
 
+    // changing this GraphDto, you may have to increase the local-storage version key in JavaScript to keep the local state clean!
     record GraphDto(List<DataSeries> dataSeries, List<DataSeries> sickRateDataSeries, List<BigDecimal> dataSeriesRadial) {
     }
 
