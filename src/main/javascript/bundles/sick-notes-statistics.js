@@ -3,6 +3,7 @@ import { useTheme } from "../js/use-theme";
 import ApexCharts from "apexcharts/core";
 import "apexcharts/radialBar";
 import "apexcharts/bar";
+import "apexcharts/line";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
@@ -23,7 +24,7 @@ const categoryPairs = dataseriesNames.map((name, categoryIndex) => {
 // and current year (sick + child-sick stacked, on the right). ApexCharts groups bar series by
 // their `group` value, positioning each unique group side by side in first-appearance order -
 // so all "previousYear" series must come before the "currentYear" series in this array.
-const series = [
+const barSeries = [
   ...categoryPairs.map(({ name, previousYear }) => ({
     name: `${name} ${previousYear.year}`,
     group: "previousYear",
@@ -36,27 +37,40 @@ const series = [
   })),
 ];
 
+// sick rate is rendered as a line on a second (percentage) y-axis, overlaid on the bars above.
+// backend sends [currentYear, previousYear].
+const sickRateName = globalThis.sicknoteStatistic.sickRateName;
+const [currentYearSickRate, previousYearSickRate] = globalThis.sicknoteStatistic.sickRateValues;
+const RATE_CURRENT_INDEX = barSeries.length;
+const RATE_PREVIOUS_INDEX = barSeries.length + 1;
+const rateSeries = [
+  { name: `${sickRateName} ${currentYearSickRate.year}`, type: "line", data: currentYearSickRate.data },
+  { name: `${sickRateName} ${previousYearSickRate.year}`, type: "line", data: previousYearSickRate.data },
+];
+
+const series = [...barSeries, ...rateSeries];
+
 function round1(number) {
   return Math.round(number * 10) / 10;
 }
 
-function formatTooltipValue(value, previousYearValue) {
+function formatTooltipValue(value, previousYearValue, unit = "") {
   if (previousYearValue === undefined) {
-    return `${round1(value)}`;
+    return `${round1(value)}${unit}`;
   }
 
   const difference = round1(value - previousYearValue);
   const sign = difference > 0 ? "+" : "";
   if (previousYearValue === 0) {
-    return `${round1(value)} (${sign}${difference})`;
+    return `${round1(value)}${unit} (${sign}${difference}${unit})`;
   }
 
   const percentage = Math.round((difference / previousYearValue) * 100);
   const percentageSign = percentage > 0 ? "+" : "";
-  return `${round1(value)} (${sign}${difference} / ${percentageSign}${percentage}%)`;
+  return `${round1(value)}${unit} (${sign}${difference}${unit} / ${percentageSign}${percentage}%)`;
 }
 
-// series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
+// bar series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
 // the current/previous counterpart of a series is offset by CATEGORY_COUNT.
 function pairSeriesIndex(seriesIndex) {
   return seriesIndex < CATEGORY_COUNT ? seriesIndex + CATEGORY_COUNT : seriesIndex - CATEGORY_COUNT;
@@ -107,59 +121,96 @@ const options = {
     // (vertically centered on it), so it renders on top of the bar instead of beside it.
     followCursor: true,
     // custom row order (top to bottom): sick current, sick previous, child-sick current,
-    // child-sick previous - independent of the series' internal render/group order.
+    // child-sick previous, sick rate current, sick rate previous - independent of the
+    // series' internal render/group order.
     custom: function ({ series: seriesValues, dataPointIndex, w }) {
       const categoryLabel = w.globals.labels[dataPointIndex];
 
-      const rowSeriesIndexes = categoryPairs.flatMap((_, categoryIndex) => [
-        CATEGORY_COUNT + categoryIndex,
-        categoryIndex,
-      ]);
+      const buildRow = (seriesIndex, previousValue, unit = "") => {
+        const value = seriesValues[seriesIndex][dataPointIndex];
+        const name = w.globals.seriesNames[seriesIndex];
+        const color = w.config.colors[seriesIndex];
+        const valueText =
+          previousValue === undefined ? `${round1(value)}${unit}` : formatTooltipValue(value, previousValue, unit);
 
-      const rows = rowSeriesIndexes
+        return `
+          <div class="sicknote-statistics-tooltip-row">
+            <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
+            <span>${name}: ${valueText}</span>
+          </div>
+        `;
+      };
+
+      const barRows = categoryPairs
+        .flatMap((_, categoryIndex) => [CATEGORY_COUNT + categoryIndex, categoryIndex])
         .map((seriesIndex) => {
-          const value = seriesValues[seriesIndex][dataPointIndex];
-          const valueText = isPreviousYearSeriesIndex(seriesIndex)
-            ? `${round1(value)}`
-            : formatTooltipValue(value, seriesValues[pairSeriesIndex(seriesIndex)]?.[dataPointIndex]);
-          const name = w.globals.seriesNames[seriesIndex];
-          const color = w.config.colors[seriesIndex];
+          const previousValue = isPreviousYearSeriesIndex(seriesIndex)
+            ? undefined
+            : seriesValues[pairSeriesIndex(seriesIndex)]?.[dataPointIndex];
+          return buildRow(seriesIndex, previousValue);
+        });
 
-          return `
-            <div class="sicknote-statistics-tooltip-row">
-              <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
-              <span>${name}: ${valueText}</span>
-            </div>
-          `;
-        })
-        .join("");
+      const rateRows = [
+        buildRow(RATE_CURRENT_INDEX, seriesValues[RATE_PREVIOUS_INDEX][dataPointIndex], "%"),
+        buildRow(RATE_PREVIOUS_INDEX, undefined, "%"),
+      ];
 
-      return `<div class="sicknote-statistics-tooltip-title">${categoryLabel}</div>${rows}`;
+      return `<div class="sicknote-statistics-tooltip-title">${categoryLabel}</div>${[...barRows, ...rateRows].join("")}`;
     },
   },
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
-  // series order is [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick]
+  // series order is [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick,
+  // currentYearSickRate, previousYearSickRate]
   colors: [
     "var(--sick-note-color-light)",
     "var(--sick-note-child-color-light)",
     "var(--sick-note-color)",
     "var(--sick-note-child-color)",
+    "var(--sick-rate-color)",
+    "var(--sick-rate-color-light)",
   ],
+  // transparent border creates a visible gap between adjacent bar segments (sick / child-sick,
+  // previous / current year); the rate series get an actual stroke to render as a smooth line.
   stroke: {
     show: true,
-    width: 2,
-    colors: ["transparent"],
+    width: [2, 2, 2, 2, 1, 1],
+    colors: [
+      "transparent",
+      "transparent",
+      "transparent",
+      "transparent",
+      "var(--sick-rate-color)",
+      "var(--sick-rate-color-light)",
+    ],
+    curve: "smooth",
+  },
+  // suppress the per-point value labels on the sick-rate line series; bar segments keep their default labels.
+  dataLabels: {
+    enabledOnSeries: [0, 1, 2, 3],
   },
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
   },
-  yaxis: {
-    title: {
-      text: globalThis.sicknoteStatistic.yaxisTitle,
+  yaxis: [
+    {
+      seriesName: barSeries.map((s) => s.name),
+      title: {
+        text: globalThis.sicknoteStatistic.yaxisTitle,
+      },
     },
-  },
+    {
+      seriesName: rateSeries.map((s) => s.name),
+      opposite: true,
+      title: {
+        text: globalThis.sicknoteStatistic.sickRateYaxisTitle,
+      },
+      labels: {
+        formatter: (value) => `${round1(value)}%`,
+      },
+    },
+  ],
   series,
 };
 

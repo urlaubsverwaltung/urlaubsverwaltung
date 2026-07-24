@@ -12,14 +12,19 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 
+import static java.math.BigDecimal.valueOf;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -43,12 +48,14 @@ class SickNoteStatisticsServiceTest {
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
+    @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     private static final Clock clock = Clock.systemDefaultZone();
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, clock);
+        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, workingTimeCalendarService, clock);
     }
 
     @Test
@@ -105,6 +112,7 @@ class SickNoteStatisticsServiceTest {
         verifyNoMoreInteractions(personService);
         verifyNoMoreInteractions(departmentService);
         verifyNoMoreInteractions(sickNoteService);
+        verifyNoMoreInteractions(workingTimeCalendarService);
     }
 
     @Test
@@ -162,6 +170,7 @@ class SickNoteStatisticsServiceTest {
         verifyNoMoreInteractions(personService);
         verifyNoMoreInteractions(departmentService);
         verifyNoMoreInteractions(sickNoteService);
+        verifyNoMoreInteractions(workingTimeCalendarService);
     }
 
     @Test
@@ -306,5 +315,50 @@ class SickNoteStatisticsServiceTest {
         verifyNoMoreInteractions(personService);
         verifyNoMoreInteractions(departmentService);
         verifyNoMoreInteractions(sickNoteService);
+        verifyNoMoreInteractions(workingTimeCalendarService);
+    }
+
+    @Test
+    void ensureCreateStatisticsForPersonUsesWorkingTimeCalendarsForSickRate() {
+
+        final Year year = Year.of(2022);
+
+        final Person office = new Person();
+        office.setId(1L);
+        office.setPermissions(List.of(USER, OFFICE));
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
+
+        final LocalDate from = LocalDate.of(2022, 1, 1);
+        final LocalDate to = LocalDate.of(2022, 12, 31);
+        final LocalDate sickNoteStart = LocalDate.of(2022, 1, 10);
+        final LocalDate sickNoteEnd = LocalDate.of(2022, 1, 11);
+
+        // only the two sick note dates are target work days for `person`, `office` has none at all
+        // --> target work days in January == sick days in January
+        final WorkingTimeCalendar personCalendar = workingTimeCalendarMondayToSunday(from, to,
+            date -> date.equals(sickNoteStart) || date.equals(sickNoteEnd));
+        final WorkingTimeCalendar officeCalendar = workingTimeCalendarMondayToSunday(from, to, date -> false);
+
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
+            .startDate(sickNoteStart)
+            .endDate(sickNoteEnd)
+            .dayLength(FULL)
+            .workingTimeCalendar(personCalendar)
+            .build();
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office, person), from, to)).thenReturn(List.of(sickNote));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(office, person), year))
+            .thenReturn(Map.of(office, officeCalendar, person, personCalendar));
+
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, office);
+
+        verify(workingTimeCalendarService).getWorkingTimesByPersons(List.of(office, person), year);
+        assertThat(sickNoteStatistics.getSickRateByMonth().get(0)).isEqualByComparingTo(valueOf(100));
     }
 }
