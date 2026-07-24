@@ -123,6 +123,42 @@ describe("calendar", () => {
     expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
   });
 
+  it("dragging from one day to another on desktop marks and books the whole range in between", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.route(
+      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [],
+      },
+    );
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    holidayService.bookHoliday = vi.fn();
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const dayFrom = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-11"]`);
+    const dayTo = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+    const dayBetween = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-13"]`);
+
+    dayFrom.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+    dayTo.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+
+    // days between drag-start and the currently hovered day are marked while the button is still held
+    expect(dayBetween.classList.contains("datepicker-day-selected")).toBe(true);
+    expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+
+    document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+    dayTo.click();
+
+    expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-11"), parseISO("2017-12-15"));
+  });
+
   describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
     "ensure correct rendering when clicking %s ",
     (buttonSelector) => {
@@ -483,6 +519,255 @@ describe("calendar", () => {
     const day = $('[data-datepicker-date="2024-05-30"]');
     expect(day).toBeTruthy();
     expect(day.getAttribute("title")).toBe("Statehood Day, Corpus Christi");
+  });
+
+  describe("swipe gestures", () => {
+    const expectedInitialCaptions = [
+      "August 2017",
+      "September 2017",
+      "October 2017",
+      "November 2017",
+      "December 2017",
+      "January 2018",
+      "February 2018",
+      "March 2018",
+      "April 2018",
+      "May 2018",
+    ];
+
+    function touchEvent(type, x, y) {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      event.touches = [{ clientX: x, clientY: y }];
+      return event;
+    }
+
+    function swipe(container, { startX, endX, startY = 100, endY = 100 }) {
+      container.dispatchEvent(touchEvent("touchstart", startX, startY));
+      container.dispatchEvent(touchEvent("touchmove", endX, endY));
+      container.dispatchEvent(touchEvent("touchend", endX, endY));
+    }
+
+    function flush() {
+      return new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    function monthCaptions() {
+      return [...document.querySelectorAll(".calendar-month-caption")].map((element) => element.textContent);
+    }
+
+    // resolves the swipe animation started by `swipe`, mirroring the browser
+    // firing `transitionend` once the CSS slide animation finishes
+    function settleSwipeAnimation() {
+      const currentMonthElement = document.querySelectorAll(".calendar-month-container")[4];
+      currentMonthElement.dispatchEvent(new Event("transitionend", { bubbles: true }));
+      return flush();
+    }
+
+    async function setUpMobileCalendar() {
+      // pretend to be on a touch-sized viewport so swipe handling is active
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn() });
+
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [],
+        },
+      );
+      fetchMock.route(`/persons/42/public-holidays?from=2017-01-01&to=2017-12-31`, { publicHolidays: [] });
+      mockEmptyYear(42, 2018);
+
+      await calendarTestSetup();
+
+      renderCalendar(createHolidayService({ webPrefix: "", apiPrefix: "", personId: 42 }));
+
+      return document.querySelector(".calendar-container");
+    }
+
+    it("swiping left past the commit threshold navigates to the next month, like the next button", async () => {
+      const container = await setUpMobileCalendar();
+      expect(monthCaptions()).toEqual(expectedInitialCaptions);
+
+      swipe(container, { startX: 200, endX: 100 });
+      await settleSwipeAnimation();
+
+      expect(monthCaptions()).toEqual([
+        "September 2017",
+        "October 2017",
+        "November 2017",
+        "December 2017",
+        "January 2018",
+        "February 2018",
+        "March 2018",
+        "April 2018",
+        "May 2018",
+        "June 2018",
+      ]);
+    });
+
+    it("swiping right past the commit threshold navigates to the previous month, like the previous button", async () => {
+      const container = await setUpMobileCalendar();
+
+      swipe(container, { startX: 100, endX: 200 });
+      await settleSwipeAnimation();
+
+      expect(monthCaptions()).toEqual([
+        "July 2017",
+        "August 2017",
+        "September 2017",
+        "October 2017",
+        "November 2017",
+        "December 2017",
+        "January 2018",
+        "February 2018",
+        "March 2018",
+        "April 2018",
+      ]);
+    });
+
+    it("does not navigate when the swipe distance stays under the commit threshold", async () => {
+      const container = await setUpMobileCalendar();
+
+      swipe(container, { startX: 200, endX: 180 });
+      await settleSwipeAnimation();
+
+      expect(monthCaptions()).toEqual(expectedInitialCaptions);
+    });
+
+    it("ignores a predominantly vertical touch move so page scrolling keeps working", async () => {
+      const container = await setUpMobileCalendar();
+
+      const preventDefaultSpy = vi.fn();
+      container.dispatchEvent(touchEvent("touchstart", 200, 100));
+      const moveEvent = touchEvent("touchmove", 205, 180);
+      moveEvent.preventDefault = preventDefaultSpy;
+      container.dispatchEvent(moveEvent);
+      container.dispatchEvent(touchEvent("touchend", 205, 180));
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(monthCaptions()).toEqual(expectedInitialCaptions);
+    });
+
+    it("does not react to touch gestures outside the mobile single-month view", async () => {
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn() });
+
+      mockDate(1_512_130_448_379);
+      await calendarTestSetup();
+      renderCalendar(createHolidayService({ personId: 42 }));
+
+      const container = document.querySelector(".calendar-container");
+      swipe(container, { startX: 200, endX: 50 });
+
+      expect(document.querySelectorAll(".calendar-month-container.calendar-month-swipe-active").length).toBe(0);
+      expect(monthCaptions()).toEqual(expectedInitialCaptions);
+    });
+  });
+
+  describe("mobile day range selection (tap to mark)", () => {
+    async function setUpMobileCalendarNoAbsences() {
+      // pretend to be on a touch-sized viewport so tap-to-mark handling is active
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn() });
+
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      holidayService.bookHoliday = vi.fn();
+
+      renderCalendar(holidayService);
+
+      return holidayService;
+    }
+
+    function day(date) {
+      return document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+    }
+
+    function isMarked(date) {
+      return day(date).classList.contains("datepicker-day-selected");
+    }
+
+    it("marks a day on first tap without booking, marks the range on a second tap, and books on a third tap inside the range", async () => {
+      const holidayService = await setUpMobileCalendarNoAbsences();
+
+      day("2017-12-11").click();
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+      expect(isMarked("2017-12-11")).toBe(true);
+      expect(isMarked("2017-12-15")).toBe(false);
+
+      day("2017-12-15").click();
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+      expect(isMarked("2017-12-11")).toBe(true);
+      expect(isMarked("2017-12-13")).toBe(true);
+      expect(isMarked("2017-12-15")).toBe(true);
+
+      day("2017-12-13").click();
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-11"), parseISO("2017-12-15"));
+      expect(isMarked("2017-12-11")).toBe(false);
+      expect(isMarked("2017-12-15")).toBe(false);
+    });
+
+    it("confirms a single-day booking when the already-marked day is tapped again", async () => {
+      const holidayService = await setUpMobileCalendarNoAbsences();
+
+      day("2017-12-11").click();
+      day("2017-12-11").click();
+
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-11"), parseISO("2017-12-11"));
+    });
+
+    it("extends the marked range relative to the original anchor when tapping outside it", async () => {
+      const holidayService = await setUpMobileCalendarNoAbsences();
+
+      day("2017-12-11").click(); // anchor
+      day("2017-12-15").click(); // marks range 11-15
+      day("2017-12-20").click(); // outside 11-15, re-anchored to 11-20
+
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+      expect(isMarked("2017-12-13")).toBe(true);
+      expect(isMarked("2017-12-18")).toBe(true);
+
+      day("2017-12-18").click();
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-11"), parseISO("2017-12-20"));
+    });
+
+    it("still navigates directly to an existing absence on tap, without engaging range marking", async () => {
+      globalThis.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn() });
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [
+            {
+              date: "2017-12-15",
+              absenceType: "VACATION",
+              id: 1337,
+              absent: "FULL",
+              absentNumeric: 1,
+              status: "ALLOWED",
+              typeId: 1,
+            },
+          ],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      holidayService.navigateToApplicationForLeave = vi.fn();
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService);
+
+      day("2017-12-15").click();
+
+      expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
+    });
   });
 
   function mockEmptyYear(personId, year) {

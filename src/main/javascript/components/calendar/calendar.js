@@ -56,8 +56,20 @@ const CSS = {
   next: "datepicker-next",
   previous: "datepicker-prev",
   month: "calendar-month-container",
+  container: "calendar-container",
   mousedown: "mousedown",
+  swipeActive: "calendar-month-swipe-active",
+  swipeTransition: "calendar-month-swipe-transition",
 };
+
+// how many pixels a touch must move (in the dominant axis) before we decide
+// the gesture is a horizontal swipe rather than vertical page scrolling
+const swipeAxisLockThreshold = 10;
+// how many pixels a horizontal swipe must cover before it commits to a month change
+const swipeCommitThreshold = 50;
+// mirrors ".calendar-month-container:nth-child(5)" in calendar.css, the slot
+// CSS always uses to display the "current" month on mobile
+const currentMonthIndex = 4;
 
 const DATA = {
   date: "datepickerDate",
@@ -390,9 +402,13 @@ const Controller = (function () {
   let view;
   let holidayService;
 
+  const mobileScreenQuery = globalThis.matchMedia("(max-width: 640px)");
+
   const datepickerHandlers = {
     mousedown: function (event) {
-      if (event.button !== mouseButtons.left) {
+      if (event.button !== mouseButtons.left || mobileScreenQuery.matches) {
+        // on mobile, range selection is driven entirely by taps in the click handler below,
+        // so that a mousedown-drag never competes with the swipe-to-change-month gesture
         return;
       }
 
@@ -429,9 +445,6 @@ const Controller = (function () {
     },
 
     click: function () {
-      const dateFrom = selectionFrom();
-      const dateTo = selectionTo();
-
       const dateThis = getDateFromElement(this);
 
       const isSelectable = this.dataset.datepickerSelectable;
@@ -440,9 +453,48 @@ const Controller = (function () {
 
       if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
         holidayService.navigateToApplicationForLeave(absenceId);
-      } else if (isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
+        return;
+      }
+
+      if (isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
         holidayService.navigateToSickNote(absenceId);
-      } else if (
+        return;
+      }
+
+      if (mobileScreenQuery.matches) {
+        // no mousedown-drag range selection on mobile (it would fight the swipe-to-change-month
+        // gesture), so a range is built from separate taps instead: tap a day to mark it, tap
+        // another day to mark the range between them, tap anywhere inside the marked range
+        // again to confirm and book it
+        if (isSelectable !== "true") {
+          return;
+        }
+
+        const start = selectionFrom();
+        const end = selectionTo();
+        const hasPendingSelection = isValidDate(start) && isValidDate(end);
+
+        if (hasPendingSelection && isWithinInterval(dateThis, { start, end })) {
+          holidayService.bookHoliday(start, end);
+          clearSelection();
+        } else if (hasPendingSelection) {
+          const anchor = new Date(view.getRootElement().dataset[DATA.selected]);
+          const isThisBefore = isBefore(dateThis, anchor);
+          selectionFrom(isThisBefore ? dateThis : anchor);
+          selectionTo(isThisBefore ? anchor : dateThis);
+        } else {
+          view.getRootElement().dataset[DATA.selected] = dateThis;
+          selectionFrom(dateThis);
+          selectionTo(dateThis);
+        }
+
+        return;
+      }
+
+      const dateFrom = selectionFrom();
+      const dateTo = selectionTo();
+
+      if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&
         isValidDate(dateTo) &&
@@ -465,7 +517,7 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
+      return Promise.all([
         holidayService.fetchPublicHolidays(getYear(date)),
         holidayService.fetchAbsences(getYear(date)),
       ]).then(view.displayNext);
@@ -481,10 +533,151 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
+      return Promise.all([
         holidayService.fetchPublicHolidays(getYear(date)),
         holidayService.fetchAbsences(getYear(date)),
       ]).then(view.displayPrevious);
+    },
+  };
+
+  // touch swipe support for the single-month mobile view. Adjacent months
+  // are already rendered (just hidden via CSS), so a swipe only has to
+  // slide the current and the target month into view and then delegate to
+  // the existing button handlers to do the actual data fetch + DOM swap.
+  let swipeGesture;
+  let swipeNavigationPending = false;
+
+  function getCurrentMonthElement() {
+    return view.getRootElement().querySelectorAll(`.${CSS.month}`)[currentMonthIndex];
+  }
+
+  function clearSwipeStyles(element) {
+    if (!element) {
+      return;
+    }
+    element.classList.remove(CSS.swipeActive, CSS.swipeTransition);
+    element.style.removeProperty("transform");
+  }
+
+  const swipeHandlers = {
+    touchstart: function (event) {
+      if (!mobileScreenQuery.matches || swipeGesture || swipeNavigationPending || event.touches.length !== 1) {
+        return;
+      }
+
+      const currentElement = getCurrentMonthElement();
+      if (!currentElement) {
+        return;
+      }
+
+      swipeGesture = {
+        startX: event.touches[0].clientX,
+        startY: event.touches[0].clientY,
+        deltaX: 0,
+        axis: undefined,
+        direction: undefined,
+        currentElement,
+        targetElement: undefined,
+      };
+    },
+
+    touchmove: function (event) {
+      if (!swipeGesture) {
+        return;
+      }
+
+      const touch = event.touches[0];
+      const deltaX = touch.clientX - swipeGesture.startX;
+      const deltaY = touch.clientY - swipeGesture.startY;
+
+      if (!swipeGesture.axis) {
+        if (Math.abs(deltaX) < swipeAxisLockThreshold && Math.abs(deltaY) < swipeAxisLockThreshold) {
+          return;
+        }
+
+        swipeGesture.axis = Math.abs(deltaX) > Math.abs(deltaY) ? "horizontal" : "vertical";
+
+        if (swipeGesture.axis === "horizontal") {
+          swipeGesture.direction = deltaX < 0 ? "next" : "previous";
+          swipeGesture.targetElement =
+            swipeGesture.direction === "next"
+              ? swipeGesture.currentElement.nextElementSibling
+              : swipeGesture.currentElement.previousElementSibling;
+
+          if (swipeGesture.targetElement) {
+            swipeGesture.currentElement.classList.add(CSS.swipeActive);
+            swipeGesture.targetElement.classList.add(CSS.swipeActive);
+          }
+        }
+      }
+
+      if (swipeGesture.axis !== "horizontal" || !swipeGesture.targetElement) {
+        // vertical scroll (or no adjacent month to slide in): let the page scroll as usual
+        return;
+      }
+
+      // we're committed to a horizontal swipe now, don't let the page scroll along
+      event.preventDefault();
+
+      swipeGesture.deltaX = deltaX;
+      const targetOffset = swipeGesture.direction === "next" ? "100%" : "-100%";
+
+      swipeGesture.currentElement.style.transform = `translateX(${deltaX}px)`;
+      swipeGesture.targetElement.style.transform = `translateX(calc(${targetOffset} + ${deltaX}px))`;
+    },
+
+    touchend: function () {
+      if (!swipeGesture) {
+        return;
+      }
+
+      const { axis, targetElement, currentElement, direction, deltaX } = swipeGesture;
+      swipeGesture = undefined;
+
+      if (axis !== "horizontal" || !targetElement) {
+        return;
+      }
+
+      const commit = Math.abs(deltaX) >= swipeCommitThreshold;
+
+      currentElement.classList.add(CSS.swipeTransition);
+      targetElement.classList.add(CSS.swipeTransition);
+
+      if (commit) {
+        const outOffset = direction === "next" ? "-100%" : "100%";
+        currentElement.style.transform = `translateX(${outOffset})`;
+        targetElement.style.transform = "translateX(0)";
+      } else {
+        currentElement.style.transform = "translateX(0)";
+        targetElement.style.transform = "";
+      }
+
+      currentElement.addEventListener(
+        "transitionend",
+        function () {
+          clearSwipeStyles(currentElement);
+          clearSwipeStyles(targetElement);
+
+          if (commit) {
+            swipeNavigationPending = true;
+            const navigate = direction === "next" ? datepickerHandlers.clickNext : datepickerHandlers.clickPrevious;
+            Promise.resolve(navigate()).finally(function () {
+              swipeNavigationPending = false;
+            });
+          }
+        },
+        { once: true },
+      );
+    },
+
+    touchcancel: function () {
+      if (!swipeGesture) {
+        return;
+      }
+
+      clearSwipeStyles(swipeGesture.currentElement);
+      clearSwipeStyles(swipeGesture.targetElement);
+      swipeGesture = undefined;
     },
   };
 
@@ -584,18 +777,23 @@ const Controller = (function () {
         document.body.classList.remove(CSS.mousedown);
       });
 
-      const smScreenQuery = globalThis.matchMedia("(max-width: 640px)");
-      if (smScreenQuery.matches) {
+      if (mobileScreenQuery.matches) {
         for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.add("button");
         }
       }
 
-      smScreenQuery.addEventListener("change", function () {
+      mobileScreenQuery.addEventListener("change", function () {
         for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.toggle("button");
         }
       });
+
+      const calendarContainer = view.getRootElement().querySelector(`.${CSS.container}`);
+      calendarContainer.addEventListener("touchstart", swipeHandlers.touchstart, { passive: true });
+      calendarContainer.addEventListener("touchmove", swipeHandlers.touchmove, { passive: false });
+      calendarContainer.addEventListener("touchend", swipeHandlers.touchend);
+      calendarContainer.addEventListener("touchcancel", swipeHandlers.touchcancel);
     },
   };
 
