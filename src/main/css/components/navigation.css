@@ -30,6 +30,7 @@
         margin-top: auto;
         background: white;
         padding: --spacing(2) 0;
+        padding-bottom: calc(--spacing(2) + env(safe-area-inset-bottom));
         border-top: 1px solid transparent;
         transition: border-color 150ms;
 
