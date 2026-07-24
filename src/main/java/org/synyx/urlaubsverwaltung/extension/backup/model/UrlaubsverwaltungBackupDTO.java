@@ -7,5 +7,6 @@ public record UrlaubsverwaltungBackupDTO(String tenantId, String urlaubsverwaltu
                                          ApplicationBackupDTO applications, List<DepartmentDTO> departments,
                                          List<DepartmentMembershipDTO> departmentMemberships, CalendarBackupDTO calendars,
                                          CalendarIntegrationBackupDTO calendarIntegration,
-                                         SettingsDTO settings) {
+                                         SettingsDTO settings,
+                                         List<PersonActivePeriodDTO> personActivePeriods) {
 }

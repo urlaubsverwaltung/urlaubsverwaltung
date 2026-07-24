@@ -1,0 +1,94 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-person-active-period--table">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="5" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="person_active_period_id_seq" startValue="1"/>
+
+    <createTable tableName="person_active_period">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="person_active_period_pkey"/>
+      </column>
+      <column name="person_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_from" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_to" type="timestamptz"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableName="person_active_period"
+                             baseColumnNames="person_id"
+                             constraintName="fk_person_active_period_person"
+                             referencedTableName="person"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createIndex tableName="person_active_period" indexName="idx_person_active_period_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <!--
+    Backfill one active period per existing person, since Person itself has no creation timestamp:
+    - valid_from is the start date of the person's first working time (the closest available proxy for
+      "start of activity" for persons that already existed before this table was introduced).
+    - valid_to is left NULL (still active) for persons currently without the INACTIVE role, or set to the
+      migration run time for persons currently holding the INACTIVE role. The exact historical deactivation
+      date of already-inactive legacy persons cannot be reconstructed, so "now" is used as a documented
+      best-effort approximation rather than leaving them incorrectly marked as still active.
+  -->
+  <changeSet author="schneider" id="add-person-active-period--migrate-existing-persons">
+    <preConditions>
+      <tableExists tableName="person_active_period"/>
+    </preConditions>
+    <sql>
+      INSERT INTO person_active_period (
+        tenant_id,
+        id,
+        person_id,
+        valid_from,
+        valid_to
+      )
+      SELECT
+        person.tenant_id,
+        nextval('person_active_period_id_seq') as id,
+        person.id as person_id,
+        first_working_time.valid_from::timestamptz as valid_from,
+        CASE WHEN inactive_person.person_id IS NOT NULL THEN now() ELSE NULL END as valid_to
+      FROM person
+      JOIN (
+        SELECT person_id, MIN(valid_from) as valid_from
+        FROM working_time
+        GROUP BY person_id
+      ) first_working_time ON first_working_time.person_id = person.id
+      LEFT JOIN (
+        SELECT DISTINCT person_id
+        FROM person_permissions
+        WHERE permissions = 'INACTIVE'
+      ) inactive_person ON inactive_person.person_id = person.id;
+    </sql>
+  </changeSet>
+
+  <!--
+    Enforces at application-data level what PersonActivePeriodServiceImpl only checks-then-inserts:
+    a person must never have more than one open (valid_to IS NULL) active period at the same time.
+    Without this, two concurrent openPeriod() calls for the same person could both pass the
+    "no open period exists yet" check before either commits, producing two open rows.
+  -->
+  <changeSet author="schneider" id="add-person-active-period--unique-open-period">
+    <sql>
+      CREATE UNIQUE INDEX idx_person_active_period_open_unique
+      ON person_active_period (person_id)
+      WHERE valid_to IS NULL;
+    </sql>
+    <rollback>
+      <sql>DROP INDEX idx_person_active_period_open_unique;</sql>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>

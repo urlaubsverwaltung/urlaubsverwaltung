@@ -63,6 +63,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public Person create(String username, String firstName, String lastName, String email) {
 
         final List<MailNotification> defaultMailNotifications = List.of(
@@ -93,6 +94,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
@@ -112,6 +114,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public Person update(Person person) {
 
         if (person.getId() == null) {
