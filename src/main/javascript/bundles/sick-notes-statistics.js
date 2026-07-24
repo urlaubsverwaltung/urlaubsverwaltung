@@ -226,6 +226,7 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
     height: 160,
     width: "160px",
     parentHeightOffset: 0,
+    background: "var(--uv-chart-background)",
     toolbar: {
       show: false,
     },
