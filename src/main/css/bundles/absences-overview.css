@@ -238,6 +238,12 @@ svg.no-workday-icon {
   --font-color: var(--uv-cal-public-holiday-color);
 }
 
+.blackout-period {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+}
+
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);

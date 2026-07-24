@@ -53,6 +53,7 @@ const css = {
   sickNoteNoon: "datepicker-day-sick-note-noon",
   sickNoteNoonSolid: "absence-noon--solid",
   sickNoteNoonOutline: "absence-noon--outline",
+  blackout: "datepicker-day-blackout",
 };
 
 const isPast = () => false;
@@ -71,13 +72,14 @@ export function removeDatepickerCssClassesFromNode(node) {
  * @param date {Date}
  * @param absences {Array}
  * @param publicHolidays {Array}
+ * @param blackoutPeriods {Array}
  */
-export function addDatepickerCssClassesToNode(node, date, absences, publicHolidays) {
-  const cssClasses = getCssClassesForDate(date, absences, publicHolidays);
+export function addDatepickerCssClassesToNode(node, date, absences, publicHolidays, blackoutPeriods) {
+  const cssClasses = getCssClassesForDate(date, absences, publicHolidays, blackoutPeriods);
   node.classList.add(...cssClasses);
 }
 
-function getCssClassesForDate(date, absences, publicHolidays) {
+function getCssClassesForDate(date, absences, publicHolidays, blackoutPeriods = []) {
   return [
     css.day,
     isToday(date) && css.today,
@@ -86,6 +88,7 @@ function getCssClassesForDate(date, absences, publicHolidays) {
     isPublicHoliday(publicHolidays) && css.publicHolidayFull,
     isPublicHolidayMorning(publicHolidays) && css.publicHolidayMorning,
     isPublicHolidayNoon(publicHolidays) && css.publicHolidayNoon,
+    blackoutPeriods.length > 0 && css.blackout,
 
     isPersonalHolidayWaitingFull(absences) && [css.absenceFull, css.absenceFullOutline],
     isPersonalHolidayTemporaryFull(absences) && [css.absenceFull, css.absenceFullOutlineSolidHalf],

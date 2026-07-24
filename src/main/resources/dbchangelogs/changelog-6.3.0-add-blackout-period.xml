@@ -1,0 +1,70 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-blackout-period--table">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="blackout_period_id_seq" startValue="1"/>
+
+    <createTable tableName="blackout_period">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="blackout_period_pkey"/>
+      </column>
+      <column name="title" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modification" type="date"/>
+    </createTable>
+
+    <createTable tableName="blackout_period_department">
+      <column name="blackout_period_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="department_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="blackout_period_department" columnNames="blackout_period_id, department_id"/>
+
+    <addForeignKeyConstraint baseTableName="blackout_period_department"
+                             baseColumnNames="blackout_period_id"
+                             constraintName="fk_blackout_period_department_blackout_period"
+                             referencedTableName="blackout_period"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createTable tableName="blackout_period_vacation_type">
+      <column name="blackout_period_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="vacation_type_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="blackout_period_vacation_type" columnNames="blackout_period_id, vacation_type_id"/>
+
+    <addForeignKeyConstraint baseTableName="blackout_period_vacation_type"
+                             baseColumnNames="blackout_period_id"
+                             constraintName="fk_blackout_period_vacation_type_blackout_period"
+                             referencedTableName="blackout_period"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createIndex tableName="blackout_period" indexName="idx_blackout_period_date_range">
+      <column name="start_date"/>
+      <column name="end_date"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>
