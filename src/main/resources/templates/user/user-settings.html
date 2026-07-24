@@ -149,6 +149,75 @@
               </li>
             </ul>
           </fieldset>
+          <fieldset class="mt-16" th:if="${globalGravatarEnabled}">
+            <legend
+              id="gravatar-description"
+              th:text="#{user-settings.gravatarEnabled.title}"
+              class="mb-4 text-lg dark:text-zinc-100"
+            >
+              Avatar
+            </legend>
+            <ul
+              aria-describedby="gravatar-description"
+              class="flex flex-col gap-2 @3xl/main:grid @3xl/main:auto-cols-fr @3xl/main:grid-flow-col @3xl/main:gap-8"
+            >
+              <li class="relative flex @3xl/main:block items-center gap-4 @3xl/main:flex-row @3xl/main:justify-center">
+                <input
+                  type="radio"
+                  id="userSettings-gravatarEnabled-false"
+                  name="gravatarEnabled"
+                  value="false"
+                  th:checked="${!userSettings.gravatarEnabled}"
+                  class="peer @3xl/main:absolute bottom-5 left-4"
+                />
+                <span class="block w-full h-full px-4 py-3 rounded-lg border-2 peer-checked:border-blue-400">
+                  <label
+                    for="userSettings-gravatarEnabled-false"
+                    class="flex items-center gap-4 cursor-pointer @3xl/main:text-center @3xl/main:flex-col"
+                  >
+                    <span class="text-blue-50 dark:text-sky-800">
+                      <svg
+                        th:replace="~{icon/avatar::svg(avatarText=${personInitials}, height='36', width='36', className='w-9 h-9 @3xl/main:w-16 @3xl/main:h-16')}"
+                      ></svg>
+                    </span>
+                    <span
+                      th:text="#{user-settings.gravatarEnabled.off}"
+                      class="min-w-0 @3xl/main:w-4/5 whitespace-nowrap text-ellipsis overflow-hidden"
+                    >
+                      Initialen
+                    </span>
+                  </label>
+                </span>
+              </li>
+              <li class="relative flex @3xl/main:block items-center gap-4 @3xl/main:flex-row @3xl/main:justify-center">
+                <input
+                  type="radio"
+                  id="userSettings-gravatarEnabled-true"
+                  name="gravatarEnabled"
+                  value="true"
+                  th:checked="${userSettings.gravatarEnabled}"
+                  class="peer @3xl/main:absolute bottom-5 left-4"
+                />
+                <span class="block w-full h-full px-4 py-3 rounded-lg border-2 peer-checked:border-blue-400">
+                  <label
+                    for="userSettings-gravatarEnabled-true"
+                    class="flex items-center gap-4 cursor-pointer @3xl/main:text-center @3xl/main:flex-col"
+                  >
+                    <svg
+                      th:replace="~{icon/gravatar-logo::svg(height='36', width='36', className='w-9 h-9 @3xl/main:w-16 @3xl/main:h-16')}"
+                    ></svg>
+                    <span
+                      th:text="#{user-settings.gravatarEnabled.on}"
+                      class="min-w-0 @3xl/main:w-4/5 whitespace-nowrap text-ellipsis overflow-hidden"
+                      th:data-title="#{user-settings.gravatarEnabled.description}"
+                    >
+                      Gravatar
+                    </span>
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
           <noscript>
             <div class="bottom-bar">
               <div class="bottom-bar-inner flex justify-between items-center mt-16">

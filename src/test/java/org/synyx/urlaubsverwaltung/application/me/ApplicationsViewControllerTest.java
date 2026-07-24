@@ -727,6 +727,7 @@ class ApplicationsViewControllerTest {
         replacement.setFirstName("Max");
         replacement.setLastName("Mustermann");
         replacement.setEmail("max@example.com");
+        replacement.setGravatarEnabled(true);
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
@@ -795,12 +796,14 @@ class ApplicationsViewControllerTest {
         replacement1.setFirstName("Anna");
         replacement1.setLastName("Abc");
         replacement1.setEmail("anna@example.com");
+        replacement1.setGravatarEnabled(true);
 
         final Person replacement2 = new Person();
         replacement2.setId(101L);
         replacement2.setFirstName("Bob");
         replacement2.setLastName("Bobson");
         replacement2.setEmail("bob@example.com");
+        replacement2.setGravatarEnabled(true);
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);

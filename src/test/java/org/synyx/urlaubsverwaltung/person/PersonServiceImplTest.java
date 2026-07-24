@@ -467,6 +467,22 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureUpdateKeepsGravatarEnabledFlag() {
+
+        final Person person = createPerson("active person", USER);
+        person.setId(1L);
+        person.setGravatarEnabled(true);
+        when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+
+        sut.update(person);
+
+        verify(personRepository).save(personArgumentCaptor.capture());
+        assertThat(personArgumentCaptor.getValue().isGravatarEnabled()).isTrue();
+    }
+
+    @Test
     void ensurePersonDisabledEventIsFiredAfterPersonUpdate() {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);

@@ -26,5 +26,6 @@
   <include relativeToChangelogFile="true" file="changelog-5.35.0-add-spring-session.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.0.0-M4-adjust-allocation-sizes.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.0.0-RC1-add-navigation-collapsed-to-user-settings.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.4.0-add-gravatar-enabled-to-person.xml"/>
 
 </databaseChangeLog>
