@@ -54,6 +54,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingFirstNameLastName;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -137,7 +138,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .flatMap(List::stream)
                     .filter(member -> !member.hasRole(INACTIVE))
                     .distinct()
-                    .sorted(comparing(Person::getFirstName))
+                    .sorted(comparingFirstNameLastName())
                     .toList();
             }
         } else {

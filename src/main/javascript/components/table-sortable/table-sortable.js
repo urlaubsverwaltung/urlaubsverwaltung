@@ -67,13 +67,15 @@ function initTableSortable(table) {
  * @returns {(a: any, b: any) => number}
  */
 function getComparator(sortType) {
+  // collate with the language of the rendered page, not the browser locale, to match server side sorting
+  const locale = document.documentElement.lang || undefined;
   if (sortType === "numeric") {
-    return new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+    return new Intl.Collator(locale, { numeric: true, sensitivity: "base" }).compare;
   }
   if (sortType === "date") {
     return (a, b) => a.getTime() - b.getTime();
   }
-  return new Intl.Collator(undefined, { caseFirst: "upper" }).compare;
+  return new Intl.Collator(locale, { caseFirst: "upper" }).compare;
 }
 
 /**

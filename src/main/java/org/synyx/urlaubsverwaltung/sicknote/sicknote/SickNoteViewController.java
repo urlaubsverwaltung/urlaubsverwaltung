@@ -53,11 +53,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingFirstNameLastName;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -582,7 +582,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .sorted(comparingFirstNameLastName())
             .toList();
     }
 
