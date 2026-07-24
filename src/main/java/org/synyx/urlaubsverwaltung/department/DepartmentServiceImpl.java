@@ -380,6 +380,53 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<Person> getDepartmentHeadsAllowedToManagePerson(List<Person> departmentHeads, Person person) {
+        return managersAllowedToManagePerson(departmentHeads, DepartmentMembershipKind.DEPARTMENT_HEAD, person);
+    }
+
+    @Override
+    public List<Person> getSecondStageAuthoritiesAllowedToManagePerson(List<Person> secondStageAuthorities, Person person) {
+        return managersAllowedToManagePerson(secondStageAuthorities, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, person);
+    }
+
+    /**
+     * Returns the given managers that manage a department the given person is a {@link DepartmentMembershipKind#MEMBER}
+     * of, i.e. that have a membership of {@code managerKind} in one of the person's member departments.
+     * <p>
+     * This is the batch equivalent of {@link #isDepartmentHeadAllowedToManagePerson(Person, Person)} /
+     * {@link #isSecondStageAuthorityAllowedToManagePerson(Person, Person)} which both boil down to an overlap between
+     * the manager's {@code managerKind} departments and the person's member departments. The memberships of all
+     * managers and the person are loaded with a single query.
+     */
+    private List<Person> managersAllowedToManagePerson(List<Person> managers, DepartmentMembershipKind managerKind, Person person) {
+
+        if (managers.isEmpty()) {
+            return List.of();
+        }
+
+        final PersonId personId = person.getIdAsPersonId();
+        final List<PersonId> personIds = Stream.concat(managers.stream().map(Person::getIdAsPersonId), Stream.of(personId)).toList();
+
+        final Map<PersonId, List<DepartmentMembership>> memberships = departmentMembershipService.getActiveMembershipsOfPersons(personIds);
+
+        final Set<Long> personMemberDepartmentIds = memberships.getOrDefault(personId, List.of()).stream()
+            .filter(membership -> membership.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
+
+        if (personMemberDepartmentIds.isEmpty()) {
+            return List.of();
+        }
+
+        return managers.stream()
+            .filter(manager -> memberships.getOrDefault(manager.getIdAsPersonId(), List.of()).stream()
+                .filter(membership -> membership.membershipKind().equals(managerKind))
+                .map(DepartmentMembership::departmentId)
+                .anyMatch(personMemberDepartmentIds::contains))
+            .toList();
+    }
+
+    @Override
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
             .stream()

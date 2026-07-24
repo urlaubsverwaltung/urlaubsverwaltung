@@ -43,13 +43,13 @@ class ResponsiblePersonServiceImplTest {
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(departmentHead));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.getDepartmentHeadsAllowedToManagePerson(List.of(departmentHead), person)).thenReturn(List.of(departmentHead));
 
         // given second stage
         final Person secondStage = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
         secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         when(personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)).thenReturn(List.of(secondStage));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, person)).thenReturn(true);
+        when(departmentService.getSecondStageAuthoritiesAllowedToManagePerson(List.of(secondStage), person)).thenReturn(List.of(secondStage));
 
         final Person boss = new Person("boss", "boss", "senior", "boss@example.org");
         boss.setPermissions(List.of(USER, BOSS));
