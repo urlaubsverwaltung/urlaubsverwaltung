@@ -38,10 +38,16 @@
           </h2>
 
           <div class="uv-form__group">
-            <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-              <span th:text="#{department.data.description}"></span>
-            </p>
+            <div class="uv-form__group-info">
+              <p class="uv-help-block">
+                <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                <span th:text="#{department.data.description}"></span>
+              </p>
+              <p class="uv-help-block">
+                <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                <span th:text="#{department.data.absences-visible-from-creation.description}"></span>
+              </p>
+            </div>
 
             <div class="uv-form__input-row">
               <label for="name" class="is-required" th:text="|#{department.data.name}:|"> Abteilungsname </label>
