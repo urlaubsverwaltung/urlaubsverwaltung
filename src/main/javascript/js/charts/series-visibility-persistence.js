@@ -4,6 +4,11 @@
 
 const STORAGE_PREFIX = "uv:chart-series-visibility";
 
+// series[].hidden and legendClick's seriesIndex only map to independent, hideable series for these
+// cartesian chart types. pie/donut/polarArea/radialBar use a single flat series and toggle
+// per-datapoint, not per-series - unsupported by this implementation.
+const SUPPORTED_CHART_TYPES = ["bar", "line", "area", "scatter", "candlestick", "boxPlot", "rangeBar", "heatmap"];
+
 /**
  * Enhances the given apex chart options with persistence of visible data rows.
  *
@@ -12,6 +17,14 @@ const STORAGE_PREFIX = "uv:chart-series-visibility";
  * @return {*} enhanced apex options
  */
 export function apexOptionsWithPersistence(apexOptions, options) {
+  const chartType = apexOptions.chart?.type;
+  if (!SUPPORTED_CHART_TYPES.includes(chartType)) {
+    throw new Error(
+      `apexOptionsWithPersistence: unsupported chart.type "${chartType}". ` +
+        `supported types: ${SUPPORTED_CHART_TYPES.join(", ")}.`,
+    );
+  }
+
   const hiddenIds = loadHiddenIds(options.key, options.version);
   const ids = apexOptions.series.map((entry) => options.getId(entry));
 
