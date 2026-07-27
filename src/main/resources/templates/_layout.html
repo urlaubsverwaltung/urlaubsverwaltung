@@ -134,7 +134,7 @@
     <div class="launchpad-app-cell topbar-cell flex items-center gap-2 py-2 px-4 lg:pl-6">
       <div th:replace="~{launchpad/launchpad::launchpad}"></div>
       <a
-        href="/"
+        th:href="@{/}"
         class="hidden desktop:block font-logo text-xl font-medium mr-8 md:mr-16 text-zinc-900 dark:text-zinc-100 no-underline"
       >
         Urlaubsverwaltung
