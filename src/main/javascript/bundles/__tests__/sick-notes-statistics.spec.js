@@ -16,6 +16,8 @@ describe("sick-notes-statistics", function () {
   beforeEach(function () {
     vi.resetModules();
 
+    globalThis.uv = { userId: "user-1" };
+
     chartInstances = [];
     MockApexCharts = vi.fn().mockImplementation(function (element, options) {
       this.element = element;
@@ -41,6 +43,7 @@ describe("sick-notes-statistics", function () {
   afterEach(function () {
     document.body.innerHTML = "";
     delete globalThis.sicknoteStatistic;
+    delete globalThis.uv;
   });
 
   function setSicknoteStatistic(overrides) {
@@ -76,12 +79,12 @@ describe("sick-notes-statistics", function () {
 
       const { options } = chartInstances[0];
       expect(options.series).toEqual([
-        { name: "Krank 2023", group: "previousYear", data: [1, 2, 3] },
-        { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6] },
-        { name: "Krank 2024", group: "currentYear", data: [7, 8, 9] },
-        { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12] },
-        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14] },
-        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10] },
+        { name: "Krank 2023", group: "previousYear", data: [1, 2, 3], hidden: false },
+        { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6], hidden: false },
+        { name: "Krank 2024", group: "currentYear", data: [7, 8, 9], hidden: false },
+        { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12], hidden: false },
+        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14], hidden: false },
+        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10], hidden: false },
       ]);
     });
 
@@ -98,12 +101,12 @@ describe("sick-notes-statistics", function () {
 
       const { options } = chartInstances[0];
       expect(options.series).toEqual([
-        { name: "Krank 2023", group: "previousYear", data: [1, 2, 3] },
-        { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6] },
-        { name: "Krank 2024", group: "currentYear", data: [7, 8, 9] },
-        { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12] },
-        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14] },
-        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10] },
+        { name: "Krank 2023", group: "previousYear", data: [1, 2, 3], hidden: false },
+        { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6], hidden: false },
+        { name: "Krank 2024", group: "currentYear", data: [7, 8, 9], hidden: false },
+        { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12], hidden: false },
+        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14], hidden: false },
+        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10], hidden: false },
       ]);
     });
 
