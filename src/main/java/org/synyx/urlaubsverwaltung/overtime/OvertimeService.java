@@ -47,6 +47,7 @@ public interface OvertimeService {
      * @param dateRange to fetch the overtime records for
      * @return list of matching overtime records
      */
+    // TODO: Do we need this additional method or can be replace with getOvertimeForPersonsInDateRange?
     List<Overtime> getOvertimeRecordsForPersonsAndDateRange(Collection<Person> persons, DateRange dateRange);
 
     /**
