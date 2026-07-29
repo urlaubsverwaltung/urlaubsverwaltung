@@ -74,7 +74,8 @@ class PersonEventHandlerExtensionTest {
         void happyPath() {
 
             final Person person = anyPerson();
-            final PersonCreatedEvent event = new PersonCreatedEvent("source?", person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
+            person.setCreatedAt(Instant.now());
+            final PersonCreatedEvent event = new PersonCreatedEvent("source?", person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive(), person.getCreatedAt());
 
             when(personService.getPersonByUsername(any())).thenReturn(Optional.of(person));
             when(tenantSupplier.get()).thenReturn("default");
@@ -102,7 +103,7 @@ class PersonEventHandlerExtensionTest {
         @Test
         void ensureNoEventPublishedForUnknownPerson() {
 
-            final PersonCreatedEvent event = new PersonCreatedEvent("source?", 1L, "Marlene Muster", "muster", "muster@example.org", true);
+            final PersonCreatedEvent event = new PersonCreatedEvent("source?", 1L, "Marlene Muster", "muster", "muster@example.org", true, Instant.now());
 
             sut.on(event);
 

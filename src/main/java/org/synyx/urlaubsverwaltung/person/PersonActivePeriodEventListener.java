@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.person;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
 /**
@@ -23,7 +21,7 @@ class PersonActivePeriodEventListener {
     void on(PersonCreatedEvent event) {
         if (event.isActive()) {
             final PersonId personId = new PersonId(event.getPersonId());
-            personActivePeriodService.openPeriod(personId, Instant.ofEpochMilli(event.getTimestamp()));
+            personActivePeriodService.openPeriod(personId, event.getCreatedAt());
         }
     }
 

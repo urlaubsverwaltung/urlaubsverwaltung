@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,8 @@ class PersonMailServiceTest {
 
         final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         createdPerson.setId(1L);
-        final PersonCreatedEvent event = new PersonCreatedEvent(this, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive());
+        createdPerson.setCreatedAt(Instant.now());
+        final PersonCreatedEvent event = new PersonCreatedEvent(this, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive(), createdPerson.getCreatedAt());
 
         final Map<String, Object> model = Map.of(
             "personId", event.getPersonId(),

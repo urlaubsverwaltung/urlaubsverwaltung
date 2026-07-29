@@ -10,6 +10,7 @@ import jakarta.persistence.SequenceGenerator;
 import org.hibernate.annotations.BatchSize;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -44,6 +45,9 @@ public class Person extends AbstractTenantAwareEntity {
     @Column(nullable = false)
     private String firstName;
     private String email;
+
+    @Column(nullable = false)
+    private Instant createdAt;
 
     @ElementCollection(fetch = EAGER)
     @Enumerated(STRING)
@@ -84,6 +88,14 @@ public class Person extends AbstractTenantAwareEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getFirstName() {

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
 
         final Person transientPerson = new Person("legacyActive", "Mustermann", "Legacy", "legacy-active@example.org");
         transientPerson.setPermissions(new ArrayList<>(List.of(Role.USER)));
+        transientPerson.setCreatedAt(Instant.now());
         final Person person = personRepository.save(transientPerson);
 
         workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2018, 3, 1), person);
@@ -95,6 +97,7 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
 
         final Person transientPerson = new Person("legacyInactive", "Mustermann", "Legacy", "legacy-inactive@example.org");
         transientPerson.setPermissions(new ArrayList<>(List.of(Role.USER, Role.INACTIVE)));
+        transientPerson.setCreatedAt(Instant.now());
         final Person person = personRepository.save(transientPerson);
 
         workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2015, 6, 1), person);

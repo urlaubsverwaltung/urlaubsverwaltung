@@ -76,7 +76,9 @@ class PersonActivePeriodRepositoryIT extends SingleTenantTestContainersBase {
         void ensureDifferentPersonsMayEachHaveAnOpenPeriod() {
 
             final Person personOne = createPerson();
-            final Person personTwo = personRepository.save(new Person("sam", "Smith", "Sam", "sam@example.org"));
+            final Person transientPersonTwo = new Person("sam", "Smith", "Sam", "sam@example.org");
+            transientPersonTwo.setCreatedAt(Instant.now());
+            final Person personTwo = personRepository.save(transientPersonTwo);
 
             sut.saveAndFlush(newEntity(personOne.getId(), Instant.now(), null));
             sut.saveAndFlush(newEntity(personTwo.getId(), Instant.now(), null));
@@ -135,7 +137,9 @@ class PersonActivePeriodRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     private Person createPerson() {
-        return personRepository.save(new Person("max", "Mustermann", "Max", "mustermann@example.org"));
+        final Person transientPerson = new Person("max", "Mustermann", "Max", "mustermann@example.org");
+        transientPerson.setCreatedAt(Instant.now());
+        return personRepository.save(transientPerson);
     }
 
     private PersonActivePeriodEntity newEntity(Long personId, Instant validFrom, Instant validTo) {

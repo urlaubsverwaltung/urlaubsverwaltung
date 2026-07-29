@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,16 +52,19 @@ class PersonServiceImpl implements PersonService {
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final Clock clock;
 
     @Autowired
     PersonServiceImpl(
         PersonRepository personRepository, AccountInteractionService accountInteractionService,
-        WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher
+        WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher,
+        Clock clock
     ) {
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.clock = clock;
     }
 
     @Override
@@ -99,6 +104,7 @@ class PersonServiceImpl implements PersonService {
                          List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = normalizePerson(new Person(username, lastName, firstName, email));
+        person.setCreatedAt(Instant.now(clock));
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
@@ -121,12 +127,17 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        final Collection<Role> previousPermissions = personRepository.findById(person.getId())
+        final Optional<Person> existingPerson = personRepository.findById(person.getId());
+
+        final Collection<Role> previousPermissions = existingPerson
             .map(Person::getPermissions)
             .map(List::copyOf)
             .orElse(List.of());
 
-        final Person updatedPerson = personRepository.save(normalizePerson(person));
+        final Person normalizedPerson = normalizePerson(person);
+        normalizedPerson.setCreatedAt(existingPerson.map(Person::getCreatedAt).orElseGet(() -> Instant.now(clock)));
+
+        final Person updatedPerson = personRepository.save(normalizedPerson);
         LOG.info("Updated person: {}", updatedPerson);
 
         if (updatedPerson.isInactive()) {
@@ -296,7 +307,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     private PersonCreatedEvent toPersonCreatedEvent(Person person) {
-        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive(), person.getCreatedAt());
     }
 
     private PersonUpdatedEvent toPersonUpdateEvent(Person person) {

@@ -30,21 +30,23 @@ class PersonActivePeriodEventListenerTest {
         @Test
         void ensureOpensPeriodWhenPersonIsCreatedActive() {
 
-            final PersonCreatedEvent event = new PersonCreatedEvent(this, 1L, "niceName", "username", "email", true);
+            final Instant createdAt = Instant.parse("2021-01-01T00:00:00Z");
+            final PersonCreatedEvent event = new PersonCreatedEvent(this, 1L, "niceName", "username", "email", true, createdAt);
 
             sut.on(event);
 
-            verify(personActivePeriodService).openPeriod(new PersonId(1L), Instant.ofEpochMilli(event.getTimestamp()));
+            verify(personActivePeriodService).openPeriod(new PersonId(1L), createdAt);
         }
 
         @Test
         void ensureDoesNotOpenPeriodWhenPersonIsCreatedInactive() {
 
-            final PersonCreatedEvent event = new PersonCreatedEvent(this, 1L, "niceName", "username", "email", false);
+            final Instant createdAt = Instant.parse("2021-01-01T00:00:00Z");
+            final PersonCreatedEvent event = new PersonCreatedEvent(this, 1L, "niceName", "username", "email", false, createdAt);
 
             sut.on(event);
 
-            verify(personActivePeriodService, never()).openPeriod(new PersonId(1L), Instant.ofEpochMilli(event.getTimestamp()));
+            verify(personActivePeriodService, never()).openPeriod(new PersonId(1L), createdAt);
         }
     }
 

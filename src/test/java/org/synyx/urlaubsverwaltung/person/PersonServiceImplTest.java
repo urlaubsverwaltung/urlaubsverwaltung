@@ -19,10 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,9 +70,11 @@ class PersonServiceImplTest {
     @Captor
     private ArgumentCaptor<PersonPermissionsChangedEvent> personPermissionsChangedEventArgumentCaptor;
 
+    private final Clock clock = Clock.fixed(Instant.now(), UTC);
+
     @BeforeEach
     void setUp() {
-        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher);
+        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher, clock);
     }
 
     @AfterEach
@@ -183,6 +188,15 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureCreatedPersonHasCreatedAtSetToNow() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de");
+        assertThat(createdPerson.getCreatedAt()).isEqualTo(Instant.now(clock));
+    }
+
+    @Test
     void ensureUpdatedPersonIsPersisted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -191,6 +205,24 @@ class PersonServiceImplTest {
 
         sut.update(person);
         verify(personRepository).save(person);
+    }
+
+    @Test
+    void ensureUpdatedPersonKeepsCreatedAtOfExistingPerson() {
+
+        final Instant originalCreatedAt = Instant.now(clock).minusSeconds(60 * 60 * 24 * 365);
+
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        existingPerson.setCreatedAt(originalCreatedAt);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+
+        final Person personToUpdate = new Person("muster", "Muster", "Marlene", "new-mail@example.org");
+        personToUpdate.setId(1L);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(personToUpdate);
+        assertThat(updatedPerson.getCreatedAt()).isEqualTo(originalCreatedAt);
     }
 
     @Test

@@ -61,7 +61,7 @@ class PersonDataCollectionService {
             final UserSettings userSettingsForPerson = userSettingsService.getUserSettingsForPerson(person);
             final UserSettingsDTO userSettings = new UserSettingsDTO(ThemeDTO.valueOf(userSettingsForPerson.theme().name()), userSettingsForPerson.locale().orElse(null), userSettingsForPerson.localeBrowserSpecific().orElse(null), userNotificationSettingsDTO, userPaginationSettingsDTO);
 
-            return new PersonDTO(person.getId(), person.getUsername(), person.getFirstName(), person.getLastName(), person.getEmail(), person.isActive(), permissions, mailNotificationDTOS, personBaseDataDTO, accountDTOS, workingTimeDTOS, userSettings);
+            return new PersonDTO(person.getId(), person.getUsername(), person.getFirstName(), person.getLastName(), person.getEmail(), person.isActive(), person.getCreatedAt(), permissions, mailNotificationDTOS, personBaseDataDTO, accountDTOS, workingTimeDTOS, userSettings);
         }).toList();
     }
 
