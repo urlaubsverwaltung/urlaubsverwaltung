@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
@@ -8,6 +9,9 @@ public class NavigationPage {
 
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String PERSONS_SELECTOR = "[data-test-id=navigation-persons-link]";
+    private static final String MOBILE_MENU_TOGGLE_SELECTOR = "button[popovertarget=navigation]";
+    private static final String MOBILE_MENU_SELECTOR = "#navigation";
+    private static final String OVERVIEW_LINK_SELECTOR = "#basic-overview-link";
 
     private final Page page;
     private final AvatarMenu avatarMenu;
@@ -37,6 +41,28 @@ public class NavigationPage {
      */
     public void clickPersons() {
         page.locator(PERSONS_SELECTOR).click();
+    }
+
+    /**
+     * Opens the mobile navigation drawer (the hamburger menu button, only visible below the desktop breakpoint).
+     */
+    public void openMobileMenu() {
+        page.locator(MOBILE_MENU_TOGGLE_SELECTOR).click();
+    }
+
+    /**
+     * The mobile navigation drawer element itself.
+     */
+    public Locator mobileMenu() {
+        return page.locator(MOBILE_MENU_SELECTOR);
+    }
+
+    /**
+     * A navigation link that is visible to every authenticated person, regardless of role. Useful to assert
+     * that the navigation drawer actually renders its content and is not just an empty/collapsed box.
+     */
+    public Locator overviewLink() {
+        return page.locator(OVERVIEW_LINK_SELECTOR);
     }
 
     public static final class QuickAdd {
