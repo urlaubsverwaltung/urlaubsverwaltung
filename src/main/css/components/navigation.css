@@ -3,11 +3,13 @@
 
   .navigation-button {
     padding: --spacing(4);
+    anchor-name: --navigation-toggle;
   }
 
   .navigation {
     background-color: var(--color-white);
     width: 100dvw;
+    position-anchor: --navigation-toggle;
 
     /* prevent body scrolling with overscroll behaviour and full height */
     overscroll-behavior: none;
