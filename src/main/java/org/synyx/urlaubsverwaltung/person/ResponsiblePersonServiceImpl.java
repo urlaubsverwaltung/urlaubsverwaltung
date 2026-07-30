@@ -39,18 +39,18 @@ class ResponsiblePersonServiceImpl implements ResponsiblePersonService {
 
     @Override
     public List<Person> getResponsibleDepartmentHeads(Person personOfInterest) {
-        return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
+        final List<Person> departmentHeads = personService.getActivePersonsByRole(DEPARTMENT_HEAD);
+        return departmentService.getDepartmentHeadsAllowedToManagePerson(departmentHeads, personOfInterest)
             .stream()
-            .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
             .filter(without(personOfInterest))
             .toList();
     }
 
     @Override
     public List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
-        return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
+        final List<Person> secondStageAuthorities = personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY);
+        return departmentService.getSecondStageAuthoritiesAllowedToManagePerson(secondStageAuthorities, personOfInterest)
             .stream()
-            .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
             .filter(without(personOfInterest))
             .toList();
     }
