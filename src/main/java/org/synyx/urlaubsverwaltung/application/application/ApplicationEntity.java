@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -111,6 +113,7 @@ public class ApplicationEntity extends AbstractTenantAwareEntity {
 
     @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
     @ElementCollection(fetch = EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**
