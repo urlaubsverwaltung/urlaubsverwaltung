@@ -564,7 +564,10 @@ const Controller = (function () {
   // slide the current and the target month into view and then delegate to
   // the existing button handlers to do the actual data fetch + DOM swap.
   let swipeGesture;
-  let swipeNavigationPending = false;
+  // true from the moment a swipe commits or snaps back (touchend) until its slide
+  // transition (and, if committed, the resulting month navigation) has fully finished;
+  // blocks a new gesture from starting on elements that are still mid-transition
+  let swipeSettling = false;
 
   function getCurrentMonthElement() {
     return view.getRootElement().querySelectorAll(`.${CSS.month}`)[currentMonthIndex];
@@ -613,7 +616,7 @@ const Controller = (function () {
 
   const swipeHandlers = {
     touchstart: function (event) {
-      if (!mobileScreenQuery.matches || swipeGesture || swipeNavigationPending || event.touches.length !== 1) {
+      if (!mobileScreenQuery.matches || swipeGesture || swipeSettling || event.touches.length !== 1) {
         return;
       }
 
@@ -671,6 +674,8 @@ const Controller = (function () {
 
       const commit = Math.abs(deltaX) >= swipeCommitThreshold;
 
+      swipeSettling = true;
+
       currentElement.classList.add(CSS.swipeTransition);
       targetElement.classList.add(CSS.swipeTransition);
 
@@ -690,11 +695,12 @@ const Controller = (function () {
           clearSwipeStyles(targetElement);
 
           if (commit) {
-            swipeNavigationPending = true;
             const navigate = direction === "next" ? datepickerHandlers.clickNext : datepickerHandlers.clickPrevious;
             Promise.resolve(navigate()).finally(function () {
-              swipeNavigationPending = false;
+              swipeSettling = false;
             });
+          } else {
+            swipeSettling = false;
           }
         },
         { once: true },
