@@ -137,7 +137,38 @@ public class VacationDaysService {
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
         final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
         final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
+
+        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, workingTimeCalendars);
+    }
+
+    /**
+     * Same as {@link #getVacationDaysLeft(List, DateRange, List)}, but accepts an already computed
+     * {@link WorkingTimeCalendar} per {@link Person} instead of computing it internally. Use this overload when the
+     * caller needs the same working time calendar for other calculations too, to avoid recomputing it repeatedly.
+     *
+     * @param holidayAccounts             {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param dateRange                   date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccountsNextYear     to calculate the vacation days that are already used next year
+     * @param workingTimeCalendarsByPerson pre-computed working time calendar, must cover every person of {@code holidayAccounts}
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        List<Account> holidayAccountsNextYear,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
+    ) {
+
+        final LocalDate from = dateRange.startDate();
+        final LocalDate to = dateRange.endDate();
+
+        if (to.getYear() != from.getYear()) {
+            throw new IllegalArgumentException("date range must be in the same year but was from=%s to=%s".formatted(from, to));
+        }
+
+        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
+        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
 

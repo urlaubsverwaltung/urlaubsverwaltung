@@ -89,10 +89,14 @@ class ApplicationForLeaveStatisticsBuilder {
 
     private Map<Person, Optional<ApplicationForLeaveStatistics>> buildStatistics(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes) {
 
-        final Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson =
-            getStatisticsByPersonWithoutApplicationInfo(dateRange, persons, holidayAccounts, applications, vacationTypes);
+        // computed once and reused below instead of letting every collaborator recompute it for the same persons/year.
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
+            workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(dateRange.startDate().getYear()));
 
-        addApplicationInfosToStatistics(dateRange, persons, applications, statisticsByPerson);
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson =
+            getStatisticsByPersonWithoutApplicationInfo(dateRange, persons, holidayAccounts, applications, vacationTypes, workingTimeCalendarsByPerson);
+
+        addApplicationInfosToStatistics(dateRange, persons, applications, workingTimeCalendarsByPerson, statisticsByPerson);
 
         addMissingPersonsToStatistics(statisticsByPerson, persons);
 
@@ -105,13 +109,13 @@ class ApplicationForLeaveStatisticsBuilder {
         );
     }
 
-    private Map<Person, Optional<ApplicationForLeaveStatistics>> getStatisticsByPersonWithoutApplicationInfo(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes) {
+    private Map<Person, Optional<ApplicationForLeaveStatistics>> getStatisticsByPersonWithoutApplicationInfo(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
 
         final Map<Person, LeftOvertime> leftOvertimeByPerson = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        final Map<Account, HolidayAccountVacationDays> vacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange);
+        final Map<Account, HolidayAccountVacationDays> vacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange, List.of(), workingTimeCalendarsByPerson);
 
         return holidayAccounts.stream()
             .map(account -> buildStatisticsForAccount(dateRange, account, vacationTypes, vacationDaysByAccount, leftOvertimeByPerson))
@@ -150,13 +154,10 @@ class ApplicationForLeaveStatisticsBuilder {
         return statistics;
     }
 
-    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, List<Application> applications, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
+    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, List<Application> applications, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
-            workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
 
         // `applications` is already fetched by the caller (build()) covering at least `persons` and `dateRange`,
         // narrow it here instead of querying the database again for essentially the same data.
