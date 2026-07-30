@@ -21,9 +21,11 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Duration.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -90,7 +92,7 @@ class ApplicationForLeaveStatisticsBuilder {
         final Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson =
             getStatisticsByPersonWithoutApplicationInfo(dateRange, persons, holidayAccounts, applications, vacationTypes);
 
-        addApplicationInfosToStatistics(dateRange, persons, statisticsByPerson);
+        addApplicationInfosToStatistics(dateRange, persons, applications, statisticsByPerson);
 
         addMissingPersonsToStatistics(statisticsByPerson, persons);
 
@@ -148,7 +150,7 @@ class ApplicationForLeaveStatisticsBuilder {
         return statistics;
     }
 
-    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
+    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, List<Application> applications, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -156,10 +158,13 @@ class ApplicationForLeaveStatisticsBuilder {
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
             workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
 
-        final Map<Person, List<Application>> applicationsByPerson =
-            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())
-                .stream()
-                .collect(groupingBy(Application::getPerson));
+        // `applications` is already fetched by the caller (build()) covering at least `persons` and `dateRange`,
+        // narrow it here instead of querying the database again for essentially the same data.
+        final Set<Person> personsOfInterest = new HashSet<>(persons);
+        final Map<Person, List<Application>> applicationsByPerson = applications.stream()
+            .filter(application -> personsOfInterest.contains(application.getPerson()))
+            .filter(application -> !application.getEndDate().isBefore(from) && !application.getStartDate().isAfter(to))
+            .collect(groupingBy(Application::getPerson));
 
         for (Person person : persons) {
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);

@@ -43,6 +43,9 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -197,6 +200,71 @@ class ApplicationForLeaveStatisticsBuilderTest {
             assertThat(value.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
             assertThat(value.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
         });
+    }
+
+    @Test
+    void ensureApplicationsAreFetchedOnlyOnceEvenWhenFilteringForASubRangeOfTheYear() {
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
+
+        final Person person = new Person();
+
+        final LocalDate from = of(2014, OCTOBER, 1);
+        final LocalDate to = of(2014, OCTOBER, 31);
+        final LocalDate firstDayOfYear = from.with(firstDayOfYear());
+        final LocalDate lastDayOfYear = from.with(lastDayOfYear());
+        final DateRange dateRange = new DateRange(from, to);
+
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+        final Account account = new Account(person, from, to, false, expiryDate, TEN, TEN, TEN, null);
+
+        when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
+
+        // within the requested [from, to] sub-range
+        final Application applicationInRange = new Application();
+        applicationInRange.setPerson(person);
+        applicationInRange.setDayLength(FULL);
+        applicationInRange.setVacationType(vacationTypes.getFirst());
+        applicationInRange.setStartDate(of(2014, 10, 13));
+        applicationInRange.setEndDate(of(2014, 10, 13));
+        applicationInRange.setStatus(ALLOWED);
+
+        // within the year, but outside of the requested [from, to] sub-range
+        final Application applicationOutOfRange = new Application();
+        applicationOutOfRange.setPerson(person);
+        applicationOutOfRange.setDayLength(FULL);
+        applicationOutOfRange.setVacationType(vacationTypes.getFirst());
+        applicationOutOfRange.setStartDate(of(2014, 3, 3));
+        applicationOutOfRange.setEndDate(of(2014, 3, 3));
+        applicationOutOfRange.setStatus(ALLOWED);
+
+        final List<Application> applications = List.of(applicationInRange, applicationOutOfRange);
+
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(firstDayOfYear, lastDayOfYear, List.of(person), activeStatuses()))
+            .thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ZERO, Duration.ZERO)));
+
+        final HolidayAccountVacationDays personVacationDays =
+            new HolidayAccountVacationDays(account, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+
+        final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
+
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
+
+        // only the application within the requested [from, to] range is counted...
+        assertThat(actual.get(person)).hasValueSatisfying(value ->
+            assertThat(value.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.ONE));
+
+        // ...even though applications for the year were fetched exactly once, not once per sub-range
+        verify(applicationService, times(1)).getApplicationsForACertainPeriodAndStatus(any(), any(), any(), any());
     }
 
     @Test
