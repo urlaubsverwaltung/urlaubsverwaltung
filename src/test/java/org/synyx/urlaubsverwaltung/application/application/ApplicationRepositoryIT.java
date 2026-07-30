@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +53,10 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
     private PersonService personService;
     @Autowired
     private VacationTypeService vacationTypeService;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Test
     void ensureApplicationForLeaveForStatusAndPersonAndWithinDateRange() {
@@ -662,6 +670,57 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         final List<ApplicationEntity> applicationsByHolidayReplacement = sut.findAllByHolidayReplacements_Person(person);
 
         assertThat(applicationsByHolidayReplacement).contains(application);
+    }
+
+    @Test
+    void ensureHolidayReplacementsAreFetchedWithoutOneQueryPerApplication() {
+
+        // one applicant and one holiday replacement, reused for every application, so that unrelated eager
+        // associations (person, vacation type, ...) are loaded at most once and don't confound the measurement.
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person replacementPerson = personService.create("holly", "Holly", "Replacement", "holly@example.org");
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        for (int i = 0; i < 3; i++) {
+            final HolidayReplacementEntity replacement = new HolidayReplacementEntity();
+            replacement.setPerson(replacementPerson);
+
+            final LocalDate day = askedStartDate.plusDays(i);
+            final ApplicationEntity application = applicationEntity(person, vacationType, day, day, FULL);
+            application.setHolidayReplacements(List.of(replacement));
+            application.setStatus(WAITING);
+            sut.save(application);
+        }
+
+        // only the last of the three applications matches (end_date >= askedStartDate.plusDays(2))
+        final long statementsForOneApplication = fetchAndTouchHolidayReplacements(person, askedStartDate.plusDays(2), askedEndDate, 1);
+
+        // all three applications match (end_date >= askedStartDate)
+        final long statementsForThreeApplications = fetchAndTouchHolidayReplacements(person, askedStartDate, askedEndDate, 3);
+
+        // fetching two more applications and their holidayReplacements must not cost any extra queries
+        assertThat(statementsForThreeApplications).isEqualTo(statementsForOneApplication);
+    }
+
+    private long fetchAndTouchHolidayReplacements(Person person, LocalDate from, LocalDate to, int expectedApplicationCount) {
+
+        // force the next query to actually hit the database instead of returning managed entities from the session cache
+        entityManager.flush();
+        entityManager.clear();
+
+        final Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+
+        final List<ApplicationEntity> applications = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(
+            List.of(person), from, to, List.of(WAITING));
+        applications.forEach(application -> application.getHolidayReplacements().size());
+
+        assertThat(applications).hasSize(expectedApplicationCount);
+        return statistics.getPrepareStatementCount();
     }
 
     private VacationTypeEntity getVacationType(VacationCategory category) {
