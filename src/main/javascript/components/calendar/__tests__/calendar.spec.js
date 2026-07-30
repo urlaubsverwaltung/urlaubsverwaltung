@@ -650,6 +650,23 @@ describe("calendar", () => {
       expect(monthCaptions()).toEqual(expectedInitialCaptions);
     });
 
+    it("ignores a swipe to the right started mid-animation while a swipe to the left is still settling", async () => {
+      const container = await setUpMobileCalendar();
+
+      // swipe left, past the commit threshold, but don't let its transitionend fire yet
+      swipe(container, { startX: 200, endX: 100 });
+
+      // fire a swipe to the right immediately, before the left swipe's slide
+      // animation (and its cleanup) has finished
+      swipe(container, { startX: 100, endX: 200 });
+
+      expect(
+        document.querySelectorAll(".calendar-month-container.calendar-month-swipe-active").length,
+      ).toBeLessThanOrEqual(2);
+
+      await settleSwipeAnimation();
+    });
+
     it("does not react to touch gestures outside the mobile single-month view", async () => {
       globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn() });
 
