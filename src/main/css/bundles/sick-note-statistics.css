@@ -56,74 +56,9 @@
   }
 }
 
-.statistic-summary-container {
-  .statistic-summary-container-title {
-    margin: 0;
-    @apply text-sm;
-    font-weight: 600;
-  }
-
-  .statistic-summary-card-box {
-    --statistic-card-box-gap: --spacing(4);
-    margin-top: --spacing(4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--statistic-card-box-gap);
-
-    & ~ .statistic-summary-card-box {
-      margin-top: var(--statistic-card-box-gap);
-    }
-
-    .statistic-summary-card {
-      flex: 1 0 0;
-      display: flex;
-      flex-direction: column;
-      gap: --spacing(2);
-      background-color: var(--uv-chart-container-background);
-      padding: --spacing(2) --spacing(4);
-      margin: 0;
-      @apply rounded-md;
-      @apply shadow-2xs;
-      @apply dark:shadow-none;
-
-      .statistic-summary-card__label {
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-200;
-      }
-
-      .statistic-summary-card__content {
-        @apply text-xl;
-        font-weight: 600;
-        @apply text-black;
-        @apply dark:text-zinc-100;
-      }
-
-      .statistic-summary-card__content-previous {
-        margin-left: --spacing(1);
-        font-weight: 400;
-        cursor: help;
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-400;
-      }
-    }
-  }
-}
-
 @variant sm {
   .sicknote-statistics-chart-container {
     padding: --spacing(4);
-    border: 1px solid var(--uv-chart-border);
-  }
-
-  .statistic-summary-container {
-    .statistic-summary-card-box {
-      flex-direction: row;
-    }
-  }
-
-  .statistic-summary-card {
     border: 1px solid var(--uv-chart-border);
   }
 }

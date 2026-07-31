@@ -26,6 +26,7 @@
 @import "../components/tab-list.css" layer(components);
 @import "../components/topbar.css" layer(components);
 @import "../components/section-heading.css" layer(components);
+@import "../components/statistic-summary.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);
 @import "../components/person-search.css" layer(components);

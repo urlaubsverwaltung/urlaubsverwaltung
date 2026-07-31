@@ -72,8 +72,17 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
         model.addAttribute("selectedYear", selectedYear.getValue());
         model.addAttribute("currentYear", currentYear.getValue());
         model.addAttribute("overtimeGraph", toGraphDto(statistics, locale));
+        model.addAttribute("overtimeYearSummary", toYearSummaryDto(statistics, locale));
 
         return "overtime/overtime_statistics";
+    }
+
+    private YearSummaryDto toYearSummaryDto(OvertimeStatistics statistics, Locale locale) {
+        return new YearSummaryDto(
+            toText(statistics.accrued(), locale),
+            toText(statistics.reduction(), locale),
+            toText(statistics.balance(), locale)
+        );
     }
 
     private GraphDto toGraphDto(OvertimeStatistics statistics, Locale locale) {
@@ -88,9 +97,11 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
     }
 
     private List<String> toTexts(List<Duration> durations, Locale locale) {
-        return durations.stream()
-            .map(duration -> DurationFormatter.toDurationString(duration, messageSource, locale))
-            .toList();
+        return durations.stream().map(duration -> toText(duration, locale)).toList();
+    }
+
+    private String toText(Duration duration, Locale locale) {
+        return DurationFormatter.toDurationString(duration, messageSource, locale);
     }
 
     /**
@@ -133,5 +144,20 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
         List<String> reductionText,
         List<String> balanceText
     ) {
+    }
+
+    /**
+     * Totals of the selected year, formatted for humans.
+     *
+     * <p>
+     * These are the sums of the monthly chart values, so the balance starts at zero on january first and carries
+     * nothing over from earlier years. The figures over the whole history live in their own block above the year
+     * selector.
+     *
+     * @param accrued   accrued overtime of the selected year
+     * @param reduction reduced overtime of the selected year, without sign
+     * @param balance   accrued minus reduced, negative when more was reduced than accrued
+     */
+    record YearSummaryDto(String accrued, String reduction, String balance) {
     }
 }

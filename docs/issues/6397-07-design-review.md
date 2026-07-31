@@ -42,6 +42,10 @@ Unterschied ohne Vorwissen ankommt, kann nur ein Mensch beurteilen.
       sich tragen — inklusive Farbfehlsichtigkeit
 - [ ] Die Seite scrollt auf schmalen Viewports nicht horizontal; breite Inhalte scrollen in ihrem
       eigenen Container
+- [ ] Die Kacheln sehen auf **beiden** Statistikseiten unverändert aus. Die `statistic-summary-*`-Regeln
+      wurden aus dem Bundle der Krankmeldungsstatistik in eine geteilte Komponente gezogen und liegen
+      jetzt in `layer(components)` statt unlayered. Damit verlieren sie gegen ungelayerte Regeln und
+      gegen Tailwind-Utilities — nach Durchsicht kollidiert nichts, geprüft ist es aber nicht
 - [ ] `prefers-reduced-motion` wird respektiert
 - [ ] Beschriftung abgenommen: der Unterschied zwischen Gesamtbestand und Jahreszahlen ist ohne
       Vorwissen verständlich

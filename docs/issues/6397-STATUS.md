@@ -1,5 +1,6 @@
 # 6397 — Arbeitsstand
 
+claude --resume 45c57c23-7407-442d-aaf1-37bd89cd160e
 Stand: 2026-07-31. Branch `feature/6397-overtime-statistics`.
 
 ## Fertig: Slice 01 — Statistikseite erreichbar
@@ -100,11 +101,29 @@ Zwei Details, die beim Lesen des Codes sonst überraschen:
   die Spanne ist durch das gewählte Jahr plus die Ausläufer grenzüberschreitender Anträge begrenzt.
   Für Slice 05 bleibt die Sorge bestehen, dort geht es wirklich über alle Jahre.
 
-## Als Nächstes: Slice 04 oder 05
+## Fertig: Slice 04 — Jahres-Kacheln
 
-Beide sind nach Slice 02 startklar, [Jahres-Kacheln](./6397-04-jahres-kacheln.md) ist die kleinere
-Aufgabe: `OvertimeStatistics` liefert `accrued()`, `reduction()` und `balance()` schon, es fehlen nur
-die Kacheln im Template und die Message-Keys.
+Volle Suite grün: 4776 Java-Tests, 689 JS-Tests.
+
+Drei Kacheln unter dem Balkendiagramm mit den Summen des gewählten Jahres, Abschnitt „Im Jahr JJJJ"
+plus Erklärsatz. Der Controller liefert sie als `YearSummaryDto` mit fertig formatierten Texten. Ein
+Test stellt sicher, dass die Aufbau-Kachel mit der Summe der Balken übereinstimmt — die Kacheln dürfen
+keine andere Geschichte erzählen als das Diagramm darüber.
+
+Die Kachel-Styles lagen bisher im Bundle der Krankmeldungsstatistik, obwohl sie generisch
+`statistic-summary-*` heißen. Sie sind nach `components/statistic-summary.css` gewandert und werden
+über `bundles/style.css` global eingebunden, damit beide Statistikseiten dieselben Kacheln nutzen statt
+die Klassennamen doppelt zu definieren. **Nebenwirkung:** die Regeln liegen nun in `layer(components)`
+statt unlayered und verlieren damit gegen ungelayerte Regeln und Tailwind-Utilities. Nach Durchsicht
+kollidiert nichts, aber es ist nicht visuell geprüft — steht als Punkt in Slice 07, und zwar für
+**beide** Seiten.
+
+## Als Nächstes: Slice 05
+
+[Gesamtbestand-Kacheln](./6397-05-gesamtbestand-kacheln.md) über der Jahresauswahl, ohne jeden
+Jahresbezug. Dort landen auch die beiden aus Slice 03 verschobenen Kriterien: der Konsistenztest gegen
+`Σ getLeftOvertimeForPerson` und die Laufzeitmessung — beim All-time-Pfad geht die Kalenderspanne
+wirklich über alle Jahre, dort ist die Sorge berechtigt.
 
 Weiterhin gültige Vorarbeit:
 

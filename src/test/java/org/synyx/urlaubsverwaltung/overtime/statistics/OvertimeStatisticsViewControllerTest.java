@@ -152,6 +152,68 @@ class OvertimeStatisticsViewControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void ensureYearSummaryCarriesTheTotalsOfTheSelectedYear() throws Exception {
+
+        overtimeFeature(true);
+        // twelve months of two and a half hours accrued and two hours reduced
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.YearSummaryDto summary = yearSummaryOf(result);
+
+        assertThat(summary.accrued()).isEqualTo("30 Std.");
+        assertThat(summary.reduction()).isEqualTo("24 Std.");
+        assertThat(summary.balance()).isEqualTo("6 Std.");
+    }
+
+    @Test
+    void ensureNegativeYearBalanceIsFormattedWithSign() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofHours(1)), months(Duration.ofHours(3)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        assertThat(yearSummaryOf(result).balance()).isEqualTo("-24 Std.");
+    }
+
+    @Test
+    void ensureYearWithoutAnyOvertimeShowsTheZeroTextInsteadOfNothing() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.YearSummaryDto summary = yearSummaryOf(result);
+
+        assertThat(summary.accrued()).isEqualTo("keine");
+        assertThat(summary.reduction()).isEqualTo("keine");
+        assertThat(summary.balance()).isEqualTo("keine");
+    }
+
+    @Test
+    void ensureYearSummaryIsTheSumOfTheChartValues() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final BigDecimal accruedFromChart = graphOf(result).accrued().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // the tiles must not tell a different story than the bars above them
+        assertThat(accruedFromChart).isEqualByComparingTo(new BigDecimal("30.00"));
+        assertThat(yearSummaryOf(result).accrued()).isEqualTo("30 Std.");
+    }
+
+    private static OvertimeStatisticsViewController.YearSummaryDto yearSummaryOf(MvcResult result) {
+        return (OvertimeStatisticsViewController.YearSummaryDto) result.getModelAndView().getModel().get("overtimeYearSummary");
+    }
+
     private void statisticsOf(Year year, List<Duration> accrued, List<Duration> reduction) {
         when(statisticsService.getStatistics(year)).thenReturn(new OvertimeStatistics(year, accrued, reduction));
     }

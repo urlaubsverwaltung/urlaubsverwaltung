@@ -66,7 +66,8 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
             // proves the page is actually rendered, including the year selector fragment
             // and the mount point of the chart
             .andExpect(content().string(containsString("/web/overtime/statistics?year=")))
-            .andExpect(content().string(containsString("id=\"overtime-statistics-chart\"")));
+            .andExpect(content().string(containsString("id=\"overtime-statistics-chart\"")))
+            .andExpect(content().string(containsString("statistic-summary-card")));
     }
 
     @ParameterizedTest
