@@ -118,6 +118,19 @@ statt unlayered und verlieren damit gegen ungelayerte Regeln und Tailwind-Utilit
 kollidiert nichts, aber es ist nicht visuell geprüft — steht als Punkt in Slice 07, und zwar für
 **beide** Seiten.
 
+## Zwischenschritt: Demodaten
+
+`OvertimeDemoRecords` erzeugt die Überstunden-Demodaten: das Vorjahr vollständig und das aktuelle Jahr
+bis heute, für jede Person, die überhaupt Demodaten bekommt (sechs beim Login als Chef oder Office).
+Abbau-Anträge sind bewusst nicht dabei, nur Einträge — positive und negative.
+
+Die Werte stammen aus einer festen Saisonkurve statt aus Zufall, damit Screenshots vergleichbar bleiben.
+Juli, August und Dezember haben mehr Abbau als Aufbau, also negative Monatssalden — sonst sähe das
+Balkendiagramm flach aus und zeigte gerade nicht, was das Ticket sehen will. Das Vorjahr liegt etwas
+niedriger, damit die beiden Jahreskurven in Slice 06 nicht übereinander liegen.
+
+Grob über sechs Personen: rund 280 Einträge, etwa 860 h Aufbau, 380 h Abbau, Saldo etwa +480 h.
+
 ## Als Nächstes: Slice 05
 
 [Gesamtbestand-Kacheln](./6397-05-gesamtbestand-kacheln.md) über der Jahresauswahl, ohne jeden

@@ -5,14 +5,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.security.SecureRandom;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
@@ -283,16 +280,12 @@ public class DemoDataCreationService {
 
         if (overtimeRecordDataProvider.personHasNoOvertimes(person)) {
 
-            final LocalDate now = LocalDate.now(clock);
-
-            final LocalDate lastWeek = now.minusWeeks(1);
-            final LocalDate weekBeforeLast = now.minusWeeks(2);
-            final LocalDate lastYear = now.minusYears(1);
-
             overtimeRecordDataProvider.activateOvertime();
-            overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), Duration.ofMinutes(150L));
-            overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), Duration.ofHours(3L));
-            overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY), lastYear.with(FRIDAY), Duration.ofHours(4L));
+
+            // spread over the previous year and the current year up to today, accrual and reduction, so the company
+            // wide overtime statistics have something to show for both years
+            OvertimeDemoRecords.of(person.getId(), LocalDate.now(clock)).forEach(entry ->
+                overtimeRecordDataProvider.createOvertimeRecord(person, entry.startDate(), entry.endDate(), entry.duration()));
         }
     }
 }
