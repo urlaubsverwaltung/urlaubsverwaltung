@@ -1,0 +1,41 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:text="#{overtime.statistics.header.title(${selectedYear})}">Überstundenstatistik</title>
+    <th:block th:fragment="styles"></th:block>
+    <th:block th:fragment="preload"></th:block>
+    <th:block th:fragment="scripts"></th:block>
+    <th:block th:fragment="scriptsDefer"></th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::overtime-statistics-heading-body}, ~{::overtime-statistics-heading-actions})}"
+      >
+        <th:block th:ref="overtime-statistics-heading-body">
+          <h1 th:text="#{overtime.statistics.title}">Überstunden - gesamtes Unternehmen</h1>
+        </th:block>
+        <th:block th:ref="overtime-statistics-heading-actions"> </th:block>
+      </div>
+
+      <!--
+        The year selector sits in its own row instead of the section heading, because the company wide
+        figures are placed above it - they are deliberately not affected by the selected year.
+      -->
+      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span class="text-sm font-bold" th:text="#{overtime.statistics.year.label}">Jahr</span>
+        <div
+          th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
+        ></div>
+      </div>
+    </main>
+  </body>
+</html>

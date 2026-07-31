@@ -179,6 +179,12 @@ public class FrameDataProvider implements DataProviderInterface {
             elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", "sun", url.equals(applications)));
         }
 
+        final boolean canViewOvertimes = user.hasAnyRole(OFFICE, BOSS) && overtimeEnabled(settings.getOvertimeSettings());
+        if (canViewOvertimes) {
+            final String overtimeStatistics = "/web/overtime/statistics";
+            elements.add(new NavigationItemDto("company-overtime-link", overtimeStatistics, "nav.company.overtimes", "clock-arrow-up", url.equals(overtimeStatistics)));
+        }
+
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
         if (canViewSickNotes) {
 
