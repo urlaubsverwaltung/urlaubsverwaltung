@@ -12,6 +12,10 @@ Drei Kacheln **oberhalb** der Jahresauswahl: Aufgebaut insgesamt, Abgebaut insge
 die gesamte Historie. Sie reagieren nicht auf den Jahres-Selector, weil sie über ihm stehen; ihre
 Position ist die Aussage.
 
+Diese Kacheln haben **keinen Jahresbezug**: kein Stichtag, kein Jahresparameter im Aggregat, auch
+keine Begrenzung auf das Ende des gewählten Jahres. Eine frühere Zwischenentscheidung im Issue-Verlauf
+sagte „all-time bis Ende des gewählten Jahres" — die gilt nicht mehr.
+
 Diese Saldo-Kachel beantwortet „wie viele Überstunden hat das Unternehmen offen" und ist damit die
 Zahl für Gespräche mit der Geschäftsführung. Sie ist außerdem der Wert, der der Summe der
 persönlichen verbleibenden Überstunden entspricht.

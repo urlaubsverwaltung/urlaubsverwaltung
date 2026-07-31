@@ -52,9 +52,15 @@ Vorarbeit, die schon geklärt ist:
 - Vorlage für den ApexCharts-Aufbau ist `bundles/sick-notes-statistics.js`.
 - Optisches Ziel: [6397-prototype.html](./6397-prototype.html) — Wegwerf-Mockup, im Browser öffnen.
 
-## Offene Rückfrage
+## Entschieden: die all-time Kacheln haben keinen Jahresbezug
 
-Die all-time Kacheln stehen laut Entscheidung oberhalb der Jahresauswahl und reagieren deshalb
-**nicht** auf den Selector. Das hebt die frühere Entscheidung „all-time bis Ende des gewählten
-Jahres" auf. Im Mockup ist es so umgesetzt und abgenommen, im Issue-Kommentar so dokumentiert —
-falls die Kacheln doch mitwandern sollen, ist es eine kleine Änderung in Slice 05.
+Bestätigt am 2026-07-31: die Kacheln oberhalb der Jahresauswahl zeigen den Gesamtbestand über die
+gesamte Historie — **ohne jeden Jahresbezug**. Sie reagieren nicht auf den Selector, und sie sind
+auch nicht auf das Ende des gewählten Jahres begrenzt.
+
+Damit ist die frühere Zwischenentscheidung „all-time bis Ende des gewählten Jahres" endgültig
+aufgehoben. Wer sie im Verlauf des Issues liest: sie gilt nicht mehr.
+
+Die Konsequenz für Slice 05: es braucht keinen Stichtag im Aggregat und keinen Jahresparameter im
+zugehörigen Service-Aufruf. Ein Test muss festhalten, dass ein Wechsel des Jahres die drei Werte
+nicht verändert.
