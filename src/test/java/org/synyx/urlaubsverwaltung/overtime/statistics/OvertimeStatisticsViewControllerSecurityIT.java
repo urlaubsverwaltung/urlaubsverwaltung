@@ -17,7 +17,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -61,7 +64,9 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
         )
             .andExpect(status().isOk())
             // proves the page is actually rendered, including the year selector fragment
-            .andExpect(content().string(containsString("/web/overtime/statistics?year=")));
+            // and the mount point of the chart
+            .andExpect(content().string(containsString("/web/overtime/statistics?year=")))
+            .andExpect(content().string(containsString("id=\"overtime-statistics-chart\"")));
     }
 
     @ParameterizedTest
@@ -80,6 +85,8 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
         final Person person = new Person("user", "Reichenbach", "Marie", "person@example.org");
         person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
+        // the real statistics service runs here, an empty company renders the page with zeros everywhere
+        when(personService.getAllPersonsHavingAccountInYear(any())).thenReturn(List.of());
     }
 
     private void overtimeFeature(boolean active) {

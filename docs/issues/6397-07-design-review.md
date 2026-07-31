@@ -37,8 +37,9 @@ Unterschied ohne Vorwissen ankommt, kann nur ein Mensch beurteilen.
       aus dem Light Mode abgeleitet
 - [ ] Kontrast und Farbfehlsichtigkeit sind für beide Themes geprüft und das Ergebnis ist im Pull
       Request dokumentiert
-- [ ] Identität hängt nie allein an der Farbe: Legende in beiden Diagrammen vorhanden,
-      Tabellenansicht in beiden Diagrammen erreichbar
+- [ ] Identität hängt nie allein an der Farbe: Legende in beiden Diagrammen vorhanden.
+      Eine Tabellenansicht gibt es bewusst nicht, deshalb muss die Farbunterscheidung der Serien für
+      sich tragen — inklusive Farbfehlsichtigkeit
 - [ ] Die Seite scrollt auf schmalen Viewports nicht horizontal; breite Inhalte scrollen in ihrem
       eigenen Container
 - [ ] `prefers-reduced-motion` wird respektiert

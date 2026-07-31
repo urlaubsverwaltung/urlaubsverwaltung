@@ -38,18 +38,43 @@ Compiler eine Klasse auf, die es im Quellcode nicht gab — die Fehlermeldung wa
 verwirrend. Das Paket wurde aus `target` entfernt. Bei ähnlich unerklärlichen Compilerfehlern lohnt
 ein Blick in `target/classes`.
 
-## Als Nächstes: Slice 02
+## Fertig: Slice 02 — Monatswerte und Balkendiagramm
 
-[Monatswerte und Balkendiagramm](./6397-02-monatswerte-balkendiagramm.md).
+Volle Suite grün: 4764 Java-Tests, 689 JS-Tests.
 
-Vorarbeit, die schon geklärt ist:
+- `OvertimeStatistics` — Domänenobjekt, Auf- und Abbau je Monat als `Duration`, Abbau als positiver
+  Betrag. Auf- und Abbau bleiben getrennt, weil ein Monat mit 10 h auf und 10 h ab nicht dasselbe ist
+  wie ein Monat ohne Bewegung.
+- `OvertimeStatisticsService` — aggregiert über die Jahres-Kohorte, eine gebatchte Abfrage, Verteilung
+  auf Monate über `Overtime.durationForDateRange`. **Nur Überstunden-Einträge**, die Abbau-Anträge
+  kommen erst mit Slice 03.
+- Controller liefert `GraphDto`: Dezimalstunden für die Achse plus fertig formatierte Texte aus dem
+  `DurationFormatter` für den Tooltip. Der Abbau wird negiert übergeben, damit ApexCharts ihn unter
+  die Nulllinie zeichnet.
+- `bundles/overtime-statistics.js` — gestapeltes Balkendiagramm, keine Zahlen an den Balken, Legende,
+  Tooltip mit Aufbau, Abbau und Saldo, Theme-Wechsel.
+- Neue Theme-Tokens `--overtime-accrued-color` (violet-500) und `--overtime-reduction-color`
+  (cyan-600), bewusst **ohne** Dark-Override, weil beide Werte gegen beide Chart-Flächen geprüft sind.
 
-- Personenmenge über `getAllPersonsHavingAccountInYear(year)`.
-- Anteilige Verteilung von Einträgen über Monatsgrenzen mit `Overtime.durationForDateRange`.
-- Zahlenformat über `DurationFormatter`, Diagramme intern in Dezimalstunden.
-- Chartfarben validiert: Aufbau `#8b5cf6`, Abbau `#0891b2`, beide Themes.
-  Jahreslinien `#2563eb` (light) / `#3b82f6` (dark) gegen `#d97706`.
-- Vorlage für den ApexCharts-Aufbau ist `bundles/sick-notes-statistics.js`.
+**Keine Tabellenansicht.** Sie war zunächst als zugängliche Alternative gebaut und wurde am 2026-07-31
+auf Wunsch wieder entfernt — die Seite bietet die Zahlen nur im Tooltip an. Folge fürs Design-Review:
+die Serien werden ausschließlich über Farbe und Legende unterschieden, es gibt keinen textuellen
+Ausweichweg mehr. Für Slice 06 gilt dasselbe, dort ist die Tabelle ebenfalls gestrichen.
+
+Ein Punkt für das Design-Review in Slice 07: die Farbwerte sind als Tailwind-Tokens hinterlegt
+(`--color-violet-500`, `--color-cyan-600`). Validiert wurden die Hex-Werte `#8b5cf6` und `#0891b2`;
+Tailwind 4 rechnet in oklch, die gerenderten Werte weichen minimal ab und sollten im Review
+nachgemessen werden.
+
+## Als Nächstes: Slice 03
+
+[Abbau um Abbau-Anträge erweitern](./6397-03-abbau-antraege.md). Der Einstiegspunkt ist
+`OvertimeStatisticsService.getStatistics`: dort kommen die Anträge der Kategorie Überstundenabbau in
+den Abbau-Topf, tagesgenau verteilt über `Application.getOvertimeReductionShareFor`.
+
+Weiterhin gültige Vorarbeit:
+
+- Chartfarben für die Jahreslinien in Slice 06: `#2563eb` (light) / `#3b82f6` (dark) gegen `#d97706`.
 - Optisches Ziel: [6397-prototype.html](./6397-prototype.html) — Wegwerf-Mockup, im Browser öffnen.
 
 ## Entschieden: die all-time Kacheln haben keinen Jahresbezug

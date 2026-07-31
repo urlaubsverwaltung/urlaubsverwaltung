@@ -10,10 +10,45 @@
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{overtime.statistics.header.title(${selectedYear})}">Überstundenstatistik</title>
-    <th:block th:fragment="styles"></th:block>
-    <th:block th:fragment="preload"></th:block>
-    <th:block th:fragment="scripts"></th:block>
-    <th:block th:fragment="scriptsDefer"></th:block>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/overtime-statistics.css}" />
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('overtime_statistics.js')}" />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.overtimeStatistics = {};
+        window.overtimeStatistics.xaxisLabels = [
+          /*[[#{month.january.short}]]*/ "Jan",
+          /*[[#{month.february.short}]]*/ "Feb",
+          /*[[#{month.march.short}]]*/ "Mär",
+          /*[[#{month.april.short}]]*/ "Apr",
+          /*[[#{month.may.short}]]*/ "Mai",
+          /*[[#{month.june.short}]]*/ "Jun",
+          /*[[#{month.july.short}]]*/ "Jul",
+          /*[[#{month.august.short}]]*/ "Aug",
+          /*[[#{month.september.short}]]*/ "Sep",
+          /*[[#{month.october.short}]]*/ "Okt",
+          /*[[#{month.november.short}]]*/ "Nov",
+          /*[[#{month.december.short}]]*/ "Dez",
+        ];
+        window.overtimeStatistics.yaxisTitle = /*[[#{overtime.statistics.chart.y-axis-label}]]*/ "Stunden";
+        window.overtimeStatistics.accruedName = /*[[#{overtime.statistics.chart.accrued}]]*/ "Aufbau";
+        window.overtimeStatistics.reductionName = /*[[#{overtime.statistics.chart.reduction}]]*/ "Abbau";
+        window.overtimeStatistics.balanceName = /*[[#{overtime.statistics.chart.balance}]]*/ "Saldo";
+        window.overtimeStatistics.accrued = /*[[${overtimeGraph.accrued}]]*/ [];
+        window.overtimeStatistics.reduction = /*[[${overtimeGraph.reduction}]]*/ [];
+        window.overtimeStatistics.accruedText = /*[[${overtimeGraph.accruedText}]]*/ [];
+        window.overtimeStatistics.reductionText = /*[[${overtimeGraph.reductionText}]]*/ [];
+        window.overtimeStatistics.balanceText = /*[[${overtimeGraph.balanceText}]]*/ [];
+        /*]]>*/
+      </script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="overtime_statistics.js"></script>
+    </th:block>
   </head>
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
@@ -35,6 +70,21 @@
         <div
           th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
         ></div>
+      </div>
+
+      <div>
+        <div class="mt-8">
+          <h2 class="font-bold text-base" th:text="#{overtime.statistics.chart.title(${selectedYear})}">
+            Überstunden je Monat
+          </h2>
+          <p class="text-sm mt-1" th:text="#{overtime.statistics.chart.description}">
+            Aufbau nach oben, Abbau nach unten.
+          </p>
+        </div>
+
+        <div class="mt-4 overtime-statistics-chart-container">
+          <div id="overtime-statistics-chart" class="overtime-statistics-chart"></div>
+        </div>
       </div>
     </main>
   </body>

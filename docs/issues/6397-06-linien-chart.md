@@ -17,11 +17,10 @@ der Bestand steht in den Kacheln über der Jahresauswahl. Dadurch sind zwei Jahr
 direkt vergleichbar: die zweite Serie zeigt das Vorjahr, sodass „stehen wir im Juli besser als letztes
 Jahr im Juli?" beantwortbar wird.
 
-Legende, Tooltip im Format der Anwendung und eine umschaltbare Tabellenansicht als zugängliche
-Alternative. Der Sichtbarkeitszustand der Serien wird wie in der Krankmeldungsstatistik im
-lokalen Speicher des Browsers gehalten, mit einem Versionskey, der bei Änderungen an der
-übertragenen Datenstruktur erhöht wird — sonst hängen Nutzer an einem Zustand, der nicht mehr zu den
-Serien passt.
+Legende und Tooltip im Format der Anwendung, keine Tabellenansicht. Der Sichtbarkeitszustand der
+Serien wird wie in der Krankmeldungsstatistik im lokalen Speicher des Browsers gehalten, mit einem
+Versionskey, der bei Änderungen an der übertragenen Datenstruktur erhöht wird — sonst hängen Nutzer
+an einem Zustand, der nicht mehr zu den Serien passt.
 
 Solange Slice 03 nicht gelandet ist, enthält der Abbau nur die negativen Einträge; die Kurvenform
 bleibt korrekt, die Werte werden durch Slice 03 vollständig.
@@ -36,7 +35,6 @@ bleibt korrekt, die Werte werden durch Slice 03 vollständig.
 - [ ] Der Versionskey ist so dokumentiert, dass eine Strukturänderung den gespeicherten Zustand
       invalidiert
 - [ ] Der Tooltip nennt die Werte beider Jahre für den jeweiligen Monat
-- [ ] Eine Tabellenansicht mit denselben Werten ist umschaltbar
 - [ ] Ein Vorjahr ohne Daten führt nicht zu einem Fehler, sondern zu einer fehlenden zweiten Serie
 - [ ] Service-Tests für die Kumulation und JS-Spec für den Chart-Aufbau
 

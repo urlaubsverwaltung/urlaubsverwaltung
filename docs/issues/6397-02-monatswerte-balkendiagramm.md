@@ -21,8 +21,9 @@ ausscheidet.
 
 Das Diagramm zeigt zwei Serien um die Nulllinie: Aufbau nach oben, Abbau nach unten, sodass je Monat
 eine Spalte entsteht und der überwiegende Anteil sofort erkennbar ist. Bewusst **keine** Zahl an
-jedem Balken — bei 24 Balken wird das unlesbar. Die Werte kommen aus dem Tooltip und einer
-umschaltbaren Tabellenansicht, die zugleich die zugängliche Alternative zum Diagramm ist.
+jedem Balken — bei 24 Balken wird das unlesbar. Die exakten Werte kommen aus dem Tooltip.
+
+Eine Tabellenansicht ist ausdrücklich **nicht** Teil der Seite.
 
 ## Acceptance criteria
 
@@ -30,7 +31,6 @@ umschaltbaren Tabellenansicht, die zugleich die zugängliche Alternative zum Dia
 - [ ] Aufbau wird oberhalb, Abbau unterhalb der Nulllinie dargestellt
 - [ ] Eine Legende mit beiden Serien ist vorhanden
 - [ ] Der Tooltip nennt Aufbau, Abbau und den Monatssaldo im Format „x Std. y Min."
-- [ ] Eine Tabellenansicht mit denselben Werten ist umschaltbar
 - [ ] Ein Eintrag über eine Monatsgrenze wird anteilig auf beide Monate verteilt
 - [ ] Ein Eintrag über eine Jahresgrenze zählt nur mit seinem Anteil im gewählten Jahr
 - [ ] Personen ohne Urlaubskonto im gewählten Jahr gehen nicht in die Aggregation ein

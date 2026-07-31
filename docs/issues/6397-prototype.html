@@ -167,16 +167,6 @@
         color: var(--ink-muted);
         margin: 0.25rem 0 0;
       }
-      .view-toggle {
-        font: inherit;
-        font-size: 0.8125rem;
-        border: 1px solid var(--chart-border);
-        background: var(--chart-container-bg);
-        color: var(--ink);
-        border-radius: 6px;
-        padding: 0.125rem 0.625rem;
-        cursor: pointer;
-      }
 
       .chart-container {
         margin-top: 1rem;
@@ -246,37 +236,6 @@
         height: 0.75rem;
         border-radius: 2px;
         flex-shrink: 0;
-      }
-
-      table {
-        margin-top: 1rem;
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.875rem;
-        font-variant-numeric: tabular-nums;
-      }
-      caption {
-        text-align: left;
-        font-size: 0.8125rem;
-        color: var(--ink-muted);
-        padding-bottom: 0.5rem;
-      }
-      th,
-      td {
-        text-align: right;
-        padding: 0.25rem 0.5rem;
-        border-bottom: 1px solid var(--chart-border);
-      }
-      th:first-child,
-      td:first-child {
-        text-align: left;
-      }
-      thead th {
-        color: var(--ink-muted);
-        font-weight: 600;
-      }
-      [hidden] {
-        display: none !important;
       }
 
       /* ApexCharts-Tooltip: nur Inhalt layouten, Rahmen kommt von ApexCharts */
@@ -351,25 +310,10 @@
               Aufbau nach oben, Abbau nach unten. Abbau umfasst negative Einträge und Abbau-Anträge.
             </p>
           </div>
-          <button type="button" class="view-toggle" data-toggle="bar-table">Als Tabelle</button>
         </div>
         <div class="chart-container">
           <div class="chart" id="chart-bar"></div>
         </div>
-        <table id="bar-table" hidden>
-          <caption>
-            Auf- und Abbau je Monat in Stunden
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Monat</th>
-              <th scope="col">Aufbau</th>
-              <th scope="col">Abbau</th>
-              <th scope="col">Saldo</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
       </section>
 
       <!-- 2. KPI-Kacheln: nur das gewählte Jahr, Saldo startet am 1.1. bei 0 -->
@@ -407,24 +351,10 @@
             <h2>Überstundenverlauf im Jahr — Jahresvergleich</h2>
             <p class="section-note">Im Jahr kumulierter Saldo, Januar startet bei 0. Ohne Übertrag aus Vorjahren.</p>
           </div>
-          <button type="button" class="view-toggle" data-toggle="line-table">Als Tabelle</button>
         </div>
         <div class="chart-container">
           <div class="chart" id="chart-line"></div>
         </div>
-        <table id="line-table" hidden>
-          <caption>
-            Kumulierter Saldo je Monat in Stunden
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Monat</th>
-              <th scope="col" id="line-th-current"></th>
-              <th scope="col" id="line-th-previous"></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
       </section>
     </main>
 
@@ -591,32 +521,6 @@
       }
 
       // ------------------------------------------------------------- Tabellen/KPI
-      function renderTables(year) {
-        const { aufbau, abbau } = YEARS[year];
-        document.querySelector("#bar-table tbody").innerHTML = MONTHS.map(
-          (month, index) => `
-            <tr>
-              <th scope="row">${month}</th>
-              <td>${decimal(aufbau[index])}</td>
-              <td>${decimal(-abbau[index])}</td>
-              <td>${decimal(aufbau[index] - abbau[index])}</td>
-            </tr>`,
-        ).join("");
-
-        const previousYear = year - 1;
-        const current = cumulative(year);
-        const previous = YEARS[previousYear] ? cumulative(previousYear) : [];
-        document.querySelector("#line-th-current").textContent = year;
-        document.querySelector("#line-th-previous").textContent = previousYear;
-        document.querySelector("#line-table tbody").innerHTML = MONTHS.map(
-          (month, index) => `
-            <tr>
-              <th scope="row">${month}</th>
-              <td>${decimal(current[index])}</td>
-              <td>${previous.length > 0 ? decimal(previous[index]) : "–"}</td>
-            </tr>`,
-        ).join("");
-      }
 
       function renderAllTimeKpis() {
         document.querySelector("#kpi-all-aufbau").textContent = toDurationString(ALL_TIME.aufbau);
@@ -644,7 +548,6 @@
         document.querySelector("#bar-year").textContent = selectedYear;
         renderAllTimeKpis();
         renderYearKpis(selectedYear);
-        renderTables(selectedYear);
 
         if (barChart) barChart.destroy();
         if (lineChart) lineChart.destroy();
@@ -661,15 +564,6 @@
             .querySelectorAll(".year-selector button")
             .forEach((other) => other.setAttribute("aria-current", String(other === button)));
           render();
-        });
-      });
-
-      document.querySelectorAll(".view-toggle").forEach((button) => {
-        button.addEventListener("click", () => {
-          const table = document.querySelector(`#${button.dataset.toggle}`);
-          const showTable = table.hidden;
-          table.hidden = !showTable;
-          button.textContent = showTable ? "Als Diagramm" : "Als Tabelle";
         });
       });
 

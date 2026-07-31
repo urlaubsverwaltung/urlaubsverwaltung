@@ -5,15 +5,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.Year;
+import java.util.List;
 
+import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.nCopies;
+import static java.util.Locale.GERMAN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -27,19 +37,27 @@ class OvertimeStatisticsViewControllerTest {
     private OvertimeStatisticsViewController sut;
 
     @Mock
+    private OvertimeStatisticsService statisticsService;
+    @Mock
     private SettingsService settingsService;
 
     private final Clock clock = Clock.fixed(Instant.parse("2026-07-31T10:15:00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeStatisticsViewController(settingsService, clock);
+        final StaticMessageSource messageSource = new StaticMessageSource();
+        messageSource.addMessage("hours.abbr", GERMAN, "Std.");
+        messageSource.addMessage("minutes.abbr", GERMAN, "Min.");
+        messageSource.addMessage("overtime.person.zero", GERMAN, "keine");
+
+        sut = new OvertimeStatisticsViewController(statisticsService, settingsService, messageSource, clock);
     }
 
     @Test
     void ensureStatisticsForCurrentYearWhenNoYearIsRequested() throws Exception {
 
         overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
 
         perform(get("/web/overtime/statistics"))
             .andExpect(status().isOk())
@@ -52,6 +70,7 @@ class OvertimeStatisticsViewControllerTest {
     void ensureStatisticsForRequestedYear() throws Exception {
 
         overtimeFeature(true);
+        statisticsOf(Year.of(2024), months(ZERO), months(ZERO));
 
         perform(get("/web/overtime/statistics").param("year", "2024"))
             .andExpect(status().isOk())
@@ -64,6 +83,7 @@ class OvertimeStatisticsViewControllerTest {
     void ensureUnparsableYearFallsBackToCurrentYear() throws Exception {
 
         overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
 
         perform(get("/web/overtime/statistics").param("year", "not-a-year"))
             .andExpect(status().isOk())
@@ -79,6 +99,71 @@ class OvertimeStatisticsViewControllerTest {
             .andExpect(status().isNotFound());
     }
 
+    @Test
+    void ensureGraphHasAccrualUpwardsAndReductionDownwardsInDecimalHours() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.GraphDto graph = graphOf(result);
+
+        assertThat(graph.accrued()).hasSize(12);
+        assertThat(graph.reduction()).hasSize(12);
+        assertThat(graph.accrued().get(0)).isEqualByComparingTo(new BigDecimal("2.50"));
+        // reduction is handed over negated, so the bars point downwards from the zero line
+        assertThat(graph.reduction().get(0)).isEqualByComparingTo(new BigDecimal("-2.00"));
+    }
+
+    @Test
+    void ensureGraphCarriesFormattedValuesForTooltipAndTable() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.GraphDto graph = graphOf(result);
+
+        assertThat(graph.accruedText().get(0)).isEqualTo("2 Std. 30 Min.");
+        assertThat(graph.reductionText().get(0)).isEqualTo("2 Std.");
+        assertThat(graph.balanceText().get(0)).isEqualTo("30 Min.");
+    }
+
+    @Test
+    void ensureNegativeMonthlyBalanceIsFormattedWithSign() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofHours(1)), months(Duration.ofHours(3)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        assertThat(graphOf(result).balanceText().get(0)).isEqualTo("-2 Std.");
+    }
+
+    @Test
+    void ensureStatisticsAreRequestedForTheSelectedYear() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2024), months(ZERO), months(ZERO));
+
+        perform(get("/web/overtime/statistics").param("year", "2024"))
+            .andExpect(status().isOk());
+    }
+
+    private void statisticsOf(Year year, List<Duration> accrued, List<Duration> reduction) {
+        when(statisticsService.getStatistics(year)).thenReturn(new OvertimeStatistics(year, accrued, reduction));
+    }
+
+    private static List<Duration> months(Duration duration) {
+        return nCopies(12, duration);
+    }
+
+    private static OvertimeStatisticsViewController.GraphDto graphOf(MvcResult result) {
+        return (OvertimeStatisticsViewController.GraphDto) result.getModelAndView().getModel().get("overtimeGraph");
+    }
+
     private void overtimeFeature(boolean active) {
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(active);
@@ -86,6 +171,6 @@ class OvertimeStatisticsViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder.locale(GERMAN));
     }
 }
