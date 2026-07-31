@@ -179,4 +179,44 @@ class PersonActivePeriodServiceTest {
             verify(repository, never()).save(any());
         }
     }
+
+    @Nested
+    class InsertPeriod {
+
+        @Test
+        void ensureInsertsClosedPeriod() {
+
+            final Instant validFrom = Instant.now().minus(Duration.ofDays(10));
+            final Instant validTo = Instant.now().minus(Duration.ofDays(5));
+
+            when(repository.findAllByPersonIdIsInAndOverlapping(List.of(1L), validFrom, validTo)).thenReturn(List.of());
+
+            sut.insertPeriod(new PersonId(1L), validFrom, validTo);
+
+            verify(repository).save(entityCaptor.capture());
+            final PersonActivePeriodEntity saved = entityCaptor.getValue();
+            assertThat(saved.getPersonId()).isEqualTo(1L);
+            assertThat(saved.getValidFrom()).isEqualTo(validFrom);
+            assertThat(saved.getValidTo()).isEqualTo(validTo);
+        }
+
+        @Test
+        void ensureThrowsWhenAnExistingPeriodTouchesTheRange() {
+
+            final Instant validFrom = Instant.now().minus(Duration.ofDays(10));
+            final Instant validTo = Instant.now().minus(Duration.ofDays(5));
+
+            final PersonActivePeriodEntity touchingPeriod = new PersonActivePeriodEntity();
+            touchingPeriod.setPersonId(1L);
+            touchingPeriod.setValidFrom(validFrom.minus(Duration.ofDays(1)));
+            touchingPeriod.setValidTo(validTo.minus(Duration.ofDays(1)));
+
+            when(repository.findAllByPersonIdIsInAndOverlapping(List.of(1L), validFrom, validTo)).thenReturn(List.of(touchingPeriod));
+
+            assertThatThrownBy(() -> sut.insertPeriod(new PersonId(1L), validFrom, validTo))
+                .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
+
+            verify(repository, never()).save(any());
+        }
+    }
 }

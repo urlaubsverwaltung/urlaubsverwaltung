@@ -99,6 +99,33 @@ class PersonActivePeriodServiceImpl implements PersonActivePeriodService {
         LOG.info("Closed active period for person with id={} at {}", personId.value(), validTo);
     }
 
+    /**
+     * Inserts an already closed active period for the given person, e.g. to retroactively fill a gap that is
+     * uncovered by evidence of activity (such as an overtime record) predating the person's earliest known
+     * active period.
+     *
+     * @param personId the ID of the person
+     * @param validFrom the start of the period
+     * @param validTo the end of the period
+     * @throws PersonActivePeriodInconsistentStateException if an existing active period touches the given range
+     */
+    void insertPeriod(PersonId personId, Instant validFrom, Instant validTo) {
+
+        final List<PersonActivePeriodEntity> overlapping = repository.findAllByPersonIdIsInAndOverlapping(List.of(personId.value()), validFrom, validTo);
+        if (!overlapping.isEmpty()) {
+            throw new PersonActivePeriodInconsistentStateException(
+                "Person with id=%d already has an active period touching the range %s to %s.".formatted(personId.value(), validFrom, validTo));
+        }
+
+        final PersonActivePeriodEntity entity = new PersonActivePeriodEntity();
+        entity.setPersonId(personId.value());
+        entity.setValidFrom(validFrom);
+        entity.setValidTo(validTo);
+        repository.save(entity);
+
+        LOG.info("Inserted active period for person with id={} from {} to {}", personId.value(), validFrom, validTo);
+    }
+
     private static PersonActivePeriod toPersonActivePeriod(PersonActivePeriodEntity entity) {
         return new PersonActivePeriod(new PersonId(entity.getPersonId()), entity.getValidFrom(), Optional.ofNullable(entity.getValidTo()));
     }
