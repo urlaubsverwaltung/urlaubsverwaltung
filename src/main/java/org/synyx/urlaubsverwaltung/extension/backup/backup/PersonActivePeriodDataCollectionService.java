@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.backup;
 
 import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.backup.model.PersonActivePeriodDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.PersonDTO;
 import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-@Component
+@Service
 @ConditionalOnBackupCreateEnabled
 class PersonActivePeriodDataCollectionService {
 
