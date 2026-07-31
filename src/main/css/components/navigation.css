@@ -7,11 +7,19 @@
 
   .navigation {
     background-color: var(--color-white);
+
+    /* anchor-size(height)/position-area (inherited from .popover) resolve unreliably
+     * for this element on some Chromium builds (observed on Samsung Internet), collapsing
+     * the drawer to a small anchor-sized box instead of a full-viewport drawer.
+     * position the drawer statically below the topbar instead of relying on anchor positioning. */
+    position-area: none;
+    inset-inline-start: 0;
+    top: calc(var(--topbar-height) + var(--info-banner-height));
     width: 100dvw;
 
     /* prevent body scrolling with overscroll behaviour and full height */
     overscroll-behavior: none;
-    height: calc(100dvh - anchor-size(height) - var(--info-banner-height));
+    height: calc(100dvh - var(--topbar-height) - var(--info-banner-height));
 
     @variant dark {
       background-color: var(--color-zinc-950);
