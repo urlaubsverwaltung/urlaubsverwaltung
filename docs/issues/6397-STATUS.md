@@ -66,11 +66,45 @@ Ein Punkt für das Design-Review in Slice 07: die Farbwerte sind als Tailwind-To
 Tailwind 4 rechnet in oklch, die gerenderten Werte weichen minimal ab und sollten im Review
 nachgemessen werden.
 
-## Als Nächstes: Slice 03
+## Fertig: Slice 03 — Abbau umfasst die Abbau-Anträge
 
-[Abbau um Abbau-Anträge erweitern](./6397-03-abbau-antraege.md). Der Einstiegspunkt ist
-`OvertimeStatisticsService.getStatistics`: dort kommen die Anträge der Kategorie Überstundenabbau in
-den Abbau-Topf, tagesgenau verteilt über `Application.getOvertimeReductionShareFor`.
+Volle Suite grün: 4772 Java-Tests, 689 JS-Tests.
+
+Der Abbau je Monat setzt sich jetzt aus negativen Überstunden-Einträgen **und** Anträgen der Kategorie
+Überstundenabbau in `activeStatuses()` zusammen. Wartende Anträge senken den Saldo also bereits — das
+folgt dem Verhalten, das die Anwendung für den persönlichen Saldo schon zeigt.
+
+Zwei Details, die beim Lesen des Codes sonst überraschen:
+
+- Die Monatsanteile werden über `Application.getOvertimeReductionShareFor(monatsBereich, …)` erfragt,
+  also zwölfmal pro Antrag. Das ist bewusst so: der Antrag beantwortet selbst, wie viel von ihm in einen
+  Zeitraum fällt, und die Regel bleibt in `Application` statt sich über zwei Klassen zu verteilen.
+  Intern baut jeder Aufruf die Tageskarte neu auf — bei einem Abbau-Antrag, der selten mehr als zwei
+  Monate umfasst, ist das vernachlässigbar. Eine frühere Variante hat die Karte einmal pro Antrag geholt
+  und selbst nach Monaten sortiert; die wurde verworfen, weil sie die Fachlogik aus `Application`
+  herausgezogen hat. Der Abbau-Pfad ist damit auch symmetrisch zum Einträge-Pfad.
+- Der Arbeitszeitkalender wird über die **volle Spanne der Anträge** geladen, nicht über das Jahr.
+  `getOvertimeReductionShares` verteilt über alle Arbeitstage des Antrags; ein am 31.12. abgeschnittener
+  Kalender würde den Nenner verfälschen und damit jeden Tagesanteil.
+
+### Zwei Akzeptanzkriterien sind offen
+
+- **„Saldo = Summe der persönlichen verbleibenden Überstunden"** lässt sich hier noch nicht prüfen. Die
+  Aussage gilt über die gesamte Historie, und diesen Pfad gibt es erst mit Slice 05. Ein Test, der beide
+  Seiten mockt, wäre zirkulär. Das Kriterium wandert damit nach Slice 05 und braucht dort einen Test
+  gegen eine echte Datenbank.
+- **Laufzeit- und Speichermessung** ist nicht erfolgt, weil dafür eine befüllte Datenbank nötig ist.
+  Was sich ohne Messung sagen lässt und durch Tests abgedeckt ist: die Abfragezahl ist konstant und
+  wächst nicht mit der Personenzahl — Personen, Überstunden, Anträge, Kalender, also vier Abfragen. Die
+  im Slice notierte Sorge „Kalender über die gesamte Historie" trifft auf den Jahrespfad **nicht** zu:
+  die Spanne ist durch das gewählte Jahr plus die Ausläufer grenzüberschreitender Anträge begrenzt.
+  Für Slice 05 bleibt die Sorge bestehen, dort geht es wirklich über alle Jahre.
+
+## Als Nächstes: Slice 04 oder 05
+
+Beide sind nach Slice 02 startklar, [Jahres-Kacheln](./6397-04-jahres-kacheln.md) ist die kleinere
+Aufgabe: `OvertimeStatistics` liefert `accrued()`, `reduction()` und `balance()` schon, es fehlen nur
+die Kacheln im Template und die Message-Keys.
 
 Weiterhin gültige Vorarbeit:
 
