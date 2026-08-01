@@ -43,6 +43,10 @@
         window.overtimeStatistics.accruedText = /*[[${overtimeGraph.accruedText}]]*/ [];
         window.overtimeStatistics.reductionText = /*[[${overtimeGraph.reductionText}]]*/ [];
         window.overtimeStatistics.balanceText = /*[[${overtimeGraph.balanceText}]]*/ [];
+        window.overtimeStatistics.selectedYear = /*[[${selectedYear}]]*/ 2026;
+        window.overtimeStatistics.balanceYaxisTitle =
+          /*[[#{overtime.statistics.balance.y-axis-label}]]*/ "Stunden (kumuliert)";
+        window.overtimeStatistics.balanceSeries = /*[[${overtimeBalanceGraph.series}]]*/ [];
         /*]]>*/
       </script>
     </th:block>
@@ -158,6 +162,19 @@
             <span class="statistic-summary-card__label" th:text="#{overtime.statistics.summary.balance}">Saldo</span>
             <span class="statistic-summary-card__content" th:text="${overtimeYearSummary.balance}">6 Std.</span>
           </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="mt-8">
+          <h2 class="font-bold text-base" th:text="#{overtime.statistics.balance.title}">Überstundenverlauf im Jahr</h2>
+          <p class="text-sm mt-1" th:text="#{overtime.statistics.balance.description}">
+            Im Jahr kumulierter Saldo, Januar startet bei 0.
+          </p>
+        </div>
+
+        <div class="mt-4 overtime-statistics-chart-container">
+          <div id="overtime-balance-chart" class="overtime-statistics-chart"></div>
         </div>
       </div>
     </main>

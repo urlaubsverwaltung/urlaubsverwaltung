@@ -164,10 +164,32 @@ Eine echte Laufzeit- und Speichermessung auf realistischem Datenbestand. Die Abf
 und durch Tests abgesichert, aber wie sich das Laden aller Überstunden-Einträge eines großen
 Unternehmens verhält, ist ungemessen.
 
-## Als Nächstes: Slice 06
+## Fertig: Slice 06 — Linien-Chart mit Jahresvergleich
 
-[Linien-Chart mit Jahresvergleich](./6397-06-linien-chart.md) — im Jahr kumulierter Saldo, zwei Serien,
-localStorage-Persistenz. `OvertimeStatistics.balanceByMonth()` liefert die Monatssalden bereits.
+Kumulierter Jahressaldo als Kurve, eine Linie je Jahr. `OvertimeStatistics.cumulativeBalanceByMonth()`
+liefert die Werte, ein Test hält fest, dass der Dezemberwert gleich `balance()` ist — die Kurve endet
+also dort, wo die Saldo-Kachel steht.
+
+Drei Entscheidungen, die beim Lesen sonst überraschen:
+
+- **Ein Vorjahr ohne jede Bewegung wird weggelassen** statt als flache Nulllinie gezeichnet. Dafür gibt
+  es `hasNoOvertime()`; eine Linie auf 0 würde eine Aussage vortäuschen, die keine ist.
+- **Die localStorage-Id ist nicht die Jahreszahl**, sondern `balance` bzw. `balance-compare`. Sonst
+  würde eine ausgeblendete Vergleichslinie beim Jahreswechsel wieder auftauchen, weil der Serienname
+  sich ändert. Zwei Tests decken das Wiederherstellen und das Verwerfen bei geänderter Versionsangabe ab.
+- **Die Vorjahreslinie ist gestrichelt.** Da es keine Tabellenansicht mehr gibt, tragen die Serien sonst
+  allein über Farbe; der Strichstil ist die zweite, farbunabhängige Unterscheidung.
+
+Nur der Linien-Chart persistiert seinen Serienzustand. Der Balken-Chart tut es nicht — das war in
+Slice 02 nicht gefordert. Falls die Seite darin einheitlich sein soll, ist das eine Zeile in Slice 07.
+
+Neue Tokens `--overtime-balance-color` (blue-600, im Dark Mode blue-500) und
+`--overtime-balance-compare-color` (amber-600).
+
+## Als Nächstes: Slice 07
+
+[Design- und Accessibility-Review](./6397-07-design-review.md) — der letzte Slice und der einzige mit
+menschlichem Review. Alle offenen Punkte sind dort als Kriterien hinterlegt.
 
 Weiterhin gültige Vorarbeit:
 

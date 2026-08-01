@@ -47,6 +47,8 @@ Unterschied ohne Vorwissen ankommt, kann nur ein Mensch beurteilen.
       jetzt in `layer(components)` statt unlayered. Damit verlieren sie gegen ungelayerte Regeln und
       gegen Tailwind-Utilities — nach Durchsicht kollidiert nichts, geprüft ist es aber nicht
 - [ ] `prefers-reduced-motion` wird respektiert
+- [ ] Entscheiden, ob auch das Balkendiagramm seinen Serienzustand über einen Reload behalten soll.
+      Aktuell tut das nur der Linien-Chart, weil Slice 02 es nicht gefordert hat
 - [ ] Beschriftung abgenommen: der Unterschied zwischen Gesamtbestand und Jahreszahlen ist ohne
       Vorwissen verständlich
 - [ ] Review durch @honnel abgenommen

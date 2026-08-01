@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime.statistics;
 
 import java.time.Duration;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -34,6 +35,32 @@ record OvertimeStatistics(Year year, List<Duration> accruedByMonth, List<Duratio
         return IntStream.range(0, MONTHS_PER_YEAR)
             .mapToObj(month -> accruedByMonth.get(month).minus(reductionByMonth.get(month)))
             .toList();
+    }
+
+    /**
+     * The balance added up month by month, january first. Starts at the balance of january, not at a carry over from
+     * earlier years - this is the movement within the year, not the stock.
+     *
+     * @return cumulated balance per month, the last entry equals {@link #balance()}
+     */
+    List<Duration> cumulativeBalanceByMonth() {
+
+        final List<Duration> cumulative = new ArrayList<>(MONTHS_PER_YEAR);
+
+        Duration running = ZERO;
+        for (Duration balanceOfMonth : balanceByMonth()) {
+            running = running.plus(balanceOfMonth);
+            cumulative.add(running);
+        }
+
+        return List.copyOf(cumulative);
+    }
+
+    /**
+     * @return {@code true} when nothing at all happened in this year, neither accrual nor reduction
+     */
+    boolean hasNoOvertime() {
+        return accrued().isZero() && reduction().isZero();
     }
 
     Duration accrued() {

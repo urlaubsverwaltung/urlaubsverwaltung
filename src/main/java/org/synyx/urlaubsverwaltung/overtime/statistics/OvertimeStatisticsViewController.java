@@ -17,6 +17,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -74,11 +75,36 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
         model.addAttribute("overtimeGraph", toGraphDto(statistics, locale));
         model.addAttribute("overtimeYearSummary", toYearSummaryDto(statistics, locale));
 
+        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1));
+        model.addAttribute("overtimeBalanceGraph", toBalanceGraphDto(statistics, previousStatistics, locale));
+
         // deliberately without the selected year, these figures cover the whole history
         final OvertimeTotals totals = overtimeStatisticsService.getTotals();
         model.addAttribute("overtimeTotals", toTotalsDto(totals, locale));
 
         return "overtime/overtime_statistics";
+    }
+
+    private BalanceGraphDto toBalanceGraphDto(OvertimeStatistics statistics, OvertimeStatistics previous, Locale locale) {
+
+        final List<BalanceSeriesDto> series = new ArrayList<>();
+        series.add(toBalanceSeriesDto(statistics, locale));
+
+        // a year in which nothing happened at all would only add a flat line at zero, which says nothing
+        if (!previous.hasNoOvertime()) {
+            series.add(toBalanceSeriesDto(previous, locale));
+        }
+
+        return new BalanceGraphDto(List.copyOf(series));
+    }
+
+    private BalanceSeriesDto toBalanceSeriesDto(OvertimeStatistics statistics, Locale locale) {
+        final List<Duration> cumulative = statistics.cumulativeBalanceByMonth();
+        return new BalanceSeriesDto(
+            statistics.year().getValue(),
+            cumulative.stream().map(OvertimeStatisticsViewController::toDecimalHours).toList(),
+            toTexts(cumulative, locale)
+        );
     }
 
     private TotalsDto toTotalsDto(OvertimeTotals totals, Locale locale) {
@@ -185,5 +211,22 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
      * @param balance   accrued minus reduced
      */
     record TotalsDto(String accrued, String reduction, String balance) {
+    }
+
+    /**
+     * Data of the balance curve. One entry per year, the selected year first, the previous year second when it has
+     * anything to show.
+     */
+    record BalanceGraphDto(List<BalanceSeriesDto> series) {
+    }
+
+    /**
+     * One curve of the balance chart.
+     *
+     * @param year       the year this curve belongs to, also its label
+     * @param values     cumulated balance per month in decimal hours, january first
+     * @param valuesText the same values formatted for humans
+     */
+    record BalanceSeriesDto(int year, List<BigDecimal> values, List<String> valuesText) {
     }
 }

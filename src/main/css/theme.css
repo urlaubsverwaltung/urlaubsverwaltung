@@ -65,6 +65,12 @@
    */
   --overtime-accrued-color: var(--color-violet-500);
   --overtime-reduction-color: var(--color-cyan-600);
+  /*
+   * The balance curve compares two years, an identity pair rather than a polarity. The comparison line is dashed
+   * as well, so the years can be told apart without relying on colour.
+   */
+  --overtime-balance-color: var(--color-blue-600);
+  --overtime-balance-compare-color: var(--color-amber-600);
 
   @variant dark {
     --uv-cal-border-color: var(--color-neutral-900);
@@ -94,6 +100,8 @@
     --sick-note-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
     --sick-note-child-color: var(--color-red-900);
     --sick-note-child-color-light: color-mix(in srgb, var(--color-red-900) 50%, white);
+    /* blue-600 is too dark against the dark chart surface, amber-600 passes in both modes */
+    --overtime-balance-color: var(--color-blue-500);
     --sick-rate-color: var(--color-pink-300);
     --sick-rate-color-light: color-mix(in srgb, var(--color-pink-300) 50%, white);
   }

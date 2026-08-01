@@ -2,6 +2,7 @@ import { observable } from "../../js/observable";
 
 vi.mock("../../js/common", () => ({}));
 vi.mock("apexcharts/bar", () => ({}));
+vi.mock("apexcharts/line", () => ({}));
 vi.mock("apexcharts/features/legend", () => ({}));
 vi.mock("apexcharts/features/keyboard", () => ({}));
 
@@ -13,6 +14,8 @@ describe("overtime-statistics", function () {
 
   beforeEach(function () {
     vi.resetModules();
+    globalThis.localStorage.clear();
+    globalThis.uv = { userId: "user-1" };
 
     chartInstances = [];
     MockApexCharts = vi.fn().mockImplementation(function (element, options) {
@@ -30,12 +33,17 @@ describe("overtime-statistics", function () {
     vi.doMock("../../js/use-theme", () => ({ useTheme: () => ({ theme: themeObservable }) }));
     vi.doMock("../../js/use-media", () => ({ useMedia: () => ({ matches: reducedMotionObservable }) }));
 
-    document.body.innerHTML = `<div id="overtime-statistics-chart"></div>`;
+    document.body.innerHTML = `
+      <div id="overtime-statistics-chart"></div>
+      <div id="overtime-balance-chart"></div>
+    `;
   });
 
   afterEach(function () {
     document.body.innerHTML = "";
     delete globalThis.overtimeStatistics;
+    delete globalThis.uv;
+    globalThis.localStorage.clear();
   });
 
   function setOvertimeStatistics(overrides) {
@@ -50,6 +58,12 @@ describe("overtime-statistics", function () {
       accruedText: ["2 Std. 30 Min.", "4 Std.", "keine"],
       reductionText: ["2 Std.", "1 Std. 30 Min.", "keine"],
       balanceText: ["30 Min.", "2 Std. 30 Min.", "keine"],
+      selectedYear: 2026,
+      balanceYaxisTitle: "Stunden (kumuliert)",
+      balanceSeries: [
+        { year: 2026, values: [0.5, 3, 3], valuesText: ["30 Min.", "3 Std.", "3 Std."] },
+        { year: 2025, values: [1, 1.5, 2], valuesText: ["1 Std.", "1 Std. 30 Min.", "2 Std."] },
+      ],
       ...overrides,
     };
   }
@@ -58,7 +72,7 @@ describe("overtime-statistics", function () {
     setOvertimeStatistics();
     await import("../overtime-statistics.js");
 
-    expect(chartInstances).toHaveLength(1);
+    expect(chartInstances).toHaveLength(2);
 
     const chart = chartInstances[0];
     expect(chart.element).toBe(document.querySelector("#overtime-statistics-chart"));
@@ -142,5 +156,79 @@ describe("overtime-statistics", function () {
     await import("../overtime-statistics.js");
 
     expect(chartInstances[0].options.chart.animations.enabled).toBe(false);
+  });
+
+  describe("balance chart", function () {
+    it("renders a line per year on its own element", async function () {
+      setOvertimeStatistics();
+      await import("../overtime-statistics.js");
+
+      const chart = chartInstances[1];
+      expect(chart.element).toBe(document.querySelector("#overtime-balance-chart"));
+      expect(chart.render).toHaveBeenCalled();
+      expect(chart.options.chart.type).toBe("line");
+
+      expect(chart.options.series).toEqual([
+        expect.objectContaining({ name: "2026", data: [0.5, 3, 3] }),
+        expect.objectContaining({ name: "2025", data: [1, 1.5, 2] }),
+      ]);
+    });
+
+    it("draws only the selected year when the previous one has nothing to show", async function () {
+      setOvertimeStatistics({
+        balanceSeries: [{ year: 2026, values: [0.5, 3, 3], valuesText: ["30 Min.", "3 Std.", "3 Std."] }],
+      });
+      await import("../overtime-statistics.js");
+
+      expect(chartInstances[1].options.series).toHaveLength(1);
+    });
+
+    it("names every year with its value in the tooltip", async function () {
+      setOvertimeStatistics();
+      await import("../overtime-statistics.js");
+
+      const { tooltip, colors } = chartInstances[1].options;
+      const html = tooltip.custom({ dataPointIndex: 1, w: { config: { colors } } });
+
+      expect(html).toContain("Feb");
+      expect(html).toContain("2026");
+      expect(html).toContain("3 Std.");
+      expect(html).toContain("2025");
+      expect(html).toContain("1 Std. 30 Min.");
+      expect(html).not.toContain("undefined");
+    });
+
+    it("does not label every single point", async function () {
+      setOvertimeStatistics();
+      await import("../overtime-statistics.js");
+
+      expect(chartInstances[1].options.dataLabels.enabled).toBe(false);
+    });
+
+    it("restores a series the user hid before the reload", async function () {
+      globalThis.localStorage.setItem(
+        "uv:chart-series-visibility:user-1:overtime-statistics-balance",
+        JSON.stringify({ version: new Date("2026-08-01").toISOString(), hiddenIds: ["balance-compare"] }),
+      );
+
+      setOvertimeStatistics();
+      await import("../overtime-statistics.js");
+
+      const series = chartInstances[1].options.series;
+      expect(series[0].hidden).toBe(false);
+      expect(series[1].hidden).toBe(true);
+    });
+
+    it("ignores a persisted state that belongs to an older data structure", async function () {
+      globalThis.localStorage.setItem(
+        "uv:chart-series-visibility:user-1:overtime-statistics-balance",
+        JSON.stringify({ version: new Date("2020-01-01").toISOString(), hiddenIds: ["balance-compare"] }),
+      );
+
+      setOvertimeStatistics();
+      await import("../overtime-statistics.js");
+
+      expect(chartInstances[1].options.series[1].hidden).toBe(false);
+    });
   });
 });

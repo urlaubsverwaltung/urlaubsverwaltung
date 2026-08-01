@@ -24,6 +24,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.nCopies;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +57,9 @@ class OvertimeStatisticsViewControllerTest {
 
         // most tests are about the selected year, so an empty company wide history is the default
         lenient().when(statisticsService.getTotals()).thenReturn(OvertimeTotals.empty());
+        // every request also loads the previous year for the comparison curve
+        lenient().when(statisticsService.getStatistics(any()))
+            .thenAnswer(invocation -> OvertimeStatistics.empty(invocation.getArgument(0)));
     }
 
     @Test
@@ -257,6 +261,84 @@ class OvertimeStatisticsViewControllerTest {
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
         assertThat(totalsOf(result).balance()).isEqualTo("keine");
+    }
+
+    @Test
+    void ensureBalanceGraphCumulatesTheSelectedYearStartingAtZero() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofHours(5)), months(Duration.ofHours(2)));
+        statisticsOf(Year.of(2025), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.BalanceSeriesDto selectedYear = balanceGraphOf(result).series().get(0);
+
+        assertThat(selectedYear.year()).isEqualTo(2026);
+        assertThat(selectedYear.values()).hasSize(12);
+        assertThat(selectedYear.values().get(0)).isEqualByComparingTo(new BigDecimal("3.00"));
+        assertThat(selectedYear.values().get(1)).isEqualByComparingTo(new BigDecimal("6.00"));
+        assertThat(selectedYear.values().get(11)).isEqualByComparingTo(new BigDecimal("36.00"));
+    }
+
+    @Test
+    void ensureBalanceGraphHasASecondSeriesForThePreviousYear() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofHours(5)), months(ZERO));
+        statisticsOf(Year.of(2025), months(Duration.ofHours(1)), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final List<OvertimeStatisticsViewController.BalanceSeriesDto> series = balanceGraphOf(result).series();
+
+        assertThat(series).hasSize(2);
+        assertThat(series.get(0).year()).isEqualTo(2026);
+        assertThat(series.get(1).year()).isEqualTo(2025);
+        assertThat(series.get(1).values().get(11)).isEqualByComparingTo(new BigDecimal("12.00"));
+    }
+
+    @Test
+    void ensurePreviousYearWithoutAnyOvertimeIsLeftOutInsteadOfDrawingAFlatLine() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofHours(5)), months(ZERO));
+        statisticsOf(Year.of(2025), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        assertThat(balanceGraphOf(result).series()).hasSize(1);
+    }
+
+    @Test
+    void ensureBalanceGraphCarriesFormattedValuesForTheTooltip() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+        statisticsOf(Year.of(2025), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(0)).isEqualTo("30 Min.");
+        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(1)).isEqualTo("1 Std.");
+    }
+
+    @Test
+    void ensureTheLastPointOfTheCurveIsTheBalanceCardOfTheYear() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+        statisticsOf(Year.of(2025), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        // the curve must end where the card says the year ended, otherwise the page contradicts itself
+        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(11))
+            .isEqualTo(yearSummaryOf(result).balance());
+    }
+
+    private static OvertimeStatisticsViewController.BalanceGraphDto balanceGraphOf(MvcResult result) {
+        return (OvertimeStatisticsViewController.BalanceGraphDto) result.getModelAndView().getModel().get("overtimeBalanceGraph");
     }
 
     private static OvertimeStatisticsViewController.TotalsDto totalsOf(MvcResult result) {
