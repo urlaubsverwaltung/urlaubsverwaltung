@@ -38,6 +38,17 @@ Solange Slice 03 nicht gelandet ist, enthält der Abbau nur die negativen Eintr�
 - [ ] Ein Unternehmen ohne jegliche Überstunden zeigt drei Nullwerte statt eines Fehlers
 - [ ] Tests für die Aggregation und für die Unabhängigkeit vom gewählten Jahr
 
+## Ergebnis
+
+Umgesetzt. Personenmenge ist die aktuelle Belegschaft, nicht die Jahres-Kohorte — wer ausgeschieden ist,
+gehört nicht zu den offenen Überstunden des Unternehmens.
+
+Die Kalender-Sorge aus Slice 03 hat sich erledigt: ohne Datumsgrenze gibt es nichts anteilig zu
+verteilen, ein Abbau-Antrag zählt komplett. Der Pfad braucht drei Abfragen und keine Arbeitszeitkalender.
+
+Der Konsistenztest gegen `Σ getLeftOvertimeForPerson` läuft in `OvertimeStatisticsServiceIT` gegen eine
+echte Datenbank. Offen bleibt eine Laufzeitmessung auf realistischem Datenbestand.
+
 ## Blocked by
 
 - [Slice 02 — Monatswerte und Balkendiagramm](./6397-02-monatswerte-balkendiagramm.md)

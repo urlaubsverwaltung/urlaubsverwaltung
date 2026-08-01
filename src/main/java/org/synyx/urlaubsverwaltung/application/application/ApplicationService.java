@@ -160,6 +160,19 @@ public interface ApplicationService {
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
     /**
+     * Get the total overtime reduction of the given persons over their whole history, in one query.
+     *
+     * <p>
+     * Covers the same applications as {@link #getTotalOvertimeReductionOfPerson(Person)}: category overtime in the
+     * active statuses, without any date restriction. Without a date boundary there is nothing to spread pro rata, so
+     * this does not need the working time calendars.
+     *
+     * @param persons to get the total overtime reduction for
+     * @return the summed overtime reduction of all given persons, never {@code null}
+     */
+    Duration getTotalOvertimeReductionOfPersons(Collection<Person> persons);
+
+    /**
      * Calculate total overtime reduction until the given date (inclusive).
      *
      * @param persons persons to calculate overtime reduction for

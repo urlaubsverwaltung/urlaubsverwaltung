@@ -131,12 +131,43 @@ niedriger, damit die beiden Jahreskurven in Slice 06 nicht übereinander liegen.
 
 Grob über sechs Personen: rund 280 Einträge, etwa 860 h Aufbau, 380 h Abbau, Saldo etwa +480 h.
 
-## Als Nächstes: Slice 05
+## Fertig: Slice 05 — Gesamtbestand-Kacheln
 
-[Gesamtbestand-Kacheln](./6397-05-gesamtbestand-kacheln.md) über der Jahresauswahl, ohne jeden
-Jahresbezug. Dort landen auch die beiden aus Slice 03 verschobenen Kriterien: der Konsistenztest gegen
-`Σ getLeftOvertimeForPerson` und die Laufzeitmessung — beim All-time-Pfad geht die Kalenderspanne
-wirklich über alle Jahre, dort ist die Sorge berechtigt.
+Drei Kacheln über der Jahresauswahl, ohne jeden Jahresbezug. Personenmenge ist die **aktuelle
+Belegschaft** (`getActivePersons`), nicht die Jahres-Kohorte: wer ausgeschieden ist, gehört nicht zu
+den Überstunden, die das Unternehmen noch offen hat — und genau das beantwortet diese Kachel.
+
+Zwei gebatchte Bausteine kamen dafür neu dazu, beide klein und allgemein nutzbar:
+
+- `OvertimeService.getAllOvertimesByPersonIds(…)` — alle Einträge mehrerer Personen ohne Datumsgrenze
+  in einer Abfrage.
+- `ApplicationService.getTotalOvertimeReductionOfPersons(…)` — die Abbau-Summe mehrerer Personen über
+  die gesamte Historie als eine SQL-Summe.
+
+### Die Kalender-Sorge aus Slice 03 ist erledigt
+
+Der All-time-Pfad braucht **keine Arbeitszeitkalender**. Ohne Datumsgrenze gibt es nichts anteilig zu
+verteilen: ein Abbau-Antrag zählt komplett, egal in welches Jahr er fällt. Damit besteht der Pfad aus
+drei Abfragen — Personen, Einträge, Abbau-Summe — unabhängig von der Personenzahl. Die im Slice
+notierte Befürchtung „Kalender über alle Jahre" trifft nicht zu.
+
+### Der Konsistenztest steht
+
+`OvertimeStatisticsServiceIT` prüft gegen eine echte Datenbank, dass der Unternehmenssaldo gleich der
+Summe von `getLeftOvertimeForPerson` über alle Personen ist. Beide Seiten entstehen aus völlig
+getrenntem Code, deshalb ist der Test gegen eine Datenbank geschrieben und nicht gegen Mocks — mit
+Mocks wäre er zirkulär gewesen. Damit ist das aus Slice 03 verschobene Kriterium erfüllt.
+
+### Weiterhin offen
+
+Eine echte Laufzeit- und Speichermessung auf realistischem Datenbestand. Die Abfragezahl ist konstant
+und durch Tests abgesichert, aber wie sich das Laden aller Überstunden-Einträge eines großen
+Unternehmens verhält, ist ungemessen.
+
+## Als Nächstes: Slice 06
+
+[Linien-Chart mit Jahresvergleich](./6397-06-linien-chart.md) — im Jahr kumulierter Saldo, zwei Serien,
+localStorage-Persistenz. `OvertimeStatistics.balanceByMonth()` liefert die Monatssalden bereits.
 
 Weiterhin gültige Vorarbeit:
 

@@ -323,6 +323,23 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public Map<PersonId, List<Overtime>> getAllOvertimesByPersonIds(Collection<PersonId> personIds) {
+
+        if (personIds.isEmpty()) {
+            return Map.of();
+        }
+
+        final List<Long> personIdValues = personIds.stream().map(PersonId::value).toList();
+        final Map<PersonId, List<Overtime>> overtimesByPersonId = overtimeRepository.findByPersonIdIn(personIdValues)
+            .stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .collect(groupingBy(Overtime::personId));
+
+        return personIds.stream()
+            .collect(toMap(identity(), personId -> overtimesByPersonId.getOrDefault(personId, List.of())));
+    }
+
+    @Override
     public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, PersonId personId) {
         return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId.value(), date, date)
             .map(OvertimeServiceImpl::entityToOvertime);

@@ -74,7 +74,19 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
         model.addAttribute("overtimeGraph", toGraphDto(statistics, locale));
         model.addAttribute("overtimeYearSummary", toYearSummaryDto(statistics, locale));
 
+        // deliberately without the selected year, these figures cover the whole history
+        final OvertimeTotals totals = overtimeStatisticsService.getTotals();
+        model.addAttribute("overtimeTotals", toTotalsDto(totals, locale));
+
         return "overtime/overtime_statistics";
+    }
+
+    private TotalsDto toTotalsDto(OvertimeTotals totals, Locale locale) {
+        return new TotalsDto(
+            toText(totals.accrued(), locale),
+            toText(totals.reduction(), locale),
+            toText(totals.balance(), locale)
+        );
     }
 
     private YearSummaryDto toYearSummaryDto(OvertimeStatistics statistics, Locale locale) {
@@ -159,5 +171,19 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
      * @param balance   accrued minus reduced, negative when more was reduced than accrued
      */
     record YearSummaryDto(String accrued, String reduction, String balance) {
+    }
+
+    /**
+     * Figures over the whole history, formatted for humans.
+     *
+     * <p>
+     * These are shown above the year selector and do not react to it. The balance is the overtime the company still
+     * has open, which is the same figure every person sees as their own remaining overtime, summed up.
+     *
+     * @param accrued   accrued overtime over the whole history
+     * @param reduction reduced overtime over the whole history, without sign
+     * @param balance   accrued minus reduced
+     */
+    record TotalsDto(String accrued, String reduction, String balance) {
     }
 }

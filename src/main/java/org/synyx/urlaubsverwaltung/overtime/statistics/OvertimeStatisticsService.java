@@ -89,6 +89,46 @@ class OvertimeStatisticsService {
         return new OvertimeStatistics(year, List.copyOf(accrued), List.copyOf(reduction));
     }
 
+    /**
+     * Creates the company wide overtime figures over the whole history, without any reference to a year.
+     *
+     * <p>
+     * Aggregated over the persons currently employed. Someone who left is not part of the overtime the company still
+     * has open, which is exactly the question these figures answer.
+     *
+     * <p>
+     * Without a date boundary nothing has to be spread pro rata, so this needs neither the monthly split nor the
+     * working time calendars - the reduction of an application counts as a whole, no matter which year it falls into.
+     *
+     * @return company wide overtime figures over the whole history
+     */
+    OvertimeTotals getTotals() {
+
+        final List<Person> persons = personService.getActivePersons();
+        if (persons.isEmpty()) {
+            return OvertimeTotals.empty();
+        }
+
+        final List<PersonId> personIds = persons.stream().map(Person::getIdAsPersonId).toList();
+
+        Duration accrued = ZERO;
+        Duration reductionByRecords = ZERO;
+
+        for (List<Overtime> overtimes : overtimeService.getAllOvertimesByPersonIds(personIds).values()) {
+            for (Overtime overtime : overtimes) {
+                if (overtime.duration().isNegative()) {
+                    reductionByRecords = reductionByRecords.plus(overtime.duration().negated());
+                } else {
+                    accrued = accrued.plus(overtime.duration());
+                }
+            }
+        }
+
+        final Duration reductionByApplications = applicationService.getTotalOvertimeReductionOfPersons(persons);
+
+        return new OvertimeTotals(accrued, reductionByRecords.plus(reductionByApplications));
+    }
+
     private void addOvertimeRecords(Year year, List<Person> persons, List<Duration> accrued, List<Duration> reduction) {
 
         final List<PersonId> personIds = persons.stream().map(Person::getIdAsPersonId).toList();

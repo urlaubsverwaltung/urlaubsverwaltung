@@ -1580,6 +1580,55 @@ class OvertimeServiceImplTest {
         }
     }
 
+    @Nested
+    class GetAllOvertimesByPersonIds {
+
+        @Test
+        void ensureAllOvertimesOfEveryPersonAreReturnedGroupedByPerson() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            marie.setId(1L);
+            final Person klaus = new Person("klaus", "Mustermann", "Klaus", "klaus@example.org");
+            klaus.setId(2L);
+
+            final OvertimeEntity marieOvertime = new OvertimeEntity(marie, LocalDate.of(2020, 3, 1), LocalDate.of(2020, 3, 1), Duration.ofHours(4));
+            marieOvertime.setId(1L);
+            final OvertimeEntity klausOvertime = new OvertimeEntity(klaus, LocalDate.of(2026, 1, 5), LocalDate.of(2026, 1, 5), Duration.ofHours(2).negated());
+            klausOvertime.setId(2L);
+
+            when(overtimeRepository.findByPersonIdIn(List.of(1L, 2L))).thenReturn(List.of(marieOvertime, klausOvertime));
+
+            final Map<PersonId, List<Overtime>> actual =
+                sut.getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId(), klaus.getIdAsPersonId()));
+
+            assertThat(actual).hasSize(2);
+            assertThat(actual.get(marie.getIdAsPersonId())).extracting(Overtime::duration).containsExactly(Duration.ofHours(4));
+            assertThat(actual.get(klaus.getIdAsPersonId())).extracting(Overtime::duration).containsExactly(Duration.ofHours(2).negated());
+        }
+
+        @Test
+        void ensurePersonWithoutAnyOvertimeIsPresentWithAnEmptyList() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            marie.setId(1L);
+
+            when(overtimeRepository.findByPersonIdIn(List.of(1L))).thenReturn(List.of());
+
+            final Map<PersonId, List<Overtime>> actual = sut.getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId()));
+
+            assertThat(actual).containsExactly(Map.entry(marie.getIdAsPersonId(), List.of()));
+        }
+
+        @Test
+        void ensureNoQueryWithoutAnyPerson() {
+
+            final Map<PersonId, List<Overtime>> actual = sut.getAllOvertimesByPersonIds(List.of());
+
+            assertThat(actual).isEmpty();
+            verifyNoInteractions(overtimeRepository);
+        }
+    }
+
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly, boolean overtimeActive, boolean overtimeSyncActive) {
 
         final Settings settings = new Settings();

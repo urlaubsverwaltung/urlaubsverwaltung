@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.statistics;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -378,6 +379,125 @@ class OvertimeStatisticsServiceTest {
         sut.getStatistics(YEAR);
 
         verify(workingTimeCalendarService, never()).getWorkingTimesByPersons(any(), any(DateRange.class));
+    }
+
+    @Nested
+    class GetTotals {
+
+        @Test
+        void ensureAccrualAndReductionOverTheWholeHistory() {
+
+            final Person marie = person(1L);
+            final Person klaus = person(2L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie, klaus));
+
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of(
+                marie.getIdAsPersonId(), List.of(
+                    overtime(marie, "2019-04-02", "2019-04-02", Duration.ofHours(40)),
+                    overtime(marie, "2026-01-05", "2026-01-05", Duration.ofHours(6).negated())
+                ),
+                klaus.getIdAsPersonId(), List.of(overtime(klaus, "2024-11-11", "2024-11-11", Duration.ofHours(10)))
+            ));
+            when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(Duration.ofHours(4));
+
+            final OvertimeTotals totals = sut.getTotals();
+
+            assertThat(totals.accrued()).isEqualTo(Duration.ofHours(50));
+            assertThat(totals.reduction()).isEqualTo(Duration.ofHours(10));
+            assertThat(totals.balance()).isEqualTo(Duration.ofHours(40));
+        }
+
+        @Test
+        void ensureReductionApplicationsAreCountedWithoutAnyDateRestriction() {
+
+            final Person marie = person(1L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
+            when(applicationService.getTotalOvertimeReductionOfPersons(List.of(marie))).thenReturn(Duration.ofHours(3));
+
+            assertThat(sut.getTotals().reduction()).isEqualTo(Duration.ofHours(3));
+        }
+
+        @Test
+        void ensureTheCurrentWorkforceIsUsedAndNotTheCohortOfAnyYear() {
+
+            final Person marie = person(1L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
+            when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(ZERO);
+
+            sut.getTotals();
+
+            verify(personService, never()).getAllPersonsHavingAccountInYear(any());
+        }
+
+        @Test
+        void ensureEverythingIsFetchedInOneQueryPerSource() {
+
+            final Person marie = person(1L);
+            final Person klaus = person(2L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie, klaus));
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
+            when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(ZERO);
+
+            sut.getTotals();
+
+            verify(overtimeService).getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId(), klaus.getIdAsPersonId()));
+            verify(applicationService).getTotalOvertimeReductionOfPersons(List.of(marie, klaus));
+        }
+
+        @Test
+        void ensureEmptyCompanyIsZeroEverywhereWithoutQueryingAnything() {
+
+            when(personService.getActivePersons()).thenReturn(List.of());
+
+            final OvertimeTotals totals = sut.getTotals();
+
+            assertThat(totals.accrued()).isEqualTo(ZERO);
+            assertThat(totals.reduction()).isEqualTo(ZERO);
+            assertThat(totals.balance()).isEqualTo(ZERO);
+
+            verify(overtimeService, never()).getAllOvertimesByPersonIds(any());
+            verify(applicationService, never()).getTotalOvertimeReductionOfPersons(any());
+        }
+
+        @Test
+        void ensureBalanceIsNegativeWhenMoreWasReducedThanAccrued() {
+
+            final Person marie = person(1L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of(
+                marie.getIdAsPersonId(), List.of(overtime(marie, "2026-01-05", "2026-01-05", Duration.ofHours(2)))
+            ));
+            when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(Duration.ofHours(9));
+
+            assertThat(sut.getTotals().balance()).isEqualTo(Duration.ofHours(7).negated());
+        }
+
+        /**
+         * The balance shown to office and boss has to be the same figure every person sees as their own remaining
+         * overtime. That identity is what makes the number trustworthy, so it is pinned down here.
+         */
+        @Test
+        void ensureBalanceEqualsAllOvertimeRecordsMinusAllReductionApplications() {
+
+            final Person marie = person(1L);
+            when(personService.getActivePersons()).thenReturn(List.of(marie));
+
+            final List<Overtime> records = List.of(
+                overtime(marie, "2024-02-01", "2024-02-01", Duration.ofHours(12)),
+                overtime(marie, "2024-06-01", "2024-06-01", Duration.ofHours(5).negated()),
+                overtime(marie, "2025-09-01", "2025-09-01", Duration.ofHours(8))
+            );
+            when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of(marie.getIdAsPersonId(), records));
+            when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(Duration.ofHours(6));
+
+            // getLeftOvertimeForPerson is the sum of all records minus the reduction applications
+            final Duration sumOfAllRecords = records.stream().map(Overtime::duration).reduce(ZERO, Duration::plus);
+            final Duration leftOvertime = sumOfAllRecords.minus(Duration.ofHours(6));
+
+            assertThat(sut.getTotals().balance()).isEqualTo(leftOvertime);
+        }
     }
 
     private void personsHavingAccount(Person... persons) {

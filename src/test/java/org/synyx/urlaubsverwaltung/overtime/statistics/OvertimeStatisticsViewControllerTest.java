@@ -24,6 +24,8 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.nCopies;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -51,6 +53,9 @@ class OvertimeStatisticsViewControllerTest {
         messageSource.addMessage("overtime.person.zero", GERMAN, "keine");
 
         sut = new OvertimeStatisticsViewController(statisticsService, settingsService, messageSource, clock);
+
+        // most tests are about the selected year, so an empty company wide history is the default
+        lenient().when(statisticsService.getTotals()).thenReturn(OvertimeTotals.empty());
     }
 
     @Test
@@ -208,6 +213,54 @@ class OvertimeStatisticsViewControllerTest {
         // the tiles must not tell a different story than the bars above them
         assertThat(accruedFromChart).isEqualByComparingTo(new BigDecimal("30.00"));
         assertThat(yearSummaryOf(result).accrued()).isEqualTo("30 Std.");
+    }
+
+    @Test
+    void ensureTotalsCarryTheFiguresOfTheWholeHistory() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
+        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofMinutes(21030)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.TotalsDto totals = totalsOf(result);
+
+        assertThat(totals.accrued()).isEqualTo("427 Std.");
+        assertThat(totals.reduction()).isEqualTo("350 Std. 30 Min.");
+        assertThat(totals.balance()).isEqualTo("76 Std. 30 Min.");
+    }
+
+    @Test
+    void ensureTotalsDoNotDependOnTheSelectedYear() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2024), months(ZERO), months(ZERO));
+        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofHours(350)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics").param("year", "2024"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        assertThat(totalsOf(result).accrued()).isEqualTo("427 Std.");
+        // the totals are fetched without handing over any year
+        verify(statisticsService).getTotals();
+    }
+
+    @Test
+    void ensureEmptyCompanyShowsTheZeroTextInTheTotals() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
+        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(ZERO, ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        assertThat(totalsOf(result).balance()).isEqualTo("keine");
+    }
+
+    private static OvertimeStatisticsViewController.TotalsDto totalsOf(MvcResult result) {
+        return (OvertimeStatisticsViewController.TotalsDto) result.getModelAndView().getModel().get("overtimeTotals");
     }
 
     private static OvertimeStatisticsViewController.YearSummaryDto yearSummaryOf(MvcResult result) {

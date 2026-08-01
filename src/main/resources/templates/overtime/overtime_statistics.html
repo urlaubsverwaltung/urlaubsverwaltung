@@ -62,10 +62,49 @@
       </div>
 
       <!--
-        The year selector sits in its own row instead of the section heading, because the company wide
-        figures are placed above it - they are deliberately not affected by the selected year.
+        Above the year selector on purpose: these figures cover the whole history and do not react to the
+        selected year. The position is the statement, so the description has to say it as well.
       -->
-      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div class="mt-6 statistic-summary-container">
+        <h2 class="statistic-summary-container-title" th:text="#{overtime.statistics.totals.title}">
+          Gesamtbestand - alle Jahre
+        </h2>
+        <p class="text-sm" th:text="#{overtime.statistics.totals.description}">
+          Alle je erfassten Überstunden über die gesamte Historie.
+        </p>
+        <div class="statistic-summary-card-box">
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label">
+              <span
+                class="inline-block h-3 w-3 rounded-xs mr-2"
+                style="background-color: var(--overtime-accrued-color)"
+              ></span>
+              <th:block th:text="#{overtime.statistics.totals.accrued}">Aufgebaut insgesamt</th:block>
+            </span>
+            <span class="statistic-summary-card__content" th:text="${overtimeTotals.accrued}">427 Std.</span>
+          </p>
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label">
+              <span
+                class="inline-block h-3 w-3 rounded-xs mr-2"
+                style="background-color: var(--overtime-reduction-color)"
+              ></span>
+              <th:block th:text="#{overtime.statistics.totals.reduction}">Abgebaut insgesamt</th:block>
+            </span>
+            <span class="statistic-summary-card__content" th:text="${overtimeTotals.reduction}">350 Std. 30 Min.</span>
+          </p>
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{overtime.statistics.totals.balance}">Saldo</span>
+            <span class="statistic-summary-card__content" th:text="${overtimeTotals.balance}">76 Std. 30 Min.</span>
+          </p>
+        </div>
+      </div>
+
+      <!--
+        The year selector sits in its own row instead of the section heading, because the figures above it
+        are deliberately not affected by the selected year.
+      -->
+      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t pt-6">
         <span class="text-sm font-bold" th:text="#{overtime.statistics.year.label}">Jahr</span>
         <div
           th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
