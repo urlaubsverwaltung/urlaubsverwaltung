@@ -72,7 +72,7 @@
     "postcss-url": "10.1.4",
     "prettier": "3.9.6",
     "rimraf": "6.1.3",
-    "rollup": "4.62.2",
+    "rollup": "4.62.3",
     "rollup-plugin-esbuild": "6.2.1",
     "tailwindcss": "4.3.3",
     "vitest": "4.1.5"
