@@ -60,7 +60,7 @@
     "eslint-plugin-unicorn": "64.0.0",
     "fast-glob": "3.3.3",
     "fetch-mock": "12.6.0",
-    "globals": "17.7.0",
+    "globals": "17.8.0",
     "jsdom": "30.0.0",
     "lint-staged": "17.2.0",
     "node-fetch": "2.7.0",
