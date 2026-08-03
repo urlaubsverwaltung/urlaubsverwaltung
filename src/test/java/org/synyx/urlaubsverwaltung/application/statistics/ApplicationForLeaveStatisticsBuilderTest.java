@@ -44,6 +44,10 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -51,6 +55,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
@@ -124,7 +129,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -183,7 +188,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -250,7 +255,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -315,7 +320,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -428,7 +433,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, VacationDaysLeft.builder().build());
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -478,7 +483,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange, List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -493,6 +498,206 @@ class ApplicationForLeaveStatisticsBuilderTest {
             assertThat(value.getLeftOvertimeForYear()).isEqualTo(Duration.ofHours(9));
             assertThat(value.getLeftOvertimeForPeriod()).isEqualTo(Duration.ofHours(3));
         });
+    }
+
+    /**
+     * A vacation type that has been deactivated is not part of the vacation types the statistics are built for, so it
+     * must only show up for the persons who actually took an absence with it - and it must still be counted for them.
+     */
+    @Test
+    void ensureDeactivatedVacationTypeIsOnlyShownForThePersonWhoUsedIt() {
+
+        final LocalDate from = of(2014, JANUARY, 1);
+        final LocalDate to = of(2014, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(from, to);
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+
+        final Person personWithAbsence = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        personWithAbsence.setId(1L);
+        final Person personWithoutAbsence = new Person("other", "Other", "Otto", "other@example.org");
+        personWithoutAbsence.setId(2L);
+        final List<Person> persons = List.of(personWithAbsence, personWithoutAbsence);
+
+        final Account accountWithAbsence = new Account(personWithAbsence, from, to, false, expiryDate, TEN, TEN, TEN, null);
+        final Account accountWithoutAbsence = new Account(personWithoutAbsence, from, to, false, expiryDate, TEN, TEN, TEN, null);
+        final List<Account> accounts = List.of(accountWithAbsence, accountWithoutAbsence);
+        when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars =
+            Map.of(personWithAbsence, workingTimeCalendar, personWithoutAbsence, workingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendars);
+
+        final VacationType<?> deactivatedVacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(4711L).active(false).category(HOLIDAY).messageKey("deactivated").build();
+
+        final Application absenceOfDeactivatedType = new Application();
+        absenceOfDeactivatedType.setPerson(personWithAbsence);
+        absenceOfDeactivatedType.setDayLength(FULL);
+        absenceOfDeactivatedType.setVacationType(deactivatedVacationType);
+        absenceOfDeactivatedType.setStartDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setEndDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setStatus(ALLOWED);
+
+        final List<Application> applications = List.of(absenceOfDeactivatedType);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())).thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(Map.of());
+
+        final HolidayAccountVacationDays vacationDaysWithAbsence = new HolidayAccountVacationDays(
+            accountWithAbsence, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        final HolidayAccountVacationDays vacationDaysWithoutAbsence = new HolidayAccountVacationDays(
+            accountWithoutAbsence, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(accounts, dateRange, List.of(), workingTimeCalendars))
+            .thenReturn(Map.of(accountWithAbsence, vacationDaysWithAbsence, accountWithoutAbsence, vacationDaysWithoutAbsence));
+
+        // the deactivated type is NOT among the vacation types the statistics are built for
+        final VacationType<?> activeVacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L).active(true).category(HOLIDAY).messageKey("active").build();
+
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual =
+            sut.build(persons, from, to, List.of(activeVacationType));
+
+        assertThat(actual.get(personWithAbsence)).hasValueSatisfying(statistics -> {
+            assertThat(statistics.hasVacationType(deactivatedVacationType)).isTrue();
+            assertThat(statistics.getAllowedVacationDays(deactivatedVacationType)).isEqualTo(BigDecimal.ONE);
+            assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.ONE);
+        });
+
+        assertThat(actual.get(personWithoutAbsence)).hasValueSatisfying(statistics ->
+            assertThat(statistics.hasVacationType(deactivatedVacationType)).isFalse());
+    }
+
+    /**
+     * The caller of this overload has already fetched the applications, so the deactivated type must survive that
+     * hand-over too - the sort-by-statistics view of the page uses this overload.
+     */
+    @Test
+    void ensureDeactivatedVacationTypeIsOnlyShownForThePersonWhoUsedItWithGivenApplications() {
+
+        final LocalDate from = of(2014, JANUARY, 1);
+        final LocalDate to = of(2014, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(from, to);
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+
+        final Person personWithAbsence = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        personWithAbsence.setId(1L);
+        final Person personWithoutAbsence = new Person("other", "Other", "Otto", "other@example.org");
+        personWithoutAbsence.setId(2L);
+        final List<Person> persons = List.of(personWithAbsence, personWithoutAbsence);
+
+        final Account accountWithAbsence = new Account(personWithAbsence, from, to, false, expiryDate, TEN, TEN, TEN, null);
+        final Account accountWithoutAbsence = new Account(personWithoutAbsence, from, to, false, expiryDate, TEN, TEN, TEN, null);
+        final List<Account> accounts = List.of(accountWithAbsence, accountWithoutAbsence);
+        when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars =
+            Map.of(personWithAbsence, workingTimeCalendar, personWithoutAbsence, workingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendars);
+
+        final VacationType<?> deactivatedVacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(4711L).active(false).category(HOLIDAY).messageKey("deactivated").build();
+
+        final Application absenceOfDeactivatedType = new Application();
+        absenceOfDeactivatedType.setPerson(personWithAbsence);
+        absenceOfDeactivatedType.setDayLength(FULL);
+        absenceOfDeactivatedType.setVacationType(deactivatedVacationType);
+        absenceOfDeactivatedType.setStartDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setEndDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setStatus(ALLOWED);
+
+        final List<Application> applications = List.of(absenceOfDeactivatedType);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(Map.of());
+
+        final HolidayAccountVacationDays vacationDaysWithAbsence = new HolidayAccountVacationDays(
+            accountWithAbsence, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        final HolidayAccountVacationDays vacationDaysWithoutAbsence = new HolidayAccountVacationDays(
+            accountWithoutAbsence, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(accounts, dateRange, List.of(), workingTimeCalendars))
+            .thenReturn(Map.of(accountWithAbsence, vacationDaysWithAbsence, accountWithoutAbsence, vacationDaysWithoutAbsence));
+
+        final VacationType<?> activeVacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L).active(true).category(HOLIDAY).messageKey("active").build();
+
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual =
+            sut.build(persons, from, to, List.of(activeVacationType), applications);
+
+        assertThat(actual.get(personWithAbsence)).hasValueSatisfying(statistics -> {
+            assertThat(statistics.hasVacationType(deactivatedVacationType)).isTrue();
+            assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.ONE);
+        });
+
+        assertThat(actual.get(personWithoutAbsence)).hasValueSatisfying(statistics ->
+            assertThat(statistics.hasVacationType(deactivatedVacationType)).isFalse());
+    }
+
+    /**
+     * The applications the caller passes in cover the whole year, the tallies only the requested period. Narrowing
+     * that down must happen in memory - asking the database a second time for a subset of what we already hold was
+     * the single most expensive part of building these statistics.
+     */
+    @Test
+    void ensureApplicationsAreNotFetchedAgainAndTheCalendarIsComputedOnlyOnce() {
+
+        final LocalDate from = of(2014, OCTOBER, 1);
+        final LocalDate to = of(2014, OCTOBER, 31);
+        final DateRange dateRange = new DateRange(from, to);
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        final List<Person> persons = List.of(person);
+
+        final Account account = new Account(person, of(2014, JANUARY, 1), of(2014, DECEMBER, 31), false, expiryDate, TEN, TEN, TEN, null);
+        final List<Account> accounts = List.of(account);
+        when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(of(2014, JANUARY, 1), of(2014, DECEMBER, 31));
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars = Map.of(person, workingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendars);
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L).active(true).category(HOLIDAY).messageKey("active").build();
+
+        // one absence inside the requested period, one outside of it but within the same year
+        final Application insidePeriod = new Application();
+        insidePeriod.setPerson(person);
+        insidePeriod.setDayLength(FULL);
+        insidePeriod.setVacationType(vacationType);
+        insidePeriod.setStartDate(of(2014, 10, 13));
+        insidePeriod.setEndDate(of(2014, 10, 13));
+        insidePeriod.setStatus(ALLOWED);
+
+        final Application outsidePeriod = new Application();
+        outsidePeriod.setPerson(person);
+        outsidePeriod.setDayLength(FULL);
+        outsidePeriod.setVacationType(vacationType);
+        outsidePeriod.setStartDate(of(2014, 3, 13));
+        outsidePeriod.setEndDate(of(2014, 3, 13));
+        outsidePeriod.setStatus(ALLOWED);
+
+        final List<Application> applications = List.of(insidePeriod, outsidePeriod);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(Map.of());
+
+        final HolidayAccountVacationDays vacationDays = new HolidayAccountVacationDays(
+            account, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(accounts, dateRange, List.of(), workingTimeCalendars))
+            .thenReturn(Map.of(account, vacationDays));
+
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual =
+            sut.build(persons, from, to, List.of(vacationType), applications);
+
+        // only the absence within the requested period is tallied ...
+        assertThat(actual.get(person)).hasValueSatisfying(statistics ->
+            assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.ONE));
+
+        // ... without asking the database again, and without computing the calendar twice
+        verifyNoInteractions(applicationService);
+        verify(workingTimeCalendarService, times(1)).getWorkingTimesByPersons(persons, Year.of(2014));
+        verifyNoMoreInteractions(workingTimeCalendarService);
     }
 
     @Test
@@ -519,7 +724,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Map<Person, LeftOvertime> leftOvertimeByPerson = Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ofHours(3)));
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(leftOvertimeByPerson);
 
-        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to))).thenReturn(Map.of());
+        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to), List.of(), Map.of(person, workingTimeCalendar))).thenReturn(Map.of());
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
         final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(persons, from, to, List.of(type));
@@ -553,16 +758,16 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014)))
-            .thenReturn(Map.of(personWithAccount, workingTimeCalendar, personWithoutAccount, workingTimeCalendar));
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars =
+            Map.of(personWithAccount, workingTimeCalendar, personWithoutAccount, workingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendars);
 
         final List<Application> applications = List.of();
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())).thenReturn(applications);
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(Map.of());
 
         final HolidayAccountVacationDays vacationDays = new HolidayAccountVacationDays(
             account, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
-        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to)))
+        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to), List.of(), workingTimeCalendars))
             .thenReturn(Map.of(account, vacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
