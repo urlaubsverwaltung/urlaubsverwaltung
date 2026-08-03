@@ -314,7 +314,10 @@
                 </p>
               </div>
 
-              <div th:if="${not #lists.isEmpty(selectableHolidayReplacements)}" class="uv-form__input-row">
+              <div
+                th:if="${not #lists.isEmpty(selectableHolidayReplacements) or not #lists.isEmpty(applicationForLeaveForm.holidayReplacements)}"
+                class="uv-form__input-row"
+              >
                 <label for="holiday-replacement-select" th:text="#{application.data.holidayReplacement}">
                   Vertretung
                 </label>
