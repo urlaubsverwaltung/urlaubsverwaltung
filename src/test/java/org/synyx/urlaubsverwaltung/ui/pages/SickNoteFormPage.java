@@ -16,7 +16,7 @@ public class SickNoteFormPage {
     private static final String FROM_SELECTOR = "[data-test-id=sicknote-from-date]";
     private static final String TO_SELECTOR = "[data-test-id=sicknote-to-date]";
     private static final String AUB_FROM_SELECTOR = "[data-test-id=sicknote-aub-from]";
-    private static final String AUB_TO_SELECTOR = "[data-test-id=sicknote-aub-from]";
+    private static final String AUB_TO_SELECTOR = "[data-test-id=sicknote-aub-to]";
     private static final String SUBMIT_SELECTOR = "[data-test-id=sicknote-submit-button]";
 
     private final Page page;
