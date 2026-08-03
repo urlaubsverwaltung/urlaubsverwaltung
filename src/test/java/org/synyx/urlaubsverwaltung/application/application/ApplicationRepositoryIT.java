@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.Month.MAY;
@@ -705,6 +706,50 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
 
         // fetching two more applications and their holidayReplacements must not cost any extra queries
         assertThat(statementsForThreeApplications).isEqualTo(statementsForOneApplication);
+    }
+
+    @Test
+    void ensureApplicantsAreFetchedWithoutOneQueryPerApplicant() {
+
+        // one application per person, so that the number of distinct applicants to resolve for the eager
+        // `person` association is the only thing that differs between the two measurements below.
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        final List<Person> persons = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            final Person person = personService.create("username_" + i, "First" + i, "Last" + i, "user" + i + "@example.org");
+            persons.add(person);
+
+            final ApplicationEntity application = applicationEntity(person, vacationType, askedStartDate, askedEndDate, FULL);
+            application.setStatus(WAITING);
+            sut.save(application);
+        }
+
+        final long statementsForOneApplicant = fetchAndTouchApplicants(persons.subList(0, 1), askedStartDate, askedEndDate, 1);
+        final long statementsForThreeApplicants = fetchAndTouchApplicants(persons, askedStartDate, askedEndDate, 3);
+
+        // resolving two more distinct applicants must not cost any extra queries
+        assertThat(statementsForThreeApplicants).isEqualTo(statementsForOneApplicant);
+    }
+
+    private long fetchAndTouchApplicants(List<Person> persons, LocalDate from, LocalDate to, int expectedApplicationCount) {
+
+        // force the next query to actually hit the database instead of returning managed entities from the session cache
+        entityManager.flush();
+        entityManager.clear();
+
+        final Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+
+        final List<ApplicationEntity> applications = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(
+            persons, from, to, List.of(WAITING));
+        applications.forEach(application -> application.getPerson().getPermissions().size());
+
+        assertThat(applications).hasSize(expectedApplicationCount);
+        return statistics.getPrepareStatementCount();
     }
 
     private long fetchAndTouchHolidayReplacements(Person person, LocalDate from, LocalDate to, int expectedApplicationCount) {
