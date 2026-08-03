@@ -38,6 +38,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -293,6 +294,83 @@ class ApplicationForLeaveStatisticsServiceTest {
     @Nested
     class GetStatisticsSortedByStatistics {
 
+        /**
+         * The builder registers an entry for every person it is asked about, but the page must not depend on it: a
+         * person missing from the map is one person without statistics, not a broken page for the whole company.
+         */
+        @Test
+        void ensurePersonsMissingFromTheBuiltStatisticsAreSkippedInsteadOfFailing() {
+
+            final LocalDate startDate = LocalDate.parse("2018-01-01");
+            final LocalDate endDate = LocalDate.parse("2018-12-31");
+            final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+            final Person office = new Person();
+            office.setId(1L);
+            office.setPermissions(List.of(USER, OFFICE));
+
+            final Person withoutStatistics = new Person();
+            withoutStatistics.setId(2L);
+            withoutStatistics.setPermissions(List.of(USER));
+
+            final List<Person> persons = List.of(office, withoutStatistics);
+            when(personService.getActivePersons(any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
+                .thenReturn(new PageImpl<>(persons));
+
+            final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
+            when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+            final List<Application> applications = List.of();
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), ""))
+                .thenReturn(applications);
+
+            // the second person is missing from the map entirely
+            when(applicationForLeaveStatisticsBuilder.build(persons, startDate, endDate, vacationTypes, applications))
+                .thenReturn(Map.of(office, Optional.of(new ApplicationForLeaveStatistics(office, vacationTypes))));
+
+            final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
+            final Page<ApplicationForLeaveStatistics> actual = sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "");
+
+            assertThat(actual.getContent()).hasSize(1);
+            assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(office);
+        }
+
+        /**
+         * The left overtime <em>of the year</em> is derived from the applications handed to the builder, so fetching
+         * only the requested period would understate it for everyone who reduced overtime outside that period.
+         */
+        @Test
+        void ensureApplicationsOfTheWholeYearAreFetchedEvenForAShorterPeriod() {
+
+            final LocalDate startDate = LocalDate.parse("2018-06-01");
+            final LocalDate endDate = LocalDate.parse("2018-06-30");
+            final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+            final Person office = new Person();
+            office.setId(1L);
+            office.setPermissions(List.of(USER, OFFICE));
+
+            when(personService.getActivePersons(any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
+                .thenReturn(new PageImpl<>(List.of(office)));
+
+            final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
+            when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+            final List<Application> applications = List.of(new Application());
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(
+                LocalDate.parse("2018-01-01"), LocalDate.parse("2018-12-31"), ApplicationStatus.activeStatuses(), ""))
+                .thenReturn(applications);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(office), startDate, endDate, vacationTypes, applications))
+                .thenReturn(Map.of(office, Optional.of(new ApplicationForLeaveStatistics(office, vacationTypes))));
+
+            final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
+            sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "");
+
+            verify(applicationService).getApplicationsForACertainPeriodAndStatus(
+                LocalDate.parse("2018-01-01"), LocalDate.parse("2018-12-31"), ApplicationStatus.activeStatuses(), "");
+        }
+
         @ParameterizedTest
         @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
         void ensureAllActivePersonsAreRequestedWhenSortedByStatisticsAttributeByRole(Role role) {
@@ -319,7 +397,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
             final List<Application> applications = List.of(new Application());
 
-            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), vacationTypes, ""))
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), ""))
                 .thenReturn(applications);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes, applications))
@@ -372,7 +450,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
             final List<Application> applications = List.of(new Application());
 
-            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), vacationTypes, ""))
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), ""))
                 .thenReturn(applications);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes, applications))

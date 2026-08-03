@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -97,7 +99,7 @@ class ApplicationForLeaveStatisticsService {
         final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
 
         final List<Application> allApplications =
-            getApplicationsOfInterest(period.startDate(), period.endDate(), vacationTypes, query);
+            getApplicationsOfInterest(period.startDate(), period.endDate(), query);
 
         // fetch all allowed persons, there may be persons without applications
         final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query).getContent();
@@ -124,8 +126,9 @@ class ApplicationForLeaveStatisticsService {
             statisticsByPerson = applicationForLeaveStatisticsBuilder.build(sortedPersons, period.startDate(), period.endDate(), vacationTypes, applications);
         }
 
+        // a person without statistics must not take the whole page down, no matter which builder path produced the map
         final List<ApplicationForLeaveStatistics> sortedStatistics = sortedPersons.stream()
-            .map(statisticsByPerson::get)
+            .map(person -> statisticsByPerson.getOrDefault(person, Optional.empty()))
             .flatMap(Optional::stream)
             .toList();
 
@@ -145,9 +148,19 @@ class ApplicationForLeaveStatisticsService {
         return statistics;
     }
 
-    private List<Application> getApplicationsOfInterest(LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, String personQuery) {
+    /**
+     * Fetches every application of the requested year, not just the ones of the requested period, and without
+     * restricting them to the currently active {@link VacationType}s.
+     *
+     * <p>
+     * Both are required by {@link ApplicationForLeaveStatisticsBuilder}: the left overtime <em>of the year</em> is
+     * derived from this list, so narrowing it to the requested period would understate it, and vacation types that
+     * have been deactivated in the meantime must still show up for the persons who used them.
+     */
+    private List<Application> getApplicationsOfInterest(LocalDate from, LocalDate to, String personQuery) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
-        return applicationService.getApplicationsForACertainPeriodAndStatus(from, to, activeStatuses(), vacationTypes, personQuery);
+        return applicationService.getApplicationsForACertainPeriodAndStatus(
+            from.with(firstDayOfYear()), from.with(lastDayOfYear()), activeStatuses(), personQuery);
     }
 
     private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {

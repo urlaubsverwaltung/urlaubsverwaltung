@@ -708,6 +708,33 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         assertThat(statementsForThreeApplications).isEqualTo(statementsForOneApplication);
     }
 
+    /**
+     * The leave statistics report the absences someone took with a vacation type that has been deactivated since,
+     * so this query must not restrict its result to the currently active vacation types.
+     */
+    @Test
+    void ensureApplicationsOfDeactivatedVacationTypesAreFound() {
+
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+
+        final VacationTypeEntity deactivatedVacationType = getVacationType(HOLIDAY);
+        deactivatedVacationType.setActive(false);
+        entityManager.merge(deactivatedVacationType);
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        final ApplicationEntity application = applicationEntity(person, deactivatedVacationType, askedStartDate, askedEndDate, FULL);
+        application.setStatus(WAITING);
+        sut.save(application);
+
+        final List<ApplicationEntity> actual = sut.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+            askedStartDate, askedEndDate, List.of(WAITING), "");
+
+        assertThat(actual).containsExactly(application);
+        assertThat(actual.getFirst().getVacationType().isActive()).isFalse();
+    }
+
     @Test
     void ensureApplicantsAreFetchedWithoutOneQueryPerApplicant() {
 

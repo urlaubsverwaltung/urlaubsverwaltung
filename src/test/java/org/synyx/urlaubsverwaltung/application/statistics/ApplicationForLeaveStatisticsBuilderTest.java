@@ -528,4 +528,50 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .containsKey(person)
             .containsEntry(person, Optional.empty());
     }
+
+    /**
+     * Callers map the returned map back over the persons they asked for, so every requested person needs an entry -
+     * also for this overload. Someone who joined this year has no account for last year, and a missing entry made the
+     * statistics page fail for the whole company as soon as it was sorted by one of the statistics columns.
+     */
+    @Test
+    void ensureThatAllPersonsThatWhereRequestedAreThereWithOptionalEmptyIfNoAccountWithGivenApplications() {
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+
+        final LocalDate from = of(2014, JANUARY, 1);
+        final LocalDate to = of(2014, DECEMBER, 31);
+
+        final Person personWithAccount = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        personWithAccount.setId(1L);
+        final Person personWithoutAccount = new Person("newbie", "Joiner", "New", "newbie@example.org");
+        personWithoutAccount.setId(2L);
+        final List<Person> persons = List.of(personWithAccount, personWithoutAccount);
+
+        final Account account = new Account(personWithAccount, from, to, false, of(2014, APRIL, 1), TEN, TEN, TEN, null);
+        final List<Account> accounts = List.of(account);
+        when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014)))
+            .thenReturn(Map.of(personWithAccount, workingTimeCalendar, personWithoutAccount, workingTimeCalendar));
+
+        final List<Application> applications = List.of();
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())).thenReturn(applications);
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(Map.of());
+
+        final HolidayAccountVacationDays vacationDays = new HolidayAccountVacationDays(
+            account, VacationDaysLeft.builder().build(), VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to)))
+            .thenReturn(Map.of(account, vacationDays));
+
+        final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual =
+            sut.build(persons, from, to, List.of(type), applications);
+
+        assertThat(actual)
+            .hasSize(2)
+            .containsEntry(personWithoutAccount, Optional.empty());
+        assertThat(actual.get(personWithAccount)).isPresent();
+    }
 }
