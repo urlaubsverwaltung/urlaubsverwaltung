@@ -3,18 +3,16 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isWeekend;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
@@ -121,10 +119,5 @@ public class WorkingTimeCalendarFactory {
             map.put(date, dayLengthProvider.apply(date));
         }
         return map;
-    }
-
-    private static boolean isWeekend(LocalDate date) {
-        final DayOfWeek dayOfWeek = date.getDayOfWeek();
-        return dayOfWeek == SATURDAY || dayOfWeek == SUNDAY;
     }
 }

@@ -24,6 +24,16 @@ public final class DateUtil {
     }
 
     /**
+     * Check if the given date is on a weekend.
+     *
+     * @param date to check
+     * @return {@code true} if the given date is on a weekend, else {@code false}
+     */
+    public static boolean isWeekend(LocalDate date) {
+        return !isWorkDay(date);
+    }
+
+    /**
      * Check if given date is on Christmas Eve.
      *
      * @param date to check

@@ -30,7 +30,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.TextStyle;
@@ -47,8 +46,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
@@ -59,6 +56,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isWeekend;
 
 @RequestMapping("/web/absences")
 @Controller
@@ -604,11 +602,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             return now.withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
         }
         return now.with(firstOrLastOfMonthSupplier.get());
-    }
-
-    private static boolean isWeekend(LocalDate date) {
-        final DayOfWeek dayOfWeek = date.getDayOfWeek();
-        return dayOfWeek == SATURDAY || dayOfWeek == SUNDAY;
     }
 
     private List<Person> getActiveMembersOfPerson(final Person person) {

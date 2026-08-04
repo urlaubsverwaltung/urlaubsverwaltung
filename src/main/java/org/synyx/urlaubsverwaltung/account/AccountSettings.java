@@ -137,7 +137,7 @@ public class AccountSettings implements Serializable {
             && doRemainingVacationDaysExpireGlobally == that.doRemainingVacationDaysExpireGlobally
             && Objects.equals(defaultVacationDays, that.defaultVacationDays)
             && Objects.equals(maximumAnnualVacationDays, that.maximumAnnualVacationDays)
-            && expiryDateMonth == that.expiryDateMonth;
+            && Objects.equals(expiryDateMonth, that.expiryDateMonth);
     }
 
     @Override
