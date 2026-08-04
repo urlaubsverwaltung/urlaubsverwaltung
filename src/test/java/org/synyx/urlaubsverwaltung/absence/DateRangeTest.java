@@ -10,6 +10,9 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.time.Month.AUGUST;
+import static java.time.Month.JULY;
+import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -174,19 +177,19 @@ class DateRangeTest {
 
     @Test
     void dateRangeDurationReturnsCorrectValueIfNotEmpty() {
-        final Duration duration = new DateRange(LocalDate.of(2022, 10, 10), LocalDate.of(2022, 10, 20)).duration();
+        final Duration duration = new DateRange(LocalDate.of(2022, OCTOBER, 10), LocalDate.of(2022, OCTOBER, 20)).duration();
         assertThat(duration).isEqualTo(Duration.ofDays(11));
     }
 
     @Test
     void ensureThatDateRangeIsCorrectOverMoreThanOneMonth() {
-        final Duration duration = new DateRange(LocalDate.of(2021, 7, 12), LocalDate.of(2021, 8, 13)).duration();
+        final Duration duration = new DateRange(LocalDate.of(2021, JULY, 12), LocalDate.of(2021, AUGUST, 13)).duration();
         assertThat(duration).isEqualTo(Duration.ofDays(33));
     }
 
     @Test
     void dateRangeDurationReturnsOneOnSameDay() {
-        final LocalDate date = LocalDate.of(2022, 10, 10);
+        final LocalDate date = LocalDate.of(2022, OCTOBER, 10);
         final Duration duration = new DateRange(date, date).duration();
         assertThat(duration).isEqualTo(Duration.ofDays(1));
     }

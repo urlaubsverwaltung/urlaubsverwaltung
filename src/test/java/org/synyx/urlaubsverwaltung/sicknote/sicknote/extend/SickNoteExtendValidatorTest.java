@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.time.Month.AUGUST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,8 +65,8 @@ class SickNoteExtendValidatorTest {
 
     static Stream<Arguments> endDateTuples() {
         return Stream.of(
-            Arguments.of(LocalDate.of(2024, 8, 8), LocalDate.of(2024, 8, 7)),
-            Arguments.of(LocalDate.of(2024, 8, 8), LocalDate.of(2024, 8, 8))
+            Arguments.of(LocalDate.of(2024, AUGUST, 8), LocalDate.of(2024, AUGUST, 7)),
+            Arguments.of(LocalDate.of(2024, AUGUST, 8), LocalDate.of(2024, AUGUST, 8))
         );
     }
 

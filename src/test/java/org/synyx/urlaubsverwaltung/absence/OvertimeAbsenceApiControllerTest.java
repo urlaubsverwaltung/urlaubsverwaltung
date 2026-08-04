@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.time.Month.JANUARY;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -55,7 +56,7 @@ class OvertimeAbsenceApiControllerTest {
     @Test
     void threeHoursForty() throws Exception {
 
-        final LocalDate date = LocalDate.of(2016, 1, 1);
+        final LocalDate date = LocalDate.of(2016, JANUARY, 1);
         final Duration duration = Duration.ofHours(3).plusMinutes(40);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -94,8 +95,8 @@ class OvertimeAbsenceApiControllerTest {
 
     @Test
     void multipleDays() throws Exception {
-        final LocalDate startDate = LocalDate.of(2016, 1, 1);
-        final LocalDate endDate = LocalDate.of(2016, 1, 2);
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 2);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
@@ -137,8 +138,8 @@ class OvertimeAbsenceApiControllerTest {
 
     @Test
     void multipleDaysWithDaysWithoutWorkingDaysAndHalfDays() throws Exception {
-        final LocalDate startDate = LocalDate.of(2016, 1, 1);
-        final LocalDate endDate = LocalDate.of(2016, 1, 3);
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 3);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
@@ -156,9 +157,9 @@ class OvertimeAbsenceApiControllerTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(startDate, endDate)))
             .thenReturn(Map.of(
                 person, new WorkingTimeCalendar(Map.of(
-                    LocalDate.of(2016, 1, 1), fullWorkday(),
-                    LocalDate.of(2016, 1, 2), halfWorkdayMorning(),
-                    LocalDate.of(2016, 1, 3), noWorkday()
+                    LocalDate.of(2016, JANUARY, 1), fullWorkday(),
+                    LocalDate.of(2016, JANUARY, 2), halfWorkdayMorning(),
+                    LocalDate.of(2016, JANUARY, 3), noWorkday()
                 ))
             ));
 
@@ -230,7 +231,7 @@ class OvertimeAbsenceApiControllerTest {
     @Test
     void ensureToSetDurationToZeroIfNotKnown() throws Exception {
 
-        final LocalDate date = LocalDate.of(2016, 1, 1);
+        final LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);

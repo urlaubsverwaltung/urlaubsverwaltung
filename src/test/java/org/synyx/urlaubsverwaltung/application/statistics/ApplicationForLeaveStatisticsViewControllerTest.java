@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -135,8 +138,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final Locale locale = Locale.GERMAN;
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2020", locale)).thenReturn(Optional.of(LocalDate.of(2020, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2020", locale)).thenReturn(Optional.of(LocalDate.of(2020, AUGUST, 1)));
 
         perform(
             get(givenRequestUrl)
@@ -156,8 +159,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final Locale locale = Locale.GERMAN;
 
-        when(dateFormatAware.parse("01.12.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 12, 1)));
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.12.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, DECEMBER, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
 
         perform(
             get(givenRequestUrl)
@@ -193,8 +196,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").id(1L).build());
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         final ResultActions resultActions = perform(
             get(givenRequestUrl)
@@ -251,8 +254,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         final ResultActions resultActions = perform(
             get(givenRequestUrl)
@@ -469,8 +472,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final Locale locale = Locale.GERMAN;
 
-        when(dateFormatAware.parse("01.01.2000", locale)).thenReturn(Optional.of(LocalDate.of(2000, 1, 1)));
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.01.2000", locale)).thenReturn(Optional.of(LocalDate.of(2000, JANUARY, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
 
         perform(
             get(givenRequestUrl)
@@ -530,8 +533,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         perform(get(givenRequestUrl)
             .locale(locale)
@@ -565,8 +568,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         perform(get(givenRequestUrl)
             .locale(locale)
@@ -602,8 +605,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         perform(get(givenRequestUrl)
             .locale(locale)
@@ -638,8 +641,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
 
         perform(get(givenRequestUrl)
             .locale(locale)

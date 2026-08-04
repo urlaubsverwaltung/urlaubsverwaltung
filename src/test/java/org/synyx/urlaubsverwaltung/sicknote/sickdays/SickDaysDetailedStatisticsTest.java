@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Calendar.JUNE;
 import static java.util.Calendar.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +35,8 @@ class SickDaysDetailedStatisticsTest {
         sickNoteType.setCategory(SICK_NOTE);
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
-            LocalDate.of(2022, 1, 1),
-            LocalDate.of(2022, 12, 31)
+            LocalDate.of(2022, JANUARY, 1),
+            LocalDate.of(2022, DECEMBER, 31)
         );
 
         final SickNote sickNoteOne = SickNote.builder()
@@ -64,7 +66,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(sickNoteOne, sickNoteTwo), List.of());
 
-        final SickDays actual = sut.getSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getSickDays(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.valueOf(5));
@@ -90,7 +92,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(sickNote), List.of());
 
-        final SickDays actual = sut.getSickDays(LocalDate.of(2022, 12, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getSickDays(LocalDate.of(2022, DECEMBER, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
@@ -116,7 +118,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(childSickNote), List.of());
 
-        final SickDays actual = sut.getSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getSickDays(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
@@ -133,8 +135,8 @@ class SickDaysDetailedStatisticsTest {
         childSickNoteType.setCategory(SICK_NOTE_CHILD);
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
-            LocalDate.of(2022, 1, 1),
-            LocalDate.of(2022, 12, 31)
+            LocalDate.of(2022, JANUARY, 1),
+            LocalDate.of(2022, DECEMBER, 31)
         );
 
         final SickNote childSickNoteOne = SickNote.builder()
@@ -164,7 +166,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(childSickNoteOne, childSickNoteTwo), List.of());
 
-        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.valueOf(5));
@@ -190,7 +192,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(childSickNote), List.of());
 
-        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 12, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, DECEMBER, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
@@ -216,7 +218,7 @@ class SickDaysDetailedStatisticsTest {
         final SickDaysDetailedStatistics sut =
             new SickDaysDetailedStatistics("0000001337", person, List.of(sickNote), List.of());
 
-        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
+        final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);

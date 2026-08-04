@@ -12,6 +12,8 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+import static java.time.Month.OCTOBER;
+import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.HOLIDAY_REPLACEMENT;
 
@@ -29,8 +31,8 @@ class CalendarAbsenceTest {
     @Test
     void ensureCanBeInstantiatedWithCorrectProperties() {
 
-        final LocalDate start = LocalDate.of(2015, 9, 21);
-        final LocalDate end = LocalDate.of(2015, 9, 23);
+        final LocalDate start = LocalDate.of(2015, SEPTEMBER, 21);
+        final LocalDate end = LocalDate.of(2015, SEPTEMBER, 23);
         final Period period = new Period(start, end, DayLength.FULL);
 
         final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
@@ -43,8 +45,8 @@ class CalendarAbsenceTest {
     @Test
     void ensureCanBeInstantiatedWithCorrectPropertiesInDifferentTimeZone() {
 
-        final LocalDate start = LocalDate.of(2015, 9, 21);
-        final LocalDate end = LocalDate.of(2015, 9, 23);
+        final LocalDate start = LocalDate.of(2015, SEPTEMBER, 21);
+        final LocalDate end = LocalDate.of(2015, SEPTEMBER, 23);
         final Period period = new Period(start, end, DayLength.FULL);
 
         final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration("Europe/Berlin"));
@@ -58,8 +60,8 @@ class CalendarAbsenceTest {
     void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
 
         // Date where daylight saving time is relevant
-        final LocalDate start = LocalDate.of(2015, 10, 23);
-        final LocalDate end = LocalDate.of(2015, 10, 25);
+        final LocalDate start = LocalDate.of(2015, OCTOBER, 23);
+        final LocalDate end = LocalDate.of(2015, OCTOBER, 25);
         final Period period = new Period(start, end, DayLength.FULL);
 
         final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
@@ -149,8 +151,8 @@ class CalendarAbsenceTest {
     @Test
     void toStringTest() {
         // Date where daylight saving time is relevant
-        final LocalDate start = LocalDate.of(2015, 10, 23);
-        final LocalDate end = LocalDate.of(2015, 10, 25);
+        final LocalDate start = LocalDate.of(2015, OCTOBER, 23);
+        final LocalDate end = LocalDate.of(2015, OCTOBER, 25);
         final CalendarAbsence absence = new CalendarAbsence(person, new Period(start, end, DayLength.FULL), getAbsenceTimeConfiguration());
 
         final String absenceToString = absence.toString();

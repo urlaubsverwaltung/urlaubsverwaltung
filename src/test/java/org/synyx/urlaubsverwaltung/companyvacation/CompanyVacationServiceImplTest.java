@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdated
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -60,8 +61,8 @@ class CompanyVacationServiceImplTest {
         assertThat(publishedEvent.dayLength()).isEqualTo(DayLength.NOON);
 
         final int currentYear = LocalDate.now().getYear();
-        assertThat(publishedEvent.startDate()).isEqualTo(LocalDate.of(currentYear, 12, 24));
-        assertThat(publishedEvent.endDate()).isEqualTo(LocalDate.of(currentYear, 12, 24));
+        assertThat(publishedEvent.startDate()).isEqualTo(LocalDate.of(currentYear, DECEMBER, 24));
+        assertThat(publishedEvent.endDate()).isEqualTo(LocalDate.of(currentYear, DECEMBER, 24));
         assertThat(publishedEvent.sourceId()).isEqualTo("settings-christmas-eve");
     }
 
@@ -95,8 +96,8 @@ class CompanyVacationServiceImplTest {
         assertThat(publishedEvent.dayLength()).isEqualTo(DayLength.MORNING);
 
         final int currentYear = LocalDate.now().getYear();
-        assertThat(publishedEvent.startDate()).isEqualTo(LocalDate.of(currentYear, 12, 31));
-        assertThat(publishedEvent.endDate()).isEqualTo(LocalDate.of(currentYear, 12, 31));
+        assertThat(publishedEvent.startDate()).isEqualTo(LocalDate.of(currentYear, DECEMBER, 31));
+        assertThat(publishedEvent.endDate()).isEqualTo(LocalDate.of(currentYear, DECEMBER, 31));
         assertThat(publishedEvent.sourceId()).isEqualTo("settings-new-years-eve");
     }
 

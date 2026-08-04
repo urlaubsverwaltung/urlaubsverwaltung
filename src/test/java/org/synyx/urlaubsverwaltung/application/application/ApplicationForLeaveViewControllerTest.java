@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static java.time.Month.JANUARY;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1573,8 +1574,8 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         person.setFirstName("Hans");
         person.setLastName("Dampf");
-        final LocalDate startDate = LocalDate.of(2024, 1, 4);
-        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
@@ -1628,8 +1629,8 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         person.setFirstName("Hans");
         person.setLastName("Dampf");
-        final LocalDate startDate = LocalDate.of(2024, 1, 4);
-        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
@@ -1683,8 +1684,8 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         person.setFirstName("Hans");
         person.setLastName("Dampf");
-        final LocalDate startDate = LocalDate.of(2024, 1, 4);
-        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
@@ -1738,8 +1739,8 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         person.setFirstName("Hans");
         person.setLastName("Dampf");
-        final LocalDate startDate = LocalDate.of(2024, 1, 4);
-        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)

@@ -75,20 +75,20 @@ class WorkingTimeCalendarServiceImplTest {
             date -> sut.getNextWorkingDayFollowingTo(person, date);
 
         // first day of valid(From) workingTime
-        assertThat(get.apply(LocalDate.of(2024, 1, 1))).hasValue(LocalDate.of(2024, 1, 2));
+        assertThat(get.apply(LocalDate.of(2024, JANUARY, 1))).hasValue(LocalDate.of(2024, JANUARY, 2));
 
         // within valid working time
-        assertThat(get.apply(LocalDate.of(2024, 7, 15))).hasValue(LocalDate.of(2024, 7, 16));
-        assertThat(get.apply(LocalDate.of(2024, 7, 16))).hasValue(LocalDate.of(2024, 7, 18));
-        assertThat(get.apply(LocalDate.of(2024, 7, 17))).hasValue(LocalDate.of(2024, 7, 18));
-        assertThat(get.apply(LocalDate.of(2024, 7, 18))).hasValue(LocalDate.of(2024, 7, 19));
-        assertThat(get.apply(LocalDate.of(2024, 7, 19))).hasValue(LocalDate.of(2024, 7, 22));
-        assertThat(get.apply(LocalDate.of(2024, 7, 20))).hasValue(LocalDate.of(2024, 7, 22));
-        assertThat(get.apply(LocalDate.of(2024, 7, 21))).hasValue(LocalDate.of(2024, 7, 22));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 15))).hasValue(LocalDate.of(2024, JULY, 16));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 16))).hasValue(LocalDate.of(2024, JULY, 18));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 17))).hasValue(LocalDate.of(2024, JULY, 18));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 18))).hasValue(LocalDate.of(2024, JULY, 19));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 19))).hasValue(LocalDate.of(2024, JULY, 22));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 20))).hasValue(LocalDate.of(2024, JULY, 22));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 21))).hasValue(LocalDate.of(2024, JULY, 22));
 
         // future
-        assertThat(get.apply(LocalDate.of(2024, 12, 31))).hasValue(LocalDate.of(2025, 1, 2));
-        assertThat(get.apply(LocalDate.of(2025, 1, 1))).hasValue(LocalDate.of(2025, 1, 2));
+        assertThat(get.apply(LocalDate.of(2024, DECEMBER, 31))).hasValue(LocalDate.of(2025, JANUARY, 2));
+        assertThat(get.apply(LocalDate.of(2025, JANUARY, 1))).hasValue(LocalDate.of(2025, JANUARY, 2));
     }
 
     @Test
@@ -111,16 +111,16 @@ class WorkingTimeCalendarServiceImplTest {
             date -> sut.getNextWorkingDayFollowingTo(person, date);
 
         // outside of future workingTime, but next working day is within future workingTime
-        assertThat(get.apply(LocalDate.of(2024, 6, 30))).hasValue(LocalDate.of(2024, 7, 5));
+        assertThat(get.apply(LocalDate.of(2024, JUNE, 30))).hasValue(LocalDate.of(2024, JULY, 5));
 
         // within valid working time
-        assertThat(get.apply(LocalDate.of(2024, 7, 1))).hasValue(LocalDate.of(2024, 7, 5));
-        assertThat(get.apply(LocalDate.of(2024, 7, 2))).hasValue(LocalDate.of(2024, 7, 5));
-        assertThat(get.apply(LocalDate.of(2024, 7, 3))).hasValue(LocalDate.of(2024, 7, 5));
-        assertThat(get.apply(LocalDate.of(2024, 7, 4))).hasValue(LocalDate.of(2024, 7, 5));
-        assertThat(get.apply(LocalDate.of(2024, 7, 5))).hasValue(LocalDate.of(2024, 7, 6));
-        assertThat(get.apply(LocalDate.of(2024, 7, 6))).hasValue(LocalDate.of(2024, 7, 7));
-        assertThat(get.apply(LocalDate.of(2024, 7, 7))).hasValue(LocalDate.of(2024, 7, 12));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 1))).hasValue(LocalDate.of(2024, JULY, 5));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 2))).hasValue(LocalDate.of(2024, JULY, 5));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 3))).hasValue(LocalDate.of(2024, JULY, 5));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 4))).hasValue(LocalDate.of(2024, JULY, 5));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 5))).hasValue(LocalDate.of(2024, JULY, 6));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 6))).hasValue(LocalDate.of(2024, JULY, 7));
+        assertThat(get.apply(LocalDate.of(2024, JULY, 7))).hasValue(LocalDate.of(2024, JULY, 12));
     }
 
     @Test
@@ -132,7 +132,7 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
             .thenReturn(List.of());
 
-        final Optional<LocalDate> actual = sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, 7, 21));
+        final Optional<LocalDate> actual = sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, JULY, 21));
         assertThat(actual).isEmpty();
     }
 
@@ -151,10 +151,10 @@ class WorkingTimeCalendarServiceImplTest {
         final Function<LocalDate, Optional<LocalDate>> get =
             date -> sut.getNextWorkingDayFollowingTo(person, date);
 
-        assertThat(get.apply(LocalDate.of(2023, 12, 30))).isEmpty();
+        assertThat(get.apply(LocalDate.of(2023, DECEMBER, 30))).isEmpty();
 
         // is present because the next day matches a workingTime
-        assertThat(get.apply(LocalDate.of(2023, 12, 31))).isPresent();
+        assertThat(get.apply(LocalDate.of(2023, DECEMBER, 31))).isPresent();
     }
 
     @Test
@@ -169,7 +169,7 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
             .thenReturn(List.of(workingTimeEntity));
 
-        assertThat(sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, 7, 21))).isEmpty();
+        assertThat(sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, JULY, 21))).isEmpty();
     }
 
     @Test
@@ -407,7 +407,7 @@ class WorkingTimeCalendarServiceImplTest {
             return Optional.empty();
         });
 
-        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2024, 12, 24), LocalDate.of(2024, 12, 24)));
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2024, DECEMBER, 24), LocalDate.of(2024, DECEMBER, 24)));
         assertThat(actual)
             .hasSize(1)
             .containsKeys(person);

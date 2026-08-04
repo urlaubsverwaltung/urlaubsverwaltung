@@ -12,6 +12,9 @@ import static java.math.BigDecimal.TEN;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.LocalDate.of;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -24,7 +27,7 @@ class ApplicationForLeaveTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application = createApplication(person, of(2015, 3, 3), of(2015, 3, 6), FULL, new StaticMessageSource());
+        final Application application = createApplication(person, of(2015, MARCH, 3), of(2015, MARCH, 6), FULL, new StaticMessageSource());
 
         final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
         workDaysByYear.put(2015, TEN);
@@ -42,7 +45,7 @@ class ApplicationForLeaveTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application = createApplication(person, of(2025, 12, 29), of(2026, 1, 2), FULL, new StaticMessageSource());
+        final Application application = createApplication(person, of(2025, DECEMBER, 29), of(2026, JANUARY, 2), FULL, new StaticMessageSource());
 
         final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
         workDaysByYear.put(2025, BigDecimal.valueOf(3));
@@ -58,7 +61,7 @@ class ApplicationForLeaveTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application = createApplication(person, of(2016, 3, 1), of(2016, 3, 4), FULL, new StaticMessageSource());
+        final Application application = createApplication(person, of(2016, MARCH, 1), of(2016, MARCH, 4), FULL, new StaticMessageSource());
 
         final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
         workDaysByYear.put(2016, BigDecimal.valueOf(4));

@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,8 +49,8 @@ class OvertimeEventHandlerExtensionTest {
         @Test
         void ensureEventIsConvertedToDTO() {
 
-            final LocalDate startDate = LocalDate.of(2025, 3, 1);
-            final LocalDate endDate = LocalDate.of(2025, 3, 1);
+            final LocalDate startDate = LocalDate.of(2025, MARCH, 1);
+            final LocalDate endDate = LocalDate.of(2025, MARCH, 1);
             final Duration duration = Duration.ofHours(2);
 
             final OvertimeCreatedEvent event = OvertimeCreatedEvent.of(42L, "muster", startDate, endDate, duration);
@@ -84,8 +85,8 @@ class OvertimeEventHandlerExtensionTest {
         @Test
         void ensureEventIsConvertedToDTO() {
 
-            final LocalDate startDate = LocalDate.of(2025, 3, 1);
-            final LocalDate endDate = LocalDate.of(2025, 3, 5);
+            final LocalDate startDate = LocalDate.of(2025, MARCH, 1);
+            final LocalDate endDate = LocalDate.of(2025, MARCH, 5);
             final Duration duration = Duration.ofHours(8);
 
             final OvertimeUpdatedEvent event = OvertimeUpdatedEvent.of(99L, "muster", startDate, endDate, duration);

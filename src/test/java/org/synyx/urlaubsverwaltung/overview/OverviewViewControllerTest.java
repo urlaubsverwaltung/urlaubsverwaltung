@@ -61,6 +61,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
+import static java.time.Month.JUNE;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
@@ -746,8 +747,8 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
 
-        final LocalDate startDate = LocalDate.of(2021, 6, 1);
-        final LocalDate endDate = LocalDate.of(2021, 6, 2);
+        final LocalDate startDate = LocalDate.of(2021, JUNE, 1);
+        final LocalDate endDate = LocalDate.of(2021, JUNE, 2);
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             new PersonId(person.getId()),

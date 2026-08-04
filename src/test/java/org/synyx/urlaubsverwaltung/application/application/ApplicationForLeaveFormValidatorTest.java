@@ -41,6 +41,9 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -145,8 +148,8 @@ class ApplicationForLeaveFormValidatorTest {
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .startDate(LocalDate.of(2012, 1, 17))
-            .endDate(LocalDate.of(2012, 1, 12))
+            .startDate(LocalDate.of(2012, JANUARY, 17))
+            .endDate(LocalDate.of(2012, JANUARY, 12))
             .build();
 
         sut.validate(appForm, errors);
@@ -291,7 +294,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        final LocalDate date = LocalDate.of(Year.now(UTC).getValue(), 10, 10);
+        final LocalDate date = LocalDate.of(Year.now(UTC).getValue(), OCTOBER, 10);
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(NOON)
@@ -1186,8 +1189,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, 12, 24))
-            .endDate(LocalDate.of(actualYear, 12, 24))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
             .build();
 
         sut.validate(appForm, errors);
@@ -1211,8 +1214,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, 12, 24))
-            .endDate(LocalDate.of(actualYear, 12, 24))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
             .build();
 
         sut.validate(appForm, errors);
@@ -1235,8 +1238,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(NOON)
-            .startDate(LocalDate.of(actualYear, 12, 24))
-            .endDate(LocalDate.of(actualYear, 12, 24))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
             .build();
 
         sut.validate(appForm, errors);
@@ -1258,7 +1261,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         final int actualYear = Year.now().getValue();
 
-        final LocalDate christmasEve = LocalDate.of(actualYear, 12, 24);
+        final LocalDate christmasEve = LocalDate.of(actualYear, DECEMBER, 24);
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLength)
             .startDate(christmasEve)
@@ -1285,8 +1288,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, 12, 31))
-            .endDate(LocalDate.of(actualYear, 12, 31))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
             .build();
 
         sut.validate(appForm, errors);
@@ -1309,8 +1312,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, 12, 31))
-            .endDate(LocalDate.of(actualYear, 12, 31))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
             .build();
 
         sut.validate(appForm, errors);
@@ -1333,8 +1336,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(NOON)
-            .startDate(LocalDate.of(actualYear, 12, 31))
-            .endDate(LocalDate.of(actualYear, 12, 31))
+            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
+            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
             .build();
 
         sut.validate(appForm, errors);
@@ -1356,7 +1359,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         final int actualYear = Year.now().getValue();
 
-        final LocalDate christmasEve = LocalDate.of(actualYear, 12, 31);
+        final LocalDate christmasEve = LocalDate.of(actualYear, DECEMBER, 31);
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLength)
             .startDate(christmasEve)

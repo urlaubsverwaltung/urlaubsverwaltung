@@ -7,11 +7,12 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.time.LocalDate;
 
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SickNoteFormDtoTest {
 
-    private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
+    private final LocalDate day2019_04_16 = LocalDate.of(2019, APRIL, 16);
     private final Long id = 1L;
     private final Person person = new Person();
     private final SickNoteType type = new SickNoteType();

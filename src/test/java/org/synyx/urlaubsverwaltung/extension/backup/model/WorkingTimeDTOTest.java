@@ -6,13 +6,14 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeEntity;
 
 import java.time.LocalDate;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WorkingTimeDTOTest {
 
     @Test
     void happyPathWithDefaultFederalState() {
-        final WorkingTimeDTO dto = new WorkingTimeDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, LocalDate.of(2023, 1, 1), FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG, true);
+        final WorkingTimeDTO dto = new WorkingTimeDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, LocalDate.of(2023, JANUARY, 1), FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG, true);
         final Person person = new Person();
 
         final WorkingTimeEntity entity = dto.toWorkingTimeEntity(person);
@@ -31,7 +32,7 @@ class WorkingTimeDTOTest {
 
     @Test
     void happyPathWithoutDefaultFederalState() {
-        final WorkingTimeDTO dto = new WorkingTimeDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, LocalDate.of(2023, 1, 1), FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG, false);
+        final WorkingTimeDTO dto = new WorkingTimeDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, LocalDate.of(2023, JANUARY, 1), FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG, false);
         final Person person = new Person();
 
         final WorkingTimeEntity entity = dto.toWorkingTimeEntity(person);

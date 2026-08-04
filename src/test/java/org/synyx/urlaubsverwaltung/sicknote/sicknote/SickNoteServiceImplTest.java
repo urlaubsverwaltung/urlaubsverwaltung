@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JUNE;
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -61,9 +64,9 @@ class SickNoteServiceImplTest {
         final Person person = new Person();
         final Person applier = new Person();
         final SickNoteType sickNoteType = new SickNoteType();
-        final LocalDate startDate = LocalDate.of(2022, 12, 5);
-        final LocalDate endDate = LocalDate.of(2022, 12, 9);
-        final LocalDate aubStartDate = LocalDate.of(2022, 12, 7);
+        final LocalDate startDate = LocalDate.of(2022, DECEMBER, 5);
+        final LocalDate endDate = LocalDate.of(2022, DECEMBER, 9);
+        final LocalDate aubStartDate = LocalDate.of(2022, DECEMBER, 7);
 
         when(sickNoteRepository.save(any(SickNoteEntity.class))).thenAnswer(returnsFirstArg());
 
@@ -77,7 +80,7 @@ class SickNoteServiceImplTest {
             .dayLength(DayLength.FULL)
             .aubStartDate(aubStartDate)
             .aubEndDate(endDate)
-            .lastEdited(LocalDate.of(2022, 12, 5))
+            .lastEdited(LocalDate.of(2022, DECEMBER, 5))
             .endOfSickPayNotificationSend(endDate)
             .status(ACTIVE)
             .build();
@@ -303,8 +306,8 @@ class SickNoteServiceImplTest {
     void getSickNotesReachingEndOfSickPay() {
 
         final Person person = new Person();
-        final LocalDate startDate = LocalDate.of(2022, 12, 5);
-        final LocalDate endDate = LocalDate.of(2022, 12, 9);
+        final LocalDate startDate = LocalDate.of(2022, DECEMBER, 5);
+        final LocalDate endDate = LocalDate.of(2022, DECEMBER, 9);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
@@ -321,7 +324,7 @@ class SickNoteServiceImplTest {
         settings.setSickNoteSettings(sickNoteSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(5, 2, LocalDate.of(2021, 6, 28)))
+        when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(5, 2, LocalDate.of(2021, JUNE, 28)))
             .thenReturn(List.of(entity));
 
         final SickNote sickNote = SickNote.builder().build();
@@ -409,7 +412,7 @@ class SickNoteServiceImplTest {
 
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
-        final LocalDate since = LocalDate.of(2020, 10, 3);
+        final LocalDate since = LocalDate.of(2020, OCTOBER, 3);
 
         when(sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(openSickNoteStatuses, persons, since))
             .thenReturn(List.of(entity));

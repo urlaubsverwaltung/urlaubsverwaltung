@@ -19,6 +19,10 @@ import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.OCTOBER;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -50,8 +54,8 @@ class YearlyUsedDaysSummaryTest {
 
         final Application holidayAllowed = anyApplication();
         holidayAllowed.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holidayAllowed.setStartDate(LocalDate.of(2014, 3, 5));
-        holidayAllowed.setEndDate(LocalDate.of(2016, 12, 30));
+        holidayAllowed.setStartDate(LocalDate.of(2014, MARCH, 5));
+        holidayAllowed.setEndDate(LocalDate.of(2016, DECEMBER, 30));
         holidayAllowed.setStatus(ALLOWED);
 
         final BigDecimal workingDays = BigDecimal.valueOf(499);
@@ -70,62 +74,62 @@ class YearlyUsedDaysSummaryTest {
 
         final Application holiday = anyApplication();
         holiday.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holiday.setStartDate(LocalDate.of(2014, 10, 13));
-        holiday.setEndDate(LocalDate.of(2014, 10, 13));
+        holiday.setStartDate(LocalDate.of(2014, OCTOBER, 13));
+        holiday.setEndDate(LocalDate.of(2014, OCTOBER, 13));
         holiday.setStatus(WAITING);
 
         final Application holidayAllowed = anyApplication();
         holidayAllowed.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
-        holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
+        holidayAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 14));
+        holidayAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 14));
         holidayAllowed.setStatus(ALLOWED);
 
         final Application holidayAllowedRequestCancellation = anyApplication();
         holidayAllowedRequestCancellation.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holidayAllowedRequestCancellation.setStartDate(LocalDate.of(2014, 10, 14));
-        holidayAllowedRequestCancellation.setEndDate(LocalDate.of(2014, 10, 14));
+        holidayAllowedRequestCancellation.setStartDate(LocalDate.of(2014, OCTOBER, 14));
+        holidayAllowedRequestCancellation.setEndDate(LocalDate.of(2014, OCTOBER, 14));
         holidayAllowedRequestCancellation.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final Application specialLeave = anyApplication();
         specialLeave.setVacationType(createVacationType(1L, SPECIALLEAVE, new StaticMessageSource()));
-        specialLeave.setStartDate(LocalDate.of(2014, 10, 15));
-        specialLeave.setEndDate(LocalDate.of(2014, 10, 15));
+        specialLeave.setStartDate(LocalDate.of(2014, OCTOBER, 15));
+        specialLeave.setEndDate(LocalDate.of(2014, OCTOBER, 15));
         specialLeave.setStatus(WAITING);
 
         final Application specialLeaveAllowed = anyApplication();
         specialLeaveAllowed.setVacationType(createVacationType(1L, SPECIALLEAVE, new StaticMessageSource()));
-        specialLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
-        specialLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
+        specialLeaveAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 16));
+        specialLeaveAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 16));
         specialLeaveAllowed.setStatus(ALLOWED);
 
         final Application unpaidLeave = anyApplication();
         unpaidLeave.setVacationType(createVacationType(1L, UNPAIDLEAVE, new StaticMessageSource()));
-        unpaidLeave.setStartDate(LocalDate.of(2014, 10, 17));
-        unpaidLeave.setEndDate(LocalDate.of(2014, 10, 17));
+        unpaidLeave.setStartDate(LocalDate.of(2014, OCTOBER, 17));
+        unpaidLeave.setEndDate(LocalDate.of(2014, OCTOBER, 17));
         unpaidLeave.setStatus(WAITING);
 
         final Application unpaidLeaveAllowed = anyApplication();
         unpaidLeaveAllowed.setVacationType(createVacationType(1L, UNPAIDLEAVE, new StaticMessageSource()));
-        unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 20));
-        unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 20));
+        unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 20));
+        unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 20));
         unpaidLeaveAllowed.setStatus(ALLOWED);
 
         final Application overtimeLeave = anyApplication();
         overtimeLeave.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        overtimeLeave.setStartDate(LocalDate.of(2014, 10, 21));
-        overtimeLeave.setEndDate(LocalDate.of(2014, 10, 21));
+        overtimeLeave.setStartDate(LocalDate.of(2014, OCTOBER, 21));
+        overtimeLeave.setEndDate(LocalDate.of(2014, OCTOBER, 21));
         overtimeLeave.setStatus(WAITING);
 
         final Application overtimeLeaveAllowed = anyApplication();
         overtimeLeaveAllowed.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 22));
-        overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 22));
+        overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 22));
+        overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 22));
         overtimeLeaveAllowed.setStatus(ALLOWED);
 
         final Application overtimeLeaveRequestCancellation = anyApplication();
         overtimeLeaveRequestCancellation.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        overtimeLeaveRequestCancellation.setStartDate(LocalDate.of(2014, 10, 22));
-        overtimeLeaveRequestCancellation.setEndDate(LocalDate.of(2014, 10, 22));
+        overtimeLeaveRequestCancellation.setStartDate(LocalDate.of(2014, OCTOBER, 22));
+        overtimeLeaveRequestCancellation.setEndDate(LocalDate.of(2014, OCTOBER, 22));
         overtimeLeaveRequestCancellation.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final List<Application> applications = Arrays.asList(holiday, holidayAllowed, holidayAllowedRequestCancellation,
@@ -164,8 +168,8 @@ class YearlyUsedDaysSummaryTest {
     void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        LocalDate startDate = LocalDate.of(2013, 12, 24);
-        LocalDate endDate = LocalDate.of(2014, 1, 6);
+        LocalDate startDate = LocalDate.of(2013, DECEMBER, 24);
+        LocalDate endDate = LocalDate.of(2014, JANUARY, 6);
 
         // 3 days in 2013, 2 days in 2014
         Application holiday = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()), startDate, endDate, DayLength.FULL);
@@ -190,20 +194,20 @@ class YearlyUsedDaysSummaryTest {
 
         final Application holiday = anyApplication();
         holiday.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holiday.setStartDate(LocalDate.of(2014, 10, 13));
-        holiday.setEndDate(LocalDate.of(2014, 10, 13));
+        holiday.setStartDate(LocalDate.of(2014, OCTOBER, 13));
+        holiday.setEndDate(LocalDate.of(2014, OCTOBER, 13));
         holiday.setStatus(WAITING);
 
         final Application holidayAllowed = anyApplication();
         holidayAllowed.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
-        holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
+        holidayAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 14));
+        holidayAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 14));
         holidayAllowed.setStatus(ALLOWED);
 
         final Application holidayTemporaryAllowed = anyApplication();
         holidayTemporaryAllowed.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 15));
-        holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 15));
+        holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, OCTOBER, 15));
+        holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, OCTOBER, 15));
         holidayTemporaryAllowed.setStatus(TEMPORARY_ALLOWED);
 
         List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);

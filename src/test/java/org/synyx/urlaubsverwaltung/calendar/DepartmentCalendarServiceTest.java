@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDate.parse;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MAY;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,7 +96,7 @@ class DepartmentCalendarServiceTest {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1L);
-        department.setCreatedAt(LocalDate.of(2018, 1, 1));
+        department.setCreatedAt(LocalDate.of(2018, JANUARY, 1));
         when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -272,7 +275,7 @@ class DepartmentCalendarServiceTest {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1L);
-        final LocalDate createdAt = LocalDate.of(2018, 5, 1);
+        final LocalDate createdAt = LocalDate.of(2018, MAY, 1);
         department.setCreatedAt(createdAt);
         when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
@@ -304,7 +307,7 @@ class DepartmentCalendarServiceTest {
 
         final Department department = createDepartment("DepartmentName");
         department.setId(1L);
-        final LocalDate createdAt = LocalDate.of(2018, 5, 1);
+        final LocalDate createdAt = LocalDate.of(2018, MAY, 1);
         department.setCreatedAt(createdAt);
         when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
@@ -321,10 +324,10 @@ class DepartmentCalendarServiceTest {
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
         final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
-        when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15))).thenReturn(fullDayAbsences);
+        when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), LocalDate.of(2018, JUNE, 15))).thenReturn(fullDayAbsences);
 
         departmentCalendarService.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
-        verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15));
+        verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, JUNE, 15));
     }
 
     @Test

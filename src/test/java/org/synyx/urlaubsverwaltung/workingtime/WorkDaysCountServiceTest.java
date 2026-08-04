@@ -30,8 +30,10 @@ import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -69,8 +71,8 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2010, 12, 17);
-        final LocalDate endDate = LocalDate.of(2010, 12, 31);
+        final LocalDate startDate = LocalDate.of(2010, DECEMBER, 17);
+        final LocalDate endDate = LocalDate.of(2010, DECEMBER, 31);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -91,8 +93,8 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2009, 12, 17);
-        final LocalDate endDate = LocalDate.of(2009, 12, 31);
+        final LocalDate startDate = LocalDate.of(2009, DECEMBER, 17);
+        final LocalDate endDate = LocalDate.of(2009, DECEMBER, 31);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -112,15 +114,15 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Mon Jan 8 to Fri Jan 12, 2024
-        final LocalDate startDate = LocalDate.of(2024, 1, 8);
-        final LocalDate endDate = LocalDate.of(2024, 1, 12);
+        final LocalDate startDate = LocalDate.of(2024, JANUARY, 8);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 12);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         // Wed Jan 10 intentionally not covered by any DateRange
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class)))
             .thenReturn(Map.of(
-                new DateRange(startDate, LocalDate.of(2024, 1, 9)), workingTime,
-                new DateRange(LocalDate.of(2024, 1, 11), endDate), workingTime
+                new DateRange(startDate, LocalDate.of(2024, JANUARY, 9)), workingTime,
+                new DateRange(LocalDate.of(2024, JANUARY, 11), endDate), workingTime
             ));
 
         // Mon, Tue, (Wed skipped — no WorkingTime), Thu, Fri = 4
@@ -132,9 +134,9 @@ class WorkDaysCountServiceTest {
     void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2022, 1, 10);
-        final LocalDate midDate = LocalDate.of(2022, 1, 17);
-        final LocalDate endDate = LocalDate.of(2022, 1, 23);
+        final LocalDate startDate = LocalDate.of(2022, JANUARY, 10);
+        final LocalDate midDate = LocalDate.of(2022, JANUARY, 17);
+        final LocalDate endDate = LocalDate.of(2022, JANUARY, 23);
 
         final WorkingTime workingTimeFullWeek = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         final WorkingTime workingTimeHalfWeek = createWorkingTime(person, midDate, MONDAY, TUESDAY, WEDNESDAY);
@@ -155,9 +157,9 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Period: Dec 20, 2023 (Wednesday) - Jan 5, 2024 (Friday)
-        final LocalDate startDate = LocalDate.of(2023, 12, 20);
-        final LocalDate midDate = LocalDate.of(2024, 1, 1);
-        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final LocalDate startDate = LocalDate.of(2023, DECEMBER, 20);
+        final LocalDate midDate = LocalDate.of(2024, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2024, JANUARY, 5);
 
         // First period: Baden-Wuerttemberg (Dec 20, 2023 - Dec 31, 2023)
         final WorkingTime workingTimeBW = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
@@ -206,8 +208,8 @@ class WorkDaysCountServiceTest {
     void getWorkDaysWithHalfDayMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2011, 1, 4);
-        final LocalDate endDate = LocalDate.of(2011, 1, 4);
+        final LocalDate startDate = LocalDate.of(2011, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2011, JANUARY, 4);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -220,8 +222,8 @@ class WorkDaysCountServiceTest {
     void getWorkDaysWithHalfDaysMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2011, 1, 4);
-        final LocalDate endDate = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2011, JANUARY, 8);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -234,8 +236,8 @@ class WorkDaysCountServiceTest {
     void getWorkDaysWithHalfDayNoon() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2011, 1, 4);
-        final LocalDate endDate = LocalDate.of(2011, 1, 4);
+        final LocalDate startDate = LocalDate.of(2011, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2011, JANUARY, 4);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -248,8 +250,8 @@ class WorkDaysCountServiceTest {
     void getWorkDaysWithHalfDaysNoon() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2011, 1, 4);
-        final LocalDate endDate = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, JANUARY, 4);
+        final LocalDate endDate = LocalDate.of(2011, JANUARY, 8);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -264,8 +266,8 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // start date is Sunday, end date Saturday
-        final LocalDate startDate = LocalDate.of(2011, 1, 2);
-        final LocalDate endDate = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, JANUARY, 2);
+        final LocalDate endDate = LocalDate.of(2011, JANUARY, 8);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -279,8 +281,8 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Labour Day (1st May)
-        final LocalDate startDate = LocalDate.of(2009, 4, 27);
-        final LocalDate endDate = LocalDate.of(2009, 5, 2);
+        final LocalDate startDate = LocalDate.of(2009, APRIL, 27);
+        final LocalDate endDate = LocalDate.of(2009, MAY, 2);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
@@ -296,8 +298,8 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // start date and end date are not in the same year
-        final LocalDate startDate = LocalDate.of(2011, 12, 26);
-        final LocalDate endDate = LocalDate.of(2012, 1, 15);
+        final LocalDate startDate = LocalDate.of(2011, DECEMBER, 26);
+        final LocalDate endDate = LocalDate.of(2012, JANUARY, 15);
 
         final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));

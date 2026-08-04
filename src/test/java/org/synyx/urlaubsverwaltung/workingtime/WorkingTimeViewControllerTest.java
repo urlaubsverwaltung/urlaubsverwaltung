@@ -34,6 +34,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.MONDAY;
+import static java.time.Month.APRIL;
+import static java.time.Month.MARCH;
+import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -121,7 +124,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, 10, 2), GERMANY_BERLIN, false);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, OCTOBER, 2), GERMANY_BERLIN, false);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
@@ -132,7 +135,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
-            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, 10, 2))))))
+            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, OCTOBER, 2))))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validTo", equalTo(null)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
@@ -148,7 +151,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, 10, 2), GERMANY_BERLIN, false);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, OCTOBER, 2), GERMANY_BERLIN, false);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
 
         // this results in `null` in the implementation at time of writing this.
@@ -238,11 +241,11 @@ class WorkingTimeViewControllerTest {
 
     private static Stream<Arguments> dateInputAndLocalDateTuple() {
         return Stream.of(
-            Arguments.of("25.03.2022", LocalDate.of(2022, 3, 25)),
-            Arguments.of("25.03.22", LocalDate.of(2022, 3, 25)),
-            Arguments.of("25.3.2022", LocalDate.of(2022, 3, 25)),
-            Arguments.of("25.3.22", LocalDate.of(2022, 3, 25)),
-            Arguments.of("1.4.22", LocalDate.of(2022, 4, 1))
+            Arguments.of("25.03.2022", LocalDate.of(2022, MARCH, 25)),
+            Arguments.of("25.03.22", LocalDate.of(2022, MARCH, 25)),
+            Arguments.of("25.3.2022", LocalDate.of(2022, MARCH, 25)),
+            Arguments.of("25.3.22", LocalDate.of(2022, MARCH, 25)),
+            Arguments.of("1.4.22", LocalDate.of(2022, APRIL, 1))
         );
     }
 

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.MARCH;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,15 +90,15 @@ class SickNoteMailServiceTest {
         final SickNote sickNoteA = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 4, 1))
-            .endDate(LocalDate.of(2022, 4, 13))
+            .startDate(LocalDate.of(2022, APRIL, 1))
+            .endDate(LocalDate.of(2022, APRIL, 13))
             .build();
 
         final SickNote sickNoteB = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 4, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, APRIL, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         when(sickNoteService.getSickNotesReachingEndOfSickPay()).thenReturn(asList(sickNoteA, sickNoteB));
@@ -105,18 +107,18 @@ class SickNoteMailServiceTest {
 
         final Map<String, Object> modelA = new HashMap<>();
         modelA.put("maximumSickPayDays", 5);
-        modelA.put("endOfSickPayDays", LocalDate.of(2022, 4, 5));
+        modelA.put("endOfSickPayDays", LocalDate.of(2022, APRIL, 5));
         modelA.put("sickPayDaysEndedDaysAgo", 4L);
         modelA.put("sickNotePayFrom", sickNoteA.getStartDate());
-        modelA.put("sickNotePayTo", LocalDate.of(2022, 4, 5));
+        modelA.put("sickNotePayTo", LocalDate.of(2022, APRIL, 5));
         modelA.put("sickNote", sickNoteA);
 
         final Map<String, Object> modelB = new HashMap<>();
         modelB.put("maximumSickPayDays", 5);
-        modelB.put("endOfSickPayDays", LocalDate.of(2022, 4, 14));
+        modelB.put("endOfSickPayDays", LocalDate.of(2022, APRIL, 14));
         modelB.put("sickPayDaysEndedDaysAgo", 13L);
         modelB.put("sickNotePayFrom", sickNoteB.getStartDate());
-        modelB.put("sickNotePayTo", LocalDate.of(2022, 4, 14));
+        modelB.put("sickNotePayTo", LocalDate.of(2022, APRIL, 14));
         modelB.put("sickNote", sickNoteB);
 
         sut.sendEndOfSickPayNotification();
@@ -171,8 +173,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendCreatedToSickPerson(sickNote);
@@ -203,8 +205,8 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 4, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, APRIL, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .dayLength(DayLength.FULL)
             .build();
 
@@ -243,8 +245,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendEditedToSickPerson(sickNote, management);
@@ -277,8 +279,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT))
@@ -312,8 +314,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendCancelledToSickPerson(sickNote, management);
@@ -337,8 +339,8 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 4, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, APRIL, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -381,8 +383,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
             .applier(management1)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         final String comment = "Some comment";
@@ -409,8 +411,8 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendSickNoteSubmittedNotificationToSickPerson(sickNote);
@@ -439,8 +441,8 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendSickNoteAcceptedNotificationToSickPerson(sickNote, management);
@@ -472,8 +474,8 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
@@ -510,8 +512,8 @@ class SickNoteMailServiceTest {
             .id(2L)
             .person(person)
 
-            .startDate(LocalDate.of(2022, 3, 10))
-            .endDate(LocalDate.of(2022, 4, 20))
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
             .build();
 
         sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management1);

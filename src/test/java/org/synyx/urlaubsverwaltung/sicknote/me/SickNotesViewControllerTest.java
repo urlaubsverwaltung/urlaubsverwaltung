@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -76,7 +79,7 @@ class SickNotesViewControllerTest {
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    private final Clock clock = Clock.fixed(ZonedDateTime.of(LocalDate.of(2022, 6, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+    private final Clock clock = Clock.fixed(ZonedDateTime.of(LocalDate.of(2022, JUNE, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
     @BeforeEach
     void setUp() {
@@ -193,8 +196,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(42L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -468,8 +471,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(SUBMITTED)
@@ -503,8 +506,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -542,8 +545,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -581,8 +584,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -620,8 +623,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -659,8 +662,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -695,8 +698,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -730,8 +733,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote1 = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 3, 1))
-            .endDate(LocalDate.of(2022, 3, 3))
+            .startDate(LocalDate.of(2022, MARCH, 1))
+            .endDate(LocalDate.of(2022, MARCH, 3))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -740,8 +743,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote2 = SickNote.builder()
             .id(2L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 1))
-            .endDate(LocalDate.of(2022, 1, 3))
+            .startDate(LocalDate.of(2022, JANUARY, 1))
+            .endDate(LocalDate.of(2022, JANUARY, 3))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -779,8 +782,8 @@ class SickNotesViewControllerTest {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 1, 2))
-            .endDate(LocalDate.of(2022, 1, 4))
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
             .dayLength(FULL)
             .sickNoteType(sickNoteType)
             .status(ACTIVE)
@@ -800,8 +803,8 @@ class SickNotesViewControllerTest {
             .andExpect(model().attribute("sickNotes",
                 hasItems(
                     hasProperty("id", is(1L)),
-                    hasProperty("startDate", is(LocalDate.of(2022, 1, 2))),
-                    hasProperty("endDate", is(LocalDate.of(2022, 1, 4))),
+                    hasProperty("startDate", is(LocalDate.of(2022, JANUARY, 2))),
+                    hasProperty("endDate", is(LocalDate.of(2022, JANUARY, 4))),
                     hasProperty("dayLength", is(FULL)),
                     hasProperty("status", is(ACTIVE)),
                     hasProperty("allowedToEdit", is(true)),

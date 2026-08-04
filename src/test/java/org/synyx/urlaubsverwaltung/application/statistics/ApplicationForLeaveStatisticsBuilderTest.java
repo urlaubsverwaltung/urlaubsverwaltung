@@ -38,6 +38,7 @@ import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.NOVEMBER;
 import static java.time.Month.OCTOBER;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -80,7 +81,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.build(List.of(new Person()), of(2014, 1, 1), of(2015, 1, 1), List.of(type)));
+            .isThrownBy(() -> sut.build(List.of(new Person()), of(2014, JANUARY, 1), of(2015, JANUARY, 1), List.of(type)));
     }
 
     @Test
@@ -108,8 +109,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
         applicationForLeave.setVacationType(vacationTypes.getFirst());
-        applicationForLeave.setStartDate(of(2014, 10, 13));
-        applicationForLeave.setEndDate(of(2014, 10, 13));
+        applicationForLeave.setStartDate(of(2014, OCTOBER, 13));
+        applicationForLeave.setEndDate(of(2014, OCTOBER, 13));
         applicationForLeave.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(applicationForLeave);
@@ -167,8 +168,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
         applicationForLeave.setVacationType(vacationTypes.getFirst());
-        applicationForLeave.setStartDate(of(2014, 10, 13));
-        applicationForLeave.setEndDate(of(2014, 10, 13));
+        applicationForLeave.setStartDate(of(2014, OCTOBER, 13));
+        applicationForLeave.setEndDate(of(2014, OCTOBER, 13));
         applicationForLeave.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(applicationForLeave);
@@ -224,8 +225,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
         applicationForLeave.setVacationType(vacationTypes.getFirst());
-        applicationForLeave.setStartDate(of(2014, 10, 13));
-        applicationForLeave.setEndDate(of(2014, 10, 13));
+        applicationForLeave.setStartDate(of(2014, OCTOBER, 13));
+        applicationForLeave.setEndDate(of(2014, OCTOBER, 13));
         applicationForLeave.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(applicationForLeave);
@@ -291,8 +292,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
         applicationForLeave.setVacationType(vacationTypes.getFirst());
-        applicationForLeave.setStartDate(of(2014, 10, 13));
-        applicationForLeave.setEndDate(of(2014, 10, 13));
+        applicationForLeave.setStartDate(of(2014, OCTOBER, 13));
+        applicationForLeave.setEndDate(of(2014, OCTOBER, 13));
         applicationForLeave.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(applicationForLeave);
@@ -357,56 +358,56 @@ class ApplicationForLeaveStatisticsBuilderTest {
         holidayWaiting.setPerson(person);
         holidayWaiting.setDayLength(FULL);
         holidayWaiting.setVacationType(vacationTypes.getFirst());
-        holidayWaiting.setStartDate(of(2014, 10, 13));
-        holidayWaiting.setEndDate(of(2014, 10, 13));
+        holidayWaiting.setStartDate(of(2014, OCTOBER, 13));
+        holidayWaiting.setEndDate(of(2014, OCTOBER, 13));
         holidayWaiting.setStatus(WAITING);
 
         final Application holidayTemporaryAllowed = new Application();
         holidayTemporaryAllowed.setPerson(person);
         holidayTemporaryAllowed.setDayLength(FULL);
         holidayTemporaryAllowed.setVacationType(vacationTypes.getFirst());
-        holidayTemporaryAllowed.setStartDate(of(2014, 10, 12));
-        holidayTemporaryAllowed.setEndDate(of(2014, 10, 12));
+        holidayTemporaryAllowed.setStartDate(of(2014, OCTOBER, 12));
+        holidayTemporaryAllowed.setEndDate(of(2014, OCTOBER, 12));
         holidayTemporaryAllowed.setStatus(TEMPORARY_ALLOWED);
 
         final Application holidayAllowed = new Application();
         holidayAllowed.setPerson(person);
         holidayAllowed.setDayLength(FULL);
         holidayAllowed.setVacationType(vacationTypes.getFirst());
-        holidayAllowed.setStartDate(of(2014, 10, 14));
-        holidayAllowed.setEndDate(of(2014, 10, 14));
+        holidayAllowed.setStartDate(of(2014, OCTOBER, 14));
+        holidayAllowed.setEndDate(of(2014, OCTOBER, 14));
         holidayAllowed.setStatus(ALLOWED);
 
         final Application holidayAllowedCancellationRequested = new Application();
         holidayAllowedCancellationRequested.setPerson(person);
         holidayAllowedCancellationRequested.setDayLength(FULL);
         holidayAllowedCancellationRequested.setVacationType(vacationTypes.getFirst());
-        holidayAllowedCancellationRequested.setStartDate(of(2014, 10, 15));
-        holidayAllowedCancellationRequested.setEndDate(of(2014, 10, 15));
+        holidayAllowedCancellationRequested.setStartDate(of(2014, OCTOBER, 15));
+        holidayAllowedCancellationRequested.setEndDate(of(2014, OCTOBER, 15));
         holidayAllowedCancellationRequested.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final Application specialLeaveWaiting = new Application();
         specialLeaveWaiting.setPerson(person);
         specialLeaveWaiting.setDayLength(FULL);
         specialLeaveWaiting.setVacationType(vacationTypes.get(1));
-        specialLeaveWaiting.setStartDate(of(2014, 10, 15));
-        specialLeaveWaiting.setEndDate(of(2014, 10, 15));
+        specialLeaveWaiting.setStartDate(of(2014, OCTOBER, 15));
+        specialLeaveWaiting.setEndDate(of(2014, OCTOBER, 15));
         specialLeaveWaiting.setStatus(WAITING);
 
         final Application unpaidLeaveAllowed = new Application();
         unpaidLeaveAllowed.setPerson(person);
         unpaidLeaveAllowed.setDayLength(FULL);
         unpaidLeaveAllowed.setVacationType(vacationTypes.get(2));
-        unpaidLeaveAllowed.setStartDate(of(2014, 10, 16));
-        unpaidLeaveAllowed.setEndDate(of(2014, 10, 16));
+        unpaidLeaveAllowed.setStartDate(of(2014, OCTOBER, 16));
+        unpaidLeaveAllowed.setEndDate(of(2014, OCTOBER, 16));
         unpaidLeaveAllowed.setStatus(ALLOWED);
 
         final Application overTimeWaiting = new Application();
         overTimeWaiting.setPerson(person);
         overTimeWaiting.setDayLength(FULL);
         overTimeWaiting.setVacationType(vacationTypes.get(3));
-        overTimeWaiting.setStartDate(of(2014, 11, 3));
-        overTimeWaiting.setEndDate(of(2014, 11, 3));
+        overTimeWaiting.setStartDate(of(2014, NOVEMBER, 3));
+        overTimeWaiting.setEndDate(of(2014, NOVEMBER, 3));
         overTimeWaiting.setStatus(WAITING);
 
         final List<Application> applications = List.of(holidayWaiting, holidayTemporaryAllowed, holidayAllowed,

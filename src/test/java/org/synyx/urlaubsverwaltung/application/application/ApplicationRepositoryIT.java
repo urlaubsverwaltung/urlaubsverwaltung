@@ -18,6 +18,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.MAY;
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -156,7 +158,7 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
-        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED), LocalDate.of(2020, 10, 3));
+        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED), LocalDate.of(2020, OCTOBER, 3));
         assertThat(allowedApplications)
             .contains(fullDayOvertimeReduction, fullDayHoliday)
             .hasSize(2);
@@ -198,7 +200,7 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
-        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED, REJECTED), LocalDate.of(2020, 10, 3));
+        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED, REJECTED), LocalDate.of(2020, OCTOBER, 3));
         assertThat(allowedApplications)
             .contains(fullDayOvertimeReduction, fullDayHoliday, rejectedOvertimeReduction)
             .hasSize(3);
@@ -216,7 +218,7 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
-        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(), LocalDate.of(2020, 10, 3));
+        final List<ApplicationEntity> allowedApplications = sut.findByStatusInAndEndDateGreaterThanEqual(List.of(), LocalDate.of(2020, OCTOBER, 3));
         assertThat(allowedApplications)
             .isEmpty();
     }
@@ -423,8 +425,8 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         holidayReplacementEntity.setPerson(holidayReplacement);
 
         // correct
-        final LocalDate from = LocalDate.of(2020, 5, 3);
-        final LocalDate to = LocalDate.of(2020, 5, 10);
+        final LocalDate from = LocalDate.of(2020, MAY, 3);
+        final LocalDate to = LocalDate.of(2020, MAY, 10);
         final ApplicationEntity waitingApplication = applicationEntity(person, getVacationType(OVERTIME), from, to, FULL);
         waitingApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         waitingApplication.setStatus(WAITING);
@@ -437,8 +439,8 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         sut.save(allowedApplication);
 
         // other date
-        final LocalDate otherStartDate = LocalDate.of(2020, 5, 3);
-        final LocalDate otherEndDate = LocalDate.of(2020, 5, 4);
+        final LocalDate otherStartDate = LocalDate.of(2020, MAY, 3);
+        final LocalDate otherEndDate = LocalDate.of(2020, MAY, 4);
         final ApplicationEntity wrongDateApplication = applicationEntity(person, getVacationType(OVERTIME), otherStartDate, otherEndDate, FULL);
         wrongDateApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         wrongDateApplication.setStatus(WAITING);
@@ -453,7 +455,7 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         otherHolidayReplacementApplication.setStatus(WAITING);
         sut.save(otherHolidayReplacementApplication);
 
-        final LocalDate requestDate = LocalDate.of(2020, 5, 5);
+        final LocalDate requestDate = LocalDate.of(2020, MAY, 5);
         final List<ApplicationStatus> requestStatus = List.of(WAITING);
         final List<ApplicationEntity> applications = sut.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, requestDate, requestStatus);
         assertThat(applications).hasSize(1).contains(waitingApplication);
@@ -465,19 +467,19 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         // yesterday
-        final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
+        final LocalDate yesterdayDates = LocalDate.of(2020, MAY, 3);
         final ApplicationEntity yesterdayApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), yesterdayDates, yesterdayDates, FULL);
         yesterdayApplication.setStatus(ALLOWED);
         sut.save(yesterdayApplication);
 
         // today
-        final LocalDate todayDates = LocalDate.of(2020, 5, 4);
+        final LocalDate todayDates = LocalDate.of(2020, MAY, 4);
         final ApplicationEntity todayApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), todayDates, todayDates, FULL);
         todayApplication.setStatus(ALLOWED);
         sut.save(todayApplication);
 
         // tomorrow
-        final LocalDate tomorrowAllowedDates = LocalDate.of(2020, 5, 5);
+        final LocalDate tomorrowAllowedDates = LocalDate.of(2020, MAY, 5);
         final ApplicationEntity tomorrowDateApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
         tomorrowDateApplication.setStatus(ALLOWED);
         sut.save(tomorrowDateApplication);
@@ -495,14 +497,14 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         sut.save(tomorrowWaitingDateApplication);
 
         // day after tomorrow
-        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, 5, 6);
+        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, MAY, 6);
 
         final ApplicationEntity dayAfterTomorrowDateApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), dayAfterTomorrowAllowedDates, dayAfterTomorrowAllowedDates, FULL);
         dayAfterTomorrowDateApplication.setStatus(ALLOWED);
         sut.save(dayAfterTomorrowDateApplication);
 
-        final LocalDate requestedStartDateFrom = LocalDate.of(2020, 5, 4);
-        final LocalDate requestedStartDateTo = LocalDate.of(2020, 5, 5);
+        final LocalDate requestedStartDateFrom = LocalDate.of(2020, MAY, 4);
+        final LocalDate requestedStartDateTo = LocalDate.of(2020, MAY, 5);
         final List<ApplicationStatus> requestStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
         final List<ApplicationEntity> applications = sut.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(requestStatuses, requestedStartDateFrom, requestedStartDateTo);
         assertThat(applications)
@@ -519,20 +521,20 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         holidayReplacement.setNote("Note");
 
         // yesterday
-        final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
+        final LocalDate yesterdayDates = LocalDate.of(2020, MAY, 3);
         final ApplicationEntity yesterdayApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), yesterdayDates, yesterdayDates, FULL);
         yesterdayApplication.setHolidayReplacements(List.of(holidayReplacement));
         yesterdayApplication.setStatus(ALLOWED);
         sut.save(yesterdayApplication);
 
         // today
-        final LocalDate todayDates = LocalDate.of(2020, 5, 4);
+        final LocalDate todayDates = LocalDate.of(2020, MAY, 4);
         final ApplicationEntity todayApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), todayDates, todayDates, FULL);
         todayApplication.setStatus(ALLOWED);
         sut.save(todayApplication);
 
         // tomorrow
-        final LocalDate tomorrowAllowedDates = LocalDate.of(2020, 5, 5);
+        final LocalDate tomorrowAllowedDates = LocalDate.of(2020, MAY, 5);
 
         final ApplicationEntity tomorrowDateApplicationNoHolidayReplacement = applicationEntity(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
         tomorrowDateApplicationNoHolidayReplacement.setStatus(ALLOWED);
@@ -564,15 +566,15 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         sut.save(tomorrowWaitingDateApplication);
 
         // day after tomorrow
-        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, 5, 6);
+        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, MAY, 6);
 
         final ApplicationEntity dayAfterTomorrowDateApplication = applicationEntity(savedPerson, getVacationType(HOLIDAY), dayAfterTomorrowAllowedDates, dayAfterTomorrowAllowedDates, FULL);
         dayAfterTomorrowDateApplication.setHolidayReplacements(List.of(holidayReplacement));
         dayAfterTomorrowDateApplication.setStatus(ALLOWED);
         sut.save(dayAfterTomorrowDateApplication);
 
-        final LocalDate requestedStartDateFrom = LocalDate.of(2020, 5, 4);
-        final LocalDate requestedStartDateTo = LocalDate.of(2020, 5, 5);
+        final LocalDate requestedStartDateFrom = LocalDate.of(2020, MAY, 4);
+        final LocalDate requestedStartDateTo = LocalDate.of(2020, MAY, 5);
         final List<ApplicationStatus> requestStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
         final List<ApplicationEntity> applications = sut.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(requestStatuses, requestedStartDateFrom, requestedStartDateTo);
         assertThat(applications)

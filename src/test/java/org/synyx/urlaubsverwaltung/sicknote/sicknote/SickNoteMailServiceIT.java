@@ -28,6 +28,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.FEBRUARY;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
@@ -77,8 +79,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .build();
 
@@ -159,8 +161,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -206,8 +208,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -248,8 +250,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .build();
 
@@ -297,8 +299,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(editor)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -353,8 +355,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(management)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -395,8 +397,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .build();
 
@@ -443,10 +445,10 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(office1)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
-            .aubStartDate(LocalDate.of(2022, 2, 2))
-            .aubEndDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
+            .aubStartDate(LocalDate.of(2022, FEBRUARY, 2))
+            .aubEndDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteType)
             .build();
@@ -495,8 +497,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -543,8 +545,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -590,8 +592,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
@@ -640,8 +642,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .id(1L)
             .person(person)
             .applier(person)
-            .startDate(LocalDate.of(2022, 2, 1))
-            .endDate(LocalDate.of(2022, 4, 1))
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();

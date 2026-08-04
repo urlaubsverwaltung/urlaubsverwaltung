@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 
@@ -19,8 +20,8 @@ class SickNoteConvertFormTest {
     void ensureCorrectProvidedValuesFromSickNote() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate startDate = LocalDate.of(2014, 1, 1);
-        final LocalDate endDate = LocalDate.of(2014, 1, 10);
+        final LocalDate startDate = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2014, JANUARY, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, DayLength.NOON);
 
         final SickNoteConvertForm sut = new SickNoteConvertForm(sickNote);

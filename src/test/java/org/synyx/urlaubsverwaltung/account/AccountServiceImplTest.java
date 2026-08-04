@@ -18,6 +18,8 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,7 +121,7 @@ class AccountServiceImplTest {
 
         final int year = 2012;
         final LocalDate from = Year.of(year).atDay(1);
-        final LocalDate to = LocalDate.of(year, 1, 1).with(lastDayOfYear());
+        final LocalDate to = LocalDate.of(year, JANUARY, 1).with(lastDayOfYear());
         final LocalDate expiryDate = LocalDate.of(year, APRIL, 1);
 
         final AccountEntity accountEntity1 = new AccountEntity(person, from, to, null, expiryDate,
@@ -289,8 +291,8 @@ class AccountServiceImplTest {
     void ensureSave() {
 
         final Account account = new Account();
-        account.setValidFrom(LocalDate.of(2022, 1, 1));
-        account.setValidTo(LocalDate.of(2022, 12, 31));
+        account.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        account.setValidTo(LocalDate.of(2022, DECEMBER, 31));
         account.setExpiryDateLocally(LocalDate.of(2022, JUNE, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         account.setDoRemainingVacationDaysExpireGlobally(false);
@@ -313,8 +315,8 @@ class AccountServiceImplTest {
         assertThat(captor.getValue()).satisfies(entity -> {
             assertThat(entity.getYear()).isEqualTo(2022);
             assertThat(entity.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
-            assertThat(entity.getValidFrom()).isEqualTo(LocalDate.of(2022, 1, 1));
-            assertThat(entity.getValidTo()).isEqualTo(LocalDate.of(2022, 12, 31));
+            assertThat(entity.getValidFrom()).isEqualTo(LocalDate.of(2022, JANUARY, 1));
+            assertThat(entity.getValidTo()).isEqualTo(LocalDate.of(2022, DECEMBER, 31));
             assertThat(entity.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
             assertThat(entity.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(20));
             assertThat(entity.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(10));
@@ -324,8 +326,8 @@ class AccountServiceImplTest {
 
         assertThat(actual.getYear()).isEqualTo(2022);
         assertThat(actual.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
-        assertThat(actual.getValidFrom()).isEqualTo(LocalDate.of(2022, 1, 1));
-        assertThat(actual.getValidTo()).isEqualTo(LocalDate.of(2022, 12, 31));
+        assertThat(actual.getValidFrom()).isEqualTo(LocalDate.of(2022, JANUARY, 1));
+        assertThat(actual.getValidTo()).isEqualTo(LocalDate.of(2022, DECEMBER, 31));
         assertThat(actual.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
         assertThat(actual.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(20));
         assertThat(actual.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(10));
@@ -337,8 +339,8 @@ class AccountServiceImplTest {
     void ensureToCalculateGlobalExpiryDateAfterSaveOnMapping() {
 
         final Account account = new Account();
-        account.setValidFrom(LocalDate.of(2022, 1, 1));
-        account.setValidTo(LocalDate.of(2022, 12, 31));
+        account.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        account.setValidTo(LocalDate.of(2022, DECEMBER, 31));
         account.setExpiryDateLocally(null);
         account.setDoRemainingVacationDaysExpireLocally(true);
         account.setDoRemainingVacationDaysExpireGlobally(false);

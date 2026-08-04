@@ -22,6 +22,13 @@ import java.util.stream.Stream;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.APRIL;
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
+import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -44,8 +51,8 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureNextWorkingFollowingTo() {
 
-            final LocalDate from = LocalDate.of(2024, 7, 1);
-            final LocalDate to = LocalDate.of(2024, 7, 31);
+            final LocalDate from = LocalDate.of(2024, JULY, 1);
+            final LocalDate to = LocalDate.of(2024, JULY, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> {
                 if (List.of(WEDNESDAY, SATURDAY, SUNDAY).contains(date.getDayOfWeek())) {
@@ -55,27 +62,27 @@ class WorkingTimeCalendarTest {
                 }
             });
 
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 30))).hasValue(LocalDate.of(2024, 7, 1));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 15))).hasValue(LocalDate.of(2024, 7, 16));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 16))).hasValue(LocalDate.of(2024, 7, 18));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 17))).hasValue(LocalDate.of(2024, 7, 18));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 18))).hasValue(LocalDate.of(2024, 7, 19));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 19))).hasValue(LocalDate.of(2024, 7, 22));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 20))).hasValue(LocalDate.of(2024, 7, 22));
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 21))).hasValue(LocalDate.of(2024, 7, 22));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JUNE, 30))).hasValue(LocalDate.of(2024, JULY, 1));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 15))).hasValue(LocalDate.of(2024, JULY, 16));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 16))).hasValue(LocalDate.of(2024, JULY, 18));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 17))).hasValue(LocalDate.of(2024, JULY, 18));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 18))).hasValue(LocalDate.of(2024, JULY, 19));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 19))).hasValue(LocalDate.of(2024, JULY, 22));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 20))).hasValue(LocalDate.of(2024, JULY, 22));
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 21))).hasValue(LocalDate.of(2024, JULY, 22));
         }
 
         @Test
         void ensureNextWorkingFollowingToReturnsEmptyOptionalWhenNotInWorkingDays() {
 
-            final LocalDate from = LocalDate.of(2024, 7, 1);
-            final LocalDate to = LocalDate.of(2024, 7, 31);
+            final LocalDate from = LocalDate.of(2024, JULY, 1);
+            final LocalDate to = LocalDate.of(2024, JULY, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             // 2024-06-30 would return 2024-07-01 -> use 2024-06-30 to assert empty value
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 29))).isEmpty();
-            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 31))).isEmpty();
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JUNE, 29))).isEmpty();
+            assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, JULY, 31))).isEmpty();
         }
     }
 
@@ -85,8 +92,8 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureWorkingTimeForApplicationOverTwoDaysWhenWorkingFull() {
 
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
@@ -103,8 +110,8 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureWorkingTimeForApplicationHalfDayWhenWorkingFull() {
 
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
@@ -122,8 +129,8 @@ class WorkingTimeCalendarTest {
         @MethodSource("morningAndNoonWorkingTimeInformation")
         void ensureWorkingTimeForApplicationFullDayWhenWorkingWith(WorkingDayInformation workingDayInformation) {
 
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
@@ -137,31 +144,31 @@ class WorkingTimeCalendarTest {
 
         @Test
         void ensureWorkingTimeForLocalDateWhenWorkingFull() {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
-            final Optional<BigDecimal> actual = sut.workingTime(LocalDate.of(2022, 8, 10));
+            final Optional<BigDecimal> actual = sut.workingTime(LocalDate.of(2022, AUGUST, 10));
 
             assertThat(actual).hasValue(BigDecimal.valueOf(1));
         }
 
         @Test
         void ensureWorkingTimeForLocalDateReturnsEmptyOptionalForDateOutOfRange() {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
-            assertThat(sut.workingTime(LocalDate.of(2022, 7, 31))).isEmpty();
-            assertThat(sut.workingTime(LocalDate.of(2022, 9, 1))).isEmpty();
+            assertThat(sut.workingTime(LocalDate.of(2022, JULY, 31))).isEmpty();
+            assertThat(sut.workingTime(LocalDate.of(2022, SEPTEMBER, 1))).isEmpty();
         }
 
         @Test
         void ensureWorkingTimeForDateRangeWhenWorkingFull() {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
@@ -171,8 +178,8 @@ class WorkingTimeCalendarTest {
 
         @Test
         void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingFull() {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
@@ -182,8 +189,8 @@ class WorkingTimeCalendarTest {
         @ParameterizedTest
         @MethodSource("morningAndNoonWorkingTimeInformation")
         void ensureWorkingTimeForDateRangeWhenWorkingNotFull(WorkingDayInformation workingDayInformation) {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
@@ -194,8 +201,8 @@ class WorkingTimeCalendarTest {
         @ParameterizedTest
         @MethodSource("morningAndNoonWorkingTimeInformation")
         void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingNotFull(WorkingDayInformation workingDayInformation) {
-            final LocalDate from = LocalDate.of(2022, 8, 1);
-            final LocalDate to = LocalDate.of(2022, 8, 31);
+            final LocalDate from = LocalDate.of(2022, AUGUST, 1);
+            final LocalDate to = LocalDate.of(2022, AUGUST, 31);
 
             final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
@@ -216,9 +223,9 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureWorkingTimeForApplicationWithStartInDateRange() {
 
-            final LocalDate applicationFrom = LocalDate.of(2023, 3, 31);
-            final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
-            final DateRange marchDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 31));
+            final LocalDate applicationFrom = LocalDate.of(2023, MARCH, 31);
+            final LocalDate applicationTo = LocalDate.of(2023, APRIL, 2);
+            final DateRange marchDateRange = new DateRange(LocalDate.of(2023, MARCH, 1), LocalDate.of(2023, MARCH, 31));
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(applicationFrom, applicationTo);
 
@@ -235,9 +242,9 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureWorkingTimeForApplicationWithEndInDateRange() {
 
-            final LocalDate applicationFrom = LocalDate.of(2023, 3, 31);
-            final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
-            final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
+            final LocalDate applicationFrom = LocalDate.of(2023, MARCH, 31);
+            final LocalDate applicationTo = LocalDate.of(2023, APRIL, 2);
+            final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, APRIL, 1), LocalDate.of(2023, APRIL, 30));
 
             final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(applicationFrom, applicationTo);
 
@@ -254,8 +261,8 @@ class WorkingTimeCalendarTest {
         @Test
         void ensureWorkingTimeForApplicationWithoutWorkingDayInformation() {
 
-            final LocalDate applicationDate = LocalDate.of(2023, 3, 31);
-            final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 4, 30));
+            final LocalDate applicationDate = LocalDate.of(2023, MARCH, 31);
+            final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, MARCH, 1), LocalDate.of(2023, APRIL, 30));
 
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(Map.of());
 
@@ -273,7 +280,7 @@ class WorkingTimeCalendarTest {
         @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
         void ensureWorkingTimeForHalfDayApplicationAtHalfPublicHoliday(DayLength dayLength) {
 
-            final LocalDate christmas = LocalDate.of(2024, 12, 24);
+            final LocalDate christmas = LocalDate.of(2024, DECEMBER, 24);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
@@ -304,7 +311,7 @@ class WorkingTimeCalendarTest {
         @MethodSource("singleHalfDay")
         void ensureWorkingTimeForHalfDayApplicationAndWorkingDay(DayLength dayLength, WorkingDayInformation workingDayInformation, BigDecimal expectedWorkingTime) {
 
-            final LocalDate date = LocalDate.of(2024, 12, 24);
+            final LocalDate date = LocalDate.of(2024, DECEMBER, 24);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, workingDayInformation);
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
@@ -345,7 +352,7 @@ class WorkingTimeCalendarTest {
         @ParameterizedTest
         @MethodSource("falsyHalfDayPublicHolidayTuples")
         void ensureHasHalfDayPublicHolidayReturnsFalse(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
-            final LocalDate date = LocalDate.of(2024, 12, 1);
+            final LocalDate date = LocalDate.of(2024, DECEMBER, 1);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
@@ -357,7 +364,7 @@ class WorkingTimeCalendarTest {
         @ParameterizedTest
         @MethodSource("truthyHalfDayPublicHolidayTuples")
         void ensureHasHalfDayPublicHolidayReturnsTrue(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
-            final LocalDate date = LocalDate.of(2024, 12, 1);
+            final LocalDate date = LocalDate.of(2024, DECEMBER, 1);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);

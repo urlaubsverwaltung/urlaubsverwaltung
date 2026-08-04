@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -176,7 +177,7 @@ class OvertimeStatisticServiceTest {
 
     private static Overtime overtime(PersonId personId, Duration duration) {
         return new Overtime(new OvertimeId(1L), personId,
-            new DateRange(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 2)),
+            new DateRange(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, JANUARY, 2)),
             duration, UV_INTERNAL, Instant.parse("2026-01-01T00:00:00.00Z"));
     }
 }

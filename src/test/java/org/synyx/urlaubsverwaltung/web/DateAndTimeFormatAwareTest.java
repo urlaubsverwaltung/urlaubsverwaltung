@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,12 +50,12 @@ class DateAndTimeFormatAwareTest {
 
     @Test
     void ensureParseForIsoDateString() {
-        assertThat(sut.parse("2020-10-30", locale)).hasValue(LocalDate.of(2020, 10, 30));
+        assertThat(sut.parse("2020-10-30", locale)).hasValue(LocalDate.of(2020, OCTOBER, 30));
     }
 
     @Test
     void ensureParseForGermanDateString() {
-        assertThat(sut.parse("30.10.2020", locale)).hasValue(LocalDate.of(2020, 10, 30));
+        assertThat(sut.parse("30.10.2020", locale)).hasValue(LocalDate.of(2020, OCTOBER, 30));
     }
 
     @Test

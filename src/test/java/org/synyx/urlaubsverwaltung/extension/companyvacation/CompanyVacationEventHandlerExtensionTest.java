@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -72,8 +73,8 @@ class CompanyVacationEventHandlerExtensionTest {
             id1,
             createdAt1,
             org.synyx.urlaubsverwaltung.period.DayLength.NOON,
-            LocalDate.of(year, 12, 24),
-            LocalDate.of(year, 12, 24)
+            LocalDate.of(year, DECEMBER, 24),
+            LocalDate.of(year, DECEMBER, 24)
         );
 
         final UUID id2 = UUID.randomUUID();
@@ -83,13 +84,13 @@ class CompanyVacationEventHandlerExtensionTest {
             id2,
             createdAt2,
             org.synyx.urlaubsverwaltung.period.DayLength.MORNING,
-            LocalDate.of(year, 12, 31),
-            LocalDate.of(year, 12, 31)
+            LocalDate.of(year, DECEMBER, 31),
+            LocalDate.of(year, DECEMBER, 31)
         );
 
         return Stream.of(
-            Arguments.of(christmasEvent, DayLength.NOON, LocalDate.of(year, 12, 24), "settings-christmas-eve"),
-            Arguments.of(newYearsEvent, DayLength.MORNING, LocalDate.of(year, 12, 31), "settings-new-years-eve")
+            Arguments.of(christmasEvent, DayLength.NOON, LocalDate.of(year, DECEMBER, 24), "settings-christmas-eve"),
+            Arguments.of(newYearsEvent, DayLength.MORNING, LocalDate.of(year, DECEMBER, 31), "settings-new-years-eve")
         );
     }
 

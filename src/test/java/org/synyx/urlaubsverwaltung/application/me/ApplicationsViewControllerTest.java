@@ -41,6 +41,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,7 +96,7 @@ class ApplicationsViewControllerTest {
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(
-        ZonedDateTime.of(LocalDate.of(2022, 6, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(),
+        ZonedDateTime.of(LocalDate.of(2022, JUNE, 15).atStartOfDay(), ZoneId.systemDefault()).toInstant(),
         ZoneId.systemDefault()
     );
 
@@ -215,8 +217,8 @@ class ApplicationsViewControllerTest {
         final Application application = new Application();
         application.setId(99L);
         application.setPerson(person);
-        application.setStartDate(LocalDate.of(2022, 1, 10));
-        application.setEndDate(LocalDate.of(2022, 1, 12));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 10));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 12));
 
         final VacationType<?> vacationType = mock(VacationType.class);
         when(vacationType.getLabel(any(Locale.class))).thenReturn("label");
@@ -854,8 +856,8 @@ class ApplicationsViewControllerTest {
         application.setId(id);
         application.setPerson(person);
         application.setStatus(status);
-        application.setStartDate(LocalDate.of(2022, 1, 10));
-        application.setEndDate(LocalDate.of(2022, 1, 12));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 10));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 12));
 
         final VacationType<?> vacationType = mock(VacationType.class);
         when(vacationType.getLabel(any(Locale.class))).thenReturn("label");

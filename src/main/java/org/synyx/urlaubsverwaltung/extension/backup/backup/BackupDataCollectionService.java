@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.Month.DECEMBER;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -73,7 +74,7 @@ class BackupDataCollectionService {
     }
 
     private static LocalDate getLastDayOfNextYear() {
-        return LocalDate.of(LocalDate.now().plusYears(1).getYear(), 12, 31);
+        return LocalDate.of(LocalDate.now().plusYears(1).getYear(), DECEMBER, 31);
     }
 
     public UrlaubsverwaltungBackupDTO collectData() {

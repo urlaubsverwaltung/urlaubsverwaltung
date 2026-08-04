@@ -29,6 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.time.Duration.ZERO;
+import static java.time.Month.AUGUST;
+import static java.time.Month.OCTOBER;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -185,16 +187,16 @@ class ApplicationServiceImplTest {
         @Test
         void ensureSaveCallsCorrectDaoMethod() {
 
-            final LocalDate applicationDate = LocalDate.of(2023, 10, 14);
-            final LocalDate cancelDate = LocalDate.of(2023, 10, 15);
-            final LocalDate editedDate = LocalDate.of(2023, 10, 16);
-            final LocalDate startDate = LocalDate.of(2023, 10, 17);
+            final LocalDate applicationDate = LocalDate.of(2023, OCTOBER, 14);
+            final LocalDate cancelDate = LocalDate.of(2023, OCTOBER, 15);
+            final LocalDate editedDate = LocalDate.of(2023, OCTOBER, 16);
+            final LocalDate startDate = LocalDate.of(2023, OCTOBER, 17);
             final LocalTime startTime = LocalTime.of(11, 0);
-            final LocalDate endDate = LocalDate.of(2023, 10, 18);
+            final LocalDate endDate = LocalDate.of(2023, OCTOBER, 18);
             final LocalTime endTime = LocalTime.of(15, 30);
-            final LocalDate remindDate = LocalDate.of(2023, 10, 19);
-            final LocalDate upcomingApplicationReminderSend = LocalDate.of(2023, 10, 20);
-            final LocalDate upcomingApplicationsReminderSend = LocalDate.of(2023, 10, 21);
+            final LocalDate remindDate = LocalDate.of(2023, OCTOBER, 19);
+            final LocalDate upcomingApplicationReminderSend = LocalDate.of(2023, OCTOBER, 20);
+            final LocalDate upcomingApplicationsReminderSend = LocalDate.of(2023, OCTOBER, 21);
 
             final Person applier = new Person();
             applier.setId(1L);
@@ -321,10 +323,10 @@ class ApplicationServiceImplTest {
             applicationEntity.setId(1L);
             applicationEntity.setVacationType(new VacationTypeEntity());
 
-            when(applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(WAITING), LocalDate.of(2020, 10, 3)))
+            when(applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(WAITING), LocalDate.of(2020, OCTOBER, 3)))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> result = sut.getForStatesSince(List.of(WAITING), LocalDate.of(2020, 10, 3));
+            final List<Application> result = sut.getForStatesSince(List.of(WAITING), LocalDate.of(2020, OCTOBER, 3));
             assertThat(result).isEqualTo(List.of(application));
         }
     }
@@ -359,7 +361,7 @@ class ApplicationServiceImplTest {
         void getForHolidayReplacement() {
 
             final Person holidayReplacement = new Person();
-            final LocalDate localDate = LocalDate.of(2020, 10, 1);
+            final LocalDate localDate = LocalDate.of(2020, OCTOBER, 1);
 
             final Application application = new Application();
             application.setId(1L);
@@ -381,8 +383,8 @@ class ApplicationServiceImplTest {
 
         @Test
         void getApplicationsWithStartDateAndState() {
-            final LocalDate from = LocalDate.of(2020, 10, 1);
-            final LocalDate to = LocalDate.of(2020, 10, 3);
+            final LocalDate from = LocalDate.of(2020, OCTOBER, 1);
+            final LocalDate to = LocalDate.of(2020, OCTOBER, 3);
 
             final Application application = new Application();
             application.setId(1L);
@@ -405,8 +407,8 @@ class ApplicationServiceImplTest {
 
         @Test
         void getApplicationsWhereHolidayReplacementShouldBeNotified() {
-            final LocalDate from = LocalDate.of(2020, 10, 1);
-            final LocalDate to = LocalDate.of(2020, 10, 3);
+            final LocalDate from = LocalDate.of(2020, OCTOBER, 1);
+            final LocalDate to = LocalDate.of(2020, OCTOBER, 3);
 
             final Application application = new Application();
             application.setId(1L);
@@ -430,8 +432,8 @@ class ApplicationServiceImplTest {
         @Test
         void getApplicationsForACertainPeriodAndPersonAndVacationCategory() {
             final Person person = new Person();
-            final LocalDate from = LocalDate.of(2020, 10, 1);
-            final LocalDate to = LocalDate.of(2020, 10, 3);
+            final LocalDate from = LocalDate.of(2020, OCTOBER, 1);
+            final LocalDate to = LocalDate.of(2020, OCTOBER, 3);
 
             final Application application = new Application();
             application.setId(1L);
@@ -458,8 +460,8 @@ class ApplicationServiceImplTest {
             final Person person = new Person();
             person.setId(1L);
 
-            final LocalDate startDate = LocalDate.of(2022, 8, 18);
-            final LocalDate endDate = LocalDate.of(2022, 8, 18);
+            final LocalDate startDate = LocalDate.of(2022, AUGUST, 18);
+            final LocalDate endDate = LocalDate.of(2022, AUGUST, 18);
             final List<Person> persons = List.of(person);
 
             final Application application = new Application();
@@ -790,7 +792,7 @@ class ApplicationServiceImplTest {
             alfred.setId(3L);
 
             final Set<Person> persons = Set.of(batman, robin, alfred);
-            final LocalDate until = LocalDate.of(2022, 8, 30);
+            final LocalDate until = LocalDate.of(2022, AUGUST, 30);
 
             when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until))
                 .thenReturn(List.of());
@@ -810,8 +812,8 @@ class ApplicationServiceImplTest {
             final VacationTypeEntity vacationTypeOvertime = new VacationTypeEntity();
             vacationTypeOvertime.setCategory(OVERTIME);
 
-            final LocalDate startDate = LocalDate.of(2022, 8, 10);
-            final LocalDate endDate = LocalDate.of(2022, 8, 12);
+            final LocalDate startDate = LocalDate.of(2022, AUGUST, 10);
+            final LocalDate endDate = LocalDate.of(2022, AUGUST, 12);
 
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setPerson(batman);
@@ -823,7 +825,7 @@ class ApplicationServiceImplTest {
             applicationEntity.setHours(Duration.ofHours(10));
 
             final Set<Person> persons = Set.of(batman);
-            final LocalDate until = LocalDate.of(2022, 8, 30);
+            final LocalDate until = LocalDate.of(2022, AUGUST, 30);
 
             when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
                 persons,
@@ -848,8 +850,8 @@ class ApplicationServiceImplTest {
             final VacationTypeEntity vacationTypeOvertime = new VacationTypeEntity();
             vacationTypeOvertime.setCategory(OVERTIME);
 
-            final LocalDate startDate = LocalDate.of(2022, 8, 10);
-            final LocalDate endDate = LocalDate.of(2022, 8, 19);
+            final LocalDate startDate = LocalDate.of(2022, AUGUST, 10);
+            final LocalDate endDate = LocalDate.of(2022, AUGUST, 19);
 
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setPerson(batman);
@@ -861,7 +863,7 @@ class ApplicationServiceImplTest {
             applicationEntity.setHours(Duration.ofHours(10));
 
             final Set<Person> persons = Set.of(batman);
-            final LocalDate until = LocalDate.of(2022, 8, 14);
+            final LocalDate until = LocalDate.of(2022, AUGUST, 14);
 
             when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
                 persons,

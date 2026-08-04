@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -20,7 +22,7 @@ class OvertimeTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             new PersonId(1L),
-            new DateRange(LocalDate.of(2022, 12, 30), LocalDate.of(2023, 1, 2)),
+            new DateRange(LocalDate.of(2022, DECEMBER, 30), LocalDate.of(2023, JANUARY, 2)),
             Duration.ofHours(20),
             OvertimeType.UV_INTERNAL,
             Instant.now()
@@ -39,7 +41,7 @@ class OvertimeTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             new PersonId(1L),
-            new DateRange(LocalDate.of(2022, 12, 30), LocalDate.of(2023, 1, 2)),
+            new DateRange(LocalDate.of(2022, DECEMBER, 30), LocalDate.of(2023, JANUARY, 2)),
             Duration.ofHours(20),
             OvertimeType.UV_INTERNAL,
             Instant.now()

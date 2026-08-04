@@ -30,6 +30,7 @@ import java.util.Optional;
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
@@ -63,14 +64,14 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
 
         final Account accountNextYear = new Account();
         accountNextYear.setPerson(person);
-        accountNextYear.setExpiryDateLocally(LocalDate.of(2023, 4, 10));
+        accountNextYear.setExpiryDateLocally(LocalDate.of(2023, APRIL, 10));
         accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(accountNextYear));
 
@@ -108,7 +109,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
@@ -149,13 +150,13 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         final Account account2022 = new Account();
         account2022.setPerson(person);
-        account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account2022.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account2022.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
         final Account account2023 = new Account();
         account2023.setPerson(person);
-        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        account2023.setExpiryDateLocally(LocalDate.of(2023, APRIL, 1));
         account2023.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 
@@ -203,13 +204,13 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
 
         final Account account2023 = new Account();
         account2023.setPerson(person);
-        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        account2023.setExpiryDateLocally(LocalDate.of(2023, APRIL, 1));
         account2023.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 

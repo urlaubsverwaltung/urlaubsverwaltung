@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -65,8 +66,8 @@ class PublicHolidayApiControllerTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final PublicHoliday fromHoliday = new PublicHoliday(from, MORNING, "");
         final PublicHoliday toHoliday = new PublicHoliday(to, NOON, "");
         when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
@@ -137,8 +138,8 @@ class PublicHolidayApiControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
 
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(from, to)))
             .thenReturn(Map.of(

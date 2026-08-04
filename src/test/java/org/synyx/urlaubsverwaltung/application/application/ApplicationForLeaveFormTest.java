@@ -11,6 +11,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
@@ -132,10 +134,10 @@ class ApplicationForLeaveFormTest {
         final Person person = new Person();
         final Person holidayReplacement = new Person();
 
-        final LocalDate startDate = LocalDate.of(2022, 1, 2);
+        final LocalDate startDate = LocalDate.of(2022, JANUARY, 2);
         final LocalTime startTime = LocalTime.of(11, 10, 0);
 
-        final LocalDate endDate = LocalDate.of(2022, 2, 2);
+        final LocalDate endDate = LocalDate.of(2022, FEBRUARY, 2);
         final LocalTime endTime = LocalTime.of(12, 10, 0);
 
         final HolidayReplacementDto replacementDto = new HolidayReplacementDto();

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -16,7 +18,7 @@ class DateUtilTest {
     void ensureReturnsTrueIfGivenDayIsAWorkDay() {
 
         // Monday
-        LocalDate date = LocalDate.of(2011, 12, 26);
+        LocalDate date = LocalDate.of(2011, DECEMBER, 26);
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -27,7 +29,7 @@ class DateUtilTest {
     void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
 
         // Sunday
-        LocalDate date = LocalDate.of(2014, 11, 23);
+        LocalDate date = LocalDate.of(2014, NOVEMBER, 23);
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
@@ -37,7 +39,7 @@ class DateUtilTest {
     @Test
     void ensureReturnsTrueForChristmasEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 24);
+        LocalDate date = LocalDate.of(2011, DECEMBER, 24);
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -47,7 +49,7 @@ class DateUtilTest {
     @Test
     void ensureReturnsFalseForNotChristmasEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 25);
+        LocalDate date = LocalDate.of(2011, DECEMBER, 25);
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
@@ -57,7 +59,7 @@ class DateUtilTest {
     @Test
     void ensureReturnsTrueForNewYearsEve() {
 
-        LocalDate date = LocalDate.of(2014, 12, 31);
+        LocalDate date = LocalDate.of(2014, DECEMBER, 31);
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
@@ -67,7 +69,7 @@ class DateUtilTest {
     @Test
     void ensureReturnsFalseForNotNewYearsEve() {
 
-        LocalDate date = LocalDate.of(2011, 12, 25);
+        LocalDate date = LocalDate.of(2011, DECEMBER, 25);
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
