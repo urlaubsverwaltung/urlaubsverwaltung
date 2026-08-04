@@ -147,7 +147,7 @@ class PersonsUIIT {
         final String userId = keycloak.createUser(email, firstName, lastName, email, email);
         final Person savedPerson = personService.create(userId, firstName, lastName, email, List.of(), roles);
 
-        final LocalDate validFrom = LocalDate.of(2022, 1, 1);
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).toList();
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 

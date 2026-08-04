@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,7 +39,7 @@ class WorkingTimeEventHandlerExtensionTest {
     @Test
     void ensureWorkingTimeConfiguredEventIsConvertedToDTO() {
 
-        final LocalDate validFrom = LocalDate.of(2025, 1, 1);
+        final LocalDate validFrom = LocalDate.of(2025, JANUARY, 1);
         final List<Integer> workingDays = List.of(1, 2, 3, 4, 5);
 
         final WorkingTimeConfiguredEvent event = WorkingTimeConfiguredEvent.of("muster", validFrom, workingDays, "GERMANY_BADEN_WUERTTEMBERG");
@@ -65,7 +66,7 @@ class WorkingTimeEventHandlerExtensionTest {
     @Test
     void ensureWorkingTimeConfiguredEventWithNullFederalStateIsConvertedToDTO() {
 
-        final LocalDate validFrom = LocalDate.of(2025, 1, 1);
+        final LocalDate validFrom = LocalDate.of(2025, JANUARY, 1);
         final List<Integer> workingDays = List.of(1, 2, 3, 4, 5);
 
         final WorkingTimeConfiguredEvent event = WorkingTimeConfiguredEvent.of("muster", validFrom, workingDays, null);

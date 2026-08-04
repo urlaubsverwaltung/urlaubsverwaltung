@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -160,8 +161,8 @@ class CompanyControllerTest {
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final LocalDate berlinToday = LocalDate.of(2026, 1, 15);
-        final LocalDate monthStart = LocalDate.of(2026, 1, 1);
+        final LocalDate berlinToday = LocalDate.of(2026, JANUARY, 15);
+        final LocalDate monthStart = LocalDate.of(2026, JANUARY, 1);
         stubCurrentAndPreviousRange(signedInUser, monthStart, berlinToday, OvertimeStatistic.empty());
 
         final Model model = new ConcurrentModel();
@@ -241,7 +242,7 @@ class CompanyControllerTest {
     }
 
     private static Overtime overtimeOf(PersonId personId, Duration duration) {
-        final LocalDate day = LocalDate.of(2024, 1, 1);
+        final LocalDate day = LocalDate.of(2024, JANUARY, 1);
         return new Overtime(new OvertimeId(personId.value()), personId, new DateRange(day, day), duration, OvertimeType.UV_INTERNAL, Instant.EPOCH);
     }
 }

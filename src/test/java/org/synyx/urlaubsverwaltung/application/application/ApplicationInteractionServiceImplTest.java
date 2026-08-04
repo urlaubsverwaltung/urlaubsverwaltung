@@ -28,6 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -1015,8 +1019,8 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ALLOWED);
-        applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
-        applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
+        applicationForLeave.setStartDate(LocalDate.of(2014, DECEMBER, 24));
+        applicationForLeave.setEndDate(LocalDate.of(2015, JANUARY, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -1114,8 +1118,8 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ALLOWED_CANCELLATION_REQUESTED);
-        applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
-        applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
+        applicationForLeave.setStartDate(LocalDate.of(2014, DECEMBER, 24));
+        applicationForLeave.setEndDate(LocalDate.of(2015, JANUARY, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -1149,8 +1153,8 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ALLOWED);
-        applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
-        applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
+        applicationForLeave.setStartDate(LocalDate.of(2014, DECEMBER, 24));
+        applicationForLeave.setEndDate(LocalDate.of(2015, JANUARY, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
 
         assertThatThrownBy(() -> sut.declineCancellationRequest(applicationForLeave, canceller, comment))
@@ -1169,8 +1173,8 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(null);
-        applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
-        applicationForLeave.setEndDate(LocalDate.of(2015, 1, 7));
+        applicationForLeave.setStartDate(LocalDate.of(2014, DECEMBER, 24));
+        applicationForLeave.setEndDate(LocalDate.of(2015, JANUARY, 7));
         applicationForLeave.setDayLength(DayLength.FULL);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -1527,15 +1531,15 @@ class ApplicationInteractionServiceImplTest {
         final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
-        newApplication.setStartDate(LocalDate.of(2020, 10, 3));
-        newApplication.setEndDate(LocalDate.of(2020, 10, 3));
+        newApplication.setStartDate(LocalDate.of(2020, OCTOBER, 3));
+        newApplication.setEndDate(LocalDate.of(2020, OCTOBER, 3));
         newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
-        oldApplication.setStartDate(LocalDate.of(2020, 10, 4));
-        oldApplication.setEndDate(LocalDate.of(2020, 10, 4));
+        oldApplication.setStartDate(LocalDate.of(2020, OCTOBER, 4));
+        oldApplication.setEndDate(LocalDate.of(2020, OCTOBER, 4));
 
         final Optional<String> comment = of("Comment");
 
@@ -1688,8 +1692,8 @@ class ApplicationInteractionServiceImplTest {
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
-        applicationForLeave.setStartDate(LocalDate.of(2013, 2, 1));
-        applicationForLeave.setEndDate(LocalDate.of(2013, 2, 5));
+        applicationForLeave.setStartDate(LocalDate.of(2013, FEBRUARY, 1));
+        applicationForLeave.setEndDate(LocalDate.of(2013, FEBRUARY, 5));
         applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setHolidayReplacements(List.of(replacementEntity));
 

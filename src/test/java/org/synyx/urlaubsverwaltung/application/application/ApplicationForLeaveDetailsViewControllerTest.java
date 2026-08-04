@@ -45,6 +45,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -1568,7 +1570,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final LocalDate expiryDate = now.minusDays(1);
 
-        final Account account = new Account(person, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31), true, expiryDate,
+        final Account account = new Account(person, LocalDate.of(year, JANUARY, 1), LocalDate.of(year, DECEMBER, 31), true, expiryDate,
             BigDecimal.valueOf(10), BigDecimal.valueOf(5), BigDecimal.valueOf(1), "");
 
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));

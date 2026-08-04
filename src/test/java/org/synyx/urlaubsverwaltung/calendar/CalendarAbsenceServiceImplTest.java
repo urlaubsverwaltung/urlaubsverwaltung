@@ -18,6 +18,9 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.NOVEMBER;
+import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -55,15 +58,15 @@ class CalendarAbsenceServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final LocalDate since = LocalDate.of(2020, 10, 13);
+        final LocalDate since = LocalDate.of(2020, OCTOBER, 13);
 
-        final LocalDate startDate = LocalDate.of(2019, 12, 10);
-        final LocalDate endDate = LocalDate.of(2019, 12, 23);
+        final LocalDate startDate = LocalDate.of(2019, DECEMBER, 10);
+        final LocalDate endDate = LocalDate.of(2019, DECEMBER, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
         when(applicationService.getForStatesAndPersonSince(activeStatuses(), List.of(person), since)).thenReturn(List.of(application));
 
-        final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
-        final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
+        final LocalDate startDateSickNote = LocalDate.of(2019, OCTOBER, 10);
+        final LocalDate endDateSickNote = LocalDate.of(2019, OCTOBER, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
         when(sickNoteService.getForStatesAndPersonSince(List.of(SUBMITTED, ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
 
@@ -88,15 +91,15 @@ class CalendarAbsenceServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final LocalDate since = LocalDate.of(2020, 11, 13);
+        final LocalDate since = LocalDate.of(2020, NOVEMBER, 13);
 
-        final LocalDate startDate = LocalDate.of(2019, 11, 10);
-        final LocalDate endDate = LocalDate.of(2019, 11, 23);
+        final LocalDate startDate = LocalDate.of(2019, NOVEMBER, 10);
+        final LocalDate endDate = LocalDate.of(2019, NOVEMBER, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
         when(applicationService.getForStatesSince(activeStatuses(), since)).thenReturn(List.of(application));
 
-        final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
-        final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
+        final LocalDate startDateSickNote = LocalDate.of(2019, OCTOBER, 10);
+        final LocalDate endDateSickNote = LocalDate.of(2019, OCTOBER, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
         when(sickNoteService.getForStatesSince(List.of(SUBMITTED, ACTIVE), since)).thenReturn(List.of(sickNote));
 

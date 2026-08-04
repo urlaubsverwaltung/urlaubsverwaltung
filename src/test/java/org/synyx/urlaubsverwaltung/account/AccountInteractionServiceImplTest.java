@@ -157,7 +157,7 @@ class AccountInteractionServiceImplTest {
         final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
 
         final Account account = new Account();
-        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
 
         when(accountService.save(any(Account.class))).then(returnsFirstArg());
 
@@ -270,8 +270,8 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.getAnnualVacationDays()).isEqualTo(referenceHolidaysAccount.getAnnualVacationDays());
         assertThat(createdHolidaysAccount.getRemainingVacationDays()).isEqualTo(leftDays);
         assertThat(createdHolidaysAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
-        assertThat(createdHolidaysAccount.getValidFrom()).isEqualTo(LocalDate.of(nextYear, 1, 1));
-        assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
+        assertThat(createdHolidaysAccount.getValidFrom()).isEqualTo(LocalDate.of(nextYear, JANUARY, 1));
+        assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, DECEMBER, 31));
         assertThat(createdHolidaysAccount.getExpiryDateLocally()).isNull();
         assertThat(createdHolidaysAccount.isDoRemainingVacationDaysExpireLocally()).isNull();
         assertThat(createdHolidaysAccount.doRemainingVacationDaysExpire()).isFalse();
@@ -297,8 +297,8 @@ class AccountInteractionServiceImplTest {
             BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
         final LocalDate expiryDateOld = LocalDate.of(year, APRIL, 1);
-        final Account nextYearAccount = new Account(person, LocalDate.of(nextYear, 1, 1), LocalDate.of(
-            nextYear, 10, 31), true, expiryDateOld, BigDecimal.valueOf(28), ZERO, ZERO, "comment");
+        final Account nextYearAccount = new Account(person, LocalDate.of(nextYear, JANUARY, 1), LocalDate.of(
+            nextYear, OCTOBER, 31), true, expiryDateOld, BigDecimal.valueOf(28), ZERO, ZERO, "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.of(nextYearAccount));
         when(vacationDaysService.getTotalLeftVacationDays(referenceAccount)).thenReturn(leftDays);

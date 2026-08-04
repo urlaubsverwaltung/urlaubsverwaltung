@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDate.of;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -60,14 +64,14 @@ class VacationApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application allowedVacation = createApplication(person,
-            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), FULL, new StaticMessageSource());
+            LocalDate.of(2016, MAY, 19), LocalDate.of(2016, MAY, 20), FULL, new StaticMessageSource());
         allowedVacation.setStatus(ALLOWED);
 
         final Application cancellationRequestedVacation = createApplication(person,
-            LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), FULL, new StaticMessageSource());
+            LocalDate.of(2016, APRIL, 5), LocalDate.of(2016, APRIL, 10), FULL, new StaticMessageSource());
         cancellationRequestedVacation.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        when(applicationService.getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(applicationService.getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(allowedVacation, cancellationRequestedVacation));
 
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
@@ -165,13 +169,13 @@ class VacationApiControllerTest {
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
+            of(2016, MAY, 19), of(2016, MAY, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED);
         final Application vacationAllowedCancelRequested = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
+            of(2016, MAY, 19), of(2016, MAY, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(vacationAllowedCancelRequested, vacationAllowed));
 
         perform(get("/api/persons/23/vacations")

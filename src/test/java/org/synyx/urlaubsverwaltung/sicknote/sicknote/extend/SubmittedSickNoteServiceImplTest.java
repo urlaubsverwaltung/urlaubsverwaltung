@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.AUGUST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -91,9 +92,9 @@ class SubmittedSickNoteServiceImplTest {
             final Person person = new Person();
             person.setId(1L);
 
-            final LocalDate startDate = LocalDate.of(2024, 8, 21);
-            final LocalDate endDate = LocalDate.of(2024, 8, 22);
-            final LocalDate nextEndDate = LocalDate.of(2024, 8, 23);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 21);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 22);
+            final LocalDate nextEndDate = LocalDate.of(2024, AUGUST, 23);
 
             when(sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), List.of(person)))
                 .thenReturn(List.of());
@@ -143,9 +144,9 @@ class SubmittedSickNoteServiceImplTest {
             final Person person = new Person();
             person.setId(1L);
 
-            final LocalDate startDate = LocalDate.of(2024, 8, 21);
-            final LocalDate endDate = LocalDate.of(2024, 8, 22);
-            final LocalDate nextEndDate = LocalDate.of(2024, 8, 23);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 21);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 22);
+            final LocalDate nextEndDate = LocalDate.of(2024, AUGUST, 23);
 
             when(sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), List.of(person)))
                 .thenReturn(List.of());
@@ -196,9 +197,9 @@ class SubmittedSickNoteServiceImplTest {
             final Person person = new Person();
             person.setId(1L);
 
-            final LocalDate startDate = LocalDate.of(2024, 8, 21);
-            final LocalDate endDate = LocalDate.of(2024, 8, 22);
-            final LocalDate nextEndDate = LocalDate.of(2024, 8, 23);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 21);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 22);
+            final LocalDate nextEndDate = LocalDate.of(2024, AUGUST, 23);
 
             final SickNote sickNote = SickNote.builder()
                 .id(1L)

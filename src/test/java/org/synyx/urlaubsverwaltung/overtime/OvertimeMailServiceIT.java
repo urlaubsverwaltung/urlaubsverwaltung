@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
@@ -49,8 +50,8 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         person.setId(1L);
 
-        final LocalDate startDate = LocalDate.of(2020, 4, 16);
-        final LocalDate endDate = LocalDate.of(2020, 4, 23);
+        final LocalDate startDate = LocalDate.of(2020, APRIL, 16);
+        final LocalDate endDate = LocalDate.of(2020, APRIL, 23);
         final OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 
@@ -96,8 +97,8 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person author = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(), List.of(USER, OFFICE));
 
-        final LocalDate startDate = LocalDate.of(2020, 4, 16);
-        final LocalDate endDate = LocalDate.of(2020, 4, 23);
+        final LocalDate startDate = LocalDate.of(2020, APRIL, 16);
+        final LocalDate endDate = LocalDate.of(2020, APRIL, 23);
         final OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 
@@ -137,8 +138,8 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person author = personService.create("user", "Lieschen", "Müller", "lieschen@example.org", List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED), List.of(USER));
 
-        final LocalDate startDate = LocalDate.of(2020, 4, 16);
-        final LocalDate endDate = LocalDate.of(2020, 4, 23);
+        final LocalDate startDate = LocalDate.of(2020, APRIL, 16);
+        final LocalDate endDate = LocalDate.of(2020, APRIL, 23);
         final OvertimeEntity overtime = new OvertimeEntity(author, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 

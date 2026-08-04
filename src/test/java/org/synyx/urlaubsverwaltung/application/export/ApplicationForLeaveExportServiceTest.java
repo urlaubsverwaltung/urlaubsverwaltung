@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -82,8 +83,8 @@ class ApplicationForLeaveExportServiceTest {
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
         when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
-        final LocalDate from = LocalDate.of(2023, 1, 1);
-        final LocalDate to = LocalDate.of(2023, 1, 31);
+        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);
@@ -128,8 +129,8 @@ class ApplicationForLeaveExportServiceTest {
         when(departmentService.getManagedMembersOfPerson(person, personPageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(departmentMember)));
 
-        final LocalDate from = LocalDate.of(2023, 1, 1);
-        final LocalDate to = LocalDate.of(2023, 1, 31);
+        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(departmentMember);
@@ -142,7 +143,7 @@ class ApplicationForLeaveExportServiceTest {
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(departmentMemberId, List.of("department")));
 
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 31), personSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
 
         final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
@@ -164,7 +165,7 @@ class ApplicationForLeaveExportServiceTest {
             .thenReturn(new PageImpl<>(List.of()));
 
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 31), personSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
 
         verifyNoMoreInteractions(departmentService);
         verifyNoInteractions(applicationService, personBasedataService);
@@ -190,8 +191,8 @@ class ApplicationForLeaveExportServiceTest {
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
         when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
-        final LocalDate from = LocalDate.of(2023, 1, 1);
-        final LocalDate to = LocalDate.of(2023, 1, 31);
+        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);
@@ -240,8 +241,8 @@ class ApplicationForLeaveExportServiceTest {
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
         when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
-        final LocalDate from = LocalDate.of(2023, 1, 1);
-        final LocalDate to = LocalDate.of(2023, 1, 31);
+        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
         app.setPerson(user);

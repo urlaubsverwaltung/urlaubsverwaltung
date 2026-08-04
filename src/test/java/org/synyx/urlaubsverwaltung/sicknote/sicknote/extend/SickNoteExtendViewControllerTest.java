@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -124,7 +125,7 @@ class SickNoteExtendViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final LocalDate endDate = LocalDate.of(2024, 9, 27);
+        final LocalDate endDate = LocalDate.of(2024, SEPTEMBER, 27);
 
         final SickNote currentActiveSickNote = SickNote.builder()
             .id(1L)
@@ -156,7 +157,7 @@ class SickNoteExtendViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final LocalDate endDate = LocalDate.of(2024, 9, 27);
+        final LocalDate endDate = LocalDate.of(2024, SEPTEMBER, 27);
 
         final SickNote currentActiveSickNote = SickNote.builder()
             .id(1L)

@@ -52,6 +52,8 @@ import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.MARCH;
 import static java.util.Locale.GERMAN;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
@@ -78,7 +80,7 @@ class OverviewCalendarUIIT {
         keycloak.configureSpringDataSource(registry);
     }
 
-    private static final LocalDate FIXED_DATE = LocalDate.of(2022, 2, 5);
+    private static final LocalDate FIXED_DATE = LocalDate.of(2022, FEBRUARY, 5);
 
     @TestConfiguration
     static class Configuration {
@@ -125,7 +127,7 @@ class OverviewCalendarUIIT {
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Click on a day in the next month
-        final LocalDate date = LocalDate.of(2022, 3, 15);
+        final LocalDate date = LocalDate.of(2022, MARCH, 15);
         overviewPage.clickDay(date);
 
         // Ensure navigation to ApplicationPage
@@ -154,8 +156,8 @@ class OverviewCalendarUIIT {
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
-        final LocalDate startDate = LocalDate.of(2022, 3, 8);
-        final LocalDate endDate = LocalDate.of(2022, 3, 10);
+        final LocalDate startDate = LocalDate.of(2022, MARCH, 8);
+        final LocalDate endDate = LocalDate.of(2022, MARCH, 10);
 
         overviewPage.selectDateRange(startDate, endDate);
         overviewPage.clickDay(endDate);

@@ -21,6 +21,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -64,12 +67,12 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -94,12 +97,12 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
@@ -124,12 +127,12 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
@@ -221,12 +224,12 @@ class SickNoteApiControllerTest {
         person.setId(23L);
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         perform(get("/api/persons/23/sicknotes")
@@ -253,12 +256,12 @@ class SickNoteApiControllerTest {
         person.setId(23L);
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(true);
@@ -286,12 +289,12 @@ class SickNoteApiControllerTest {
         person.setId(23L);
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
-        final LocalDate from = LocalDate.of(2016, 5, 19);
-        final LocalDate to = LocalDate.of(2016, 5, 20);
+        final LocalDate from = LocalDate.of(2016, MAY, 19);
+        final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);

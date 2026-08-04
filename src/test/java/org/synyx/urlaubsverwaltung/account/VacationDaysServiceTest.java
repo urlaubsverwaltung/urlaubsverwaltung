@@ -89,11 +89,11 @@ class VacationDaysServiceTest {
         application20DaysAfterApril.setEndDate(LocalDate.of(2022, APRIL, 21));
         application20DaysAfterApril.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application20DaysBeforeExpiryDate, application20DaysAfterApril));
 
         final Year year = Year.of(2022);
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -123,11 +123,11 @@ class VacationDaysServiceTest {
         application1Day.setEndDate(LocalDate.of(2022, MAY, 2));
         application1Day.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application1Day));
 
         final Year year = Year.of(2022);
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -159,11 +159,11 @@ class VacationDaysServiceTest {
         application1Day.setEndDate(LocalDate.of(2022, MAY, 2));
         application1Day.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application1Day));
 
         final Year year = Year.of(2022);
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -195,11 +195,11 @@ class VacationDaysServiceTest {
         application3Day.setEndDate(LocalDate.of(2022, MAY, 4));
         application3Day.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application3Day));
 
         final Year year = Year.of(2022);
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -231,7 +231,7 @@ class VacationDaysServiceTest {
         application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
         application20Days.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application20Days));
 
         final Year year = Year.of(2022);
@@ -240,7 +240,7 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
         account.setDoRemainingVacationDaysExpireLocally(true);
 
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -268,7 +268,7 @@ class VacationDaysServiceTest {
         application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
         application20Days.setStatus(ALLOWED);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application20Days));
 
         final Year year = Year.of(2022);
@@ -277,7 +277,7 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
@@ -302,7 +302,7 @@ class VacationDaysServiceTest {
         application20Days.setStartDate(LocalDate.of(2022, APRIL, 1));
         application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
         application20Days.setStatus(ALLOWED);
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
             .thenReturn(List.of(application4Days, application20Days));
 
         final Application application4DaysIn2023 = anyApplication(person);
@@ -313,7 +313,7 @@ class VacationDaysServiceTest {
         application20DaysIn2023.setStartDate(LocalDate.of(2022, APRIL, 1));
         application20DaysIn2023.setEndDate(LocalDate.of(2022, APRIL, 20));
         application20DaysIn2023.setStatus(ALLOWED);
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, DECEMBER, 31)))
             .thenReturn(List.of(application4DaysIn2023, application20DaysIn2023));
 
         // 36 Total, using 24, so 12 left
@@ -353,7 +353,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final Year year = Year.of(2022);
-        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -398,7 +398,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -443,7 +443,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -486,7 +486,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -529,7 +529,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -572,7 +572,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -615,7 +615,7 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final int year = 2022;
-        final LocalDate firstDayOfYear = LocalDate.of(2022, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -727,7 +727,7 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(2));
         account.setDoRemainingVacationDaysExpireLocally(true);
 
-        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31)))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(year, JANUARY, 1), LocalDate.of(year, DECEMBER, 31)))
             .thenReturn(List.of());
 
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year)))

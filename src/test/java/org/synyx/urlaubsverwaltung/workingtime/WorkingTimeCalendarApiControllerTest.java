@@ -67,7 +67,7 @@ class WorkingTimeCalendarApiControllerTest {
             .andExpect(jsonPath("$.workDays", is("1")));
 
         verify(personService).getPersonByID(23L);
-        verify(workDaysCountService).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
+        verify(workDaysCountService).getWorkDaysCount(FULL, LocalDate.of(2016, JANUARY, 4), LocalDate.of(2016, JANUARY, 4), person);
     }
 
     @Test

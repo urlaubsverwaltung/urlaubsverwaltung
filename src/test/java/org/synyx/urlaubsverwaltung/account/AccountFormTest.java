@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountFormTest {
@@ -13,8 +15,8 @@ class AccountFormTest {
     void ensureHasDefaultValuesForHolidaysAccountPeriod() {
         final AccountForm accountForm = new AccountForm(2014);
         assertThat(accountForm.getHolidaysAccountYear()).isEqualTo(2014);
-        assertThat(accountForm.getHolidaysAccountValidFrom()).isEqualTo(LocalDate.of(2014, 1, 1));
-        assertThat(accountForm.getHolidaysAccountValidTo()).isEqualTo(LocalDate.of(2014, 12, 31));
+        assertThat(accountForm.getHolidaysAccountValidFrom()).isEqualTo(LocalDate.of(2014, JANUARY, 1));
+        assertThat(accountForm.getHolidaysAccountValidTo()).isEqualTo(LocalDate.of(2014, DECEMBER, 31));
     }
 
     @Test

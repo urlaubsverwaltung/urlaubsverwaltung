@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDate.of;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,24 +80,24 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         // records starting before 2016
-        sut.save(new OvertimeEntity(person, of(2012, 1, 1), of(2012, 1, 3), Duration.ofHours(1)));
-        sut.save(new OvertimeEntity(person, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(2)));
-        sut.save(new OvertimeEntity(person, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(3)));
-        sut.save(new OvertimeEntity(person, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(4)));
+        sut.save(new OvertimeEntity(person, of(2012, JANUARY, 1), of(2012, JANUARY, 3), Duration.ofHours(1)));
+        sut.save(new OvertimeEntity(person, of(2014, DECEMBER, 30), of(2015, JANUARY, 3), Duration.ofHours(2)));
+        sut.save(new OvertimeEntity(person, of(2015, OCTOBER, 5), of(2015, OCTOBER, 20), Duration.ofHours(3)));
+        sut.save(new OvertimeEntity(person, of(2015, DECEMBER, 28), of(2016, JANUARY, 6), Duration.ofHours(4)));
 
         // record after or in 2016
-        sut.save(new OvertimeEntity(person, of(2016, 12, 5), of(2016, 12, 31), Duration.ofHours(99)));
-        sut.save(new OvertimeEntity(person, of(2016, 1, 1), of(2016, 1, 1), Duration.ofHours(99)));
+        sut.save(new OvertimeEntity(person, of(2016, DECEMBER, 5), of(2016, DECEMBER, 31), Duration.ofHours(99)));
+        sut.save(new OvertimeEntity(person, of(2016, JANUARY, 1), of(2016, JANUARY, 1), Duration.ofHours(99)));
 
-        final List<OvertimeEntity> overtimes = sut.findByPersonAndStartDateIsBefore(person, of(2016, 1, 1));
+        final List<OvertimeEntity> overtimes = sut.findByPersonAndStartDateIsBefore(person, of(2016, JANUARY, 1));
         assertThat(overtimes).hasSize(4);
-        assertThat(overtimes.getFirst().getStartDate()).isEqualTo(of(2012, 1, 1));
+        assertThat(overtimes.getFirst().getStartDate()).isEqualTo(of(2012, JANUARY, 1));
         assertThat(overtimes.getFirst().getDuration()).isEqualTo(Duration.ofHours(1));
-        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2014, 12, 30));
+        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2014, DECEMBER, 30));
         assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
-        assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2015, 10, 5));
+        assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2015, OCTOBER, 5));
         assertThat(overtimes.get(2).getDuration()).isEqualTo(Duration.ofHours(3));
-        assertThat(overtimes.get(3).getStartDate()).isEqualTo(of(2015, 12, 28));
+        assertThat(overtimes.get(3).getStartDate()).isEqualTo(of(2015, DECEMBER, 28));
         assertThat(overtimes.get(3).getDuration()).isEqualTo(Duration.ofHours(4));
     }
 
@@ -104,8 +109,8 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
         final Person person3 = personService.create("john", "john", "doe", "john@example.org");
 
         final List<Person> persons = List.of(person, person2);
-        final LocalDate start = LocalDate.of(2022, 2, 1);
-        final LocalDate end = LocalDate.of(2022, 3, 1);
+        final LocalDate start = LocalDate.of(2022, FEBRUARY, 1);
+        final LocalDate end = LocalDate.of(2022, MARCH, 1);
 
         // should be found
         sut.save(new OvertimeEntity(person, start.minusDays(1), start.plusDays(1), Duration.ofHours(1)));
@@ -136,7 +141,7 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
         final Person person2 = personService.create("retsum", "Enelram", "Retsum", "retsum@example.org");
 
-        final LocalDate date = LocalDate.of(2022, 2, 1);
+        final LocalDate date = LocalDate.of(2022, FEBRUARY, 1);
 
         // should be found
         sut.save(new OvertimeEntity(person, date, date, Duration.ofHours(1), true));

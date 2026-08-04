@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.AUGUST;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -46,12 +48,12 @@ class SickNoteMapperTest {
             applier.setId(2L);
 
             final SickNoteType sickNoteType = new SickNoteType();
-            final LocalDate startDate = LocalDate.of(2024, 8, 19);
-            final LocalDate endDate = LocalDate.of(2024, 8, 23);
-            final LocalDate aubStartDate = LocalDate.of(2024, 8, 20);
-            final LocalDate aubEndDate = LocalDate.of(2024, 8, 23);
-            final LocalDate lastEdited = LocalDate.of(2024, 8, 20);
-            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, 1, 1);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate aubStartDate = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate aubEndDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate lastEdited = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, JANUARY, 1);
 
             final SickNoteEntity entity = new SickNoteEntity();
             entity.setId(1L);
@@ -96,12 +98,12 @@ class SickNoteMapperTest {
             applier.setId(2L);
 
             final SickNoteType sickNoteType = new SickNoteType();
-            final LocalDate startDate = LocalDate.of(2024, 8, 19);
-            final LocalDate endDate = LocalDate.of(2024, 8, 23);
-            final LocalDate aubStartDate = LocalDate.of(2024, 8, 20);
-            final LocalDate aubEndDate = LocalDate.of(2024, 8, 23);
-            final LocalDate lastEdited = LocalDate.of(2024, 8, 20);
-            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, 1, 1);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate aubStartDate = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate aubEndDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate lastEdited = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, JANUARY, 1);
 
             final SickNoteEntity entity = new SickNoteEntity();
             entity.setId(1L);
@@ -153,8 +155,8 @@ class SickNoteMapperTest {
         @Test
         void ensureWithEmptyEntities() {
 
-            final LocalDate startDate = LocalDate.of(2024, 8, 19);
-            final LocalDate endDate = LocalDate.of(2024, 8, 23);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 23);
 
             final List<SickNote> actual = sut.toSickNoteWithWorkDays(List.of(), new DateRange(startDate, endDate));
             assertThat(actual).isEmpty();
@@ -175,12 +177,12 @@ class SickNoteMapperTest {
             applier.setId(3L);
 
             final SickNoteType sickNoteType = new SickNoteType();
-            final LocalDate startDate = LocalDate.of(2024, 8, 19);
-            final LocalDate endDate = LocalDate.of(2024, 8, 23);
-            final LocalDate aubStartDate = LocalDate.of(2024, 8, 20);
-            final LocalDate aubEndDate = LocalDate.of(2024, 8, 23);
-            final LocalDate lastEdited = LocalDate.of(2024, 8, 20);
-            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, 1, 1);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate aubStartDate = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate aubEndDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate lastEdited = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, JANUARY, 1);
 
             final SickNoteEntity entity1 = new SickNoteEntity();
             entity1.setId(1L);
@@ -261,12 +263,12 @@ class SickNoteMapperTest {
             applier.setId(3L);
 
             final SickNoteType sickNoteType = new SickNoteType();
-            final LocalDate startDate = LocalDate.of(2024, 8, 19);
-            final LocalDate endDate = LocalDate.of(2024, 8, 23);
-            final LocalDate aubStartDate = LocalDate.of(2024, 8, 20);
-            final LocalDate aubEndDate = LocalDate.of(2024, 8, 23);
-            final LocalDate lastEdited = LocalDate.of(2024, 8, 20);
-            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, 1, 1);
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate aubStartDate = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate aubEndDate = LocalDate.of(2024, AUGUST, 23);
+            final LocalDate lastEdited = LocalDate.of(2024, AUGUST, 20);
+            final LocalDate endOfSickPauNotificationSend = LocalDate.of(2025, JANUARY, 1);
 
             final SickNoteEntity entity1 = new SickNoteEntity();
             entity1.setId(1L);

@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -88,7 +89,7 @@ class CalendarSyncServiceTest {
     @Test
     void ensureToCreateCalendarEventOnApplicationUpdatedEvent() {
 
-        final LocalDate now = LocalDate.of(2022, 12, 10);
+        final LocalDate now = LocalDate.of(2022, DECEMBER, 10);
 
         final Application application = new Application();
         application.setId(1L);
@@ -124,7 +125,7 @@ class CalendarSyncServiceTest {
     @Test
     void ensureToCreateCalendarEventOnApplicationRejectedEvent() {
 
-        final LocalDate now = LocalDate.of(2022, 12, 10);
+        final LocalDate now = LocalDate.of(2022, DECEMBER, 10);
 
         final Application application = new Application();
         application.setId(1L);
@@ -191,7 +192,7 @@ class CalendarSyncServiceTest {
     @Test
     void ensureToUpdateCalendarEventOnSickNoteUpdatedEvent() {
 
-        final LocalDate now = LocalDate.of(2022, 12, 10);
+        final LocalDate now = LocalDate.of(2022, DECEMBER, 10);
 
         final Person person = new Person();
         person.setFirstName("first");

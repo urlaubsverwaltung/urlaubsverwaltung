@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.time.Duration.ofHours;
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -106,7 +110,7 @@ class ApplicationTest {
     @Test
     void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
 
-        LocalDate startDate = LocalDate.of(2016, 2, 1);
+        LocalDate startDate = LocalDate.of(2016, FEBRUARY, 1);
 
         Application application = new Application();
         application.setStartDate(startDate);
@@ -145,7 +149,7 @@ class ApplicationTest {
     void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
 
         final Application application = new Application();
-        application.setEndDate(LocalDate.of(2016, 12, 21));
+        application.setEndDate(LocalDate.of(2016, DECEMBER, 21));
         application.setEndTime(LocalTime.of(12, 30, 0));
 
         final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
@@ -184,8 +188,8 @@ class ApplicationTest {
 
         final Application application = new Application();
         application.setPerson(person);
-        application.setStartDate(LocalDate.of(2022, 12, 30));
-        application.setEndDate(LocalDate.of(2023, 1, 2));
+        application.setStartDate(LocalDate.of(2022, DECEMBER, 30));
+        application.setEndDate(LocalDate.of(2023, JANUARY, 2));
         application.setDayLength(FULL);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
 
@@ -202,13 +206,13 @@ class ApplicationTest {
 
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
             // 1h reduction
-            LocalDate.of(2022, 12, 30), new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+            LocalDate.of(2022, DECEMBER, 30), new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             // 0.5h reduction
-            LocalDate.of(2022, 12, 31), new WorkingTimeCalendar.WorkingDayInformation(MORNING, WORKDAY, NO_WORKDAY),
+            LocalDate.of(2022, DECEMBER, 31), new WorkingTimeCalendar.WorkingDayInformation(MORNING, WORKDAY, NO_WORKDAY),
             // 0h
-            LocalDate.of(2023, 1, 1), new WorkingTimeCalendar.WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY),
+            LocalDate.of(2023, JANUARY, 1), new WorkingTimeCalendar.WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY),
             // 1h reduction
-            LocalDate.of(2023, 1, 2), new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2023, JANUARY, 2), new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         ));
 
         final Map<Integer, Duration> hoursByYear = application.getHoursByYear((_, _) -> workingTimeCalendar);
@@ -271,7 +275,7 @@ class ApplicationTest {
 
     @Test
     void ensureGetOvertimeReductionSharesForSingleDays() {
-        final LocalDate date = LocalDate.of(2022, 8, 10);
+        final LocalDate date = LocalDate.of(2022, AUGUST, 10);
 
         final Person person = new Person();
         person.setId(1L);
@@ -316,7 +320,7 @@ class ApplicationTest {
         DayLength applicationDayLength, Duration applicationDuration,
         WorkingTimeCalendar.WorkingDayInformation workingDayInformation, Duration overtimeHours
     ) {
-        final LocalDate date = LocalDate.of(2022, 8, 10);
+        final LocalDate date = LocalDate.of(2022, AUGUST, 10);
 
         final Person person = new Person();
         person.setId(1L);
@@ -339,9 +343,9 @@ class ApplicationTest {
 
     @Test
     void ensureGetOvertimeReductionSharesForMultipleDays() {
-        final LocalDate startDate = LocalDate.of(2022, 8, 10);
-        final LocalDate middleDate = LocalDate.of(2022, 8, 11);
-        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+        final LocalDate startDate = LocalDate.of(2022, AUGUST, 10);
+        final LocalDate middleDate = LocalDate.of(2022, AUGUST, 11);
+        final LocalDate endDate = LocalDate.of(2022, AUGUST, 12);
 
         final Person person = new Person();
         person.setId(1L);
@@ -356,9 +360,9 @@ class ApplicationTest {
         application.setHours(Duration.ofHours(12));
 
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
-            LocalDate.of(2022, 8, 10), fullWorkday(),
-            LocalDate.of(2022, 8, 11), fullWorkday(),
-            LocalDate.of(2022, 8, 12), fullWorkday()
+            LocalDate.of(2022, AUGUST, 10), fullWorkday(),
+            LocalDate.of(2022, AUGUST, 11), fullWorkday(),
+            LocalDate.of(2022, AUGUST, 12), fullWorkday()
         ));
 
         final var partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
@@ -371,9 +375,9 @@ class ApplicationTest {
 
     @Test
     void ensureGetOvertimeReductionSharesForMultipleDaysWithOneNoWorkday() {
-        final LocalDate startDate = LocalDate.of(2022, 8, 10);
-        final LocalDate middleDate = LocalDate.of(2022, 8, 11);
-        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+        final LocalDate startDate = LocalDate.of(2022, AUGUST, 10);
+        final LocalDate middleDate = LocalDate.of(2022, AUGUST, 11);
+        final LocalDate endDate = LocalDate.of(2022, AUGUST, 12);
 
         final Person person = new Person();
         person.setId(1L);
@@ -388,9 +392,9 @@ class ApplicationTest {
         application.setHours(Duration.ofHours(12));
 
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
-            LocalDate.of(2022, 8, 10), fullWorkday(),
-            LocalDate.of(2022, 8, 11), noWorkday(),
-            LocalDate.of(2022, 8, 12), fullWorkday()
+            LocalDate.of(2022, AUGUST, 10), fullWorkday(),
+            LocalDate.of(2022, AUGUST, 11), noWorkday(),
+            LocalDate.of(2022, AUGUST, 12), fullWorkday()
         ));
 
         final var partitionedDurations = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
@@ -403,8 +407,8 @@ class ApplicationTest {
 
     @Test
     void ensureGetOvertimeReductionHoursWhenConvertingFromSickNoteWithDefaultZero() {
-        final LocalDate startDate = LocalDate.of(2022, 8, 10);
-        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+        final LocalDate startDate = LocalDate.of(2022, AUGUST, 10);
+        final LocalDate endDate = LocalDate.of(2022, AUGUST, 12);
 
         final Person person = new Person();
         person.setId(1L);

@@ -7,6 +7,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountDTOTest {
@@ -14,13 +17,13 @@ class AccountDTOTest {
     @Test
     void happyPath() {
         final AccountDTO accountDTO = new AccountDTO(
-            LocalDate.of(2023, 1, 1),
-            LocalDate.of(2023, 12, 31),
+            LocalDate.of(2023, JANUARY, 1),
+            LocalDate.of(2023, DECEMBER, 31),
             true,
             false,
-            LocalDate.of(2023, 12, 31),
+            LocalDate.of(2023, DECEMBER, 31),
             null,
-            LocalDate.of(2023, 11, 1),
+            LocalDate.of(2023, NOVEMBER, 1),
             BigDecimal.valueOf(30),
             BigDecimal.valueOf(25),
             BigDecimal.valueOf(5),

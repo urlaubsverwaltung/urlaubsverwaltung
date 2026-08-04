@@ -13,13 +13,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApplicationDTOTest {
 
     @Test
     void happyPath() {
-        ApplicationDTO applicationDTO = new ApplicationDTO(1L, "personExternalId", "applierExternalId", "bossExternalId", "cancellerExternalId", true, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 10), LocalTime.of(9, 0), LocalTime.of(17, 0), 1L, DayLengthDTO.FULL, "Vacation", List.of(), "Address", LocalDate.of(2023, 1, 1), null, null, null, ApplicationStatusDTO.ALLOWED, true, Duration.ofHours(8), null, null, List.of());
+        ApplicationDTO applicationDTO = new ApplicationDTO(1L, "personExternalId", "applierExternalId", "bossExternalId", "cancellerExternalId", true, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 10), LocalTime.of(9, 0), LocalTime.of(17, 0), 1L, DayLengthDTO.FULL, "Vacation", List.of(), "Address", LocalDate.of(2023, JANUARY, 1), null, null, null, ApplicationStatusDTO.ALLOWED, true, Duration.ofHours(8), null, null, List.of());
         VacationTypeEntity vacationType = new VacationTypeEntity();
         Person person = new Person();
         Person applier = new Person();

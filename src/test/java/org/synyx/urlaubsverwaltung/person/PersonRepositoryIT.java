@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -217,8 +219,8 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
 
         final Account previousYearAccount = new Account();
         previousYearAccount.setPerson(person);
-        previousYearAccount.setValidFrom(LocalDate.of(currentYear.minusYears(1).getValue(), 1, 1));
-        previousYearAccount.setValidTo(LocalDate.of(currentYear.minusYears(1).getValue(), 12, 31));
+        previousYearAccount.setValidFrom(LocalDate.of(currentYear.minusYears(1).getValue(), JANUARY, 1));
+        previousYearAccount.setValidTo(LocalDate.of(currentYear.minusYears(1).getValue(), DECEMBER, 31));
         accountService.save(previousYearAccount);
 
         assertThat(sut.findAllWithAccountByYear(currentYear.getValue())).hasSize(3);

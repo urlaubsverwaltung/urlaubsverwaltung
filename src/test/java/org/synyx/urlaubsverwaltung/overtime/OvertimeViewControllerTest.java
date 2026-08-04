@@ -48,6 +48,11 @@ import java.util.Set;
 
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JULY;
+import static java.time.Month.MARCH;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -285,7 +290,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             person.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            new DateRange(LocalDate.of(2019, JULY, 2), LocalDate.of(2019, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -494,7 +499,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             person.getIdAsPersonId(),
-            new DateRange( LocalDate.of(2012, 2, 5), LocalDate.of(2012, 2, 5)),
+            new DateRange( LocalDate.of(2012, FEBRUARY, 5), LocalDate.of(2012, FEBRUARY, 5)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -554,12 +559,12 @@ class OvertimeViewControllerTest {
         overtimePerson.setEmail("person@example.org");
 
         final OvertimeId overtimeId = new OvertimeId(2L);
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, FEBRUARY, 5);
 
         final Overtime overtime = new Overtime(
            overtimeId,
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), overtimeEndDate),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -615,7 +620,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             overtimeId,
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5)),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), LocalDate.of(2016, FEBRUARY, 5)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -762,11 +767,11 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(1L);
 
         final OvertimeId overtimeId = new OvertimeId(2L);
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, FEBRUARY, 5);
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), overtimeEndDate),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -797,11 +802,11 @@ class OvertimeViewControllerTest {
         overtimePerson.setPermissions(List.of(USER));
 
         final OvertimeId overtimeId = new OvertimeId(2L);
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, FEBRUARY, 5);
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange( LocalDate.of(2016, 2, 5), overtimeEndDate),
+            new DateRange( LocalDate.of(2016, FEBRUARY, 5), overtimeEndDate),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -826,11 +831,11 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(5L);
 
         final OvertimeId overtimeId = new OvertimeId(2L);
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, FEBRUARY, 5);
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), overtimeEndDate),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -855,11 +860,11 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(2L);
 
         final OvertimeId overtimeId = new OvertimeId(2L);
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, FEBRUARY, 5);
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), overtimeEndDate),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -903,8 +908,8 @@ class OvertimeViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final LocalDate startDate = LocalDate.of(2019, 7, 2);
-        final LocalDate endDate = LocalDate.of(2019, 7, 2);
+        final LocalDate startDate = LocalDate.of(2019, JULY, 2);
+        final LocalDate endDate = LocalDate.of(2019, JULY, 2);
         final DateRange dateRange = new DateRange(startDate, endDate);
         final Duration duration = ofHours(8);
 
@@ -947,7 +952,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28)),
+            new DateRange(LocalDate.of(2022, MARCH, 1), LocalDate.of(2022, APRIL, 28)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1035,7 +1040,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18)),
+            new DateRange(LocalDate.of(2020, DECEMBER, 18), LocalDate.of(2020, DECEMBER, 18)),
             ofHours(-10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1067,7 +1072,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18)),
+            new DateRange(LocalDate.of(2020, DECEMBER, 18), LocalDate.of(2020, DECEMBER, 18)),
             ofMinutes(-30),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1122,7 +1127,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            new DateRange(LocalDate.of(2019, JULY, 2), LocalDate.of(2019, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1156,8 +1161,8 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(overtimePersonId.value());
 
-        final LocalDate startDate = LocalDate.of(2022, 3, 1);
-        final LocalDate endDate = LocalDate.of(2022, 4, 28);
+        final LocalDate startDate = LocalDate.of(2022, MARCH, 1);
+        final LocalDate endDate = LocalDate.of(2022, APRIL, 28);
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
@@ -1202,7 +1207,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             person.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            new DateRange(LocalDate.of(2019, JULY, 2), LocalDate.of(2019, JULY, 2)),
             ofHours(8),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1230,7 +1235,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             person.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(8),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1274,7 +1279,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1308,7 +1313,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1342,7 +1347,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1386,7 +1391,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1429,7 +1434,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)
@@ -1459,7 +1464,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(
             new OvertimeId(2L),
             overtimePerson.getIdAsPersonId(),
-            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
             ofHours(10),
             OvertimeType.UV_INTERNAL,
             Instant.now(clock)

@@ -16,9 +16,13 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.stream.Stream;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -336,8 +340,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureInvalidPeriodForToDateAfterFromDate() {
         final AccountForm form = new AccountForm(2021);
-        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.JANUARY, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, JANUARY, 1));
 
         sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidRangeReversed");
@@ -347,8 +351,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureInvalidPeriodForToDateEqualsFromDate() {
         final AccountForm form = new AccountForm(2021);
-        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.MARCH, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, MARCH, 1));
 
         sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidRange");
@@ -358,8 +362,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureInvalidPeriodForFromDateWrongYear() {
         final AccountForm form = new AccountForm(2021);
-        form.setHolidaysAccountValidFrom(LocalDate.of(2022, Month.MARCH, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.MARCH, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2022, MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, MARCH, 1));
 
         sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidFrom", "person.form.annualVacation.error.holidaysAccountValidFrom.invalidYear", new Object[]{"2021"}, "");
@@ -368,8 +372,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureInvalidPeriodForToDateWringYear() {
         final AccountForm form = new AccountForm(2021);
-        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2020, Month.MARCH, 1));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2020, MARCH, 1));
 
         sut.validatePeriod(form, errors);
         verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidYear", new Object[]{"2021"}, "");
@@ -378,8 +382,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureValidPeriodHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 5));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, MAY, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, MAY, 5));
 
         sut.validatePeriod(form, errors);
         verifyNoInteractions(errors);
@@ -403,7 +407,7 @@ class AccountFormValidatorTest {
     @Test
     void ensureHolidaysAccountExpiryDateCanBeNull() {
 
-        mockExpiryDateGlobal(LocalDate.of(2013, 2, 1));
+        mockExpiryDateGlobal(LocalDate.of(2013, FEBRUARY, 1));
 
         final AccountForm form = new AccountForm(2013);
         form.setDoRemainingVacationDaysExpireLocally(true);
@@ -416,10 +420,10 @@ class AccountFormValidatorTest {
     @Test
     void ensureInvalidExpiryDateWrongYear() {
 
-        mockExpiryDateGlobal(LocalDate.of(2021, 4, 1));
+        mockExpiryDateGlobal(LocalDate.of(2021, APRIL, 1));
 
         final AccountForm form = new AccountForm(2021);
-        form.setExpiryDateLocally(LocalDate.of(2022, Month.MARCH, 1));
+        form.setExpiryDateLocally(LocalDate.of(2022, MARCH, 1));
 
         sut.validateExpiryDateLocally(form, errors, this::getSettings);
         verify(errors).rejectValue("expiryDateLocally", "person.form.annualVacation.error.expiryDateLocally.invalidYear", new Object[]{"2021"}, "");
@@ -428,11 +432,11 @@ class AccountFormValidatorTest {
     @Test
     void ensureExpiryDateHasNoValidationError() {
 
-        mockExpiryDateGlobal(LocalDate.of(2013, 4, 1));
+        mockExpiryDateGlobal(LocalDate.of(2013, APRIL, 1));
 
         final AccountForm form = new AccountForm(2013);
         form.setDoRemainingVacationDaysExpireLocally(true);
-        form.setExpiryDateLocally(LocalDate.of(2013, 5, 1));
+        form.setExpiryDateLocally(LocalDate.of(2013, MAY, 1));
 
         sut.validateExpiryDateLocally(form, errors, this::getSettings);
         verifyNoInteractions(errors);

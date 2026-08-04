@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import static java.math.BigDecimal.valueOf;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -76,7 +79,7 @@ class SickNoteStatisticsServiceTest {
         final List<Person> members = List.of(member1, member2);
         when(departmentService.getManagedMembersOfPerson(departmentHead, year)).thenReturn(members);
 
-        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
+        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
 
         final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
@@ -133,7 +136,7 @@ class SickNoteStatisticsServiceTest {
         final List<Person> members = List.of(member1, member2);
         when(departmentService.getManagedMembersOfPerson(secondStageAuthPerson, year)).thenReturn(members);
 
-        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
+        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
 
         final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
@@ -188,9 +191,9 @@ class SickNoteStatisticsServiceTest {
 
         when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(personWithRole, person));
 
-        final LocalDate from = LocalDate.of(year.getValue(), 1, 1);
-        final LocalDate to = LocalDate.of(year.getValue(), 12, 31);
-        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
+        final LocalDate from = LocalDate.of(year.getValue(), JANUARY, 1);
+        final LocalDate to = LocalDate.of(year.getValue(), DECEMBER, 31);
+        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
@@ -242,14 +245,14 @@ class SickNoteStatisticsServiceTest {
 
         when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
 
-        final LocalDate from = LocalDate.of(2022, 1, 1);
-        final LocalDate to = LocalDate.of(2022, 12, 31);
+        final LocalDate from = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(year.getValue(), 10, 10))
-            .endDate(LocalDate.of(year.getValue(), 10, 10))
+            .startDate(LocalDate.of(year.getValue(), OCTOBER, 10))
+            .endDate(LocalDate.of(year.getValue(), OCTOBER, 10))
             .dayLength(FULL)
             .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
             .build();
@@ -278,14 +281,14 @@ class SickNoteStatisticsServiceTest {
         user.setId(1L);
         user.setPermissions(List.of(USER, SICK_NOTE_VIEW));
 
-        final LocalDate from = LocalDate.of(2022, 1, 1);
-        final LocalDate to = LocalDate.of(2022, 12, 31);
+        final LocalDate from = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
 
         final SickNote sickNote = SickNote.builder()
             .person(user)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(year.getValue(), 10, 10))
-            .endDate(LocalDate.of(year.getValue(), 10, 10))
+            .startDate(LocalDate.of(year.getValue(), OCTOBER, 10))
+            .endDate(LocalDate.of(year.getValue(), OCTOBER, 10))
             .dayLength(FULL)
             .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
             .build();
@@ -333,10 +336,10 @@ class SickNoteStatisticsServiceTest {
 
         when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
 
-        final LocalDate from = LocalDate.of(2022, 1, 1);
-        final LocalDate to = LocalDate.of(2022, 12, 31);
-        final LocalDate sickNoteStart = LocalDate.of(2022, 1, 10);
-        final LocalDate sickNoteEnd = LocalDate.of(2022, 1, 11);
+        final LocalDate from = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
+        final LocalDate sickNoteStart = LocalDate.of(2022, JANUARY, 10);
+        final LocalDate sickNoteEnd = LocalDate.of(2022, JANUARY, 11);
 
         // only the two sick note dates are target work days for `person`, `office` has none at all
         // --> target work days in January == sick days in January

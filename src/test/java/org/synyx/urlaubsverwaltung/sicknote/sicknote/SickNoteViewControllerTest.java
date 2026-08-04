@@ -49,6 +49,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -815,8 +817,8 @@ class SickNoteViewControllerTest {
         final Person somePerson = new Person();
         when(personService.getSignedInUser()).thenReturn(somePerson);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(somePerson).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(somePerson).build()));
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
 
@@ -828,8 +830,8 @@ class SickNoteViewControllerTest {
         final Person officePerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20))
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20))
             .person(new Person()).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -861,8 +863,8 @@ class SickNoteViewControllerTest {
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
@@ -881,8 +883,8 @@ class SickNoteViewControllerTest {
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -902,8 +904,8 @@ class SickNoteViewControllerTest {
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -936,8 +938,8 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -954,8 +956,8 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -1005,8 +1007,8 @@ class SickNoteViewControllerTest {
 
         final Person person = new Person();
         final SickNote sickNote = SickNote.builder()
-            .startDate(LocalDate.of(2019, 1, 1))
-            .endDate(LocalDate.of(2019, 2, 24))
+            .startDate(LocalDate.of(2019, JANUARY, 1))
+            .endDate(LocalDate.of(2019, FEBRUARY, 24))
             .person(person)
             .status(ACTIVE)
             .build();
@@ -1022,7 +1024,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/15"))
             .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
-            .andExpect(model().attribute("sickPayDaysEndDate", LocalDate.of(2019, 2, 11)))
+            .andExpect(model().attribute("sickPayDaysEndDate", LocalDate.of(2019, FEBRUARY, 11)))
             .andExpect(model().attribute("doesSickPayDaysEnd", true))
             .andExpect(model().attribute("numberSickPayDaysSinceEnd", ChronoUnit.DAYS.between(sickPayDaysEndDate, LocalDate.now()) + 1))
             .andExpect(view().name("sicknote/sick_note_detail"));
@@ -1036,8 +1038,8 @@ class SickNoteViewControllerTest {
 
         final Person person = new Person();
         final SickNote sickNote = SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20))
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20))
             .person(person)
             .status(ACTIVE)
             .build();
@@ -1065,8 +1067,8 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(role, SICK_NOTE_VIEW, SICK_NOTE_EDIT));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(new Person()).status(ACTIVE).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))
@@ -1085,8 +1087,8 @@ class SickNoteViewControllerTest {
 
         final Person person = new Person();
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
@@ -1122,8 +1124,8 @@ class SickNoteViewControllerTest {
 
         final Person person = new Person();
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(person).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
@@ -1156,8 +1158,8 @@ class SickNoteViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
-            .startDate(LocalDate.of(2025, 2, 10))
-            .endDate(LocalDate.of(2025, 2, 20)).person(new Person()).status(ACTIVE).build()));
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))

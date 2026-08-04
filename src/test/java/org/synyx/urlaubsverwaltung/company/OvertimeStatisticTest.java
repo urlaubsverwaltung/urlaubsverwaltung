@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
@@ -81,7 +82,7 @@ class OvertimeStatisticTest {
         return new Overtime(
             new OvertimeId(1L),
             personId,
-            new DateRange(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 1, 2)),
+            new DateRange(LocalDate.of(2024, JANUARY, 1), LocalDate.of(2024, JANUARY, 2)),
             duration,
             UV_INTERNAL,
             Instant.now()

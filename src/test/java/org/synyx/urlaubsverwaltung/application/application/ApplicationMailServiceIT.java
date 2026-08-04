@@ -32,14 +32,16 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
 import static java.time.Month.APRIL;
+import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static java.time.ZoneOffset.UTC;
@@ -500,9 +502,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2023, 5, 22));
-        application.setEndDate(LocalDate.of(2023, 5, 22));
-        application.setApplicationDate(LocalDate.of(2023, 5, 22));
+        application.setStartDate(LocalDate.of(2023, MAY, 22));
+        application.setEndDate(LocalDate.of(2023, MAY, 22));
+        application.setApplicationDate(LocalDate.of(2023, MAY, 22));
         application.setBoss(boss);
 
         final ApplicationComment comment = new ApplicationComment(
@@ -591,9 +593,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
 
         final Application application = createApplication(recipient);
-        application.setApplicationDate(LocalDate.of(2022, 5, 19));
-        application.setStartDate(LocalDate.of(2022, 5, 20));
-        application.setEndDate(LocalDate.of(2022, 5, 29));
+        application.setApplicationDate(LocalDate.of(2022, MAY, 19));
+        application.setStartDate(LocalDate.of(2022, MAY, 20));
+        application.setEndDate(LocalDate.of(2022, MAY, 29));
         application.setBoss(boss);
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
@@ -646,8 +648,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Application application = createApplication(person);
         application.setStatus(ApplicationStatus.ALLOWED);
-        application.setStartDate(LocalDate.of(2020, 5, 29));
-        application.setEndDate(LocalDate.of(2020, 5, 29));
+        application.setStartDate(LocalDate.of(2020, MAY, 29));
+        application.setEndDate(LocalDate.of(2020, MAY, 29));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCEL_REQUESTED_DECLINED, office, "Stornierung abgelehnt!");
@@ -735,8 +737,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2020, 5, 29));
-        application.setEndDate(LocalDate.of(2020, 5, 29));
+        application.setStartDate(LocalDate.of(2020, MAY, 29));
+        application.setEndDate(LocalDate.of(2020, MAY, 29));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCEL_REQUESTED, person, "Bitte stornieren!");
@@ -1088,8 +1090,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2020, 12, 18));
-        application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
         application.setApplier(applier);
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
@@ -1141,8 +1143,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2020, 12, 18));
-        application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setId(1L);
@@ -1190,8 +1192,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setBoss(boss);
-        application.setStartDate(LocalDate.of(2020, 5, 29));
-        application.setEndDate(LocalDate.of(2020, 5, 29));
+        application.setStartDate(LocalDate.of(2020, MAY, 29));
+        application.setEndDate(LocalDate.of(2020, MAY, 29));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setId(1L);
@@ -1241,8 +1243,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2020, 12, 18));
-        application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setId(1L);
@@ -1288,8 +1290,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setStatus(WAITING);
-        application.setStartDate(LocalDate.of(2020, 12, 18));
-        application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
@@ -1336,8 +1338,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setStatus(ALLOWED);
-        application.setStartDate(LocalDate.of(2020, 12, 18));
-        application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
@@ -1408,9 +1410,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2024, 8, 8));
-        application.setEndDate(LocalDate.of(2024, 8, 8));
-        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+        application.setStartDate(LocalDate.of(2024, AUGUST, 8));
+        application.setEndDate(LocalDate.of(2024, AUGUST, 8));
+        application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
@@ -1578,9 +1580,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2024, 8, 8));
-        application.setEndDate(LocalDate.of(2024, 8, 8));
-        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+        application.setStartDate(LocalDate.of(2024, AUGUST, 8));
+        application.setEndDate(LocalDate.of(2024, AUGUST, 8));
+        application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Habe das mal für dich beantragt");
@@ -1760,7 +1762,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Application application = createApplication(person);
         application.setCanceller(person);
-        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+        application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.REVOKED, person, "Wrong date - revoked");
@@ -1825,7 +1827,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REVOKED));
 
         final Application application = createApplication(person);
-        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+        application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         final Person office = new Person("office", "Person", "Office", "office@example.org");
         application.setCanceller(office);
@@ -2121,9 +2123,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         office.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
 
         final Application application = createApplication(person);
-        application.setApplicationDate(LocalDate.of(2020, 5, 29));
-        application.setStartDate(LocalDate.of(2020, 6, 15));
-        application.setEndDate(LocalDate.of(2020, 6, 15));
+        application.setApplicationDate(LocalDate.of(2020, MAY, 29));
+        application.setStartDate(LocalDate.of(2020, JUNE, 15));
+        application.setEndDate(LocalDate.of(2020, JUNE, 15));
         application.setCanceller(office);
         application.setDayLength(FULL);
 
@@ -2245,9 +2247,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2023, 5, 22));
-        application.setEndDate(LocalDate.of(2023, 5, 22));
-        application.setApplicationDate(LocalDate.of(2023, 5, 22));
+        application.setStartDate(LocalDate.of(2023, MAY, 22));
+        application.setEndDate(LocalDate.of(2023, MAY, 22));
+        application.setApplicationDate(LocalDate.of(2023, MAY, 22));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
@@ -2348,9 +2350,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Application application = createApplication(secondStage);
-        application.setStartDate(LocalDate.of(2023, 5, 22));
-        application.setEndDate(LocalDate.of(2023, 5, 22));
-        application.setApplicationDate(LocalDate.of(2023, 5, 22));
+        application.setStartDate(LocalDate.of(2023, MAY, 22));
+        application.setEndDate(LocalDate.of(2023, MAY, 22));
+        application.setApplicationDate(LocalDate.of(2023, MAY, 22));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, secondStage, "Hätte gerne Urlaub");
@@ -2453,9 +2455,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
 
         final Application application = createApplication(departmentHead);
-        application.setStartDate(LocalDate.of(2023, 5, 22));
-        application.setEndDate(LocalDate.of(2023, 5, 22));
-        application.setApplicationDate(LocalDate.of(2023, 5, 22));
+        application.setStartDate(LocalDate.of(2023, MAY, 22));
+        application.setEndDate(LocalDate.of(2023, MAY, 22));
+        application.setApplicationDate(LocalDate.of(2023, MAY, 22));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, departmentHead, "Hätte gerne Urlaub");
@@ -3301,7 +3303,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
-        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+        application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         when(mailRecipientService.getResponsibleManagersOf(application.getPerson())).thenReturn(asList(boss, departmentHead));
 
@@ -3665,8 +3667,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 3));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -3715,8 +3717,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 3));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 3));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 3));
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Some notes");
@@ -3842,8 +3844,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 31));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
@@ -3882,8 +3884,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 31));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
@@ -3924,8 +3926,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -3976,8 +3978,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -4031,8 +4033,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -4090,8 +4092,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -4148,8 +4150,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 31));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -4242,8 +4244,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 3));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -4285,8 +4287,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 4));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 5));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 5));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -4327,8 +4329,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setStartDate(LocalDate.of(2022, JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);

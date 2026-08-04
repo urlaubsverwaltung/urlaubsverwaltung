@@ -48,6 +48,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.as;
@@ -127,11 +133,11 @@ class SickDaysOverviewViewControllerTest {
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
         final int year = clockYear();
         return Stream.of(
-            Arguments.of("25.03.%s".formatted(year), LocalDate.of(year, 3, 25)),
-            Arguments.of("25.03.%s".formatted(year - 2000), LocalDate.of(year, 3, 25)),
-            Arguments.of("25.3.%s".formatted(year), LocalDate.of(year, 3, 25)),
-            Arguments.of("25.3.%s".formatted(year - 2000), LocalDate.of(year, 3, 25)),
-            Arguments.of("1.4.%s".formatted(year - 2000), LocalDate.of(year, 4, 1))
+            Arguments.of("25.03.%s".formatted(year), LocalDate.of(year, MARCH, 25)),
+            Arguments.of("25.03.%s".formatted(year - 2000), LocalDate.of(year, MARCH, 25)),
+            Arguments.of("25.3.%s".formatted(year), LocalDate.of(year, MARCH, 25)),
+            Arguments.of("25.3.%s".formatted(year - 2000), LocalDate.of(year, MARCH, 25)),
+            Arguments.of("1.4.%s".formatted(year - 2000), LocalDate.of(year, APRIL, 1))
         );
     }
 
@@ -196,7 +202,7 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", givenDate)
-            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("to", LocalDate.of(year, DECEMBER, 31))
             .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
@@ -207,7 +213,7 @@ class SickDaysOverviewViewControllerTest {
         final Locale locale = Locale.GERMAN;
 
         final int year = clockYear();
-        final LocalDate fromDate = LocalDate.of(year, 1, 1);
+        final LocalDate fromDate = LocalDate.of(year, JANUARY, 1);
 
         when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
 
@@ -246,8 +252,8 @@ class SickDaysOverviewViewControllerTest {
             .hasViewName("sicknote/sick_days")
             .model()
             .containsEntry("today", LocalDate.now(clock))
-            .containsEntry("from", LocalDate.of(year, 1, 1))
-            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("from", LocalDate.of(year, JANUARY, 1))
+            .containsEntry("to", LocalDate.of(year, DECEMBER, 31))
             .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
@@ -280,22 +286,22 @@ class SickDaysOverviewViewControllerTest {
         person3.setPermissions(List.of(USER));
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
-            LocalDate.of(2019, 1, 1),
-            LocalDate.of(2019, 12, 31)
+            LocalDate.of(2019, JANUARY, 1),
+            LocalDate.of(2019, DECEMBER, 31)
         );
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
 
         final SickNote childSickNote = SickNote.builder()
-            .startDate(LocalDate.of(2019, 2, 1))
-            .endDate(LocalDate.of(2019, 3, 1))
+            .startDate(LocalDate.of(2019, FEBRUARY, 1))
+            .endDate(LocalDate.of(2019, MARCH, 1))
             .dayLength(FULL)
             .status(ACTIVE)
             .sickNoteType(childSickType)
             .person(person)
-            .aubStartDate(LocalDate.of(2019, 2, 10))
-            .aubEndDate(LocalDate.of(2019, 2, 15))
+            .aubStartDate(LocalDate.of(2019, FEBRUARY, 10))
+            .aubEndDate(LocalDate.of(2019, FEBRUARY, 15))
             .workingTimeCalendar(workingTimeCalendar)
             .build();
 
@@ -303,19 +309,19 @@ class SickDaysOverviewViewControllerTest {
         sickType.setCategory(SICK_NOTE);
 
         final SickNote sickNote = SickNote.builder()
-            .startDate(LocalDate.of(2019, 4, 1))
-            .endDate(LocalDate.of(2019, 5, 1))
+            .startDate(LocalDate.of(2019, APRIL, 1))
+            .endDate(LocalDate.of(2019, MAY, 1))
             .dayLength(FULL)
             .status(ACTIVE)
             .sickNoteType(sickType)
             .person(person2)
-            .aubStartDate(LocalDate.of(2019, 4, 10))
-            .aubEndDate(LocalDate.of(2019, 4, 20))
+            .aubStartDate(LocalDate.of(2019, APRIL, 10))
+            .aubEndDate(LocalDate.of(2019, APRIL, 20))
             .workingTimeCalendar(workingTimeCalendar)
             .build();
 
-        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
-        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+        final LocalDate requestStartDate = LocalDate.of(2019, FEBRUARY, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, APRIL, 15);
 
         final PageableSearchQuery pageableSearchQuery =
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");
@@ -403,8 +409,8 @@ class SickDaysOverviewViewControllerTest {
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
-        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+        final LocalDate requestStartDate = LocalDate.of(2019, FEBRUARY, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, APRIL, 15);
 
         final PageableSearchQuery pageableSearchQuery =
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");

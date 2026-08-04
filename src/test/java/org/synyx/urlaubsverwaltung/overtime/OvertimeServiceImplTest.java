@@ -41,7 +41,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -712,8 +715,8 @@ class OvertimeServiceImplTest {
     void ensureReturnsZeroIfPersonHasNoOvertimeRecordsYetForTheGivenYear() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        final LocalDate firstDayOfYear = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate lastDayOfYear = LocalDate.of(2016, DECEMBER, 31);
         when(overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear)).thenReturn(List.of());
 
         final Duration totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
@@ -726,14 +729,14 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final OvertimeEntity overtimeRecord = new OvertimeEntity(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(1));
+        final OvertimeEntity overtimeRecord = new OvertimeEntity(person, LocalDate.of(2016, JANUARY, 5), LocalDate.of(2016, JANUARY, 5), Duration.ofHours(1));
         overtimeRecord.setId(1L);
 
-        final OvertimeEntity otherOvertimeRecord = new OvertimeEntity(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(10));
+        final OvertimeEntity otherOvertimeRecord = new OvertimeEntity(person, LocalDate.of(2016, FEBRUARY, 5), LocalDate.of(2016, FEBRUARY, 5), Duration.ofHours(10));
         otherOvertimeRecord.setId(2L);
 
-        final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        final LocalDate firstDayOfYear = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate lastDayOfYear = LocalDate.of(2016, DECEMBER, 31);
         when(overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(overtimeRecord, otherOvertimeRecord));
 
@@ -747,13 +750,13 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2016, JANUARY, 5), LocalDate.of(2016, JANUARY, 5), Duration.ofHours(10));
         overtime.setId(1L);
 
-        final OvertimeEntity overtime2 = new OvertimeEntity(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(4));
+        final OvertimeEntity overtime2 = new OvertimeEntity(person, LocalDate.of(2016, FEBRUARY, 5), LocalDate.of(2016, FEBRUARY, 5), Duration.ofHours(4));
         overtime2.setId(2L);
 
-        final LocalDate firstDayOfYear = LocalDate.of(2017, 1, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2017, JANUARY, 1);
         final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
         when(overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear)).thenReturn(List.of(overtime, overtime2));
         when(applicationService.getTotalOvertimeReductionOfPersonUntil(person, lastDayOfBeforeYear)).thenReturn(Duration.ofHours(1));
@@ -1501,8 +1504,8 @@ class OvertimeServiceImplTest {
         @Test
         void ensureReturnsOvertimeClippedToDateRangeGroupedByPersonAndSortedByStartDate() {
 
-            final LocalDate from = LocalDate.of(2024, 6, 10);
-            final LocalDate to = LocalDate.of(2024, 6, 20);
+            final LocalDate from = LocalDate.of(2024, JUNE, 10);
+            final LocalDate to = LocalDate.of(2024, JUNE, 20);
 
             final PersonId personId = new PersonId(1L);
             final Person person = new Person();
@@ -1533,8 +1536,8 @@ class OvertimeServiceImplTest {
         @Test
         void ensureFiltersOutExternalOvertimeWithZeroDuration() {
 
-            final LocalDate from = LocalDate.of(2024, 6, 10);
-            final LocalDate to = LocalDate.of(2024, 6, 20);
+            final LocalDate from = LocalDate.of(2024, JUNE, 10);
+            final LocalDate to = LocalDate.of(2024, JUNE, 20);
 
             final PersonId personId = new PersonId(1L);
             final Person person = new Person();
@@ -1561,8 +1564,8 @@ class OvertimeServiceImplTest {
         @Test
         void ensureReturnsEmptyListForEveryRequestedPersonWithoutThrowingWhenPersonOrOvertimeIsMissing() {
 
-            final LocalDate from = LocalDate.of(2024, 6, 10);
-            final LocalDate to = LocalDate.of(2024, 6, 20);
+            final LocalDate from = LocalDate.of(2024, JUNE, 10);
+            final LocalDate to = LocalDate.of(2024, JUNE, 20);
 
             final PersonId personIdWithoutOvertime = new PersonId(1L);
             final Person personWithoutOvertime = new Person();

@@ -24,6 +24,7 @@ import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDate.of;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.OCTOBER;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,7 +65,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of());
 
             assertThat(sut.getTotalNumberOfAllSickNotes()).isEqualTo(2);
@@ -97,7 +98,7 @@ class SickNoteStatisticsTest {
             .build();
 
         final Year year = Year.of(2022);
-        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
         final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of());
 
         assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(BigDecimal.valueOf(2));
@@ -136,7 +137,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person));
 
             assertThat(sut.getAverageDurationOfAllSickNotes()).isEqualTo(valueOf(6.50).setScale(2, HALF_UP));
@@ -175,7 +176,7 @@ class SickNoteStatisticsTest {
             .build();
 
         final Year year = Year.of(2022);
-        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
         final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNoteChild), List.of());
 
         assertThat(sut.getTotalNumberOfSickDaysAllCategories()).isEqualTo(BigDecimal.valueOf(13));
@@ -216,7 +217,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2));
 
             // 2 sick notes: 1st with 3 workdays and 2nd with 10 workdays in year of statistic --> sum = 13 workdays
@@ -228,7 +229,7 @@ class SickNoteStatisticsTest {
         @Test
         void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of());
 
             final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
@@ -255,7 +256,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2015);
-            final LocalDate asOfDate = LocalDate.of(2015, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2015, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person));
 
             // 2015 has 261 monday to friday workdays
@@ -294,7 +295,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2));
 
             assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(valueOf(6.5));
@@ -339,7 +340,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2, person3));
 
             assertThat(sut.getNumberOfPersonsWithMinimumOneSickNote()).isEqualTo(2L);
@@ -383,7 +384,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2022);
-            final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+            final LocalDate asOfDate = LocalDate.of(2022, OCTOBER, 17);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2));
 
             assertThat(sut.getTotalNumberOfSickDaysAllCategories()).isEqualTo(valueOf(13));
@@ -433,7 +434,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2022, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2022, JULY, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNote2, childSickNote), List.of());
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(stream(Month.values()).map(month -> month.equals(givenMonth) ? valueOf(2) : ZERO).toList());
         }
@@ -444,15 +445,15 @@ class SickNoteStatisticsTest {
 
             final SickNote childSickNote = SickNote.builder(SickNote.builder()
                 .person(person)
-                .startDate(of(2025, 1, 1))
-                .endDate(of(2025, 1, 2))
+                .startDate(of(2025, JANUARY, 1))
+                .endDate(of(2025, JANUARY, 2))
                 .dayLength(FULL)
                 .sickNoteType(sickNoteType())
                 .status(ACTIVE)
                 .build()).sickNoteType(childSickNoteType()).build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
 
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(childSickNote), List.of());
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
@@ -478,7 +479,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of());
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(valueOf(1), valueOf(2), ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
         }
@@ -511,7 +512,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person), Map.of(person, workingTimeCalendar));
 
             // two sick days and two target work days in givenMonth --> (2 / 2) * 100 = 100%, zero elsewhere
@@ -527,15 +528,15 @@ class SickNoteStatisticsTest {
             // person only has target work days on Jan 1-2, person2 only on Jan 3-5
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
                 LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
-                date -> !date.isBefore(of(2025, 1, 1)) && !date.isAfter(of(2025, 1, 2)));
+                date -> !date.isBefore(of(2025, JANUARY, 1)) && !date.isAfter(of(2025, JANUARY, 2)));
             final WorkingTimeCalendar workingTimeCalendar2 = workingTimeCalendarMondayToSunday(
                 LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
-                date -> !date.isBefore(of(2025, 1, 3)) && !date.isAfter(of(2025, 1, 5)));
+                date -> !date.isBefore(of(2025, JANUARY, 3)) && !date.isAfter(of(2025, JANUARY, 5)));
 
             final SickNote sickNote = SickNote.builder()
                 .person(person)
-                .startDate(of(2025, 1, 1))
-                .endDate(of(2025, 1, 2))
+                .startDate(of(2025, JANUARY, 1))
+                .endDate(of(2025, JANUARY, 2))
                 .dayLength(FULL)
                 .sickNoteType(sickNoteType())
                 .status(ACTIVE)
@@ -544,8 +545,8 @@ class SickNoteStatisticsTest {
 
             final SickNote childSickNote = SickNote.builder()
                 .person(person2)
-                .startDate(of(2025, 1, 3))
-                .endDate(of(2025, 1, 5))
+                .startDate(of(2025, JANUARY, 3))
+                .endDate(of(2025, JANUARY, 5))
                 .dayLength(FULL)
                 .sickNoteType(childSickNoteType())
                 .status(ACTIVE)
@@ -553,7 +554,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
             final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = Map.of(person, workingTimeCalendar, person2, workingTimeCalendar2);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, childSickNote), List.of(person, person2), workingTimeCalendarsByPerson);
 
@@ -569,12 +570,12 @@ class SickNoteStatisticsTest {
             // only person has target work days on Jan 1-2, personWithoutCalendar has no entry in the map at all
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
                 LocalDate.parse("2025-01-01"), LocalDate.parse("2025-12-31"),
-                date -> !date.isBefore(of(2025, 1, 1)) && !date.isAfter(of(2025, 1, 2)));
+                date -> !date.isBefore(of(2025, JANUARY, 1)) && !date.isAfter(of(2025, JANUARY, 2)));
 
             final SickNote sickNote = SickNote.builder()
                 .person(person)
-                .startDate(of(2025, 1, 1))
-                .endDate(of(2025, 1, 2))
+                .startDate(of(2025, JANUARY, 1))
+                .endDate(of(2025, JANUARY, 2))
                 .dayLength(FULL)
                 .sickNoteType(sickNoteType())
                 .status(ACTIVE)
@@ -582,7 +583,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
             final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = Map.of(person, workingTimeCalendar);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person, personWithoutCalendar), workingTimeCalendarsByPerson);
 
@@ -598,8 +599,8 @@ class SickNoteStatisticsTest {
 
             final SickNote sickNote = SickNote.builder()
                 .person(person)
-                .startDate(of(2025, 1, 1))
-                .endDate(of(2025, 1, 2))
+                .startDate(of(2025, JANUARY, 1))
+                .endDate(of(2025, JANUARY, 2))
                 .dayLength(FULL)
                 .sickNoteType(sickNoteType())
                 .status(ACTIVE)
@@ -607,7 +608,7 @@ class SickNoteStatisticsTest {
                 .build();
 
             final Year year = Year.of(2025);
-            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final LocalDate asOfDate = LocalDate.of(2025, JULY, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of());
 
             assertThat(sut.getSickRateByMonth()).allMatch(rate -> rate.compareTo(ZERO) == 0);
