@@ -74,7 +74,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String PERSON_ATTRIBUTE = "person";
     private static final int NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW = 1;
-    private static final int NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW = 5;
+    private static final int NUMBER_OF_CURRENT_APPLICATION_ON_OVERVIEW = 1;
+    private static final int NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW = 4;
     private static final int NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW = 3;
     private static final int NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW = 1;
     private static final int NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW = 3;
@@ -225,22 +226,33 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         } else {
             final LocalDate today = LocalDate.now(clock);
             final List<ApplicationForLeave> allForLeave = toApplicationsForLeave(applications);
-            // always show 3 applications if no application is in the fill with future application
-            final List<ApplicationDto> pastApplicationDtos = allForLeave.stream()
-                .filter(a -> a.getStartDate().isBefore(today))
+
+            // show the applications closest to today: the last one, the currently running one and the next ones
+            final List<ApplicationForLeave> currentApplications = allForLeave.stream()
+                .filter(a -> isCurrent(a, today))
                 .sorted(comparing(ApplicationForLeave::getStartDate))
-                .limit(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW)
-                .map(a -> applicationDto(a, signedInUser, locale))
+                .limit(NUMBER_OF_CURRENT_APPLICATION_ON_OVERVIEW)
                 .toList();
 
-            final List<ApplicationDto> futureApplicationDtos = allForLeave.stream()
-                .filter(a -> !a.getStartDate().isBefore(today))
+            final List<ApplicationForLeave> pastApplications = allForLeave.stream()
+                .filter(a -> a.getEndDate().isBefore(today))
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .limit((long) NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW - pastApplicationDtos.size())
-                .map(a -> applicationDto(a, signedInUser, locale))
+                .limit(NUMBER_OF_PAST_APPLICATION_ON_OVERVIEW)
                 .toList();
 
-            applicationsForLeave = Stream.concat(futureApplicationDtos.stream(), pastApplicationDtos.stream()).toList();
+            // a currently running application takes one of the slots of the future applications
+            final List<ApplicationForLeave> futureApplications = allForLeave.stream()
+                .filter(a -> a.getStartDate().isAfter(today))
+                .sorted(comparing(ApplicationForLeave::getStartDate))
+                .limit((long) NUMBER_OF_FUTR_APPLICATION_ON_OVERVIEW - currentApplications.size())
+                .toList();
+
+            // future applications on top, the past one at the bottom
+            applicationsForLeave = Stream.of(pastApplications, currentApplications, futureApplications)
+                .flatMap(List::stream)
+                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
+                .map(a -> applicationDto(a, signedInUser, locale))
+                .toList();
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
 
@@ -252,6 +264,10 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationsForLeave.size(),
             applications.size()
         ));
+    }
+
+    private static boolean isCurrent(ApplicationForLeave applicationForLeave, LocalDate today) {
+        return !applicationForLeave.getStartDate().isAfter(today) && !applicationForLeave.getEndDate().isBefore(today);
     }
 
     private List<ApplicationForLeave> toApplicationsForLeave(List<Application> applications) {

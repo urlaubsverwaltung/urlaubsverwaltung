@@ -62,6 +62,7 @@ import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
 import static java.time.Month.JUNE;
+import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
@@ -1096,6 +1097,136 @@ class OverviewViewControllerTest {
         assertThat(applicationOverview).isNotNull();
         assertThat(applicationOverview.numberOfShownApplications()).isLessThanOrEqualTo(5);
         assertThat(applicationOverview.numberOfTotalApplications()).isEqualTo(2);
+    }
+
+    @Nested
+    class ApplicationsShownOnOverview {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        private final Person person = new Person();
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
+
+            person.setId(1L);
+        }
+
+        @Test
+        void ensureShowsNearestPastCurrentAndUpcomingApplications() throws Exception {
+
+            final Application firstOfYear = application(TODAY.withMonth(1).withDayOfMonth(5), TODAY.withMonth(1).withDayOfMonth(9));
+            final Application nearestPast = application(TODAY.minusMonths(1), TODAY.minusMonths(1).plusDays(2));
+            final Application current = application(TODAY.minusDays(3), TODAY.plusDays(3));
+            final Application firstUpcoming = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            final Application secondUpcoming = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+            final Application thirdUpcoming = application(TODAY.plusMonths(3), TODAY.plusMonths(3).plusDays(2));
+            final Application lastOfYear = application(TODAY.withMonth(12).withDayOfMonth(20), TODAY.withMonth(12).withDayOfMonth(23));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(firstOfYear, nearestPast, current, firstUpcoming, secondUpcoming, thirdUpcoming, lastOfYear));
+
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::startDate)
+                .containsExactly(
+                    thirdUpcoming.getStartDate(),
+                    secondUpcoming.getStartDate(),
+                    firstUpcoming.getStartDate(),
+                    current.getStartDate(),
+                    nearestPast.getStartDate()
+                );
+            assertThat(applicationOverview.numberOfShownApplications()).isEqualTo(5);
+            assertThat(applicationOverview.numberOfTotalApplications()).isEqualTo(7);
+        }
+
+        @Test
+        void ensureShowsFourUpcomingApplicationsWhenThereIsNoCurrentApplication() throws Exception {
+
+            final Application firstOfYear = application(TODAY.withMonth(1).withDayOfMonth(5), TODAY.withMonth(1).withDayOfMonth(9));
+            final Application nearestPast = application(TODAY.minusMonths(1), TODAY.minusMonths(1).plusDays(2));
+            final Application firstUpcoming = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            final Application secondUpcoming = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+            final Application thirdUpcoming = application(TODAY.plusMonths(3), TODAY.plusMonths(3).plusDays(2));
+            final Application fourthUpcoming = application(TODAY.plusMonths(4), TODAY.plusMonths(4).plusDays(2));
+            final Application lastOfYear = application(TODAY.withMonth(12).withDayOfMonth(20), TODAY.withMonth(12).withDayOfMonth(23));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(firstOfYear, nearestPast, firstUpcoming, secondUpcoming, thirdUpcoming, fourthUpcoming, lastOfYear));
+
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::startDate)
+                .containsExactly(
+                    fourthUpcoming.getStartDate(),
+                    thirdUpcoming.getStartDate(),
+                    secondUpcoming.getStartDate(),
+                    firstUpcoming.getStartDate(),
+                    nearestPast.getStartDate()
+                );
+        }
+
+        @Test
+        void ensureApplicationStartingTodayIsShownAsCurrentApplication() throws Exception {
+
+            final Application startingToday = application(TODAY, TODAY.plusDays(2));
+            final Application firstUpcoming = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            final Application secondUpcoming = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+            final Application thirdUpcoming = application(TODAY.plusMonths(3), TODAY.plusMonths(3).plusDays(2));
+            final Application fourthUpcoming = application(TODAY.plusMonths(4), TODAY.plusMonths(4).plusDays(2));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(startingToday, firstUpcoming, secondUpcoming, thirdUpcoming, fourthUpcoming));
+
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::startDate)
+                .containsExactly(
+                    thirdUpcoming.getStartDate(),
+                    secondUpcoming.getStartDate(),
+                    firstUpcoming.getStartDate(),
+                    startingToday.getStartDate()
+                );
+        }
+
+        @Test
+        void ensureApplicationEndingTodayIsShownAsCurrentApplication() throws Exception {
+
+            final Application endingToday = application(TODAY.minusDays(2), TODAY);
+            final Application nearestPast = application(TODAY.minusMonths(1), TODAY.minusMonths(1).plusDays(2));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(endingToday, nearestPast));
+
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::startDate)
+                .containsExactly(endingToday.getStartDate(), nearestPast.getStartDate());
+        }
+
+        private ApplicationOverviewDto overviewFor(List<Application> applications) throws Exception {
+            when(settingsService.getSettings()).thenReturn(new Settings());
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+            when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(applications);
+            stubWorkDaysCountForApplications(ONE);
+
+            final ModelAndView mav = perform(get("/web/person/1/overview")
+                .param("year", String.valueOf(TODAY.getYear()))
+                .locale(GERMAN)
+            ).andReturn().getModelAndView();
+
+            assertThat(mav).isNotNull();
+            final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+            assertThat(applicationOverview).isNotNull();
+            return applicationOverview;
+        }
+
+        private Application application(LocalDate startDate, LocalDate endDate) {
+            final Application application = new Application();
+            application.setVacationType(mock(VacationType.class));
+            application.setPerson(person);
+            application.setStartDate(startDate);
+            application.setEndDate(endDate);
+            return application;
+        }
     }
 
     private Person somePerson() {
