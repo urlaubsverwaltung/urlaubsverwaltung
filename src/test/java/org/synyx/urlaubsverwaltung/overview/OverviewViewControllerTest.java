@@ -1229,6 +1229,64 @@ class OverviewViewControllerTest {
         }
     }
 
+    @Nested
+    class EntriesClosestToToday {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        @Test
+        void ensureSortedDescendingByStartDateIndependentOfTheFutureLimit() {
+
+            final List<LocalDate> entries = List.of(
+                LocalDate.parse("2026-07-01"),
+                LocalDate.parse("2026-07-20"),
+                LocalDate.parse("2026-08-10"),
+                LocalDate.parse("2026-09-01")
+            );
+
+            final List<LocalDate> actual = OverviewViewController.entriesClosestToToday(entries, identity(), TODAY, 3, 2);
+
+            assertThat(actual).containsExactly(
+                LocalDate.parse("2026-09-01"),
+                LocalDate.parse("2026-08-10"),
+                LocalDate.parse("2026-07-20")
+            );
+        }
+
+        @Test
+        void ensureFillsTheFreeSlotsWithTheMostRecentPastEntries() {
+
+            final List<LocalDate> entries = List.of(
+                LocalDate.parse("2026-06-01"),
+                LocalDate.parse("2026-07-01"),
+                LocalDate.parse("2026-07-20"),
+                LocalDate.parse("2026-08-10")
+            );
+
+            final List<LocalDate> actual = OverviewViewController.entriesClosestToToday(entries, identity(), TODAY, 3, 1);
+
+            assertThat(actual).containsExactly(
+                LocalDate.parse("2026-08-10"),
+                LocalDate.parse("2026-07-20"),
+                LocalDate.parse("2026-07-01")
+            );
+        }
+
+        @Test
+        void ensureEntryStartingTodayIsAnUpcomingEntry() {
+
+            final List<LocalDate> entries = List.of(
+                LocalDate.parse("2026-07-20"),
+                TODAY,
+                LocalDate.parse("2026-09-01")
+            );
+
+            final List<LocalDate> actual = OverviewViewController.entriesClosestToToday(entries, identity(), TODAY, 3, 1);
+
+            assertThat(actual).containsExactly(TODAY, LocalDate.parse("2026-07-20"));
+        }
+    }
+
     private Person somePerson() {
         return new Person();
     }

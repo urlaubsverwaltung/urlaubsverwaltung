@@ -39,11 +39,13 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -277,6 +279,33 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             .toList();
     }
 
+    /**
+     * Selects the entries closest to today: the next upcoming ones and, since most of the time there are no upcoming
+     * ones, the most recent past ones to fill up the remaining slots.
+     *
+     * @return the selected entries, sorted descending by start date, the upcoming ones first
+     */
+    static <T> List<T> entriesClosestToToday(List<T> entries, Function<T, LocalDate> startDate, LocalDate today, int pastLimit, int futureLimit) {
+
+        final Comparator<T> byStartDate = comparing(startDate);
+
+        final List<T> futureEntries = entries.stream()
+            .filter(entry -> !startDate.apply(entry).isBefore(today))
+            .sorted(byStartDate)
+            .limit(futureLimit)
+            .toList();
+
+        final List<T> pastEntries = entries.stream()
+            .filter(entry -> startDate.apply(entry).isBefore(today))
+            .sorted(byStartDate.reversed())
+            .limit((long) pastLimit - futureEntries.size())
+            .toList();
+
+        return Stream.concat(futureEntries.stream(), pastEntries.stream())
+            .sorted(byStartDate.reversed())
+            .toList();
+    }
+
     private void prepareSickNoteInformation(Person person, Person signedInUser, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
@@ -286,20 +315,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final LocalDate today = LocalDate.now(clock);
 
-        // most of the time there are no future sick notes therefore we fill with past sick notes
-        final List<SickNote> futureSickNotes = sickNotes.stream()
-            .filter(s -> !s.getStartDate().isBefore(today))
-            .sorted(comparing(SickNote::getStartDate))
-            .limit(NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW)
-            .toList();
-
-        final List<SickNote> pastSickNotes = sickNotes.stream()
-            .filter(s -> s.getStartDate().isBefore(today))
-            .sorted(comparing(SickNote::getStartDate).reversed())
-            .limit((long) NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW - futureSickNotes.size())
-            .toList();
-
-        final List<SickNote> shownSickNotes = Stream.concat(futureSickNotes.stream(), pastSickNotes.stream()).toList();
+        final List<SickNote> shownSickNotes = entriesClosestToToday(sickNotes, SickNote::getStartDate, today,
+            NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW, NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW);
 
         final boolean isSamePerson = person.equals(signedInUser);
         final boolean userIsAllowedToSubmitSickNotes = isSamePerson && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
@@ -345,21 +362,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final LocalDate today = LocalDate.now(clock);
 
-        // most of the time there are no future sick notes therefore we fill with past sick notes
-        final List<Overtime> futureOvertimes = overtimes.stream()
-            .filter(s -> !s.startDate().isBefore(today))
-            .sorted(comparing(Overtime::startDate))
-            .limit(NUMBER_OF_FUTR_OVERTIMES_ON_OVERVIEW)
-            .toList();
-
-
-        final List<Overtime> pastOvertimes = overtimes.stream()
-            .filter(s -> s.startDate().isBefore(today))
-            .sorted(comparing(Overtime::startDate).reversed())
-            .limit((long) NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW - futureOvertimes.size())
-            .toList();
-
-        final List<Overtime> shownOvertimes = Stream.concat(futureOvertimes.stream(), pastOvertimes.stream()).toList();
+        final List<Overtime> shownOvertimes = entriesClosestToToday(overtimes, Overtime::startDate, today,
+            NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW, NUMBER_OF_FUTR_OVERTIMES_ON_OVERVIEW);
 
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
             settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
