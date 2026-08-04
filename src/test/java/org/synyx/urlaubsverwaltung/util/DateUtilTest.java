@@ -37,6 +37,28 @@ class DateUtilTest {
     }
 
     @Test
+    void ensureReturnsTrueIfGivenDayIsOnAWeekend() {
+
+        // Saturday
+        LocalDate date = LocalDate.of(2014, NOVEMBER, 22);
+
+        boolean returnValue = DateUtil.isWeekend(date);
+
+        assertThat(returnValue).isTrue();
+    }
+
+    @Test
+    void ensureReturnsFalseIfGivenDayIsNotOnAWeekend() {
+
+        // Monday
+        LocalDate date = LocalDate.of(2011, DECEMBER, 26);
+
+        boolean returnValue = DateUtil.isWeekend(date);
+
+        assertThat(returnValue).isFalse();
+    }
+
+    @Test
     void ensureReturnsTrueForChristmasEve() {
 
         LocalDate date = LocalDate.of(2011, DECEMBER, 24);
