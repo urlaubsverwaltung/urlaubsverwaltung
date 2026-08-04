@@ -12,6 +12,10 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 public class SickNoteExtensionPage {
 
+    // the `duet-date-picker` prefix matches only the hydrated datepicker, not the plain `input[date]` the server renders.
+    private static final String DUET_CUSTOM_NEXT_END_DATE_SELECTOR =
+        "duet-date-picker [data-test-id=sicknote-custom-next-end-date-input]";
+
     private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -30,10 +34,17 @@ public class SickNoteExtensionPage {
         return page.title().equals(messageSource.getMessage("sicknote.extend.header.title", null, locale));
     }
 
+    /**
+     * Waits for the page and its datepicker to be ready to interact with.
+     */
+    public void waitForVisible() {
+        page.waitForCondition(this::isVisible);
+        page.waitForSelector(DUET_CUSTOM_NEXT_END_DATE_SELECTOR);
+    }
+
     public void setCustomNextEndDate(LocalDate nextEndDate) {
         final String nextEndDateValue = DATE_FORMATTER.format(nextEndDate);
-        // this only works for initialised datepicker (fails with native date input element)
-        page.locator("[data-test-id=sicknote-custom-next-end-date-input]").fill(nextEndDateValue);
+        page.locator(DUET_CUSTOM_NEXT_END_DATE_SELECTOR).fill(nextEndDateValue);
     }
 
     public void showsExtensionPreview(LocalDate startDate, LocalDate nextEndDate) {
