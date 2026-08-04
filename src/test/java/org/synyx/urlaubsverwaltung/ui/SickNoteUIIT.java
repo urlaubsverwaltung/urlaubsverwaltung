@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.LoadState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -206,10 +205,7 @@ class SickNoteUIIT {
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.clickCreateNewSickNote();
-
-        // waiting for fetched assets (we may have to wait a little more for datepicker instantiation?)
-        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        page.waitForCondition(sickNoteExtensionPage::isVisible);
+        sickNoteExtensionPage.waitForVisible();
 
         sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
 
