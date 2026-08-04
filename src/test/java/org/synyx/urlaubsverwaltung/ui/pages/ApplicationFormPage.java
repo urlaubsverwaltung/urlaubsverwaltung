@@ -12,9 +12,12 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class ApplicationFormPage {
 
-    private static final String FROM_INPUT_SELECTOR = "#from";
-    private static final String TO_INPUT_SELECTOR = "#to";
+    private static final String DUET_FROM_INPUT_SELECTOR = "duet-date-picker #from";
+    private static final String DUET_TO_INPUT_SELECTOR = "duet-date-picker #to";
     private static final String SUBMIT_SELECTOR = "button#apply-application";
+    private static final String HOLIDAY_REPLACEMENT_SELECT_SELECTOR = "[data-test-id=holiday-replacement-select]";
+    private static final String HOLIDAY_REPLACEMENT_SELECT_READY_SELECTOR =
+        HOLIDAY_REPLACEMENT_SELECT_SELECTOR + "[aria-controls=added-replacements-list-element]";
     private static final String VACATION_TYPE_SELECT_SELECTOR = "[data-test-id=vacation-type-select]";
     private static final String DAY_LENGTH_FULL_SELECTOR = "[data-test-id=day-length-full]";
     private static final String DAY_LENGTH_MORNING_SELECTOR = "[data-test-id=day-length-morning]";
@@ -28,21 +31,22 @@ public class ApplicationFormPage {
 
     public void waitForVisible() {
         page.waitForSelector(VACATION_TYPE_SELECT_SELECTOR);
-        page.waitForSelector(FROM_INPUT_SELECTOR);
+        page.waitForSelector(DUET_FROM_INPUT_SELECTOR);
+        page.waitForSelector(DUET_TO_INPUT_SELECTOR);
     }
 
     public void assertDatesAreSelected(LocalDate startDate, LocalDate endDate) {
         final String startDateString = ofPattern("d.M.yyyy").format(startDate);
         final String endDateString = ofPattern("d.M.yyyy").format(endDate);
 
-        assertThat(page.locator(FROM_INPUT_SELECTOR)).hasValue(startDateString);
-        assertThat(page.locator(TO_INPUT_SELECTOR)).hasValue(endDateString);
+        assertThat(page.locator(DUET_FROM_INPUT_SELECTOR)).hasValue(startDateString);
+        assertThat(page.locator(DUET_TO_INPUT_SELECTOR)).hasValue(endDateString);
 
     }
 
     public void from(LocalDate date) {
         final String dateString = ofPattern("d.M.yyyy").format(date);
-        page.locator(FROM_INPUT_SELECTOR).fill(dateString);
+        page.locator(DUET_FROM_INPUT_SELECTOR).fill(dateString);
     }
 
     public Locator vacationTypeSelect() {
@@ -59,13 +63,15 @@ public class ApplicationFormPage {
     }
 
     /**
-     * selected the given person in the  replacement select box.
-     * Note that this does not submit the form! Maybe there is JavaScript loaded which does it, though.
+     * Selects the given person in the replacement select box, which makes JavaScript add the person to the list of
+     * replacements. Note that this does not submit the form!
      *
      * @param person person that should be selected
      */
     public void selectReplacement(Person person) {
-        final Locator element = page.locator("[data-test-id=holiday-replacement-select]");
+        // wait for JavaScript to be ready, otherwise the selection happens without a `change` listener and is lost.
+        page.waitForSelector(HOLIDAY_REPLACEMENT_SELECT_READY_SELECTOR);
+        final Locator element = page.locator(HOLIDAY_REPLACEMENT_SELECT_SELECTOR);
         element.selectOption(String.valueOf(person.getId()));
     }
 
