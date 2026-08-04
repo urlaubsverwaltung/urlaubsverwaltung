@@ -78,10 +78,9 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<ApplicationStatus> statuses, List<VacationType<?>> vacationTypes, String personQuery) {
+    public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<ApplicationStatus> statuses, String personQuery) {
         final String query = hasText(personQuery) ? personQuery : "";
-        final List<Long> vacationTypeIds = vacationTypes.stream().map(VacationType::getId).toList();
-        return toApplication(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(startDate, endDate, statuses, vacationTypeIds, query));
+        return toApplication(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(startDate, endDate, statuses, query));
     }
 
     @Override

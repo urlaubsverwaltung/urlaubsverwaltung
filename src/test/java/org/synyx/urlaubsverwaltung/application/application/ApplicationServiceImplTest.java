@@ -485,19 +485,15 @@ class ApplicationServiceImplTest {
             final LocalDate endDate = LocalDate.parse("2025-01-31");
             final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
 
-            final VacationType<?> vacationType1 = ProvidedVacationType.builder(messageSource).id(1L).build();
-            final VacationType<?> vacationType2 = ProvidedVacationType.builder(messageSource).id(2L).build();
-            final List<VacationType<?>> vacationTypes = List.of(vacationType1, vacationType2);
-
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setId(1L);
             applicationEntity.setVacationType(new VacationTypeEntity());
 
             when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(1L, 2L), ""))
+                startDate, endDate, statuses, ""))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, null);
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, null);
 
             final Application expectedApplication = new Application();
             expectedApplication.setId(1L);
@@ -511,18 +507,15 @@ class ApplicationServiceImplTest {
             final LocalDate endDate = LocalDate.parse("2025-01-31");
             final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
 
-            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
-            final List<VacationType<?>> vacationTypes = List.of(vacationType);
-
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setId(1L);
             applicationEntity.setVacationType(new VacationTypeEntity());
 
             when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(1L), ""))
+                startDate, endDate, statuses, ""))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, givenQuery);
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, givenQuery);
 
             final Application expectedApplication = new Application();
             expectedApplication.setId(1L);
@@ -535,18 +528,15 @@ class ApplicationServiceImplTest {
             final LocalDate endDate = LocalDate.parse("2025-01-31");
             final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
 
-            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
-            final List<VacationType<?>> vacationTypes = List.of(vacationType);
-
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setId(1L);
             applicationEntity.setVacationType(new VacationTypeEntity());
 
             when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(1L), "John"))
+                startDate, endDate, statuses, "John"))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "John");
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, "John");
 
             final Application expectedApplication = new Application();
             expectedApplication.setId(1L);
@@ -554,44 +544,29 @@ class ApplicationServiceImplTest {
         }
 
         @Test
-        void ensureGetApplicationsForACertainPeriodWithMultipleVacationTypes() {
+        void ensureGetApplicationsForACertainPeriodDoesNotRestrictToCertainVacationTypes() {
             final LocalDate startDate = LocalDate.parse("2025-01-01");
             final LocalDate endDate = LocalDate.parse("2025-01-31");
             final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
 
-            final VacationType<?> vacationType1 = ProvidedVacationType.builder(messageSource).id(5L).build();
-            final VacationType<?> vacationType2 = ProvidedVacationType.builder(messageSource).id(10L).build();
-            final VacationType<?> vacationType3 = ProvidedVacationType.builder(messageSource).id(15L).build();
-            final List<VacationType<?>> vacationTypes = List.of(vacationType1, vacationType2, vacationType3);
+            // an application of a vacation type that has been deactivated in the meantime must still be returned,
+            // callers rely on it to keep reporting the absences someone already took with that type.
+            final VacationTypeEntity deactivatedVacationType = new VacationTypeEntity();
+            deactivatedVacationType.setId(99L);
+            deactivatedVacationType.setActive(false);
 
             final ApplicationEntity applicationEntity = new ApplicationEntity();
             applicationEntity.setId(1L);
-            applicationEntity.setVacationType(new VacationTypeEntity());
+            applicationEntity.setVacationType(deactivatedVacationType);
 
             when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(5L, 10L, 15L), "Smith"))
+                startDate, endDate, statuses, "Smith"))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "Smith");
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, "Smith");
 
-            final Application expectedApplication = new Application();
-            expectedApplication.setId(1L);
-            assertThat(actual).containsExactly(expectedApplication);
-        }
-
-        @Test
-        void ensureGetApplicationsForACertainPeriodWithEmptyVacationTypesList() {
-            final LocalDate startDate = LocalDate.parse("2025-01-01");
-            final LocalDate endDate = LocalDate.parse("2025-01-31");
-            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
-            final List<VacationType<?>> vacationTypes = List.of();
-
-            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(), ""))
-                .thenReturn(List.of());
-
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, null);
-            assertThat(actual).isEmpty();
+            assertThat(actual).hasSize(1);
+            assertThat(actual.getFirst().getVacationType().getId()).isEqualTo(99L);
         }
 
         @Test
@@ -601,9 +576,6 @@ class ApplicationServiceImplTest {
             final LocalDate startDate = LocalDate.parse("2025-01-01");
             final LocalDate endDate = LocalDate.parse("2025-01-31");
             final List<ApplicationStatus> statuses = List.of(WAITING);
-
-            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
-            final List<VacationType<?>> vacationTypes = List.of(vacationType);
 
             final Person person = new Person();
             person.setId(1L);
@@ -627,10 +599,10 @@ class ApplicationServiceImplTest {
             applicationEntity.setDayLength(DayLength.FULL);
 
             when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
-                startDate, endDate, statuses, List.of(1L), "test"))
+                startDate, endDate, statuses, "test"))
                 .thenReturn(List.of(applicationEntity));
 
-            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "test");
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, "test");
 
             assertThat(actual).hasSize(1);
             assertThat(actual.getFirst()).satisfies(application -> {

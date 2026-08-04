@@ -126,6 +126,32 @@ public class VacationDaysService {
         DateRange dateRange,
         List<Account> holidayAccountsNextYear
     ) {
+        final LocalDate from = dateRange.startDate();
+        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
+        final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
+
+        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, workingTimeCalendars);
+    }
+
+    /**
+     * Same as {@link #getVacationDaysLeft(List, DateRange, List)}, but for callers that already hold the
+     * {@link WorkingTimeCalendar} of every person involved. Pass it in to avoid recomputing the very same
+     * day-by-day calendar a second time.
+     *
+     * @param holidayAccounts             {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param dateRange                   date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccountsNextYear     to calculate the vacation days that are already used next year
+     * @param workingTimeCalendarsByPerson pre-computed calendar, must cover every person of {@code holidayAccounts}
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        List<Account> holidayAccountsNextYear,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
+    ) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -135,9 +161,7 @@ public class VacationDaysService {
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
-        final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
+        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
 

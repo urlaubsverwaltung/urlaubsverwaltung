@@ -21,9 +21,11 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Duration.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -76,23 +78,40 @@ class ApplicationForLeaveStatisticsBuilder {
         return buildStatistics(new DateRange(from, to), persons, holidayAccounts, applications, vacationTypes);
     }
 
+    /**
+     * Same as {@link #build(List, LocalDate, LocalDate, List)}, but for callers that have already fetched the
+     * applications themselves.
+     *
+     * @param applications every application of the requested <em>year</em> - not only of the requested period - with
+     *                     an {@link org.synyx.urlaubsverwaltung.application.application.ApplicationStatus#activeStatuses()
+     *                     active status}, of any {@link VacationType}, covering at least the given persons. The whole
+     *                     year is required because the left overtime of the year is derived from it, and all vacation
+     *                     types are required so that types deactivated in the meantime still show up for the persons
+     *                     who used them.
+     */
     public Map<Person, Optional<ApplicationForLeaveStatistics>> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, List<Application> applications) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
-        final List<Person> personsWithAccount = holidayAccounts.stream().map(Account::getPerson).toList();
 
-        return buildStatistics(new DateRange(from, to), personsWithAccount, holidayAccounts, applications, vacationTypes);
+        return buildStatistics(new DateRange(from, to), persons, holidayAccounts, applications, vacationTypes);
     }
 
     private Map<Person, Optional<ApplicationForLeaveStatistics>> buildStatistics(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes) {
 
+        // computed once and threaded through both collaborators below, instead of letting each of them recompute the
+        // very same day-by-day calendar for the same persons and year.
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
+            workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(dateRange.startDate().getYear()));
+
         final Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson =
-            getStatisticsByPersonWithoutApplicationInfo(dateRange, persons, holidayAccounts, applications, vacationTypes);
+            getStatisticsByPersonWithoutApplicationInfo(dateRange, persons, holidayAccounts, applications, vacationTypes, workingTimeCalendarsByPerson);
 
-        addApplicationInfosToStatistics(dateRange, persons, statisticsByPerson);
-
+        // persons without a holiday account for the requested year get no statistics. Register them before tallying,
+        // so that the tally below can rely on every person having an entry.
         addMissingPersonsToStatistics(statisticsByPerson, persons);
+
+        addApplicationInfosToStatistics(dateRange, persons, applications, workingTimeCalendarsByPerson, statisticsByPerson);
 
         return statisticsByPerson;
     }
@@ -103,13 +122,13 @@ class ApplicationForLeaveStatisticsBuilder {
         );
     }
 
-    private Map<Person, Optional<ApplicationForLeaveStatistics>> getStatisticsByPersonWithoutApplicationInfo(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes) {
+    private Map<Person, Optional<ApplicationForLeaveStatistics>> getStatisticsByPersonWithoutApplicationInfo(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
 
         final Map<Person, LeftOvertime> leftOvertimeByPerson = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        final Map<Account, HolidayAccountVacationDays> vacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange);
+        final Map<Account, HolidayAccountVacationDays> vacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange, List.of(), workingTimeCalendarsByPerson);
 
         return holidayAccounts.stream()
             .map(account -> buildStatisticsForAccount(dateRange, account, vacationTypes, vacationDaysByAccount, leftOvertimeByPerson))
@@ -148,33 +167,35 @@ class ApplicationForLeaveStatisticsBuilder {
         return statistics;
     }
 
-    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
+    private void addApplicationInfosToStatistics(DateRange dateRange, List<Person> persons, List<Application> applications, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson, Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
 
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
-            workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-
-        final Map<Person, List<Application>> applicationsByPerson =
-            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())
-                .stream()
-                .collect(groupingBy(Application::getPerson));
+        // `applications` already covers the whole year for these persons, narrow it to the requested period in memory
+        // instead of asking the database again for what is essentially a subset of what we already hold.
+        final Set<Person> personsOfInterest = new HashSet<>(persons);
+        final Map<Person, List<Application>> applicationsByPerson = applications.stream()
+            .filter(application -> personsOfInterest.contains(application.getPerson()))
+            .filter(application -> !application.getEndDate().isBefore(from) && !application.getStartDate().isAfter(to))
+            .collect(groupingBy(Application::getPerson));
 
         for (Person person : persons) {
-            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
-            final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
-            for (Application application : personApplications) {
+            final Optional<ApplicationForLeaveStatistics> maybeStatistics = statisticsByPerson.get(person);
+            if (maybeStatistics.isEmpty()) {
+                // no holiday account for the requested year, so there is nothing to tally the applications into
+                continue;
+            }
 
+            final ApplicationForLeaveStatistics statistics = maybeStatistics.get();
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
+
+            for (Application application : applicationsByPerson.getOrDefault(person, List.of())) {
                 final BigDecimal workingTime = workingTimeCalendar.workingTimeInDateRage(application, dateRange);
-                final Optional<ApplicationForLeaveStatistics> maybeStatistics = statisticsByPerson.get(application.getPerson());
-                if (maybeStatistics.isPresent()) {
-                    final ApplicationForLeaveStatistics statistics = maybeStatistics.get();
-                    if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
-                        statistics.addWaitingVacationDays(application.getVacationType(), workingTime);
-                    } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
-                        statistics.addAllowedVacationDays(application.getVacationType(), workingTime);
-                    }
+                if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
+                    statistics.addWaitingVacationDays(application.getVacationType(), workingTime);
+                } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+                    statistics.addAllowedVacationDays(application.getVacationType(), workingTime);
                 }
             }
         }

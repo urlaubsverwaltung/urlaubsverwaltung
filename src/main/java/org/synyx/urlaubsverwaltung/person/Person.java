@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import org.hibernate.annotations.BatchSize;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Collection;
@@ -27,6 +28,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
  * This class describes a person.
  */
 @Entity
+@BatchSize(size = 500)
 public class Person extends AbstractTenantAwareEntity {
 
     @Id
@@ -45,10 +47,12 @@ public class Person extends AbstractTenantAwareEntity {
 
     @ElementCollection(fetch = EAGER)
     @Enumerated(STRING)
+    @BatchSize(size = 500)
     private Collection<Role> permissions;
 
     @ElementCollection(fetch = EAGER)
     @Enumerated(STRING)
+    @BatchSize(size = 500)
     private Collection<MailNotification> notifications;
 
     public Person() {

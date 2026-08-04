@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -38,6 +42,10 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
     private AccountService accountService;
     @Autowired
     private AccountInteractionService accountInteractionService;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Test
     void countPersonByPermissionsIsNot() {
@@ -206,6 +214,46 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
             person -> assertThat(person).isEqualTo(person2),
             person -> assertThat(person).isEqualTo(person1)
         );
+    }
+
+    @Test
+    void ensurePermissionsAndNotificationsAreFetchedWithoutOneQueryPerPerson() {
+
+        // every person gets the same permissions and notifications, so the only thing that differs between the two
+        // measurements below is the number of persons - and therefore the number of collections to initialise.
+        final List<Person> persons = List.of(
+            personService.create("username_1", "Xenia", "Basta", "xenia@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE)),
+            personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE)),
+            personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE))
+        );
+
+        final List<Long> personIds = persons.stream().map(Person::getId).toList();
+
+        final long statementsForOnePerson = fetchAndTouchPermissionsAndNotifications(personIds.subList(0, 1));
+        final long statementsForThreePersons = fetchAndTouchPermissionsAndNotifications(personIds);
+
+        // fetching two more persons with their permissions and notifications must not cost any extra queries
+        assertThat(statementsForThreePersons).isEqualTo(statementsForOnePerson);
+    }
+
+    private long fetchAndTouchPermissionsAndNotifications(List<Long> personIds) {
+
+        // force the next query to actually hit the database instead of returning managed entities from the session cache
+        entityManager.flush();
+        entityManager.clear();
+
+        final Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+
+        final List<Person> persons = sut.findAllByIdIsInOrderByFirstNameAscLastNameAsc(personIds);
+        persons.forEach(person -> {
+            person.getPermissions().size();
+            person.getNotifications().size();
+        });
+
+        assertThat(persons).hasSize(personIds.size());
+        return statistics.getPrepareStatementCount();
     }
 
     @Test
