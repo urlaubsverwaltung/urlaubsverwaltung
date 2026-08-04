@@ -38,6 +38,7 @@ import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.time.Month.NOVEMBER;
 import static java.time.Month.OCTOBER;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -535,8 +536,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         absenceOfDeactivatedType.setPerson(personWithAbsence);
         absenceOfDeactivatedType.setDayLength(FULL);
         absenceOfDeactivatedType.setVacationType(deactivatedVacationType);
-        absenceOfDeactivatedType.setStartDate(of(2014, 10, 13));
-        absenceOfDeactivatedType.setEndDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setStartDate(of(2014, OCTOBER, 13));
+        absenceOfDeactivatedType.setEndDate(of(2014, OCTOBER, 13));
         absenceOfDeactivatedType.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(absenceOfDeactivatedType);
@@ -603,8 +604,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         absenceOfDeactivatedType.setPerson(personWithAbsence);
         absenceOfDeactivatedType.setDayLength(FULL);
         absenceOfDeactivatedType.setVacationType(deactivatedVacationType);
-        absenceOfDeactivatedType.setStartDate(of(2014, 10, 13));
-        absenceOfDeactivatedType.setEndDate(of(2014, 10, 13));
+        absenceOfDeactivatedType.setStartDate(of(2014, OCTOBER, 13));
+        absenceOfDeactivatedType.setEndDate(of(2014, OCTOBER, 13));
         absenceOfDeactivatedType.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(absenceOfDeactivatedType);
@@ -666,16 +667,16 @@ class ApplicationForLeaveStatisticsBuilderTest {
         insidePeriod.setPerson(person);
         insidePeriod.setDayLength(FULL);
         insidePeriod.setVacationType(vacationType);
-        insidePeriod.setStartDate(of(2014, 10, 13));
-        insidePeriod.setEndDate(of(2014, 10, 13));
+        insidePeriod.setStartDate(of(2014, OCTOBER, 13));
+        insidePeriod.setEndDate(of(2014, OCTOBER, 13));
         insidePeriod.setStatus(ALLOWED);
 
         final Application outsidePeriod = new Application();
         outsidePeriod.setPerson(person);
         outsidePeriod.setDayLength(FULL);
         outsidePeriod.setVacationType(vacationType);
-        outsidePeriod.setStartDate(of(2014, 3, 13));
-        outsidePeriod.setEndDate(of(2014, 3, 13));
+        outsidePeriod.setStartDate(of(2014, MARCH, 13));
+        outsidePeriod.setEndDate(of(2014, MARCH, 13));
         outsidePeriod.setStatus(ALLOWED);
 
         final List<Application> applications = List.of(insidePeriod, outsidePeriod);
@@ -741,7 +742,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
      */
     @Test
     void ensureThatAllPersonsThatWhereRequestedAreThereWithOptionalEmptyIfNoAccountWithGivenApplications() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+        final ApplicationForLeaveStatisticsBuilder sutIn2014 = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final LocalDate from = of(2014, JANUARY, 1);
@@ -772,7 +773,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
         final Map<Person, Optional<ApplicationForLeaveStatistics>> actual =
-            sut.build(persons, from, to, List.of(type), applications);
+            sutIn2014.build(persons, from, to, List.of(type), applications);
 
         assertThat(actual)
             .hasSize(2)

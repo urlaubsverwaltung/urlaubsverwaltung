@@ -717,9 +717,9 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
 
         final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
 
-        final VacationTypeEntity deactivatedVacationType = getVacationType(HOLIDAY);
-        deactivatedVacationType.setActive(false);
-        entityManager.merge(deactivatedVacationType);
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
+        vacationType.setActive(false);
+        final VacationTypeEntity deactivatedVacationType = entityManager.merge(vacationType);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
