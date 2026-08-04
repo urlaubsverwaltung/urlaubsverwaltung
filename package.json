@@ -61,7 +61,7 @@
     "fast-glob": "3.3.3",
     "fetch-mock": "12.6.0",
     "globals": "17.8.0",
-    "jsdom": "30.0.0",
+    "jsdom": "30.0.1",
     "lint-staged": "17.2.0",
     "node-fetch": "2.7.0",
     "onchange": "7.1.0",
