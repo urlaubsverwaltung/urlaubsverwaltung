@@ -13,10 +13,10 @@ public class SickNoteFormPage {
     private static final String PERSON_SELECTOR = "[data-test-id=person-select]";
     private static final String SICKNOTE_TYPE_SELECTOR = "[data-test-id=sicknote-type-select]";
     private static final String DAY_TYPE_FULL_SELECTOR = "[data-test-id=day-type-full]";
-    private static final String FROM_SELECTOR = "[data-test-id=sicknote-from-date]";
-    private static final String TO_SELECTOR = "[data-test-id=sicknote-to-date]";
-    private static final String AUB_FROM_SELECTOR = "[data-test-id=sicknote-aub-from]";
-    private static final String AUB_TO_SELECTOR = "[data-test-id=sicknote-aub-to]";
+    private static final String DUET_FROM_SELECTOR = "duet-date-picker [data-test-id=sicknote-from-date]";
+    private static final String DUET_TO_SELECTOR = "duet-date-picker [data-test-id=sicknote-to-date]";
+    private static final String DUET_AUB_FROM_SELECTOR = "duet-date-picker [data-test-id=sicknote-aub-from]";
+    private static final String DUET_AUB_TO_SELECTOR = "duet-date-picker [data-test-id=sicknote-aub-to]";
     private static final String SUBMIT_SELECTOR = "[data-test-id=sicknote-submit-button]";
 
     private final Page page;
@@ -37,16 +37,18 @@ public class SickNoteFormPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(FROM_SELECTOR);
-        page.waitForSelector(TO_SELECTOR);
+        page.waitForSelector(DUET_FROM_SELECTOR);
+        page.waitForSelector(DUET_TO_SELECTOR);
+        page.waitForSelector(DUET_AUB_FROM_SELECTOR);
+        page.waitForSelector(DUET_AUB_TO_SELECTOR);
     }
 
     public void startDate(LocalDate startDate) {
-        setDate(startDate, FROM_SELECTOR);
+        setDate(startDate, DUET_FROM_SELECTOR);
     }
 
     public void toDate(LocalDate toDate) {
-        setDate(toDate, TO_SELECTOR);
+        setDate(toDate, DUET_TO_SELECTOR);
     }
 
     public void selectTypeChildSickNote() {
@@ -54,7 +56,7 @@ public class SickNoteFormPage {
     }
 
     public void aubStartDate(LocalDate aubStartDate) {
-        setDate(aubStartDate, AUB_FROM_SELECTOR);
+        setDate(aubStartDate, DUET_AUB_FROM_SELECTOR);
     }
 
     /**
@@ -74,12 +76,12 @@ public class SickNoteFormPage {
 
     public void showsToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
-        assertThat(page.locator(TO_SELECTOR)).hasValue(expectedDateString);
+        assertThat(page.locator(DUET_TO_SELECTOR)).hasValue(expectedDateString);
     }
 
     public void showsAubToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
-        assertThat(page.locator(AUB_TO_SELECTOR)).hasValue(expectedDateString);
+        assertThat(page.locator(DUET_AUB_TO_SELECTOR)).hasValue(expectedDateString);
     }
 
     /**
