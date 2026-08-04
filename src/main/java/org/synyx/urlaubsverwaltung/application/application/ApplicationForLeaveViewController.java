@@ -138,18 +138,27 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         // prepare everything as we don't know whether to render 'userApplications' or 'userHolidayReplacements'
         // when activeTab matches 'submitted sick notes' for instance.
         // however, we could consider the referer header. feel free to improve this :-)
-        prepareUserApplications(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final List<ApplicationForLeave> cancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+
+        final List<ApplicationForLeave> allApplications = Stream.of(userApplications, otherApplications, cancellationRequests)
+            .flatMap(List::stream)
+            .toList();
+        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, allApplications);
+
+        prepareUserApplications(model, signedInUser, userApplications, permissionsOf, locale);
         prepareUserHolidayReplacements(model, signedInUser, locale);
-        prepareOtherApplications(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        prepareOtherApplications(model, signedInUser, otherApplications, permissionsOf, locale);
         prepareOtherSubmittedSickNotes(model, signedInUser, locale);
-        prepareApplicationCancellationRequests(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        prepareApplicationCancellationRequests(model, signedInUser, cancellationRequests, permissionsOf, locale);
 
         model.addAttribute("activeContent", activeTab.name);
     }
 
-    private void prepareUserApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> memberOfSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
-        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, locale);
+    private void prepareUserApplications(Model model, Person signedInUser, List<ApplicationForLeave> userApplications,
+                                         Function<Application, ApplicationForLeavePermissions> permissionsOf, Locale locale) {
+        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, permissionsOf, locale);
         model.addAttribute("userApplications", userApplicationsDtos);
     }
 
@@ -159,9 +168,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
-    private void prepareOtherApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> membersOfSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority);
-        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, locale);
+    private void prepareOtherApplications(Model model, Person signedInUser, List<ApplicationForLeave> otherApplications,
+                                          Function<Application, ApplicationForLeavePermissions> permissionsOf, Locale locale) {
+        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, permissionsOf, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
     }
 
@@ -171,9 +180,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         model.addAttribute("otherSickNotes", otherSickNotesDtos);
     }
 
-    private void prepareApplicationCancellationRequests(Model model, Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
-        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
+    private void prepareApplicationCancellationRequests(Model model, Person signedInUser, List<ApplicationForLeave> applicationsForLeaveCancellationRequests,
+                                                       Function<Application, ApplicationForLeavePermissions> permissionsOf, Locale locale) {
+        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, permissionsOf, locale);
         if (!cancellationDtoList.isEmpty()) {
             model.addAttribute("applications_cancellation_request", cancellationDtoList);
         }
@@ -211,9 +220,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(
         List<ApplicationForLeave> applications,
         Person signedInUser,
+        Function<Application, ApplicationForLeavePermissions> permissionsOf,
         Locale locale
     ) {
-        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, applications);
         return applications.stream()
             .map(applicationForLeave -> {
                 final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
