@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -122,7 +124,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-06-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2026-01-15T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 1, 1);
+            final LocalDate startDate = LocalDate.of(2026, JANUARY, 1);
             final Instant expectedValidFrom = Instant.parse("2026-01-01T00:00:00Z");
 
             when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person(1L)));
@@ -130,7 +132,7 @@ class PersonActivePeriodEventListenerTest {
                 .thenReturn(List.of(new PersonActivePeriod(new PersonId(1L), earliestValidFrom)));
 
             final OvertimeCreatedEvent event = new OvertimeCreatedEvent(
-                UUID.randomUUID(), createdAt, 42L, "username", startDate, LocalDate.of(2026, 1, 2), Duration.ofHours(5)
+                UUID.randomUUID(), createdAt, 42L, "username", startDate, LocalDate.of(2026, JANUARY, 2), Duration.ofHours(5)
             );
 
             sut.on(event);
@@ -143,14 +145,14 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-01-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 6, 1);
+            final LocalDate startDate = LocalDate.of(2026, JUNE, 1);
 
             when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person(1L)));
             when(personActivePeriodService.getActivePeriods(new PersonId(1L)))
                 .thenReturn(List.of(new PersonActivePeriod(new PersonId(1L), earliestValidFrom)));
 
             final OvertimeCreatedEvent event = new OvertimeCreatedEvent(
-                UUID.randomUUID(), createdAt, 42L, "username", startDate, LocalDate.of(2026, 6, 2), Duration.ofHours(5)
+                UUID.randomUUID(), createdAt, 42L, "username", startDate, LocalDate.of(2026, JUNE, 2), Duration.ofHours(5)
             );
 
             sut.on(event);
@@ -165,7 +167,7 @@ class PersonActivePeriodEventListenerTest {
             when(personActivePeriodService.getActivePeriods(new PersonId(1L))).thenReturn(List.of());
 
             final OvertimeCreatedEvent event = new OvertimeCreatedEvent(
-                UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), 42L, "username", LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 2), Duration.ofHours(5)
+                UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), 42L, "username", LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 2), Duration.ofHours(5)
             );
 
             sut.on(event);
@@ -178,7 +180,7 @@ class PersonActivePeriodEventListenerTest {
             when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
 
             final OvertimeCreatedEvent event = new OvertimeCreatedEvent(
-                UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), 42L, "username", LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 2), Duration.ofHours(5)
+                UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), 42L, "username", LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 2), Duration.ofHours(5)
             );
 
             assertThatThrownBy(() -> sut.on(event)).isInstanceOf(IllegalStateException.class);
@@ -199,7 +201,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-06-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2026-01-15T00:00:00Z");
-            final LocalDate validFrom = LocalDate.of(2026, 1, 1);
+            final LocalDate validFrom = LocalDate.of(2026, JANUARY, 1);
             final Instant expectedValidFrom = Instant.parse("2026-01-01T00:00:00Z");
 
             when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person(1L)));
@@ -220,7 +222,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-01-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
-            final LocalDate validFrom = LocalDate.of(2026, 6, 1);
+            final LocalDate validFrom = LocalDate.of(2026, JUNE, 1);
 
             when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person(1L)));
             when(personActivePeriodService.getActivePeriods(new PersonId(1L)))
@@ -243,7 +245,7 @@ class PersonActivePeriodEventListenerTest {
 
             final WorkingTimeConfiguredEvent event = new WorkingTimeConfiguredEvent(
                 UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), "username",
-                LocalDate.of(2026, 6, 1), List.of(1, 2, 3, 4, 5), "GERMANY_BADEN_WUERTTEMBERG"
+                LocalDate.of(2026, JUNE, 1), List.of(1, 2, 3, 4, 5), "GERMANY_BADEN_WUERTTEMBERG"
             );
 
             sut.on(event);
@@ -257,7 +259,7 @@ class PersonActivePeriodEventListenerTest {
 
             final WorkingTimeConfiguredEvent event = new WorkingTimeConfiguredEvent(
                 UUID.randomUUID(), Instant.parse("2026-07-31T00:00:00Z"), "username",
-                LocalDate.of(2026, 6, 1), List.of(1, 2, 3, 4, 5), "GERMANY_BADEN_WUERTTEMBERG"
+                LocalDate.of(2026, JUNE, 1), List.of(1, 2, 3, 4, 5), "GERMANY_BADEN_WUERTTEMBERG"
             );
 
             assertThatThrownBy(() -> sut.on(event)).isInstanceOf(IllegalStateException.class);
@@ -278,7 +280,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-06-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2026-01-15T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 1, 1);
+            final LocalDate startDate = LocalDate.of(2026, JANUARY, 1);
             final Instant expectedValidFrom = Instant.parse("2026-01-01T00:00:00Z");
 
             final Person person = person(1L);
@@ -299,7 +301,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-01-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 6, 1);
+            final LocalDate startDate = LocalDate.of(2026, JUNE, 1);
 
             final Person person = person(1L);
             final SickNote sickNote = SickNote.builder().person(person).startDate(startDate).build();
@@ -318,7 +320,7 @@ class PersonActivePeriodEventListenerTest {
         void ensureDoesNotInsertPeroidWhenPersonHasNoActivePeriod() {
 
             final Person person = person(1L);
-            final SickNote sickNote = SickNote.builder().person(person).startDate(LocalDate.of(2026, 6, 1)).build();
+            final SickNote sickNote = SickNote.builder().person(person).startDate(LocalDate.of(2026, JUNE, 1)).build();
 
             when(personActivePeriodService.getActivePeriods(new PersonId(1L))).thenReturn(List.of());
 
@@ -343,7 +345,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-06-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2026-01-15T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 1, 1);
+            final LocalDate startDate = LocalDate.of(2026, JANUARY, 1);
             final Instant expectedValidFrom = Instant.parse("2026-01-01T00:00:00Z");
 
             final Person person = person(1L);
@@ -366,7 +368,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-01-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 6, 1);
+            final LocalDate startDate = LocalDate.of(2026, JUNE, 1);
 
             final Person person = person(1L);
             final Application application = new Application();
@@ -389,7 +391,7 @@ class PersonActivePeriodEventListenerTest {
             final Person person = person(1L);
             final Application application = new Application();
             application.setPerson(person);
-            application.setStartDate(LocalDate.of(2026, 6, 1));
+            application.setStartDate(LocalDate.of(2026, JUNE, 1));
 
             when(personActivePeriodService.getActivePeriods(new PersonId(1L))).thenReturn(List.of());
 
@@ -415,7 +417,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-06-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2026-01-15T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 1, 1);
+            final LocalDate startDate = LocalDate.of(2026, JANUARY, 1);
             final Instant expectedValidFrom = Instant.parse("2026-01-01T00:00:00Z");
 
             final Person person = person(1L);
@@ -438,7 +440,7 @@ class PersonActivePeriodEventListenerTest {
 
             final Instant earliestValidFrom = Instant.parse("2026-01-01T00:00:00Z");
             final Instant createdAt = Instant.parse("2025-01-01T00:00:00Z");
-            final LocalDate startDate = LocalDate.of(2026, 6, 1);
+            final LocalDate startDate = LocalDate.of(2026, JUNE, 1);
 
             final Person person = person(1L);
             final Application application = new Application();
@@ -461,7 +463,7 @@ class PersonActivePeriodEventListenerTest {
             final Person person = person(1L);
             final Application application = new Application();
             application.setPerson(person);
-            application.setStartDate(LocalDate.of(2026, 6, 1));
+            application.setStartDate(LocalDate.of(2026, JUNE, 1));
 
             when(personActivePeriodService.getActivePeriods(new PersonId(1L))).thenReturn(List.of());
 

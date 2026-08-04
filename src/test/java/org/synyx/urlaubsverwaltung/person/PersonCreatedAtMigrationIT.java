@@ -12,6 +12,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -53,8 +55,8 @@ class PersonCreatedAtMigrationIT extends SingleTenantTestContainersBase {
 
         final Person person = personService.create("legacy", "Legacy", "Mustermann", "legacy@example.org");
 
-        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2018, 3, 1), person);
-        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2020, 1, 1), person);
+        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2018, MARCH, 1), person);
+        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2020, JANUARY, 1), person);
 
         entityManager.flush();
 
@@ -68,6 +70,6 @@ class PersonCreatedAtMigrationIT extends SingleTenantTestContainersBase {
         // compare as a date (not an absolute instant) to stay independent of the DB session's timezone
         final LocalDate createdAtDate = jdbcTemplate.queryForObject(
             "SELECT created_at::date FROM person WHERE id = ?", LocalDate.class, person.getId());
-        assertThat(createdAtDate).isEqualTo(LocalDate.of(2018, 3, 1));
+        assertThat(createdAtDate).isEqualTo(LocalDate.of(2018, MARCH, 1));
     }
 }

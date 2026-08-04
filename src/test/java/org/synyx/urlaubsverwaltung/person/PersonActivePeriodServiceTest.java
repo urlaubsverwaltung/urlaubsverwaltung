@@ -141,7 +141,10 @@ class PersonActivePeriodServiceTest {
 
             when(repository.findByPersonIdAndValidToIsNull(1L)).thenReturn(Optional.of(existingOpenPeriod));
 
-            assertThatThrownBy(() -> sut.openPeriod(new PersonId(1L), Instant.now()))
+            final PersonId personId = new PersonId(1L);
+            final Instant validFrom = Instant.now();
+
+            assertThatThrownBy(() -> sut.openPeriod(personId, validFrom))
                 .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
 
             verify(repository, never()).save(any());
@@ -173,7 +176,10 @@ class PersonActivePeriodServiceTest {
 
             when(repository.findByPersonIdAndValidToIsNull(1L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.closeOpenPeriod(new PersonId(1L), Instant.now()))
+            final PersonId personId = new PersonId(1L);
+            final Instant validTo = Instant.now();
+
+            assertThatThrownBy(() -> sut.closeOpenPeriod(personId, validTo))
                 .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
 
             verify(repository, never()).save(any());
@@ -213,7 +219,9 @@ class PersonActivePeriodServiceTest {
 
             when(repository.findAllByPersonIdIsInAndOverlapping(List.of(1L), validFrom, validTo)).thenReturn(List.of(touchingPeriod));
 
-            assertThatThrownBy(() -> sut.insertPeriod(new PersonId(1L), validFrom, validTo))
+            final PersonId personId = new PersonId(1L);
+
+            assertThatThrownBy(() -> sut.insertPeriod(personId, validFrom, validTo))
                 .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
 
             verify(repository, never()).save(any());

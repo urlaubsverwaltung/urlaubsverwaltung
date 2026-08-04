@@ -95,13 +95,19 @@ class PersonServiceImpl implements PersonService {
             USER
         );
 
-        return create(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
+        return createPerson(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
     }
 
     @Override
     @Transactional
     public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
+
+        return createPerson(username, firstName, lastName, email, notifications, permissions);
+    }
+
+    private Person createPerson(String username, String firstName, String lastName, String email,
+                                List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = normalizePerson(new Person(username, lastName, firstName, email));
         person.setCreatedAt(Instant.now(clock));

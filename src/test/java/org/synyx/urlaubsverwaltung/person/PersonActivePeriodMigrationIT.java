@@ -14,6 +14,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -76,8 +79,8 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
         transientPerson.setCreatedAt(Instant.now());
         final Person person = personRepository.save(transientPerson);
 
-        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2018, 3, 1), person);
-        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2020, 1, 1), person);
+        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2018, MARCH, 1), person);
+        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2020, JANUARY, 1), person);
 
         entityManager.flush();
         jdbcTemplate.update(BACKFILL_SQL);
@@ -89,7 +92,7 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
         // compare as a date (not an absolute instant) to stay independent of the DB session's timezone
         final LocalDate validFromDate = jdbcTemplate.queryForObject(
             "SELECT valid_from::date FROM person_active_period WHERE person_id = ?", LocalDate.class, person.getId());
-        assertThat(validFromDate).isEqualTo(LocalDate.of(2018, 3, 1));
+        assertThat(validFromDate).isEqualTo(LocalDate.of(2018, MARCH, 1));
     }
 
     @Test
@@ -100,7 +103,7 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
         transientPerson.setCreatedAt(Instant.now());
         final Person person = personRepository.save(transientPerson);
 
-        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2015, 6, 1), person);
+        workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2015, JUNE, 1), person);
 
         entityManager.flush();
         jdbcTemplate.update(BACKFILL_SQL);
