@@ -24,8 +24,6 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
@@ -54,6 +52,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     private final ApplicationCommentService commentService;
     private final ApplicationMailService applicationMailService;
     private final DepartmentService departmentService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final Clock clock;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -63,7 +62,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         ApplicationCommentService commentService,
         AccountInteractionService accountInteractionService,
         ApplicationMailService applicationMailService,
-        DepartmentService departmentService, Clock clock,
+        DepartmentService departmentService, ApplicationForLeavePermissionEvaluator permissionEvaluator, Clock clock,
         ApplicationEventPublisher applicationEventPublisher
     ) {
         this.applicationService = applicationService;
@@ -71,6 +70,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         this.accountInteractionService = accountInteractionService;
         this.applicationMailService = applicationMailService;
         this.departmentService = departmentService;
+        this.permissionEvaluator = permissionEvaluator;
         this.clock = clock;
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -347,9 +347,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(canceller, application.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(canceller, application.getPerson());
-        if (isAllowedToCancelApplication(application, canceller, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson)) {
+        if (permissionEvaluator.of(canceller, application).isAllowedToCancel()) {
             /*
              * Only management with the role application_cancel can cancel allowed applications for leave directly,
              * users have to request cancellation
@@ -460,9 +458,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application edit(Application oldApplication, Application editedApplication, Person editor, Optional<String> comment) {
 
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(editor, editedApplication.getPerson());
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(editor, editedApplication.getPerson());
-        if (!isAllowedToEditApplication(oldApplication, editor, isDepartmentHead, isSecondStageAuthority)) {
+        if (!permissionEvaluator.of(editor, oldApplication).isAllowedToEdit()) {
             throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
                 "with id %d because editor %s has not enough permissions", oldApplication.getId(), editor.getId()));
         }
