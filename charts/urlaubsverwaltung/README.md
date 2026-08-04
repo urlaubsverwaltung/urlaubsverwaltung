@@ -158,21 +158,30 @@ A new service will be created, but not exposed via an ingress!
 customizedManagementServer:
     enabled: true
 
+# Startup probe configuration
+startupProbe: |
+    httpGet:
+      path: /actuator/health/liveness
+      port: http-management
+    initialDelaySeconds: 15
+    failureThreshold: 12
+    periodSeconds: 5
+
+# Liveness probe configuration
 livenessProbe: |
     httpGet:
       path: /actuator/health/liveness
       port: http-management
-    initialDelaySeconds: 120
-    periodSeconds: 10
-    failureThreshold: 10
+    failureThreshold: 3
+    periodSeconds: 5
 
+# Readiness probe configuration
 readinessProbe: |
     httpGet:
       path: /actuator/health/readiness
       port: http-management
-    initialDelaySeconds: 60
-    periodSeconds: 10
-    failureThreshold: 10
+    failureThreshold: 2
+    periodSeconds: 5
 ```
 
 ### Prometheus Operator Support
