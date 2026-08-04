@@ -56,6 +56,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -135,7 +136,7 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-            departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
             vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
 
         lenient().when(settingsService.getSettings()).thenReturn(new Settings());
@@ -1184,7 +1185,7 @@ class OverviewViewControllerTest {
         void setUpWithFixedClock() {
             sut = new OverviewViewController(personService, accountService, vacationDaysService,
                 workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
                 vacationTypeViewModelService, personSearchUiFragmentSupplier,
                 Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
 

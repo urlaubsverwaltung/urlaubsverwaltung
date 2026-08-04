@@ -110,7 +110,8 @@ class ApplicationForLeaveViewControllerTest {
         userIsAllowedToSubmitSickNotes(false);
 
         sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService,
-            new SickNotePermissionEvaluator(departmentService, settingsService), workDaysCountService,
+            new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+            workDaysCountService,
             departmentService, personService, settingsService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, clock);
     }
@@ -269,7 +270,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(true))
                 ))
             ))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
@@ -373,7 +374,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(true))
                 ))
             ))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
@@ -575,7 +576,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(true))
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasSize(1)))
@@ -674,7 +675,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(true))
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasSize(1)))
@@ -761,7 +762,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false)),
+                    hasProperty("cancelAllowed", is(true)),
                     hasProperty("approveAllowed", is(false))
                 )
             )))
@@ -871,7 +872,7 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10L)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false)),
+                    hasProperty("cancelAllowed", is(true)),
                     hasProperty("approveAllowed", is(false))
                 )
             )))
