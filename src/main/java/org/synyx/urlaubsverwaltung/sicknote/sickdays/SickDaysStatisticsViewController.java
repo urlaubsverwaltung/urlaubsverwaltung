@@ -62,7 +62,7 @@ class SickDaysStatisticsViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @GetMapping("/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(
         @RequestParam(value = "from", defaultValue = "") String from,

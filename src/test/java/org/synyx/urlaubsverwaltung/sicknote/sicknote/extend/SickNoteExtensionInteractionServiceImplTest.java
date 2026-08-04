@@ -24,6 +24,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,11 +40,11 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteExtensionInteractionServiceImplTest {
 
-    @InjectMocks
     private SickNoteExtensionInteractionServiceImpl sut;
 
     @Mock
@@ -52,7 +56,18 @@ class SickNoteExtensionInteractionServiceImplTest {
     @Mock
     private SickNoteCommentService sickNoteCommentService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
+    private SettingsService settingsService;
+    @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @BeforeEach
+    void setUp() {
+        sut = new SickNoteExtensionInteractionServiceImpl(sickNoteExtensionService, sickNoteService,
+            sickNoteInteractionService, sickNoteCommentService,
+            new SickNotePermissionEvaluator(departmentService, settingsService), applicationEventPublisher);
+    }
 
     @Nested
     class SubmitSickNoteExtension {
@@ -164,7 +179,9 @@ class SickNoteExtensionInteractionServiceImplTest {
 
             final Person maintainer = new Person();
             maintainer.setId(1L);
-            maintainer.setPermissions(List.of(USER));
+            maintainer.setPermissions(List.of(USER, SICK_NOTE_EDIT));
+
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(SickNote.builder().id(1L).person(new Person()).build()));
 
             assertThatThrownBy(() -> sut.acceptSubmittedExtension(maintainer, 1L, ""))
                 .isInstanceOf(AccessDeniedException.class)
@@ -175,14 +192,15 @@ class SickNoteExtensionInteractionServiceImplTest {
         }
 
         @ParameterizedTest
-        @EnumSource(value = Role.class, names = {"OFFICE", "SICK_NOTE_EDIT"})
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
         void ensureAcceptSubmittedExtension(Role role) {
 
             final Person maintainer = new Person();
             maintainer.setId(1L);
-            maintainer.setPermissions(List.of(USER, role));
+            maintainer.setPermissions(List.of(USER, role, SICK_NOTE_EDIT));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             final SickNote actual = sut.acceptSubmittedExtension(maintainer, 1L, "");
@@ -196,7 +214,8 @@ class SickNoteExtensionInteractionServiceImplTest {
             maintainer.setId(1L);
             maintainer.setPermissions(List.of(USER, OFFICE));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             sut.acceptSubmittedExtension(maintainer, 1L, "awesome comment");
@@ -211,7 +230,8 @@ class SickNoteExtensionInteractionServiceImplTest {
             maintainer.setId(1L);
             maintainer.setPermissions(List.of(USER, OFFICE));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             sut.acceptSubmittedExtension(maintainer, 1L, "");

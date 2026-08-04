@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteService;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
@@ -59,6 +60,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     private final ApplicationService applicationService;
     private final SubmittedSickNoteService sickNoteService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -69,13 +71,15 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     private final Clock clock;
 
     ApplicationForLeaveViewController(
-        ApplicationService applicationService, SubmittedSickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
+        ApplicationService applicationService, SubmittedSickNoteService sickNoteService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator, WorkDaysCountService workDaysCountService,
         DepartmentService departmentService, PersonService personService, SettingsService settingsService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
         MessageSource messageSource, Clock clock
     ) {
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
@@ -123,7 +127,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
         model.addAttribute("canAccessCancellationRequests", isAllowedToAccessCancellationRequest(signedInUser));
         model.addAttribute("canAccessOtherApplications", isAllowedToAccessOtherApplications(signedInUser));
-        model.addAttribute("canAccessSickNoteSubmissions", sickNoteSettings.getUserIsAllowedToSubmitSickNotes() && isAllowedToAccessSickNoteSubmissions(signedInUser));
+        model.addAttribute("canAccessSickNoteSubmissions", sickNoteSettings.getUserIsAllowedToSubmitSickNotes() && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
@@ -179,11 +183,6 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     private static boolean isAllowedToAccessOtherApplications(Person signedInUser) {
         return signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-    }
-
-    private static boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE)
-            || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private List<SubmittedSickNoteDto> mapToSickNoteDtoList(List<SubmittedSickNote> sickNotes, Locale locale) {

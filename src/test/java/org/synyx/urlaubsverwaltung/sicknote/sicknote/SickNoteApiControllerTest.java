@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,10 +19,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -27,6 +27,7 @@ import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,6 +41,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteApiControllerTest {
@@ -55,15 +58,16 @@ class SickNoteApiControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteApiController(sickNoteService, personService, departmentService);
+        sut = new SickNoteApiController(sickNoteService, personService, departmentService,
+            new SickNotePermissionEvaluator(departmentService, mock(SettingsService.class)));
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
-    void getSickNotesWithOfficeRole(Role role) throws Exception {
+    void getSickNotesForPersonAllowedToViewSickNotesOfAllPersons(Role role) throws Exception {
 
         final Person signedInUser = new Person("requester", "requester", "requester", "requester@example.org");
-        signedInUser.setPermissions(List.of(USER, role));
+        signedInUser.setPermissions(List.of(USER, role, SICK_NOTE_VIEW));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -87,6 +91,25 @@ class SickNoteApiControllerTest {
             .andExpect(jsonPath("$.sickNotes[0].from", is("2016-05-19")))
             .andExpect(jsonPath("$.sickNotes[0].to", is("2016-05-20")))
             .andExpect(jsonPath("$.sickNotes[0].person").exists());
+    }
+
+    @Test
+    void getSickNotesForBossWithoutSickNoteViewReturnsNoSickNotesOfOtherPersons() throws Exception {
+
+        final Person signedInUser = new Person("requester", "requester", "requester", "requester@example.org");
+        signedInUser.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(List.of());
+
+        perform(get("/api/sicknotes")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sickNotes", hasSize(0)));
+
+        verifyNoInteractions(departmentService);
     }
 
     @Test

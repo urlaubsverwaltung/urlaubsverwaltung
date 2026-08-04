@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissions;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -30,11 +31,6 @@ import java.util.List;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 
 @Controller
@@ -49,6 +45,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final SettingsService settingsService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -58,6 +55,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         WorkDaysCountService workDaysCountService,
         SickNoteService sickNoteService,
         DepartmentService departmentService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         SettingsService settingsService,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
@@ -66,6 +64,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         this.workDaysCountService = workDaysCountService;
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.settingsService = settingsService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -108,8 +107,9 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, person);
 
-        if (!isAllowedToAccessSickNotesOf(signedInUser, person)) {
+        if (!permissions.isAllowedToView()) {
             throw new AccessDeniedException(
                 "User '%s' has not the correct permissions to access the sick notes of user '%s'".formatted(signedInUser.getId(), person.getId()));
         }
@@ -120,7 +120,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
-        prepareSickNoteList(person, signedInUser, yearToShow, model);
+        prepareSickNoteList(person, signedInUser, permissions, yearToShow, model);
 
         model.addAttribute("userIsAllowedToSubmitSickNotes", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes());
 
@@ -128,26 +128,21 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("signedInUser", signedInUser);
 
-        model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE)
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
+        model.addAttribute("canViewSickNoteAnotherUser", !person.equals(signedInUser) && permissions.isAllowedToView());
 
         return "me/sicknotes";
     }
 
-    private void prepareSickNoteList(Person person, Person signedInUser, int year, Model model) {
+    private void prepareSickNoteList(Person person, Person signedInUser, SickNotePermissions permissions, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, from, to);
 
-        final boolean isSamePerson = person.equals(signedInUser);
-
         final List<SickNoteDto> sortedSickNotes = sickNotes.stream()
             .sorted(comparing(SickNote::getStartDate).reversed())
-            .map(sickNote -> mapToSickNoteDtos(person, signedInUser, sickNote, isSamePerson))
+            .map(sickNote -> mapToSickNoteDtos(sickNote, permissions))
             .toList();
         model.addAttribute("sickNotes", sortedSickNotes);
 
@@ -155,7 +150,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("sickDaysOverview", yearlySickDaysSummary);
     }
 
-    private @NonNull SickNoteDto mapToSickNoteDtos(Person person, Person signedInUser, SickNote sickNote, boolean isSamePerson) {
+    private @NonNull SickNoteDto mapToSickNoteDtos(SickNote sickNote, SickNotePermissions permissions) {
         return new SickNoteDto(
             sickNote.getId(),
             sickNote.getStartDate(),
@@ -166,26 +161,8 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
             sickNote.getWorkDaysWithAub(),
             sickNote.getStatus(),
             sickNote.getSickNoteType(),
-            signedInUser.hasRole(OFFICE)
-                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
-                || (isSamePerson && sickNote.isSubmitted()),
-            signedInUser.hasRole(OFFICE)
-                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
+            permissions.isAllowedToEdit(sickNote),
+            permissions.isAllowedToCancel()
         );
-    }
-
-    private boolean isAllowedToAccessSickNotesOf(Person signedInUser, Person sickNotePerson) {
-        return sickNotePerson.equals(signedInUser)
-            || signedInUser.hasRole(OFFICE)
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson);
-    }
-
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
-        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
-        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 }

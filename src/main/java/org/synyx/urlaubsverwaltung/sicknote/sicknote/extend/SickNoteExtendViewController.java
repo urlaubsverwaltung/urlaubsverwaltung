@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -44,8 +45,6 @@ import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURBO_REQUEST_ID;
 
@@ -58,6 +57,7 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     private final SickNoteService sickNoteService;
     private final SickNoteExtensionServiceImpl sickNoteExtensionService;
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final SickNoteExtendValidator sickNoteExtendValidator;
     private final DateFormatAware dateFormatAware;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
@@ -67,6 +67,7 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
                                  SickNoteService sickNoteService, SickNoteExtensionServiceImpl sickNoteExtensionService,
                                  SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+                                 SickNotePermissionEvaluator sickNotePermissionEvaluator,
                                  SickNoteExtendValidator sickNoteExtendValidator, DateFormatAware dateFormatAware,
                                  PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
                                  PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
@@ -76,6 +77,7 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         this.sickNoteService = sickNoteService;
         this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.sickNoteExtendValidator = sickNoteExtendValidator;
         this.dateFormatAware = dateFormatAware;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
@@ -171,7 +173,7 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
 
             sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
 
-            if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD)) {
+            if (sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAcceptExtension()) {
                 sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNote.getId(), null);
             }
 

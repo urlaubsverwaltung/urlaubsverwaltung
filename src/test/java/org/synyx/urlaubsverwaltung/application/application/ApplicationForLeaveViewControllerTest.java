@@ -1,5 +1,14 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,21 +34,12 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import static java.time.Month.JANUARY;
 import static java.util.function.Function.identity;
@@ -108,7 +108,8 @@ class ApplicationForLeaveViewControllerTest {
 
         userIsAllowedToSubmitSickNotes(false);
 
-        sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService, workDaysCountService,
+        sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService,
+            new SickNotePermissionEvaluator(departmentService, settingsService), workDaysCountService,
             departmentService, personService, settingsService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, clock);
     }

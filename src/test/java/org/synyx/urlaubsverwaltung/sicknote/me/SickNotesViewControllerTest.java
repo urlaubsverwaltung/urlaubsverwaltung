@@ -1,6 +1,12 @@
 package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,23 +21,17 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.time.Month.JANUARY;
@@ -84,6 +84,7 @@ class SickNotesViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService,
+            new SickNotePermissionEvaluator(departmentService, settingsService),
             settingsService, personSearchUiFragmentSupplier, clock);
     }
 
@@ -401,6 +402,29 @@ class SickNotesViewControllerTest {
         signedInUser.setId(21L);
         signedInUser.setUsername("departhead");
         signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD, Role.SICK_NOTE_VIEW));
+
+        when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "20")))
+            .andExpect(status().isOk())
+            .andExpect(view().name("me/sicknotes"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureCanViewSickNoteAnotherUserIsTrueForDepartmentHeadWithoutSickNoteViewRole() throws Exception {
+        final Person person = new Person();
+        person.setId(20L);
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(21L);
+        signedInUser.setUsername("departhead");
+        signedInUser.setPermissions(List.of(Role.DEPARTMENT_HEAD));
 
         when(personService.getPersonByID(20L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(signedInUser);

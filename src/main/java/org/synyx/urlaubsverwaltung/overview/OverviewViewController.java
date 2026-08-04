@@ -32,6 +32,8 @@ import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissions;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -61,10 +63,6 @@ import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -92,6 +90,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -103,6 +102,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         WorkDaysCountService workDaysCountService, ApplicationService applicationService,
         SickNoteService sickNoteService, OvertimeService overtimeService,
         SettingsService settingsService, DepartmentService departmentService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         VacationTypeViewModelService vacationTypeViewModelService, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
@@ -115,6 +115,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
         this.departmentService = departmentService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -318,25 +319,19 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final List<SickNote> shownSickNotes = entriesClosestToToday(sickNotes, SickNote::getStartDate, today,
             NUMBER_OF_PAST_SICK_NOTES_ON_OVERVIEW, NUMBER_OF_FUTR_SICK_NOTES_ON_OVERVIEW);
 
-        final boolean isSamePerson = person.equals(signedInUser);
-        final boolean userIsAllowedToSubmitSickNotes = isSamePerson && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-        final boolean userIsAllowedToAddSickNotes = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person);
-        final boolean isAllowedToAddOrSubmitSickNotes =
-            signedInUser.hasRole(OFFICE)
-                || userIsAllowedToAddSickNotes
-                || userIsAllowedToSubmitSickNotes;
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, person);
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            mapToSickNoteDtos(person, signedInUser, shownSickNotes, isSamePerson),
+            mapToSickNoteDtos(shownSickNotes, permissions),
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
-            isAllowedToAddOrSubmitSickNotes,
-            person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person),
+            permissions.isAllowedToAdd() || permissions.isAllowedToSubmit(),
+            permissions.isAllowedToView(),
             shownSickNotes.size(),
             sickNotes.size()
         ));
     }
 
-    private @NonNull List<SickNoteDto> mapToSickNoteDtos(Person person, Person signedInUser, List<SickNote> shownSickNotes, boolean isSamePerson) {
+    private @NonNull List<SickNoteDto> mapToSickNoteDtos(List<SickNote> shownSickNotes, SickNotePermissions permissions) {
         return shownSickNotes.stream()
             .map(sickNote -> new SickNoteDto(
                 sickNote.getId(),
@@ -348,11 +343,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 sickNote.getWorkDaysWithAub(),
                 sickNote.getStatus(),
                 sickNote.getSickNoteType(),
-                signedInUser.hasRole(OFFICE)
-                    || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person)
-                    || (isSamePerson && sickNote.isSubmitted()),
-                signedInUser.hasRole(OFFICE)
-                    || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, person)
+                permissions.isAllowedToEdit(sickNote),
+                permissions.isAllowedToCancel()
             )).toList();
     }
 

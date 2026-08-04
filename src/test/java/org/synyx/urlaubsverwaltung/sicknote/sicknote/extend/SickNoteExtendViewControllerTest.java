@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,24 +14,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -39,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +75,7 @@ class SickNoteExtendViewControllerTest {
     void setUp() {
         sut = new SickNoteExtendViewController(personService, workingTimeCalendarService,
             sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), mock(SettingsService.class)),
             sickNoteExtendValidator, dateFormatAware, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             clock);
     }
@@ -116,12 +121,12 @@ class SickNoteExtendViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"OFFICE", "SICK_NOTE_ADD"})
-    void ensureExtensionIsImmediatelyAcceptedWhenUserHasRole(Role role) throws Exception {
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureExtensionIsImmediatelyAcceptedWhenUserIsAllowedToAcceptSickNotes(Role role) throws Exception {
 
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(List.of(USER, role));
+        person.setPermissions(List.of(USER, role, SICK_NOTE_EDIT));
 
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -148,12 +153,13 @@ class SickNoteExtendViewControllerTest {
         verify(sickNoteExtensionInteractionService).acceptSubmittedExtension(person, 1L, null);
     }
 
-    @Test
-    void ensureExtensionIsNotImmediatelyAcceptedForSimpleUserOrBoss() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "SICK_NOTE_ADD"})
+    void ensureExtensionIsNotImmediatelyAcceptedWhenUserIsNotAllowedToAcceptSickNotes(Role role) throws Exception {
 
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(List.of(USER, BOSS));
+        person.setPermissions(List.of(USER, role));
 
         when(personService.getSignedInUser()).thenReturn(person);
 
