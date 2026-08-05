@@ -177,7 +177,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isInstanceOfSatisfying(NavigationDto.class, dto ->
-                assertThat(dto.company()).doesNotContain(companyOvertimeLink(), companyOvertimeLink(true)));
+                assertThat(dto.company()).isNotEmpty().doesNotContain(companyOvertimeLink(), companyOvertimeLink(true)));
     }
 
     @ParameterizedTest
@@ -198,7 +198,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isInstanceOfSatisfying(NavigationDto.class, dto ->
-                assertThat(dto.company()).doesNotContain(companyOvertimeLink()));
+                assertThat(dto.company()).isNotEmpty().doesNotContain(companyOvertimeLink()));
     }
 
     @Test

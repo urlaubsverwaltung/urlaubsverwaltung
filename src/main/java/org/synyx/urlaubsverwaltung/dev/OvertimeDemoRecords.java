@@ -57,7 +57,7 @@ final class OvertimeDemoRecords {
 
             final int monthIndex = month.getMonthValue() - 1;
             // spreads the persons apart so the company sums are not just one curve multiplied
-            final int personOffset = (int) (personId % 4);
+            final long personOffset = personId % 4;
             // the previous year is a bit weaker, otherwise both year curves would lie on top of each other
             final int yearOffset = month.getYear() < today.getYear() ? -1 : 0;
 
@@ -65,7 +65,7 @@ final class OvertimeDemoRecords {
             final LocalDate accrualStart = month.atDay(ACCRUAL_WEEK_START);
             if (!accrualStart.isAfter(today)) {
                 final LocalDate accrualEnd = earlier(month.atDay(ACCRUAL_WEEK_END), today);
-                final int accrualHours = Math.max(1, ACCRUAL_HOURS_BY_MONTH[monthIndex] + personOffset + yearOffset);
+                final long accrualHours = Math.max(1L, ACCRUAL_HOURS_BY_MONTH[monthIndex] + personOffset + yearOffset);
                 entries.add(new Entry(accrualStart, accrualEnd, hours(accrualHours)));
             }
 

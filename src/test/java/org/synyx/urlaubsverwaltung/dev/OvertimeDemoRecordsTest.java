@@ -9,12 +9,14 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Set;
 
+import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OvertimeDemoRecordsTest {
 
-    private static final LocalDate TODAY = LocalDate.of(2026, 7, 15);
+    private static final LocalDate TODAY = LocalDate.of(2026, JULY, 15);
 
     @Test
     void ensureEveryMonthOfThePreviousYearIsCovered() {
@@ -59,8 +61,8 @@ class OvertimeDemoRecordsTest {
 
         final List<Entry> entries = OvertimeDemoRecords.of(1L, TODAY);
 
-        assertThat(entries).allSatisfy(entry ->
-            assertThat(entry.startDate()).isAfterOrEqualTo(LocalDate.of(2025, 1, 1)));
+        assertThat(entries).isNotEmpty().allSatisfy(entry ->
+            assertThat(entry.startDate()).isAfterOrEqualTo(LocalDate.of(2025, JANUARY, 1)));
     }
 
     @Test
@@ -68,8 +70,9 @@ class OvertimeDemoRecordsTest {
 
         final List<Entry> entries = OvertimeDemoRecords.of(1L, TODAY);
 
-        assertThat(entries).anySatisfy(entry -> assertThat(entry.duration()).isPositive());
-        assertThat(entries).anySatisfy(entry -> assertThat(entry.duration()).isNegative());
+        assertThat(entries)
+            .anySatisfy(entry -> assertThat(entry.duration()).isPositive())
+            .anySatisfy(entry -> assertThat(entry.duration()).isNegative());
     }
 
     @Test
@@ -77,7 +80,7 @@ class OvertimeDemoRecordsTest {
 
         final List<Entry> entries = OvertimeDemoRecords.of(1L, TODAY);
 
-        assertThat(entries).allSatisfy(entry -> assertThat(entry.duration()).isNotEqualTo(Duration.ZERO));
+        assertThat(entries).isNotEmpty().allSatisfy(entry -> assertThat(entry.duration()).isNotEqualTo(Duration.ZERO));
     }
 
     @Test
@@ -85,7 +88,7 @@ class OvertimeDemoRecordsTest {
 
         final List<Entry> entries = OvertimeDemoRecords.of(1L, TODAY);
 
-        assertThat(entries).allSatisfy(entry ->
+        assertThat(entries).isNotEmpty().allSatisfy(entry ->
             assertThat(entry.endDate()).isAfterOrEqualTo(entry.startDate()));
     }
 
@@ -108,20 +111,20 @@ class OvertimeDemoRecordsTest {
     void ensureTheMonthOfTodayIsCutOffAtToday() {
 
         // the accrual week starts on the 8th, today is the 10th
-        final List<Entry> entries = OvertimeDemoRecords.of(1L, LocalDate.of(2026, 7, 10));
+        final List<Entry> entries = OvertimeDemoRecords.of(1L, LocalDate.of(2026, JULY, 10));
 
-        assertThat(entries).filteredOn(entry -> entry.startDate().equals(LocalDate.of(2026, 7, 8)))
+        assertThat(entries).filteredOn(entry -> entry.startDate().equals(LocalDate.of(2026, JULY, 8)))
             .singleElement()
-            .satisfies(entry -> assertThat(entry.endDate()).isEqualTo(LocalDate.of(2026, 7, 10)));
+            .satisfies(entry -> assertThat(entry.endDate()).isEqualTo(LocalDate.of(2026, JULY, 10)));
     }
 
     @Test
     void ensureAMonthThatHasNotStartedYetIsSkipped() {
 
         // first day of the month, the accrual week on the 8th has not happened yet
-        final List<Entry> entries = OvertimeDemoRecords.of(1L, LocalDate.of(2026, 7, 1));
+        final List<Entry> entries = OvertimeDemoRecords.of(1L, LocalDate.of(2026, JULY, 1));
 
         assertThat(entries).noneSatisfy(entry ->
-            assertThat(YearMonth.from(entry.startDate())).isEqualTo(YearMonth.of(2026, 7)));
+            assertThat(YearMonth.from(entry.startDate())).isEqualTo(YearMonth.of(2026, JULY)));
     }
 }

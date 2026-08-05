@@ -45,6 +45,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -1591,9 +1592,9 @@ class OvertimeServiceImplTest {
             final Person klaus = new Person("klaus", "Mustermann", "Klaus", "klaus@example.org");
             klaus.setId(2L);
 
-            final OvertimeEntity marieOvertime = new OvertimeEntity(marie, LocalDate.of(2020, 3, 1), LocalDate.of(2020, 3, 1), Duration.ofHours(4));
+            final OvertimeEntity marieOvertime = new OvertimeEntity(marie, LocalDate.of(2020, MARCH, 1), LocalDate.of(2020, MARCH, 1), Duration.ofHours(4));
             marieOvertime.setId(1L);
-            final OvertimeEntity klausOvertime = new OvertimeEntity(klaus, LocalDate.of(2026, 1, 5), LocalDate.of(2026, 1, 5), Duration.ofHours(2).negated());
+            final OvertimeEntity klausOvertime = new OvertimeEntity(klaus, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 5), Duration.ofHours(2).negated());
             klausOvertime.setId(2L);
 
             when(overtimeRepository.findByPersonIdIn(List.of(1L, 2L))).thenReturn(List.of(marieOvertime, klausOvertime));

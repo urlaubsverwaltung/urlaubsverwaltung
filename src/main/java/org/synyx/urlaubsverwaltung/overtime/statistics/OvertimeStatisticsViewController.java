@@ -157,7 +157,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
     private static Optional<Year> toYear(String value) {
         try {
             return Optional.of(Year.parse(value));
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException _) {
             return Optional.empty();
         }
     }
