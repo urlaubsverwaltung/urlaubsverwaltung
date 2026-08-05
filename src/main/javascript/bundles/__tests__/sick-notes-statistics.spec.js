@@ -61,7 +61,6 @@ describe("sick-notes-statistics", function () {
       ],
       xaxisLabels: ["Jan", "Feb", "Mar"],
       yaxisTitle: "Tage",
-      sickRateName: "Krankenquote",
       sickRateYaxisTitle: "Krankenquote in %",
       sickRateValues: [
         { year: 2024, data: [10, 12, 14] },
@@ -128,7 +127,8 @@ describe("sick-notes-statistics", function () {
       await loadModule();
 
       const { options } = barChart();
-      expect(options.series.map(({ name }) => name)).not.toContain("Krankenquote 2024");
+      // the four day series only - no rate line, and therefore no second (percentage) y-axis
+      expect(options.series).toHaveLength(4);
       expect(options.yaxis).not.toBeInstanceOf(Array);
     });
 
@@ -201,7 +201,7 @@ describe("sick-notes-statistics", function () {
         series: seriesValues,
         dataPointIndex,
         w: {
-          globals: { labels: [1, 2, 3], seriesNames: ["Krankenquote 2024", "Krankenquote 2023"] },
+          globals: { labels: [1, 2, 3], seriesNames: ["2024", "2023"] },
           config: { colors: ["rate", "rate-light"] },
         },
       });
@@ -221,8 +221,8 @@ describe("sick-notes-statistics", function () {
 
       expect(sickRateChart().options.chart.type).toBe("line");
       expect(sickRateChart().options.series).toEqual([
-        { name: "Krankenquote 2024", data: [10, 12, 14], hidden: false },
-        { name: "Krankenquote 2023", data: [8, 9, 10], hidden: false },
+        { name: "2024", data: [10, 12, 14], hidden: false },
+        { name: "2023", data: [8, 9, 10], hidden: false },
       ]);
     });
 
@@ -263,9 +263,9 @@ describe("sick-notes-statistics", function () {
         1,
       );
 
-      expect(html).toContain("Krankenquote 2024: 12% (+2% / +20%)");
-      expect(html).toContain("Krankenquote 2023: 10%");
-      expect(html).not.toContain("Krankenquote 2023: 10% (");
+      expect(html).toContain("2024: 12% (+2% / +20%)");
+      expect(html).toContain("2023: 10%");
+      expect(html).not.toContain("2023: 10% (");
     });
 
     // apexcharts infers a numeric x-axis for a line chart, so w.globals.labels holds the month

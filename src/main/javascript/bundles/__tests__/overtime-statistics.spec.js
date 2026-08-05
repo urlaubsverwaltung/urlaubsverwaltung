@@ -50,6 +50,7 @@ describe("overtime-statistics", function () {
   function setOvertimeStatistics(overrides) {
     globalThis.overtimeStatistics = {
       xaxisLabels: ["Jan", "Feb", "Mär"],
+      tooltipLabels: ["Januar", "Februar", "März"],
       yaxisTitle: "Stunden",
       accruedName: "Aufbau",
       reductionName: "Abbau",
@@ -191,7 +192,8 @@ describe("overtime-statistics", function () {
       const { tooltip, colors } = chartInstances[1].options;
       const html = tooltip.custom({ dataPointIndex: 1, w: { config: { colors } } });
 
-      expect(html).toContain("Feb");
+      // the axis is abbreviated, the tooltip spells the month out
+      expect(html).toContain("Februar");
       expect(html).toContain("2026");
       expect(html).toContain("3 Std.");
       expect(html).toContain("2025");

@@ -46,13 +46,13 @@ const barSeries = [
 
 // the sick rate has its own chart below the days per month - it is a percentage rather than a day
 // count, so it does not share an axis with the bars. backend sends [currentYear, previousYear].
-const sickRateName = globalThis.sicknoteStatistic.sickRateName;
 const [currentYearSickRate, previousYearSickRate] = globalThis.sicknoteStatistic.sickRateValues;
 const RATE_CURRENT_INDEX = 0;
 const RATE_PREVIOUS_INDEX = 1;
+// the chart is headed "Krankenquote" already, so a series is named by its year alone
 const rateSeries = [
-  { name: `${sickRateName} ${currentYearSickRate.year}`, data: currentYearSickRate.data },
-  { name: `${sickRateName} ${previousYearSickRate.year}`, data: previousYearSickRate.data },
+  { name: String(currentYearSickRate.year), data: currentYearSickRate.data },
+  { name: String(previousYearSickRate.year), data: previousYearSickRate.data },
 ];
 
 function round1(number) {

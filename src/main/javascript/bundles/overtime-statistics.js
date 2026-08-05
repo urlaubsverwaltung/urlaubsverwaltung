@@ -174,11 +174,9 @@ const balanceOptions = {
     name: String(entry.year),
     data: entry.values,
   })),
-  // the previous year is dashed as well, so the two lines can be told apart without relying on colour
   stroke: {
     width: 3,
     curve: "smooth",
-    dashArray: [0, 4],
   },
   // no dots on the data points - the curve carries the trend, the exact values are in the tooltip.
   // apexcharts still shows a marker on hover.
@@ -207,7 +205,7 @@ const balanceOptions = {
     intersect: false,
     followCursor: true,
     custom: function ({ dataPointIndex, w }) {
-      const month = statistics.xaxisLabels[dataPointIndex];
+      const month = statistics.tooltipLabels[dataPointIndex];
       const rows = statistics.balanceSeries
         .map((entry, index) => tooltipRow(w.config.colors[index], String(entry.year), entry.valuesText[dataPointIndex]))
         .join("");
