@@ -372,6 +372,35 @@
         </div>
       </div>
 
+      <div class="mt-8 statistic-summary-container">
+        <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sick-rate.title}">
+          Krankenquote
+        </h3>
+        <p
+          class="text-sm"
+          th:text="#{sicknotes.statistics.summary.sick-rate.description(${selectedYearStatistics.year})}"
+        >
+          Alle Krankheitstage im Jahr im Verhältnis zu den Sollarbeitstagen.
+        </p>
+        <div class="statistic-summary-card-box">
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{sicknotes.statistics.summary.sick-rate.total.label}">
+              Krankenquote im Jahr
+            </span>
+            <span class="statistic-summary-card__content">
+              <span th:text="|${#numbers.formatDecimal(selectedYearStatistics.sickRate, 1, 1)} %|"> 3,4 % </span>
+              <span
+                class="statistic-summary-card__content-previous"
+                th:text="|(${#numbers.formatDecimal(previousSelectedYearStatistics.sickRate, 1, 1)} %)|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
+              >
+                (2,9 %)
+              </span>
+            </span>
+          </p>
+        </div>
+      </div>
+
       <div class="mt-12 statistic-summary-container">
         <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sicknotes.title}">
           Krankmeldungen
