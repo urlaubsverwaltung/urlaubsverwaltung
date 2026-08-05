@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { observable } from "../../js/observable";
 
 vi.mock("../../js/common", () => ({}));
@@ -230,5 +231,18 @@ describe("overtime-statistics", function () {
 
       expect(chartInstances[1].options.series[1].hidden).toBe(false);
     });
+  });
+
+  // the chart hosts are empty until this bundle has executed - the css has to reserve the box up
+  // front, otherwise the page paints collapsed charts and reflows by their full height afterwards.
+  it("reserves every chart height in the stylesheet", async function () {
+    setOvertimeStatistics();
+    await import("../overtime-statistics.js");
+
+    const css = readFileSync("src/main/css/bundles/overtime-statistics.css", "utf8");
+
+    for (const { options } of chartInstances) {
+      expect(css).toContain(`calc(${options.chart.height}px +`);
+    }
   });
 });

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { observable } from "../../js/observable";
 
 vi.mock("../../js/common", () => ({}));
@@ -390,5 +391,18 @@ describe("sick-notes-statistics", function () {
       expect(options.tooltip.enabled).toBe(false);
       expect(options.legend.show).toBe(false);
     });
+  });
+
+  // the chart hosts are empty until this bundle has executed - the css has to reserve the box up
+  // front, otherwise the page paints collapsed charts and reflows by their full size afterwards.
+  it("reserves the chart and gauge size in the stylesheet", async function () {
+    setSicknoteStatistic();
+    await loadModule();
+
+    const css = readFileSync("src/main/css/bundles/sick-note-statistics.css", "utf8");
+
+    expect(css).toContain(`calc(${chartInstances[0].options.chart.height}px +`);
+    expect(css).toContain(`width: ${chartInstances[1].options.chart.width};`);
+    expect(css).toContain(`min-height: ${chartInstances[1].options.chart.height}px;`);
   });
 });

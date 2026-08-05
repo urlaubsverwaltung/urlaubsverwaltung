@@ -10,6 +10,10 @@ import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persi
 
 const statistics = globalThis.overtimeStatistics;
 
+// the chart hosts are empty until this bundle has executed, so css/bundles/overtime-statistics.css
+// reserves this height up front to keep the page from reflowing. keep both in sync.
+const CHART_HEIGHT = 340;
+
 const { theme } = useTheme();
 const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
@@ -35,7 +39,7 @@ const options = {
   chart: {
     type: "bar",
     stacked: true,
-    height: 340,
+    height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
     animations: {
@@ -126,7 +130,7 @@ const balanceColors = ["var(--overtime-balance-color)", "var(--overtime-balance-
 const balanceOptions = {
   chart: {
     type: "line",
-    height: 340,
+    height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
     animations: {

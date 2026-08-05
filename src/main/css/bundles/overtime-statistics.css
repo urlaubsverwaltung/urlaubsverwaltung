@@ -12,6 +12,15 @@
   padding: --spacing(1);
   background-color: var(--uv-chart-background);
 
+  /*
+   * Reserve the box apexcharts will fill. This element is empty until the chart bundle has been
+   * downloaded and executed - without a reservation the page paints with a collapsed chart and
+   * then reflows by the full chart height once apexcharts sets its own min-height here.
+   * apexcharts reserves the canvas height only (CHART_HEIGHT in overtime-statistics.js - keep the
+   * 340px in sync), the padding of this border-box element comes on top of it.
+   */
+  min-height: calc(340px + --spacing(2));
+
   /* ApexCharts injects its own theme-aware background/border/shadow for
      .apexcharts-tooltip - only the content layout needs styling here. */
   .overtime-statistics-tooltip-title {
@@ -48,5 +57,6 @@
 
   .overtime-statistics-chart {
     padding: --spacing(4);
+    min-height: calc(340px + --spacing(8));
   }
 }

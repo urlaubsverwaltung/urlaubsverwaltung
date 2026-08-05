@@ -9,6 +9,11 @@ import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 
+// the chart hosts are empty until this bundle has executed, so css/bundles/sick-note-statistics.css
+// reserves these sizes up front to keep the page from reflowing. keep both in sync.
+const CHART_HEIGHT = 320;
+const GAUGE_SIZE = 160;
+
 // backend sends [currentYearSick, currentYearChildSick, previousYearSick, previousYearChildSick];
 // entries of the same category (sick / child-sick) are at the same index modulo 2.
 const dataseriesValues = globalThis.sicknoteStatistic.dataseriesValues;
@@ -88,7 +93,7 @@ const options = {
   chart: {
     type: "bar",
     stacked: true,
-    height: 320,
+    height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
     animations: {
@@ -259,8 +264,8 @@ const dataseriesValuesForAtLeastOneSickNotePercent = globalThis.sicknoteStatisti
 const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote-statistic-verteilung"), {
   chart: {
     type: "radialBar",
-    height: 160,
-    width: "160px",
+    height: GAUGE_SIZE,
+    width: `${GAUGE_SIZE}px`,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
     toolbar: {
