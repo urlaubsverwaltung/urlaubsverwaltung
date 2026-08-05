@@ -120,7 +120,16 @@ const options = {
   },
 };
 
-const chart = new ApexCharts(document.querySelector("#overtime-statistics-chart"), options);
+const chart = new ApexCharts(
+  document.querySelector("#overtime-statistics-chart"),
+  apexOptionsWithPersistence(options, {
+    key: "overtime-statistics-chart",
+    version: new Date("2026-08-01"),
+    getId({ name }) {
+      return name === statistics.accruedName ? "accrued" : "reduction";
+    },
+  }),
+);
 void chart.render();
 
 // the balance curve: the balance added up month by month, one line per year so the years can be compared
