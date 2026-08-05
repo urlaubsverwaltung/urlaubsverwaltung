@@ -17,11 +17,30 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String postLogoutRedirectUri = "{baseUrl}";
 
+    /**
+     * OIDC end session (RP-initiated logout) endpoint of the provider.
+     * <p>
+     * Only required when the provider's {@code end_session_endpoint} cannot be
+     * discovered automatically, e.g. when {@code issuer-uri} is not used for the
+     * client registration (manual authorization-uri/token-uri/jwk-set-uri setup).
+     * When left empty, the end session endpoint is looked up from the OIDC provider
+     * metadata as usual and RP-initiated logout is skipped if that metadata is absent.
+     */
+    private String endSessionEndpoint;
+
     public String getPostLogoutRedirectUri() {
         return postLogoutRedirectUri;
     }
 
     public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
         this.postLogoutRedirectUri = postLogoutRedirectUri;
+    }
+
+    public String getEndSessionEndpoint() {
+        return endSessionEndpoint;
+    }
+
+    public void setEndSessionEndpoint(String endSessionEndpoint) {
+        this.endSessionEndpoint = endSessionEndpoint;
     }
 }
