@@ -12,6 +12,15 @@
   padding: --spacing(1);
   background-color: var(--uv-chart-background);
 
+  /*
+   * Reserve the box apexcharts will fill. This element is empty until the chart bundle has been
+   * downloaded and executed - without a reservation the page paints with a collapsed chart and
+   * then reflows by the full chart height once apexcharts sets its own min-height here.
+   * apexcharts reserves the canvas height only (CHART_HEIGHT in sick-notes-statistics.js - keep the
+   * 320px in sync), the padding of this border-box element comes on top of it.
+   */
+  min-height: calc(320px + --spacing(2));
+
   /* ApexCharts injects its own theme-aware background/border/shadow for
      .apexcharts-tooltip - only the content layout needs styling here. */
   .sicknote-statistics-tooltip-title {
@@ -56,74 +65,20 @@
   }
 }
 
-.statistic-summary-container {
-  .statistic-summary-container-title {
-    margin: 0;
-    @apply text-sm;
-    font-weight: 600;
-  }
-
-  .statistic-summary-card-box {
-    --statistic-card-box-gap: --spacing(4);
-    margin-top: --spacing(4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--statistic-card-box-gap);
-
-    & ~ .statistic-summary-card-box {
-      margin-top: var(--statistic-card-box-gap);
-    }
-
-    .statistic-summary-card {
-      flex: 1 0 0;
-      display: flex;
-      flex-direction: column;
-      gap: --spacing(2);
-      background-color: var(--uv-chart-container-background);
-      padding: --spacing(2) --spacing(4);
-      margin: 0;
-      @apply rounded-md;
-      @apply shadow-2xs;
-      @apply dark:shadow-none;
-
-      .statistic-summary-card__label {
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-200;
-      }
-
-      .statistic-summary-card__content {
-        @apply text-xl;
-        font-weight: 600;
-        @apply text-black;
-        @apply dark:text-zinc-100;
-      }
-
-      .statistic-summary-card__content-previous {
-        margin-left: --spacing(1);
-        font-weight: 400;
-        cursor: help;
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-400;
-      }
-    }
-  }
+/*
+ * The gauge sits in a flex row next to its description, so an unreserved box shifts that text
+ * sideways as well once the chart bundle has executed. GAUGE_SIZE in sick-notes-statistics.js -
+ * keep the 160px in sync. apexcharts fits partial arcs to their geometry instead of honouring
+ * chart.height exactly, so the rendered gauge may end up a pixel taller than the reservation.
+ */
+.sicknote-statistics-gauge {
+  width: 160px;
+  min-height: 160px;
 }
 
 @variant sm {
   .sicknote-statistics-chart-container {
     padding: --spacing(4);
-    border: 1px solid var(--uv-chart-border);
-  }
-
-  .statistic-summary-container {
-    .statistic-summary-card-box {
-      flex-direction: row;
-    }
-  }
-
-  .statistic-summary-card {
     border: 1px solid var(--uv-chart-border);
   }
 }
@@ -135,5 +90,6 @@
 
   .sicknote-statistics-chart {
     padding: --spacing(4);
+    min-height: calc(320px + --spacing(8));
   }
 }

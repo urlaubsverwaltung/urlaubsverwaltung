@@ -1,0 +1,201 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:text="#{overtime.statistics.header.title(${selectedYear})}">Überstundenstatistik</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/overtime-statistics.css}" />
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('overtime_statistics.js')}" />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.overtimeStatistics = {};
+        window.overtimeStatistics.xaxisLabels = [
+          /*[[#{month.january.short}]]*/ "Jan",
+          /*[[#{month.february.short}]]*/ "Feb",
+          /*[[#{month.march.short}]]*/ "Mär",
+          /*[[#{month.april.short}]]*/ "Apr",
+          /*[[#{month.may.short}]]*/ "Mai",
+          /*[[#{month.june.short}]]*/ "Jun",
+          /*[[#{month.july.short}]]*/ "Jul",
+          /*[[#{month.august.short}]]*/ "Aug",
+          /*[[#{month.september.short}]]*/ "Sep",
+          /*[[#{month.october.short}]]*/ "Okt",
+          /*[[#{month.november.short}]]*/ "Nov",
+          /*[[#{month.december.short}]]*/ "Dez",
+        ];
+        // the x-axis stays abbreviated - twelve full names do not fit next to each other - but the
+        // tooltip has the room to spell the month out.
+        window.overtimeStatistics.tooltipLabels = [
+          /*[[#{month.january}]]*/ "Januar",
+          /*[[#{month.february}]]*/ "Februar",
+          /*[[#{month.march}]]*/ "März",
+          /*[[#{month.april}]]*/ "April",
+          /*[[#{month.may}]]*/ "Mai",
+          /*[[#{month.june}]]*/ "Juni",
+          /*[[#{month.july}]]*/ "Juli",
+          /*[[#{month.august}]]*/ "August",
+          /*[[#{month.september}]]*/ "September",
+          /*[[#{month.october}]]*/ "Oktober",
+          /*[[#{month.november}]]*/ "November",
+          /*[[#{month.december}]]*/ "Dezember",
+        ];
+        window.overtimeStatistics.yaxisTitle = /*[[#{overtime.statistics.chart.y-axis-label}]]*/ "Stunden";
+        window.overtimeStatistics.accruedName = /*[[#{overtime.statistics.chart.accrued}]]*/ "Aufbau";
+        window.overtimeStatistics.reductionName = /*[[#{overtime.statistics.chart.reduction}]]*/ "Abbau";
+        window.overtimeStatistics.balanceName = /*[[#{overtime.statistics.chart.balance}]]*/ "Offene Überstunden";
+        window.overtimeStatistics.monthlySeries = /*[[${overtimeGraph.series}]]*/ [];
+        window.overtimeStatistics.selectedYear = /*[[${selectedYear}]]*/ 2026;
+        window.overtimeStatistics.balanceYaxisTitle =
+          /*[[#{overtime.statistics.balance.y-axis-label}]]*/ "Stunden (kumuliert)";
+        window.overtimeStatistics.balanceSeries = /*[[${overtimeBalanceGraph.series}]]*/ [];
+        /*]]>*/
+      </script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="overtime_statistics.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div>
+        <div
+          th:replace="~{fragments/section-heading::section-heading(~{::overtime-statistics-heading-body}, ~{::overtime-statistics-heading-actions})}"
+        >
+          <th:block th:ref="overtime-statistics-heading-body">
+            <h1 th:text="#{overtime.statistics.title}">Überstundenstatistik</h1>
+          </th:block>
+          <th:block th:ref="overtime-statistics-heading-actions"> </th:block>
+        </div>
+        <div class="statistic-summary-container">
+          <h2 class="statistic-summary-container-title text-base" th:text="#{overtime.statistics.totals.title}">
+            Gesamtbestand - alle Jahre
+          </h2>
+          <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.totals.description}">
+            Alle je erfassten Überstunden über die gesamte Historie. Unabhängig von der Jahresauswahl darunter.
+          </p>
+          <div class="statistic-summary-card-box">
+            <p class="statistic-summary-card">
+              <span class="statistic-summary-card__label">
+                <span
+                  class="inline-block h-3 w-3 rounded-xs mr-2"
+                  style="background-color: var(--overtime-accrued-color)"
+                ></span>
+                <th:block th:text="#{overtime.statistics.totals.accrued}">Aufgebaut insgesamt</th:block>
+              </span>
+              <span class="statistic-summary-card__content" th:text="${overtimeTotals.accrued}">427 Std.</span>
+            </p>
+            <p class="statistic-summary-card">
+              <span class="statistic-summary-card__label">
+                <span
+                  class="inline-block h-3 w-3 rounded-xs mr-2"
+                  style="background-color: var(--overtime-reduction-color)"
+                ></span>
+                <th:block th:text="#{overtime.statistics.totals.reduction}">Abgebaut insgesamt</th:block>
+              </span>
+              <span class="statistic-summary-card__content" th:text="${overtimeTotals.reduction}"
+                >350 Std. 30 Min.</span
+              >
+            </p>
+            <p class="statistic-summary-card">
+              <span class="statistic-summary-card__label" th:text="#{overtime.statistics.totals.balance}"
+                >Offene Überstunden</span
+              >
+              <span class="statistic-summary-card__content" th:text="${overtimeTotals.balance}">76 Std. 30 Min.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
+          <th:block th:ref="applications-heading-body">
+            <h2 th:text="#{overtime.statistics.year.label}" class="mr-2">Jahr</h2>
+            <div
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
+            ></div>
+          </th:block>
+        </div>
+
+        <div class="flex flex-col gap-8">
+          <div>
+            <h2 class="font-bold text-base" th:text="#{overtime.statistics.chart.title}">Überstunden je Monat</h2>
+            <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.chart.description}">
+              Aufgebaute Überstunden werden nach oben, abgebaute nach unten dargestellt.
+            </p>
+
+            <div class="mt-4 overtime-statistics-chart-container">
+              <div id="overtime-statistics-chart" class="overtime-statistics-chart"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="statistic-summary-container">
+              <h3
+                class="statistic-summary-container-title text-base"
+                th:text="#{overtime.statistics.summary.title(${selectedYear})}"
+              >
+                Im Jahr
+              </h3>
+              <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.summary.description}">
+                Summe der aufgebauten, abgebauten und noch offenen Überstunden
+              </p>
+              <div class="statistic-summary-card-box">
+                <p class="statistic-summary-card">
+                  <span class="statistic-summary-card__label">
+                    <span
+                      class="inline-block h-3 w-3 rounded-xs mr-2"
+                      style="background-color: var(--overtime-accrued-color)"
+                    ></span>
+                    <th:block th:text="#{overtime.statistics.summary.accrued}">Aufgebaut</th:block>
+                  </span>
+                  <span class="statistic-summary-card__content" th:text="${overtimeYearSummary.accrued}">30 Std.</span>
+                </p>
+                <p class="statistic-summary-card">
+                  <span class="statistic-summary-card__label">
+                    <span
+                      class="inline-block h-3 w-3 rounded-xs mr-2"
+                      style="background-color: var(--overtime-reduction-color)"
+                    ></span>
+                    <th:block th:text="#{overtime.statistics.summary.reduction}">Abgebaut</th:block>
+                  </span>
+                  <span class="statistic-summary-card__content" th:text="${overtimeYearSummary.reduction}"
+                    >24 Std.</span
+                  >
+                </p>
+                <p class="statistic-summary-card">
+                  <span class="statistic-summary-card__label" th:text="#{overtime.statistics.summary.balance}"
+                    >Offene Überstunden</span
+                  >
+                  <span class="statistic-summary-card__content" th:text="${overtimeYearSummary.balance}">6 Std.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="font-bold text-base" th:text="#{overtime.statistics.balance.title}">
+              Überstundenverlauf im Jahresvergleich
+            </h2>
+            <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.balance.description}">
+              Im Jahr kumulierte Überstunden im Vergleich mit dem Vorjahr
+            </p>
+            <div class="mt-4 overtime-statistics-chart-container">
+              <div id="overtime-balance-chart" class="overtime-statistics-chart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

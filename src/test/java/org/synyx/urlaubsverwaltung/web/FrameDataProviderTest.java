@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -107,13 +108,97 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
+    }
+
+    @Test
+    void postHandleCompanyOvertimeStatisticsLinkForOffice() {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(new MockHttpServletRequest(), null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyOvertimeLink()));
+    }
+
+    @Test
+    void postHandleCompanyOvertimeStatisticsLinkIsActiveOnStatisticsPage() {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/overtime/statistics");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyOvertimeLink(true)));
+    }
+
+    @Test
+    void postHandleNoCompanyOvertimeStatisticsLinkWhenOvertimeFeatureIsDeactivated() {
+        mockSettings(false, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(new MockHttpServletRequest(), null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).isNotEmpty().doesNotContain(companyOvertimeLink(), companyOvertimeLink(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void postHandleNoCompanyOvertimeStatisticsLinkForDepartmentRoles(final String role) {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, Role.valueOf(role)));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(new MockHttpServletRequest(), null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).isNotEmpty().doesNotContain(companyOvertimeLink()));
     }
 
     @Test
@@ -178,7 +263,8 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).containsExactlyElementsOf(settingsLinks());
             });
@@ -689,6 +775,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto companyDepartmentLink(boolean active) {
         return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", "users", active);
+    }
+
+    private static NavigationItemDto companyOvertimeLink() {
+        return companyOvertimeLink(false);
+    }
+
+    private static NavigationItemDto companyOvertimeLink(boolean active) {
+        return new NavigationItemDto("company-overtime-link", "/web/overtime/statistics", "nav.company.overtimes", "clock-arrow-up", active);
     }
 
     private static NavigationItemDto companySickNoteLink() {

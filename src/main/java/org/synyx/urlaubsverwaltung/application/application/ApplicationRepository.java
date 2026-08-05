@@ -67,6 +67,13 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
 
+    @Query(
+        "SELECT SUM(a.hours) FROM application a WHERE a.person IN :persons "
+            + "AND a.vacationType.category = 'OVERTIME' "
+            + "AND (a.status = 'WAITING' OR a.status = 'TEMPORARY_ALLOWED' OR a.status = 'ALLOWED' OR a.status = 'ALLOWED_CANCELLATION_REQUESTED')"
+    )
+    BigDecimal calculateTotalOvertimeReductionOfPersons(@Param("persons") Collection<Person> persons);
+
     List<ApplicationEntity> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
         Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
 

@@ -45,6 +45,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -1577,6 +1578,55 @@ class OvertimeServiceImplTest {
             final Map<PersonId, List<Overtime>> actual = sut.getOvertimeForPersonsInDateRange(List.of(personIdWithoutOvertime), from.atStartOfDay().toInstant(UTC), to.atStartOfDay().toInstant(UTC));
 
             assertThat(actual).containsExactly(Map.entry(personIdWithoutOvertime, List.of()));
+        }
+    }
+
+    @Nested
+    class GetAllOvertimesByPersonIds {
+
+        @Test
+        void ensureAllOvertimesOfEveryPersonAreReturnedGroupedByPerson() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            marie.setId(1L);
+            final Person klaus = new Person("klaus", "Mustermann", "Klaus", "klaus@example.org");
+            klaus.setId(2L);
+
+            final OvertimeEntity marieOvertime = new OvertimeEntity(marie, LocalDate.of(2020, MARCH, 1), LocalDate.of(2020, MARCH, 1), Duration.ofHours(4));
+            marieOvertime.setId(1L);
+            final OvertimeEntity klausOvertime = new OvertimeEntity(klaus, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 5), Duration.ofHours(2).negated());
+            klausOvertime.setId(2L);
+
+            when(overtimeRepository.findByPersonIdIn(List.of(1L, 2L))).thenReturn(List.of(marieOvertime, klausOvertime));
+
+            final Map<PersonId, List<Overtime>> actual =
+                sut.getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId(), klaus.getIdAsPersonId()));
+
+            assertThat(actual).hasSize(2);
+            assertThat(actual.get(marie.getIdAsPersonId())).extracting(Overtime::duration).containsExactly(Duration.ofHours(4));
+            assertThat(actual.get(klaus.getIdAsPersonId())).extracting(Overtime::duration).containsExactly(Duration.ofHours(2).negated());
+        }
+
+        @Test
+        void ensurePersonWithoutAnyOvertimeIsPresentWithAnEmptyList() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            marie.setId(1L);
+
+            when(overtimeRepository.findByPersonIdIn(List.of(1L))).thenReturn(List.of());
+
+            final Map<PersonId, List<Overtime>> actual = sut.getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId()));
+
+            assertThat(actual).containsExactly(Map.entry(marie.getIdAsPersonId(), List.of()));
+        }
+
+        @Test
+        void ensureNoQueryWithoutAnyPerson() {
+
+            final Map<PersonId, List<Overtime>> actual = sut.getAllOvertimesByPersonIds(List.of());
+
+            assertThat(actual).isEmpty();
+            verifyNoInteractions(overtimeRepository);
         }
     }
 

@@ -140,6 +140,19 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Duration getTotalOvertimeReductionOfPersons(Collection<Person> persons) {
+
+        if (persons.isEmpty()) {
+            return Duration.ZERO;
+        }
+
+        final BigDecimal overtimeReduction =
+            Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).orElse(BigDecimal.ZERO);
+
+        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+    }
+
+    @Override
     public Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate until) {
         return getTotalOvertimeReductionOfPersonUntil(List.of(person), until).getOrDefault(person, Duration.ZERO);
     }

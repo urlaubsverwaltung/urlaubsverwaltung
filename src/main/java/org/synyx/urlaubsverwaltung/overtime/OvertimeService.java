@@ -191,6 +191,14 @@ public interface OvertimeService {
     List<Overtime> getAllOvertimesByPersonId(PersonId personId);
 
     /**
+     * Get all overtime records of the given persons, without any date restriction, in one query.
+     *
+     * @param personIds ids of the given persons
+     * @return all overtime records grouped by person, every given person is present in the map
+     */
+    Map<PersonId, List<Overtime>> getAllOvertimesByPersonIds(Collection<PersonId> personIds);
+
+    /**
      * Get external overtime record if exists, otherwise return optional empty
      *
      * @param date     date of overtime record

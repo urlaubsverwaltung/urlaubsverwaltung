@@ -35,6 +35,7 @@ import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -307,6 +308,41 @@ class ApplicationServiceImplTest {
             final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
             assertThat(totalHours).isEqualTo(Duration.ofHours(1));
             verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
+        }
+    }
+
+    @Nested
+    class GetTotalOvertimeReductionOfPersons {
+
+        @Test
+        void ensureTotalOvertimeReductionOfAllGivenPersonsInOneQuery() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            final Person klaus = new Person("klaus", "Mustermann", "Klaus", "klaus@example.org");
+            final List<Person> persons = List.of(marie, klaus);
+
+            when(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).thenReturn(BigDecimal.valueOf(7.5));
+
+            assertThat(sut.getTotalOvertimeReductionOfPersons(persons)).isEqualTo(Duration.ofHours(7).plusMinutes(30));
+        }
+
+        @Test
+        void ensureZeroWhenNobodyReducedAnyOvertime() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            final List<Person> persons = List.of(marie);
+
+            when(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).thenReturn(null);
+
+            assertThat(sut.getTotalOvertimeReductionOfPersons(persons)).isEqualTo(ZERO);
+        }
+
+        @Test
+        void ensureNoQueryWithoutAnyPerson() {
+
+            assertThat(sut.getTotalOvertimeReductionOfPersons(List.of())).isEqualTo(ZERO);
+
+            verify(applicationRepository, never()).calculateTotalOvertimeReductionOfPersons(any());
         }
     }
 

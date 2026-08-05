@@ -40,7 +40,6 @@
           /*[[#{sicknotes.statistics.chart.sick-days.child.title}]]*/ "Kind-Krank",
         ];
         window.sicknoteStatistic.dataseriesValues = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
-        window.sicknoteStatistic.sickRateName = /*[[#{sicknotes.statistics.chart.sick-rate.title}]]*/ "Krankenquote";
         window.sicknoteStatistic.sickRateYaxisTitle =
           /*[[#{sicknotes.statistics.chart.sick-rate.y-axis-label}]]*/ "Krankenquote in %";
         window.sicknoteStatistic.sickRateValues = /*[[${sickNoteGraphStatistic.sickRateDataSeries}]]*/ [];
@@ -69,9 +68,7 @@
 
       <div>
         <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
-          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">
-            Verteilung der Krankheitstage
-          </h2>
+          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
           <div class="text-sm @3xl/main:font-bold @3xl/main:text-right @3xl/main:px-3">
             <th:block th:text="#{filter.validity}"></th:block>
             <th:block th:text="${#temporals.format(selectedYearStatistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
@@ -365,6 +362,45 @@
         </div>
       </div>
 
+      <div>
+        <div class="mt-8">
+          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.sick-rate.title}">Krankenquote</h2>
+        </div>
+
+        <div class="mt-4 sicknote-statistics-chart-container">
+          <div id="sicknote-statistic-sick-rate-chart" class="sicknote-statistics-chart"></div>
+        </div>
+      </div>
+
+      <div class="mt-8 statistic-summary-container">
+        <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sick-rate.title}">
+          Krankenquote
+        </h3>
+        <p
+          class="text-sm"
+          th:text="#{sicknotes.statistics.summary.sick-rate.description(${selectedYearStatistics.year})}"
+        >
+          Alle Krankheitstage im Jahr im Verhältnis zu den Sollarbeitstagen.
+        </p>
+        <div class="statistic-summary-card-box">
+          <p class="statistic-summary-card">
+            <span class="statistic-summary-card__label" th:text="#{sicknotes.statistics.summary.sick-rate.total.label}">
+              Krankenquote im Jahr
+            </span>
+            <span class="statistic-summary-card__content">
+              <span th:text="|${#numbers.formatDecimal(selectedYearStatistics.sickRate, 1, 1)} %|"> 3,4 % </span>
+              <span
+                class="statistic-summary-card__content-previous"
+                th:text="|(${#numbers.formatDecimal(previousSelectedYearStatistics.sickRate, 1, 1)} %)|"
+                th:title="#{sicknotes.statistics.summary.previous-year.title(${previousSelectedYearStatistics.year})}"
+              >
+                (2,9 %)
+              </span>
+            </span>
+          </p>
+        </div>
+      </div>
+
       <div class="mt-12 statistic-summary-container">
         <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sicknotes.title}">
           Krankmeldungen
@@ -443,7 +479,7 @@
             </div>
             <div class="statistic-summary-card__content">
               <div class="flex items-center gap-4 text-base font-normal">
-                <div id="sicknote-statistic-verteilung"></div>
+                <div id="sicknote-statistic-verteilung" class="sicknote-statistics-gauge"></div>
                 <div class="flex-1 flex flex-col gap-1 text-sm">
                   <p
                     th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${selectedYearStatistics.numberOfPersonsWithMinimumOneSickNote})}"
