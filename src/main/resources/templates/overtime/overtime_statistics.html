@@ -65,10 +65,6 @@
         <th:block th:ref="overtime-statistics-heading-actions"> </th:block>
       </div>
 
-      <!--
-        Above the year selector on purpose: these figures cover the whole history and do not react to the
-        selected year. The position is the statement, so the description has to say it as well.
-      -->
       <div class="mt-6 statistic-summary-container">
         <h2 class="statistic-summary-container-title" th:text="#{overtime.statistics.totals.title}">
           Gesamtbestand - alle Jahre
@@ -104,15 +100,15 @@
         </div>
       </div>
 
-      <!--
-        The year selector sits in its own row instead of the section heading, because the figures above it
-        are deliberately not affected by the selected year.
-      -->
-      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t pt-6">
-        <span class="text-sm font-bold" th:text="#{overtime.statistics.year.label}">Jahr</span>
-        <div
-          th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
-        ></div>
+      <div class="mt-8">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
+          <th:block th:ref="applications-heading-body">
+            <h2 th:text="#{overtime.statistics.year.label}" class="mr-2">Überstunden</h2>
+            <div
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime/statistics?year=|, selectedYear=${selectedYear})}"
+            ></div>
+          </th:block>
+        </div>
       </div>
 
       <div>
