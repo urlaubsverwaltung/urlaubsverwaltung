@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -100,6 +101,8 @@ class AbsenceOverviewViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
+    private BlackoutPeriodService blackoutPeriodService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -109,7 +112,7 @@ class AbsenceOverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, clock);
     }
 
@@ -502,7 +505,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -597,7 +600,7 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -708,7 +711,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, fixedClock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
@@ -4996,7 +4999,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, fixedClock);
 
         final var person = new Person();
@@ -5055,7 +5058,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+            workingTimeService, vacationTypeService, blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, fixedClock);
 
         final var person = new Person();

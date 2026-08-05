@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -126,6 +127,10 @@ class ApplicationForLeaveFormViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
     @Mock
+    private BlackoutPeriodService blackoutPeriodService;
+    @Mock
+    private MessageSource messageSource;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -136,8 +141,8 @@ class ApplicationForLeaveFormViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
-            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), defaultPersonSuggestionUrlStrategy,
-            personSearchUiFragmentSupplier, clock);
+            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), blackoutPeriodService,
+            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
     @Test
