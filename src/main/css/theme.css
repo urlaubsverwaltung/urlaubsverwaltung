@@ -60,7 +60,9 @@
   --sick-note-child-color: var(--color-red-700);
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
   --overtime-accrued-color: var(--color-emerald-500);
+  --overtime-accrued-color-light: color-mix(in srgb, var(--color-emerald-500) 50%, white);
   --overtime-reduction-color: var(--color-emerald-300);
+  --overtime-reduction-color-light: color-mix(in srgb, var(--color-emerald-300) 50%, white);
   --overtime-balance-color: var(--uv-chart-line-color);
   --overtime-balance-compare-color: var(--uv-chart-line-light-color);
 
@@ -97,7 +99,9 @@
     --sick-note-child-color-light: color-mix(in srgb, var(--color-red-900) 50%, white);
 
     --overtime-accrued-color: var(--color-green-600);
+    --overtime-accrued-color-light: color-mix(in srgb, var(--color-green-600) 50%, white);
     --overtime-reduction-color: var(--color-green-800);
+    --overtime-reduction-color-light: color-mix(in srgb, var(--color-green-800) 50%, white);
 
     --overtime-balance-color: var(--color-green-500);
     --overtime-balance-compare-color: var(--color-teal-400);

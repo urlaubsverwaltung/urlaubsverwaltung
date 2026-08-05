@@ -116,7 +116,7 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        final OvertimeStatisticsViewController.GraphDto graph = graphOf(result);
+        final OvertimeStatisticsViewController.MonthlySeriesDto graph = selectedSeriesOf(result);
 
         assertThat(graph.accrued()).hasSize(12);
         assertThat(graph.reduction()).hasSize(12);
@@ -133,11 +133,42 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        final OvertimeStatisticsViewController.GraphDto graph = graphOf(result);
+        final OvertimeStatisticsViewController.MonthlySeriesDto graph = selectedSeriesOf(result);
 
         assertThat(graph.accruedText().get(0)).isEqualTo("2 Std. 30 Min.");
         assertThat(graph.reductionText().get(0)).isEqualTo("2 Std.");
         assertThat(graph.balanceText().get(0)).isEqualTo("30 Min.");
+    }
+
+    @Test
+    void ensureGraphCarriesThePreviousYearBesideTheSelectedOne() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+        statisticsOf(Year.of(2025), months(Duration.ofHours(1)), months(Duration.ofMinutes(30)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        // the selected year first, the previous year second
+        assertThat(graphOf(result).series())
+            .extracting(OvertimeStatisticsViewController.MonthlySeriesDto::year)
+            .containsExactly(2026, 2025);
+        assertThat(graphOf(result).series().get(1).accrued().get(0)).isEqualByComparingTo(new BigDecimal("1.00"));
+    }
+
+    @Test
+    void ensureGraphLeavesOutAPreviousYearWithoutAnyOvertime() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(150)), months(Duration.ofHours(2)));
+        statisticsOf(Year.of(2025), months(ZERO), months(ZERO));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        // a row of empty bars next to every month would say nothing
+        assertThat(graphOf(result).series())
+            .extracting(OvertimeStatisticsViewController.MonthlySeriesDto::year)
+            .containsExactly(2026);
     }
 
     @Test
@@ -148,7 +179,7 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        assertThat(graphOf(result).balanceText().get(0)).isEqualTo("-2 Std.");
+        assertThat(selectedSeriesOf(result).balanceText().get(0)).isEqualTo("-2 Std.");
     }
 
     @Test
@@ -211,7 +242,7 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        final BigDecimal accruedFromChart = graphOf(result).accrued().stream()
+        final BigDecimal accruedFromChart = selectedSeriesOf(result).accrued().stream()
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // the tiles must not tell a different story than the bars above them
@@ -359,6 +390,10 @@ class OvertimeStatisticsViewControllerTest {
 
     private static OvertimeStatisticsViewController.GraphDto graphOf(MvcResult result) {
         return (OvertimeStatisticsViewController.GraphDto) result.getModelAndView().getModel().get("overtimeGraph");
+    }
+
+    private static OvertimeStatisticsViewController.MonthlySeriesDto selectedSeriesOf(MvcResult result) {
+        return graphOf(result).series().get(0);
     }
 
     private void overtimeFeature(boolean active) {

@@ -70,12 +70,12 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
 
         final OvertimeStatistics statistics = overtimeStatisticsService.getStatistics(selectedYear);
 
+        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1));
+
         model.addAttribute("selectedYear", selectedYear.getValue());
         model.addAttribute("currentYear", currentYear.getValue());
-        model.addAttribute("overtimeGraph", toGraphDto(statistics, locale));
+        model.addAttribute("overtimeGraph", toGraphDto(statistics, previousStatistics, locale));
         model.addAttribute("overtimeYearSummary", toYearSummaryDto(statistics, locale));
-
-        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1));
         model.addAttribute("overtimeBalanceGraph", toBalanceGraphDto(statistics, previousStatistics, locale));
 
         // deliberately without the selected year, these figures cover the whole history
@@ -123,8 +123,22 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
         );
     }
 
-    private GraphDto toGraphDto(OvertimeStatistics statistics, Locale locale) {
-        return new GraphDto(
+    private GraphDto toGraphDto(OvertimeStatistics statistics, OvertimeStatistics previous, Locale locale) {
+
+        final List<MonthlySeriesDto> series = new ArrayList<>();
+        series.add(toMonthlySeriesDto(statistics, locale));
+
+        // same rule as the balance curve: a year in which nothing happened adds a row of empty bars, which says nothing
+        if (!previous.hasNoOvertime()) {
+            series.add(toMonthlySeriesDto(previous, locale));
+        }
+
+        return new GraphDto(List.copyOf(series));
+    }
+
+    private MonthlySeriesDto toMonthlySeriesDto(OvertimeStatistics statistics, Locale locale) {
+        return new MonthlySeriesDto(
+            statistics.year().getValue(),
             statistics.accruedByMonth().stream().map(OvertimeStatisticsViewController::toDecimalHours).toList(),
             // negated, so that apexcharts renders the reduction below the zero line
             statistics.reductionByMonth().stream().map(Duration::negated).map(OvertimeStatisticsViewController::toDecimalHours).toList(),
@@ -163,19 +177,28 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
     }
 
     /**
-     * Data of the monthly overtime chart.
+     * Data of the monthly overtime chart. One entry per year, the selected year first, the previous year second when
+     * it has anything to show.
      *
      * <p>
      * When changing this record, the local-storage version key in the JavaScript may need to be increased to keep the
      * persisted chart state clean.
+     */
+    record GraphDto(List<MonthlySeriesDto> series) {
+    }
+
+    /**
+     * The bars of one year.
      *
+     * @param year          the year these bars belong to, also part of their label
      * @param accrued       accrued hours per month, january first, positive
      * @param reduction     reduced hours per month, january first, negative so the bars point downwards
      * @param accruedText   accrued overtime per month, formatted for humans
      * @param reductionText reduced overtime per month, formatted for humans, without sign
      * @param balanceText   balance per month, formatted for humans
      */
-    record GraphDto(
+    record MonthlySeriesDto(
+        int year,
         List<BigDecimal> accrued,
         List<BigDecimal> reduction,
         List<String> accruedText,

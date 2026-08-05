@@ -18,13 +18,24 @@ const { theme } = useTheme();
 const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
 // accrual and reduction are two series stacked around the zero line: the backend hands over the reduction negated, so
-// accrual grows upwards and reduction downwards while both share one column per month.
-const series = [
-  { name: statistics.accruedName, data: statistics.accrued },
-  { name: statistics.reductionName, data: statistics.reduction },
-];
+// accrual grows upwards and reduction downwards while both share one column. one such column per year and month, the
+// years standing next to each other - apexcharts positions the groups in first-appearance order, so the previous year
+// has to come first to end up on the left.
+const yearsOldestFirst = statistics.monthlySeries.toSorted((a, b) => a.year - b.year);
+const isComparisonYear = ({ year }) => year !== statistics.selectedYear;
 
-const colors = ["var(--overtime-accrued-color)", "var(--overtime-reduction-color)"];
+const series = yearsOldestFirst.flatMap((entry) => [
+  { name: `${statistics.accruedName} ${entry.year}`, group: String(entry.year), data: entry.accrued },
+  { name: `${statistics.reductionName} ${entry.year}`, group: String(entry.year), data: entry.reduction },
+]);
+
+// the previous year in the lighter shade of the same colour, so a bar is read as "accrual" or "reduction" first and
+// as a year second - the years are already told apart by standing next to each other.
+const colors = yearsOldestFirst.flatMap((entry) =>
+  isComparisonYear(entry)
+    ? ["var(--overtime-accrued-color-light)", "var(--overtime-reduction-color-light)"]
+    : ["var(--overtime-accrued-color)", "var(--overtime-reduction-color)"],
+);
 
 function tooltipRow(color, label, value) {
   return `
@@ -71,11 +82,13 @@ const options = {
   },
   colors,
   series,
+  // no rounded corners: apexcharts builds its rounding map per column without looking at the group
+  // (createBorderRadiusArr in charts/common/bar/Helpers.js), so it only ever rounds the highest-indexed positive and
+  // negative series of a column - the selected year - and leaves the previous year square. square for both beats
+  // rounded for one.
   plotOptions: {
     bar: {
       columnWidth: "55%",
-      borderRadius: 4,
-      borderRadiusApplication: "end",
     },
   },
   // a stroke in the surface colour keeps a visible gap where accrual and reduction meet at the zero line
@@ -108,13 +121,28 @@ const options = {
     intersect: false,
     // without this, apexcharts anchors the tooltip on the hovered bar segment itself and renders on top of it
     followCursor: true,
+    // grouped by figure rather than by year - accrual of every year, then reduction, then balance - so the years can
+    // be compared by reading down one block. the selected year leads each block.
     custom: function ({ dataPointIndex, w }) {
-      const month = statistics.xaxisLabels[dataPointIndex];
+      const month = statistics.tooltipLabels[dataPointIndex];
+      const yearsSelectedFirst = statistics.monthlySeries;
+
+      const block = (name, textsOf, colorOf) =>
+        yearsSelectedFirst
+          .map((entry) => tooltipRow(colorOf(entry), `${name} ${entry.year}`, textsOf(entry)[dataPointIndex]))
+          .join("");
+
+      const colorOfSeries = (offset) => (entry) => w.config.colors[yearsOldestFirst.indexOf(entry) * 2 + offset];
+
       return `
         <div class="overtime-statistics-tooltip-title">${month}</div>
-        ${tooltipRow(w.config.colors[0], statistics.accruedName, statistics.accruedText[dataPointIndex])}
-        ${tooltipRow(w.config.colors[1], statistics.reductionName, statistics.reductionText[dataPointIndex])}
-        ${tooltipRow("transparent", statistics.balanceName, statistics.balanceText[dataPointIndex])}
+        ${block(statistics.accruedName, (entry) => entry.accruedText, colorOfSeries(0))}
+        ${block(statistics.reductionName, (entry) => entry.reductionText, colorOfSeries(1))}
+        ${block(
+          statistics.balanceName,
+          (entry) => entry.balanceText,
+          () => "transparent",
+        )}
       `;
     },
   },
@@ -124,9 +152,14 @@ const chart = new ApexCharts(
   document.querySelector("#overtime-statistics-chart"),
   apexOptionsWithPersistence(options, {
     key: "overtime-statistics-chart",
-    version: new Date("2026-08-01"),
+
+    // raised when the previous year joined the chart, a stored state would hide the wrong bar
+    version: new Date("2026-08-05"),
+
+    // the id must not carry the year: hiding the previous year should keep it hidden after switching the year
     getId({ name }) {
-      return name === statistics.accruedName ? "accrued" : "reduction";
+      const figure = name.startsWith(statistics.accruedName) ? "accrued" : "reduction";
+      return name.endsWith(String(statistics.selectedYear)) ? figure : `${figure}-compare`;
     },
   }),
 );

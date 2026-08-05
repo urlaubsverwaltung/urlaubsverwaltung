@@ -55,11 +55,25 @@ describe("overtime-statistics", function () {
       accruedName: "Aufbau",
       reductionName: "Abbau",
       balanceName: "Saldo",
-      accrued: [2.5, 4, 0],
-      reduction: [-2, -1.5, 0],
-      accruedText: ["2 Std. 30 Min.", "4 Std.", "keine"],
-      reductionText: ["2 Std.", "1 Std. 30 Min.", "keine"],
-      balanceText: ["30 Min.", "2 Std. 30 Min.", "keine"],
+      // the backend sends the selected year first
+      monthlySeries: [
+        {
+          year: 2026,
+          accrued: [2.5, 4, 0],
+          reduction: [-2, -1.5, 0],
+          accruedText: ["2 Std. 30 Min.", "4 Std.", "keine"],
+          reductionText: ["2 Std.", "1 Std. 30 Min.", "keine"],
+          balanceText: ["30 Min.", "2 Std. 30 Min.", "keine"],
+        },
+        {
+          year: 2025,
+          accrued: [1, 2, 3],
+          reduction: [-0.5, -1, -2],
+          accruedText: ["1 Std.", "2 Std.", "3 Std."],
+          reductionText: ["30 Min.", "1 Std.", "2 Std."],
+          balanceText: ["30 Min.", "1 Std.", "1 Std."],
+        },
+      ],
       selectedYear: 2026,
       balanceYaxisTitle: "Stunden (kumuliert)",
       balanceSeries: [
@@ -82,10 +96,50 @@ describe("overtime-statistics", function () {
     expect(chart.options.chart.type).toBe("bar");
     expect(chart.options.chart.stacked).toBe(true);
 
+    // the previous year first, so apexcharts puts its group on the left.
     // hidden is added by the visibility persistence the chart is wrapped in
     expect(chart.options.series).toEqual([
-      { name: "Aufbau", data: [2.5, 4, 0], hidden: false },
-      { name: "Abbau", data: [-2, -1.5, 0], hidden: false },
+      { name: "Aufbau 2025", group: "2025", data: [1, 2, 3], hidden: false },
+      { name: "Abbau 2025", group: "2025", data: [-0.5, -1, -2], hidden: false },
+      { name: "Aufbau 2026", group: "2026", data: [2.5, 4, 0], hidden: false },
+      { name: "Abbau 2026", group: "2026", data: [-2, -1.5, 0], hidden: false },
+    ]);
+  });
+
+  it("draws only the selected year when the previous one has nothing to show", async function () {
+    setOvertimeStatistics({
+      monthlySeries: [
+        {
+          year: 2026,
+          accrued: [2.5, 4, 0],
+          reduction: [-2, -1.5, 0],
+          accruedText: ["2 Std. 30 Min.", "4 Std.", "keine"],
+          reductionText: ["2 Std.", "1 Std. 30 Min.", "keine"],
+          balanceText: ["30 Min.", "2 Std. 30 Min.", "keine"],
+        },
+      ],
+    });
+    await import("../overtime-statistics.js");
+
+    expect(chartInstances[0].options.series).toHaveLength(2);
+  });
+
+  it("leaves the bars square, apexcharts would round the selected year only", async function () {
+    setOvertimeStatistics();
+    await import("../overtime-statistics.js");
+
+    expect(chartInstances[0].options.plotOptions.bar.borderRadius).toBeUndefined();
+  });
+
+  it("shows the previous year in the lighter shade of the same colour", async function () {
+    setOvertimeStatistics();
+    await import("../overtime-statistics.js");
+
+    expect(chartInstances[0].options.colors).toEqual([
+      "var(--overtime-accrued-color-light)",
+      "var(--overtime-reduction-color-light)",
+      "var(--overtime-accrued-color)",
+      "var(--overtime-reduction-color)",
     ]);
   });
 
@@ -127,6 +181,27 @@ describe("overtime-statistics", function () {
     expect(html).toContain("2 Std. 30 Min.");
     // every label must come from the backend, a missing one would silently render as "undefined"
     expect(html).not.toContain("undefined");
+  });
+
+  it("blocks the tooltip by figure, the selected year first", async function () {
+    setOvertimeStatistics();
+    await import("../overtime-statistics.js");
+
+    const { tooltip, colors } = chartInstances[0].options;
+    const html = tooltip.custom({ dataPointIndex: 1, w: { config: { colors } } });
+
+    const order = [
+      "Aufbau 2026: 4 Std.",
+      "Aufbau 2025: 2 Std.",
+      "Abbau 2026",
+      "Abbau 2025",
+      "Saldo 2026",
+      "Saldo 2025",
+    ];
+    const positions = order.map((label) => html.indexOf(label));
+
+    expect(positions).not.toContain(-1);
+    expect(positions).toEqual(positions.toSorted((a, b) => a - b));
   });
 
   it("does not show a negative sign for the reduction in the tooltip", async function () {
