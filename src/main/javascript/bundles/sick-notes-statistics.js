@@ -18,6 +18,7 @@ const GAUGE_SIZE = 160;
 // entries of the same category (sick / child-sick) are at the same index modulo 2.
 const dataseriesValues = globalThis.sicknoteStatistic.dataseriesValues;
 const dataseriesNames = globalThis.sicknoteStatistic.dataseriesNames;
+const xaxisLabels = globalThis.sicknoteStatistic.xaxisLabels;
 const CATEGORY_COUNT = dataseriesNames.length;
 
 // build one [previousYear, currentYear] pair per category (sick / child-sick).
@@ -43,18 +44,16 @@ const barSeries = [
   })),
 ];
 
-// sick rate is rendered as a line on a second (percentage) y-axis, overlaid on the bars above.
-// backend sends [currentYear, previousYear].
+// the sick rate has its own chart below the days per month - it is a percentage rather than a day
+// count, so it does not share an axis with the bars. backend sends [currentYear, previousYear].
 const sickRateName = globalThis.sicknoteStatistic.sickRateName;
 const [currentYearSickRate, previousYearSickRate] = globalThis.sicknoteStatistic.sickRateValues;
-const RATE_CURRENT_INDEX = barSeries.length;
-const RATE_PREVIOUS_INDEX = barSeries.length + 1;
+const RATE_CURRENT_INDEX = 0;
+const RATE_PREVIOUS_INDEX = 1;
 const rateSeries = [
-  { name: `${sickRateName} ${currentYearSickRate.year}`, type: "line", data: currentYearSickRate.data },
-  { name: `${sickRateName} ${previousYearSickRate.year}`, type: "line", data: previousYearSickRate.data },
+  { name: `${sickRateName} ${currentYearSickRate.year}`, data: currentYearSickRate.data },
+  { name: `${sickRateName} ${previousYearSickRate.year}`, data: previousYearSickRate.data },
 ];
-
-const series = [...barSeries, ...rateSeries];
 
 function round1(number) {
   return Math.round(number * 10) / 10;
@@ -74,6 +73,30 @@ function formatTooltipValue(value, previousYearValue, unit = "") {
   const percentage = Math.round((difference / previousYearValue) * 100);
   const percentageSign = percentage > 0 ? "+" : "";
   return `${round1(value)}${unit} (${sign}${difference}${unit} / ${percentageSign}${percentage}%)`;
+}
+
+// one tooltip row per series, shared by both charts. previousValue undefined renders the bare
+// value, otherwise the difference to the previous year is appended.
+function buildTooltipRow({ series: seriesValues, dataPointIndex, w }, seriesIndex, previousValue, unit = "") {
+  const value = seriesValues[seriesIndex][dataPointIndex];
+  const name = w.globals.seriesNames[seriesIndex];
+  const color = w.config.colors[seriesIndex];
+  const valueText =
+    previousValue === undefined ? `${round1(value)}${unit}` : formatTooltipValue(value, previousValue, unit);
+
+  return `
+    <div class="sicknote-statistics-tooltip-row">
+      <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
+      <span>${name}: ${valueText}</span>
+    </div>
+  `;
+}
+
+// the month is taken from the model rather than from w.globals.labels: apexcharts infers a numeric
+// x-axis for the line chart, which leaves the month index there instead of the name.
+function buildTooltip(dataPointIndex, rows) {
+  const month = xaxisLabels[dataPointIndex];
+  return `<div class="sicknote-statistics-tooltip-title">${month}</div>${rows.join("")}`;
 }
 
 // bar series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
@@ -127,25 +150,9 @@ const options = {
     // (vertically centered on it), so it renders on top of the bar instead of beside it.
     followCursor: true,
     // custom row order (top to bottom): sick current, sick previous, child-sick current,
-    // child-sick previous, sick rate current, sick rate previous - independent of the
-    // series' internal render/group order.
-    custom: function ({ series: seriesValues, dataPointIndex, w }) {
-      const categoryLabel = w.globals.labels[dataPointIndex];
-
-      const buildRow = (seriesIndex, previousValue, unit = "") => {
-        const value = seriesValues[seriesIndex][dataPointIndex];
-        const name = w.globals.seriesNames[seriesIndex];
-        const color = w.config.colors[seriesIndex];
-        const valueText =
-          previousValue === undefined ? `${round1(value)}${unit}` : formatTooltipValue(value, previousValue, unit);
-
-        return `
-          <div class="sicknote-statistics-tooltip-row">
-            <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
-            <span>${name}: ${valueText}</span>
-          </div>
-        `;
-      };
+    // child-sick previous - independent of the series' internal render/group order.
+    custom: function (tooltipContext) {
+      const { series: seriesValues, dataPointIndex } = tooltipContext;
 
       const barRows = categoryPairs
         .flatMap((_, categoryIndex) => [CATEGORY_COUNT + categoryIndex, categoryIndex])
@@ -153,71 +160,41 @@ const options = {
           const previousValue = isPreviousYearSeriesIndex(seriesIndex)
             ? undefined
             : seriesValues[pairSeriesIndex(seriesIndex)]?.[dataPointIndex];
-          return buildRow(seriesIndex, previousValue);
+          return buildTooltipRow(tooltipContext, seriesIndex, previousValue);
         });
 
-      const rateRows = [
-        buildRow(RATE_CURRENT_INDEX, seriesValues[RATE_PREVIOUS_INDEX][dataPointIndex], "%"),
-        buildRow(RATE_PREVIOUS_INDEX, undefined, "%"),
-      ];
-
-      return `<div class="sicknote-statistics-tooltip-title">${categoryLabel}</div>${[...barRows, ...rateRows].join("")}`;
+      return buildTooltip(dataPointIndex, barRows);
     },
   },
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
-  // series order is [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick,
-  // currentYearSickRate, previousYearSickRate]
+  // series order is [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick]
   colors: [
     "var(--sick-note-color-light)",
     "var(--sick-note-child-color-light)",
     "var(--sick-note-color)",
     "var(--sick-note-child-color)",
-    "var(--sick-rate-color)",
-    "var(--sick-rate-color-light)",
   ],
   // transparent border creates a visible gap between adjacent bar segments (sick / child-sick,
-  // previous / current year); the rate series get an actual stroke to render as a smooth line.
+  // previous / current year).
   stroke: {
     show: true,
-    width: [2, 2, 2, 2, 1, 1],
-    colors: [
-      "transparent",
-      "transparent",
-      "transparent",
-      "transparent",
-      "var(--sick-rate-color)",
-      "var(--sick-rate-color-light)",
-    ],
-    curve: "smooth",
+    width: 2,
+    colors: ["transparent"],
   },
-  // suppress the per-point value labels on the sick-rate line series; bar segments keep their default labels.
   dataLabels: {
-    enabledOnSeries: [0, 1, 2, 3],
+    enabled: true,
   },
   xaxis: {
-    categories: globalThis.sicknoteStatistic.xaxisLabels,
+    categories: xaxisLabels,
   },
-  yaxis: [
-    {
-      seriesName: barSeries.map((s) => s.name),
-      title: {
-        text: globalThis.sicknoteStatistic.yaxisTitle,
-      },
+  yaxis: {
+    title: {
+      text: globalThis.sicknoteStatistic.yaxisTitle,
     },
-    {
-      seriesName: rateSeries.map((s) => s.name),
-      opposite: true,
-      title: {
-        text: globalThis.sicknoteStatistic.sickRateYaxisTitle,
-      },
-      labels: {
-        formatter: (value) => `${round1(value)}%`,
-      },
-    },
-  ],
-  series,
+  },
+  series: barSeries,
 };
 
 const chart = new ApexCharts(
@@ -228,7 +205,8 @@ const chart = new ApexCharts(
     // keep the local state clean:
     // - update version date on breaking changes to clean the persisted local state
     //   (order should be safe by deterministic key calculated with #getId )
-    version: new Date("2026-07-27"),
+    // raised when the sick rate moved into its own chart, a stored state would hide the wrong bar
+    version: new Date("2026-08-05"),
 
     // map series element to id.
     // the id is used as key in persist layer to be independent of the array order.
@@ -236,11 +214,6 @@ const chart = new ApexCharts(
     getId({ name }) {
       const year = currentYearSickRate.year;
       const isComparison = !name.includes(year);
-
-      const isSickRateElement = name.includes(sickRateName);
-      if (isSickRateElement) {
-        return isComparison ? "sick-rate-compare" : "sick-rate";
-      }
 
       const isSickDaysCountElement = dataseriesNames.some((label) => name.includes(label));
       if (isSickDaysCountElement) {
@@ -257,6 +230,100 @@ const chart = new ApexCharts(
 );
 
 void chart.render();
+
+// the sick rate of both years, one line each. same months as the bars above, but a percentage -
+// which is why it is a chart of its own instead of a second axis on the bars.
+const sickRateOptions = {
+  chart: {
+    type: "line",
+    height: CHART_HEIGHT,
+    parentHeightOffset: 0,
+    background: "var(--uv-chart-background)",
+    animations: {
+      enabled: !reducedMotion.value,
+      speed: 200,
+    },
+    toolbar: {
+      show: false,
+    },
+  },
+  states: {
+    hover: {
+      filter: {
+        type: "none",
+      },
+    },
+    active: {
+      filter: {
+        type: "none",
+      },
+    },
+  },
+  legend: {
+    position: "top",
+    horizontalAlign: "right",
+  },
+  theme: {
+    mode: theme.value === "dark" ? "dark" : "light",
+  },
+  // series order is [currentYearSickRate, previousYearSickRate]. a year keeps the colour it has in
+  // the days chart above, so the same year reads as the same colour across both charts.
+  colors: ["var(--sick-note-color)", "var(--sick-note-color-light)"],
+  stroke: {
+    show: true,
+    width: 1,
+    curve: "smooth",
+  },
+  // twelve months times two years would put 24 numbers into the plot - the exact values are
+  // available in the tooltip instead
+  dataLabels: {
+    enabled: false,
+  },
+  xaxis: {
+    categories: xaxisLabels,
+  },
+  yaxis: {
+    title: {
+      text: globalThis.sicknoteStatistic.sickRateYaxisTitle,
+    },
+    labels: {
+      formatter: (value) => `${round1(value)}%`,
+    },
+  },
+  tooltip: {
+    shared: true,
+    intersect: false,
+    followCursor: true,
+    custom: function (tooltipContext) {
+      const { series: seriesValues, dataPointIndex } = tooltipContext;
+
+      const rows = [
+        buildTooltipRow(tooltipContext, RATE_CURRENT_INDEX, seriesValues[RATE_PREVIOUS_INDEX][dataPointIndex], "%"),
+        buildTooltipRow(tooltipContext, RATE_PREVIOUS_INDEX, undefined, "%"),
+      ];
+
+      return buildTooltip(dataPointIndex, rows);
+    },
+  },
+  series: rateSeries,
+};
+
+const sickRateChart = new ApexCharts(
+  document.querySelector("#sicknote-statistic-sick-rate-chart"),
+  apexOptionsWithPersistence(sickRateOptions, {
+    key: "sicknote-statistics-sick-rate",
+
+    version: new Date("2026-08-05"),
+
+    // the id must not be the year: hiding the comparison line should keep it hidden after
+    // switching the year
+    getId({ name }) {
+      return name.includes(currentYearSickRate.year) ? "sick-rate" : "sick-rate-compare";
+    },
+  }),
+);
+
+void sickRateChart.render();
 
 const dataseriesValuesForAtLeastOneSickNotePercent = globalThis.sicknoteStatistic
   .dataseriesValuesForAtLeastOneSickNotePercent || [0, 0];
@@ -343,6 +410,7 @@ theme.subscribe(async function (nextTheme) {
   const mode = nextTheme === "dark" ? "dark" : "light";
   await Promise.all([
     chart.updateOptions({ theme: { mode } }),
+    sickRateChart.updateOptions({ theme: { mode } }),
     atLeastOneSickNoteChart.updateOptions({ theme: { mode } }),
   ]);
 });
