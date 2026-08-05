@@ -167,7 +167,7 @@ const balanceOptions = {
   })),
   // the previous year is dashed as well, so the two lines can be told apart without relying on colour
   stroke: {
-    width: 2,
+    width: 3,
     curve: "straight",
     dashArray: [0, 4],
   },
