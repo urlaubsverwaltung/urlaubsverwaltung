@@ -61,17 +61,8 @@
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
   --sick-rate-color: var(--uv-chart-line-color);
   --sick-rate-color-light: var(--uv-chart-line-light-color);
-  /*
-   * Overtime accrual and reduction are a polarity, so they get two distinct hues instead of two steps of one hue.
-   * These two were checked against the light and the dark chart surface and pass in both, which is why there is
-   * deliberately no dark override below - the same steps are the validated choice for both themes.
-   */
   --overtime-accrued-color: var(--color-emerald-500);
   --overtime-reduction-color: var(--color-emerald-300);
-  /*
-   * The balance curve compares two years, an identity pair rather than a polarity. The comparison line is dashed
-   * as well, so the years can be told apart without relying on colour.
-   */
   --overtime-balance-color: var(--uv-chart-line-color);
   --overtime-balance-compare-color: var(--uv-chart-line-light-color);
 
