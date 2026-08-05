@@ -82,9 +82,10 @@ describe("overtime-statistics", function () {
     expect(chart.options.chart.type).toBe("bar");
     expect(chart.options.chart.stacked).toBe(true);
 
+    // hidden is added by the visibility persistence the chart is wrapped in
     expect(chart.options.series).toEqual([
-      { name: "Aufbau", data: [2.5, 4, 0] },
-      { name: "Abbau", data: [-2, -1.5, 0] },
+      { name: "Aufbau", data: [2.5, 4, 0], hidden: false },
+      { name: "Abbau", data: [-2, -1.5, 0], hidden: false },
     ]);
   });
 
