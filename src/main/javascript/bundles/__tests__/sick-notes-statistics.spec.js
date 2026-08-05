@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { observable } from "../../js/observable";
 
 vi.mock("../../js/common", () => ({}));
@@ -16,6 +17,7 @@ describe("sick-notes-statistics", function () {
   beforeEach(function () {
     vi.resetModules();
 
+    globalThis.localStorage.clear();
     globalThis.uv = { userId: "user-1" };
 
     chartInstances = [];
@@ -36,6 +38,7 @@ describe("sick-notes-statistics", function () {
 
     document.body.innerHTML = `
       <div id="sicknote-statistic-chart"></div>
+      <div id="sicknote-statistic-sick-rate-chart"></div>
       <div id="sicknote-statistic-verteilung"></div>
     `;
   });
@@ -44,6 +47,7 @@ describe("sick-notes-statistics", function () {
     document.body.innerHTML = "";
     delete globalThis.sicknoteStatistic;
     delete globalThis.uv;
+    globalThis.localStorage.clear();
   });
 
   function setSicknoteStatistic(overrides) {
@@ -57,7 +61,6 @@ describe("sick-notes-statistics", function () {
       ],
       xaxisLabels: ["Jan", "Feb", "Mar"],
       yaxisTitle: "Tage",
-      sickRateName: "Krankenquote",
       sickRateYaxisTitle: "Krankenquote in %",
       sickRateValues: [
         { year: 2024, data: [10, 12, 14] },
@@ -72,19 +75,30 @@ describe("sick-notes-statistics", function () {
     return import("../sick-notes-statistics.js");
   }
 
+  // the bundle constructs the charts in this order
+  function barChart() {
+    return chartInstances[0];
+  }
+
+  function sickRateChart() {
+    return chartInstances[1];
+  }
+
+  function radialChart() {
+    return chartInstances[2];
+  }
+
   describe("main sick-note chart", function () {
     it("builds grouped series: previous-year series first, then current-year series", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.series).toEqual([
         { name: "Krank 2023", group: "previousYear", data: [1, 2, 3], hidden: false },
         { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6], hidden: false },
         { name: "Krank 2024", group: "currentYear", data: [7, 8, 9], hidden: false },
         { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12], hidden: false },
-        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14], hidden: false },
-        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10], hidden: false },
       ]);
     });
 
@@ -99,58 +113,63 @@ describe("sick-notes-statistics", function () {
       });
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.series).toEqual([
         { name: "Krank 2023", group: "previousYear", data: [1, 2, 3], hidden: false },
         { name: "Kind krank 2023", group: "previousYear", data: [4, 5, 6], hidden: false },
         { name: "Krank 2024", group: "currentYear", data: [7, 8, 9], hidden: false },
         { name: "Kind krank 2024", group: "currentYear", data: [10, 11, 12], hidden: false },
-        { name: "Krankenquote 2024", type: "line", data: [10, 12, 14], hidden: false },
-        { name: "Krankenquote 2023", type: "line", data: [8, 9, 10], hidden: false },
       ]);
+    });
+
+    it("leaves the sick rate to its own chart", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      const { options } = barChart();
+      // the four day series only - no rate line, and therefore no second (percentage) y-axis
+      expect(options.series).toHaveLength(4);
+      expect(options.yaxis).not.toBeInstanceOf(Array);
     });
 
     it("renders into #sicknote-statistic-chart and calls render", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      expect(chartInstances[0].element).toBe(document.querySelector("#sicknote-statistic-chart"));
-      expect(chartInstances[0].render).toHaveBeenCalled();
+      expect(barChart().element).toBe(document.querySelector("#sicknote-statistic-chart"));
+      expect(barChart().render).toHaveBeenCalled();
     });
 
     it("configures a stacked bar chart with hidden toolbar and top-right legend", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.chart.type).toBe("bar");
       expect(options.chart.stacked).toBe(true);
       expect(options.chart.toolbar.show).toBe(false);
       expect(options.legend).toEqual({ position: "top", horizontalAlign: "right" });
     });
 
-    it("uses the backend-provided x-axis categories and y-axis titles", async function () {
+    it("uses the backend-provided x-axis categories and y-axis title", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.xaxis.categories).toEqual(["Jan", "Feb", "Mar"]);
-      expect(options.yaxis[0].title.text).toBe("Tage");
-      expect(options.yaxis[1].title.text).toBe("Krankenquote in %");
+      expect(options.yaxis.title.text).toBe("Tage");
     });
 
-    it("orders colors as [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick, currentYearSickRate, previousYearSickRate]", async function () {
+    it("orders colors as [previousYearSick, previousYearChildSick, currentYearSick, currentYearChildSick]", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.colors).toEqual([
         "var(--sick-note-color-light)",
         "var(--sick-note-child-color-light)",
         "var(--sick-note-color)",
         "var(--sick-note-child-color)",
-        "var(--sick-rate-color)",
-        "var(--sick-rate-color-light)",
       ]);
     });
 
@@ -158,7 +177,7 @@ describe("sick-notes-statistics", function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.states.hover.filter.type).toBe("none");
       expect(options.states.active.filter.type).toBe("none");
     });
@@ -167,34 +186,132 @@ describe("sick-notes-statistics", function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[0];
+      const { options } = barChart();
       expect(options.tooltip.shared).toBe(true);
       expect(options.tooltip.intersect).toBe(false);
       expect(options.tooltip.followCursor).toBe(true);
     });
   });
 
+  describe("sick rate chart", function () {
+    // apexcharts hands over the month index in w.globals.labels here (numeric x-axis), which is
+    // exactly what the tooltip must not use
+    function callSickRateTooltip(seriesValues, dataPointIndex) {
+      return sickRateChart().options.tooltip.custom({
+        series: seriesValues,
+        dataPointIndex,
+        w: {
+          globals: { labels: [1, 2, 3], seriesNames: ["2024", "2023"] },
+          config: { colors: ["rate", "rate-light"] },
+        },
+      });
+    }
+
+    it("renders into #sicknote-statistic-sick-rate-chart and calls render", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      expect(sickRateChart().element).toBe(document.querySelector("#sicknote-statistic-sick-rate-chart"));
+      expect(sickRateChart().render).toHaveBeenCalled();
+    });
+
+    it("draws one line per year, current year first", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      expect(sickRateChart().options.chart.type).toBe("line");
+      expect(sickRateChart().options.series).toEqual([
+        { name: "2024", data: [10, 12, 14], hidden: false },
+        { name: "2023", data: [8, 9, 10], hidden: false },
+      ]);
+    });
+
+    it("shares the months of the bar chart and labels its own axis as a percentage", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      const { options } = sickRateChart();
+      expect(options.xaxis.categories).toEqual(["Jan", "Feb", "Mar"]);
+      expect(options.yaxis.title.text).toBe("Krankenquote in %");
+      expect(options.yaxis.labels.formatter(12.34)).toBe("12.3%");
+    });
+
+    it("gives a year the same color it has in the days chart", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      const [currentYearDays, previousYearDays] = [barChart().options.colors[2], barChart().options.colors[0]];
+      expect(sickRateChart().options.colors).toEqual([currentYearDays, previousYearDays]);
+    });
+
+    it("does not label every single point", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      expect(sickRateChart().options.dataLabels.enabled).toBe(false);
+    });
+
+    it("shows the current year with the difference to the previous year, the previous year plain", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      const html = callSickRateTooltip(
+        [
+          [9, 12],
+          [8, 10],
+        ],
+        1,
+      );
+
+      expect(html).toContain("2024: 12% (+2% / +20%)");
+      expect(html).toContain("2023: 10%");
+      expect(html).not.toContain("2023: 10% (");
+    });
+
+    // apexcharts infers a numeric x-axis for a line chart, so w.globals.labels holds the month
+    // index rather than its name - the title has to come from the model instead
+    it("titles the tooltip with the month name, not its index", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      const html = callSickRateTooltip(
+        [
+          [9, 12],
+          [8, 10],
+        ],
+        1,
+      );
+
+      expect(html).toContain('<div class="sicknote-statistics-tooltip-title">Feb</div>');
+    });
+
+    it("restores a line the user hid before the reload", async function () {
+      globalThis.localStorage.setItem(
+        "uv:chart-series-visibility:user-1:sicknote-statistics-sick-rate",
+        JSON.stringify({ version: new Date("2026-08-05").toISOString(), hiddenIds: ["sick-rate-compare"] }),
+      );
+
+      setSicknoteStatistic();
+      await loadModule();
+
+      const { series } = sickRateChart().options;
+      expect(series[0].hidden).toBe(false);
+      expect(series[1].hidden).toBe(true);
+    });
+  });
+
   describe("tooltip custom rendering", function () {
     function callTooltip(seriesValues, dataPointIndex = 0) {
-      // pad with dummy sick-rate series values (indices 4/5) when a test only cares about the bar rows
-      const values = seriesValues.length === 4 ? [...seriesValues, [20], [15]] : seriesValues;
-      return chartInstances[0].options.tooltip.custom({
-        series: values,
+      return barChart().options.tooltip.custom({
+        series: seriesValues,
         dataPointIndex,
         w: {
           globals: {
             labels: ["Jan", "Feb", "Mar"],
-            seriesNames: [
-              "Krank 2023",
-              "Kind krank 2023",
-              "Krank 2024",
-              "Kind krank 2024",
-              "Krankenquote 2024",
-              "Krankenquote 2023",
-            ],
+            seriesNames: ["Krank 2023", "Kind krank 2023", "Krank 2024", "Kind krank 2024"],
           },
           config: {
-            colors: ["light-sick", "light-child", "sick", "child", "rate", "rate-light"],
+            colors: ["light-sick", "light-child", "sick", "child"],
           },
         },
       });
@@ -292,53 +409,58 @@ describe("sick-notes-statistics", function () {
   });
 
   describe("theme handling", function () {
-    it("uses dark theme mode for both charts when the current theme is dark", async function () {
+    it("uses dark theme mode for every chart when the current theme is dark", async function () {
       setSicknoteStatistic();
       themeObservable.value = "dark";
       await loadModule();
 
-      expect(chartInstances[0].options.theme.mode).toBe("dark");
-      expect(chartInstances[1].options.theme.mode).toBe("dark");
+      for (const { options } of chartInstances) {
+        expect(options.theme.mode).toBe("dark");
+      }
     });
 
-    it("uses light theme mode for both charts when the current theme is not dark", async function () {
+    it("uses light theme mode for every chart when the current theme is not dark", async function () {
       setSicknoteStatistic();
       themeObservable.value = "light";
       await loadModule();
 
-      expect(chartInstances[0].options.theme.mode).toBe("light");
-      expect(chartInstances[1].options.theme.mode).toBe("light");
+      for (const { options } of chartInstances) {
+        expect(options.theme.mode).toBe("light");
+      }
     });
 
-    it("updates both charts' theme mode when the theme changes afterwards", async function () {
+    it("updates every chart's theme mode when the theme changes afterwards", async function () {
       setSicknoteStatistic();
       await loadModule();
 
       themeObservable.value = "dark";
       await Promise.resolve();
 
-      expect(chartInstances[0].updateOptions).toHaveBeenCalledWith({ theme: { mode: "dark" } });
-      expect(chartInstances[1].updateOptions).toHaveBeenCalledWith({ theme: { mode: "dark" } });
+      for (const { updateOptions } of chartInstances) {
+        expect(updateOptions).toHaveBeenCalledWith({ theme: { mode: "dark" } });
+      }
     });
   });
 
   describe("reduced motion handling", function () {
-    it("disables chart animations for both charts when reduced motion is preferred", async function () {
+    it("disables animations for every chart when reduced motion is preferred", async function () {
       setSicknoteStatistic();
       reducedMotionObservable.value = true;
       await loadModule();
 
-      expect(chartInstances[0].options.chart.animations.enabled).toBe(false);
-      expect(chartInstances[1].options.chart.animations.enabled).toBe(false);
+      for (const { options } of chartInstances) {
+        expect(options.chart.animations.enabled).toBe(false);
+      }
     });
 
-    it("enables chart animations for both charts when reduced motion is not preferred", async function () {
+    it("enables animations for every chart when reduced motion is not preferred", async function () {
       setSicknoteStatistic();
       reducedMotionObservable.value = false;
       await loadModule();
 
-      expect(chartInstances[0].options.chart.animations.enabled).toBe(true);
-      expect(chartInstances[1].options.chart.animations.enabled).toBe(true);
+      for (const { options } of chartInstances) {
+        expect(options.chart.animations.enabled).toBe(true);
+      }
     });
   });
 
@@ -347,36 +469,36 @@ describe("sick-notes-statistics", function () {
       setSicknoteStatistic();
       await loadModule();
 
-      expect(chartInstances[1].element).toBe(document.querySelector("#sicknote-statistic-verteilung"));
-      expect(chartInstances[1].render).toHaveBeenCalled();
+      expect(radialChart().element).toBe(document.querySelector("#sicknote-statistic-verteilung"));
+      expect(radialChart().render).toHaveBeenCalled();
     });
 
     it("uses the backend-provided current/previous-year percentages as its series", async function () {
       setSicknoteStatistic({ dataseriesValuesForAtLeastOneSickNotePercent: [42, 37] });
       await loadModule();
 
-      expect(chartInstances[1].options.series).toEqual([42, 37]);
+      expect(radialChart().options.series).toEqual([42, 37]);
     });
 
     it("falls back to [0, 0] when no percentages are provided", async function () {
       setSicknoteStatistic({ dataseriesValuesForAtLeastOneSickNotePercent: undefined });
       await loadModule();
 
-      expect(chartInstances[1].options.series).toEqual([0, 0]);
+      expect(radialChart().options.series).toEqual([0, 0]);
     });
 
     it("orders colors as [currentYear, previousYear]", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      expect(chartInstances[1].options.colors).toEqual(["var(--sick-note-color)", "var(--sick-note-color-light)"]);
+      expect(radialChart().options.colors).toEqual(["var(--sick-note-color)", "var(--sick-note-color-light)"]);
     });
 
     it("formats bar labels as a percentage of the given series value", async function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { formatter } = chartInstances[1].options.plotOptions.radialBar.barLabels;
+      const { formatter } = radialChart().options.plotOptions.radialBar.barLabels;
       const result = formatter("some name", { seriesIndex: 1, w: { globals: { series: [42, 37] } } });
 
       expect(result).toBe("37%");
@@ -386,9 +508,25 @@ describe("sick-notes-statistics", function () {
       setSicknoteStatistic();
       await loadModule();
 
-      const { options } = chartInstances[1];
+      const { options } = radialChart();
       expect(options.tooltip.enabled).toBe(false);
       expect(options.legend.show).toBe(false);
     });
+  });
+
+  // the chart hosts are empty until this bundle has executed - the css has to reserve the box up
+  // front, otherwise the page paints collapsed charts and reflows by their full size afterwards.
+  it("reserves the chart and gauge size in the stylesheet", async function () {
+    setSicknoteStatistic();
+    await loadModule();
+
+    const css = readFileSync("src/main/css/bundles/sick-note-statistics.css", "utf8");
+
+    // both cartesian charts share the .sicknote-statistics-chart host, so one reservation covers them
+    expect(barChart().options.chart.height).toBe(sickRateChart().options.chart.height);
+    expect(css).toContain(`calc(${barChart().options.chart.height}px +`);
+
+    expect(css).toContain(`width: ${radialChart().options.chart.width};`);
+    expect(css).toContain(`min-height: ${radialChart().options.chart.height}px;`);
   });
 });

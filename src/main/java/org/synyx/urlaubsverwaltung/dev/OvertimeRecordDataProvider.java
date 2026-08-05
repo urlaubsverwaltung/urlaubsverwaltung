@@ -32,7 +32,13 @@ class OvertimeRecordDataProvider {
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
         final PersonId personId = person.getIdAsPersonId();
         final DateRange dateRange = new DateRange(startDate, endDate);
-        overtimeService.createOvertime(personId, dateRange, duration, personId, "Ich habe ganz viel gearbeitet");
+        overtimeService.createOvertime(personId, dateRange, duration, personId, comment(duration));
+    }
+
+    private static String comment(Duration duration) {
+        return duration.isNegative()
+            ? "Ich habe Überstunden abgebaut"
+            : "Ich habe ganz viel gearbeitet";
     }
 
     boolean personHasNoOvertimes(Person person) {

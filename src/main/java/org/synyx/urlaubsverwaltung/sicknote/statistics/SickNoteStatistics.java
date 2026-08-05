@@ -107,6 +107,29 @@ public class SickNoteStatistics {
         return sickRateByMonth;
     }
 
+    /**
+     * Sick rate of the whole year, i.e. all sick days and child sick days in relation to the target
+     * (expected) work days of all considered persons in that year, as a percentage.
+     *
+     * <p>Both sums are taken over the year before dividing, so a month weighs as much as it has
+     * target work days. Averaging {@link #getSickRateByMonth()} instead would give a short month
+     * the same say as a long one.
+     *
+     * @return the sick rate of the year as a percentage
+     */
+    public BigDecimal getSickRate() {
+        final BigDecimal targetWorkDays = sum(targetWorkDaysByMonth);
+        if (targetWorkDays.compareTo(ZERO) == 0) {
+            return ZERO;
+        }
+
+        final BigDecimal sickDays = sum(numberOfSickDaysByMonth).add(sum(numberOfChildSickDaysByMonth));
+
+        return sickDays
+            .divide(targetWorkDays, 3, HALF_UP)
+            .multiply(valueOf(100));
+    }
+
     public int getTotalNumberOfAllSickNotes() {
         return totalNumberOfAllSickNotes;
     }
@@ -197,6 +220,10 @@ public class SickNoteStatistics {
 
     public int getYear() {
         return year;
+    }
+
+    private static BigDecimal sum(List<BigDecimal> values) {
+        return values.stream().reduce(ZERO, BigDecimal::add);
     }
 
     private Long calculateNumberOfPersonWithoutSickNote(List<Person> persons, List<SickNote> sickNotes) {

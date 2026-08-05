@@ -1,0 +1,62 @@
+@reference "../config.css";
+
+.overtime-statistics-chart-container {
+  padding: --spacing(2);
+  @apply rounded-lg;
+  background-color: var(--uv-chart-container-background);
+}
+
+.overtime-statistics-chart {
+  @apply rounded-md;
+  overflow: hidden;
+  padding: --spacing(1);
+  background-color: var(--uv-chart-background);
+
+  /*
+   * Reserve the box apexcharts will fill. This element is empty until the chart bundle has been
+   * downloaded and executed - without a reservation the page paints with a collapsed chart and
+   * then reflows by the full chart height once apexcharts sets its own min-height here.
+   * apexcharts reserves the canvas height only (CHART_HEIGHT in overtime-statistics.js - keep the
+   * 340px in sync), the padding of this border-box element comes on top of it.
+   */
+  min-height: calc(340px + --spacing(2));
+
+  /* ApexCharts injects its own theme-aware background/border/shadow for
+     .apexcharts-tooltip - only the content layout needs styling here. */
+  .overtime-statistics-tooltip-title {
+    padding: --spacing(2) --spacing(3) --spacing(1);
+    font-weight: 600;
+  }
+
+  .overtime-statistics-tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: --spacing(2);
+    padding: --spacing(1) --spacing(3);
+  }
+
+  .overtime-statistics-tooltip-swatch {
+    flex-shrink: 0;
+    width: --spacing(2.5);
+    height: --spacing(2.5);
+    @apply rounded-xs;
+  }
+}
+
+@variant sm {
+  .overtime-statistics-chart-container {
+    padding: --spacing(4);
+    border: 1px solid var(--uv-chart-border);
+  }
+}
+
+@variant md {
+  .overtime-statistics-chart-container {
+    padding: --spacing(5);
+  }
+
+  .overtime-statistics-chart {
+    padding: --spacing(4);
+    min-height: calc(340px + --spacing(8));
+  }
+}

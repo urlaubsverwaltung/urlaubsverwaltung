@@ -43,6 +43,9 @@
   --uv-form-control-text-size: 0.875rem;
   --uv-placeholder-color: #999;
 
+  --uv-chart-line-color: var(--color-black);
+  --uv-chart-line-light-color: color-mix(in srgb, var(--color-black) 50%, white);
+
   /* 500 */
   --absence-color-GRAY: #6b7280;
   --absence-color-ORANGE: #f97316;
@@ -56,8 +59,12 @@
   --sick-note-color-light: color-mix(in srgb, var(--color-red-500) 50%, white);
   --sick-note-child-color: var(--color-red-700);
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
-  --sick-rate-color: var(--color-black);
-  --sick-rate-color-light: color-mix(in srgb, var(--color-black) 50%, white);
+  --overtime-accrued-color: var(--color-emerald-500);
+  --overtime-accrued-color-light: color-mix(in srgb, var(--color-emerald-500) 50%, white);
+  --overtime-reduction-color: var(--color-emerald-300);
+  --overtime-reduction-color-light: color-mix(in srgb, var(--color-emerald-300) 50%, white);
+  --overtime-balance-color: var(--uv-chart-line-color);
+  --overtime-balance-compare-color: var(--uv-chart-line-light-color);
 
   @variant dark {
     --uv-cal-border-color: var(--color-neutral-900);
@@ -74,6 +81,9 @@
     --uv-error-color: var(--color-red-400);
     --uv-error-border-color: var(--color-red-400);
 
+    --uv-chart-line-color: var(--color-pink-300);
+    --uv-chart-line-light-color: color-mix(in srgb, var(--color-pink-300) 50%, white);
+
     /* 400 */
     --absence-color-GRAY: #9ca3af;
     --absence-color-ORANGE: #fb923c;
@@ -87,8 +97,14 @@
     --sick-note-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
     --sick-note-child-color: var(--color-red-900);
     --sick-note-child-color-light: color-mix(in srgb, var(--color-red-900) 50%, white);
-    --sick-rate-color: var(--color-pink-300);
-    --sick-rate-color-light: color-mix(in srgb, var(--color-pink-300) 50%, white);
+
+    --overtime-accrued-color: var(--color-green-600);
+    --overtime-accrued-color-light: color-mix(in srgb, var(--color-green-600) 50%, white);
+    --overtime-reduction-color: var(--color-green-800);
+    --overtime-reduction-color-light: color-mix(in srgb, var(--color-green-800) 50%, white);
+
+    --overtime-balance-color: var(--color-green-500);
+    --overtime-balance-compare-color: var(--color-teal-400);
   }
 
   @variant desktop {
