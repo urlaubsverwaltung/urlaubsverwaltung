@@ -68,9 +68,7 @@
 
       <div>
         <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
-          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">
-            Verteilung der Krankheitstage
-          </h2>
+          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
           <div class="text-sm @3xl/main:font-bold @3xl/main:text-right @3xl/main:px-3">
             <th:block th:text="#{filter.validity}"></th:block>
             <th:block th:text="${#temporals.format(selectedYearStatistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
@@ -171,16 +169,6 @@
               </span>
             </span>
           </p>
-        </div>
-      </div>
-
-      <div>
-        <div class="mt-8">
-          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.sick-rate.title}">Krankenquote</h2>
-        </div>
-
-        <div class="mt-4 sicknote-statistics-chart-container">
-          <div id="sicknote-statistic-sick-rate-chart" class="sicknote-statistics-chart"></div>
         </div>
       </div>
 
@@ -371,6 +359,16 @@
               </span>
             </span>
           </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="mt-8">
+          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.sick-rate.title}">Krankenquote</h2>
+        </div>
+
+        <div class="mt-4 sicknote-statistics-chart-container">
+          <div id="sicknote-statistic-sick-rate-chart" class="sicknote-statistics-chart"></div>
         </div>
       </div>
 
