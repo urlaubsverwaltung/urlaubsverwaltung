@@ -59,8 +59,6 @@
   --sick-note-color-light: color-mix(in srgb, var(--color-red-500) 50%, white);
   --sick-note-child-color: var(--color-red-700);
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
-  --sick-rate-color: var(--uv-chart-line-color);
-  --sick-rate-color-light: var(--uv-chart-line-light-color);
   --overtime-accrued-color: var(--color-emerald-500);
   --overtime-reduction-color: var(--color-emerald-300);
   --overtime-balance-color: var(--uv-chart-line-color);
