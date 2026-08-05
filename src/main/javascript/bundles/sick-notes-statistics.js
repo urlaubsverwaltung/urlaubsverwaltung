@@ -271,7 +271,7 @@ const sickRateOptions = {
   colors: ["var(--sick-note-color)", "var(--sick-note-color-light)"],
   stroke: {
     show: true,
-    width: 1,
+    width: 3,
     curve: "smooth",
   },
   // twelve months times two years would put 24 numbers into the plot - the exact values are

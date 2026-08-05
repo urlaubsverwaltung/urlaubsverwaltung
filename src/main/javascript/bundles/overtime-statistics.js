@@ -177,13 +177,13 @@ const balanceOptions = {
   // the previous year is dashed as well, so the two lines can be told apart without relying on colour
   stroke: {
     width: 3,
-    curve: "straight",
+    curve: "smooth",
     dashArray: [0, 4],
   },
+  // no dots on the data points - the curve carries the trend, the exact values are in the tooltip.
+  // apexcharts still shows a marker on hover.
   markers: {
-    size: 4,
-    strokeWidth: 2,
-    strokeColors: "var(--uv-chart-background)",
+    size: 0,
   },
   dataLabels: {
     enabled: false,
