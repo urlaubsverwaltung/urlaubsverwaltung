@@ -108,8 +108,8 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companyOvertimeLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -263,8 +263,8 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyApplicationsLink(),
-                    companyOvertimeLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).containsExactlyElementsOf(settingsLinks());
             });
