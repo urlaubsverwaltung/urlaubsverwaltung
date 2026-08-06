@@ -4,32 +4,34 @@ import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 const frame = document.querySelector("#frame-company-overview");
 const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let loadingTimer;
-let requestId = 0;
+{
+  let loadingTimer;
+  let requestId = 0;
 
-frame?.addEventListener("turbo:before-fetch-request", function (event) {
-  if (event.detail.fetchOptions.headers["X-Sec-Purpose"] === "prefetch") {
-    return;
-  }
-
-  clearTimeout(loadingTimer);
-  const id = ++requestId;
-  loadingTimer = setTimeout(() => {
-    if (id !== requestId) return;
-    for (let card of document.querySelectorAll(".stat-card")) {
-      card.classList.add("stat-card--is-loading");
+  frame?.addEventListener("turbo:before-fetch-request", function (event) {
+    if (event.detail.fetchOptions.headers["X-Sec-Purpose"] === "prefetch") {
+      return;
     }
-  }, 300);
-});
 
-frame?.addEventListener("turbo:before-fetch-response", clearLoadingIndicator);
-frame?.addEventListener("turbo:fetch-request-error", clearLoadingIndicator);
+    clearTimeout(loadingTimer);
+    const id = ++requestId;
+    loadingTimer = setTimeout(() => {
+      if (id !== requestId) return;
+      for (let card of document.querySelectorAll(".stat-card")) {
+        card.classList.add("stat-card--is-loading");
+      }
+    }, 300);
+  });
 
-function clearLoadingIndicator() {
-  requestId++;
-  clearTimeout(loadingTimer);
-  for (let card of document.querySelectorAll(".stat-card")) {
-    card.classList.remove("stat-card--is-loading");
+  frame?.addEventListener("turbo:before-fetch-response", clearLoadingIndicator);
+  frame?.addEventListener("turbo:fetch-request-error", clearLoadingIndicator);
+
+  function clearLoadingIndicator() {
+    requestId++;
+    clearTimeout(loadingTimer);
+    for (let card of document.querySelectorAll(".stat-card")) {
+      card.classList.remove("stat-card--is-loading");
+    }
   }
 }
 

@@ -17,17 +17,19 @@ describe("sick-notes-statistics", function () {
   beforeEach(function () {
     vi.resetModules();
 
-    globalThis.localStorage.clear();
+    localStorage.clear();
     globalThis.uv = { userId: "user-1" };
 
     chartInstances = [];
-    MockApexCharts = vi.fn().mockImplementation(function (element, options) {
-      this.element = element;
-      this.options = options;
-      this.render = vi.fn();
-      this.updateOptions = vi.fn().mockResolvedValue();
-      chartInstances.push(this);
-    });
+    MockApexCharts = class {
+      constructor(element, options) {
+        this.element = element;
+        this.options = options;
+        this.render = vi.fn();
+        this.updateOptions = vi.fn().mockResolvedValue();
+        chartInstances.push(this);
+      }
+    };
 
     themeObservable = observable("light");
     reducedMotionObservable = observable(false);
@@ -47,7 +49,7 @@ describe("sick-notes-statistics", function () {
     document.body.replaceChildren();
     delete globalThis.sicknoteStatistic;
     delete globalThis.uv;
-    globalThis.localStorage.clear();
+    localStorage.clear();
   });
 
   function setSicknoteStatistic(overrides) {
@@ -286,7 +288,7 @@ describe("sick-notes-statistics", function () {
     });
 
     it("restores a line the user hid before the reload", async function () {
-      globalThis.localStorage.setItem(
+      localStorage.setItem(
         "uv:chart-series-visibility:user-1:sicknote-statistics-sick-rate",
         JSON.stringify({ version: new Date("2026-08-05").toISOString(), hiddenIds: ["sick-rate-compare"] }),
       );

@@ -15,17 +15,19 @@ describe("overtime-statistics", function () {
 
   beforeEach(function () {
     vi.resetModules();
-    globalThis.localStorage.clear();
+    localStorage.clear();
     globalThis.uv = { userId: "user-1" };
 
     chartInstances = [];
-    MockApexCharts = vi.fn().mockImplementation(function (element, options) {
-      this.element = element;
-      this.options = options;
-      this.render = vi.fn();
-      this.updateOptions = vi.fn().mockResolvedValue();
-      chartInstances.push(this);
-    });
+    MockApexCharts = class {
+      constructor(element, options) {
+        this.element = element;
+        this.options = options;
+        this.render = vi.fn();
+        this.updateOptions = vi.fn().mockResolvedValue();
+        chartInstances.push(this);
+      }
+    };
 
     themeObservable = observable("light");
     reducedMotionObservable = observable(false);
@@ -41,10 +43,10 @@ describe("overtime-statistics", function () {
   });
 
   afterEach(function () {
-    document.body.innerHTML = "";
+    document.body.replaceChildren();
     delete globalThis.overtimeStatistics;
     delete globalThis.uv;
-    globalThis.localStorage.clear();
+    localStorage.clear();
   });
 
   function setOvertimeStatistics(overrides) {
@@ -285,7 +287,7 @@ describe("overtime-statistics", function () {
     });
 
     it("restores a series the user hid before the reload", async function () {
-      globalThis.localStorage.setItem(
+      localStorage.setItem(
         "uv:chart-series-visibility:user-1:overtime-statistics-balance",
         JSON.stringify({ version: new Date("2026-08-01").toISOString(), hiddenIds: ["balance-compare"] }),
       );
@@ -299,7 +301,7 @@ describe("overtime-statistics", function () {
     });
 
     it("ignores a persisted state that belongs to an older data structure", async function () {
-      globalThis.localStorage.setItem(
+      localStorage.setItem(
         "uv:chart-series-visibility:user-1:overtime-statistics-balance",
         JSON.stringify({ version: new Date("2020-01-01").toISOString(), hiddenIds: ["balance-compare"] }),
       );
