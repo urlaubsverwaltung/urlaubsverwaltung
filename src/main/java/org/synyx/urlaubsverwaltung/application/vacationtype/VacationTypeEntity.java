@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.BatchSize;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Locale;
@@ -23,6 +24,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * @since 2.15.0
  */
 @Entity(name = "vacation_type")
+@BatchSize(size = 500)
 public class VacationTypeEntity extends AbstractTenantAwareEntity {
 
     @Id

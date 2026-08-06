@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.BatchSize;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
@@ -16,6 +17,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
+@BatchSize(size = 500)
 public class SickNoteType extends AbstractTenantAwareEntity {
 
     @Id
