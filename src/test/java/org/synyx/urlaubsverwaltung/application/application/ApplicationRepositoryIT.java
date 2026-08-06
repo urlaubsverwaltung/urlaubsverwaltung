@@ -761,6 +761,61 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         assertThat(statementsForThreeApplicants).isEqualTo(statementsForOneApplicant);
     }
 
+    @Test
+    void ensureVacationTypesAreFetchedWithoutOneQueryPerVacationType() {
+
+        final List<VacationTypeEntity> vacationTypes = vacationTypeService.getAllVacationTypes().stream()
+            .map(VacationTypeServiceImpl::convert)
+            .toList();
+        assertThat(vacationTypes).hasSizeGreaterThan(1);
+
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        // same person and same number of applications in both measurements below, so that the number of distinct
+        // vacation types to resolve for the eager `vacationType` association is the only thing that differs.
+        for (int i = 0; i < vacationTypes.size(); i++) {
+            final ApplicationEntity application = applicationEntity(person, vacationTypes.getFirst(), askedStartDate, askedEndDate, FULL);
+            application.setStatus(WAITING);
+            sut.save(application);
+        }
+
+        final long statementsForOneVacationType = fetchAndTouchVacationTypes(person, askedStartDate, askedEndDate, vacationTypes.size());
+
+        // now give every application its own vacation type
+        final List<ApplicationEntity> applications = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(
+            List.of(person), askedStartDate, askedEndDate, List.of(WAITING));
+        for (int i = 0; i < applications.size(); i++) {
+            final ApplicationEntity application = applications.get(i);
+            application.setVacationType(vacationTypes.get(i));
+            sut.save(application);
+        }
+
+        final long statementsForDistinctVacationTypes = fetchAndTouchVacationTypes(person, askedStartDate, askedEndDate, vacationTypes.size());
+
+        // resolving one distinct vacation type per application must not cost any extra queries
+        assertThat(statementsForDistinctVacationTypes).isEqualTo(statementsForOneVacationType);
+    }
+
+    private long fetchAndTouchVacationTypes(Person person, LocalDate from, LocalDate to, int expectedApplicationCount) {
+
+        // force the next query to actually hit the database instead of returning managed entities from the session cache
+        entityManager.flush();
+        entityManager.clear();
+
+        final Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+
+        final List<ApplicationEntity> applications = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(
+            List.of(person), from, to, List.of(WAITING));
+        applications.forEach(application -> application.getVacationType().getCategory());
+
+        assertThat(applications).hasSize(expectedApplicationCount);
+        return statistics.getPrepareStatementCount();
+    }
+
     private long fetchAndTouchApplicants(List<Person> persons, LocalDate from, LocalDate to, int expectedApplicationCount) {
 
         // force the next query to actually hit the database instead of returning managed entities from the session cache

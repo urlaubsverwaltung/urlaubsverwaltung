@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +35,15 @@ class SickNoteRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private SickNoteTypeService sickNoteTypeService;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Test
     void ensureToFindSickNotesForNotificationOfSickPayEnd() {
@@ -244,6 +259,60 @@ class SickNoteRepositoryIT extends SingleTenantTestContainersBase {
         final List<SickNoteEntity> actualSickNotes = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, askedStartDate, askedEndDate);
 
         assertThat(actualSickNotes).contains(noteStartingBeforePeriod, noteEndingAfterPeriod, noteInBetween, noteStartingAtPeriod, noteEndingAtPeriod);
+    }
+
+    @Test
+    void ensureSickNoteTypesAreFetchedWithoutOneQueryPerSickNoteType() {
+
+        final List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
+        assertThat(sickNoteTypes).hasSizeGreaterThan(1);
+
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        // same person and same number of sick notes in both measurements below, so that the number of distinct
+        // sick note types to resolve for the eager `sickNoteType` association is the only thing that differs.
+        for (int i = 0; i < sickNoteTypes.size(); i++) {
+            final SickNoteEntity sickNote = createSickNote(person, askedStartDate, askedEndDate, ACTIVE);
+            sickNote.setSickNoteType(sickNoteTypes.getFirst());
+            sickNoteRepository.save(sickNote);
+        }
+
+        final long statementsForOneSickNoteType = fetchAndTouchSickNoteTypes(person, askedStartDate, askedEndDate, sickNoteTypes.size());
+
+        // now give every sick note its own type
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
+            List.of(ACTIVE), List.of(person), askedStartDate, askedEndDate);
+        for (int i = 0; i < sickNotes.size(); i++) {
+            final SickNoteEntity sickNote = sickNotes.get(i);
+            sickNote.setSickNoteType(sickNoteTypes.get(i));
+            sickNoteRepository.save(sickNote);
+        }
+
+        final long statementsForDistinctSickNoteTypes = fetchAndTouchSickNoteTypes(person, askedStartDate, askedEndDate, sickNoteTypes.size());
+
+        // resolving one distinct sick note type per sick note must not cost any extra queries
+        assertThat(statementsForDistinctSickNoteTypes).isEqualTo(statementsForOneSickNoteType);
+    }
+
+    private long fetchAndTouchSickNoteTypes(Person person, LocalDate from, LocalDate to, int expectedSickNoteCount) {
+
+        // force the next query to actually hit the database instead of returning managed entities from the session cache
+        entityManager.flush();
+        entityManager.clear();
+
+        final Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
+            List.of(ACTIVE), List.of(person), from, to);
+        sickNotes.forEach(sickNote -> sickNote.getSickNoteType().getCategory());
+
+        assertThat(sickNotes).hasSize(expectedSickNoteCount);
+        return statistics.getPrepareStatementCount();
     }
 
     private SickNoteEntity createSickNote(Person person, LocalDate startDate, LocalDate endDate, SickNoteStatus active) {
