@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -116,21 +115,14 @@ class PersonServiceExtensionImplTest {
 
     @Test
     void deleteHappyPath() {
-        final Person signedInUserId = new Person("boss", "Scherer", "Theresa", "boss@example.org");
-        when(personService.getPersonByID(any())).thenReturn(Optional.of(signedInUserId));
+        final Person signedInUser = new Person("boss", "Scherer", "Theresa", "boss@example.org");
+        signedInUser.setId(42L);
+        when(personService.getPersonByID(any())).thenReturn(Optional.of(signedInUser));
 
         sut.delete(anyPersonDTO(1L), 42L);
 
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-
         verify(personService).getPersonByID(42L);
-
-        verify(personService).delete(personArgumentCaptor.capture(), eq(signedInUserId));
-
-        final Person personToDelete = personArgumentCaptor.getValue();
-        assertThat(personToDelete).isNotNull();
-        assertThat(personToDelete.getId()).isOne();
-        assertThat(personToDelete.getUsername()).isEqualTo("muster");
+        verify(personService).delete(new PersonId(1L), new PersonId(42L));
     }
 
     @Test

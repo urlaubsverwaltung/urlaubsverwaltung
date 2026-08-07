@@ -181,7 +181,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).hasSize(1);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).hasSize(1);
 
-        personService.delete(personWithId, new Person());
+        personService.delete(personWithId.getIdAsPersonId(), new PersonId(personId + 1));
 
         assertThat(personRepository.existsById(personId)).isFalse();
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isZero();

@@ -159,11 +159,10 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void delete(Person person, Person signedInUser) {
+    public void delete(PersonId personId, PersonId signedInUserId) {
 
-        if (!personRepository.existsById(person.getId())) {
-            throw new IllegalArgumentException("Can not find a person for ID = " + person.getId());
-        }
+        final Person person = personRepository.findById(personId.value())
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
 
         applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
         accountInteractionService.deleteAllByPerson(person);
@@ -171,7 +170,7 @@ class PersonServiceImpl implements PersonService {
         personRepository.delete(person);
 
         final String status = person.isActive() ? "active" : "inactive";
-        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUser.getId());
+        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUserId.value());
     }
 
     @Override

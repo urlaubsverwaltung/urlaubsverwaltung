@@ -40,7 +40,7 @@ class DepartmentMembershipIT extends SingleTenantTestContainersBase {
         departmentService.create(department);
         assertThat(departmentMembershipRepository.findAll()).hasSize(1);
 
-        personService.delete(person, person);
+        personService.delete(person.getIdAsPersonId(), person.getIdAsPersonId());
         entityManager.flush();
 
         assertThat(departmentMembershipRepository.findAll()).isEmpty();

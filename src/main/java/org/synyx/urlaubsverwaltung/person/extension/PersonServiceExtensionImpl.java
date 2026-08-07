@@ -53,7 +53,7 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     public void delete(PersonDTO person, Long signedInUserId) {
         personService.getPersonByID(signedInUserId)
             .ifPresentOrElse(
-                signedInUser -> personService.delete(toPerson(person), signedInUser),
+                signedInUser -> personService.delete(new PersonId(person.id()), signedInUser.getIdAsPersonId()),
                 () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.id(), signedInUserId)
             );
     }

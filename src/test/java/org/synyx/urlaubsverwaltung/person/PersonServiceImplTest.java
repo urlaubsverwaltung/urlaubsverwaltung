@@ -527,18 +527,16 @@ class PersonServiceImplTest {
     @Test
     void deletesExistingPersonDelegatesAndSendsEvent() {
 
-        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
-
         final Person person = new Person();
         final long personId = 42;
         person.setId(personId);
-        when(personRepository.existsById(personId)).thenReturn(true);
+        when(personRepository.findById(personId)).thenReturn(Optional.of(person));
 
-        sut.delete(person, signedInUser);
+        sut.delete(new PersonId(personId), new PersonId(1L));
 
         final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
 
-        inOrder.verify(personRepository).existsById(42L);
+        inOrder.verify(personRepository).findById(42L);
         inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
         assertThat(personDeletedEventArgumentCaptor.getValue().person())
             .isEqualTo(person);
@@ -550,13 +548,12 @@ class PersonServiceImplTest {
 
     @Test
     void deletingNotExistingPersonThrowsException() {
-        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
 
-        final Person person = new Person();
-        person.setId(1L);
-        assertThatThrownBy(() -> sut.delete(person, signedInUser)).isInstanceOf(IllegalArgumentException.class);
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        verify(personRepository).existsById(1L);
+        assertThatThrownBy(() -> sut.delete(new PersonId(1L), new PersonId(2L))).isInstanceOf(IllegalArgumentException.class);
+
+        verify(personRepository).findById(1L);
         verifyNoMoreInteractions(applicationEventPublisher, workingTimeWriteService, accountInteractionService, personRepository);
     }
 

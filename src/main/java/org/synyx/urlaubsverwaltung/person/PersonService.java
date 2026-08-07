@@ -53,12 +53,13 @@ public interface PersonService {
     Person update(PersonId personId, PersonUpdate personUpdate);
 
     /**
-     * Deletes a {@link Person} in the database by its primary key.
+     * Deletes the person with the given id and everything that belongs to them.
      *
-     * @param person       the person to be deleted
-     * @param signedInUser the person who wants to delete the given person
+     * @param personId         of the person to delete
+     * @param signedInUserId   of the person who wants to delete the given person
+     * @throws IllegalArgumentException if there is no person with the given id
      */
-    void delete(Person person, Person signedInUser);
+    void delete(PersonId personId, PersonId signedInUserId);
 
     /**
      * finds a {@link Person} in the database by its primary key.
