@@ -38,14 +38,14 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     private static final ZoneId USER_ZONE = ZoneId.of("Europe/Berlin");
 
     private final PersonService personService;
-    private final OvertimeStatisticService overtimeStatisticService;
+    private final HealthOvertimeStatisticService overtimeStatisticService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     CompanyController(
         PersonService personService,
-        OvertimeStatisticService overtimeStatisticService,
+        HealthOvertimeStatisticService overtimeStatisticService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock

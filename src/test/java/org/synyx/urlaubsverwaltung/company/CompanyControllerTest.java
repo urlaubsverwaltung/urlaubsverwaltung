@@ -51,7 +51,7 @@ class CompanyControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private OvertimeStatisticService overtimeStatisticService;
+    private HealthOvertimeStatisticService overtimeStatisticService;
     @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
