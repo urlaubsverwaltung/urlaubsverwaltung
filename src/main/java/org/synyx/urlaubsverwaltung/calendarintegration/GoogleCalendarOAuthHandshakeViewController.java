@@ -90,7 +90,10 @@ public class GoogleCalendarOAuthHandshakeViewController {
                 } else {
                     LOG.info("OAuth Handshake was successful!");
                 }
-                calendarSettings.getGoogleCalendarSettings().setRefreshToken(refreshToken);
+                final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
+                googleCalendarSettings.setRefreshToken(refreshToken);
+                googleCalendarSettings.setAccessToken(credential.getAccessToken());
+                googleCalendarSettings.setAccessTokenExpirationMillis(credential.getExpirationTimeMilliseconds());
                 calendarSettingsService.save(calendarSettings);
                 calendarSyncService.checkCalendarSyncSettings();
             } else {
@@ -106,9 +109,12 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     private String authorize(String redirectUri) {
 
+        // "prompt=consent" is required, otherwise google only returns a refresh token
+        // on the very first authorization of the oauth client
         final AuthorizationCodeRequestUrl authorizationUrl = createGoogleAuthorizationCodeFlow()
             .newAuthorizationUrl()
-            .setRedirectUri(redirectUri);
+            .setRedirectUri(redirectUri)
+            .set("prompt", "consent");
 
         LOG.info("using authorizationUrl {}", authorizationUrl);
 
