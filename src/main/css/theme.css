@@ -4,6 +4,16 @@
   initial-value: 300px;
 }
 
+/* must be a length, never a unitless 0. it is used in calc() with other lengths
+ * (e.g. the mobile navigation drawer) and a unitless value makes those invalid at
+ * computed-value time, dropping the declaration. registering the type guarantees a
+ * usable value even on pages without javascript, e.g. the error pages. */
+@property --info-banner-height {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 /* regular variables not required by tailwindcss toolchain */
 :root {
   --nav-width: 300px;
@@ -16,7 +26,7 @@
   --z-index-sticky: 100;
 
   /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
-  --info-banner-height: 0;
+  --info-banner-height: 0px;
   --topbar-height: 3.5rem;
   --search-bar-height: 3.5rem;
 

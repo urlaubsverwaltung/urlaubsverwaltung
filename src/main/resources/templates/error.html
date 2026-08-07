@@ -5,9 +5,16 @@
   th:class="|theme-${theme}|"
   th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
   xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
 >
-  <head th:replace="~{_layout::head(title=~{::title})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{error-page.common.meta.title}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('frame.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="frame.js"></script>
+    </th:block>
   </head>
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
