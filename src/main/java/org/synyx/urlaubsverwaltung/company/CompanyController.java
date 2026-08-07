@@ -69,26 +69,17 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
         final ViewMode viewMode = view.flatMap(ViewMode::of).orElse(ViewMode.MONTH);
         final DateRange dateRange = getRequestedDateRange(viewMode);
-
-        final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
-
         final DateRange previousDateRange = toPreviousRange(dateRange);
-        final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
 
-        final Duration average = stats.average();
-        final Duration averagePrev = prevStats.average();
-        final Duration averageGrowth = average.minus(averagePrev);
+        final OvertimeStatDtoTuple overtimeStat = overtimeStatistic(signedInUser, dateRange, previousDateRange);
 
         final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
-            toLocalDate(dateRange.start), toLocalDate(dateRange.end),
-            toOvertimeDurationDto(average), toOvertimeDurationDto(averageGrowth),
-            new OvertimeDistributionDto(stats.personCount(), List.of(
-                new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
-                new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
-                new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
-                new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
-            ))
-        ));
+            toLocalDate(dateRange.start),
+            toLocalDate(dateRange.end),
+            overtimeStat.averageOvertime,
+            overtimeStat.averageOvertimeGrowth,
+            overtimeStat.overtimeDistribution
+        );
 
         model.addAttribute("viewMode", viewMode.name().toLowerCase());
         model.addAttribute("statistics", statisticsDto);
@@ -132,6 +123,30 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
                 return Optional.empty();
             }
         }
+    }
+
+    private record OvertimeStatDtoTuple(OvertimeDurationDto averageOvertime, OvertimeDurationDto averageOvertimeGrowth, OvertimeDistributionDto overtimeDistribution) {}
+
+    private OvertimeStatDtoTuple overtimeStatistic(Person signedInUser, DateRange dateRange, DateRange previousDateRange) {
+        final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
+        final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
+
+        final Duration average = stats.average();
+        final Duration averagePrev = prevStats.average();
+        final Duration averageGrowth = average.minus(averagePrev);
+
+        final OvertimeDistributionDto overtimeDistributionDto = new OvertimeDistributionDto(stats.personCount(), List.of(
+            new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
+            new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
+            new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
+            new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
+            )));
+
+        return new OvertimeStatDtoTuple(
+            toOvertimeDurationDto(average),
+            toOvertimeDurationDto(averageGrowth),
+            overtimeDistributionDto
+        );
     }
 
     record DateRange(Instant start, Instant end) {}
