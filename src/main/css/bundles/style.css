@@ -35,7 +35,7 @@
 @layer base {
   :root {
     /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
-    --info-banner-height: 0;
+    --info-banner-height: 0px;
   }
 
   html {

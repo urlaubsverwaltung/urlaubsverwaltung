@@ -33,6 +33,11 @@ public class NavigationPage {
      * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
      */
     public void clickSickNotes() {
+        // this navigation item has sub items, therefore it is rendered as a `button[data-href]` and not as an `a[href]`.
+        // such a button is navigated by the click handler of navigation.js, so clicking it before the javascript of the
+        // page has been evaluated is silently swallowed and the browser stays on the current page. waiting for
+        // DOMContentLoaded guarantees the deferred module scripts ran and the handler is registered.
+        page.waitForLoadState(DOMCONTENTLOADED);
         page.locator(SICK_NOTES_SELECTOR).click();
     }
 
