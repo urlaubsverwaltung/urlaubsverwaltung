@@ -120,7 +120,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
-        prepareSickNoteList(person, signedInUser, permissions, yearToShow, model);
+        prepareSickNoteList(person, permissions, yearToShow, model);
 
         model.addAttribute("userIsAllowedToSubmitSickNotes", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes());
 
@@ -133,7 +133,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         return "me/sicknotes";
     }
 
-    private void prepareSickNoteList(Person person, Person signedInUser, SickNotePermissions permissions, int year, Model model) {
+    private void prepareSickNoteList(Person person, SickNotePermissions permissions, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
