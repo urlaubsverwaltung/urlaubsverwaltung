@@ -24,6 +24,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -76,23 +77,24 @@ class SickNoteStatisticsViewControllerTest {
     void sickNoteStatistics() throws Exception {
 
         final Year year = Year.now(clock);
+        final LocalDate asOfDate = LocalDate.now(clock);
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics selectedYearStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
+        final SickNoteStatistics selectedYearStatistics = new SickNoteStatistics(year, asOfDate, List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(selectedYearStatistics);
 
         final Year previousSelectedYear = year.minusYears(1);
-        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, LocalDate.now(clock), List.of(), List.of());
+        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, asOfDate, List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
 
         perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(year.getValue()))
         )
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedYearStatistics", selectedYearStatistics))
-            .andExpect(model().attribute("previousSelectedYearStatistics", previousSelectedYearStatistics))
+            .andExpect(model().attribute("selectedYearStatistics", emptyStatsDto(year, asOfDate)))
+            .andExpect(model().attribute("previousSelectedYearStatistics", emptyStatsDto(previousSelectedYear, asOfDate)))
             .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
@@ -101,20 +103,21 @@ class SickNoteStatisticsViewControllerTest {
     void sickNoteStatisticsWithoutYear() throws Exception {
 
         final Year year = Year.now(clock);
+        final LocalDate asOfDate = LocalDate.now(clock);
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, asOfDate, List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
         final Year previousSelectedYear = year.minusYears(1);
-        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, LocalDate.now(clock), List.of(), List.of());
+        final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, asOfDate, List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
 
         perform(get("/web/sicknote/statistics"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedYearStatistics", sickNoteStatistics))
-            .andExpect(model().attribute("previousSelectedYearStatistics", previousSelectedYearStatistics))
+            .andExpect(model().attribute("selectedYearStatistics", emptyStatsDto(year, asOfDate)))
+            .andExpect(model().attribute("previousSelectedYearStatistics", emptyStatsDto(previousSelectedYear, asOfDate)))
             .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
@@ -171,11 +174,29 @@ class SickNoteStatisticsViewControllerTest {
         final SickNoteStatisticsViewController.DataSeries currentYearRate = graphDto.sickRateDataSeries().get(0);
         assertThat(currentYearRate.year()).isEqualTo(year.getValue());
         assertThat(currentYearRate.data().get(0)).isEqualByComparingTo(BigDecimal.valueOf(100));
-        assertThat(currentYearRate.data().subList(1, 12)).allMatch(rate -> rate.compareTo(BigDecimal.ZERO) == 0);
+        assertThat(currentYearRate.data().subList(1, 12)).allMatch(rate -> rate.compareTo(ZERO) == 0);
 
         final SickNoteStatisticsViewController.DataSeries previousYearRate = graphDto.sickRateDataSeries().get(1);
         assertThat(previousYearRate.year()).isEqualTo(previousSelectedYear.getValue());
-        assertThat(previousYearRate.data()).allMatch(rate -> rate.compareTo(BigDecimal.ZERO) == 0);
+        assertThat(previousYearRate.data()).allMatch(rate -> rate.compareTo(ZERO) == 0);
+    }
+
+    private static SickNoteStatisticsDto emptyStatsDto(Year year, LocalDate asOfDate) {
+        return new SickNoteStatisticsDto(
+            year.getValue(),
+            asOfDate,
+            List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO),
+            List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO),
+            List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO),
+            ZERO,
+            0,
+            ZERO,
+            ZERO,
+            ZERO,
+            0L,
+            0L,
+            ZERO, ZERO, ZERO, ZERO, new BigDecimal("0.00"), new BigDecimal("0.00"), ZERO, ZERO, ZERO
+        );
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
