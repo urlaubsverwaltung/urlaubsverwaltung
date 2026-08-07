@@ -68,9 +68,9 @@ public class SickNoteStatistics {
         this.totalNumberOfSickDaysAllCategories = calculateTotalNumberOfSickDaysAllCategories(totalNumberOfSickDaysByCategory);
         this.averageDurationOfSickNoteByCategory = calculateAverageDurationOfSickNoteByCategory(totalNumberOfSickDaysByCategory, sickNotes);
 
-        this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, sickNotes, SICK_NOTE);
-        this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, sickNotes, SICK_NOTE_CHILD);
-        this.targetWorkDaysByMonth = calculateTargetWorkDaysByMonth(year, persons, workingTimeCalendarsByPerson);
+        this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, asOfDate, sickNotes, SICK_NOTE);
+        this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, asOfDate, sickNotes, SICK_NOTE_CHILD);
+        this.targetWorkDaysByMonth = calculateTargetWorkDaysByMonth(year, asOfDate, persons, workingTimeCalendarsByPerson);
     }
 
     public List<BigDecimal> getNumberOfSickDaysByMonth() {
@@ -84,6 +84,9 @@ public class SickNoteStatistics {
     /**
      * Sick rate per month, i.e. sick days and child sick days per month in relation to the target
      * (expected) work days of all considered persons in that month, as a percentage.
+     *
+     * <p>Only days up to and including {@link #getAsOfDate()} are considered, so months after it are
+     * zero and the current month is not diluted by days that have not happened yet.
      *
      * @return one value per month (January to December)
      */
@@ -114,6 +117,10 @@ public class SickNoteStatistics {
      * <p>Both sums are taken over the year before dividing, so a month weighs as much as it has
      * target work days. Averaging {@link #getSickRateByMonth()} instead would give a short month
      * the same say as a long one.
+     *
+     * <p>For a running year both sums end at {@link #getAsOfDate()}. Counting the target work days
+     * of the remaining months would divide the sick days so far by a full year and make the running
+     * year look healthier than a completed one it is shown next to.
      *
      * @return the sick rate of the year as a percentage
      */
@@ -226,6 +233,10 @@ public class SickNoteStatistics {
         return values.stream().reduce(ZERO, BigDecimal::add);
     }
 
+    private static LocalDate earlierOf(LocalDate first, LocalDate second) {
+        return first.isBefore(second) ? first : second;
+    }
+
     private Long calculateNumberOfPersonWithoutSickNote(List<Person> persons, List<SickNote> sickNotes) {
         final Set<Person> personsWithSickNotes = sickNotes.stream()
             .map(SickNote::getPerson)
@@ -275,14 +286,19 @@ public class SickNoteStatistics {
         return totalNumberOfSickDaysByCategory.values().stream().reduce(ZERO, BigDecimal::add);
     }
 
-    private List<BigDecimal> calculateTargetWorkDaysByMonth(Year year, List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    private List<BigDecimal> calculateTargetWorkDaysByMonth(Year year, LocalDate asOfDate, List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
         final List<BigDecimal> values = new ArrayList<>();
 
         for (final Month month : Month.values()) {
 
             final LocalDate firstDateOfMonth = year.atMonth(month).atDay(1);
-            final LocalDate lastDateOfMonth = year.atMonth(month).atEndOfMonth();
+            if (firstDateOfMonth.isAfter(asOfDate)) {
+                values.add(ZERO);
+                continue;
+            }
+
+            final LocalDate lastDateOfMonth = earlierOf(year.atMonth(month).atEndOfMonth(), asOfDate);
 
             BigDecimal targetWorkDaysInMonth = ZERO;
 
@@ -299,14 +315,19 @@ public class SickNoteStatistics {
         return values;
     }
 
-    private List<BigDecimal> calculateTotalNumberOfSickDaysAllCategories(Year year, List<SickNote> sickNotes, SickNoteCategory category) {
+    private List<BigDecimal> calculateTotalNumberOfSickDaysAllCategories(Year year, LocalDate asOfDate, List<SickNote> sickNotes, SickNoteCategory category) {
 
         final List<BigDecimal> values = new ArrayList<>();
 
         for (final Month month : Month.values()) {
 
             final LocalDate firstDateOfMonth = year.atMonth(month).atDay(1);
-            final LocalDate lastDateOfMonth = year.atMonth(month).atEndOfMonth();
+            if (firstDateOfMonth.isAfter(asOfDate)) {
+                values.add(ZERO);
+                continue;
+            }
+
+            final LocalDate lastDateOfMonth = earlierOf(year.atMonth(month).atEndOfMonth(), asOfDate);
             final DateRange monthDateRange = new DateRange(firstDateOfMonth, lastDateOfMonth);
 
             BigDecimal sumOfSickDaysInMonth = ZERO;
