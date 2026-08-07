@@ -107,12 +107,12 @@
                   <span class="stat-card__value">
                     <span
                       class="company-overtime-average-hours-value"
-                      th:text="${statistics.averageOvertime().negative()} ? '-' + ${statistics.averageOvertime().hours()} : ${statistics.averageOvertime().hours()}"
+                      th:text="${statistics.overtime.average.negative} ? '-' + ${statistics.overtime.average.hours} : ${statistics.overtime.average.hours}"
                       >-3</span
                     >&nbsp;<span th:text="#{hours.abbr}">h</span>
                     <span
                       class="company-overtime-average-minutes-value"
-                      th:text="${statistics.averageOvertime().minutes()}"
+                      th:text="${statistics.overtime.average.minutes}"
                       >30</span
                     >&nbsp;<span th:text="#{minutes.abbr}">min</span>
                   </span>
@@ -137,7 +137,7 @@
                 </div>
                 <div
                   class="stat-card__body"
-                  th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}, maxBarHeight=150, minBarHeight=3"
+                  th:with="entries=${statistics.overtime.distribution.entries}, max=${statistics.overtime.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
@@ -164,7 +164,7 @@
                   </ol>
                   <p
                     class="mt-4 text-sm"
-                    th:with="last=${statistics.overtimeDistribution.entries.last}"
+                    th:with="last=${statistics.overtime.distribution.entries.last}"
                     th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
                   >
                     Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last

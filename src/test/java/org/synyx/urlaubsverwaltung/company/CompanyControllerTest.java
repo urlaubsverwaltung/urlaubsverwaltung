@@ -8,9 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntryDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDurationDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeType;
@@ -182,14 +182,16 @@ class CompanyControllerTest {
 
         final CompanyStatisticsDto expected = new CompanyStatisticsDto(
             start, end,
-            new OvertimeDurationDto(false, 15, 45),
-            new OvertimeDurationDto(false, 10, 45),
-            new OvertimeDistributionDto(4, List.of(
-                new OvertimeDistributionEntryDto(0, 5, 1),
-                new OvertimeDistributionEntryDto(5, 15, 1),
-                new OvertimeDistributionEntryDto(15, 25, 1),
-                new OvertimeDistributionEntryDto(25, null, 1)
-            ))
+            new OvertimeStatDto(
+                new OvertimeDurationDto(false, 15, 45),
+                new OvertimeDurationDto(false, 10, 45),
+                new OvertimeDistributionDto(4, List.of(
+                    new OvertimeDistributionEntryDto(0, 5, 1),
+                    new OvertimeDistributionEntryDto(5, 15, 1),
+                    new OvertimeDistributionEntryDto(15, 25, 1),
+                    new OvertimeDistributionEntryDto(25, null, 1)
+                ))
+            )
         );
 
         perform(get("/web/company/overview").param("view", "month"))
@@ -236,14 +238,16 @@ class CompanyControllerTest {
     private static CompanyStatisticsDto emptyStatisticsDto(LocalDate from, LocalDate to) {
         return new CompanyStatisticsDto(
             from, to,
-            new OvertimeDurationDto(false, 0, 0),
-            new OvertimeDurationDto(false, 0, 0),
-            new OvertimeDistributionDto(0, List.of(
-                new OvertimeDistributionEntryDto(0, 5, 0),
-                new OvertimeDistributionEntryDto(5, 15, 0),
-                new OvertimeDistributionEntryDto(15, 25, 0),
-                new OvertimeDistributionEntryDto(25, null, 0)
-            ))
+            new OvertimeStatDto(
+                new OvertimeDurationDto(false, 0, 0),
+                new OvertimeDurationDto(false, 0, 0),
+                new OvertimeDistributionDto(0, List.of(
+                    new OvertimeDistributionEntryDto(0, 5, 0),
+                    new OvertimeDistributionEntryDto(5, 15, 0),
+                    new OvertimeDistributionEntryDto(15, 25, 0),
+                    new OvertimeDistributionEntryDto(25, null, 0)
+                ))
+            )
         );
     }
 
