@@ -17,13 +17,13 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Component
-class OvertimeStatisticService {
+class HealthOvertimeStatisticService {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
     private final DepartmentService departmentService;
 
-    OvertimeStatisticService(OvertimeService overtimeService, PersonService personService, DepartmentService departmentService) {
+    HealthOvertimeStatisticService(OvertimeService overtimeService, PersonService personService, DepartmentService departmentService) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.departmentService = departmentService;
