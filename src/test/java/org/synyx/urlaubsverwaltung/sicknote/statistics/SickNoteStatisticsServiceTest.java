@@ -1,44 +1,33 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.List;
+import java.util.Map;
+
 import static java.math.BigDecimal.valueOf;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
@@ -50,9 +39,7 @@ class SickNoteStatisticsServiceTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private DepartmentService departmentService;
-    @Mock
-    private PersonService personService;
+    private SickNoteRelevantPersonsService sickNoteRelevantPersonsService;
     @Mock
     private WorkingTimeCalendarService workingTimeCalendarService;
 
@@ -60,302 +47,62 @@ class SickNoteStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, workingTimeCalendarService,
-            new SickNotePermissionEvaluator(departmentService, mock(SettingsService.class)), clock);
+        sut = new SickNoteStatisticsService(sickNoteService, sickNoteRelevantPersonsService, workingTimeCalendarService, clock);
     }
 
     @Test
-    void ensureCreateStatisticsForPersonWithRoleDepartmentHeadOnlyForMembers() {
-
-        final Year year = Year.of(2022);
-
-        final Person departmentHead = new Person();
-        departmentHead.setId(1L);
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
-
-        final Person member1 = new Person();
-        member1.setId(2L);
-
-        final Person member2 = new Person();
-        member2.setId(3L);
-
-        final List<Person> members = List.of(member1, member2);
-        when(departmentService.getManagedMembersOfPerson(departmentHead, year)).thenReturn(members);
-
-        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
-
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        final List<SickNote> sickNotes = List.of(SickNote.builder()
-            .person(member1)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(date)
-            .endDate(date)
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
-            .build());
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(personService);
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithRoleDepartmentHeadWithoutSickNoteViewOnlyForMembers() {
-
-        final Year year = Year.of(2022);
-
-        final Person departmentHead = new Person();
-        departmentHead.setId(1L);
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-
-        final Person member = new Person();
-        member.setId(2L);
-
-        final List<Person> members = List.of(member);
-        when(departmentService.getManagedMembersOfPerson(departmentHead, year)).thenReturn(members);
-
-        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        final List<SickNote> sickNotes = List.of(SickNote.builder()
-            .person(member)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(date)
-            .endDate(date)
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
-            .build());
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(personService);
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithRoleSecondStageAuthorityOnlyForMembers() {
-
-        final Year year = Year.of(2022);
-
-        final Person secondStageAuthPerson = new Person();
-        secondStageAuthPerson.setId(1L);
-        secondStageAuthPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
-
-        final Person member1 = new Person();
-        member1.setId(2L);
-
-        final Person member2 = new Person();
-        member2.setId(3L);
-
-        final List<Person> members = List.of(member1, member2);
-        when(departmentService.getManagedMembersOfPerson(secondStageAuthPerson, year)).thenReturn(members);
-
-        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
-
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        final SickNote sickNote = SickNote.builder()
-            .person(member1)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(date)
-            .endDate(date)
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
-            .build();
-        final List<SickNote> sickNotes = List.of(sickNote);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, secondStageAuthPerson);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(personService);
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithRoleSecondStageAuthorityWithoutSickNoteViewOnlyForMembers() {
-
-        final Year year = Year.of(2022);
-
-        final Person ssa = new Person();
-        ssa.setId(1L);
-        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-
-        final Person member = new Person();
-        member.setId(2L);
-
-        final List<Person> members = List.of(member);
-        when(departmentService.getManagedMembersOfPerson(ssa, year)).thenReturn(members);
-
-        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        final List<SickNote> sickNotes = List.of(SickNote.builder()
-            .person(member)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(date)
-            .endDate(date)
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
-            .build());
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, ssa);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(personService);
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithRoleBossAndSickNoteView() {
-
-        final Year year = Year.of(2022);
-
-        final Person personWithRole = new Person();
-        personWithRole.setId(1L);
-        personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
+    void ensureCreateStatisticsWithoutRelevantPersons() {
 
         final Person person = new Person();
-        person.setId(2L);
-        person.setPermissions(List.of(USER));
+        person.setId(1L);
 
-        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(personWithRole, person));
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
-        final LocalDate from = LocalDate.of(year.getValue(), JANUARY, 1);
-        final LocalDate to = LocalDate.of(year.getValue(), DECEMBER, 31);
-        final LocalDate date = LocalDate.of(year.getValue(), OCTOBER, 10);
+        when(sickNoteRelevantPersonsService.getStatisticRelevantPersons(from, to, person)).thenReturn(List.of());
 
-        final SickNote sickNote = SickNote.builder()
-            .person(person)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(date)
-            .endDate(date)
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
-            .build();
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(personWithRole, person), from, to)).thenReturn(List.of(sickNote));
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(departmentService);
-    }
-
-    @Test
-    void ensureCreateNoStatisticsForPersonWithRoleBossWithoutSickNoteView() {
-
-        final Year year = Year.of(2022);
-
-        final Person personWithRole = new Person();
-        personWithRole.setId(1L);
-        personWithRole.setPermissions(List.of(USER, BOSS));
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(from, to, person);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
 
-        verifyNoMoreInteractions(personService);
-        verifyNoMoreInteractions(departmentService);
-        verifyNoMoreInteractions(sickNoteService);
+        verifyNoInteractions(sickNoteService);
+        verifyNoInteractions(workingTimeCalendarService);
     }
 
     @Test
-    void ensureCreateStatisticsForPersonWithRoleOffice() {
+    void ensureCreateStatisticsForRelevantPersons() {
 
         final Year year = Year.of(2022);
 
         final Person office = new Person();
         office.setId(1L);
-        office.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person();
         person.setId(2L);
-        person.setPermissions(List.of(USER));
 
-        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
+        final List<Person> relevantPersons = List.of(office, person);
 
         final LocalDate from = LocalDate.of(2022, JANUARY, 1);
         final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
+        final LocalDate sickNoteDate = LocalDate.of(2022, OCTOBER, 10);
+
+        when(sickNoteRelevantPersonsService.getStatisticRelevantPersons(from, to, office)).thenReturn(relevantPersons);
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(year.getValue(), OCTOBER, 10))
-            .endDate(LocalDate.of(year.getValue(), OCTOBER, 10))
+            .startDate(sickNoteDate)
+            .endDate(sickNoteDate)
             .dayLength(FULL)
             .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
             .build();
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office, person), from, to)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), relevantPersons, from, to)).thenReturn(List.of(sickNote));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, office);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(from, to, office);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
 
-        verifyNoMoreInteractions(departmentService);
-    }
-
-    private static SickNoteType sickNoteType(SickNoteCategory category) {
-        final SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setId(1L);
-        sickNoteType.setCategory(category);
-        return sickNoteType;
-    }
-
-    @Test
-    void ensureCreateStatisticsForUser() {
-
-        final Year year = Year.of(2022);
-
-        final Person user = new Person();
-        user.setId(1L);
-        user.setPermissions(List.of(USER, SICK_NOTE_VIEW));
-
-        final LocalDate from = LocalDate.of(2022, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
-
-        final SickNote sickNote = SickNote.builder()
-            .person(user)
-            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(year.getValue(), OCTOBER, 10))
-            .endDate(LocalDate.of(year.getValue(), OCTOBER, 10))
-            .dayLength(FULL)
-            .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
-            .build();
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(user), from, to)).thenReturn(List.of(sickNote));
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, user);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
-
-        verifyNoMoreInteractions(personService);
-        verifyNoMoreInteractions(departmentService);
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithoutPrivilegedRole() {
-
-        final Year year = Year.of(2022);
-
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER));
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, person);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
-
-        verifyNoMoreInteractions(personService);
-        verifyNoMoreInteractions(departmentService);
-        verifyNoMoreInteractions(sickNoteService);
-        verifyNoMoreInteractions(workingTimeCalendarService);
+        verify(workingTimeCalendarService).getWorkingTimesByPersons(relevantPersons, year);
     }
 
     @Test
@@ -365,18 +112,18 @@ class SickNoteStatisticsServiceTest {
 
         final Person office = new Person();
         office.setId(1L);
-        office.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person();
         person.setId(2L);
-        person.setPermissions(List.of(USER));
 
-        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
+        final List<Person> relevantPersons = List.of(office, person);
 
         final LocalDate from = LocalDate.of(2022, JANUARY, 1);
         final LocalDate to = LocalDate.of(2022, DECEMBER, 31);
         final LocalDate sickNoteStart = LocalDate.of(2022, JANUARY, 10);
         final LocalDate sickNoteEnd = LocalDate.of(2022, JANUARY, 11);
+
+        when(sickNoteRelevantPersonsService.getStatisticRelevantPersons(from, to, office)).thenReturn(relevantPersons);
 
         // only the two sick note dates are target work days for `person`, `office` has none at all
         // --> target work days in January == sick days in January
@@ -392,13 +139,20 @@ class SickNoteStatisticsServiceTest {
             .dayLength(FULL)
             .workingTimeCalendar(personCalendar)
             .build();
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office, person), from, to)).thenReturn(List.of(sickNote));
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(office, person), year))
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), relevantPersons, from, to)).thenReturn(List.of(sickNote));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(relevantPersons, year))
             .thenReturn(Map.of(office, officeCalendar, person, personCalendar));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, office);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(from, to, office);
 
-        verify(workingTimeCalendarService).getWorkingTimesByPersons(List.of(office, person), year);
-        assertThat(sickNoteStatistics.getSickRateByMonth().get(0)).isEqualByComparingTo(valueOf(100));
+        verify(workingTimeCalendarService).getWorkingTimesByPersons(relevantPersons, year);
+        assertThat(sickNoteStatistics.getSickRateByMonth().getFirst()).isEqualByComparingTo(valueOf(100));
+    }
+
+    private static SickNoteType sickNoteType(SickNoteCategory category) {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setId(1L);
+        sickNoteType.setCategory(category);
+        return sickNoteType;
     }
 }

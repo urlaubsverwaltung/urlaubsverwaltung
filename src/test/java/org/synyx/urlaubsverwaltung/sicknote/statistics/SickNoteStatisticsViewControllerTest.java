@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -82,12 +83,16 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
+        final LocalDate yearFirstDay = year.atDay(1);
+        final LocalDate yearLastDay = yearFirstDay.with(lastDayOfYear());
         final SickNoteStatistics selectedYearStatistics = new SickNoteStatistics(year, asOfDate, List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(selectedYearStatistics);
+        when(statisticsService.createStatisticsForPerson(yearFirstDay, yearLastDay, person)).thenReturn(selectedYearStatistics);
 
         final Year previousSelectedYear = year.minusYears(1);
+        final LocalDate previousYearFirstDay = previousSelectedYear.atDay(1);
+        final LocalDate previousYearLastDay = previousYearFirstDay.with(lastDayOfYear());
         final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, asOfDate, List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
+        when(statisticsService.createStatisticsForPerson(previousYearFirstDay, previousYearLastDay, person)).thenReturn(previousSelectedYearStatistics);
 
         perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(year.getValue()))
@@ -107,12 +112,16 @@ class SickNoteStatisticsViewControllerTest {
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
+        final LocalDate yearFirstDay = year.atDay(1);
+        final LocalDate yearLastDay = yearFirstDay.with(lastDayOfYear());
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, asOfDate, List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
+        when(statisticsService.createStatisticsForPerson(yearFirstDay, yearLastDay, person)).thenReturn(sickNoteStatistics);
 
         final Year previousSelectedYear = year.minusYears(1);
+        final LocalDate previousYearFirstDay = previousSelectedYear.atDay(1);
+        final LocalDate previousYearLastDay = previousYearFirstDay.with(lastDayOfYear());
         final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, asOfDate, List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
+        when(statisticsService.createStatisticsForPerson(previousYearFirstDay, previousYearLastDay, person)).thenReturn(previousSelectedYearStatistics);
 
         perform(get("/web/sicknote/statistics"))
             .andExpect(status().isOk())
@@ -154,11 +163,13 @@ class SickNoteStatisticsViewControllerTest {
 
         final SickNoteStatistics selectedYearStatistics =
             new SickNoteStatistics(year, LocalDate.now(clock), List.of(sickNote), List.of(person), Map.of(person, workingTimeCalendar));
-        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(selectedYearStatistics);
+        when(statisticsService.createStatisticsForPerson(from, to, person)).thenReturn(selectedYearStatistics);
 
         final Year previousSelectedYear = year.minusYears(1);
+        final LocalDate previousYearFirstDay = previousSelectedYear.atDay(1);
+        final LocalDate previousYearLastDay = previousYearFirstDay.with(lastDayOfYear());
         final SickNoteStatistics previousSelectedYearStatistics = new SickNoteStatistics(previousSelectedYear, LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(previousSelectedYear, person)).thenReturn(previousSelectedYearStatistics);
+        when(statisticsService.createStatisticsForPerson(previousYearFirstDay, previousYearLastDay, person)).thenReturn(previousSelectedYearStatistics);
 
         final MvcResult result = perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(year.getValue()))
