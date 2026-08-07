@@ -1,12 +1,20 @@
 @reference "../config.css";
 
 .stat-card {
+  --stat-card-border-radius: var(--radius-lg);
+  --stat-card-background-color: var(--uv-chart-container-background);
+  --stat-card-border-color: var(--uv-chart-border);
+  --stat-card-border-width: 1px;
+
+  anchor-scope: --stat-info-anchor;
+  anchor-name: --stat-info-anchor;
+
   display: flex;
   flex-direction: column;
   gap: --spacing(2);
-  background-color: var(--uv-chart-container-background);
-  border: 1px solid var(--uv-chart-border);
-  border-radius: var(--radius-lg);
+  background-color: var(--stat-card-background-color);
+  border: var(--stat-card-border-width) solid var(--stat-card-border-color);
+  border-radius: var(--stat-card-border-radius);
   @apply shadow-2xs;
 
   @variant dark {
@@ -18,7 +26,7 @@
     justify-content: space-between;
 
     padding: --spacing(4);
-    border-bottom: 1px solid var(--uv-chart-border);
+    border-bottom: 1px solid var(--stat-card-border-color);
 
     font-size: var(--text-sm);
     color: var(--color-gray-500);
@@ -46,6 +54,72 @@
       font-weight: bold;
       font-variant: tabular-nums;
     }
+  }
+
+  .stat-card-info-popover {
+    position-anchor: --stat-info-anchor;
+
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-gray-950);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+
+    background-color: --alpha(var(--stat-card-background-color) / 60%);
+    backdrop-filter: blur(11px);
+    font-weight: bold;
+
+    overflow: clip;
+    border-radius: var(--stat-card-border-radius);
+
+    opacity: 0;
+    transition: opacity 150ms;
+
+    pointer-events: none;
+    inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
+    width: calc(anchor-size(width) - (2 * var(--stat-card-border-width)));
+    height: calc(anchor-size(height) - (2 * var(--stat-card-border-width)));
+    margin: var(--stat-card-border-width);
+
+    &:popover-open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .stat-card-info-close-button {
+      position: absolute;
+      /* +2px to align with the popover show button*/
+      top: calc(--spacing(4) + 2px);
+      right: --spacing(4);
+
+      color: var(--color-gray-500);
+
+      @variant dark {
+        color: var(--color-zinc-400);
+      }
+    }
+
+    .stat-card-info-text {
+      margin-top: --spacing(10);
+      padding: 0 --spacing(4) --spacing(4) --spacing(4);
+      overflow: auto;
+    }
+
+    @variant dark {
+      color: var(--color-zinc-200);
+      text-shadow: 1px 1px 2px var(--color-zinc-800);
+      backdrop-filter: blur(16px);
+    }
+  }
+}
+
+@starting-style {
+  .stat-card-info-popover {
+    opacity: 0;
   }
 }
 
