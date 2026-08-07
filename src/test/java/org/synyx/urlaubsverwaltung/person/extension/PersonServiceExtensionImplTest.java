@@ -15,8 +15,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
@@ -91,7 +93,7 @@ class PersonServiceExtensionImplTest {
         final PersonDTO personDTO = anyPersonDTO(1L);
         final Person createdPerson = anyPerson();
 
-        when(personService.update(any())).thenReturn(createdPerson);
+        when(personService.update(any(), any())).thenReturn(createdPerson);
 
         final PersonDTO updatedPersonDTO = sut.update(personDTO);
 
@@ -106,13 +108,10 @@ class PersonServiceExtensionImplTest {
         assertThat(updatedPersonDTO.enabled()).isTrue();
 
 
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).update(personArgumentCaptor.capture());
-
-        final Person value = personArgumentCaptor.getValue();
-        assertThat(value).isNotNull();
-        assertThat(value.getId()).isOne();
-        assertThat(value.getUsername()).isEqualTo("muster");
+        verify(personService).update(new PersonId(1L), PersonUpdate
+            .ofPersonalData("muster", "Marlene", "Muster", "muster@example.org")
+            .withPermissions(Set.of(Role.USER))
+            .withNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)));
     }
 
     @Test

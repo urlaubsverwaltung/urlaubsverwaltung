@@ -5,6 +5,7 @@ import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.RoleDTO;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Set;
@@ -24,6 +25,13 @@ final class PersonDTOMapper {
         person.setPermissions(toRoles(personDTO));
         person.setNotifications(toMailNotifications(personDTO));
         return person;
+    }
+
+    static PersonUpdate toPersonUpdate(PersonDTO personDTO) {
+        return PersonUpdate
+            .ofPersonalData(personDTO.username(), personDTO.firstName(), personDTO.lastName(), personDTO.email())
+            .withPermissions(toRoles(personDTO))
+            .withNotifications(toMailNotifications(personDTO));
     }
 
     static PersonDTO toPersonDTO(Person person) {

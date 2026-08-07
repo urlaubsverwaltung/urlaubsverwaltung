@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,8 +51,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         entityManager.flush();
         entityManager.clear();
 
-        person.setPermissions(new ArrayList<>(List.of(USER, INACTIVE)));
-        personService.update(person);
+        personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER, INACTIVE)));
         entityManager.flush();
         entityManager.clear();
 
@@ -61,8 +59,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         assertThat(afterDeactivation).hasSize(1);
         assertThat(afterDeactivation.get(0).validTo()).isPresent();
 
-        person.setPermissions(new ArrayList<>(List.of(USER)));
-        personService.update(person);
+        personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER)));
         entityManager.flush();
         entityManager.clear();
 
@@ -73,14 +70,13 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureActivePeriodIsClosedOnDeactivationOfAStillManagedPerson() {
+    void ensureActivePeriodIsClosedOnDeactivationWithinTheTransactionThePersonWasCreatedIn() {
 
-        // no flush/clear on purpose: the person stays managed within this transaction, like it does when
-        // update is called within an outer transaction, e.g. by the demo data creation on person creation
+        // no flush/clear on purpose: the person is updated within the very transaction it was created in,
+        // like the demo data creation does on the PersonCreatedEvent
         final Person person = personService.create("max", "Max", "Mustermann", "mustermann@example.org");
 
-        person.setPermissions(List.of(USER, INACTIVE));
-        personService.update(person);
+        personService.update(person.getIdAsPersonId(), PersonUpdate.ofPermissions(List.of(USER, INACTIVE)));
 
         final List<PersonActivePeriod> activePeriods = sut.getActivePeriods(person.getIdAsPersonId());
         assertThat(activePeriods).hasSize(1);
@@ -105,9 +101,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         entityManager.flush();
         entityManager.clear();
 
-        person.setPermissions(new ArrayList<>(List.of(USER, INACTIVE)));
-
-        assertThatThrownBy(() -> personService.update(person))
+        assertThatThrownBy(() -> personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER, INACTIVE))))
             .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
     }
 }

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageStreamSupport;
@@ -17,6 +18,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPerson;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonDTO;
+import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonUpdate;
 
 @ConditionalOnExtensionsEnabled
 @Service
@@ -43,7 +45,7 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
 
     @Override
     public PersonDTO update(PersonDTO person) {
-        final Person update = personService.update(toPerson(person));
+        final Person update = personService.update(new PersonId(person.id()), toPersonUpdate(person));
         return toPersonDTO(update);
     }
 

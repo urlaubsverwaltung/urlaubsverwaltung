@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -53,20 +52,18 @@ class PersonServiceImpl implements PersonService {
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final EntityManager entityManager;
     private final Clock clock;
 
     @Autowired
     PersonServiceImpl(
         PersonRepository personRepository, AccountInteractionService accountInteractionService,
         WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher,
-        EntityManager entityManager, Clock clock
+        Clock clock
     ) {
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.entityManager = entityManager;
         this.clock = clock;
     }
 
@@ -130,27 +127,21 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public Person update(Person person) {
+    public Person update(PersonId personId, PersonUpdate personUpdate) {
 
-        if (person.getId() == null) {
-            throw new IllegalArgumentException("Can not update a person that is not persisted yet");
-        }
+        final Person person = personRepository.findById(personId.value())
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
 
-        // the given person may still be managed and therefore already carry the changes to apply, e.g. when
-        // update is called within an outer transaction. detaching it ensures that the persisted state is read
-        // below and that the changes are applied by the merge of the given person only.
-        entityManager.detach(person);
+        final Collection<Role> previousPermissions = List.copyOf(person.getPermissions());
 
-        final Optional<Person> existingPerson = personRepository.findById(person.getId());
-
-        final Collection<Role> previousPermissions = existingPerson
-            .map(Person::getPermissions)
-            .map(List::copyOf)
-            .orElse(List.of());
-
-        // callers may hand over a person without createdAt, e.g. PersonDTOMapper#toPerson, and createdAt is
-        // set on creation only, therefore the persisted value wins over the given one
-        existingPerson.map(Person::getCreatedAt).ifPresent(person::setCreatedAt);
+        personUpdate.personalData().ifPresent(personalData -> {
+            person.setUsername(personalData.username());
+            person.setFirstName(personalData.firstName());
+            person.setLastName(personalData.lastName());
+            person.setEmail(personalData.email());
+        });
+        personUpdate.permissions().ifPresent(person::setPermissions);
+        personUpdate.notifications().ifPresent(person::setNotifications);
 
         final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);

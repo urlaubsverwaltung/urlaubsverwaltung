@@ -74,51 +74,29 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         entityManager.flush();
         entityManager.clear();
 
-        final Person personToUpdate = personService.getPersonByID(personId).orElseThrow();
-        final Instant createdAt = personToUpdate.getCreatedAt();
-        personToUpdate.setEmail("new-mail@example.org");
-        personService.update(personToUpdate);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        assertThat(personService.getPersonByID(personId).orElseThrow().getCreatedAt()).isEqualTo(createdAt);
-    }
-
-    @Test
-    void ensureUpdateKeepsCreatedAtOfPersonGivenWithoutCreatedAt() {
-
-        final Person createdPerson = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
-        final Long personId = createdPerson.getId();
-
-        entityManager.flush();
-        entityManager.clear();
-
         final Instant createdAt = personService.getPersonByID(personId).orElseThrow().getCreatedAt();
 
-        // callers may hand over a person that does not carry createdAt at all, e.g. PersonDTOMapper#toPerson
-        final Person personToUpdate = new Person("user", "Muster", "Marlene", "new-mail@example.org");
-        personToUpdate.setId(personId);
-        personToUpdate.setPermissions(List.of(USER));
-        personService.update(personToUpdate);
+        personService.update(new PersonId(personId),
+            PersonUpdate.ofPersonalData("user", "Marlene", "Muster", "new-mail@example.org"));
 
         entityManager.flush();
         entityManager.clear();
 
-        assertThat(personService.getPersonByID(personId).orElseThrow().getCreatedAt()).isEqualTo(createdAt);
+        final Person updatedPerson = personService.getPersonByID(personId).orElseThrow();
+        assertThat(updatedPerson.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(updatedPerson.getEmail()).isEqualTo("new-mail@example.org");
     }
 
     @Test
-    void ensureUpdateOfAStillManagedPersonWithImmutableCollections() {
+    void ensureUpdateWithImmutableCollectionsDirectlyAfterCreation() {
 
         final Person person = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
 
-        // callers hand over immutable collections (e.g. Stream#toList) and the person is still managed
-        // by the persistence context, therefore hibernate has to merge into these very collections
-        person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-
-        final Person updatedPerson = personService.update(person);
+        // callers hand over immutable collections, e.g. Stream#toList, and the person is updated within the
+        // very transaction it was created in, like the demo data creation does
+        final Person updatedPerson = personService.update(person.getIdAsPersonId(),
+            PersonUpdate.ofPermissions(List.of(USER))
+                .withNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)));
 
         assertThat(updatedPerson.getPermissions()).containsExactly(USER);
         assertThat(updatedPerson.getNotifications()).containsExactly(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);

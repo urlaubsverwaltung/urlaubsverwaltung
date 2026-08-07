@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonMailService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -30,9 +31,9 @@ import java.util.function.Predicate;
 import static java.util.function.Predicate.not;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapPermissionsDtoToRole;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapToPersonPermissionsDto;
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.merge;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -99,8 +100,9 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         }
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        final Collection<Role> oldRoles = person.getPermissions();
-        final Person updatedPerson = personService.update(merge(person, personPermissionsDto));
+        final Collection<Role> oldRoles = List.copyOf(person.getPermissions());
+        final Person updatedPerson = personService.update(person.getIdAsPersonId(),
+            PersonUpdate.ofPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions())));
 
         final List<Role> addedPermissions = calculateAddedPermissions(oldRoles, updatedPerson);
         if (!addedPermissions.isEmpty()) {

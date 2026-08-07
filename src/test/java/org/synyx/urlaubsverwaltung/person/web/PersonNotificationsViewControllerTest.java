@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.SearchContext;
@@ -40,6 +41,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -730,10 +732,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(redirectedUrl("/web/person/1/notifications"))
             .andExpect(flash().attribute("success", true));
 
-        final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).update(personArgumentCaptor.capture());
-        final Person savedPerson = personArgumentCaptor.getValue();
-        assertThat(savedPerson.getNotifications()).contains(NOTIFICATION_EMAIL_APPLICATION_APPLIED);
+        final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+        verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
+        assertThat(personUpdateArgumentCaptor.getValue().notifications()).hasValueSatisfying(notifications ->
+            assertThat(notifications).contains(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1L), false);
     }
@@ -797,7 +799,7 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("error", true))
             .andExpect(view().name("person/person_notifications"));
 
-        verify(personService, never()).update(personWithoutNotifications);
+        verify(personService, never()).update(any(), any());
     }
 
     @Test
