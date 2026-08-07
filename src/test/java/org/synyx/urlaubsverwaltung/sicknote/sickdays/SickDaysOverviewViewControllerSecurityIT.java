@@ -83,6 +83,22 @@ class SickDaysOverviewViewControllerSecurityIT extends SingleTenantTestContainer
         ).andExpect(status().isOk());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
+    void ensureToHaveAccessToPeriodsSickNotesAsManagementWithoutSickNoteViewRole(final String role) throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        perform(get("/web/sickdays")
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(1)))
+        ).andExpect(status().isOk());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }

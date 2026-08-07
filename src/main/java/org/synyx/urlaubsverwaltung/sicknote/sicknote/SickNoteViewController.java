@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -63,11 +62,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -84,6 +78,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
@@ -105,6 +100,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         VacationTypeViewModelService vacationTypeViewModelService,
         PersonService personService,
         DepartmentService departmentService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         SickNoteValidator sickNoteValidator,
         SickNoteCommentFormValidator sickNoteCommentFormValidator,
         SickNoteConvertFormValidator sickNoteConvertFormValidator,
@@ -123,6 +119,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
         this.departmentService = departmentService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
@@ -166,16 +163,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         final SickNote sickNote = getSickNote(id);
         final Person sickNotePerson = sickNote.getPerson();
 
-        final boolean isSamePerson = sickNotePerson.equals(signedInUser);
-        final boolean isOffice = signedInUser.hasRole(OFFICE);
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, sickNotePerson);
 
-        if (isSamePerson
-            || isOffice
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
-
-            final boolean isAllowedToEditSickNote = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson);
+        if (permissions.isAllowedToView()) {
 
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
@@ -200,11 +190,11 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", isOffice || isAllowedToEditSickNote);
-            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || (isSamePerson && sickNote.isSubmitted()));
-            model.addAttribute("canConvertSickNote", isOffice);
-            model.addAttribute("canDeleteSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
-            model.addAttribute("canCommentSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
+            model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept());
+            model.addAttribute("canEditSickNote", permissions.isAllowedToEdit(sickNote));
+            model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert());
+            model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel());
+            model.addAttribute("canCommentSickNote", permissions.isAllowedToComment());
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
@@ -219,14 +209,21 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             signedInUser.getId(), sickNotePerson.getId()));
     }
 
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/extension/accept")
     public String acceptSickNoteExtension(
         @PathVariable("id") Long sickNoteId,
         @ModelAttribute("comment") SickNoteCommentFormDto comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl
-    ) {
+    ) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
+        final SickNote sickNote = getSickNote(sickNoteId);
+
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAcceptExtension()) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to accept a submitted sick note extension for %s".formatted(signedInUser.getId(), sickNote.getPerson()));
+        }
+
         sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId, comment.getText());
 
         return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
@@ -241,17 +238,20 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     ) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
-        final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-
-        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !userIsAllowedToSubmitSickNotes) {
-            throw new AccessDeniedException(
-                "User '%s' has not the correct permissions to create a sick note".formatted(
-                    signedInUser.getId()));
-        }
+        final boolean userIsAllowedToSubmitSickNotes = isUserAllowedToSubmitSickNotes();
 
         final Person sickNotePerson = personId == null
             ? signedInUser
             : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, sickNotePerson);
+        // the form itself is accessible for everyone who may create a sick note for at least one person, the person to
+        // create it for is chosen within the form and checked when the form is submitted.
+        final boolean canAddSickNoteForAnotherPerson = sickNotePermissionEvaluator.isAllowedToAddSickNotesForOtherPersons(signedInUser);
+
+        if (!canAddSickNoteForAnotherPerson && !permissions.isAllowedToAdd() && !permissions.isAllowedToSubmit()) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to create a sick note".formatted(signedInUser.getId()));
+        }
 
         if (userIsAllowedToSubmitSickNotes) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
@@ -276,7 +276,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
-        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
+        model.addAttribute("canAddSickNoteForAnotherPerson", canAddSickNoteForAnotherPerson);
         model.addAttribute("sickNoteTypes", sickNoteTypes);
 
         addVacationTypeColorsToModel(model);
@@ -288,8 +288,12 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     public String addOrSubmitNewSickNote(@ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        model.addAttribute("signedInUser", signedInUser);
         final Person sickNotePerson = sickNoteFormDto.getPerson();
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, sickNotePerson);
+
+        if (!permissions.isAllowedToAdd() && !permissions.isAllowedToSubmit()) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to create a sick note".formatted(signedInUser.getId()));
+        }
 
         final SickNote sickNote = SickNote.builder()
             .id(sickNoteFormDto.getId())
@@ -303,14 +307,14 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             .aubEndDate(sickNoteFormDto.getAubEndDate())
             .build();
 
-
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
+            model.addAttribute("signedInUser", signedInUser);
             model.addAttribute("errors", errors);
             model.addAttribute("sickNote", sickNoteFormDto);
             model.addAttribute("person", sickNotePerson);
             model.addAttribute("persons", getManagedPersons(signedInUser));
-            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
+            model.addAttribute("canAddSickNoteForAnotherPerson", sickNotePermissionEvaluator.isAllowedToAddSickNotesForOtherPersons(signedInUser));
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             addVacationTypeColorsToModel(model);
@@ -318,16 +322,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             return "sicknote/sick_note_form";
         }
 
-        final boolean personIsApplier = sickNote.getPerson().equals(sickNote.getApplier());
-        final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-        final boolean isAllowedToAdd = signedInUser.hasAnyRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, sickNote.getPerson());
-
-        final SickNote updatedSickNote;
-        if (isAllowedToAdd || (personIsApplier && !allowedToSubmitSickNotes)) {
-            updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
-        } else {
-            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
-        }
+        final SickNote updatedSickNote = permissions.isAllowedToAdd()
+            ? sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment())
+            : sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
 
         return "redirect:/web/sicknote/" + updatedSickNote.getId();
     }
@@ -342,10 +339,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person sickNotePerson = sickNote.getPerson();
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, sickNotePerson);
 
-        if (!signedInUser.hasRole(OFFICE)
-            && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-            && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
+        if (!permissions.isAllowedToEdit(sickNote)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to edit the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNotePerson.getId()));
         }
@@ -355,7 +351,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("sickNote", sickNoteFormDto);
         model.addAttribute("person", sickNotePerson);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
-        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
+        model.addAttribute("canAddSickNoteForAnotherPerson", sickNotePermissionEvaluator.isAllowedToAddSickNotesForOtherPersons(signedInUser));
 
         addVacationTypeColorsToModel(model);
 
@@ -368,23 +364,17 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model
     ) throws UnknownSickNoteException {
 
-        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
-        if (maybeSickNote.isEmpty()) {
-            throw new UnknownSickNoteException(sickNoteId);
-        }
-
-        final SickNote persistedSickNote = maybeSickNote.get();
+        final SickNote sickNote = getSickNote(sickNoteId);
         final Person signedInUser = personService.getSignedInUser();
-        final Person sickNotePerson = persistedSickNote.getPerson();
+        final Person sickNotePerson = sickNote.getPerson();
+        final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, sickNotePerson);
 
-        if (!signedInUser.hasRole(OFFICE)
-            && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-            && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
+        if (!permissions.isAllowedToEdit(sickNote)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to edit the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNotePerson.getId()));
         }
 
-        final SickNote editedSickNote = merge(persistedSickNote, sickNoteFormDto);
+        final SickNote editedSickNote = merge(sickNote, sickNoteFormDto);
         sickNoteValidator.validate(editedSickNote, errors);
 
         if (errors.hasErrors()) {
@@ -392,7 +382,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             model.addAttribute("sickNote", sickNoteFormDto);
             model.addAttribute("person", sickNotePerson);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
-            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, editedSickNote.getPerson()));
+            model.addAttribute("canAddSickNoteForAnotherPerson", sickNotePermissionEvaluator.isAllowedToAddSickNotesForOtherPersons(signedInUser));
 
             addVacationTypeColorsToModel(model);
 
@@ -413,17 +403,11 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         RedirectAttributes redirectAttributes
     ) throws UnknownSickNoteException {
 
-        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
-        if (maybeSickNote.isEmpty()) {
-            throw new UnknownSickNoteException(sickNoteId);
-        }
-
+        final SickNote sickNote = getSickNote(sickNoteId);
         final Person signedInUser = personService.getSignedInUser();
-        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, acceptedSickNote.getPerson())) {
-            throw new AccessDeniedException("User '%s' has not the correct permissions to accept the sick note of user '%s'".formatted(
-                signedInUser.getId(), acceptedSickNote.getPerson().getId()));
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAccept()) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to accept the sick note of user '%s'".formatted(signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
         comment.setMandatory(false);
@@ -432,6 +416,8 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             redirectAttributes.addFlashAttribute("errors", errors);
             return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
         }
+
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(sickNote, signedInUser, comment.getText());
 
 
         if (SickNoteStatus.ACTIVE.equals(acceptedSickNote.getStatus())) {
@@ -451,7 +437,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote.getPerson())) {
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToComment()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to comment the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
@@ -522,9 +508,8 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote.getPerson())) {
-            throw new AccessDeniedException("User '%s' has not the correct permissions to cancel the sick note of user '%s'".formatted(
-                signedInUser.getId(), sickNote.getPerson().getId()));
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToCancel()) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to cancel the sick note of user '%s'".formatted(signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
         comment.setMandatory(true);
@@ -552,17 +537,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             return "redirect:" + redirectUrl;
         }
         return "redirect:/web/sicknote/" + sickNoteId;
-    }
-
-    private boolean canAddSickNote(Person person, Person sickNotePerson) {
-        return person.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(person, SICK_NOTE_ADD, sickNotePerson);
-    }
-
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
-        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
-        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 
     private List<Person> getManagedPersons(Person signedInUser) {
@@ -646,8 +620,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     private static SickNote merge(SickNote sickNote, SickNoteFormDto sickNoteFormDto) {
+        // the person of a sick note cannot be changed - taking it from the form would allow to move a sick note to a
+        // person the editing user is not allowed to manage, since the permission is checked on the persisted person.
         return SickNote.builder(sickNote)
-            .person(sickNoteFormDto.getPerson())
             .sickNoteType(sickNoteFormDto.getSickNoteType())
             .startDate(sickNoteFormDto.getStartDate())
             .endDate(sickNoteFormDto.getEndDate())
@@ -664,5 +639,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote, SickNoteExtension extension) {
         final BigDecimal workingDays = sickNote.getWorkDays().add(extension.additionalWorkdays());
         return new SickNoteExtendPreviewDto(sickNote.getStartDate(), extension.nextEndDate(), workingDays);
+    }
+
+    private boolean isUserAllowedToSubmitSickNotes() {
+        return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
     }
 }

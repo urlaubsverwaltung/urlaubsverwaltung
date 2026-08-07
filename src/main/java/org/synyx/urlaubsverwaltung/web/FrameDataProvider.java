@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.me.SickNotesViewController.MY_SICKNOTES_ANONYMOUS_PATH;
 
@@ -35,6 +35,7 @@ public class FrameDataProvider implements DataProviderInterface {
 
     private final PersonService personService;
     private final SettingsService settingsService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final MenuProperties menuProperties;
     private final String applicationVersion;
 
@@ -42,11 +43,13 @@ public class FrameDataProvider implements DataProviderInterface {
     public FrameDataProvider(
         PersonService personService,
         SettingsService settingsService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         MenuProperties menuProperties,
         @Value("${info.app.version}") String applicationVersion
     ) {
         this.personService = personService;
         this.settingsService = settingsService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.menuProperties = menuProperties;
         this.applicationVersion = applicationVersion;
     }
@@ -179,7 +182,7 @@ public class FrameDataProvider implements DataProviderInterface {
             elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", "sun", url.equals(applications)));
         }
 
-        final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
+        final boolean canViewSickNotes = sickNotePermissionEvaluator.isAllowedToViewSickNotesOfOtherPersons(user);
         if (canViewSickNotes) {
 
             final String sickdays = "/web/sickdays";
@@ -248,6 +251,6 @@ public class FrameDataProvider implements DataProviderInterface {
 
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {
         var userIsAllowedToSubmitSickNotes = sickNoteSettings.getUserIsAllowedToSubmitSickNotes();
-        return user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD) || userIsAllowedToSubmitSickNotes;
+        return sickNotePermissionEvaluator.isAllowedToAddSickNotesForOtherPersons(user) || userIsAllowedToSubmitSickNotes;
     }
 }

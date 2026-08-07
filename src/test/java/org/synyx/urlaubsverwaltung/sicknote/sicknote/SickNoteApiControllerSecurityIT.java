@@ -56,7 +56,7 @@ class SickNoteApiControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
+    @ValueSource(strings = {"USER", "BOSS", "INACTIVE"})
     void getSicknotesIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         perform(
@@ -66,6 +66,25 @@ class SickNoteApiControllerSecurityIT extends SingleTenantTestContainersBase {
                 .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         )
             .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void getSicknotesForManagementWithoutSickNoteViewAuthorityIsOk(final String role) throws Exception {
+
+        final Person management = new Person();
+        management.setPermissions(List.of(USER, Role.valueOf(role)));
+        when(personService.getSignedInUser()).thenReturn(management);
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        perform(
+            get("/api/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -137,6 +156,33 @@ class SickNoteApiControllerSecurityIT extends SingleTenantTestContainersBase {
                 .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         )
             .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void personsSickNotesOfManagedMemberWithoutSickNoteViewAuthorityIsOk(final String role) throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        final Person management = new Person();
+        management.setId(2L);
+        management.setPermissions(List.of(USER, Role.valueOf(role)));
+        when(personService.getSignedInUser()).thenReturn(management);
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(management, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(management, person)).thenReturn(true);
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        perform(
+            get("/api/persons/1/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
+            .andExpect(status().isOk());
     }
 
     @ParameterizedTest

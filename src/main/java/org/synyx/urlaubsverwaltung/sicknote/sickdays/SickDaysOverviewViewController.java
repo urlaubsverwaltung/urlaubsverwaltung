@@ -89,7 +89,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad, HasPersonSe
         return personSearchUiFragmentSupplier;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @GetMapping("/sickdays")
     public String periodsSickNotes(
         @RequestParam(value = "from", defaultValue = "") String from,

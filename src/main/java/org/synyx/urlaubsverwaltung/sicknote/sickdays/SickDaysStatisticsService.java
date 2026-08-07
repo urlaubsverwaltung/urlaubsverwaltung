@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.LocalDate;
@@ -25,11 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 @Service
@@ -40,13 +36,16 @@ public class SickDaysStatisticsService {
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
     private final PersonService personService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
 
     @Autowired
-    SickDaysStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonBasedataService personBasedataService, PersonService personService) {
+    SickDaysStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonBasedataService personBasedataService,
+                              PersonService personService, SickNotePermissionEvaluator sickNotePermissionEvaluator) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
         this.personService = personService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
     }
 
     /**
@@ -105,7 +104,7 @@ public class SickDaysStatisticsService {
     }
 
     private List<SickNote> getSickNotes(Person person, List<Person> members, LocalDate from, LocalDate to) {
-        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+        if (sickNotePermissionEvaluator.isAllowedToViewSickNotesOfOtherPersons(person)) {
             return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
         }
 
@@ -116,7 +115,7 @@ public class SickDaysStatisticsService {
 
         final PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
 
-        if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
+        if (sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(person)) {
             return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
         }
 

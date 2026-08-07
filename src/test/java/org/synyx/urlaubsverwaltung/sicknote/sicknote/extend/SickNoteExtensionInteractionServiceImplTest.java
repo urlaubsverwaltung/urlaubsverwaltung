@@ -1,21 +1,25 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
@@ -29,10 +33,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
@@ -40,7 +46,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExten
 @ExtendWith(MockitoExtension.class)
 class SickNoteExtensionInteractionServiceImplTest {
 
-    @InjectMocks
     private SickNoteExtensionInteractionServiceImpl sut;
 
     @Mock
@@ -52,7 +57,20 @@ class SickNoteExtensionInteractionServiceImplTest {
     @Mock
     private SickNoteCommentService sickNoteCommentService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
+    private SettingsService settingsService;
+    @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @BeforeEach
+    void setUp() {
+        sut = new SickNoteExtensionInteractionServiceImpl(sickNoteExtensionService, sickNoteService,
+            sickNoteInteractionService, sickNoteCommentService,
+            new SickNotePermissionEvaluator(departmentService, settingsService), applicationEventPublisher);
+
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
+    }
 
     @Nested
     class SubmitSickNoteExtension {
@@ -164,7 +182,9 @@ class SickNoteExtensionInteractionServiceImplTest {
 
             final Person maintainer = new Person();
             maintainer.setId(1L);
-            maintainer.setPermissions(List.of(USER));
+            maintainer.setPermissions(List.of(USER, SICK_NOTE_EDIT));
+
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(SickNote.builder().id(1L).person(new Person()).build()));
 
             assertThatThrownBy(() -> sut.acceptSubmittedExtension(maintainer, 1L, ""))
                 .isInstanceOf(AccessDeniedException.class)
@@ -175,14 +195,15 @@ class SickNoteExtensionInteractionServiceImplTest {
         }
 
         @ParameterizedTest
-        @EnumSource(value = Role.class, names = {"OFFICE", "SICK_NOTE_EDIT"})
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
         void ensureAcceptSubmittedExtension(Role role) {
 
             final Person maintainer = new Person();
             maintainer.setId(1L);
-            maintainer.setPermissions(List.of(USER, role));
+            maintainer.setPermissions(List.of(USER, role, SICK_NOTE_EDIT));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             final SickNote actual = sut.acceptSubmittedExtension(maintainer, 1L, "");
@@ -196,7 +217,8 @@ class SickNoteExtensionInteractionServiceImplTest {
             maintainer.setId(1L);
             maintainer.setPermissions(List.of(USER, OFFICE));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             sut.acceptSubmittedExtension(maintainer, 1L, "awesome comment");
@@ -211,7 +233,8 @@ class SickNoteExtensionInteractionServiceImplTest {
             maintainer.setId(1L);
             maintainer.setPermissions(List.of(USER, OFFICE));
 
-            final SickNote sickNote = SickNote.builder().id(1L).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
             sut.acceptSubmittedExtension(maintainer, 1L, "");

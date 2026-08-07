@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -18,9 +19,7 @@ import java.util.Map;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Collections.emptyList;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -36,6 +35,7 @@ public class SickNoteStatisticsService {
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final Clock clock;
 
     SickNoteStatisticsService(
@@ -43,12 +43,14 @@ public class SickNoteStatisticsService {
         DepartmentService departmentService,
         PersonService personService,
         WorkingTimeCalendarService workingTimeCalendarService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         Clock clock
     ) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.clock = clock;
     }
 
@@ -78,13 +80,13 @@ public class SickNoteStatisticsService {
 
     private List<Person> getStatisticRelevantPersons(Year year, Person person) {
 
-        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
+        if (sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(person)) {
             // we don't know whether a person has been active/inactive over a certain year
             // Therefore, we return all persons having an account in the given year.
             return personService.getAllPersonsHavingAccountInYear(year);
         }
 
-        if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+        if (person.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
             final List<Person> managedMembers = departmentService.getManagedMembersOfPerson(person, year);
             if (year.equals(Year.now(clock))) {
                 // we can, however, determine it for THIS year.

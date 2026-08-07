@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,14 +23,13 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -53,7 +55,8 @@ class SickDaysStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysStatisticsService(sickNoteService, departmentService, personBasedataService, personService);
+        sut = new SickDaysStatisticsService(sickNoteService, departmentService, personBasedataService, personService,
+            new SickNotePermissionEvaluator(departmentService, mock(SettingsService.class)));
     }
 
     @Test

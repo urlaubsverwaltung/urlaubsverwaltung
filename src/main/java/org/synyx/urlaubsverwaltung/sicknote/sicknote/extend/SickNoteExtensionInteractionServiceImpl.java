@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
@@ -15,8 +16,6 @@ import java.time.LocalDate;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
 
 @Service
@@ -28,17 +27,20 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService commentService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final ApplicationEventPublisher eventPublisher;
 
     SickNoteExtensionInteractionServiceImpl(SickNoteExtensionService sickNoteExtensionService,
                                             SickNoteService sickNoteService,
                                             SickNoteInteractionService sickNoteInteractionService,
                                             SickNoteCommentService commentService,
+                                            SickNotePermissionEvaluator sickNotePermissionEvaluator,
                                             ApplicationEventPublisher eventPublisher) {
         this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.commentService = commentService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.eventPublisher = eventPublisher;
     }
 
@@ -67,7 +69,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     @Override
     public SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId, String comment) {
 
-        if (!maintainer.hasAnyRole(OFFICE, SICK_NOTE_EDIT)) {
+        if (!sickNotePermissionEvaluator.of(maintainer, getSickNote(sickNoteId)).isAllowedToAcceptExtension()) {
             throw new AccessDeniedException("person id=%s is not authorized to accept submitted sickNoteExtension".formatted(maintainer.getId()));
         }
 

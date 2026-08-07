@@ -56,7 +56,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         return personSearchUiFragmentSupplier;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @GetMapping
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Optional<Year> userRequestedYear, Model model) {
 

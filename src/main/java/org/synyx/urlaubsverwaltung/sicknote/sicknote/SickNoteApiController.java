@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,12 +27,9 @@ import static java.util.Comparator.comparing;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 @RestControllerAdviceMarker
@@ -47,21 +43,25 @@ public class SickNoteApiController {
     private final PersonService personService;
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
 
     @Autowired
-    SickNoteApiController(SickNoteService sickNoteService, PersonService personService, DepartmentService departmentService) {
+    SickNoteApiController(SickNoteService sickNoteService, PersonService personService, DepartmentService departmentService,
+                          SickNotePermissionEvaluator sickNotePermissionEvaluator) {
         this.personService = personService;
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
     }
 
     @Operation(
         summary = "Get all sick notes for a certain period",
         description = "Get all sick notes for a certain period. "
-            + "Information only reachable for users with role office or for users with the 'SICK_NOTE_VIEW' role."
+            + "Information only reachable for users with role office, for users with the 'SICK_NOTE_VIEW' role "
+            + "and for department heads / second stage authorities for the members they manage."
     )
     @GetMapping(path = SICKNOTES, produces = APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     public SickNotesDto getSickNotes(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
@@ -89,10 +89,11 @@ public class SickNoteApiController {
     @Operation(
         summary = "Get all sick notes for a certain period and person",
         description = "Get all sick notes for a certain period and person. "
-            + "Information only reachable for users with role office and for own sick notes."
+            + "Information only reachable for users with role office, for users with the 'SICK_NOTE_VIEW' role, "
+            + "for department heads / second stage authorities for the members they manage and for own sick notes."
     )
     @GetMapping(path = "/persons/{personId}/" + SICKNOTES, produces = APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public SickNotesDto personsSickNotes(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
@@ -117,7 +118,7 @@ public class SickNoteApiController {
 
         final Person person = optionalPerson.get();
         final Person signedInUser = personService.getSignedInUser();
-        if (!isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)) {
+        if (!sickNotePermissionEvaluator.of(signedInUser, person).isAllowedToView()) {
             throw new ResponseStatusException(FORBIDDEN, "Not allowed to access data of the person with the ID=" + personId);
         }
 
@@ -128,24 +129,9 @@ public class SickNoteApiController {
         return new SickNotesDto(sickNoteResponse);
     }
 
-    private boolean isPersonAllowedToExecuteRoleOn(Person requestPerson, Role role, Person person) {
-
-        if (requestPerson.equals(person) || requestPerson.hasRole(OFFICE)) {
-            return true;
-        }
-
-        if (requestPerson.hasRole(role)) {
-            return requestPerson.hasRole(BOSS)
-                || departmentService.isDepartmentHeadAllowedToManagePerson(requestPerson, person)
-                || departmentService.isSecondStageAuthorityAllowedToManagePerson(requestPerson, person);
-        }
-
-        return false;
-    }
-
     private List<Person> getMembersOfPersons(Person signedInUser) {
 
-        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+        if (sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(signedInUser)) {
             return personService.getActivePersons();
         }
 

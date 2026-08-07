@@ -2,6 +2,18 @@ package org.synyx.urlaubsverwaltung.overview;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,29 +45,17 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -73,6 +73,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -133,7 +134,10 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-            departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
+            departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
+
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     private void stubSickNoteWorkDaysCount(BigDecimal daysPerSickNote) {
@@ -479,6 +483,28 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+        final Object sickNotesOverview = mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview).isNotNull().hasFieldOrPropertyWithValue("canViewSickNoteOfMyselfAndAnotherUser", true);
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentHeadWithoutSickNoteView() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person personWithRole = new Person();
+        personWithRole.setId(42L);
+        personWithRole.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        final Person person = new Person();
+        person.setId(SOME_PERSON_ID);
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(personWithRole, person)).thenReturn(true);
 
         final ResultActions actions = perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
         final ModelAndView mav = actions.andReturn().getModelAndView();
@@ -1110,7 +1136,8 @@ class OverviewViewControllerTest {
         void setUpWithFixedClock() {
             sut = new OverviewViewController(personService, accountService, vacationDaysService,
                 workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-                departmentService, vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
                 Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
 
             person.setId(1L);
