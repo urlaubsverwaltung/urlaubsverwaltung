@@ -26,7 +26,7 @@
   <include relativeToChangelogFile="true" file="changelog-5.35.0-add-spring-session.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.0.0-M4-adjust-allocation-sizes.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.0.0-RC1-add-navigation-collapsed-to-user-settings.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-6.6.0-person-active-period.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-6.6.0-add-created-at-to-person.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.7.0-person-active-period.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.7.0-add-created-at-to-person.xml"/>
 
 </databaseChangeLog>
