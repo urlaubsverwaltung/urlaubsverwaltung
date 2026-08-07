@@ -3,6 +3,17 @@
   height: var(--topbar-height);
 }
 
+@variant desktop {
+  /* the collapsed navigation is narrower than the wordmark, which therefore overflows
+   * into the neighbouring search cell. both cells share the topbar z-index, so the search
+   * container - later in the dom - would win the hit test and swallow clicks on the
+   * wordmark. lift the cell above every other topbar layer (the backdrop border below
+   * already uses + 1) so the overflowing part stays clickable. */
+  html[data-nav-collapsed] .launchpad-app-cell {
+    z-index: calc(var(--z-index-topbar) + 2);
+  }
+}
+
 .topbar-backdrop {
   anchor-name: --topbbar-backdrop-anchor;
   z-index: var(--z-index-topbar);
