@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -17,24 +15,26 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
  * Permissions of a user on sick notes of one certain person, see
  * {@link SickNotePermissionEvaluator#of(Person, Person)}.
  *
- * <p>Whether the user manages the person is resolved lazily and remembered afterwards, because answering it hits the
- * database. Cheap checks are therefore evaluated first and an instance is meant to live no longer than one request.
+ * <p>Besides the roles of the user the rules depend on facts that cannot be derived from a {@link Person}: whether the
+ * user is a department head or a second stage authority of the person and whether handing in sick notes is enabled at
+ * all. They are passed in as a snapshot taken by the evaluator, therefore an instance is meant to live no longer than
+ * one request.
  */
-public class SickNotePermissions {
+public final class SickNotePermissions {
 
-    private final DepartmentService departmentService;
-    private final SettingsService settingsService;
     private final Person signedInUser;
     private final Person sickNotePerson;
+    private final boolean departmentHeadOfPerson;
+    private final boolean secondStageAuthorityOfPerson;
+    private final boolean submissionOfSickNotesEnabled;
 
-    private Boolean departmentHeadOfPerson;
-    private Boolean secondStageAuthorityOfPerson;
-
-    SickNotePermissions(DepartmentService departmentService, SettingsService settingsService, Person signedInUser, Person sickNotePerson) {
-        this.departmentService = departmentService;
-        this.settingsService = settingsService;
+    SickNotePermissions(Person signedInUser, Person sickNotePerson, boolean departmentHeadOfPerson,
+                        boolean secondStageAuthorityOfPerson, boolean submissionOfSickNotesEnabled) {
         this.signedInUser = signedInUser;
         this.sickNotePerson = sickNotePerson;
+        this.departmentHeadOfPerson = departmentHeadOfPerson;
+        this.secondStageAuthorityOfPerson = secondStageAuthorityOfPerson;
+        this.submissionOfSickNotesEnabled = submissionOfSickNotesEnabled;
     }
 
     /**
@@ -44,8 +44,7 @@ public class SickNotePermissions {
         return isSamePerson()
             || signedInUser.hasRole(OFFICE)
             || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(SICK_NOTE_VIEW))
-            || isDepartmentHeadOfPerson()
-            || isSecondStageAuthorityOfPerson();
+            || isManagerOfPerson();
     }
 
     /**
@@ -62,7 +61,7 @@ public class SickNotePermissions {
      * @return {@code true} if the user may submit a sick note for the person, {@code false} otherwise
      */
     public boolean isAllowedToSubmit() {
-        return isSamePerson() && isSubmissionOfSickNotesEnabled();
+        return isSamePerson() && submissionOfSickNotesEnabled;
     }
 
     /**
@@ -115,30 +114,15 @@ public class SickNotePermissions {
 
     private boolean isAllowedToMaintain(Role role) {
         return signedInUser.hasRole(OFFICE)
-            || (signedInUser.hasRole(role)
-            && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson() || isSecondStageAuthorityOfPerson()));
+            || (signedInUser.hasRole(role) && (signedInUser.hasRole(BOSS) || isManagerOfPerson()));
+    }
+
+    private boolean isManagerOfPerson() {
+        return departmentHeadOfPerson || secondStageAuthorityOfPerson;
     }
 
     private boolean isSamePerson() {
         // signedInUser first, the person of a sick note form may not have been submitted at all
         return signedInUser.equals(sickNotePerson);
-    }
-
-    private boolean isSubmissionOfSickNotesEnabled() {
-        return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-    }
-
-    private boolean isDepartmentHeadOfPerson() {
-        if (departmentHeadOfPerson == null) {
-            departmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson);
-        }
-        return departmentHeadOfPerson;
-    }
-
-    private boolean isSecondStageAuthorityOfPerson() {
-        if (secondStageAuthorityOfPerson == null) {
-            secondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson);
-        }
-        return secondStageAuthorityOfPerson;
     }
 }

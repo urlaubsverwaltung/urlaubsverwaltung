@@ -37,15 +37,19 @@ public class SickNotePermissionEvaluator {
     }
 
     /**
-     * Permissions of the given user on sick notes of the given person. The department memberships that the rules depend
-     * on are resolved lazily and only once, therefore the returned instance is meant to be used for a single request.
+     * Permissions of the given user on sick notes of the given person. The department memberships and the settings that
+     * the rules depend on are read once and answer every question of the returned instance, which is therefore meant to
+     * be used for a single request.
      *
      * @param signedInUser   user asking for permissions
      * @param sickNotePerson person the sick notes belong to
      * @return permissions of {@code signedInUser} on sick notes of {@code sickNotePerson}
      */
     public SickNotePermissions of(Person signedInUser, Person sickNotePerson) {
-        return new SickNotePermissions(departmentService, settingsService, signedInUser, sickNotePerson);
+        return new SickNotePermissions(signedInUser, sickNotePerson,
+            departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson),
+            departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson),
+            isSubmissionOfSickNotesEnabled());
     }
 
     /**
@@ -106,5 +110,9 @@ public class SickNotePermissionEvaluator {
     public boolean isAllowedToViewSickNotesOfOtherPersons(Person signedInUser) {
         return isAllowedToViewSickNotesOfAllPersons(signedInUser)
             || signedInUser.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+    }
+
+    private boolean isSubmissionOfSickNotesEnabled() {
+        return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
     }
 }

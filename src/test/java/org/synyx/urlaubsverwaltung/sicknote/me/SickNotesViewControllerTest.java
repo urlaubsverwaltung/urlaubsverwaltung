@@ -47,6 +47,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -86,6 +87,8 @@ class SickNotesViewControllerTest {
         sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService,
             new SickNotePermissionEvaluator(departmentService, settingsService),
             settingsService, personSearchUiFragmentSupplier, clock);
+
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     @Nested

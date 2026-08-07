@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
@@ -30,6 +31,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -75,9 +77,15 @@ class SickNoteExtendViewControllerTest {
     void setUp() {
         sut = new SickNoteExtendViewController(personService, workingTimeCalendarService,
             sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
-            new SickNotePermissionEvaluator(mock(DepartmentService.class), mock(SettingsService.class)),
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWithDefaultSettings()),
             sickNoteExtendValidator, dateFormatAware, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             clock);
+    }
+
+    private static SettingsService settingsServiceWithDefaultSettings() {
+        final SettingsService settingsService = mock(SettingsService.class);
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
+        return settingsService;
     }
 
     @Nested

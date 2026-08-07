@@ -18,10 +18,8 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -52,6 +50,8 @@ class SickNotePermissionEvaluatorTest {
 
     private SickNotePermissionEvaluator sut;
 
+    private final Settings settings = new Settings();
+
     @Mock
     private DepartmentService departmentService;
     @Mock
@@ -60,6 +60,7 @@ class SickNotePermissionEvaluatorTest {
     @BeforeEach
     void setUp() {
         sut = new SickNotePermissionEvaluator(departmentService, settingsService);
+        lenient().when(settingsService.getSettings()).thenReturn(settings);
     }
 
     @Nested
@@ -417,15 +418,6 @@ class SickNotePermissionEvaluatorTest {
     class DepartmentLookups {
 
         @Test
-        void ensureDepartmentMembershipsAreNotLookedUpForTheOwnPerson() {
-            final Person signedInUser = person(SIGNED_IN_USER_ID, USER, DEPARTMENT_HEAD);
-
-            assertThat(sut.of(signedInUser, signedInUser).isAllowedToView()).isTrue();
-
-            verifyNoInteractions(departmentService);
-        }
-
-        @Test
         void ensureDepartmentMembershipsAreLookedUpOnlyOnce() {
             final Person signedInUser = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT);
             final Person sickNotePerson = person(OTHER_PERSON_ID, USER);
@@ -439,7 +431,7 @@ class SickNotePermissionEvaluatorTest {
             permissions.isAllowedToComment();
 
             verify(departmentService).isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson);
-            verify(departmentService, never()).isSecondStageAuthorityAllowedToManagePerson(any(), any());
+            verify(departmentService).isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson);
         }
     }
 
@@ -464,9 +456,7 @@ class SickNotePermissionEvaluatorTest {
     }
 
     private void settingsWithSubmissionOfSickNotes(boolean enabled) {
-        final Settings settings = new Settings();
         settings.getSickNoteSettings().setUserIsAllowedToSubmitSickNotes(enabled);
-        when(settingsService.getSettings()).thenReturn(settings);
     }
 
     private static Person person(long id, Role... roles) {

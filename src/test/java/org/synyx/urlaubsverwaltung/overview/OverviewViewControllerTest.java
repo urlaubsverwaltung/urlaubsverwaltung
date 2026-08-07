@@ -73,6 +73,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -135,6 +136,8 @@ class OverviewViewControllerTest {
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
             vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
+
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     private void stubSickNoteWorkDaysCount(BigDecimal daysPerSickNote) {

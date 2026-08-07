@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import static java.time.Month.DECEMBER;
@@ -27,6 +28,7 @@ import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,7 +61,13 @@ class SickNoteApiControllerTest {
     @BeforeEach
     void setUp() {
         sut = new SickNoteApiController(sickNoteService, personService, departmentService,
-            new SickNotePermissionEvaluator(departmentService, mock(SettingsService.class)));
+            new SickNotePermissionEvaluator(departmentService, settingsServiceWithDefaultSettings()));
+    }
+
+    private static SettingsService settingsServiceWithDefaultSettings() {
+        final SettingsService settingsService = mock(SettingsService.class);
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
+        return settingsService;
     }
 
     @ParameterizedTest

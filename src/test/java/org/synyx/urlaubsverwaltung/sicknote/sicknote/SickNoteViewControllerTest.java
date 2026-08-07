@@ -138,6 +138,8 @@ class SickNoteViewControllerTest {
             departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
             sickNoteValidator, sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, Clock.systemUTC());
+
+        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
     @Nested
