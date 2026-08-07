@@ -51,7 +51,7 @@ public class SickNoteStatisticsService {
      * @param person the person for whom the statistics should be created
      * @return a {@link SickNoteStatistics} object containing sick notes and visible active persons
      */
-    SickNoteStatistics createStatisticsForPerson(LocalDate from, LocalDate to, Person person) {
+    public SickNoteStatistics createStatisticsForPerson(LocalDate from, LocalDate to, Person person) {
 
         final LocalDate today = LocalDate.now(clock);
         final Year year = Year.from(from);
