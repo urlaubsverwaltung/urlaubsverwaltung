@@ -7,9 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntryDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDurationDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -71,14 +71,12 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final DateRange dateRange = getRequestedDateRange(viewMode);
         final DateRange previousDateRange = toPreviousRange(dateRange);
 
-        final OvertimeStatDtoTuple overtimeStat = overtimeStatistic(signedInUser, dateRange, previousDateRange);
+        final OvertimeStatDto overtimeStatDto = overtimeStatistic(signedInUser, dateRange, previousDateRange);
 
         final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
             toLocalDate(dateRange.start),
             toLocalDate(dateRange.end),
-            overtimeStat.averageOvertime,
-            overtimeStat.averageOvertimeGrowth,
-            overtimeStat.overtimeDistribution
+            overtimeStatDto
         );
 
         model.addAttribute("viewMode", viewMode.name().toLowerCase());
@@ -125,9 +123,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         }
     }
 
-    private record OvertimeStatDtoTuple(OvertimeDurationDto averageOvertime, OvertimeDurationDto averageOvertimeGrowth, OvertimeDistributionDto overtimeDistribution) {}
-
-    private OvertimeStatDtoTuple overtimeStatistic(Person signedInUser, DateRange dateRange, DateRange previousDateRange) {
+    private OvertimeStatDto overtimeStatistic(Person signedInUser, DateRange dateRange, DateRange previousDateRange) {
         final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
         final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
 
@@ -140,9 +136,9 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
             new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
             new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
             new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
-            )));
+        )));
 
-        return new OvertimeStatDtoTuple(
+        return new OvertimeStatDto(
             toOvertimeDurationDto(average),
             toOvertimeDurationDto(averageGrowth),
             overtimeDistributionDto
