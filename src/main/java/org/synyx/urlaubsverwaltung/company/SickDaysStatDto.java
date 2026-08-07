@@ -1,4 +1,4 @@
 package org.synyx.urlaubsverwaltung.company;
 
-record SickDaysStatDto(double healthRate) {
+record SickDaysStatDto(double healthRate, int nrOfSickDays, int nrOfShouldWorkDays) {
 }
