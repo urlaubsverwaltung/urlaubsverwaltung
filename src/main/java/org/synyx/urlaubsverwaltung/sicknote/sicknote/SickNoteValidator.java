@@ -8,7 +8,6 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
