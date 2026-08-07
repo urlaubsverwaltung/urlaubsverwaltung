@@ -2,11 +2,8 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -17,11 +14,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.Collections.emptyList;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 /**
@@ -32,76 +24,43 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 public class SickNoteStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final DepartmentService departmentService;
-    private final PersonService personService;
+    private final SickNoteRelevantPersonsService sickNoteRelevantPersonsService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
-    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final Clock clock;
 
     SickNoteStatisticsService(
         SickNoteService sickNoteService,
-        DepartmentService departmentService,
-        PersonService personService,
+        SickNoteRelevantPersonsService sickNoteRelevantPersonsService,
         WorkingTimeCalendarService workingTimeCalendarService,
-        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         Clock clock
     ) {
         this.sickNoteService = sickNoteService;
-        this.departmentService = departmentService;
-        this.personService = personService;
+        this.sickNoteRelevantPersonsService = sickNoteRelevantPersonsService;
         this.workingTimeCalendarService = workingTimeCalendarService;
-        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.clock = clock;
     }
 
     /**
-     * Creates a {@link SickNoteStatistics} for the given year and person.
+     * Creates a {@link SickNoteStatistics} for the given date range and person.
      *
      * <p>
      * The given person is relevant for the visibility of sick notes and active persons considered in the statistics.
      *
-     * @param year   the year for which the statistics should be created
+     * @param from   the first day of the year for which the statistics should be created
+     * @param to     the last day of the year for which the statistics should be created
      * @param person the person for whom the statistics should be created
      * @return a {@link SickNoteStatistics} object containing sick notes and visible active persons
      */
-    SickNoteStatistics createStatisticsForPerson(Year year, Person person) {
+    SickNoteStatistics createStatisticsForPerson(LocalDate from, LocalDate to, Person person) {
 
         final LocalDate today = LocalDate.now(clock);
+        final Year year = Year.from(from);
 
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-
-        final List<Person> persons = getStatisticRelevantPersons(year, person);
-        final List<SickNote> sickNotes = getSickNotes(persons, firstDayOfYear, lastDayOfYear);
+        final List<Person> persons = sickNoteRelevantPersonsService.getStatisticRelevantPersons(from, to, person);
+        final List<SickNote> sickNotes = getSickNotes(persons, from, to);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = getWorkingTimeCalendarsByPerson(persons, year);
 
         return new SickNoteStatistics(year, today, sickNotes, persons, workingTimeCalendarsByPerson);
-    }
-
-    private List<Person> getStatisticRelevantPersons(Year year, Person person) {
-
-        if (sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(person)) {
-            // we don't know whether a person has been active/inactive over a certain year
-            // Therefore, we return all persons having an account in the given year.
-            return personService.getAllPersonsHavingAccountInYear(year);
-        }
-
-        if (person.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            final List<Person> managedMembers = departmentService.getManagedMembersOfPerson(person, year);
-            if (year.equals(Year.now(clock))) {
-                // we can, however, determine it for THIS year.
-                return managedMembers.stream().filter(Person::isActive).toList();
-            } else {
-                // Sadly, we do not know whether a person has been active or inactive in a year before this year
-                return managedMembers;
-            }
-        }
-
-        if (person.hasRole(SICK_NOTE_VIEW)) {
-            return List.of(person);
-        }
-
-        return emptyList();
     }
 
     private List<SickNote> getSickNotes(List<Person> persons, LocalDate from, LocalDate to) {

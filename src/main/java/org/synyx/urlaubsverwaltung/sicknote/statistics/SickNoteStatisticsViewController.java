@@ -15,9 +15,12 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -63,10 +66,15 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
         final Person signedInUser = personService.getSignedInUser();
 
-        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear, signedInUser);
+        final LocalDate selectedYearFirstDay = selectedYear.atDay(1);
+        final LocalDate selectedYearLastDay = selectedYearFirstDay.with(lastDayOfYear());
+        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYearFirstDay, selectedYearLastDay, signedInUser);
         model.addAttribute("selectedYearStatistics", toSickNoteStatisticsDto(selectedYearStatistics));
 
-        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear.minusYears(1), signedInUser);
+        final Year previousSelectedYear = selectedYear.minusYears(1);
+        final LocalDate previousSelectedYearFirstDay = previousSelectedYear.atDay(1);
+        final LocalDate previousSelectedYearLastDay = previousSelectedYearFirstDay.with(lastDayOfYear());
+        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(previousSelectedYearFirstDay, previousSelectedYearLastDay, signedInUser);
         model.addAttribute("previousSelectedYearStatistics", toSickNoteStatisticsDto(previousSelectedYearStatistics));
 
         final GraphDto graphDto = new GraphDto(
