@@ -11,6 +11,7 @@ import org.hibernate.annotations.BatchSize;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -122,8 +123,12 @@ public class Person extends AbstractTenantAwareEntity {
         this.username = username;
     }
 
+    /**
+     * @param permissions to set, the given collection is copied into a mutable one because hibernate
+     *                    has to be able to modify it while merging a managed {@linkplain Person}
+     */
     public void setPermissions(Collection<Role> permissions) {
-        this.permissions = permissions;
+        this.permissions = permissions == null ? new ArrayList<>() : new ArrayList<>(permissions);
     }
 
     public Collection<Role> getPermissions() {
@@ -162,14 +167,18 @@ public class Person extends AbstractTenantAwareEntity {
 
     public Collection<MailNotification> getNotifications() {
         if (notifications == null) {
-            notifications = emptyList();
+            return emptyList();
         }
 
         return unmodifiableCollection(notifications);
     }
 
+    /**
+     * @param notifications to set, the given collection is copied into a mutable one because hibernate
+     *                      has to be able to modify it while merging a managed {@linkplain Person}
+     */
     public void setNotifications(Collection<MailNotification> notifications) {
-        this.notifications = notifications;
+        this.notifications = notifications == null ? new ArrayList<>() : new ArrayList<>(notifications);
     }
 
     public boolean hasNotificationType(final MailNotification notification) {

@@ -73,6 +73,21 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void ensureActivePeriodIsClosedOnDeactivationOfAStillManagedPerson() {
+
+        // no flush/clear on purpose: the person stays managed within this transaction, like it does when
+        // update is called within an outer transaction, e.g. by the demo data creation on person creation
+        final Person person = personService.create("max", "Max", "Mustermann", "mustermann@example.org");
+
+        person.setPermissions(List.of(USER, INACTIVE));
+        personService.update(person);
+
+        final List<PersonActivePeriod> activePeriods = sut.getActivePeriods(person.getIdAsPersonId());
+        assertThat(activePeriods).hasSize(1);
+        assertThat(activePeriods.getFirst().validTo()).isPresent();
+    }
+
+    @Test
     void ensureDeactivationThrowsInsteadOfSilentlyIgnoringAnAlreadyInconsistentActivePeriodState() {
 
         final Person person = personService.create("max", "Max", "Mustermann", "mustermann@example.org");

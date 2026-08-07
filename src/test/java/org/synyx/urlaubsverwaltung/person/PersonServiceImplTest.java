@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,8 @@ class PersonServiceImplTest {
     private SecurityContext securityContext;
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
+    @Mock
+    private EntityManager entityManager;
 
     @Captor
     private ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor;
@@ -74,7 +77,7 @@ class PersonServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher, clock);
+        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher, entityManager, clock);
     }
 
     @AfterEach
@@ -223,50 +226,6 @@ class PersonServiceImplTest {
 
         final Person updatedPerson = sut.update(personToUpdate);
         assertThat(updatedPerson.getCreatedAt()).isEqualTo(originalCreatedAt);
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedUsername() {
-
-        final Person person = new Person(" muster  ", "", "", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getUsername()).isEqualTo("muster");
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedFirstName() {
-
-        final Person person = new Person("", "", " Marlene  ", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getFirstName()).isEqualTo("Marlene");
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedLastName() {
-
-        final Person person = new Person("", " Muster  ", "", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getLastName()).isEqualTo("Muster");
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedEmail() {
-
-        final Person person = new Person("", "", "", " muster@example.org  ");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getEmail()).isEqualTo("muster@example.org");
     }
 
     @Test

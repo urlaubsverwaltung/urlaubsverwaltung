@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -52,18 +53,20 @@ class PersonServiceImpl implements PersonService {
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final EntityManager entityManager;
     private final Clock clock;
 
     @Autowired
     PersonServiceImpl(
         PersonRepository personRepository, AccountInteractionService accountInteractionService,
         WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher,
-        Clock clock
+        EntityManager entityManager, Clock clock
     ) {
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.entityManager = entityManager;
         this.clock = clock;
     }
 
@@ -109,7 +112,7 @@ class PersonServiceImpl implements PersonService {
     private Person createPerson(String username, String firstName, String lastName, String email,
                                 List<MailNotification> notifications, List<Role> permissions) {
 
-        final Person person = normalizePerson(new Person(username, lastName, firstName, email));
+        final Person person = new Person(username.strip(), lastName.strip(), firstName.strip(), email.strip());
         person.setCreatedAt(Instant.now(clock));
         person.setNotifications(notifications);
         person.setPermissions(permissions);
@@ -133,6 +136,11 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
+        // the given person may still be managed and therefore already carry the changes to apply, e.g. when
+        // update is called within an outer transaction. detaching it ensures that the persisted state is read
+        // below and that the changes are applied by the merge of the given person only.
+        entityManager.detach(person);
+
         final Optional<Person> existingPerson = personRepository.findById(person.getId());
 
         final Collection<Role> previousPermissions = existingPerson
@@ -140,10 +148,11 @@ class PersonServiceImpl implements PersonService {
             .map(List::copyOf)
             .orElse(List.of());
 
-        final Person normalizedPerson = normalizePerson(person);
-        normalizedPerson.setCreatedAt(existingPerson.map(Person::getCreatedAt).orElseGet(() -> Instant.now(clock)));
+        // callers may hand over a person without createdAt, e.g. PersonDTOMapper#toPerson, and createdAt is
+        // set on creation only, therefore the persisted value wins over the given one
+        existingPerson.map(Person::getCreatedAt).ifPresent(person::setCreatedAt);
 
-        final Person updatedPerson = personRepository.save(normalizedPerson);
+        final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
 
         if (updatedPerson.isInactive()) {
@@ -295,21 +304,6 @@ class PersonServiceImpl implements PersonService {
                 PersonPermissionsChangedEvent.of(updatedPerson, previousPermissions, currentPermissions)
             );
         }
-    }
-
-    private Person normalizePerson(Person person) {
-        final Person normalized = new Person();
-
-        normalized.setUsername(person.getUsername().strip());
-        normalized.setLastName(person.getLastName().strip());
-        normalized.setFirstName(person.getFirstName().strip());
-        normalized.setEmail(person.getEmail().strip());
-
-        normalized.setId(person.getId());
-        normalized.setPermissions(person.getPermissions());
-        normalized.setNotifications(person.getNotifications());
-
-        return normalized;
     }
 
     private PersonCreatedEvent toPersonCreatedEvent(Person person) {

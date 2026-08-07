@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,68 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
     private DepartmentService departmentService;
     @Autowired
     private VacationTypeService vacationTypeService;
+    @Autowired
+    private EntityManager entityManager;
+
+    @Test
+    void ensureUpdateKeepsCreatedAtOfPersistedPerson() {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
+        final Long personId = person.getId();
+
+        // detach from the persistence context, so that the following update behaves like a separate request would
+        entityManager.flush();
+        entityManager.clear();
+
+        final Person personToUpdate = personService.getPersonByID(personId).orElseThrow();
+        final Instant createdAt = personToUpdate.getCreatedAt();
+        personToUpdate.setEmail("new-mail@example.org");
+        personService.update(personToUpdate);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(personService.getPersonByID(personId).orElseThrow().getCreatedAt()).isEqualTo(createdAt);
+    }
+
+    @Test
+    void ensureUpdateKeepsCreatedAtOfPersonGivenWithoutCreatedAt() {
+
+        final Person createdPerson = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
+        final Long personId = createdPerson.getId();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        final Instant createdAt = personService.getPersonByID(personId).orElseThrow().getCreatedAt();
+
+        // callers may hand over a person that does not carry createdAt at all, e.g. PersonDTOMapper#toPerson
+        final Person personToUpdate = new Person("user", "Muster", "Marlene", "new-mail@example.org");
+        personToUpdate.setId(personId);
+        personToUpdate.setPermissions(List.of(USER));
+        personService.update(personToUpdate);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(personService.getPersonByID(personId).orElseThrow().getCreatedAt()).isEqualTo(createdAt);
+    }
+
+    @Test
+    void ensureUpdateOfAStillManagedPersonWithImmutableCollections() {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
+
+        // callers hand over immutable collections (e.g. Stream#toList) and the person is still managed
+        // by the persistence context, therefore hibernate has to merge into these very collections
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
+
+        final Person updatedPerson = personService.update(person);
+
+        assertThat(updatedPerson.getPermissions()).containsExactly(USER);
+        assertThat(updatedPerson.getNotifications()).containsExactly(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+    }
 
     @Test
     void deletePerson() {
