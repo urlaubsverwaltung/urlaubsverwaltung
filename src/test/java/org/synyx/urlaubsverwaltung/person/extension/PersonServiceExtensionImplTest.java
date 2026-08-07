@@ -15,8 +15,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
@@ -26,7 +28,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -91,7 +92,7 @@ class PersonServiceExtensionImplTest {
         final PersonDTO personDTO = anyPersonDTO(1L);
         final Person createdPerson = anyPerson();
 
-        when(personService.update(any())).thenReturn(createdPerson);
+        when(personService.update(any(), any())).thenReturn(createdPerson);
 
         final PersonDTO updatedPersonDTO = sut.update(personDTO);
 
@@ -106,40 +107,18 @@ class PersonServiceExtensionImplTest {
         assertThat(updatedPersonDTO.enabled()).isTrue();
 
 
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).update(personArgumentCaptor.capture());
-
-        final Person value = personArgumentCaptor.getValue();
-        assertThat(value).isNotNull();
-        assertThat(value.getId()).isOne();
-        assertThat(value.getUsername()).isEqualTo("muster");
+        verify(personService).update(new PersonId(1L), PersonUpdate
+            .ofPersonalData("muster", "Marlene", "Muster", "muster@example.org")
+            .withPermissions(Set.of(Role.USER))
+            .withNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)));
     }
 
     @Test
     void deleteHappyPath() {
-        final Person signedInUserId = new Person("boss", "Scherer", "Theresa", "boss@example.org");
-        when(personService.getPersonByID(any())).thenReturn(Optional.of(signedInUserId));
 
         sut.delete(anyPersonDTO(1L), 42L);
 
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-
-        verify(personService).getPersonByID(42L);
-
-        verify(personService).delete(personArgumentCaptor.capture(), eq(signedInUserId));
-
-        final Person personToDelete = personArgumentCaptor.getValue();
-        assertThat(personToDelete).isNotNull();
-        assertThat(personToDelete.getId()).isOne();
-        assertThat(personToDelete.getUsername()).isEqualTo("muster");
-    }
-
-    @Test
-    void ensureDeleteHandlesSignedInUserUnknown() {
-
-        sut.delete(anyPersonDTO(), 42L);
-
-        verify(personService).getPersonByID(42L);
+        verify(personService).delete(new PersonId(1L), new PersonId(42L));
         verifyNoMoreInteractions(personService);
     }
 

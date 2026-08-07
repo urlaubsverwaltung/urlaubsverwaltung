@@ -19,10 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,9 +70,11 @@ class PersonServiceImplTest {
     @Captor
     private ArgumentCaptor<PersonPermissionsChangedEvent> personPermissionsChangedEventArgumentCaptor;
 
+    private final Clock clock = Clock.fixed(Instant.now(), UTC);
+
     @BeforeEach
     void setUp() {
-        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher);
+        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher, clock);
     }
 
     @AfterEach
@@ -183,67 +188,52 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureCreatedPersonHasCreatedAtSetToNow() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de");
+        assertThat(createdPerson.getCreatedAt()).isEqualTo(Instant.now(clock));
+    }
+
+    @Test
     void ensureUpdatedPersonIsPersisted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
 
-        sut.update(person);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER)));
         verify(personRepository).save(person);
     }
 
     @Test
-    void ensureUpdatedPersonHasStrippedUsername() {
+    void ensureUpdatedPersonKeepsCreatedAtOfExistingPerson() {
 
-        final Person person = new Person(" muster  ", "", "", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+        final Instant originalCreatedAt = Instant.now(clock).minusSeconds(60 * 60 * 24 * 365);
 
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getUsername()).isEqualTo("muster");
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        existingPerson.setCreatedAt(originalCreatedAt);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L),
+            PersonUpdate.ofPersonalData("muster", "Marlene", "Muster", "new-mail@example.org"));
+
+        assertThat(updatedPerson.getCreatedAt()).isEqualTo(originalCreatedAt);
+        assertThat(updatedPerson.getEmail()).isEqualTo("new-mail@example.org");
     }
 
     @Test
-    void ensureUpdatedPersonHasStrippedFirstName() {
+    void ensureThrowsIfPersonToBeUpdatedDoesNotExist() {
 
-        final Person person = new Person("", "", " Marlene  ", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getFirstName()).isEqualTo("Marlene");
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedLastName() {
-
-        final Person person = new Person("", " Muster  ", "", "");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getLastName()).isEqualTo("Muster");
-    }
-
-    @Test
-    void ensureUpdatedPersonHasStrippedEmail() {
-
-        final Person person = new Person("", "", "", " muster@example.org  ");
-        person.setId(1L);
-        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
-
-        final Person updatedPerson = sut.update(person);
-        assertThat(updatedPerson.getEmail()).isEqualTo("muster@example.org");
-    }
-
-    @Test
-    void ensureThrowsIfPersonToBeUpdatedHasNoID() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(null);
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.update(person));
+            .isThrownBy(() -> sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER))));
     }
 
     @Test
@@ -460,9 +450,10 @@ class PersonServiceImplTest {
 
         final Person activePerson = createPerson("active person", USER);
         activePerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(activePerson));
         when(personRepository.save(activePerson)).thenReturn(activePerson);
 
-        sut.update(activePerson);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER)));
         verify(applicationEventPublisher).publishEvent(any(PersonUpdatedEvent.class));
     }
 
@@ -471,9 +462,10 @@ class PersonServiceImplTest {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(inactivePerson));
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        sut.update(inactivePerson);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(INACTIVE)));
         verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
     }
 
@@ -482,9 +474,10 @@ class PersonServiceImplTest {
 
         final Person inactivePerson = createPerson("inactive person", USER);
         inactivePerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(inactivePerson));
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        sut.update(inactivePerson);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER)));
         verify(applicationEventPublisher, never()).publishEvent(any(PersonDisabledEvent.class));
     }
 
@@ -495,11 +488,9 @@ class PersonServiceImplTest {
         previousPerson.setId(1L);
         when(personRepository.findById(1L)).thenReturn(Optional.of(previousPerson));
 
-        final Person personToUpdate = createPerson("muster", USER, OFFICE);
-        personToUpdate.setId(1L);
-        when(personRepository.save(personToUpdate)).thenReturn(personToUpdate);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        sut.update(personToUpdate);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
 
         verify(applicationEventPublisher).publishEvent(personPermissionsChangedEventArgumentCaptor.capture());
         final PersonPermissionsChangedEvent event = personPermissionsChangedEventArgumentCaptor.getValue();
@@ -517,11 +508,9 @@ class PersonServiceImplTest {
         previousPerson.setId(1L);
         when(personRepository.findById(1L)).thenReturn(Optional.of(previousPerson));
 
-        final Person personToUpdate = createPerson("muster", USER, BOSS);
-        personToUpdate.setId(1L);
-        when(personRepository.save(personToUpdate)).thenReturn(personToUpdate);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        sut.update(personToUpdate);
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, BOSS)));
 
         verify(applicationEventPublisher, never()).publishEvent(any(PersonPermissionsChangedEvent.class));
     }
@@ -538,18 +527,16 @@ class PersonServiceImplTest {
     @Test
     void deletesExistingPersonDelegatesAndSendsEvent() {
 
-        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
-
         final Person person = new Person();
         final long personId = 42;
         person.setId(personId);
-        when(personRepository.existsById(personId)).thenReturn(true);
+        when(personRepository.findById(personId)).thenReturn(Optional.of(person));
 
-        sut.delete(person, signedInUser);
+        sut.delete(new PersonId(personId), new PersonId(1L));
 
         final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
 
-        inOrder.verify(personRepository).existsById(42L);
+        inOrder.verify(personRepository).findById(42L);
         inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
         assertThat(personDeletedEventArgumentCaptor.getValue().person())
             .isEqualTo(person);
@@ -561,13 +548,12 @@ class PersonServiceImplTest {
 
     @Test
     void deletingNotExistingPersonThrowsException() {
-        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
 
-        final Person person = new Person();
-        person.setId(1L);
-        assertThatThrownBy(() -> sut.delete(person, signedInUser)).isInstanceOf(IllegalArgumentException.class);
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        verify(personRepository).existsById(1L);
+        assertThatThrownBy(() -> sut.delete(new PersonId(1L), new PersonId(2L))).isInstanceOf(IllegalArgumentException.class);
+
+        verify(personRepository).findById(1L);
         verifyNoMoreInteractions(applicationEventPublisher, workingTimeWriteService, accountInteractionService, personRepository);
     }
 

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -206,6 +207,16 @@ class PersonTest {
         personOne.setId(1L);
 
         assertThat(personOne.hasAnyRole(DEPARTMENT_HEAD)).isFalse();
+    }
+
+    @Test
+    void ensureCanGetAndSetCreatedAt() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Instant createdAt = Instant.parse("2021-01-01T00:00:00Z");
+
+        person.setCreatedAt(createdAt);
+
+        assertThat(person.getCreatedAt()).isEqualTo(createdAt);
     }
 
     @Test

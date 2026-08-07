@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,46 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
     private DepartmentService departmentService;
     @Autowired
     private VacationTypeService vacationTypeService;
+    @Autowired
+    private EntityManager entityManager;
+
+    @Test
+    void ensureUpdateKeepsCreatedAtOfPersistedPerson() {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
+        final Long personId = person.getId();
+
+        // detach from the persistence context, so that the following update behaves like a separate request would
+        entityManager.flush();
+        entityManager.clear();
+
+        final Instant createdAt = personService.getPersonByID(personId).orElseThrow().getCreatedAt();
+
+        personService.update(new PersonId(personId),
+            PersonUpdate.ofPersonalData("user", "Marlene", "Muster", "new-mail@example.org"));
+
+        entityManager.flush();
+        entityManager.clear();
+
+        final Person updatedPerson = personService.getPersonByID(personId).orElseThrow();
+        assertThat(updatedPerson.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(updatedPerson.getEmail()).isEqualTo("new-mail@example.org");
+    }
+
+    @Test
+    void ensureUpdateWithImmutableCollectionsDirectlyAfterCreation() {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
+
+        // callers hand over immutable collections, e.g. Stream#toList, and the person is updated within the
+        // very transaction it was created in, like the demo data creation does
+        final Person updatedPerson = personService.update(person.getIdAsPersonId(),
+            PersonUpdate.ofPermissions(List.of(USER))
+                .withNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)));
+
+        assertThat(updatedPerson.getPermissions()).containsExactly(USER);
+        assertThat(updatedPerson.getNotifications()).containsExactly(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+    }
 
     @Test
     void deletePerson() {
@@ -139,7 +181,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).hasSize(1);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).hasSize(1);
 
-        personService.delete(personWithId, new Person());
+        personService.delete(personWithId.getIdAsPersonId(), new PersonId(personId + 1));
 
         assertThat(personRepository.existsById(personId)).isFalse();
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isZero();

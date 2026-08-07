@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -57,13 +58,10 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             if (!userUniqueID.equals(existentPerson.getUsername())) {
                 LOG.info("No person with given userUniqueID was found. Falling back to matching mail address for " +
                     "person lookup. Existing username '{}' is replaced with '{}'.", existentPerson.getUsername(), userUniqueID);
-                existentPerson.setUsername(userUniqueID);
             }
 
-            existentPerson.setFirstName(firstName);
-            existentPerson.setLastName(lastName);
-            existentPerson.setEmail(emailAddress);
-            personService.update(existentPerson);
+            personService.update(existentPerson.getIdAsPersonId(),
+                PersonUpdate.ofPersonalData(userUniqueID, firstName, lastName, emailAddress));
 
         } else {
             final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);

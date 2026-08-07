@@ -14,7 +14,9 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonMailService;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.SearchContext;
@@ -145,9 +147,10 @@ class PersonPermissionsViewControllerTest {
     void editPersonPermissionsCorrectly() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
@@ -155,16 +158,17 @@ class PersonPermissionsViewControllerTest {
             .param("permissions[1]", "OFFICE")
         );
 
-        verify(personService).update(person);
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
     }
 
     @Test
     void editPersonPermissionsAndMarkSessionToReloadAuthorities() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
@@ -172,7 +176,7 @@ class PersonPermissionsViewControllerTest {
             .param("permissions[1]", "OFFICE")
         );
 
-        verify(personService).update(person);
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
         verify(sessionService).markSessionToReloadAuthorities("username");
     }
 
@@ -183,8 +187,12 @@ class PersonPermissionsViewControllerTest {
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
 
+        final Person updatedPerson = new Person("username", "Meier", "Nina", "nina@example.org");
+        updatedPerson.setId(1L);
+        updatedPerson.setPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(updatedPerson);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
@@ -203,7 +211,8 @@ class PersonPermissionsViewControllerTest {
         final List<PersonPermissionsRoleDto> captorPermissions = permissionsCaptor.getValue();
         assertThat(captorPermissions).containsExactly(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
 
-        verify(personService).update(person);
+        verify(personService).update(new PersonId(1L),
+            PersonUpdate.ofPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY)));
     }
 
     @Test
@@ -213,8 +222,12 @@ class PersonPermissionsViewControllerTest {
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
+        final Person updatedPerson = new Person("username", "Meier", "Nina", "nina@example.org");
+        updatedPerson.setId(1L);
+        updatedPerson.setPermissions(List.of(USER, OFFICE));
+
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(updatedPerson);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
@@ -223,7 +236,7 @@ class PersonPermissionsViewControllerTest {
         );
 
         verify(personMailService, never()).sendPersonGainedMorePermissionsNotification(any(), any());
-        verify(personService).update(person);
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
     }
 
     @Test
@@ -246,7 +259,7 @@ class PersonPermissionsViewControllerTest {
         person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
             .andExpect(flash().attribute("updateSuccess", true));
@@ -259,7 +272,7 @@ class PersonPermissionsViewControllerTest {
         person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
             .andExpect(status().isFound())

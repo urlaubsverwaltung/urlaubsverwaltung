@@ -42,20 +42,24 @@ public interface PersonService {
                   List<MailNotification> notifications, List<Role> permissions);
 
     /**
-     * Updates the given person.
+     * Updates the given data of the person with the given id. Data that is not part of the given
+     * {@linkplain PersonUpdate} stays untouched.
      *
-     * @param person to be saved
+     * @param personId   of the person to update
+     * @param personUpdate describing the data to change
      * @return updated person
+     * @throws IllegalArgumentException if there is no person with the given id
      */
-    Person update(Person person);
+    Person update(PersonId personId, PersonUpdate personUpdate);
 
     /**
-     * Deletes a {@link Person} in the database by its primary key.
+     * Deletes the person with the given id and everything that belongs to them.
      *
-     * @param person       the person to be deleted
-     * @param signedInUser the person who wants to delete the given person
+     * @param personId         of the person to delete
+     * @param signedInUserId   of the person who wants to delete the given person
+     * @throws IllegalArgumentException if there is no person with the given id
      */
-    void delete(Person person, Person signedInUser);
+    void delete(PersonId personId, PersonId signedInUserId);
 
     /**
      * finds a {@link Person} in the database by its primary key.

@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -183,9 +184,8 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
             return "person/person_notifications";
         }
 
-        person.setNotifications(mapToMailNotifications(newPersonNotificationsDto));
-
-        personService.update(person);
+        personService.update(person.getIdAsPersonId(),
+            PersonUpdate.ofNotifications(mapToMailNotifications(newPersonNotificationsDto)));
 
         final boolean restrictToDepartments = newPersonNotificationsDto.getRestrictToDepartments().isActive();
         userNotificationSettingsService.updateNotificationSettings(person.getIdAsPersonId(), restrictToDepartments);

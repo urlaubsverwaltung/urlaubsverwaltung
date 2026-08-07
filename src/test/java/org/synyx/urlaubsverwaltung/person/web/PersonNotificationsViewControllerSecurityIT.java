@@ -115,7 +115,7 @@ class PersonNotificationsViewControllerSecurityIT extends SingleTenantTestContai
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personService.update(any())).thenReturn(person);
+        when(personService.update(any(), any())).thenReturn(person);
 
         perform(post("/web/person/1/notifications")
             .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))

@@ -18,7 +18,9 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -110,6 +113,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             ));
 
             final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
 
             when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
 
@@ -117,14 +121,11 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             verify(personService, never()).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
 
         @Test
@@ -142,6 +143,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             ));
 
             final Person personForLogin = new Person();
+            personForLogin.setId(1L);
             personForLogin.setUsername("idOfOtherIdentityProvider");
             personForLogin.setPermissions(List.of(USER));
             final Optional<Person> person = Optional.of(personForLogin);
@@ -153,14 +155,11 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             verify(personService).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
     }
 
@@ -185,20 +184,19 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 )
             );
 
-            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(new Person(uniqueID, familyName, givenName, email)));
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
 
             sut.handle(event);
 
             verify(personService, never()).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
     }
 
@@ -223,20 +221,19 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 )
             );
 
-            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(new Person(uniqueID, familyName, givenName, email)));
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
 
             sut.handle(event);
 
             verify(personService, never()).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
     }
 
@@ -261,20 +258,19 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 )
             );
 
-            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(new Person(uniqueID, familyName, givenName, email)));
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
 
             sut.handle(event);
 
             verify(personService, never()).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
 
         @Test
@@ -311,20 +307,19 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 )
             );
 
-            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(new Person(uniqueID, familyName, givenName, email)));
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
 
             sut.handle(event);
 
             verify(personService, never()).getPersonByMailAddress(email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).update(personArgumentCaptor.capture());
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
 
-            Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
-            assertThat(update.getLastName()).isEqualTo(familyName);
-            assertThat(update.getFirstName()).isEqualTo(givenName);
-            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
+                new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
         }
 
         @Test

@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -65,10 +66,8 @@ class PersonDataProvider {
         if (maybePerson.isPresent()) {
 
             final Person person = maybePerson.get();
-            person.setPermissions(permissions);
-            person.setNotifications(notifications);
-
-            final Person savedPerson = personService.update(person);
+            final Person savedPerson = personService.update(person.getIdAsPersonId(),
+                PersonUpdate.ofPermissions(permissions).withNotifications(notifications));
             personBasedataService.update(new PersonBasedata(savedPerson.getIdAsPersonId(), String.valueOf(personnelNumber), ""));
 
             final Year currentYear = Year.now(clock);

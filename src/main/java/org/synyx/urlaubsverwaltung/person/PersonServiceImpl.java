@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,19 +52,23 @@ class PersonServiceImpl implements PersonService {
     private final AccountInteractionService accountInteractionService;
     private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final Clock clock;
 
     @Autowired
     PersonServiceImpl(
         PersonRepository personRepository, AccountInteractionService accountInteractionService,
-        WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher
+        WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher,
+        Clock clock
     ) {
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.clock = clock;
     }
 
     @Override
+    @Transactional
     public Person create(String username, String firstName, String lastName, String email) {
 
         final List<MailNotification> defaultMailNotifications = List.of(
@@ -89,14 +95,22 @@ class PersonServiceImpl implements PersonService {
             USER
         );
 
-        return create(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
+        return createPerson(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
     }
 
     @Override
+    @Transactional
     public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        final Person person = normalizePerson(new Person(username, lastName, firstName, email));
+        return createPerson(username, firstName, lastName, email, notifications, permissions);
+    }
+
+    private Person createPerson(String username, String firstName, String lastName, String email,
+                                List<MailNotification> notifications, List<Role> permissions) {
+
+        final Person person = new Person(username.strip(), lastName.strip(), firstName.strip(), email.strip());
+        person.setCreatedAt(Instant.now(clock));
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
@@ -112,18 +126,24 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person update(Person person) {
+    @Transactional
+    public Person update(PersonId personId, PersonUpdate personUpdate) {
 
-        if (person.getId() == null) {
-            throw new IllegalArgumentException("Can not update a person that is not persisted yet");
-        }
+        final Person person = personRepository.findById(personId.value())
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
 
-        final Collection<Role> previousPermissions = personRepository.findById(person.getId())
-            .map(Person::getPermissions)
-            .map(List::copyOf)
-            .orElse(List.of());
+        final Collection<Role> previousPermissions = List.copyOf(person.getPermissions());
 
-        final Person updatedPerson = personRepository.save(normalizePerson(person));
+        personUpdate.personalData().ifPresent(personalData -> {
+            person.setUsername(personalData.username());
+            person.setFirstName(personalData.firstName());
+            person.setLastName(personalData.lastName());
+            person.setEmail(personalData.email());
+        });
+        personUpdate.permissions().ifPresent(person::setPermissions);
+        personUpdate.notifications().ifPresent(person::setNotifications);
+
+        final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
 
         if (updatedPerson.isInactive()) {
@@ -139,11 +159,10 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void delete(Person person, Person signedInUser) {
+    public void delete(PersonId personId, PersonId signedInUserId) {
 
-        if (!personRepository.existsById(person.getId())) {
-            throw new IllegalArgumentException("Can not find a person for ID = " + person.getId());
-        }
+        final Person person = personRepository.findById(personId.value())
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
 
         applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
         accountInteractionService.deleteAllByPerson(person);
@@ -151,7 +170,7 @@ class PersonServiceImpl implements PersonService {
         personRepository.delete(person);
 
         final String status = person.isActive() ? "active" : "inactive";
-        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUser.getId());
+        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUserId.value());
     }
 
     @Override
@@ -277,23 +296,8 @@ class PersonServiceImpl implements PersonService {
         }
     }
 
-    private Person normalizePerson(Person person) {
-        final Person normalized = new Person();
-
-        normalized.setUsername(person.getUsername().strip());
-        normalized.setLastName(person.getLastName().strip());
-        normalized.setFirstName(person.getFirstName().strip());
-        normalized.setEmail(person.getEmail().strip());
-
-        normalized.setId(person.getId());
-        normalized.setPermissions(person.getPermissions());
-        normalized.setNotifications(person.getNotifications());
-
-        return normalized;
-    }
-
     private PersonCreatedEvent toPersonCreatedEvent(Person person) {
-        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive(), person.getCreatedAt());
     }
 
     private PersonUpdatedEvent toPersonUpdateEvent(Person person) {

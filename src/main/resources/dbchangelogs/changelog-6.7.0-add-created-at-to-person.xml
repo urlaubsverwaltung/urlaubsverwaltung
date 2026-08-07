@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-created-at-to-person">
+    <addColumn tableName="person">
+      <column name="created_at" type="timestamptz"/>
+    </addColumn>
+  </changeSet>
+
+  <!--
+    Backfill created_at for persons that existed before this column was introduced, using the
+    earliest working_time.valid_from for that person as the best-effort proxy for "start of
+    activity" (the same source used to derive person_active_period.valid_from in
+    changelog-6.7.0-person-active-period.xml). Persons without any working_time row (should not
+    happen in practice, since every person gets a default working time on creation) get the epoch
+    instead of now(), which would be indistinguishable from a real creation date: "created_at is the
+    epoch" can be read as "the creation date of this person is not known".
+  -->
+  <changeSet author="schneider" id="add-created-at-to-person--backfill">
+    <preConditions>
+      <columnExists tableName="person" columnName="created_at"/>
+    </preConditions>
+    <sql>
+      UPDATE person
+      SET created_at = first_working_time.valid_from::timestamptz
+      FROM (
+        SELECT person_id, MIN(valid_from) as valid_from
+        FROM working_time
+        GROUP BY person_id
+      ) first_working_time
+      WHERE person.id = first_working_time.person_id
+        AND person.created_at IS NULL;
+    </sql>
+    <sql>
+      UPDATE person
+      SET created_at = '1970-01-01T00:00:00Z'::timestamptz
+      WHERE created_at IS NULL;
+    </sql>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-created-at-to-person--not-null">
+    <addNotNullConstraint tableName="person" columnName="created_at" columnDataType="timestamptz"/>
+  </changeSet>
+</databaseChangeLog>

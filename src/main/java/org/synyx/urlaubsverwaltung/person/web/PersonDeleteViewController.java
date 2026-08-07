@@ -139,7 +139,7 @@ public class PersonDeleteViewController implements HasLaunchpad {
     private String deletePerson(Person person, RedirectAttributes redirectAttributes) {
         final boolean isActive = person.isActive();
 
-        personService.delete(person, personService.getSignedInUser());
+        personService.delete(person.getIdAsPersonId(), personService.getSignedInUser().getIdAsPersonId());
 
         redirectAttributes.addFlashAttribute("personDeletionSuccess", person.getNiceName());
 

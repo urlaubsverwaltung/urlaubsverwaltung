@@ -25,11 +25,6 @@ final class PersonPermissionsMapper {
         return personPermissionsDto;
     }
 
-    static Person merge(Person person, PersonPermissionsDto personPermissionsDto) {
-        person.setPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions()));
-        return person;
-    }
-
     static List<Role> mapPermissionsDtoToRole(List<PersonPermissionsRoleDto> permissionsRoleDto) {
         final List<Role> mappedToRoles = new ArrayList<>();
         permissionsRoleDto.forEach(roleDto -> {

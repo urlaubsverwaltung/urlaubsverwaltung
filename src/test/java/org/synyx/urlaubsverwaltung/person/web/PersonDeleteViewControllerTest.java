@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
@@ -112,24 +113,28 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmed() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        signedInUser.setId(2L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
             .andExpect(redirectedUrl("/web/person?active=true"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
-        verify(personService).delete(person, signedInUser);
+        verify(personService).delete(new PersonId(1L), new PersonId(2L));
     }
 
     @Test
     void deletePersonConfirmedAjax() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        signedInUser.setId(2L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
@@ -140,15 +145,17 @@ class PersonDeleteViewControllerTest {
             .andExpect(redirectedUrl("/web/person?active=true"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
-        verify(personService).delete(person, signedInUser);
+        verify(personService).delete(new PersonId(1L), new PersonId(2L));
     }
 
     @Test
     void ensureRedirectToInactivePersons() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        signedInUser.setId(2L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
         person.setPermissions(List.of(INACTIVE));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
@@ -156,7 +163,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(redirectedUrl("/web/person?active=false"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
-        verify(personService).delete(person, signedInUser);
+        verify(personService).delete(new PersonId(1L), new PersonId(2L));
     }
 
     @Test
