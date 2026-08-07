@@ -487,6 +487,84 @@ class SickNoteStatisticsTest {
     }
 
     @Nested
+    class ShouldWorkDaysForDateRange {
+
+        @Test
+        void ensureSumsTargetWorkDaysOfAllPersonsForTheGivenRange() {
+            final Person person = anyPerson();
+            final Person person2 = new Person("master", "Master", "Marlon", "master@example.org");
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+            final WorkingTimeCalendar workingTimeCalendar2 = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = Map.of(person, workingTimeCalendar, person2, workingTimeCalendar2);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person, person2), workingTimeCalendarsByPerson);
+
+            // monday to sunday --> every day of january 1-5 is a target work day, for both persons --> 5 + 5 = 10
+            final BigDecimal result = sut.getShouldWorkDaysForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 5));
+            assertThat(result).isEqualByComparingTo(valueOf(10));
+        }
+
+        @Test
+        void ensureOnlyCountsDaysWithinTheGivenRange() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person), Map.of(person, workingTimeCalendar));
+
+            final BigDecimal result = sut.getShouldWorkDaysForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 3));
+            assertThat(result).isEqualByComparingTo(valueOf(3));
+        }
+
+        @Test
+        void ensureZeroWhenThereAreNoWorkingTimeCalendars() {
+            final Person person = anyPerson();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person));
+
+            final BigDecimal result = sut.getShouldWorkDaysForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 31));
+            assertThat(result).isEqualByComparingTo(ZERO);
+        }
+
+        @Test
+        void ensureIgnoresPersonsMissingFromWorkingTimeCalendarMap() {
+            final Person person = anyPerson();
+            final Person personWithoutCalendar = new Person("master", "Master", "Marlon", "master@example.org");
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person, personWithoutCalendar), Map.of(person, workingTimeCalendar));
+
+            // personWithoutCalendar contributes zero target work days --> only person's 3 days are counted
+            final BigDecimal result = sut.getShouldWorkDaysForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 3));
+            assertThat(result).isEqualByComparingTo(valueOf(3));
+        }
+
+        @Test
+        void ensureZeroWhenTheRangeHasNoTargetWorkDays() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"), date -> false);
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person), Map.of(person, workingTimeCalendar));
+
+            final BigDecimal result = sut.getShouldWorkDaysForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 31));
+            assertThat(result).isEqualByComparingTo(ZERO);
+        }
+    }
+
+    @Nested
     class SickRateByMonth {
 
         @ParameterizedTest

@@ -129,6 +129,12 @@
                   <span class="stat-card__value">
                     <span th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}">13,37%</span>
                   </span>
+                  <p
+                    class="mt-2 text-sm text-gray-500 dark:text-zinc-400"
+                    th:text="#{company.overview.metrics.health-rate.days-info-text(${sickDaysStatistic.nrOfSickDays}, ${sickDaysStatistic.nrOfShouldWorkDays})}"
+                  >
+                    42 Kranktage (inkl. Kind-Krank) von 1337 Sollarbeitstagen.
+                  </p>
                 </div>
               </div>
             </div>

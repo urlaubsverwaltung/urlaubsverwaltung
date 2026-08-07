@@ -31,7 +31,9 @@ class HealthSickDaysStatisticService {
         final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer);
 
         final HealthRate healthRate = HealthRate.of(ONE_HUNDRED.subtract(statistics.getSickRate()));
+        final BigDecimal totalNrOfSickDays = statistics.getTotalNumberOfSickDaysAllCategories();
+        final BigDecimal shouldWorkDays = statistics.getShouldWorkDaysForDateRange(from, to);
 
-        return new SickDaysStatistic(healthRate);
+        return new SickDaysStatistic(healthRate, totalNrOfSickDays, shouldWorkDays);
     }
 }

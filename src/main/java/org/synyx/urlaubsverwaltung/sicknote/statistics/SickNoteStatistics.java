@@ -47,6 +47,7 @@ public class SickNoteStatistics {
     private final List<BigDecimal> numberOfSickDaysByMonth;
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
     private final List<BigDecimal> targetWorkDaysByMonth;
+    private final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson;
 
     SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons) {
         this(year, asOfDate, sickNotes, persons, Map.of());
@@ -70,6 +71,8 @@ public class SickNoteStatistics {
 
         this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, asOfDate, sickNotes, SICK_NOTE);
         this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, asOfDate, sickNotes, SICK_NOTE_CHILD);
+
+        this.workingTimeCalendarsByPerson = workingTimeCalendarsByPerson;
         this.targetWorkDaysByMonth = calculateTargetWorkDaysByMonth(year, asOfDate, persons, workingTimeCalendarsByPerson);
     }
 
@@ -79,6 +82,19 @@ public class SickNoteStatistics {
 
     public List<BigDecimal> getNumberOfChildSickDaysByMonth() {
         return numberOfChildSickDaysByMonth;
+    }
+
+    /**
+     * Target (expected) work days of all considered persons for the given date range.
+     *
+     * @param from first day of the range, inclusive
+     * @param to   last day of the range, inclusive
+     * @return the sum of target work days of all considered persons in that range
+     */
+    public BigDecimal getShouldWorkDaysForDateRange(LocalDate from, LocalDate to) {
+        return workingTimeCalendarsByPerson.values().stream()
+            .map(workingTimeCalendar -> workingTimeCalendar.workingTime(from, to))
+            .reduce(ZERO, BigDecimal::add);
     }
 
     /**
