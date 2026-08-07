@@ -39,6 +39,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
     private final PersonService personService;
     private final HealthOvertimeStatisticService overtimeStatisticService;
+    private final HealthSickDaysStatisticService sickDaysStatisticService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -46,12 +47,14 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     CompanyController(
         PersonService personService,
         HealthOvertimeStatisticService overtimeStatisticService,
+        HealthSickDaysStatisticService sickDaysStatisticService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
         this.overtimeStatisticService = overtimeStatisticService;
+        this.sickDaysStatisticService = sickDaysStatisticService;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -72,15 +75,13 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final DateRange previousDateRange = toPreviousRange(dateRange);
 
         final OvertimeStatDto overtimeStatDto = overtimeStatistic(signedInUser, dateRange, previousDateRange);
-
-        final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
-            toLocalDate(dateRange.start),
-            toLocalDate(dateRange.end),
-            overtimeStatDto
-        );
+        final SickDaysStatDto sickDaysStatDto = sickDaysStatistic(signedInUser, dateRange);
 
         model.addAttribute("viewMode", viewMode.name().toLowerCase());
-        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("dateRangeStart", toLocalDate(dateRange.start));
+        model.addAttribute("dateRangeEnd", toLocalDate(dateRange.end));
+        model.addAttribute("overtimeStatistic", overtimeStatDto);
+        model.addAttribute("sickDaysStatistic", sickDaysStatDto);
 
         return "company/company-overview";
     }
@@ -143,6 +144,18 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
             toOvertimeDurationDto(averageGrowth),
             overtimeDistributionDto
         );
+    }
+
+    private SickDaysStatDto sickDaysStatistic(Person signedInUser, DateRange dateRange) {
+
+        final LocalDate from = toLocalDate(dateRange.start);
+        final LocalDate to = toLocalDate(dateRange.end);
+
+        final SickDaysStatistic stats = sickDaysStatisticService.getSickDaysStatistics(signedInUser, from, to);
+
+        final double healthRate = stats.healthRate().value();
+
+        return new SickDaysStatDto(healthRate);
     }
 
     record DateRange(Instant start, Instant end) {}

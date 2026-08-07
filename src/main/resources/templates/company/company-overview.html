@@ -32,7 +32,7 @@
         <turbo-frame id="frame-company-overview">
           <p
             class="mt-8 font-bold text-base"
-            th:with="from=${#temporals.format(statistics.from, 'dd.MM.yyyy')}, to=${#temporals.format(statistics.to, 'dd.MM.yyyy')}"
+            th:with="from=${#temporals.format(dateRangeStart, 'dd.MM.yyyy')}, to=${#temporals.format(dateRangeEnd, 'dd.MM.yyyy')}"
             th:text="#{company.overview.description(${from}, ${to})}"
           >
             Aggregierte Auswertung ohne Personenbezug - $von $bis
@@ -93,7 +93,7 @@
               </span>
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
-            <div class="mt-4 grid grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
+            <div class="mt-4 grid gap-4 grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
               <div class="stat-card stat-card--kpi">
                 <div class="stat-card__header stat-card__header--no-border">
                   <span
@@ -107,14 +107,27 @@
                   <span class="stat-card__value">
                     <span
                       class="company-overtime-average-hours-value"
-                      th:text="${statistics.overtime.average.negative} ? '-' + ${statistics.overtime.average.hours} : ${statistics.overtime.average.hours}"
+                      th:text="${overtimeStatistic.average.negative} ? '-' + ${overtimeStatistic.average.hours} : ${overtimeStatistic.average.hours}"
                       >-3</span
                     >&nbsp;<span th:text="#{hours.abbr}">h</span>
-                    <span
-                      class="company-overtime-average-minutes-value"
-                      th:text="${statistics.overtime.average.minutes}"
+                    <span class="company-overtime-average-minutes-value" th:text="${overtimeStatistic.average.minutes}"
                       >30</span
                     >&nbsp;<span th:text="#{minutes.abbr}">min</span>
+                  </span>
+                </div>
+              </div>
+              <div class="stat-card stat-card--kpi">
+                <div class="stat-card__header stat-card__header--no-border">
+                  <span
+                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                    th:text="#{company.overview.metrics.health-rate}"
+                  >
+                    Gesundheitsquote
+                  </span>
+                </div>
+                <div class="stat-card__body">
+                  <span class="stat-card__value">
+                    <span th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}">13,37%</span>
                   </span>
                 </div>
               </div>
@@ -130,14 +143,14 @@
               </span>
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
-            <div class="mt-4 grid @3xl/main:grid-cols-2">
+            <div class="mt-4 grid gap-4 @3xl/main:grid-cols-2">
               <div class="stat-card">
                 <div class="stat-card__header stat-card__header--bordered">
                   <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
                 </div>
                 <div
                   class="stat-card__body"
-                  th:with="entries=${statistics.overtime.distribution.entries}, max=${statistics.overtime.distribution.max}, maxBarHeight=150, minBarHeight=3"
+                  th:with="entries=${overtimeStatistic.distribution.entries}, max=${overtimeStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
@@ -164,7 +177,7 @@
                   </ol>
                   <p
                     class="mt-4 text-sm"
-                    th:with="last=${statistics.overtime.distribution.entries.last}"
+                    th:with="last=${overtimeStatistic.distribution.entries.last}"
                     th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
                   >
                     Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last

@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
+import org.synyx.urlaubsverwaltung.company.SickDaysStatistic.HealthRate;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeType;
@@ -53,6 +54,8 @@ class CompanyControllerTest {
     @Mock
     private HealthOvertimeStatisticService overtimeStatisticService;
     @Mock
+    private HealthSickDaysStatisticService sickDaysStatisticService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -63,8 +66,7 @@ class CompanyControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new CompanyController(personService, overtimeStatisticService, defaultPersonSuggestionUrlStrategy,
-            personSearchUiFragmentSupplier, clock);
+        sut = sutWithClock(clock);
     }
 
     @Test
@@ -90,7 +92,7 @@ class CompanyControllerTest {
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty());
+        stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0)));
 
         perform(get("/web/company/overview"))
             .andExpect(status().isOk())
@@ -104,7 +106,7 @@ class CompanyControllerTest {
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty());
+        stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0)));
 
         perform(get("/web/company/overview").param("view", "not-a-view-mode"))
             .andExpect(status().isOk())
@@ -119,13 +121,15 @@ class CompanyControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate start = currentMonth.minusMonths(2).atDay(1);
-        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty());
+        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0)));
 
         perform(get("/web/company/overview").param("view", "quarter"))
             .andExpect(status().isOk())
             .andExpect(view().name("company/company-overview"))
             .andExpect(model().attribute("viewMode", "quarter"))
-            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(start, today))));
+            .andExpect(model().attribute("dateRangeStart", equalTo(start)))
+            .andExpect(model().attribute("dateRangeEnd", equalTo(today)))
+            .andExpect(model().attribute("overtimeStatistic", equalTo(emptyOvertimeStatisticsDto())));
     }
 
     @Test
@@ -135,13 +139,15 @@ class CompanyControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate start = Year.of(currentMonth.getYear()).atDay(1);
-        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty());
+        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0)));
 
         perform(get("/web/company/overview").param("view", "year"))
             .andExpect(status().isOk())
             .andExpect(view().name("company/company-overview"))
             .andExpect(model().attribute("viewMode", "year"))
-            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(start, today))));
+            .andExpect(model().attribute("dateRangeStart", equalTo(start)))
+            .andExpect(model().attribute("dateRangeEnd", equalTo(today)))
+            .andExpect(model().attribute("overtimeStatistic", equalTo(emptyOvertimeStatisticsDto())));
     }
 
     @Test
@@ -149,19 +155,20 @@ class CompanyControllerTest {
 
         // 2026-01-14T23:30:00Z is already 2026-01-15T00:30 in Europe/Berlin (CET, UTC+1)
         final Clock nearMidnightUtcClock = Clock.fixed(Instant.parse("2026-01-14T23:30:00Z"), UTC);
-        final CompanyController sutAtBerlinMidnight = new CompanyController(personService, overtimeStatisticService,
-            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, nearMidnightUtcClock);
+        final CompanyController sutAtBerlinMidnight = sutWithClock(nearMidnightUtcClock);
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate berlinToday = LocalDate.of(2026, JANUARY, 15);
         final LocalDate monthStart = LocalDate.of(2026, JANUARY, 1);
-        stubCurrentAndPreviousRange(signedInUser, monthStart, berlinToday, OvertimeStatistic.empty());
+        stubCurrentAndPreviousRange(signedInUser, monthStart, berlinToday, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0)));
 
         perform(get("/web/company/overview"), sutAtBerlinMidnight)
             .andExpect(status().isOk())
-            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(monthStart, berlinToday))));
+            .andExpect(model().attribute("dateRangeStart", equalTo(monthStart)))
+            .andExpect(model().attribute("dateRangeEnd", equalTo(berlinToday)))
+            .andExpect(model().attribute("overtimeStatistic", equalTo(emptyOvertimeStatisticsDto())));
     }
 
     @Test
@@ -179,31 +186,48 @@ class CompanyControllerTest {
 
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(current);
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(previous);
+        when(sickDaysStatisticService.getSickDaysStatistics(signedInUser, start, end)).thenReturn(new SickDaysStatistic(new HealthRate(0)));
 
-        final CompanyStatisticsDto expected = new CompanyStatisticsDto(
-            start, end,
-            new OvertimeStatDto(
-                new OvertimeDurationDto(false, 15, 45),
-                new OvertimeDurationDto(false, 10, 45),
-                new OvertimeDistributionDto(4, List.of(
-                    new OvertimeDistributionEntryDto(0, 5, 1),
-                    new OvertimeDistributionEntryDto(5, 15, 1),
-                    new OvertimeDistributionEntryDto(15, 25, 1),
-                    new OvertimeDistributionEntryDto(25, null, 1)
-                ))
-            )
+        final OvertimeStatDto expected = new OvertimeStatDto(
+            new OvertimeDurationDto(false, 15, 45),
+            new OvertimeDurationDto(false, 10, 45),
+            new OvertimeDistributionDto(4, List.of(
+                new OvertimeDistributionEntryDto(0, 5, 1),
+                new OvertimeDistributionEntryDto(5, 15, 1),
+                new OvertimeDistributionEntryDto(15, 25, 1),
+                new OvertimeDistributionEntryDto(25, null, 1)
+            ))
         );
 
         perform(get("/web/company/overview").param("view", "month"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("statistics", equalTo(expected)));
+            .andExpect(model().attribute("dateRangeStart", equalTo(start)))
+            .andExpect(model().attribute("dateRangeEnd", equalTo(end)))
+            .andExpect(model().attribute("overtimeStatistic", equalTo(expected)));
     }
 
-    private void stubCurrentAndPreviousRange(Person signedInUser, LocalDate start, LocalDate end, OvertimeStatistic statistic) {
+    @Test
+    void ensureOverviewComputesSickDaysStatistic() throws Exception {
+
+        final Person signedInUser = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate start = currentMonth.atDay(1);
+
+        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty(), new SickDaysStatistic(new HealthRate(0.75)));
+
+        perform(get("/web/company/overview").param("view", "month"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickDaysStatistic", equalTo(new SickDaysStatDto(0.75))));
+    }
+
+    private void stubCurrentAndPreviousRange(Person signedInUser, LocalDate start, LocalDate end, OvertimeStatistic statistic, SickDaysStatistic sickDaysStatistic) {
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(statistic);
 
         final LocalDate[] previousRange = toPreviousRange(start, end);
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(statistic);
+
+        when(sickDaysStatisticService.getSickDaysStatistics(signedInUser, start, end)).thenReturn(sickDaysStatistic);
     }
 
     private static LocalDate[] toPreviousRange(LocalDate start, LocalDate end) {
@@ -235,20 +259,22 @@ class CompanyControllerTest {
         return new Overtime(new OvertimeId(personId.value()), personId, new DateRange(day, day), duration, OvertimeType.UV_INTERNAL, Instant.EPOCH);
     }
 
-    private static CompanyStatisticsDto emptyStatisticsDto(LocalDate from, LocalDate to) {
-        return new CompanyStatisticsDto(
-            from, to,
-            new OvertimeStatDto(
-                new OvertimeDurationDto(false, 0, 0),
-                new OvertimeDurationDto(false, 0, 0),
-                new OvertimeDistributionDto(0, List.of(
-                    new OvertimeDistributionEntryDto(0, 5, 0),
-                    new OvertimeDistributionEntryDto(5, 15, 0),
-                    new OvertimeDistributionEntryDto(15, 25, 0),
-                    new OvertimeDistributionEntryDto(25, null, 0)
-                ))
-            )
+    private static OvertimeStatDto emptyOvertimeStatisticsDto() {
+        return new OvertimeStatDto(
+            new OvertimeDurationDto(false, 0, 0),
+            new OvertimeDurationDto(false, 0, 0),
+            new OvertimeDistributionDto(0, List.of(
+                new OvertimeDistributionEntryDto(0, 5, 0),
+                new OvertimeDistributionEntryDto(5, 15, 0),
+                new OvertimeDistributionEntryDto(15, 25, 0),
+                new OvertimeDistributionEntryDto(25, null, 0)
+            ))
         );
+    }
+
+    private CompanyController sutWithClock(Clock clock) {
+        return new CompanyController(personService, overtimeStatisticService, sickDaysStatisticService,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
