@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.person.extension;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonServiceExtension;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,8 +13,6 @@ import org.synyx.urlaubsverwaltung.search.PageStreamSupport;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPerson;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonDTO;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonUpdate;
@@ -23,8 +20,6 @@ import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPer
 @ConditionalOnExtensionsEnabled
 @Service
 public class PersonServiceExtensionImpl implements PersonServiceExtension {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
@@ -51,11 +46,7 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
 
     @Override
     public void delete(PersonDTO person, Long signedInUserId) {
-        personService.getPersonByID(signedInUserId)
-            .ifPresentOrElse(
-                signedInUser -> personService.delete(new PersonId(person.id()), signedInUser.getIdAsPersonId()),
-                () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.id(), signedInUserId)
-            );
+        personService.delete(new PersonId(person.id()), new PersonId(signedInUserId));
     }
 
     @Override

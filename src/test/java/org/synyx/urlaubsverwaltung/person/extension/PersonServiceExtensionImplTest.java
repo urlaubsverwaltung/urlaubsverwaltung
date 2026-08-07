@@ -115,22 +115,10 @@ class PersonServiceExtensionImplTest {
 
     @Test
     void deleteHappyPath() {
-        final Person signedInUser = new Person("boss", "Scherer", "Theresa", "boss@example.org");
-        signedInUser.setId(42L);
-        when(personService.getPersonByID(any())).thenReturn(Optional.of(signedInUser));
 
         sut.delete(anyPersonDTO(1L), 42L);
 
-        verify(personService).getPersonByID(42L);
         verify(personService).delete(new PersonId(1L), new PersonId(42L));
-    }
-
-    @Test
-    void ensureDeleteHandlesSignedInUserUnknown() {
-
-        sut.delete(anyPersonDTO(), 42L);
-
-        verify(personService).getPersonByID(42L);
         verifyNoMoreInteractions(personService);
     }
 
