@@ -32,6 +32,7 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
+import org.synyx.urlaubsverwaltung.search.StringComparators;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
@@ -314,7 +315,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
         if (!originalAccountSort.equals(Sort.unsorted())) {
             final Comparator<PersonDto> accountComparator = new SortComparator<>(PersonDto.class, originalAccountSort);
-            personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName));
+            personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName, StringComparators.localeAwareComparator()));
         }
 
         return new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());

@@ -773,8 +773,9 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", contains(
-                        hasProperty("firstName", is("AA")),
+                        // "aa" and "AA" are equal for the case-insensitive comparator, insertion order is kept
                         hasProperty("firstName", is("aa")),
+                        hasProperty("firstName", is("AA")),
                         hasProperty("firstName", is("boss"))
                     ))
                 )))));

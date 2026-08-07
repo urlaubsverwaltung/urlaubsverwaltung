@@ -1,15 +1,23 @@
 package org.synyx.urlaubsverwaltung.search;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SortComparatorTest {
+
+    @AfterEach
+    void tearDown() {
+        LocaleContextHolder.resetLocaleContext();
+    }
 
     @Test
     void ensureSortingAsc() {
@@ -52,6 +60,40 @@ class SortComparatorTest {
             new StringBox("Anne Schmidt"),
             new StringBox("anne Schneider"),
             new StringBox("Bernhard")
+        );
+    }
+
+    @Test
+    void ensureSortingAscByStringHandlesUmlautsAndSpecialCharacters() {
+        LocaleContextHolder.setLocale(Locale.GERMAN);
+
+        final Sort sort = Sort.by("value");
+        final SortComparator<StringBox> sut = new SortComparator<>(StringBox.class, sort);
+
+        final List<StringBox> list = List.of(
+            new StringBox("Jof"),
+            new StringBox("Justus"),
+            new StringBox("Joél"),
+            new StringBox("O'Brian"),
+            new StringBox("Jürgen"),
+            new StringBox("Joe"),
+            new StringBox("Obrecht"),
+            new StringBox("Özdemir"),
+            new StringBox("Otto")
+        );
+
+        final List<StringBox> actual = list.stream().sorted(sut).toList();
+
+        assertThat(actual).containsExactly(
+            new StringBox("Joe"),
+            new StringBox("Joél"),
+            new StringBox("Jof"),
+            new StringBox("Jürgen"),
+            new StringBox("Justus"),
+            new StringBox("O'Brian"),
+            new StringBox("Obrecht"),
+            new StringBox("Otto"),
+            new StringBox("Özdemir")
         );
     }
 

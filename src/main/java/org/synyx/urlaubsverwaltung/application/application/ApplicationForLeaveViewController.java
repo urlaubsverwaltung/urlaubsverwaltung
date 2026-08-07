@@ -42,6 +42,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingFirstNameLastName;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -475,7 +476,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .sorted(comparingFirstNameLastName())
             .toList();
     }
 

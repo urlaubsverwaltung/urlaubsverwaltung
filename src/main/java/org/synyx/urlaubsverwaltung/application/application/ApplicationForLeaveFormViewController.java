@@ -54,7 +54,6 @@ import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
@@ -63,6 +62,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.person.PersonComparators.comparingFirstNameLastName;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -622,7 +622,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         return concat(concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream()), Stream.of(signedInUser))
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .sorted(comparingFirstNameLastName())
             .toList();
     }
 }
