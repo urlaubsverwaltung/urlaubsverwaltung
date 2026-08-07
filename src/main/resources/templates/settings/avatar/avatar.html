@@ -9,18 +9,24 @@
         <div class="uv-form__group-info">
           <div class="uv-help-block">
             <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-            <p>
-              <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
-              <a
-                class="inline-flex items-center"
-                target="_blank"
-                rel="noopener"
-                href="https://urlaubsverwaltung.cloud/hilfe/benutzer/#gibt-es-die-moeglichkeit-gravatar-global-zu-deaktivieren"
-              >
-                <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.two}" />
-                <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
-              </a>
-            </p>
+            <div class="space-y-2">
+              <p>
+                <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
+                <a
+                  class="inline-flex items-center"
+                  target="_blank"
+                  rel="noopener"
+                  href="https://urlaubsverwaltung.cloud/hilfe/benutzer/#gibt-es-die-moeglichkeit-gravatar-global-zu-deaktivieren"
+                >
+                  <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.two}" />
+                  <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+                </a>
+              </p>
+              <p th:text="#{settings.avatar.gravatarEnabled.perPerson.description}">
+                Auch wenn Gravatar hier aktiviert ist, wird es für eine Person erst angezeigt, nachdem sie selbst
+                zugestimmt hat.
+              </p>
+            </div>
           </div>
         </div>
 

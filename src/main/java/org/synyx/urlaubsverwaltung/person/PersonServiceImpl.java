@@ -288,6 +288,7 @@ class PersonServiceImpl implements PersonService {
         normalized.setId(person.getId());
         normalized.setPermissions(person.getPermissions());
         normalized.setNotifications(person.getNotifications());
+        normalized.setGravatarEnabled(person.isGravatarEnabled());
 
         return normalized;
     }

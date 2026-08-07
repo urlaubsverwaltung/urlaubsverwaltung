@@ -56,6 +56,7 @@ class FrameDataProviderTest {
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
+        person.setGravatarEnabled(true);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final ModelAndView modelAndView = new ModelAndView();
@@ -465,6 +466,7 @@ class FrameDataProviderTest {
 
         final Person person = new Person();
         person.setEmail("person@example.org");
+        person.setGravatarEnabled(true);
 
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");

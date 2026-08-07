@@ -88,6 +88,16 @@ class PersonTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setEmail(null);
+        person.setGravatarEnabled(true);
+        assertThat(person.getGravatarURL()).isSameAs("");
+    }
+
+    @Test
+    void ensureReturnsEmptyStringAsGravatarURLIfGravatarIsNotEnabled() {
+
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setEmail("muster@example.org");
+        person.setGravatarEnabled(false);
         assertThat(person.getGravatarURL()).isSameAs("");
     }
 
@@ -96,6 +106,7 @@ class PersonTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setEmail("muster@example.org");
+        person.setGravatarEnabled(true);
         assertThat(person.getGravatarURL()).isNotEqualTo("");
         assertThat(person.getEmail()).isNotEqualTo(person.getGravatarURL());
     }

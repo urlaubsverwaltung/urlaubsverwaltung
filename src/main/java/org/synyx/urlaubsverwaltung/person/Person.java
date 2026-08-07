@@ -55,6 +55,9 @@ public class Person extends AbstractTenantAwareEntity {
     @BatchSize(size = 500)
     private Collection<MailNotification> notifications;
 
+    @Column(nullable = false)
+    private boolean gravatarEnabled;
+
     public Person() {
         /* OK */
     }
@@ -184,8 +187,16 @@ public class Person extends AbstractTenantAwareEntity {
         return niceName;
     }
 
+    public boolean isGravatarEnabled() {
+        return gravatarEnabled;
+    }
+
+    public void setGravatarEnabled(boolean gravatarEnabled) {
+        this.gravatarEnabled = gravatarEnabled;
+    }
+
     public String getGravatarURL() {
-        if (hasText(this.email)) {
+        if (gravatarEnabled && hasText(this.email)) {
             return GravatarUtil.createImgURL(this.email);
         }
 

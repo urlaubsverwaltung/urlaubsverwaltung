@@ -15,8 +15,11 @@ import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.Locale;
 import java.util.Set;
@@ -60,11 +63,14 @@ class UserSettingsViewControllerTest {
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
         sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService,
-            userSettingsDtoValidator, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource);
+            userSettingsDtoValidator, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource,
+            settingsService);
     }
 
     @Nested
@@ -86,6 +92,7 @@ class UserSettingsViewControllerTest {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(42L);
+        signedInPerson.setGravatarEnabled(true);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -99,6 +106,8 @@ class UserSettingsViewControllerTest {
         when(messageSource.getMessage("user-settings.theme.SYSTEM", new Object[]{}, Locale.GERMAN)).thenReturn("system-label");
         when(messageSource.getMessage("locale", new Object[]{}, Locale.GERMAN)).thenReturn("Deutsch");
         when(messageSource.getMessage("locale", new Object[]{}, Locale.ENGLISH)).thenReturn("English");
+
+        globalGravatarEnabled(true);
 
         perform(get("/web/person/42/settings").locale(Locale.GERMAN))
             .andExpect(status().isOk())
@@ -117,6 +126,10 @@ class UserSettingsViewControllerTest {
             .andExpect(model().attribute("userSettings",
                 hasProperty("theme", is("DARK"))
             ))
+            .andExpect(model().attribute("userSettings",
+                hasProperty("gravatarEnabled", is(true))
+            ))
+            .andExpect(model().attribute("globalGravatarEnabled", is(true)))
             .andExpect(model().attribute("supportedThemes", contains(
                 allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
                 allOf(hasProperty("value", is("LIGHT")), hasProperty("label", is("light-label"))),
@@ -144,6 +157,7 @@ class UserSettingsViewControllerTest {
         signedInPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        globalGravatarEnabled(true);
 
         perform(post("/web/person/42/settings")
             .param("theme", givenTheme.name())
@@ -154,12 +168,52 @@ class UserSettingsViewControllerTest {
     }
 
     @Test
+    void ensureUpdateUserSettingsSavesGravatarPreference() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(42L);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        globalGravatarEnabled(true);
+
+        perform(post("/web/person/42/settings")
+            .param("theme", "DARK")
+            .param("gravatarEnabled", "true")
+            .locale(Locale.GERMANY)
+        )
+            .andExpect(status().is3xxRedirection());
+
+        assertThat(signedInPerson.isGravatarEnabled()).isTrue();
+        verify(personService).update(signedInPerson);
+    }
+
+    @Test
+    void ensureUpdateUserSettingsIgnoresGravatarWhenGloballyDisabled() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(42L);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        globalGravatarEnabled(false);
+
+        perform(post("/web/person/42/settings")
+            .param("theme", "DARK")
+            .param("gravatarEnabled", "true")
+            .locale(Locale.GERMANY)
+        )
+            .andExpect(status().is3xxRedirection());
+
+        assertThat(signedInPerson.isGravatarEnabled()).isFalse();
+    }
+
+    @Test
     void ensureUpdateUserSettingsThrowsWhenThemeNameIsUnknown() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        globalGravatarEnabled(true);
 
         perform(post("/web/person/42/settings")
             .param("theme", "UNKNOWN_THEME")
@@ -198,6 +252,7 @@ class UserSettingsViewControllerTest {
         }).when(userSettingsDtoValidator).validate(any(), any());
 
         when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN));
+        globalGravatarEnabled(true);
 
         perform(post("/web/person/42/settings")
             .param("theme", "someTheme")
@@ -209,9 +264,19 @@ class UserSettingsViewControllerTest {
                 hasProperty("value", is("LIGHT")),
                 hasProperty("value", is("DARK"))
             )))
-            .andExpect(model().attribute("supportedLocales", hasItem(hasProperty("locale", is(Locale.GERMAN)))));
+            .andExpect(model().attribute("supportedLocales", hasItem(hasProperty("locale", is(Locale.GERMAN)))))
+            .andExpect(model().attribute("globalGravatarEnabled", is(true)));
 
         verify(userSettingsService, never()).updateUserPreference(any(), any(), any());
+        verify(personService, never()).update(any());
+    }
+
+    private void globalGravatarEnabled(boolean enabled) {
+        final Settings settings = new Settings();
+        final AvatarSettings avatarSettings = new AvatarSettings();
+        avatarSettings.setGravatarEnabled(enabled);
+        settings.setAvatarSettings(avatarSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
