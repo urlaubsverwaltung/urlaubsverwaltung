@@ -64,10 +64,10 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final Person signedInUser = personService.getSignedInUser();
 
         final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear, signedInUser);
-        model.addAttribute("selectedYearStatistics", selectedYearStatistics);
+        model.addAttribute("selectedYearStatistics", toSickNoteStatisticsDto(selectedYearStatistics));
 
         final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear.minusYears(1), signedInUser);
-        model.addAttribute("previousSelectedYearStatistics", previousSelectedYearStatistics);
+        model.addAttribute("previousSelectedYearStatistics", toSickNoteStatisticsDto(previousSelectedYearStatistics));
 
         final GraphDto graphDto = new GraphDto(
             List.of(
@@ -90,6 +90,32 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
         return "sicknote/sick_notes_statistics";
+    }
+
+    private SickNoteStatisticsDto toSickNoteStatisticsDto(SickNoteStatistics sickNoteStatistics) {
+        return new SickNoteStatisticsDto(
+            sickNoteStatistics.getYear(),
+            sickNoteStatistics.getAsOfDate(),
+            sickNoteStatistics.getNumberOfSickDaysByMonth(),
+            sickNoteStatistics.getNumberOfChildSickDaysByMonth(),
+            sickNoteStatistics.getSickRateByMonth(),
+            sickNoteStatistics.getSickRate(),
+            sickNoteStatistics.getTotalNumberOfAllSickNotes(),
+            sickNoteStatistics.getTotalNumberOfSickNotes(),
+            sickNoteStatistics.getTotalNumberOfChildSickNotes(),
+            sickNoteStatistics.getAtLeastOneSickNotePercent(),
+            sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote(),
+            sickNoteStatistics.getNumberOfPersonsWithoutSickNote(),
+            sickNoteStatistics.getTotalNumberOfSickDaysAllCategories(),
+            sickNoteStatistics.getTotalNumberOfSickDays(),
+            sickNoteStatistics.getTotalNumberOfChildSickDays(),
+            sickNoteStatistics.getAverageDurationOfAllSickNotes(),
+            sickNoteStatistics.getAverageDurationOfSickNote(),
+            sickNoteStatistics.getAverageDurationOfChildSickNote(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPerson(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPersonAndSick(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPersonAndChildSick()
+        );
     }
 
     // changing this GraphDto, you may have to increase the local-storage version key in JavaScript to keep the local state clean!
