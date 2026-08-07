@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -67,7 +68,8 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                     SUB, uniqueID,
                     GIVEN_NAME, givenName,
                     FAMILY_NAME, familyName,
-                    EMAIL, email
+                    EMAIL, email,
+                    EMAIL_VERIFIED, true
                 ));
 
             when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
@@ -128,7 +130,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
         }
 
         @Test
-        void updateExistingPersonByEmailFallback() {
+        void updateExistingPersonByEmailFallbackWithVerifiedEmail() {
             final String uniqueID = "uniqueID";
             final String givenName = "given name";
             final String familyName = "family name";
@@ -138,7 +140,8 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 SUB, uniqueID,
                 GIVEN_NAME, givenName,
                 FAMILY_NAME, familyName,
-                EMAIL, email
+                EMAIL, email,
+                EMAIL_VERIFIED, true
             ));
 
             final Person personForLogin = new Person();
@@ -157,10 +160,125 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             verify(personService).update(personArgumentCaptor.capture());
 
             Person update = personArgumentCaptor.getValue();
-            assertThat(update.getUsername()).isEqualTo(uniqueID);
+            // username is NOT rebound since the existing person already has a populated username
+            assertThat(update.getUsername()).isEqualTo("idOfOtherIdentityProvider");
             assertThat(update.getLastName()).isEqualTo(familyName);
             assertThat(update.getFirstName()).isEqualTo(givenName);
             assertThat(update.getEmail()).isEqualTo(email);
+        }
+
+        @Test
+        void doesNotFallbackToEmailWhenNotVerified() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email,
+                EMAIL_VERIFIED, false
+            ));
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+
+            sut.handle(event);
+
+            verify(personService, never()).getPersonByMailAddress(email);
+            verify(personService).create(uniqueID, givenName, familyName, email);
+        }
+
+        @Test
+        void doesNotFallbackToEmailWhenVerifiedClaimMissing() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            // email_verified claim is not present at all
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email
+            ));
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+
+            sut.handle(event);
+
+            verify(personService, never()).getPersonByMailAddress(email);
+            verify(personService).create(uniqueID, givenName, familyName, email);
+        }
+
+        @Test
+        void rebindsUsernameOnlyWhenNull() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email,
+                EMAIL_VERIFIED, true
+            ));
+
+            final Person personForLogin = new Person();
+            personForLogin.setUsername(null);
+            personForLogin.setPermissions(List.of(USER));
+            final Optional<Person> person = Optional.of(personForLogin);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+            when(personService.getPersonByMailAddress(email)).thenReturn(person);
+
+            sut.handle(event);
+
+            verify(personService).getPersonByMailAddress(email);
+
+            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+            verify(personService).update(personArgumentCaptor.capture());
+
+            Person update = personArgumentCaptor.getValue();
+            // username IS rebound since the existing one was null (initial migration)
+            assertThat(update.getUsername()).isEqualTo(uniqueID);
+        }
+
+        @Test
+        void rebindsUsernameOnlyWhenEmpty() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email,
+                EMAIL_VERIFIED, true
+            ));
+
+            final Person personForLogin = new Person();
+            personForLogin.setUsername("");
+            personForLogin.setPermissions(List.of(USER));
+            final Optional<Person> person = Optional.of(personForLogin);
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+            when(personService.getPersonByMailAddress(email)).thenReturn(person);
+
+            sut.handle(event);
+
+            verify(personService).getPersonByMailAddress(email);
+
+            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+            verify(personService).update(personArgumentCaptor.capture());
+
+            Person update = personArgumentCaptor.getValue();
+            // username IS rebound since the existing one was empty (initial migration)
+            assertThat(update.getUsername()).isEqualTo(uniqueID);
         }
     }
 
