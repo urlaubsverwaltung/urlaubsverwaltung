@@ -2,15 +2,12 @@ package org.synyx.urlaubsverwaltung.company;
 
 import org.jspecify.annotations.Nullable;
 
-import java.time.LocalDate;
 import java.util.List;
 
-record CompanyStatisticsDto(
-    LocalDate from,
-    LocalDate to,
-    OvertimeDurationDto averageOvertime,
-    OvertimeDurationDto averageOvertimeGrowth,
-    OvertimeDistributionDto overtimeDistribution
+record OvertimeStatDto(
+    OvertimeDurationDto average,
+    OvertimeDurationDto averageGrowth,
+    OvertimeDistributionDto distribution
 ) {
 
     record OvertimeDurationDto(boolean negative, int hours, int minutes) {}

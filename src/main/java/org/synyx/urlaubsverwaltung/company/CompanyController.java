@@ -7,9 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntryDto;
-import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDurationDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
+import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -38,20 +38,23 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     private static final ZoneId USER_ZONE = ZoneId.of("Europe/Berlin");
 
     private final PersonService personService;
-    private final OvertimeStatisticService overtimeStatisticService;
+    private final HealthOvertimeStatisticService overtimeStatisticService;
+    private final HealthSickDaysStatisticService sickDaysStatisticService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     CompanyController(
         PersonService personService,
-        OvertimeStatisticService overtimeStatisticService,
+        HealthOvertimeStatisticService overtimeStatisticService,
+        HealthSickDaysStatisticService sickDaysStatisticService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
         this.overtimeStatisticService = overtimeStatisticService;
+        this.sickDaysStatisticService = sickDaysStatisticService;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -69,29 +72,16 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
         final ViewMode viewMode = view.flatMap(ViewMode::of).orElse(ViewMode.MONTH);
         final DateRange dateRange = getRequestedDateRange(viewMode);
-
-        final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
-
         final DateRange previousDateRange = toPreviousRange(dateRange);
-        final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
 
-        final Duration average = stats.average();
-        final Duration averagePrev = prevStats.average();
-        final Duration averageGrowth = average.minus(averagePrev);
-
-        final CompanyStatisticsDto statisticsDto = new CompanyStatisticsDto(
-            toLocalDate(dateRange.start), toLocalDate(dateRange.end),
-            toOvertimeDurationDto(average), toOvertimeDurationDto(averageGrowth),
-            new OvertimeDistributionDto(stats.personCount(), List.of(
-                new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
-                new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
-                new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
-                new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
-            ))
-        ));
+        final OvertimeStatDto overtimeStatDto = overtimeStatistic(signedInUser, dateRange, previousDateRange);
+        final SickDaysStatDto sickDaysStatDto = sickDaysStatistic(signedInUser, dateRange);
 
         model.addAttribute("viewMode", viewMode.name().toLowerCase());
-        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("dateRangeStart", toLocalDate(dateRange.start));
+        model.addAttribute("dateRangeEnd", toLocalDate(dateRange.end));
+        model.addAttribute("overtimeStatistic", overtimeStatDto);
+        model.addAttribute("sickDaysStatistic", sickDaysStatDto);
 
         return "company/company-overview";
     }
@@ -132,6 +122,42 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
                 return Optional.empty();
             }
         }
+    }
+
+    private OvertimeStatDto overtimeStatistic(Person signedInUser, DateRange dateRange, DateRange previousDateRange) {
+        final OvertimeStatistic stats = overtimeStatisticService.getOvertimeStatistics(signedInUser, dateRange.start, dateRange.end);
+        final OvertimeStatistic prevStats = overtimeStatisticService.getOvertimeStatistics(signedInUser, previousDateRange.start, previousDateRange.end);
+
+        final Duration average = stats.average();
+        final Duration averagePrev = prevStats.average();
+        final Duration averageGrowth = average.minus(averagePrev);
+
+        final OvertimeDistributionDto overtimeDistributionDto = new OvertimeDistributionDto(stats.personCount(), List.of(
+            new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
+            new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
+            new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
+            new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
+        )));
+
+        return new OvertimeStatDto(
+            toOvertimeDurationDto(average),
+            toOvertimeDurationDto(averageGrowth),
+            overtimeDistributionDto
+        );
+    }
+
+    private SickDaysStatDto sickDaysStatistic(Person signedInUser, DateRange dateRange) {
+
+        final LocalDate from = toLocalDate(dateRange.start);
+        final LocalDate to = toLocalDate(dateRange.end);
+
+        final SickDaysStatistic stats = sickDaysStatisticService.getSickDaysStatistics(signedInUser, from, to);
+
+        final double healthRate = stats.healthRate().value();
+        final int nrOfSickDays = stats.totalNumberOfAllSickNotes().intValue();
+        final int nrOfShouldWorkDays = stats.shouldWorkDays().intValue();
+
+        return new SickDaysStatDto(healthRate, nrOfSickDays, nrOfShouldWorkDays, stats.distribution());
     }
 
     record DateRange(Instant start, Instant end) {}

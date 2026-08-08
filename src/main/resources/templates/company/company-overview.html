@@ -32,7 +32,7 @@
         <turbo-frame id="frame-company-overview">
           <p
             class="mt-8 font-bold text-base"
-            th:with="from=${#temporals.format(statistics.from, 'dd.MM.yyyy')}, to=${#temporals.format(statistics.to, 'dd.MM.yyyy')}"
+            th:with="from=${#temporals.format(dateRangeStart, 'dd.MM.yyyy')}, to=${#temporals.format(dateRangeEnd, 'dd.MM.yyyy')}"
             th:text="#{company.overview.description(${from}, ${to})}"
           >
             Aggregierte Auswertung ohne Personenbezug - $von $bis
@@ -93,7 +93,7 @@
               </span>
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
-            <div class="mt-4 grid grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
+            <div class="mt-4 grid gap-4 grid-cols-1 @sm/main:grid-cols-2 @lg/main:grid-cols-3 @xl/main:grid-cols-4">
               <div class="stat-card stat-card--kpi">
                 <div class="stat-card__header stat-card__header--no-border">
                   <span
@@ -106,16 +106,59 @@
                 <div class="stat-card__body">
                   <span class="stat-card__value">
                     <span
-                      class="company-overtime-average-hours-value"
-                      th:text="${statistics.averageOvertime().negative()} ? '-' + ${statistics.averageOvertime().hours()} : ${statistics.averageOvertime().hours()}"
+                      data-animate-number
+                      th:text="${overtimeStatistic.average.negative} ? '-' + ${overtimeStatistic.average.hours} : ${overtimeStatistic.average.hours}"
                       >-3</span
                     >&nbsp;<span th:text="#{hours.abbr}">h</span>
-                    <span
-                      class="company-overtime-average-minutes-value"
-                      th:text="${statistics.averageOvertime().minutes()}"
-                      >30</span
-                    >&nbsp;<span th:text="#{minutes.abbr}">min</span>
+                    <span data-animate-number th:text="${overtimeStatistic.average.minutes}">30</span>&nbsp;<span
+                      th:text="#{minutes.abbr}"
+                      >min</span
+                    >
                   </span>
+                </div>
+              </div>
+              <div class="stat-card stat-card--kpi">
+                <div class="stat-card__header stat-card__header--no-border">
+                  <span
+                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                    th:text="#{company.overview.metrics.health-rate}"
+                  >
+                    Gesundheitsquote
+                  </span>
+                  <button popovertarget="stats-health-rate-description">
+                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                    <span class="sr-only" th:text="#{company.overview.metrics.health-rate.info.button}"
+                      >Informationen zur Gesundheitsquote</span
+                    >
+                  </button>
+                </div>
+                <div class="stat-card__body">
+                  <div popover="hint" id="stats-health-rate-description" class="stat-card-info-popover">
+                    <button
+                      class="stat-card-info-close-button"
+                      popovertarget="stats-health-rate-description"
+                      popovertargetaction="hide"
+                    >
+                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+                      <span class="sr-only" th:text="#{company.overview.metrics.health-rate.info.button.close}"
+                        >Schließen</span
+                      >
+                    </button>
+                    <p class="stat-card-info-text" th:text="#{company.overview.metrics.health-rate.info.tooltip}">
+                      Anzahl der Krankheitstage (inkl. Kind-Krank) im Verhältnis zu den Soll-Arbeitstagen.
+                    </p>
+                  </div>
+                  <span class="stat-card__value">
+                    <span data-animate-number th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}"
+                      >13,37%</span
+                    >
+                  </span>
+                  <p
+                    class="mt-2 text-sm text-gray-500 dark:text-zinc-400"
+                    th:text="#{company.overview.metrics.health-rate.days-info-text(${sickDaysStatistic.nrOfSickDays}, ${sickDaysStatistic.nrOfShouldWorkDays})}"
+                  >
+                    42 Kranktage (inkl. Kind-Krank) von 1337 Sollarbeitstagen.
+                  </p>
                 </div>
               </div>
             </div>
@@ -130,14 +173,17 @@
               </span>
               <span class="h-px bg-gray-200 dark:bg-zinc-600 flex-1"></span>
             </h3>
-            <div class="mt-4 grid @3xl/main:grid-cols-2">
+            <div class="mt-4 grid gap-4 @3xl/main:grid-cols-2">
               <div class="stat-card">
                 <div class="stat-card__header stat-card__header--bordered">
-                  <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
+                  <div class="flex gap-2 items-center">
+                    <svg th:replace="~{icon/clock-arrow-up::svg(className='w-4 h-4')}"></svg>
+                    <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
+                  </div>
                 </div>
                 <div
                   class="stat-card__body"
-                  th:with="entries=${statistics.overtimeDistribution.entries}, max=${statistics.overtimeDistribution.max}, maxBarHeight=150, minBarHeight=3"
+                  th:with="entries=${overtimeStatistic.distribution.entries}, max=${overtimeStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
@@ -163,12 +209,56 @@
                     </li>
                   </ol>
                   <p
-                    class="mt-4 text-sm"
-                    th:with="last=${statistics.overtimeDistribution.entries.last}"
+                    class="mt-4 text-sm text-gray-500 dark:text-zinc-400"
+                    th:with="last=${overtimeStatistic.distribution.entries.last}"
                     th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
                   >
                     Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last
                     verteilt ist, wird hier sichtbar - einzelne Personen sind daraus nicht ableitbar.
+                  </p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card__header stat-card__header--bordered">
+                  <div class="flex gap-2 items-center">
+                    <svg th:replace="~{icon/briefcase-medical::svg(className='w-4 h-4')}"></svg>
+                    <span th:text="#{company.overview.distribution.sick-days.title}"> Kranktage - wie verteilt? </span>
+                  </div>
+                </div>
+                <div
+                  class="stat-card__body"
+                  th:with="entries=${sickDaysStatistic.distribution.entries}, max=${sickDaysStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
+                >
+                  <ol class="bar-chart">
+                    <li th:each="entry, stat : ${entries}" class="bar-chart__item">
+                      <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
+                        <span
+                          class="bar-chart__bar"
+                          th:style="|height:${entry.value() == 0 ? minBarHeight : entry.value() * maxBarHeight / max}px;|"
+                        >
+                          <span
+                            class="bar-chart__value"
+                            th:aria-label="#{company.overview.distribution.sick-days.amountEmployees(${entry.value()})}"
+                            th:text="${entry.value()}"
+                            >42</span
+                          >
+                        </span>
+                      </span>
+                      <span
+                        class="bar-chart__label"
+                        th:text="${entry.rangeStart() == null} ? #{company.overview.distribution.sick-days.entry.single(${entry.rangeEnd()})} : (${entry.rangeEnd() == null} ? #{company.overview.distribution.sick-days.entry.max(${entry.rangeStart()})} : #{company.overview.distribution.sick-days.entry.range(${entry.rangeStart()}, ${entry.rangeEnd()})})"
+                      >
+                        0,5 - 2 Tage
+                      </span>
+                    </li>
+                  </ol>
+                  <p
+                    class="mt-4 text-sm text-gray-500 dark:text-zinc-400"
+                    th:with="last=${overtimeStatistic.distribution.entries.last}"
+                    th:text="#{company.overview.distribution.sick-days.description(${last.value}, ${last.rangeStart})}"
+                  >
+                    Anteil der Mitarbeitenden je Kranktage-Band. Zeigt, ob sich Ausfälle breit verteilen oder
+                    konzentrieren - einzelne Personen sind daraus nicht ableitbar.
                   </p>
                 </div>
               </div>
