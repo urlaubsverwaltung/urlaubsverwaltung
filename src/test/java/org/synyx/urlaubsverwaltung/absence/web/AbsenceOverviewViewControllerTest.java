@@ -3970,7 +3970,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        when(workingTimeService.getFederalStatesByPersons(anyList(), eq(dateRange)))
+        when(workingTimeService.getFederalStatesByWorkingTimes(anyList(), eq(dateRange)))
             .thenReturn(Map.of(person, Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG)));
 
         when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
@@ -4033,7 +4033,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        when(workingTimeService.getFederalStatesByPersons(anyList(), eq(dateRange)))
+        when(workingTimeService.getFederalStatesByWorkingTimes(anyList(), eq(dateRange)))
             .thenReturn(Map.of(person, Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG)));
 
         when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
@@ -5125,7 +5125,7 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate start = LocalDate.of(2022, JANUARY, 1);
         final LocalDate end = LocalDate.of(2022, JANUARY, 31);
         final DateRange dateRange = new DateRange(start, end);
-        when(workingTimeService.getFederalStatesByPersons(anyList(), eq(dateRange))).thenReturn(Map.of(
+        when(workingTimeService.getFederalStatesByWorkingTimes(anyList(), eq(dateRange))).thenReturn(Map.of(
             personWithCustomPublicHolidays, Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG),
             personDefaultPublicHolidays, Map.of(dateRange, GERMANY_RHEINLAND_PFALZ)
         ));

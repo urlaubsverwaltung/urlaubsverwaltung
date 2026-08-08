@@ -225,8 +225,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
-        // load the federal states of all persons with a single query instead of one query per person
-        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = workingTimeService.getFederalStatesByPersons(personList, dateRange);
+        // derive the federal states from the already loaded working times instead of one query per person
+        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = workingTimeService.getFederalStatesByWorkingTimes(workingTimeList, dateRange);
 
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
