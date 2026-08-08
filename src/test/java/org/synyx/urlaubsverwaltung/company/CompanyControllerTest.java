@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ui.ConcurrentModel;
-import org.springframework.ui.Model;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionDto;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDistributionEntryDto;
+import org.synyx.urlaubsverwaltung.company.CompanyStatisticsDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeType;
@@ -26,14 +29,19 @@ import java.time.YearMonth;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.type;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
 class CompanyControllerTest {
@@ -60,8 +68,10 @@ class CompanyControllerTest {
     }
 
     @Test
-    void ensureCompanyRedirectsToOverview() {
-        assertThat(sut.company()).isEqualTo("redirect:/web/company/overview");
+    void ensureCompanyRedirectsToOverview() throws Exception {
+        perform(get("/web/company"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/company/overview"));
     }
 
     @Test
@@ -75,37 +85,35 @@ class CompanyControllerTest {
     }
 
     @Test
-    void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsAbsent() {
+    void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsAbsent() throws Exception {
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty());
 
-        final Model model = new ConcurrentModel();
-        final String view = sut.overview(model, Optional.empty());
-
-        assertThat(view).isEqualTo("company/company-overview");
-        assertThat(model.getAttribute("viewMode")).isEqualTo("month");
+        perform(get("/web/company/overview"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("company/company-overview"))
+            .andExpect(model().attribute("viewMode", "month"));
     }
 
     @Test
-    void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsInvalid() {
+    void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsInvalid() throws Exception {
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty());
 
-        final Model model = new ConcurrentModel();
-        final String view = sut.overview(model, Optional.of("not-a-view-mode"));
-
-        assertThat(view).isEqualTo("company/company-overview");
-        assertThat(model.getAttribute("viewMode")).isEqualTo("month");
+        perform(get("/web/company/overview").param("view", "not-a-view-mode"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("company/company-overview"))
+            .andExpect(model().attribute("viewMode", "month"));
     }
 
     @Test
-    void ensureOverviewUsesQuarterDateRange() {
+    void ensureOverviewUsesQuarterDateRange() throws Exception {
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -113,22 +121,15 @@ class CompanyControllerTest {
         final LocalDate start = currentMonth.minusMonths(2).atDay(1);
         stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty());
 
-        final Model model = new ConcurrentModel();
-        final String view = sut.overview(model, Optional.of("quarter"));
-
-        assertThat(view).isEqualTo("company/company-overview");
-        assertThat(model.getAttribute("viewMode")).isEqualTo("quarter");
-
-        assertThat(model.getAttribute("statistics"))
-            .asInstanceOf(type(CompanyStatisticsDto.class))
-            .satisfies(statistics -> {
-                assertThat(statistics.from()).isEqualTo(start);
-                assertThat(statistics.to()).isEqualTo(today);
-            });
+        perform(get("/web/company/overview").param("view", "quarter"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("company/company-overview"))
+            .andExpect(model().attribute("viewMode", "quarter"))
+            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(start, today))));
     }
 
     @Test
-    void ensureOverviewUsesYearDateRange() {
+    void ensureOverviewUsesYearDateRange() throws Exception {
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -136,22 +137,15 @@ class CompanyControllerTest {
         final LocalDate start = Year.of(currentMonth.getYear()).atDay(1);
         stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty());
 
-        final Model model = new ConcurrentModel();
-        final String view = sut.overview(model, Optional.of("year"));
-
-        assertThat(view).isEqualTo("company/company-overview");
-        assertThat(model.getAttribute("viewMode")).isEqualTo("year");
-
-        assertThat(model.getAttribute("statistics"))
-            .asInstanceOf(type(CompanyStatisticsDto.class))
-            .satisfies(statistics -> {
-                assertThat(statistics.from()).isEqualTo(start);
-                assertThat(statistics.to()).isEqualTo(today);
-            });
+        perform(get("/web/company/overview").param("view", "year"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("company/company-overview"))
+            .andExpect(model().attribute("viewMode", "year"))
+            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(start, today))));
     }
 
     @Test
-    void ensureOverviewUsesBerlinDateNearUtcMidnightBoundary() {
+    void ensureOverviewUsesBerlinDateNearUtcMidnightBoundary() throws Exception {
 
         // 2026-01-14T23:30:00Z is already 2026-01-15T00:30 in Europe/Berlin (CET, UTC+1)
         final Clock nearMidnightUtcClock = Clock.fixed(Instant.parse("2026-01-14T23:30:00Z"), UTC);
@@ -165,19 +159,13 @@ class CompanyControllerTest {
         final LocalDate monthStart = LocalDate.of(2026, JANUARY, 1);
         stubCurrentAndPreviousRange(signedInUser, monthStart, berlinToday, OvertimeStatistic.empty());
 
-        final Model model = new ConcurrentModel();
-        sutAtBerlinMidnight.overview(model, Optional.empty());
-
-        assertThat(model.getAttribute("statistics"))
-            .asInstanceOf(type(CompanyStatisticsDto.class))
-            .satisfies(statistics -> {
-                assertThat(statistics.from()).isEqualTo(monthStart);
-                assertThat(statistics.to()).isEqualTo(berlinToday);
-            });
+        perform(get("/web/company/overview"), sutAtBerlinMidnight)
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("statistics", equalTo(emptyStatisticsDto(monthStart, berlinToday))));
     }
 
     @Test
-    void ensureOverviewComputesAverageGrowthAndDistribution() {
+    void ensureOverviewComputesAverageGrowthAndDistribution() throws Exception {
 
         final Person signedInUser = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -192,22 +180,21 @@ class CompanyControllerTest {
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(current);
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(previous);
 
-        final Model model = new ConcurrentModel();
-        sut.overview(model, Optional.of("month"));
+        final CompanyStatisticsDto expected = new CompanyStatisticsDto(
+            start, end,
+            new OvertimeDurationDto(false, 15, 45),
+            new OvertimeDurationDto(false, 10, 45),
+            new OvertimeDistributionDto(4, List.of(
+                new OvertimeDistributionEntryDto(0, 5, 1),
+                new OvertimeDistributionEntryDto(5, 15, 1),
+                new OvertimeDistributionEntryDto(15, 25, 1),
+                new OvertimeDistributionEntryDto(25, null, 1)
+            ))
+        );
 
-        assertThat(model.getAttribute("statistics"))
-            .asInstanceOf(type(CompanyStatisticsDto.class))
-            .satisfies(statistics -> {
-                assertThat(statistics.averageOvertime()).isEqualTo(new CompanyStatisticsDto.OvertimeDurationDto(false, 15, 45));
-                assertThat(statistics.averageOvertimeGrowth()).isEqualTo(new CompanyStatisticsDto.OvertimeDurationDto(false, 10, 45));
-                assertThat(statistics.overtimeDistribution().personCount()).isEqualTo(4);
-                assertThat(statistics.overtimeDistribution().entries()).containsExactly(
-                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(0, 5, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(5, 15, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(15, 25, 1),
-                    new CompanyStatisticsDto.OvertimeDistributionEntryDto(25, null, 1)
-                );
-            });
+        perform(get("/web/company/overview").param("view", "month"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("statistics", equalTo(expected)));
     }
 
     private void stubCurrentAndPreviousRange(Person signedInUser, LocalDate start, LocalDate end, OvertimeStatistic statistic) {
@@ -244,5 +231,27 @@ class CompanyControllerTest {
     private static Overtime overtimeOf(PersonId personId, Duration duration) {
         final LocalDate day = LocalDate.of(2024, JANUARY, 1);
         return new Overtime(new OvertimeId(personId.value()), personId, new DateRange(day, day), duration, OvertimeType.UV_INTERNAL, Instant.EPOCH);
+    }
+
+    private static CompanyStatisticsDto emptyStatisticsDto(LocalDate from, LocalDate to) {
+        return new CompanyStatisticsDto(
+            from, to,
+            new OvertimeDurationDto(false, 0, 0),
+            new OvertimeDurationDto(false, 0, 0),
+            new OvertimeDistributionDto(0, List.of(
+                new OvertimeDistributionEntryDto(0, 5, 0),
+                new OvertimeDistributionEntryDto(5, 15, 0),
+                new OvertimeDistributionEntryDto(15, 25, 0),
+                new OvertimeDistributionEntryDto(25, null, 0)
+            ))
+        );
+    }
+
+    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+        return perform(builder, sut);
+    }
+
+    private ResultActions perform(MockHttpServletRequestBuilder builder, CompanyController controller) throws Exception {
+        return standaloneSetup(controller).build().perform(builder);
     }
 }
