@@ -157,7 +157,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final int nrOfSickDays = stats.totalNumberOfAllSickNotes().intValue();
         final int nrOfShouldWorkDays = stats.shouldWorkDays().intValue();
 
-        return new SickDaysStatDto(healthRate, nrOfSickDays, nrOfShouldWorkDays);
+        return new SickDaysStatDto(healthRate, nrOfSickDays, nrOfShouldWorkDays, stats.distribution());
     }
 
     record DateRange(Instant start, Instant end) {}

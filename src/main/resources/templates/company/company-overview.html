@@ -149,7 +149,9 @@
                     </p>
                   </div>
                   <span class="stat-card__value">
-                    <span data-animate-number th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}">13,37%</span>
+                    <span data-animate-number th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}"
+                      >13,37%</span
+                    >
                   </span>
                   <p
                     class="mt-2 text-sm text-gray-500 dark:text-zinc-400"
@@ -210,6 +212,47 @@
                   >
                     Verteilung der Mehrarbeit über das Unternehmen. 77 Mitarbeitende liegen über 25h. Wie die Last
                     verteilt ist, wird hier sichtbar - einzelne Personen sind daraus nicht ableitbar.
+                  </p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card__header stat-card__header--bordered">
+                  <span th:text="#{company.overview.distribution.sick-days.title}"> Kranktage - wie verteilt? </span>
+                </div>
+                <div
+                  class="stat-card__body"
+                  th:with="entries=${sickDaysStatistic.distribution.entries}, max=${sickDaysStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
+                >
+                  <ol class="bar-chart">
+                    <li th:each="entry, stat : ${entries}" class="bar-chart__item">
+                      <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
+                        <span
+                          class="bar-chart__bar"
+                          th:style="|height:${entry.value() == 0 ? minBarHeight : entry.value() * maxBarHeight / max}px;|"
+                        >
+                          <span
+                            class="bar-chart__value"
+                            th:aria-label="#{company.overview.distribution.sick-days.amountEmployees(${entry.value()})}"
+                            th:text="${entry.value()}"
+                            >42</span
+                          >
+                        </span>
+                      </span>
+                      <span
+                        class="bar-chart__label"
+                        th:text="${entry.rangeStart() == null} ? #{company.overview.distribution.sick-days.entry.single(${entry.rangeEnd()})} : (${entry.rangeEnd() == null} ? #{company.overview.distribution.sick-days.entry.max(${entry.rangeStart()})} : #{company.overview.distribution.sick-days.entry.range(${entry.rangeStart()}, ${entry.rangeEnd()})})"
+                      >
+                        0,5 - 2 Tage
+                      </span>
+                    </li>
+                  </ol>
+                  <p
+                    class="mt-4 text-sm"
+                    th:with="last=${overtimeStatistic.distribution.entries.last}"
+                    th:text="#{company.overview.distribution.sick-days.description(${last.value}, ${last.rangeStart})}"
+                  >
+                    Anteil der Mitarbeitenden je Kranktage-Band. Zeigt, ob sich Ausfälle breit verteilen oder
+                    konzentrieren - einzelne Personen sind daraus nicht ableitbar.
                   </p>
                 </div>
               </div>

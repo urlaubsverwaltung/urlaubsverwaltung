@@ -217,7 +217,7 @@ class CompanyControllerTest {
         final LocalDate start = currentMonth.atDay(1);
 
         stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty(),
-            new SickDaysStatistic(new HealthRate(0.75), BigDecimal.valueOf(9.9), BigDecimal.valueOf(20.9)));
+            new SickDaysStatistic(new HealthRate(0.75), BigDecimal.valueOf(9.9), BigDecimal.valueOf(20.9), SickDaysStatistic.Distribution.empty()));
 
         perform(get("/web/company/overview").param("view", "month"))
             .andExpect(status().isOk())
@@ -276,7 +276,7 @@ class CompanyControllerTest {
     }
 
     private static SickDaysStatistic emptySickDaysStatistic() {
-        return new SickDaysStatistic(new HealthRate(0), ZERO, ZERO);
+        return new SickDaysStatistic(new HealthRate(0), ZERO, ZERO, SickDaysStatistic.Distribution.empty());
     }
 
     private CompanyController sutWithClock(Clock clock) {

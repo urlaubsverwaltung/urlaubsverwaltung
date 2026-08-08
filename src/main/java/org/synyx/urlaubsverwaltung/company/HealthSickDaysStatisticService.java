@@ -8,6 +8,8 @@ import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Component
 class HealthSickDaysStatisticService {
@@ -34,6 +36,38 @@ class HealthSickDaysStatisticService {
         final BigDecimal totalNrOfSickDays = statistics.getTotalNumberOfSickDaysAllCategories();
         final BigDecimal shouldWorkDays = statistics.getShouldWorkDaysForDateRange(from, to);
 
-        return new SickDaysStatistic(healthRate, totalNrOfSickDays, shouldWorkDays);
+        final SickDaysStatistic.Distribution distribution = calculateDistribution(statistics, from, to);
+
+        return new SickDaysStatistic(healthRate, totalNrOfSickDays, shouldWorkDays, distribution);
+    }
+
+    private SickDaysStatistic.Distribution calculateDistribution(SickNoteStatistics statistics, LocalDate from, LocalDate to) {
+
+        final Map<Person, BigDecimal> sickDaysByPerson = statistics.getSickDaysByPersonForDateRange(from, to);
+        final int numberOfPersons = statistics.getNumberOfPersonsToConsider();
+
+        int zero = numberOfPersons - sickDaysByPerson.size();
+        int upToTwo = 0;
+        int upToFive = 0;
+        int moreThanFive = 0;
+
+        for (BigDecimal sickDays : sickDaysByPerson.values()) {
+            if (sickDays.compareTo(BigDecimal.ZERO) <= 0) {
+                zero++;
+            } else if (sickDays.compareTo(BigDecimal.valueOf(2.0)) <= 0) {
+                upToTwo++;
+            } else if (sickDays.compareTo(BigDecimal.valueOf(5.0)) <= 0) {
+                upToFive++;
+            } else {
+                moreThanFive++;
+            }
+        }
+
+        return new SickDaysStatistic.Distribution(numberOfPersons, List.of(
+            new SickDaysStatistic.DistributionEntry(null, 0.0, zero),
+            new SickDaysStatistic.DistributionEntry(0.5, 2.0, upToTwo),
+            new SickDaysStatistic.DistributionEntry(2.0, 5.0, upToFive),
+            new SickDaysStatistic.DistributionEntry(5.0, null, moreThanFive)
+        ));
     }
 }

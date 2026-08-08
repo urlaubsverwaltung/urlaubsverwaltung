@@ -48,7 +48,7 @@ class HealthSickDaysStatisticServiceTest {
 
         final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
 
-        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(0.7), BigDecimal.valueOf(10), BigDecimal.valueOf(20)));
+        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(0.7), BigDecimal.valueOf(10), BigDecimal.valueOf(20), SickDaysStatistic.Distribution.empty()));
     }
 
     @Test
@@ -67,7 +67,7 @@ class HealthSickDaysStatisticServiceTest {
 
         final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
 
-        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(1.0), BigDecimal.ZERO, BigDecimal.valueOf(20)));
+        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(1.0), BigDecimal.ZERO, BigDecimal.valueOf(20), SickDaysStatistic.Distribution.empty()));
     }
 
     @Test
@@ -86,7 +86,7 @@ class HealthSickDaysStatisticServiceTest {
 
         final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
 
-        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(0.0), BigDecimal.valueOf(20), BigDecimal.valueOf(20)));
+        assertThat(actual).isEqualTo(new SickDaysStatistic(new HealthRate(0.0), BigDecimal.valueOf(20), BigDecimal.valueOf(20), SickDaysStatistic.Distribution.empty()));
     }
 
     @Test
