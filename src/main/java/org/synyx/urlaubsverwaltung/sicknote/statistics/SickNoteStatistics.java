@@ -14,6 +14,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,8 @@ public class SickNoteStatistics {
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
     private final List<BigDecimal> targetWorkDaysByMonth;
     private final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson;
+    private final List<SickNote> sickNotes;
+    private final List<Person> persons;
 
     SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons) {
         this(year, asOfDate, sickNotes, persons, Map.of());
@@ -56,6 +59,8 @@ public class SickNoteStatistics {
     SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
         this.year = year.getValue();
         this.asOfDate = asOfDate;
+        this.sickNotes = sickNotes;
+        this.persons = persons;
 
         this.numberOfPersonsToConsider = persons.size();
 
@@ -95,6 +100,34 @@ public class SickNoteStatistics {
         return workingTimeCalendarsByPerson.values().stream()
             .map(workingTimeCalendar -> workingTimeCalendar.workingTime(from, to))
             .reduce(ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Total number of sick days (all categories) per person for the given date range.
+     *
+     * <p>Every considered person is part of the returned map, persons without any overlapping sick
+     * note are contained with a value of zero.
+     *
+     * @param from first day of the range, inclusive
+     * @param to   last day of the range, inclusive
+     * @return sick days per person, for all considered persons
+     */
+    public Map<Person, BigDecimal> getSickDaysByPersonForDateRange(LocalDate from, LocalDate to) {
+        final DateRange dateRange = new DateRange(from, to);
+        final Map<Person, BigDecimal> sickDaysByPerson = new HashMap<>();
+
+        for (Person person : persons) {
+            sickDaysByPerson.put(person, ZERO);
+        }
+
+        for (SickNote sickNote : sickNotes) {
+            if (sickNote.getDateRange().isOverlapping(dateRange)) {
+                final BigDecimal workDays = sickNote.getWorkDays(from, to);
+                sickDaysByPerson.merge(sickNote.getPerson(), workDays, BigDecimal::add);
+            }
+        }
+
+        return sickDaysByPerson;
     }
 
     /**
@@ -243,6 +276,10 @@ public class SickNoteStatistics {
 
     public int getYear() {
         return year;
+    }
+
+    public int getNumberOfPersonsToConsider() {
+        return numberOfPersonsToConsider;
     }
 
     private static BigDecimal sum(List<BigDecimal> values) {

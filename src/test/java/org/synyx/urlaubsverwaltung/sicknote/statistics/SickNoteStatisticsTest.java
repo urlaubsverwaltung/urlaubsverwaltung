@@ -26,6 +26,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
+import static java.time.Month.MARCH;
 import static java.time.Month.OCTOBER;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -950,6 +951,182 @@ class SickNoteStatisticsTest {
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(person), Map.of(person, workingTimeCalendar));
 
             assertThat(sut.getSickRate()).isEqualByComparingTo(ZERO);
+        }
+    }
+
+    @Nested
+    class SickDaysByPersonForDateRange {
+
+        @Test
+        void ensureSumsWorkDaysWithinTheGivenRange() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 5))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person));
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 5));
+            assertThat(result).containsEntry(person, valueOf(5));
+        }
+
+        @Test
+        void ensureOnlyCountsDaysOverlappingTheRange() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 10))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person));
+
+            // only the first three days of the sick note fall within the requested range
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 3));
+            assertThat(result).containsEntry(person, valueOf(3));
+        }
+
+        @Test
+        void ensureSumsMultipleSickNotesOfTheSamePerson() {
+            final Person person = anyPerson();
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final SickNote childSickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 3))
+                .endDate(of(2026, JANUARY, 4))
+                .dayLength(FULL)
+                .sickNoteType(childSickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, childSickNote), List.of(person));
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 4));
+            assertThat(result).containsEntry(person, valueOf(4));
+        }
+
+        @Test
+        void ensureDifferentPersonsAreKeptSeparate() {
+            final Person person = anyPerson();
+            final Person person2 = new Person("master", "Master", "Marlon", "master@example.org");
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final SickNote sickNote2 = SickNote.builder()
+                .person(person2)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 3))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNote2), List.of(person, person2));
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 3));
+            assertThat(result).containsEntry(person, valueOf(2)).containsEntry(person2, valueOf(3));
+        }
+
+        @Test
+        void ensureIncludesPersonsWithoutAnOverlappingSickNoteAsZero() {
+            final Person person = anyPerson();
+            final Person personWithoutOverlap = new Person("master", "Master", "Marlon", "master@example.org");
+
+            final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+            final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(of(2026, JANUARY, 1))
+                .endDate(of(2026, JANUARY, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final SickNote sickNoteOutsideRange = SickNote.builder()
+                .person(personWithoutOverlap)
+                .startDate(of(2026, MARCH, 1))
+                .endDate(of(2026, MARCH, 2))
+                .dayLength(FULL)
+                .sickNoteType(sickNoteType())
+                .status(ACTIVE)
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+            final Year year = Year.of(2026);
+            final LocalDate asOfDate = LocalDate.of(2026, JULY, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNoteOutsideRange), List.of(person, personWithoutOverlap));
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 2));
+            assertThat(result).containsEntry(person, valueOf(2)).containsEntry(personWithoutOverlap, ZERO);
+        }
+
+        @Test
+        void ensureContainsAllPersonsAsZeroWhenNoSickNotesOverlapTheRange() {
+            final Person person = anyPerson();
+            final Person person2 = new Person("master", "Master", "Marlon", "master@example.org");
+
+            final SickNoteStatistics sut = new SickNoteStatistics(Year.of(2026), LocalDate.of(2026, JULY, 4), List.of(), List.of(person, person2));
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 31));
+            assertThat(result).containsEntry(person, ZERO).containsEntry(person2, ZERO);
+        }
+
+        @Test
+        void ensureEmptyWhenNoPersonsToConsider() {
+            final SickNoteStatistics sut = new SickNoteStatistics(Year.of(2026), LocalDate.of(2026, JULY, 4), List.of(), List.of());
+
+            final Map<Person, BigDecimal> result = sut.getSickDaysByPersonForDateRange(of(2026, JANUARY, 1), of(2026, JANUARY, 31));
+            assertThat(result).isEmpty();
         }
     }
 
