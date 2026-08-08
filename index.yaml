@@ -3,9 +3,9 @@ entries:
   urlaubsverwaltung:
   - apiVersion: v2
     appVersion: 6.6.0
-    created: "2026-08-05T21:53:01.037721213Z"
+    created: "2026-08-08T10:14:34.025253398Z"
     description: Helm Chart for the urlaubsverwaltung
-    digest: c9079804cdc040b27223b862af459c02c0d9086c00b08b9c81bd3c9ee83aa43d
+    digest: 08cd6f2f0797b71661356db913006ee243502c8aa10b76c234e05a6f913e1dc6
     home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
     keywords:
     - urlaub
@@ -2778,4 +2778,4 @@ entries:
     urls:
     - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-05T21:53:01.036743002Z"
+generated: "2026-08-08T10:14:34.024431684Z"
