@@ -106,13 +106,14 @@
                 <div class="stat-card__body">
                   <span class="stat-card__value">
                     <span
-                      class="company-overtime-average-hours-value"
+                      data-animate-number
                       th:text="${overtimeStatistic.average.negative} ? '-' + ${overtimeStatistic.average.hours} : ${overtimeStatistic.average.hours}"
                       >-3</span
                     >&nbsp;<span th:text="#{hours.abbr}">h</span>
-                    <span class="company-overtime-average-minutes-value" th:text="${overtimeStatistic.average.minutes}"
-                      >30</span
-                    >&nbsp;<span th:text="#{minutes.abbr}">min</span>
+                    <span data-animate-number th:text="${overtimeStatistic.average.minutes}">30</span>&nbsp;<span
+                      th:text="#{minutes.abbr}"
+                      >min</span
+                    >
                   </span>
                 </div>
               </div>
@@ -148,7 +149,7 @@
                     </p>
                   </div>
                   <span class="stat-card__value">
-                    <span th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}">13,37%</span>
+                    <span data-animate-number th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}">13,37%</span>
                   </span>
                   <p
                     class="mt-2 text-sm text-gray-500 dark:text-zinc-400"
