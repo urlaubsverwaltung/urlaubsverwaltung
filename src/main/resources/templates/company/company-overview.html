@@ -209,7 +209,7 @@
                     </li>
                   </ol>
                   <p
-                    class="mt-4 text-sm"
+                    class="mt-4 text-sm text-gray-500 dark:text-zinc-400"
                     th:with="last=${overtimeStatistic.distribution.entries.last}"
                     th:text="#{company.overview.distribution.overtime.description(${last.value}, ${last.rangeStart})}"
                   >
@@ -253,7 +253,7 @@
                     </li>
                   </ol>
                   <p
-                    class="mt-4 text-sm"
+                    class="mt-4 text-sm text-gray-500 dark:text-zinc-400"
                     th:with="last=${overtimeStatistic.distribution.entries.last}"
                     th:text="#{company.overview.distribution.sick-days.description(${last.value}, ${last.rangeStart})}"
                   >
