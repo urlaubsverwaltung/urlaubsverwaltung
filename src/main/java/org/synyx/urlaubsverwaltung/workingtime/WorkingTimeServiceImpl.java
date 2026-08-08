@@ -113,19 +113,19 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
-    public Map<Person, Map<DateRange, FederalState>> getFederalStatesByPersons(List<Person> persons, DateRange dateRange) {
+    public Map<Person, Map<DateRange, WorkingTime>> getWorkingTimesByPersonsAndDateRange(List<Person> persons, DateRange dateRange) {
 
         // load the working times of all persons with a single query instead of one query per person
         final Map<Person, List<WorkingTime>> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonIn(persons)).stream()
             .collect(groupingBy(WorkingTime::getPerson));
 
-        final Map<Person, Map<DateRange, FederalState>> federalStatesByPerson = new HashMap<>();
+        final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPersonAndDateRange = new HashMap<>();
         for (Person person : persons) {
             final List<WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(person, List.of());
-            federalStatesByPerson.put(person, toFederalStateByDateRange(workingTimesByDateRange(personWorkingTimes, dateRange)));
+            workingTimesByPersonAndDateRange.put(person, workingTimesByDateRange(personWorkingTimes, dateRange));
         }
 
-        return federalStatesByPerson;
+        return workingTimesByPersonAndDateRange;
     }
 
     private static Map<DateRange, FederalState> toFederalStateByDateRange(Map<DateRange, WorkingTime> workingTimesByDateRange) {
