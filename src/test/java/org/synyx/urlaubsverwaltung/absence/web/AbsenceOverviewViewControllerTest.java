@@ -52,6 +52,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
@@ -295,6 +296,254 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(view().name("absences/absences-overview"));
+    }
+
+    @Test
+    void ensureAbsencesBeforeDepartmentCreationAreNotVisibleButOwnAbsencesAre() throws Exception {
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2L);
+        otherPerson.setPermissions(List.of(USER));
+        otherPerson.setFirstName("sandra");
+        otherPerson.setLastName("smith");
+        otherPerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setCreatedAt(LocalDate.now(clock).plusDays(1));
+        department.setMembers(List.of(person, otherPerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation otherPersonMorning = new AbsencePeriod.RecordMorningVacation(otherPerson, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.Record otherPersonRecord = new AbsencePeriod.Record(LocalDate.now(clock), otherPerson, otherPersonMorning, null);
+
+        final AbsencePeriod.RecordMorningVacation ownMorning = new AbsencePeriod.RecordMorningVacation(person, 2L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.Record ownRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, ownMorning, null);
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person, otherPerson), firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new AbsencePeriod(List.of(otherPersonRecord)), new AbsencePeriod(List.of(ownRecord))));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItems(
+                        allOf(
+                            hasProperty("firstName", is("sandra")),
+                            hasProperty("days", everyItem(
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("color", hasProperty("morning", nullValue()))
+                                ))
+                            ))
+                        ),
+                        allOf(
+                            hasProperty("firstName", is("sam")),
+                            hasProperty("days", hasItems(
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("color", hasProperty("morning", is(ORANGE)))
+                                ))
+                            ))
+                        )
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensureAbsencesBeforeDepartmentCreationAreNotVisibleForDepartmentHeadOrSecondStageAuthority(Role role) throws Exception {
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2L);
+        otherPerson.setPermissions(List.of(USER));
+        otherPerson.setFirstName("sandra");
+        otherPerson.setLastName("smith");
+        otherPerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setCreatedAt(LocalDate.now(clock).plusDays(1));
+        department.setMembers(List.of(otherPerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
+
+        if (role == Role.DEPARTMENT_HEAD) {
+            when(departmentService.getMembersForDepartmentHead(person)).thenReturn(List.of(otherPerson));
+        } else {
+            when(departmentService.getMembersForSecondStageAuthority(person)).thenReturn(List.of(otherPerson));
+        }
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation otherPersonMorning = new AbsencePeriod.RecordMorningVacation(otherPerson, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.Record otherPersonRecord = new AbsencePeriod.Record(LocalDate.now(clock), otherPerson, otherPersonMorning, null);
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(otherPerson), firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new AbsencePeriod(List.of(otherPersonRecord))));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", contains(
+                        allOf(
+                            hasProperty("firstName", is("sandra")),
+                            hasProperty("days", everyItem(
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("color", hasProperty("morning", nullValue()))
+                                ))
+                            ))
+                        )
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureAbsencesBeforeDepartmentCreationAreVisibleForBossAndOffice(Role role) throws Exception {
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2L);
+        otherPerson.setPermissions(List.of(USER));
+        otherPerson.setFirstName("sandra");
+        otherPerson.setLastName("smith");
+        otherPerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setCreatedAt(LocalDate.now(clock).plusDays(1));
+        department.setMembers(List.of(otherPerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
+        when(personService.getActivePersons()).thenReturn(List.of(person, otherPerson));
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation otherPersonMorning = new AbsencePeriod.RecordMorningVacation(otherPerson, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.Record otherPersonRecord = new AbsencePeriod.Record(LocalDate.now(clock), otherPerson, otherPersonMorning, null);
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(otherPerson), firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new AbsencePeriod(List.of(otherPersonRecord))));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", contains(
+                        allOf(
+                            hasProperty("firstName", is("sandra")),
+                            hasProperty("days", hasItems(
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("color", hasProperty("morning", is(ORANGE)))
+                                ))
+                            ))
+                        )
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureAbsencesAreVisibleFromEarliestCreationDateOfSelectedDepartments() throws Exception {
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2L);
+        otherPerson.setPermissions(List.of(USER));
+        otherPerson.setFirstName("sandra");
+        otherPerson.setLastName("smith");
+        otherPerson.setEmail("sandra@example.org");
+
+        final var superheroes = department("superheroes");
+        superheroes.setCreatedAt(LocalDate.now(clock).plusDays(1));
+        superheroes.setMembers(List.of(person, otherPerson));
+
+        final var villains = department("villains");
+        villains.setCreatedAt(LocalDate.now(clock).minusDays(1));
+        villains.setMembers(List.of(person, otherPerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(superheroes, villains));
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation otherPersonMorning = new AbsencePeriod.RecordMorningVacation(otherPerson, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true);
+        final AbsencePeriod.Record otherPersonRecord = new AbsencePeriod.Record(LocalDate.now(clock), otherPerson, otherPersonMorning, null);
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person, otherPerson), firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new AbsencePeriod(List.of(otherPersonRecord))));
+
+        perform(get("/web/absences")
+            .locale(Locale.GERMANY)
+            .param("department", "superheroes")
+            .param("department", "villains"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItems(
+                        allOf(
+                            hasProperty("firstName", is("sandra")),
+                            hasProperty("days", hasItems(
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("color", hasProperty("morning", is(ORANGE)))
+                                ))
+                            ))
+                        )
+                    ))
+                ))
+            ));
     }
 
     @ParameterizedTest
