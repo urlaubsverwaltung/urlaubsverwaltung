@@ -42,7 +42,12 @@ class OidcSecurityConfiguration {
 
     @Bean
     OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(final ClientRegistrationRepository clientRegistrationRepository, final OidcSecurityProperties securityConfigurationProperties) {
-        final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        final String endSessionEndpoint = securityConfigurationProperties.getEndSessionEndpoint();
+        final ClientRegistrationRepository repository = endSessionEndpoint == null || endSessionEndpoint.isBlank()
+            ? clientRegistrationRepository
+            : new EndSessionEndpointClientRegistrationRepository(clientRegistrationRepository, endSessionEndpoint);
+
+        final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(repository);
         oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri(securityConfigurationProperties.getPostLogoutRedirectUri());
         return oidcClientInitiatedLogoutSuccessHandler;
     }
