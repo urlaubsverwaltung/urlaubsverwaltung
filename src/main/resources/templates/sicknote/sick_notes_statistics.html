@@ -9,7 +9,9 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{sicknotes.statistics.header.title(${selectedYearStatistics.year})}">Krankmeldungsstatistik</title>
+    <title
+      th:replace="~{fragments/page-title::page-title(#{sicknotes.statistics.header.title(${selectedYearStatistics.year})})}"
+    ></title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/sick-note-statistics.css}" />
     </th:block>

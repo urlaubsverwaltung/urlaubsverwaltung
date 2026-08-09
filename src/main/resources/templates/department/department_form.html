@@ -9,8 +9,7 @@
 >
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title
-      th:with="departmentTitleMessagekey=${department.id == null ? 'department.data.header.title.new' : 'department.data.header.title.edit'}"
-      th:text="#{__${departmentTitleMessagekey}__}"
+      th:replace="~{fragments/page-title::page-title(${department.id == null} ? #{department.data.header.title.new} : #{department.data.header.title.edit})}"
     ></title>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('department_form.js')}" />

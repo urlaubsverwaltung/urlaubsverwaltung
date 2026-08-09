@@ -10,7 +10,9 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{application.data.header.title(${app.person.niceName})}"></title>
+    <title
+      th:replace="~{fragments/page-title::page-title(#{application.data.header.title(${app.person.niceName})})}"
+    ></title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/

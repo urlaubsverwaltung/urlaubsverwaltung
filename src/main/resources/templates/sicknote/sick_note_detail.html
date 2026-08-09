@@ -11,11 +11,8 @@
     th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}, styles=~{::styles})}"
   >
     <title
-      th:with="messageKey=#{__${sickNote.sickNoteType.messageKey}__}"
-      th:text="#{sicknote.header.title(${messageKey}, ${sickNote.person.niceName})}"
-    >
-      Krankmeldung von Marlene
-    </title>
+      th:replace="~{fragments/page-title::page-title(#{sicknote.header.title(#{__${sickNote.sickNoteType.messageKey}__}, ${sickNote.person.niceName})})}"
+    ></title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/sick-note-detail.css}" />
     </th:block>

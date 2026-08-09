@@ -10,7 +10,7 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{applications.statistics.header.title}">Abwesenheiten</title>
+    <title th:replace="~{fragments/page-title::page-title(#{applications.statistics.header.title})}"></title>
     <th:block th:fragment="scripts">
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
     </th:block>

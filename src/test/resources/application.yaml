@@ -1,12 +1,14 @@
 uv:
+  branding:
+    name: Urlaubsverwaltung
   calendar:
     organizer: organizer@example.org
   mail:
     application-url: https://localhost:8080
     from: sender@example.org
-    fromDisplayName: Urlaubsverwaltung
+    fromDisplayName: ${uv.branding.name}
     replyTo: sender@example.org
-    replyToDisplayName: Urlaubsverwaltung
+    replyToDisplayName: ${uv.branding.name}
   tenant:
     mode: single
 
