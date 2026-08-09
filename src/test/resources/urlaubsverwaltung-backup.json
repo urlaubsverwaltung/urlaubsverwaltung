@@ -2013,7 +2013,7 @@
         "labels": {
           "de": "Erholungsurlaub",
           "en": "Holiday",
-          "el": "Διακοπές",
+          "el": "Κανονική άδεια",
           "de_AT": "Erholungsurlaub"
         }
       },
@@ -2047,7 +2047,7 @@
         "labels": {
           "de": "Unbezahlter Urlaub",
           "en": "Unpaid leave",
-          "el": "Απλήρωτη άδεια",
+          "el": "Άδεια άνευ αποδοχών",
           "de_AT": "Unbezahlter Urlaub"
         }
       },
@@ -2063,7 +2063,7 @@
         "messageKey": "application.data.vacationType.overtime",
         "labels": {
           "de": "Überstundenabbau",
-          "en": "Reduction of overtime",
+          "en": "Overtime reduction",
           "el": "Μείωση υπερωριών",
           "de_AT": "Überstundenabbau"
         }
@@ -2132,7 +2132,7 @@
         "labels": {
           "de": "Bezahlte Freistellung",
           "en": "Paid leave",
-          "el": "Αδεια μετ΄ αποδοχών",
+          "el": "Άδεια μετ' αποδοχών",
           "de_AT": "Bezahlte Freistellung"
         }
       },
@@ -2148,7 +2148,7 @@
         "messageKey": "application.data.vacationType.cure",
         "labels": {
           "de": "Kur",
-          "en": "Cure",
+          "en": "Medical rehabilitation",
           "el": "Θεραπεία",
           "de_AT": "Kur"
         }
