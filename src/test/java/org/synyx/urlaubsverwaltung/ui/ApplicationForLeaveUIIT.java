@@ -133,7 +133,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         page.waitForURL(OverviewPage.URL_PATTERN);
-        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(userPerson.getNiceName(), LocalDate.now().getYear()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(userPerson.getNiceName(), LocalDate.now().getYear()));
 
         navigationPage.quickAdd.clickCreateNewApplication();
         applicationFormPage.waitForVisible();
@@ -165,7 +165,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         page.waitForURL(OverviewPage.URL_PATTERN);
-        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(userPerson.getNiceName(), LocalDate.now().getYear()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(userPerson.getNiceName(), LocalDate.now().getYear()));
 
         navigationPage.quickAdd.clickCreateNewApplication();
 
@@ -189,7 +189,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(OverviewPage.URL_PATTERN);
-        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(officePerson.getNiceName(), LocalDate.now().getYear()));
 
         navigationPage.quickAdd.clickCreateNewApplication();
 
@@ -236,7 +236,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(OverviewPage.URL_PATTERN);
-        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(officePerson.getNiceName(), LocalDate.now().getYear()));
 
         navigationPage.quickAdd.clickCreateNewApplication();
 
@@ -275,7 +275,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(OverviewPage.URL_PATTERN);
-        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(officePerson.getNiceName(), LocalDate.now().getYear()));
 
         // ensure overtime feature is enabled
         navigationPage.settingsMenu.clickOvertime();

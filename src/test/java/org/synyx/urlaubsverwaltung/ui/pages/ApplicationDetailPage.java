@@ -28,7 +28,7 @@ public class ApplicationDetailPage {
     }
 
     public boolean isVisibleForPerson(String username) {
-        return page.title().equals(title(username));
+        return page.title().contains(title(username));
     }
 
     public void showsApplicationCreatedInfo() {

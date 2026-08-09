@@ -13,6 +13,8 @@ public class OverviewPage {
 
     public static final Pattern URL_PATTERN = Pattern.compile("/web/person/\\d+/overview");
 
+    private static final Pattern REGEX_METACHARACTER = Pattern.compile("[.\\[\\]{}()*+?^$|\\\\]");
+
     private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -23,8 +25,16 @@ public class OverviewPage {
         this.locale = locale;
     }
 
-    public String getExpectedPageTitle(String username, int year) {
-        return messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
+    /**
+     * The page title is suffixed with the configurable application name. Therefore the returned pattern matches a
+     * substring of the title only.
+     *
+     * <p>Note that the pattern is evaluated by the browser. Therefore {@link Pattern#quote(String)} cannot be used to
+     * escape the text, `\Q...\E` is java syntax which is unknown to javascript regular expressions.
+     */
+    public Pattern getExpectedPageTitlePattern(String username, int year) {
+        final String title = messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
+        return Pattern.compile(REGEX_METACHARACTER.matcher(title).replaceAll("\\\\$0"));
     }
 
     public void selectDateRange(LocalDate startDate, LocalDate endDate) {
