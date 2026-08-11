@@ -187,7 +187,8 @@
       border-top-right-radius: 6px;
 
       width: 100%;
-      max-width: --spacing(24);
+      min-width: --spacing(8);
+      max-width: --spacing(32);
       margin-inline: auto;
       min-height: 3px;
 
