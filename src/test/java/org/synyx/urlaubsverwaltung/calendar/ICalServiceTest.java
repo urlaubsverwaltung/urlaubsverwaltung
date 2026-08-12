@@ -67,6 +67,22 @@ class ICalServiceTest {
     }
 
     @Test
+    void ensureProdIdIsUtf8EncodedAndEscapesSpecialCharactersOfTheApplicationName() {
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Ürlaub; a,b\\c"), messageSource, userSettingsService);
+
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ByteArrayResource calendar = sutWithBranding.getCalendar("Abwesenheitskalender", List.of(), recipient);
+
+        // ";", "," and "\" are delimiters in an iCalendar TEXT value and have to be escaped
+        assertThat(new String(calendar.getByteArray(), UTF_8))
+            .contains("PRODID:-//Ürlaub\\; a\\,b\\\\c//iCal4j 1.0//DE");
+    }
+
+    @Test
     void ensureToGetCalendarForPersonAndNoAbsenceFound() {
 
         final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");

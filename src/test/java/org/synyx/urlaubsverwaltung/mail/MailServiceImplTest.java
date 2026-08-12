@@ -1,8 +1,11 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
@@ -19,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -206,6 +211,78 @@ class MailServiceImplTest {
         sut.send(mail);
 
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Hans Dampf <hans@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+    }
+
+    @Test
+    void ensureDisplayNameWithSpecialCharacterIsQuotedSoThatTheAddressStaysParsable() {
+        setupMockServletRequest();
+
+        when(mailProperties.getFromDisplayName()).thenReturn("focus:absence");
+        when(mailProperties.getReplyToDisplayName()).thenReturn("focus:absence");
+
+        final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
+
+        final Mail mail = Mail.builder()
+            .withRecipient(hans)
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", _ -> new HashMap<>())
+            .build();
+
+        sut.send(mail);
+
+        final ArgumentCaptor<String> from = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> replyTo = ArgumentCaptor.forClass(String.class);
+        verify(mailSenderService).sendEmail(from.capture(), replyTo.capture(), any(), any(), any());
+
+        assertThat(from.getValue()).isEqualTo("\"focus:absence\" <from@example.org>");
+        assertThat(replyTo.getValue()).isEqualTo("\"focus:absence\" <no-reply@example.org>");
+
+        // the colon made jakarta.mail reject the unquoted address
+        assertThatNoException().isThrownBy(() -> InternetAddress.parse(from.getValue(), true));
+        assertThatNoException().isThrownBy(() -> InternetAddress.parse(replyTo.getValue(), true));
+    }
+
+    @Test
+    void ensureDisplayNameWithNonAsciiCharacterIsEncoded() throws AddressException {
+        setupMockServletRequest();
+
+        when(mailProperties.getFromDisplayName()).thenReturn("Ürlaub");
+        when(mailProperties.getReplyToDisplayName()).thenReturn("Ürlaub");
+
+        final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
+
+        final Mail mail = Mail.builder()
+            .withRecipient(hans)
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", _ -> new HashMap<>())
+            .build();
+
+        sut.send(mail);
+
+        final ArgumentCaptor<String> from = ArgumentCaptor.forClass(String.class);
+        verify(mailSenderService).sendEmail(from.capture(), any(), any(), any(), any());
+
+        // a header must not carry raw non-ascii bytes, it is encoded as a rfc 2047 encoded-word
+        assertThat(from.getValue()).isEqualTo("=?UTF-8?Q?=C3=9Crlaub?= <from@example.org>");
+        assertThat(InternetAddress.parse(from.getValue(), true)[0].getPersonal()).isEqualTo("Ürlaub");
+    }
+
+    @Test
+    void ensureDisplayNameOfReplyToPersonIsQuotedSoThatTheAddressStaysParsable() {
+        setupMockServletRequest();
+
+        final Person hans = new Person("hans", "Dampf, Jr.", "Hans", "hans@example.org");
+
+        final Mail mail = Mail.builder()
+            .withRecipient(hans)
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", _ -> new HashMap<>())
+            .withReplyToFrom(hans)
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "\"Hans Dampf, Jr.\" <hans@example.org>", "hans@example.org", "subject", "emailBody");
     }
 
     private void setupMockServletRequest() {

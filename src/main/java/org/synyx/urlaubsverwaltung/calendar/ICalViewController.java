@@ -68,7 +68,7 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return new String(iCal.getByteArray());
+        return new String(iCal.getByteArray(), StandardCharsets.UTF_8);
     }
 
     @GetMapping("/company/persons/{personId}/calendar")
@@ -85,7 +85,7 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return new String(iCal.getByteArray());
+        return new String(iCal.getByteArray(), StandardCharsets.UTF_8);
     }
 
     private void setContentTypeAndHeaders(HttpServletResponse response) {

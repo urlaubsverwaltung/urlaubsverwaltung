@@ -98,6 +98,17 @@ class PageTitleFragmentTest {
     }
 
     @Test
+    void ensureApplicationNameIsHtmlEscaped() {
+
+        final Context context = new Context(Locale.GERMAN);
+        context.setVariable("applicationName", "Ürlaub & Co <b>");
+
+        final String title = render("#{settings.header.title}", context);
+
+        assertThat(title).isEqualTo("Einstellungen – Ürlaub &amp; Co &lt;b&gt;");
+    }
+
+    @Test
     void ensureTitleWithoutSuffixWhenApplicationNameIsMissing() {
 
         final Context context = new Context(Locale.GERMAN);
