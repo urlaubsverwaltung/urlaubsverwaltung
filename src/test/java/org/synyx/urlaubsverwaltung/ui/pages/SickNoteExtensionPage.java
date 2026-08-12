@@ -31,7 +31,7 @@ public class SickNoteExtensionPage {
     }
 
     public boolean isVisible() {
-        return page.title().equals(messageSource.getMessage("sicknote.extend.header.title", null, locale));
+        return page.title().contains(messageSource.getMessage("sicknote.extend.header.title", null, locale));
     }
 
     /**

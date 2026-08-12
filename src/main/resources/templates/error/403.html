@@ -8,7 +8,7 @@
   xmlns:asset="http://www.w3.org/1999/xhtml"
 >
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
-    <title th:text="#{error-page.common.meta.title}"></title>
+    <title th:replace="~{fragments/page-title::page-title(#{error-page.common.meta.title})}"></title>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('frame.js')}" />
     </th:block>

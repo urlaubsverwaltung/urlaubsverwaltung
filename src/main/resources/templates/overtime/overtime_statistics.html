@@ -9,7 +9,9 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{overtime.statistics.header.title(${selectedYear})}">Überstundenstatistik</title>
+    <title
+      th:replace="~{fragments/page-title::page-title(#{overtime.statistics.header.title(${selectedYear})})}"
+    ></title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/overtime-statistics.css}" />
     </th:block>

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.synyx.urlaubsverwaltung.branding.BrandingProperties;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
 
@@ -22,11 +23,11 @@ public class SwaggerConfig {
     private String version;
 
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI customOpenAPI(BrandingProperties brandingProperties) {
         return new OpenAPI()
             .info(
                 new Info()
-                    .title("Urlaubsverwaltung API")
+                    .title("%s API".formatted(brandingProperties.name()))
                     .version(version)
                     .description(
                         """
@@ -38,7 +39,7 @@ public class SwaggerConfig {
                     )
                     .contact(
                         new Contact()
-                            .name("Urlaubsverwaltung")
+                            .name(brandingProperties.name())
                             .url("https://urlaubsverwaltung.cloud")
                             .email("info@urlaubsverwaltung.cloud")
                     )

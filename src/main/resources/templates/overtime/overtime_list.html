@@ -10,7 +10,7 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{overtime.header.title(${person.niceName})}"></title>
+    <title th:replace="~{fragments/page-title::page-title(#{overtime.header.title(${person.niceName})})}"></title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/overtime.css}" />
     </th:block>

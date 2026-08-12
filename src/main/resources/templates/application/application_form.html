@@ -11,10 +11,8 @@
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title
-      th:text="${applicationForLeaveForm != null && applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit}"
-    >
-      Neue Abwesenheit
-    </title>
+      th:replace="~{fragments/page-title::page-title(${applicationForLeaveForm != null && applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit})}"
+    ></title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/

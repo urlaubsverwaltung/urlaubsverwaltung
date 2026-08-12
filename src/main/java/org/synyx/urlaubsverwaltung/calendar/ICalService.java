@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.branding.BrandingProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 
@@ -42,16 +43,19 @@ import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 public class ICalService {
 
     private final CalendarProperties calendarProperties;
+    private final BrandingProperties brandingProperties;
     private final MessageSource messageSource;
     private final UserSettingsService userSettingsService;
 
     @Autowired
     ICalService(
         CalendarProperties calendarProperties,
+        BrandingProperties brandingProperties,
         MessageSource messageSource,
         UserSettingsService userSettingsService
     ) {
         this.calendarProperties = calendarProperties;
+        this.brandingProperties = brandingProperties;
         this.messageSource = messageSource;
         this.userSettingsService = userSettingsService;
     }
@@ -83,7 +87,7 @@ public class ICalService {
 
         final Calendar calendar = new Calendar();
         calendar.add(VERSION_2_0);
-        calendar.add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
+        calendar.add(new ProdId("-//%s//iCal4j 1.0//DE".formatted(brandingProperties.name())));
         calendar.add(GREGORIAN);
         calendar.add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
 

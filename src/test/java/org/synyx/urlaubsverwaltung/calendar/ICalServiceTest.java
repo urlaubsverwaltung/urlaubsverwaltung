@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
+import org.synyx.urlaubsverwaltung.branding.BrandingProperties;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -49,7 +50,36 @@ class ICalServiceTest {
     void setUp() {
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        sut = new ICalService(calendarProperties, messageSource, userSettingsService);
+        sut = new ICalService(calendarProperties, new BrandingProperties("Urlaubsverwaltung"), messageSource, userSettingsService);
+    }
+
+    @Test
+    void ensureProdIdUsesConfiguredApplicationName() {
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Abwesenheiten"), messageSource, userSettingsService);
+
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ByteArrayResource calendar = sutWithBranding.getCalendar("Abwesenheitskalender", List.of(), recipient);
+        assertThat(convertCalendar(calendar)).contains("PRODID:-//Abwesenheiten//iCal4j 1.0//DE");
+    }
+
+    @Test
+    void ensureProdIdIsUtf8EncodedAndEscapesSpecialCharactersOfTheApplicationName() {
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Ürlaub; a,b\\c"), messageSource, userSettingsService);
+
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ByteArrayResource calendar = sutWithBranding.getCalendar("Abwesenheitskalender", List.of(), recipient);
+
+        // ";", "," and "\" are delimiters in an iCalendar TEXT value and have to be escaped
+        assertThat(new String(calendar.getByteArray(), UTF_8))
+            .contains("PRODID:-//Ürlaub\\; a\\,b\\\\c//iCal4j 1.0//DE");
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import jakarta.mail.internet.InternetAddress;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,12 +12,14 @@ import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -109,7 +112,16 @@ class MailServiceImpl implements MailService {
         return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
     }
 
+    /**
+     * Builds an address of the form {@code display name <address>}. The display name is quoted or encoded whenever
+     * it contains characters that are not allowed in a header unencoded - a colon or a comma for instance, which can
+     * appear both in the configured application name and in the name of a person.
+     */
     private String generateMailAddressAndDisplayName(String address, String displayName) {
-        return "%s <%s>".formatted(displayName, address);
+        try {
+            return new InternetAddress(address, displayName, UTF_8.name()).toString();
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("expected UTF-8 to be supported", e);
+        }
     }
 }

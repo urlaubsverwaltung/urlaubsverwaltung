@@ -11,9 +11,9 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="${editMode} ? #{sicknote.edit.header.title} : #{sicknote.create.header.title}">
-      Neue Krankmeldung
-    </title>
+    <title
+      th:replace="~{fragments/page-title::page-title(${editMode} ? #{sicknote.edit.header.title} : #{sicknote.create.header.title})}"
+    ></title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/

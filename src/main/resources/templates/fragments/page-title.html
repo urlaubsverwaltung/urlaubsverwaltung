@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title
+      th:fragment="page-title(pageTitle)"
+      th:text="${applicationName == null} ? ${pageTitle} : |${pageTitle} – ${applicationName}|"
+    >
+      Page Title – Urlaubsverwaltung
+    </title>
+  </head>
+  <body></body>
+</html>

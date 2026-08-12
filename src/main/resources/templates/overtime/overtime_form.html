@@ -11,8 +11,7 @@
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title
-      th:with="overtimeTitleMessagekey=${overtime.id == null ? 'overtime.record.header.title.new' : 'overtime.record.header.title.edit'}"
-      th:text="#{__${overtimeTitleMessagekey}__}"
+      th:replace="~{fragments/page-title::page-title(${overtime.id == null} ? #{overtime.record.header.title.new} : #{overtime.record.header.title.edit})}"
     ></title>
     <th:block th:ref="scripts">
       <script th:inline="javascript">

@@ -180,9 +180,7 @@ Um den E-Mail-Server zu konfigurieren, müssen folgende Konfigurationen vorgenom
 uv:
   mail:
     from: absender@example.org
-    fromDisplayName: Urlaubsverwaltung
     replyTo: no-reply@example.org
-    replyToDisplayName: Urlaubsverwaltung
     application-url: https://example.org
 spring:
   mail:
@@ -194,6 +192,32 @@ spring:
 
 Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
 eingesehen werden.
+
+| Property                   | Type   | Description                                                                     |
+|----------------------------|--------|---------------------------------------------------------------------------------|
+| uv.mail.fromDisplayName    | String | Anzeigename des Absenders, (default) `uv.branding.name`                          |
+| uv.mail.replyToDisplayName | String | Anzeigename der Antwortadresse, (default) `uv.branding.name`                     |
+
+#### Anwendungsname
+
+Der Name, unter dem sich die Anwendung den Benutzenden zeigt, kann angepasst werden.
+
+```properties
+uv.branding.name=Abwesenheiten
+```
+
+| Property         | Type   | Description                                    |
+|------------------|--------|------------------------------------------------|
+| uv.branding.name | String | (default) `Urlaubsverwaltung`, darf nicht leer sein |
+
+Der Name wird verwendet für
+
+* den Schriftzug oben links auf jeder Seite,
+* den Titel jeder Seite im Browser-Tab,
+* den Anzeigenamen in ausgehenden E-Mails (`uv.mail.fromDisplayName`, `uv.mail.replyToDisplayName`),
+* die `PRODID` exportierter Kalenderdateien,
+* den Titel der API-Dokumentation,
+* sowie `name` und `short_name` des Web-App-Manifests.
 
 #### Logging konfigurieren
 

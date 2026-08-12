@@ -1,7 +1,9 @@
 uv:
+  branding:
+    name: Urlaubsverwaltung
   mail:
-    fromDisplayName: Urlaubsverwaltung
-    replyToDisplayName: Urlaubsverwaltung
+    fromDisplayName: ${uv.branding.name}
+    replyToDisplayName: ${uv.branding.name}
   tenant:
     mode: single
 
