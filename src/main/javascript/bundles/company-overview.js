@@ -107,11 +107,25 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
   requestAnimationFrame(step);
 }
 
+const numberFormatParts = new Intl.NumberFormat(document.documentElement.lang).formatToParts(12_345.6);
+const groupSeparator = numberFormatParts.find((part) => part.type === "group")?.value ?? "";
+const decimalSeparator = numberFormatParts.find((part) => part.type === "decimal")?.value ?? ".";
+const numberPartPattern = new RegExp(String.raw`^-?[\d${escapeForCharacterClass(groupSeparator + decimalSeparator)}]+`);
+
 function parseLocaleNumber(text) {
-  const numberPart = text.match(/^-?[\d.,]+/)?.[0] ?? text;
+  const numberPart = text.match(numberPartPattern)?.[0] ?? text;
   const suffix = text.slice(numberPart.length);
-  const decimals = (numberPart.split(/[.,]/)[1] ?? "").length;
-  return { value: Number.parseFloat(numberPart.replace(",", ".")), decimals, suffix };
+  const fractionPart = numberPart.split(decimalSeparator)[1] ?? "";
+  const normalized = numberPart.replaceAll(groupSeparator, "").replace(decimalSeparator, ".");
+  return {
+    value: Number.parseFloat(normalized),
+    decimals: fractionPart.length,
+    suffix,
+  };
+}
+
+function escapeForCharacterClass(text) {
+  return text.replaceAll(/[\\\]^-]/g, String.raw`\$&`);
 }
 
 function easeInOutQuad(t) {
