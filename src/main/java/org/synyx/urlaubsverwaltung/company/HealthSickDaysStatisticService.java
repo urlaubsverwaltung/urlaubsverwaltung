@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.company;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.company.SickDaysStatistic.HealthRate;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 class HealthSickDaysStatisticService {
 
     private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
