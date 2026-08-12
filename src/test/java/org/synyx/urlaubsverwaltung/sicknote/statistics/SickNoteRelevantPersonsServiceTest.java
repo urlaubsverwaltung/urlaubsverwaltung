@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -60,8 +62,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(personService.getAllPersonsHavingAccountInYear(Year.of(2026))).thenReturn(List.of(personOne, personTwo));
 
-        final LocalDate from = LocalDate.of(2026, 1, 1);
-        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, person);
         assertThat(actual).containsExactly(personOne, personTwo);
@@ -85,8 +87,8 @@ class SickNoteRelevantPersonsServiceTest {
         when(personService.getAllPersonsHavingAccountInYear(Year.of(2025))).thenReturn(List.of(personOne));
         when(personService.getAllPersonsHavingAccountInYear(Year.of(2026))).thenReturn(List.of(personOne, personTwo));
 
-        final LocalDate from = LocalDate.of(2025, 12, 1);
-        final LocalDate to = LocalDate.of(2026, 1, 31);
+        final LocalDate from = LocalDate.of(2025, DECEMBER, 1);
+        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, person);
         assertThat(actual).containsExactly(personOne, personTwo);
@@ -113,8 +115,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, Year.of(2026))).thenReturn(List.of(activeMember, inactiveMember));
 
-        final LocalDate from = LocalDate.of(2026, 1, 1);
-        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, departmentHead);
         assertThat(actual).containsExactly(activeMember);
@@ -141,8 +143,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(departmentService.getManagedMembersOfPerson(secondStageAuthority, Year.of(2026))).thenReturn(List.of(activeMember, inactiveMember));
 
-        final LocalDate from = LocalDate.of(2026, 1, 1);
-        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, secondStageAuthority);
         assertThat(actual).containsExactly(activeMember);
@@ -169,8 +171,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, Year.of(2025))).thenReturn(List.of(activeMember, inactiveMember));
 
-        final LocalDate from = LocalDate.of(2025, 1, 1);
-        final LocalDate to = LocalDate.of(2025, 12, 31);
+        final LocalDate from = LocalDate.of(2025, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2025, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, departmentHead);
         assertThat(actual).containsExactly(activeMember, inactiveMember);
@@ -187,8 +189,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(person)).thenReturn(false);
 
-        final LocalDate from = LocalDate.of(2026, 1, 1);
-        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, person);
         assertThat(actual).containsExactly(person);
@@ -206,8 +208,8 @@ class SickNoteRelevantPersonsServiceTest {
 
         when(sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(person)).thenReturn(false);
 
-        final LocalDate from = LocalDate.of(2026, 1, 1);
-        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final List<Person> actual = sut.getStatisticRelevantPersons(from, to, person);
         assertThat(actual).isEmpty();
