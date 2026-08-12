@@ -51,7 +51,7 @@ frame?.addEventListener("turbo:before-frame-render", (event) => {
 
             return false;
           }
-          if (oldNode.matches?.(".company-overtime-average-hours-value, .company-overtime-average-minutes-value")) {
+          if (oldNode.matches?.("[data-animate-number]")) {
             pendingNumbers.push([oldNode, oldNode.textContent, newNode.textContent]);
             return false;
           }
@@ -92,11 +92,12 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
   function step(now) {
     const progress = Math.min((now - start) / duration, 1);
     const value = from.value + (to.value - from.value) * easeInOutQuad(progress);
-    element.textContent = new Intl.NumberFormat(document.documentElement.lang, {
+    const formatted = new Intl.NumberFormat(document.documentElement.lang, {
       minimumFractionDigits: to.decimals,
       maximumFractionDigits: to.decimals,
       signDisplay: "auto",
     }).format(value);
+    element.textContent = formatted + to.suffix;
 
     if (progress < 1) {
       requestAnimationFrame(step);
@@ -106,9 +107,25 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
   requestAnimationFrame(step);
 }
 
+const numberFormatParts = new Intl.NumberFormat(document.documentElement.lang).formatToParts(12_345.6);
+const groupSeparator = numberFormatParts.find((part) => part.type === "group")?.value ?? "";
+const decimalSeparator = numberFormatParts.find((part) => part.type === "decimal")?.value ?? ".";
+const numberPartPattern = new RegExp(String.raw`^-?[\d${escapeForCharacterClass(groupSeparator + decimalSeparator)}]+`);
+
 function parseLocaleNumber(text) {
-  const decimals = (text.split(/[.,]/)[1] ?? "").length;
-  return { value: Number.parseFloat(text.replace(",", ".")), decimals };
+  const numberPart = text.match(numberPartPattern)?.[0] ?? text;
+  const suffix = text.slice(numberPart.length);
+  const fractionPart = numberPart.split(decimalSeparator)[1] ?? "";
+  const normalized = numberPart.replaceAll(groupSeparator, "").replace(decimalSeparator, ".");
+  return {
+    value: Number.parseFloat(normalized),
+    decimals: fractionPart.length,
+    suffix,
+  };
+}
+
+function escapeForCharacterClass(text) {
+  return text.replaceAll(/[\\\]^-]/g, String.raw`\$&`);
 }
 
 function easeInOutQuad(t) {

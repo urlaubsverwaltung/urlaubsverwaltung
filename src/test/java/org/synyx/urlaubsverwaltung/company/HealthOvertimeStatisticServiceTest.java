@@ -35,9 +35,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
-class OvertimeStatisticServiceTest {
+class HealthOvertimeStatisticServiceTest {
 
-    private OvertimeStatisticService sut;
+    private HealthOvertimeStatisticService sut;
 
     @Mock
     private OvertimeService overtimeService;
@@ -48,7 +48,7 @@ class OvertimeStatisticServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeStatisticService(overtimeService, personService, departmentService);
+        sut = new HealthOvertimeStatisticService(overtimeService, personService, departmentService);
     }
 
     @Nested

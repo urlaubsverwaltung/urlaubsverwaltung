@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.company;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-@Component
-class OvertimeStatisticService {
+@Service
+class HealthOvertimeStatisticService {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
     private final DepartmentService departmentService;
 
-    OvertimeStatisticService(OvertimeService overtimeService, PersonService personService, DepartmentService departmentService) {
+    HealthOvertimeStatisticService(OvertimeService overtimeService, PersonService personService, DepartmentService departmentService) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.departmentService = departmentService;

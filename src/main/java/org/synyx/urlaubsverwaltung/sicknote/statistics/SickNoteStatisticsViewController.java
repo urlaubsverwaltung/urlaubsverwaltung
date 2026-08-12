@@ -15,9 +15,12 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -63,11 +66,16 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
         final Person signedInUser = personService.getSignedInUser();
 
-        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear, signedInUser);
-        model.addAttribute("selectedYearStatistics", selectedYearStatistics);
+        final LocalDate selectedYearFirstDay = selectedYear.atDay(1);
+        final LocalDate selectedYearLastDay = selectedYearFirstDay.with(lastDayOfYear());
+        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYearFirstDay, selectedYearLastDay, signedInUser);
+        model.addAttribute("selectedYearStatistics", toSickNoteStatisticsDto(selectedYearStatistics));
 
-        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(selectedYear.minusYears(1), signedInUser);
-        model.addAttribute("previousSelectedYearStatistics", previousSelectedYearStatistics);
+        final Year previousSelectedYear = selectedYear.minusYears(1);
+        final LocalDate previousSelectedYearFirstDay = previousSelectedYear.atDay(1);
+        final LocalDate previousSelectedYearLastDay = previousSelectedYearFirstDay.with(lastDayOfYear());
+        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(previousSelectedYearFirstDay, previousSelectedYearLastDay, signedInUser);
+        model.addAttribute("previousSelectedYearStatistics", toSickNoteStatisticsDto(previousSelectedYearStatistics));
 
         final GraphDto graphDto = new GraphDto(
             List.of(
@@ -90,6 +98,32 @@ class SickNoteStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
         return "sicknote/sick_notes_statistics";
+    }
+
+    private SickNoteStatisticsDto toSickNoteStatisticsDto(SickNoteStatistics sickNoteStatistics) {
+        return new SickNoteStatisticsDto(
+            sickNoteStatistics.getYear(),
+            sickNoteStatistics.getAsOfDate(),
+            sickNoteStatistics.getNumberOfSickDaysByMonth(),
+            sickNoteStatistics.getNumberOfChildSickDaysByMonth(),
+            sickNoteStatistics.getSickRateByMonth(),
+            sickNoteStatistics.getSickRate(),
+            sickNoteStatistics.getTotalNumberOfAllSickNotes(),
+            sickNoteStatistics.getTotalNumberOfSickNotes(),
+            sickNoteStatistics.getTotalNumberOfChildSickNotes(),
+            sickNoteStatistics.getAtLeastOneSickNotePercent(),
+            sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote(),
+            sickNoteStatistics.getNumberOfPersonsWithoutSickNote(),
+            sickNoteStatistics.getTotalNumberOfSickDaysAllCategories(),
+            sickNoteStatistics.getTotalNumberOfSickDays(),
+            sickNoteStatistics.getTotalNumberOfChildSickDays(),
+            sickNoteStatistics.getAverageDurationOfAllSickNotes(),
+            sickNoteStatistics.getAverageDurationOfSickNote(),
+            sickNoteStatistics.getAverageDurationOfChildSickNote(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPerson(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPersonAndSick(),
+            sickNoteStatistics.getAverageDurationOfDiseasePerPersonAndChildSick()
+        );
     }
 
     // changing this GraphDto, you may have to increase the local-storage version key in JavaScript to keep the local state clean!
