@@ -108,7 +108,8 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
 }
 
 function parseLocaleNumber(text) {
-  const [, numberPart = text, suffix = ""] = text.match(/^(-?[\d.,]+)(.*)$/) ?? [];
+  const numberPart = text.match(/^-?[\d.,]+/)?.[0] ?? text;
+  const suffix = text.slice(numberPart.length);
   const decimals = (numberPart.split(/[.,]/)[1] ?? "").length;
   return { value: Number.parseFloat(numberPart.replace(",", ".")), decimals, suffix };
 }
