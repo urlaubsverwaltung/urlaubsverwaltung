@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -35,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
-class ApplicationForLeaveStatisticsService {
+public class ApplicationForLeaveStatisticsService {
 
     private final PersonService personService;
     private final PersonBasedataService personBasedataService;
@@ -89,6 +90,19 @@ class ApplicationForLeaveStatisticsService {
      *
      * @param person             person to restrict the returned page content
      * @param period             filter result set for a given period of time
+     * @return filtered page of {@link ApplicationForLeaveStatistics}
+     */
+    public Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period) {
+        return getStatisticsSortedByStatistics(person, period, ApplicationForLeaveStatisticsPageRequest.unpaged(), "");
+    }
+
+
+    /**
+     * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
+     * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
+     *
+     * @param person             person to restrict the returned page content
+     * @param period             filter result set for a given period of time
      * @param statisticsPageable the page request
      * @param query              optional query to filter for person firstname for instance
      * @return filtered page of {@link ApplicationForLeaveStatistics}
@@ -107,11 +121,16 @@ class ApplicationForLeaveStatisticsService {
         final Collection<ApplicationForLeaveStatistics> allStatistics =
             getStatistics(period, persons, vacationTypes, allApplications);
 
-        final List<ApplicationForLeaveStatistics> paginatedStatistics = allStatistics.stream()
-            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
-            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-            .limit(pageable.getPageSize())
-            .toList();
+        Stream<ApplicationForLeaveStatistics> statisticsStream = allStatistics.stream()
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()));
+
+        if (pageable.isPaged()) {
+            statisticsStream = statisticsStream
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize());
+        }
+
+        final List<ApplicationForLeaveStatistics> paginatedStatistics = statisticsStream.toList();
 
         return new PageImpl<>(paginatedStatistics, pageable, allStatistics.size());
     }
