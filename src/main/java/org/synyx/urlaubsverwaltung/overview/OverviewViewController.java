@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -388,12 +389,14 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final boolean allowedToEdit = applicationForLeavePermissionEvaluator.isAllowedToEdit(signedInUser, applicationForLeave);
+        final ApplicationForLeavePermissions permissions = applicationForLeavePermissionEvaluator.of(signedInUser, applicationForLeave);
 
-        final boolean allowedToRevoke = applicationForLeavePermissionEvaluator.isAllowedToRevoke(signedInUser, applicationForLeave);
-        final boolean allowedToCancel = applicationForLeavePermissionEvaluator.isAllowedToCancel(signedInUser, applicationForLeave);
-        final boolean allowedToCancelDirectly = applicationForLeavePermissionEvaluator.isAllowedToCancelDirectly(signedInUser, applicationForLeave);
-        final boolean allowedToStartCancellationRequest = applicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest(signedInUser, applicationForLeave);
+        final boolean allowedToEdit = permissions.isAllowedToEdit();
+
+        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
+        final boolean allowedToCancel = permissions.isAllowedToCancel();
+        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
+        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
 
         return new ApplicationDto(
             applicationForLeave.getId(),
