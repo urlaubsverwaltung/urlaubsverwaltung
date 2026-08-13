@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -27,7 +26,6 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -57,7 +55,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
-import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -391,14 +388,12 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final ApplicationForLeavePermissions permissions = applicationForLeavePermissionEvaluator.of(signedInUser, applicationForLeave);
+        final boolean allowedToEdit = applicationForLeavePermissionEvaluator.isAllowedToEdit(signedInUser, applicationForLeave);
 
-        final boolean allowedToEdit = permissions.isAllowedToEdit();
-
-        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
-        final boolean allowedToCancel = permissions.isAllowedToCancel();
-        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
-        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
+        final boolean allowedToRevoke = applicationForLeavePermissionEvaluator.isAllowedToRevoke(signedInUser, applicationForLeave);
+        final boolean allowedToCancel = applicationForLeavePermissionEvaluator.isAllowedToCancel(signedInUser, applicationForLeave);
+        final boolean allowedToCancelDirectly = applicationForLeavePermissionEvaluator.isAllowedToCancelDirectly(signedInUser, applicationForLeave);
+        final boolean allowedToStartCancellationRequest = applicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest(signedInUser, applicationForLeave);
 
         return new ApplicationDto(
             applicationForLeave.getId(),
@@ -435,10 +430,4 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
-        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, personToShowDetails)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, personToShowDetails);
-        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
-    }
 }

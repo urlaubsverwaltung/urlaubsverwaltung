@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -178,15 +177,12 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
-        final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, applicationForLeave);
+        final boolean allowedToEdit = permissionEvaluator.isAllowedToEdit(signedInUser, applicationForLeave);
 
-        final boolean allowedToEdit = permissions.isAllowedToEdit();
-
-        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
-        final boolean allowedToCancel = permissions.isAllowedToCancel();
-        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
-        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
+        final boolean allowedToRevoke = permissionEvaluator.isAllowedToRevoke(signedInUser, applicationForLeave);
+        final boolean allowedToCancel = permissionEvaluator.isAllowedToCancel(signedInUser, applicationForLeave);
+        final boolean allowedToCancelDirectly = permissionEvaluator.isAllowedToCancelDirectly(signedInUser, applicationForLeave);
+        final boolean allowedToStartCancellationRequest = permissionEvaluator.isAllowedToStartCancellationRequest(signedInUser, applicationForLeave);
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());

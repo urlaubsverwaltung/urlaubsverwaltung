@@ -225,7 +225,6 @@ class ApplicationsViewControllerTest {
         when(vacationType.getLabel(any(Locale.class))).thenReturn("label");
         when(vacationType.getCategory()).thenReturn(HOLIDAY);
         when(vacationType.getColor()).thenReturn(ORANGE);
-        when(vacationType.isRequiresApprovalToCancel()).thenReturn(false);
         application.setVacationType(vacationType);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(

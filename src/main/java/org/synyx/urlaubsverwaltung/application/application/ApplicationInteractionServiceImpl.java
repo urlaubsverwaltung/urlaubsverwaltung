@@ -347,7 +347,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        if (permissionEvaluator.of(canceller, application).isAllowedToCancel()) {
+        if (permissionEvaluator.isAllowedToCancel(canceller, application)) {
             /*
              * Only management with the role application_cancel can cancel allowed applications for leave directly,
              * users have to request cancellation
@@ -458,7 +458,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application edit(Application oldApplication, Application editedApplication, Person editor, Optional<String> comment) {
 
-        if (!permissionEvaluator.of(editor, oldApplication).isAllowedToEdit()) {
+        if (!permissionEvaluator.isAllowedToEdit(editor, oldApplication)) {
             throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
                 "with id %d because editor %s has not enough permissions", oldApplication.getId(), editor.getId()));
         }
