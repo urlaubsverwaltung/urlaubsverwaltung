@@ -16,9 +16,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
-import java.util.function.BiPredicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -64,30 +66,30 @@ class ApplicationForLeavePermissionEvaluatorTest {
 
         @Test
         void ensureBossMayAllowEveryWaitingApplication() {
-            assertThat(onUnmanagedPerson(WAITING, BOSS).may(sut::isAllowedToAllowWaiting)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, BOSS).isAllowedToAllowWaiting()).isTrue();
         }
 
         @Test
         void ensureBossMayAllowOwnWaitingApplication() {
             final Person boss = person(SIGNED_IN_USER_ID, BOSS);
-            assertThat(sut.isAllowedToAllowWaiting(boss, application(boss, WAITING))).isTrue();
+            assertThat(sut.of(boss, application(boss, WAITING)).isAllowedToAllowWaiting()).isTrue();
         }
 
         @Test
         void ensureDepartmentHeadMayAllowWaitingApplicationOfManagedMember() {
-            assertThat(onManagedPerson(WAITING, DEPARTMENT_HEAD).may(sut::isAllowedToAllowWaiting)).isTrue();
+            assertThat(permissionsOnManagedPerson(WAITING, DEPARTMENT_HEAD).isAllowedToAllowWaiting()).isTrue();
         }
 
         @Test
         void ensureSecondStageAuthorityMayAllowWaitingApplicationOfManagedMember() {
-            assertThat(onManagedPerson(WAITING, SECOND_STAGE_AUTHORITY).may(sut::isAllowedToAllowWaiting)).isTrue();
+            assertThat(permissionsOnManagedPerson(WAITING, SECOND_STAGE_AUTHORITY).isAllowedToAllowWaiting()).isTrue();
         }
 
         @ParameterizedTest
         @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerMayNotAllowOwnWaitingApplication(Role role) {
             final Person manager = person(SIGNED_IN_USER_ID, role);
-            assertThat(sut.isAllowedToAllowWaiting(manager, application(manager, WAITING))).isFalse();
+            assertThat(sut.of(manager, application(manager, WAITING)).isAllowedToAllowWaiting()).isFalse();
         }
 
         @Test
@@ -100,36 +102,36 @@ class ApplicationForLeavePermissionEvaluatorTest {
             when(departmentService.isSecondStageAuthorityAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(false);
             when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(true);
 
-            assertThat(sut.isAllowedToAllowWaiting(departmentHead, application(secondStageAuthority, WAITING))).isFalse();
+            assertThat(sut.of(departmentHead, application(secondStageAuthority, WAITING)).isAllowedToAllowWaiting()).isFalse();
         }
 
         @Test
         void ensureNobodyWithoutManagementRoleMayAllow() {
-            assertThat(onUnmanagedPerson(WAITING, APPLICATION_ADD, APPLICATION_EDIT, APPLICATION_CANCEL).may(sut::isAllowedToAllowWaiting)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, APPLICATION_ADD, APPLICATION_EDIT, APPLICATION_CANCEL).isAllowedToAllowWaiting()).isFalse();
         }
 
         @Test
         void ensureOfficeMayNotAllow() {
-            assertThat(onUnmanagedPerson(WAITING, OFFICE).may(sut::isAllowedToAllowWaiting)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, OFFICE).isAllowedToAllowWaiting()).isFalse();
         }
 
         @Test
         void ensureAllowIsOnlyPossibleForWaitingApplications() {
-            assertThat(onUnmanagedPerson(ALLOWED, BOSS).may(sut::isAllowedToAllowWaiting)).isFalse();
-            assertThat(onUnmanagedPerson(REJECTED, BOSS).may(sut::isAllowedToAllowWaiting)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS).isAllowedToAllowWaiting()).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(REJECTED, BOSS).isAllowedToAllowWaiting()).isFalse();
         }
 
         @Test
         void ensureSecondStageAuthorityMayFinallyAllowTemporaryAllowedApplication() {
-            assertThat(onManagedPerson(TEMPORARY_ALLOWED, SECOND_STAGE_AUTHORITY).may(sut::isAllowedToAllowTemporaryAllowed)).isTrue();
+            assertThat(permissionsOnManagedPerson(TEMPORARY_ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToAllowTemporaryAllowed()).isTrue();
         }
 
         @Test
         void ensureDepartmentHeadMayNotFinallyAllowTemporaryAllowedApplication() {
-            final Fixture fixture = onManagedPerson(TEMPORARY_ALLOWED, DEPARTMENT_HEAD);
-            assertThat(fixture.may(sut::isAllowedToAllowTemporaryAllowed)).isFalse();
+            final ApplicationForLeavePermissions permissions = permissionsOnManagedPerson(TEMPORARY_ALLOWED, DEPARTMENT_HEAD);
+            assertThat(permissions.isAllowedToAllowTemporaryAllowed()).isFalse();
             // being responsible for the person is not the reason, rejecting it is allowed
-            assertThat(fixture.may(sut::isAllowedToReject)).isTrue();
+            assertThat(permissions.isAllowedToReject()).isTrue();
         }
 
         @Test
@@ -141,10 +143,10 @@ class ApplicationForLeavePermissionEvaluatorTest {
 
             final Application twoStage = application(member, WAITING);
             twoStage.setTwoStageApproval(true);
-            assertThat(sut.isAllowedToAllowTemporarily(departmentHead, twoStage)).isTrue();
+            assertThat(sut.of(departmentHead, twoStage).isAllowedToAllowTemporarily()).isTrue();
 
             final Application oneStage = application(member, WAITING);
-            assertThat(sut.isAllowedToAllowTemporarily(departmentHead, oneStage)).isFalse();
+            assertThat(sut.of(departmentHead, oneStage).isAllowedToAllowTemporarily()).isFalse();
         }
 
         @Test
@@ -154,7 +156,7 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final Application twoStage = application(person(OTHER_PERSON_ID, USER), WAITING);
             twoStage.setTwoStageApproval(true);
 
-            assertThat(sut.isAllowedToAllowTemporarily(boss, twoStage)).isFalse();
+            assertThat(sut.of(boss, twoStage).isAllowedToAllowTemporarily()).isFalse();
         }
     }
 
@@ -164,29 +166,29 @@ class ApplicationForLeavePermissionEvaluatorTest {
         @ParameterizedTest
         @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerMayRejectApplicationOfManagedMember(Role role) {
-            assertThat(onManagedPerson(WAITING, role).may(sut::isAllowedToReject)).isTrue();
+            assertThat(permissionsOnManagedPerson(WAITING, role).isAllowedToReject()).isTrue();
         }
 
         @Test
         void ensureBossMayRejectEveryApplication() {
-            assertThat(onUnmanagedPerson(WAITING, BOSS).may(sut::isAllowedToReject)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, BOSS).isAllowedToReject()).isTrue();
         }
 
         @Test
         void ensureNobodyMayRejectOwnApplication() {
             final Person boss = person(SIGNED_IN_USER_ID, BOSS);
-            assertThat(sut.isAllowedToReject(boss, application(boss, WAITING))).isFalse();
+            assertThat(sut.of(boss, application(boss, WAITING)).isAllowedToReject()).isFalse();
         }
 
         @Test
         void ensureOfficeMayNotReject() {
-            assertThat(onUnmanagedPerson(WAITING, OFFICE).may(sut::isAllowedToReject)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, OFFICE).isAllowedToReject()).isFalse();
         }
 
         @Test
         void ensureRejectIsOnlyPossibleForWaitingOrTemporaryAllowedApplications() {
-            assertThat(onUnmanagedPerson(TEMPORARY_ALLOWED, BOSS).may(sut::isAllowedToReject)).isTrue();
-            assertThat(onUnmanagedPerson(ALLOWED, BOSS).may(sut::isAllowedToReject)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(TEMPORARY_ALLOWED, BOSS).isAllowedToReject()).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS).isAllowedToReject()).isFalse();
         }
     }
 
@@ -195,31 +197,31 @@ class ApplicationForLeavePermissionEvaluatorTest {
 
         @Test
         void ensureOfficeMayComment() {
-            assertThat(onUnmanagedPerson(WAITING, OFFICE).may(sut::isAllowedToComment)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, OFFICE).isAllowedToComment()).isTrue();
         }
 
         @Test
         void ensureBossMayComment() {
-            assertThat(onUnmanagedPerson(WAITING, BOSS).may(sut::isAllowedToComment)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, BOSS).isAllowedToComment()).isTrue();
         }
 
         @ParameterizedTest
         @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerMayCommentWithoutApplicationAddRole(Role role) {
-            final Fixture fixture = onManagedPerson(WAITING, role);
+            final ApplicationForLeavePermissions permissions = permissionsOnManagedPerson(WAITING, role);
             // whoever may reject an application has to be able to say why
-            assertThat(fixture.may(sut::isAllowedToComment)).isTrue();
-            assertThat(fixture.may(sut::isAllowedToReject)).isTrue();
+            assertThat(permissions.isAllowedToComment()).isTrue();
+            assertThat(permissions.isAllowedToReject()).isTrue();
         }
 
         @Test
         void ensureManagerOfAnotherDepartmentMayNotComment() {
-            assertThat(onUnmanagedPerson(WAITING, DEPARTMENT_HEAD, APPLICATION_ADD).may(sut::isAllowedToComment)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, DEPARTMENT_HEAD, APPLICATION_ADD).isAllowedToComment()).isFalse();
         }
 
         @Test
         void ensureUserMayNotCommentApplicationOfSomebodyElse() {
-            assertThat(onUnmanagedPerson(WAITING, USER).may(sut::isAllowedToComment)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, USER).isAllowedToComment()).isFalse();
         }
     }
 
@@ -228,19 +230,19 @@ class ApplicationForLeavePermissionEvaluatorTest {
 
         @Test
         void ensureBossAndOfficeMayRefer() {
-            assertThat(onUnmanagedPerson(WAITING, BOSS).may(sut::isAllowedToRefer)).isTrue();
-            assertThat(onUnmanagedPerson(WAITING, OFFICE).may(sut::isAllowedToRefer)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, BOSS).isAllowedToRefer()).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, OFFICE).isAllowedToRefer()).isTrue();
         }
 
         @Test
         void ensureManagerMayReferApplicationOfManagedMember() {
-            assertThat(onManagedPerson(WAITING, DEPARTMENT_HEAD).may(sut::isAllowedToRefer)).isTrue();
+            assertThat(permissionsOnManagedPerson(WAITING, DEPARTMENT_HEAD).isAllowedToRefer()).isTrue();
         }
 
         @Test
         void ensureManagerMayNotReferOwnApplication() {
             final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
-            assertThat(sut.isAllowedToRefer(departmentHead, application(departmentHead, WAITING))).isFalse();
+            assertThat(sut.of(departmentHead, application(departmentHead, WAITING)).isAllowedToRefer()).isFalse();
         }
     }
 
@@ -250,29 +252,29 @@ class ApplicationForLeavePermissionEvaluatorTest {
         @Test
         void ensurePersonMayEditOwnWaitingApplication() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToEdit(person, application(person, WAITING))).isTrue();
+            assertThat(sut.of(person, application(person, WAITING)).isAllowedToEdit()).isTrue();
         }
 
         @Test
         void ensurePersonMayNotEditOwnApplicationSomebodyDecidedAbout() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToEdit(person, application(person, ALLOWED))).isFalse();
+            assertThat(sut.of(person, application(person, ALLOWED)).isAllowedToEdit()).isFalse();
         }
 
         @Test
         void ensureOfficeMayEdit() {
-            assertThat(onUnmanagedPerson(ALLOWED, OFFICE).may(sut::isAllowedToEdit)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED, OFFICE).isAllowedToEdit()).isTrue();
         }
 
         @Test
         void ensureManagerNeedsApplicationEditRoleToEdit() {
-            assertThat(onManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_EDIT).may(sut::isAllowedToEdit)).isTrue();
-            assertThat(onManagedPerson(ALLOWED, DEPARTMENT_HEAD).may(sut::isAllowedToEdit)).isFalse();
+            assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_EDIT).isAllowedToEdit()).isTrue();
+            assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD).isAllowedToEdit()).isFalse();
         }
 
         @Test
         void ensureBossMayNotEditWithoutApplicationEditRole() {
-            assertThat(onUnmanagedPerson(ALLOWED, BOSS, APPLICATION_EDIT).may(sut::isAllowedToEdit)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
         }
     }
 
@@ -282,30 +284,30 @@ class ApplicationForLeavePermissionEvaluatorTest {
         @Test
         void ensurePersonMayRevokeOwnWaitingApplication() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToRevoke(person, applicationRequiringApprovalToCancel(person, WAITING))).isTrue();
+            assertThat(sut.of(person, applicationRequiringApprovalToCancel(person, WAITING)).isAllowedToRevoke()).isTrue();
         }
 
         @Test
         void ensureManagerNeedsApplicationCancelRoleToCancel() {
-            assertThat(onManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_CANCEL).may(sut::isAllowedToCancel)).isTrue();
-            assertThat(onManagedPerson(ALLOWED, DEPARTMENT_HEAD).may(sut::isAllowedToCancel)).isFalse();
+            assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_CANCEL).isAllowedToCancel()).isTrue();
+            assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD).isAllowedToCancel()).isFalse();
         }
 
         @Test
         void ensureOfficeMayCancel() {
-            assertThat(onUnmanagedPerson(ALLOWED, OFFICE).may(sut::isAllowedToCancel)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED, OFFICE).isAllowedToCancel()).isTrue();
         }
 
         @Test
         void ensurePersonMayCancelOwnApplicationDirectlyIfNoApprovalIsRequired() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToCancelDirectly(person, application(person, ALLOWED))).isTrue();
+            assertThat(sut.of(person, application(person, ALLOWED)).isAllowedToCancelDirectly()).isTrue();
         }
 
         @Test
         void ensurePersonMayNotCancelOwnApplicationDirectlyIfApprovalIsRequired() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToCancelDirectly(person, applicationRequiringApprovalToCancel(person, ALLOWED))).isFalse();
+            assertThat(sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED)).isAllowedToCancelDirectly()).isFalse();
         }
     }
 
@@ -315,7 +317,7 @@ class ApplicationForLeavePermissionEvaluatorTest {
         @Test
         void ensurePersonMayRequestCancellationOfOwnAllowedApplication() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToStartCancellationRequest(person, applicationRequiringApprovalToCancel(person, ALLOWED))).isTrue();
+            assertThat(sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED)).isAllowedToStartCancellationRequest()).isTrue();
         }
 
         @Test
@@ -324,7 +326,7 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
             final Person other = person(OTHER_PERSON_ID, USER);
 
-            assertThat(sut.isAllowedToStartCancellationRequest(signedInUser, applicationRequiringApprovalToCancel(other, ALLOWED))).isFalse();
+            assertThat(sut.of(signedInUser, applicationRequiringApprovalToCancel(other, ALLOWED)).isAllowedToStartCancellationRequest()).isFalse();
         }
 
         @ParameterizedTest
@@ -333,7 +335,7 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final Person signedInUser = person(SIGNED_IN_USER_ID, role);
             final Person other = person(OTHER_PERSON_ID, USER);
 
-            assertThat(sut.isAllowedToStartCancellationRequest(signedInUser, applicationRequiringApprovalToCancel(other, ALLOWED))).isFalse();
+            assertThat(sut.of(signedInUser, applicationRequiringApprovalToCancel(other, ALLOWED)).isAllowedToStartCancellationRequest()).isFalse();
         }
 
         @Test
@@ -343,7 +345,7 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final Person member = person(OTHER_PERSON_ID, USER);
             when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
 
-            assertThat(sut.isAllowedToStartCancellationRequest(departmentHead, applicationRequiringApprovalToCancel(member, ALLOWED))).isTrue();
+            assertThat(sut.of(departmentHead, applicationRequiringApprovalToCancel(member, ALLOWED)).isAllowedToStartCancellationRequest()).isTrue();
         }
 
         @Test
@@ -351,8 +353,9 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final Person office = person(SIGNED_IN_USER_ID, OFFICE);
             final Application application = applicationRequiringApprovalToCancel(person(OTHER_PERSON_ID, USER), ALLOWED);
 
-            assertThat(sut.isAllowedToCancel(office, application)).isTrue();
-            assertThat(sut.isAllowedToStartCancellationRequest(office, application)).isFalse();
+            final ApplicationForLeavePermissions permissions = sut.of(office, application);
+            assertThat(permissions.isAllowedToCancel()).isTrue();
+            assertThat(permissions.isAllowedToStartCancellationRequest()).isFalse();
         }
     }
 
@@ -361,15 +364,15 @@ class ApplicationForLeavePermissionEvaluatorTest {
 
         @Test
         void ensureManagerNeedsApplicationCancellationRequestedRole() {
-            assertThat(onManagedPerson(ALLOWED_CANCELLATION_REQUESTED, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED)
-                .may(sut::isAllowedToDeclineCancellationRequest)).isTrue();
-            assertThat(onManagedPerson(ALLOWED_CANCELLATION_REQUESTED, DEPARTMENT_HEAD)
-                .may(sut::isAllowedToDeclineCancellationRequest)).isFalse();
+            assertThat(permissionsOnManagedPerson(ALLOWED_CANCELLATION_REQUESTED, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED)
+                .isAllowedToDeclineCancellationRequest()).isTrue();
+            assertThat(permissionsOnManagedPerson(ALLOWED_CANCELLATION_REQUESTED, DEPARTMENT_HEAD)
+                .isAllowedToDeclineCancellationRequest()).isFalse();
         }
 
         @Test
         void ensureOfficeMayDecline() {
-            assertThat(onUnmanagedPerson(ALLOWED_CANCELLATION_REQUESTED, OFFICE).may(sut::isAllowedToDeclineCancellationRequest)).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(ALLOWED_CANCELLATION_REQUESTED, OFFICE).isAllowedToDeclineCancellationRequest()).isTrue();
         }
     }
 
@@ -379,18 +382,18 @@ class ApplicationForLeavePermissionEvaluatorTest {
         @Test
         void ensurePersonMayRemindAboutOwnWaitingApplication() {
             final Person person = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.isAllowedToRemind(person, application(person, WAITING))).isTrue();
+            assertThat(sut.of(person, application(person, WAITING)).isAllowedToRemind()).isTrue();
         }
 
         @Test
         void ensureManagementDoesNotRemindItself() {
             final Person boss = person(SIGNED_IN_USER_ID, BOSS);
-            assertThat(sut.isAllowedToRemind(boss, application(boss, WAITING))).isFalse();
+            assertThat(sut.of(boss, application(boss, WAITING)).isAllowedToRemind()).isFalse();
         }
 
         @Test
         void ensureNobodyRemindsAboutTheApplicationOfSomebodyElse() {
-            assertThat(onUnmanagedPerson(WAITING, USER).may(sut::isAllowedToRemind)).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(WAITING, USER).isAllowedToRemind()).isFalse();
         }
     }
 
@@ -436,14 +439,54 @@ class ApplicationForLeavePermissionEvaluatorTest {
     class ResponsibilityLookups {
 
         @Test
-        void ensureResponsibilitiesAreNotLookedUpForTheOwnWaitingApplication() {
-            final Person person = person(SIGNED_IN_USER_ID, USER, DEPARTMENT_HEAD);
-            assertThat(sut.isAllowedToEdit(person, application(person, WAITING))).isTrue();
-            verifyNoInteractions(departmentService);
+        void ensureTheOwnSecondStageAuthorityIsLookedUpForADepartmentHeadOnly() {
+
+            final Person secondStageAuthority = person(SIGNED_IN_USER_ID, SECOND_STAGE_AUTHORITY);
+            final Person member = person(OTHER_PERSON_ID, USER);
+
+            sut.of(secondStageAuthority, application(member, WAITING));
+
+            // only a department head is held back by the application of their own second stage authority
+            verify(departmentService).isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, member);
+            verify(departmentService, never()).isSecondStageAuthorityAllowedToManagePerson(member, secondStageAuthority);
+        }
+
+        @Test
+        void ensureResponsibilitiesAreLookedUpOnlyOnce() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD, APPLICATION_CANCEL);
+            final Person member = person(OTHER_PERSON_ID, USER);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
+
+            final ApplicationForLeavePermissions permissions = sut.of(departmentHead, application(member, ALLOWED));
+            permissions.isAllowedToCancel();
+            permissions.isAllowedToComment();
+            permissions.isAllowedToEdit();
+
+            verify(departmentService).isDepartmentHeadAllowedToManagePerson(departmentHead, member);
+        }
+
+        @Test
+        void ensureResponsibilitiesOfAListOfApplicationsAreResolvedAtOnce() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
+            final Person memberOne = person(OTHER_PERSON_ID, USER);
+            final Person memberTwo = person(3L, USER);
+
+            when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(memberOne, memberTwo));
+
+            final List<Application> applications = List.of(application(memberOne, WAITING), application(memberTwo, WAITING));
+            final var permissionsOf = sut.of(departmentHead, applications);
+
+            assertThat(applications).allSatisfy(application ->
+                assertThat(permissionsOf.apply(application).isAllowedToAllowWaiting()).isTrue());
+
+            verify(departmentService).getMembersForDepartmentHead(departmentHead);
+            verify(departmentService, never()).isDepartmentHeadAllowedToManagePerson(any(), any());
         }
     }
 
-    private Fixture onManagedPerson(ApplicationStatus status, Role... roles) {
+    private ApplicationForLeavePermissions permissionsOnManagedPerson(ApplicationStatus status, Role... roles) {
 
         final Person signedInUser = person(SIGNED_IN_USER_ID, roles);
         final Person person = person(OTHER_PERSON_ID, USER);
@@ -456,21 +499,11 @@ class ApplicationForLeavePermissionEvaluatorTest {
             when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(true);
         }
 
-        return new Fixture(signedInUser, application(person, status));
+        return sut.of(signedInUser, application(person, status));
     }
 
-    private Fixture onUnmanagedPerson(ApplicationStatus status, Role... roles) {
-        return new Fixture(person(SIGNED_IN_USER_ID, roles), application(person(OTHER_PERSON_ID, USER), status));
-    }
-
-    /**
-     * A signed in user and the application the permissions are asked for, see {@link #may(BiPredicate)}.
-     */
-    private record Fixture(Person signedInUser, Application application) {
-
-        boolean may(BiPredicate<Person, Application> permission) {
-            return permission.test(signedInUser, application);
-        }
+    private ApplicationForLeavePermissions permissionsOnUnmanagedPerson(ApplicationStatus status, Role... roles) {
+        return sut.of(person(SIGNED_IN_USER_ID, roles), application(person(OTHER_PERSON_ID, USER), status));
     }
 
     private static Person person(long id, Role... roles) {

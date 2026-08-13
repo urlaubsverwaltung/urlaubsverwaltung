@@ -742,9 +742,6 @@ class ApplicationForLeaveViewControllerTest {
 
         when(departmentService.getMembersForSecondStageAuthority(secondStagePerson))
             .thenReturn(List.of(secondStagePerson, person, officePerson));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, person)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, officePerson)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, secondStagePerson)).thenReturn(false);
 
         // applications for signed-in user
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(secondStagePerson)))
@@ -852,9 +849,6 @@ class ApplicationForLeaveViewControllerTest {
 
         when(departmentService.getMembersForSecondStageAuthority(secondStagePerson))
             .thenReturn(List.of(secondStagePerson, person, officePerson));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, person)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, officePerson)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStagePerson, secondStagePerson)).thenReturn(false);
 
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(secondStagePerson, person, officePerson)))
             .thenReturn(List.of(applicationCancellationRequestPerson));
@@ -1280,9 +1274,6 @@ class ApplicationForLeaveViewControllerTest {
 
         when(departmentService.getMembersForDepartmentHead(headAndOfficePerson))
             .thenReturn(List.of(headAndOfficePerson, person));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(headAndOfficePerson, person)).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(headAndOfficePerson, personNotMember)).thenReturn(false);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(headAndOfficePerson, headAndOfficePerson)).thenReturn(false);
 
         // applications for signed-in user
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(headAndOfficePerson)))
@@ -1365,9 +1356,6 @@ class ApplicationForLeaveViewControllerTest {
 
         when(departmentService.getMembersForSecondStageAuthority(ssaAndOfficePerson))
             .thenReturn(List.of(ssaAndOfficePerson, person));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssaAndOfficePerson, person)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssaAndOfficePerson, personNotMember)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssaAndOfficePerson, ssaAndOfficePerson)).thenReturn(false);
 
         // applications for signed-in user
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(ssaAndOfficePerson)))

@@ -359,7 +359,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Application application = maybeApplication.get();
         final Person person = application.getPerson();
 
-        if (!permissionEvaluator.isAllowedToEdit(signedInUser, application)) {
+        if (!permissionEvaluator.of(signedInUser, application).isAllowedToEdit()) {
             return "application/application-not-editable";
         }
 
@@ -397,7 +397,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Application application = maybeApplication.get();
         final Person person = application.getPerson();
 
-        if (!permissionEvaluator.isAllowedToEdit(signedInUser, application)) {
+        if (!permissionEvaluator.of(signedInUser, application).isAllowedToEdit()) {
             redirectAttributes.addFlashAttribute("editError", true);
             return "redirect:/web/application/" + applicationId;
         }

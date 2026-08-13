@@ -231,30 +231,28 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         Person signedInUser,
         Locale locale
     ) {
+        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, applications);
         return applications.stream()
             .map(applicationForLeave -> {
                 final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
-                return toView(applicationForLeave, signedInUser, messageSource, locale, allowedToAccessPersonData);
+                return toView(applicationForLeave, permissionsOf.apply(applicationForLeave), messageSource, locale, allowedToAccessPersonData);
             })
             .toList();
     }
 
-    private ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser,
+    private ApplicationForLeaveDto toView(ApplicationForLeave application, ApplicationForLeavePermissions permissions,
                                                  MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
         final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        final boolean isAllowedToEdit = permissionEvaluator.isAllowedToEdit(signedInUser, application);
-        final boolean isAllowedToTemporaryApprove = permissionEvaluator.isAllowedToAllowTemporarily(signedInUser, application);
-        final boolean isAllowedToApprove = permissionEvaluator.isAllowedToAllowWaiting(signedInUser, application)
-            || permissionEvaluator.isAllowedToAllowTemporaryAllowed(signedInUser, application);
-        final boolean isAllowedToCancel = permissionEvaluator.isAllowedToRevoke(signedInUser, application)
-            || permissionEvaluator.isAllowedToCancel(signedInUser, application)
-            || permissionEvaluator.isAllowedToCancelDirectly(signedInUser, application)
-            || permissionEvaluator.isAllowedToStartCancellationRequest(signedInUser, application);
-        final boolean isAllowedToReject = permissionEvaluator.isAllowedToReject(signedInUser, application);
+        final boolean isAllowedToEdit = permissions.isAllowedToEdit();
+        final boolean isAllowedToTemporaryApprove = permissions.isAllowedToAllowTemporarily();
+        final boolean isAllowedToApprove = permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed();
+        final boolean isAllowedToCancel = permissions.isAllowedToRevoke() || permissions.isAllowedToCancel()
+            || permissions.isAllowedToCancelDirectly() || permissions.isAllowedToStartCancellationRequest();
+        final boolean isAllowedToReject = permissions.isAllowedToReject();
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
