@@ -180,11 +180,40 @@
                     <svg th:replace="~{icon/clock-arrow-up::svg(className='w-4 h-4')}"></svg>
                     <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
                   </div>
+                  <button popovertarget="stats-overtime-distribution-description">
+                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                    <span class="sr-only" th:text="#{company.overview.distribution.overtime.info.button}"
+                      >Informationen zur Mehrarbeit</span
+                    >
+                  </button>
                 </div>
                 <div
                   class="stat-card__body"
                   th:with="entries=${overtimeStatistic.distribution.entries}, max=${overtimeStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
+                  <div popover="hint" id="stats-overtime-distribution-description" class="stat-card-info-popover">
+                    <button
+                      class="stat-card-info-close-button"
+                      popovertarget="stats-overtime-distribution-description"
+                      popovertargetaction="hide"
+                    >
+                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+                      <span class="sr-only" th:text="#{company.overview.card.info.button.clos}">Schließen</span>
+                    </button>
+                    <div class="stat-card-info-text">
+                      <p th:text="#{company.overview.distribution.overtime.info.tooltip.paragraph1}">
+                        Der Graph zeigt, wie viele Personen wie viele Überstunden haben. Die Personen werden dazu nach
+                        der Höhe ihres aktuellen Überstundenstands gruppiert.
+                      </p>
+                      <p th:text="#{company.overview.distribution.overtime.info.tooltip.paragraph2}">
+                        Entscheidend ist, wie viele Überstunden am Ende tatsächlich übrig bleiben. Werden 5 Überstunden
+                        geleistet und später wieder vollständig abgebaut, zählen diese als 0 Überstunden.
+                      </p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </div>
+                  </div>
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
                       <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
