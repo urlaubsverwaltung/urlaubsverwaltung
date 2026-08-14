@@ -337,11 +337,27 @@
                       >Offene Erholung - wie verteilt?</span
                     >
                   </div>
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-remaining-vacation-days-description', label=#{company.overview.distribution.remaining-vacation-days.info.button})}"
+                  >
+                    Informationen zu offene Erholung
+                  </button>
                 </div>
                 <div
                   class="stat-card__body"
                   th:with="entries=${vacationDaysStatistic.remainingVacationDaysDistribution.entries}, max=${vacationDaysStatistic.remainingVacationDaysDistribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-remaining-vacation-days-description', content=~{::stats-remainingvacation-days-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-remainingvacation-days-tooltip-content">
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph1}">Paragraph 1</p>
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph2}">Paragraph 2</p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
+                  </div>
                   <ol class="bar-chart">
                     <li
                       th:each="entry, stat : ${entries}"
