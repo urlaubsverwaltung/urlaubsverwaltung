@@ -1,0 +1,119 @@
+package org.synyx.urlaubsverwaltung.absence.statistics;
+
+import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
+
+/**
+ * Fetches the data behind the absence statistics page and assembles it, via {@link MonthlyAbsenceDays} and
+ * {@link VacationDaysTaken}, into an {@link AbsenceStatistics} for a single year.
+ */
+@Service
+public class AbsenceStatisticsService {
+
+    private final AbsenceStatisticsPersons absenceStatisticsPersons;
+    private final ApplicationService applicationService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
+    private final AccountService accountService;
+    private final VacationDaysService vacationDaysService;
+    private final MonthlyAbsenceDays monthlyAbsenceDays;
+    private final VacationDaysTaken vacationDaysTaken;
+    private final Clock clock;
+
+    AbsenceStatisticsService(
+        PersonService personService,
+        DepartmentService departmentService,
+        PersonActivePeriodService personActivePeriodService,
+        ApplicationService applicationService,
+        WorkingTimeCalendarService workingTimeCalendarService,
+        AccountService accountService,
+        VacationDaysService vacationDaysService,
+        Clock clock
+    ) {
+        this.absenceStatisticsPersons = new AbsenceStatisticsPersons(personService, departmentService, personActivePeriodService);
+        this.applicationService = applicationService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
+        this.accountService = accountService;
+        this.vacationDaysService = vacationDaysService;
+        this.monthlyAbsenceDays = new MonthlyAbsenceDays();
+        this.vacationDaysTaken = new VacationDaysTaken();
+        this.clock = clock;
+    }
+
+    /**
+     * Creates the {@link AbsenceStatistics} for the given year, from the perspective of the signed-in person.
+     *
+     * @param year         year to create the statistics for
+     * @param signedInUser person requesting the statistics
+     * @return the assembled statistics; empty but exception-free when nobody is relevant for the given person/year
+     */
+    AbsenceStatistics createStatistics(Year year, Person signedInUser) {
+
+        final List<Person> persons = absenceStatisticsPersons.relevantPersons(signedInUser, year);
+        if (persons.isEmpty()) {
+            return new AbsenceStatistics(year, Map.of(), vacationDaysTaken.calculate(stichtag(year), Map.of()));
+        }
+
+        final DateRange yearRange = DateRange.ofYear(year);
+
+        final List<Application> applications =
+            applicationService.getApplicationsForACertainPeriodAndStatus(yearRange.startDate(), yearRange.endDate(), persons, activeStatuses());
+
+        // computed once and threaded through both collaborators below, instead of letting each of them recompute
+        // the same day-by-day calendar for the same persons and year - ApplicationForLeaveStatisticsBuilder does
+        // the same and explains why in its own comment.
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, year);
+
+        final Map<VacationType<?>, MonthlyAbsenceDaysByType> monthlyAbsenceDaysByType =
+            monthlyAbsenceDays.calculate(year, applications, workingTimeCalendarsByPerson);
+
+        final List<Account> accounts = accountService.getHolidaysAccount(year.getValue(), persons);
+        final Map<Account, HolidayAccountVacationDays> vacationDaysLeftByAccount =
+            vacationDaysService.getVacationDaysLeft(accounts, yearRange, List.of(), workingTimeCalendarsByPerson);
+        final Map<Account, VacationDaysLeft> vacationDaysLeftYearByAccount = vacationDaysLeftByAccount.entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().vacationDaysYear()));
+
+        final VacationDaysTakenResult vacationDaysTakenResult = vacationDaysTaken.calculate(stichtag(year), vacationDaysLeftYearByAccount);
+
+        return new AbsenceStatistics(year, monthlyAbsenceDaysByType, vacationDaysTakenResult);
+    }
+
+    /**
+     * The stichtag {@link VacationDaysTaken} is evaluated at: today for the current year, the year's own Dec 31st
+     * for a past year, and the year's own Jan 1st for a future year.
+     */
+    private LocalDate stichtag(Year year) {
+
+        final Year currentYear = Year.now(clock);
+
+        if (year.equals(currentYear)) {
+            return LocalDate.now(clock);
+        }
+        if (year.isBefore(currentYear)) {
+            return year.atDay(year.length());
+        }
+        return year.atDay(1);
+    }
+}

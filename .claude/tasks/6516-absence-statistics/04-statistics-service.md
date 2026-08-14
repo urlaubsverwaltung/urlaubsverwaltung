@@ -17,8 +17,9 @@ Beschaffung:
 - Personen über `AbsenceStatisticsPersons`
 - Anträge über `ApplicationService#getApplicationsForACertainPeriodAndStatus` für das **ganze** Jahr und `ApplicationStatus.activeStatuses()`
 - Arbeitszeitkalender über `WorkingTimeCalendarService#getWorkingTimesByPersons`
-- Abwesenheitsarten über `VacationTypeService`
 - Urlaubskonten über `AccountService`, offene Tage über `VacationDaysService`
+
+(`VacationTypeService` fällt als Beschaffung weg: Die Abwesenheitsart je Antrag steckt schon in `Application#getVacationType()`, und `MonthlyAbsenceDays` filtert Arten ohne Tage bereits selbst heraus. Eine separate Liste aller Arten — aktiv oder nicht — wird an keiner Stelle gebraucht.)
 
 Zusammensetzung:
 
@@ -42,7 +43,7 @@ Leere Eingaben (keine Personen, keine Anträge) müssen ein leeres, aber vollst�
 
 ## Definition of Done
 
-- [ ] `AbsenceStatisticsService` und `AbsenceStatistics` implementiert
-- [ ] Personen, Kalender und Konten werden je Aufruf einmal beschafft
-- [ ] Stichtagsregel liegt im Service, nicht in den Kernen
-- [ ] Tests grün
+- [x] `AbsenceStatisticsService` und `AbsenceStatistics` implementiert
+- [x] Personen, Kalender und Konten werden je Aufruf einmal beschafft
+- [x] Stichtagsregel liegt im Service, nicht in den Kernen
+- [x] Tests grün

@@ -13,7 +13,7 @@ Die Kerne 02–04 hängen nur am Package aus 01 und können unabhängig voneinan
 | 01 | [Package und Personenauflösung](01-persons.md) | — | erledigt |
 | 02 | [Monatsaufteilung der Abwesenheitstage](02-monthly-absence-days.md) | 01 | erledigt |
 | 03 | [Genommener Urlaub](03-vacation-days-taken.md) | 01 | erledigt |
-| 04 | [Statistik-Service](04-statistics-service.md) | 01, 02, 03 | offen |
+| 04 | [Statistik-Service](04-statistics-service.md) | 01, 02, 03 | erledigt |
 | 05 | [View-Controller und Route](05-view-controller.md) | 04 | offen |
 | 06 | [Navigation](06-navigation.md) | 05 | offen |
 | 07 | [Template und Übersetzungen](07-template-and-i18n.md) | 05 | offen |
