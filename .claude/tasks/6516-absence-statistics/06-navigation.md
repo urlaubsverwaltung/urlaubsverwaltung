@@ -12,9 +12,9 @@ Der Navigationseintrag „Abwesenheiten" in der Gruppe *Unternehmen* bekommt zwe
 In `FrameDataProvider#navCompanyGroup` liegt heute für Abwesenheiten ein einzelner Eintrag auf `/web/application/statistics`. Er wird auf dasselbe Muster umgestellt, das direkt darunter für Krankmeldungen bereits steht: ein Wurzeleintrag mit `withSubItems`, aktiv, wenn eine der beiden Unterrouten aktiv ist.
 
 | Unterpunkt | Route |
-| --- | --- |
-| Übersicht | `/web/application/statistics` |
-| Auswertung | `/web/absence/statistics` |
+|------------| --- |
+| Übersicht  | `/web/application/statistics` |
+| Statistik  | `/web/absence/statistics` |
 
 Der Wurzeleintrag zeigt weiterhin auf die Übersicht, damit ein Klick auf „Abwesenheiten" dort landet, wo er heute landet.
 
@@ -32,6 +32,10 @@ Ergänzung im bestehenden `FrameDataProviderTest`:
 
 ## Definition of Done
 
-- [ ] Unterpunkte vorhanden, bestehende Route unverändert
-- [ ] Übersetzungsschlüssel in allen vier `messages`-Dateien
-- [ ] Tests grün
+- [x] Unterpunkte vorhanden, bestehende Route unverändert
+- [x] Übersetzungsschlüssel in allen vier `messages`-Dateien
+- [x] Tests grün
+
+## Anmerkung
+
+Der zweite Unterpunkt heißt „Statistik" — analog zum Krankmeldungs-Pendant („Statistiken"), Schlüssel `nav.company.applications.statistics` in allen vier `messages`-Dateien.

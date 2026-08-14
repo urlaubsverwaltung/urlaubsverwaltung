@@ -205,6 +205,70 @@ class FrameDataProviderTest {
     }
 
     @Test
+    void postHandleCompanyApplicationsRootAndOverviewActiveWhenOverviewPath() {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/application/statistics");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyApplicationsLink(true, true, false)));
+    }
+
+    @Test
+    void postHandleCompanyApplicationsRootAndStatisticsActiveWhenStatisticsPath() {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/absence/statistics");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyApplicationsLink(true, false, true)));
+    }
+
+    @Test
+    void postHandleNoCompanyApplicationsLinkForUserRole() {
+        mockSettings(true, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(new MockHttpServletRequest(), null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).doesNotContain(companyApplicationsLink()));
+    }
+
+    @Test
     void postHandleNavigationAccessForBossAndSickNoteAdd() {
         mockSettings(true, false, true, false);
 
@@ -765,11 +829,15 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyApplicationsLink() {
-        return companyApplicationsLink(false);
+        return companyApplicationsLink(false, false, false);
     }
 
-    private static NavigationItemDto companyApplicationsLink(boolean active) {
-        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", "sun", active);
+    private static NavigationItemDto companyApplicationsLink(boolean rootActive, boolean overviewActive, boolean statisticsActive) {
+        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", "sun", rootActive)
+            .withSubItems(List.of(
+                new NavigationItemDto("company-application-overview-link", "/web/application/statistics", "nav.company.applications.overview", "", overviewActive),
+                new NavigationItemDto("company-application-statistics-link", "/web/absence/statistics", "nav.company.applications.statistics", "", statisticsActive)
+            ));
     }
 
     private static NavigationItemDto companyDepartmentLink() {
