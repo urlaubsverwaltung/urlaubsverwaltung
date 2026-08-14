@@ -38,7 +38,14 @@ Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Ü
 
 ## Definition of Done
 
-- [ ] Template rendert für ein Jahr mit Daten und ein Jahr ohne Daten fehlerfrei
-- [ ] Legende des Kuchendiagramms ist serverseitig gerendert
-- [ ] Kein hartkodierter deutscher Text im Template
-- [ ] Alle Schlüssel in allen vier `messages`-Dateien vorhanden
+- [x] Template rendert für ein Jahr mit Daten und ein Jahr ohne Daten fehlerfrei
+- [x] Legende des Kuchendiagramms ist serverseitig gerendert
+- [x] Kein hartkodierter deutscher Text im Template
+- [x] Alle Schlüssel in allen vier `messages`-Dateien vorhanden
+
+## Anmerkungen
+
+- `AbsenceTypeDto` (Task 05) bekam nachträglich ein `active`-Flag — für den „inaktive Art"-Hinweis in der Legende fehlte es, war aber nie Teil der ursprünglichen Task-05-Umsetzung.
+- `<script defer type="module" asset:src="absence_statistics.js">` verlangt einen Eintrag im Asset-Manifest, sonst schlägt das Rendering hart fehl (anders als ein fehlendes CSS, das nur einen 404 im Browser gibt). Deshalb legt dieser Task bereits einen minimalen Platzhalter `src/main/javascript/bundles/absence-statistics.js` an (leere IIFE) — Task 08 ersetzt den Inhalt durch die echte Diagramm-Logik, die Datei selbst bleibt bestehen.
+- `AbsenceStatistics.year()` ist ein `java.time.Year`, kein `int` — anders als bei `SickNoteStatistics.getYear()`. Für `{0, number, #}`-Übersetzungen und den `year-selector` wird deshalb `${selectedYearStatistics.year.value}` verwendet, nicht `${selectedYearStatistics.year}`.
+- Die Rendering-Prüfung („Template rendert … fehlerfrei") läuft in `AbsenceStatisticsViewControllerSecurityIT` (echter Spring-Kontext, Thymeleaf inklusive) statt im `standaloneSetup`-Test aus Task 05, der gar nicht rendert. Dort jetzt auch ein Test mit echten Diagrammdaten (`ensureYearWithDataRendersSuccessfully`) sowie die Rollen-Tests, die zuvor nur „Controller lief" geprüft haben, jetzt aber echtes `status().isOk()` mit Inhaltsprüfung.
