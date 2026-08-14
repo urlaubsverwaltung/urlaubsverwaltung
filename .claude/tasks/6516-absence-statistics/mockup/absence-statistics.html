@@ -28,8 +28,7 @@
     --absence-color-VIOLET: #8b5cf6;
     --absence-color-PINK: #ec4899;
 
-    --gauge-now: #3b82f6;
-    --gauge-forecast: #93c5fd;
+    --ring-taken: #3b82f6;
 
     --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
@@ -56,8 +55,7 @@
       --absence-color-VIOLET: #a78bfa;
       --absence-color-PINK: #f472b6;
 
-      --gauge-now: #60a5fa;
-      --gauge-forecast: #1d4ed8;
+      --ring-taken: #60a5fa;
 
       --shadow-card: none;
     }
@@ -83,8 +81,7 @@
     --absence-color-VIOLET: #a78bfa;
     --absence-color-PINK: #f472b6;
 
-    --gauge-now: #60a5fa;
-    --gauge-forecast: #1d4ed8;
+    --ring-taken: #60a5fa;
 
     --shadow-card: none;
   }
@@ -182,7 +179,7 @@
     color: var(--text-strong);
   }
   button:focus-visible {
-    outline: 2px solid var(--gauge-now);
+    outline: 2px solid var(--ring-taken);
     outline-offset: 2px;
   }
 
@@ -223,43 +220,7 @@
     min-height: 400px;
   }
 
-  /* --- summary cards, mirrors components/statistic-summary.css --------- */
-  .summary-card-box {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .summary-card {
-    flex: 1 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    margin: 0;
-    border: 1px solid var(--chart-border);
-    border-radius: 0.375rem;
-    background: var(--surface);
-    box-shadow: var(--shadow-card);
-  }
-  .summary-card__label {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-  }
-  .summary-card__content {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-strong);
-    font-variant-numeric: tabular-nums;
-  }
-  .summary-card__previous {
-    margin-left: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    cursor: help;
-  }
-
-  /* --- two-column band: distribution + remaining vacation -------------- */
+  /* --- two-column band: distribution + vacation taken ------------------ */
   .band {
     display: grid;
     grid-template-columns: 1fr;
@@ -334,14 +295,9 @@
     color: var(--text-muted);
     font-weight: 400;
   }
-  .type-values .previous {
-    color: var(--text-muted);
-    font-weight: 400;
-    cursor: help;
-  }
 
-  /* --- remaining vacation gauge --------------------------------------- */
-  #vacation-gauge {
+  /* --- vacation taken ring ---------------------------------------------- */
+  #vacation-ring {
     flex: 0 0 auto;
     width: 180px;
     min-height: 180px;
@@ -368,11 +324,6 @@
     font-variant-numeric: tabular-nums;
     color: var(--text-strong);
     font-weight: 600;
-  }
-  .fact-value .previous {
-    font-weight: 400;
-    color: var(--text-muted);
-    cursor: help;
   }
   .fact--secondary .fact-value {
     font-weight: 400;
@@ -409,9 +360,6 @@
   }
 
   @media (min-width: 52rem) {
-    .summary-card-box {
-      flex-direction: row;
-    }
     .decisions dl {
       grid-template-columns: 1fr 1fr;
     }
@@ -504,26 +452,6 @@
     </div>
   </section>
 
-  <section aria-labelledby="totals-heading">
-    <h2 id="totals-heading" class="visually-hidden" hidden>Gesamtkennzahlen</h2>
-    <div class="summary-card-box">
-      <p class="summary-card">
-        <span class="summary-card__label">Abwesenheitstage gesamt</span>
-        <span class="summary-card__content">
-          1.486
-          <span class="summary-card__previous" title="Vorjahr 2025">(1.402)</span>
-        </span>
-      </p>
-      <p class="summary-card">
-        <span class="summary-card__label">Abwesenheitstage pro Mitarbeitende</span>
-        <span class="summary-card__content">
-          ø 11,6
-          <span class="summary-card__previous" title="Vorjahr 2025">(11,3)</span>
-        </span>
-      </p>
-    </div>
-  </section>
-
   <div class="band">
     <section class="panel" aria-labelledby="distribution-heading">
       <div class="section-head">
@@ -538,39 +466,26 @@
 
     <section class="panel" aria-labelledby="vacation-heading">
       <div class="section-head">
-        <h2 id="vacation-heading">Verbleibende Urlaubstage</h2>
-        <p class="section-intro">Erholungsurlaub und noch offener Resturlaub, bezogen auf den gültigen Anspruch.</p>
+        <h2 id="vacation-heading">Genommener Urlaub</h2>
+        <p class="section-intro">Anteil des bereits genommenen bzw. geplanten Erholungsurlaubs am gültigen Anspruch.</p>
       </div>
       <div class="panel-body">
-        <div id="vacation-gauge"></div>
+        <div id="vacation-ring"></div>
         <div class="gauge-facts">
           <div class="fact">
             <span class="fact-label">
-              <span class="swatch" style="background: var(--gauge-now)"></span>
+              <span class="swatch" style="background: var(--ring-taken)"></span>
               Stand heute
             </span>
-            <span class="fact-value">
-              1.312 von 3.986 Tagen offen · 33 %
-              <span class="previous" title="Vorjahr 2025">(1.190 · 31 %)</span>
-            </span>
-          </div>
-          <div class="fact">
-            <span class="fact-label">
-              <span class="swatch" style="background: var(--gauge-forecast)"></span>
-              Prognose 31.12.2026
-            </span>
-            <span class="fact-value">
-              587 Tage offen · 15 %
-              <span class="previous" title="Vorjahr 2025">(612 · 16 %)</span>
-            </span>
+            <span class="fact-value">2.674 von 3.986 Tagen genommen/geplant · 67 %</span>
           </div>
           <div class="fact fact--secondary">
             <span class="fact-label">Pro Mitarbeitende</span>
-            <span class="fact-value">ø 10,3 Tage offen <span class="previous" title="Vorjahr 2025">(9,6)</span></span>
+            <span class="fact-value">ø 20,9 Tage genommen/geplant</span>
           </div>
           <div class="fact fact--secondary">
             <span class="fact-label">Resturlaub verfallen</span>
-            <span class="fact-value">47 Tage <span class="previous" title="Vorjahr 2025">(63)</span></span>
+            <span class="fact-value">47 Tage</span>
           </div>
         </div>
       </div>
@@ -605,19 +520,27 @@
       <div>
         <dt>Prozentbasis</dt>
         <dd>
-          Verbleibende Tage geteilt durch den noch gültigen Anspruch — verfallener Resturlaub fällt aus Zähler und
-          Nenner.
+          Genommene bzw. geplante Tage geteilt durch den noch gültigen Anspruch — verfallener Resturlaub fällt aus
+          Zähler und Nenner. Rechnerisch dieselbe Zahl wie ein „verbleibend"-Anteil, nur umgekehrt ausgewiesen.
         </dd>
       </div>
       <div>
         <dt>Arten-Auswahl</dt>
         <dd>
-          Nur Arten mit Tagen im Jahr oder Vorjahr; inaktiv gewordene Arten bleiben in historischen Jahren sichtbar.
+          Nur Arten mit Tagen im gewählten Jahr; inaktiv gewordene Arten bleiben in historischen Jahren sichtbar, in
+          denen sie genutzt wurden.
         </dd>
       </div>
       <div>
         <dt>Umfang</dt>
         <dd>Nur die Jahresauswahl — keine Personensuche, kein Abteilungsfilter, kein CSV-Export.</dd>
+      </div>
+      <div>
+        <dt>Kein Vorjahresvergleich</dt>
+        <dd>
+          Weder als Kennzahlenzeile noch je Abwesenheitsart noch am Ring — die Seite zeigt ausschließlich das gewählte
+          Jahr.
+        </dd>
       </div>
     </dl>
   </section>
@@ -31471,15 +31394,13 @@
               ((this.yaxisLabels = this.graphics.group({ class: "apexcharts-yaxis" })),
               t.forEach((t, r) => {
                 const n = t.length === e.globals.dataPoints,
-                  h = this.graphics
-                    .group()
-                    .attr({
-                      class: "apexcharts-series",
-                      "data:longestSeries": n,
-                      seriesName: y.escapeString(e.seriesData.seriesNames[r]),
-                      rel: r + 1,
-                      "data:realIndex": r,
-                    });
+                  h = this.graphics.group().attr({
+                    class: "apexcharts-series",
+                    "data:longestSeries": n,
+                    seriesName: y.escapeString(e.seriesData.seriesNames[r]),
+                    rel: r + 1,
+                    "data:realIndex": r,
+                  });
                 ((this.dataRadiusOfPercent[r] = []),
                   (this.dataRadius[r] = []),
                   (this.angleArr[r] = []),
@@ -33270,28 +33191,24 @@
         color: "var(--absence-color-YELLOW)",
         days: [42, 38, 55, 78, 64, 96, 148, 162, 71, 58, 46, 122],
         total: 980,
-        previous: 940,
       },
       {
         name: "Elternzeit",
         color: "var(--absence-color-PINK)",
         days: [20, 20, 22, 21, 20, 22, 23, 21, 20, 22, 21, 20],
         total: 252,
-        previous: 218,
       },
       {
         name: "Überstundenabbau",
         color: "var(--absence-color-EMERALD)",
         days: [8, 6, 7, 5, 9, 4, 6, 3, 7, 8, 6, 9],
         total: 78,
-        previous: 84,
       },
       {
         name: "Sabbatical",
         color: "var(--absence-color-ORANGE)",
         days: [0, 0, 0, 0, 0, 20, 22, 21, 0, 0, 0, 0],
         total: 63,
-        previous: 60,
         inactive: true,
       },
       {
@@ -33299,28 +33216,24 @@
         color: "var(--absence-color-VIOLET)",
         days: [3, 4, 2, 5, 6, 3, 4, 2, 5, 4, 3, 4],
         total: 45,
-        previous: 38,
       },
       {
         name: "Bildungsurlaub",
         color: "var(--absence-color-BLUE)",
         days: [2, 3, 4, 6, 5, 3, 0, 0, 8, 6, 4, 2],
         total: 43,
-        previous: 51,
       },
       {
         name: "Umzugstag",
         color: "var(--absence-color-GRAY)",
         days: [1, 0, 2, 1, 3, 1, 0, 1, 2, 1, 0, 1],
         total: 13,
-        previous: 11,
       },
       {
         name: "Unbezahlter Urlaub",
         color: "var(--absence-color-CYAN)",
         days: [0, 0, 2, 0, 0, 0, 5, 3, 0, 0, 2, 0],
         total: 12,
-        previous: 0,
       },
     ];
 
@@ -33434,7 +33347,9 @@
     });
     void distributionChart.render();
 
-    // legend carries colour, name, absolute days, share and previous year - one place, one truth
+    // legend carries colour, name, absolute days and share - one place, one truth. no previous
+    // year column anymore: the refinement on 2026-08-14 dropped the year-over-year comparison
+    // everywhere on this page.
     document.querySelector("#type-legend").innerHTML = TYPES.map((type) => {
       const percent = (type.total / TOTAL_DAYS) * 100;
       const inactiveHint = type.inactive ? '<span class="inactive-hint">inaktive Art</span>' : "";
@@ -33444,16 +33359,19 @@
           <span class="type-values">
             ${decimal.format(type.total)} Tage
             <span class="share">· ${share.format(percent)} %</span>
-            <span class="previous" title="Vorjahr 2025">(${decimal.format(type.previous)})</span>
           </span>
         </li>`;
     }).join("");
 
     /* ---------------------------------------------------------------- *
-     * 3 - remaining vacation days, gauge in the shape used on the
-     *     sick note statistics page
+     * 3 - vacation taken: a single ring, in the shape used on the sick
+     *     note statistics page but with one series instead of two. the
+     *     value is the share of the valid entitlement already taken or
+     *     planned - deliberately inverted from a "remaining" reading, so
+     *     a year that's mostly used up doesn't look like an empty,
+     *     broken ring by December.
      * ---------------------------------------------------------------- */
-    const vacationGauge = new ApexCharts(document.querySelector("#vacation-gauge"), {
+    const vacationRing = new ApexCharts(document.querySelector("#vacation-ring"), {
       chart: {
         type: "radialBar",
         height: 180,
@@ -33465,9 +33383,9 @@
         animations: { enabled: !reducedMotion, speed: 200 },
       },
       theme: { mode: currentThemeMode() },
-      series: [33, 15],
-      labels: ["Stand heute", "Prognose 31.12."],
-      colors: ["var(--gauge-now)", "var(--gauge-forecast)"],
+      series: [67],
+      labels: ["Stand heute"],
+      colors: ["var(--ring-taken)"],
       states: { hover: { filter: { type: "none" } }, active: { filter: { type: "none" } } },
       stroke: { lineCap: "round" },
       legend: { show: false },
@@ -33492,12 +33410,12 @@
         },
       },
     });
-    void vacationGauge.render();
+    void vacationRing.render();
 
     /* ---------------------------------------------------------------- *
      * theme toggle - review aid for the mockup, not part of the page
      * ---------------------------------------------------------------- */
-    const charts = [monthlyChart, distributionChart, vacationGauge];
+    const charts = [monthlyChart, distributionChart, vacationRing];
     const toggle = document.querySelector("#theme-toggle");
     const toggleLabel = document.querySelector("#theme-toggle-label");
 
