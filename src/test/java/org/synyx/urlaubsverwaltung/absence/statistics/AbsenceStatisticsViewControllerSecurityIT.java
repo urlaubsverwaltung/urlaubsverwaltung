@@ -69,7 +69,7 @@ class AbsenceStatisticsViewControllerSecurityIT extends SingleTenantTestContaine
         final List<BigDecimal> daysByMonth = List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, TEN);
         final MonthlyAbsenceDaysByType monthlyAbsenceDaysByType = new MonthlyAbsenceDaysByType(daysByMonth, TEN);
         final VacationDaysTakenResult vacationDaysTaken =
-            new VacationDaysTakenResult(TEN, BigDecimal.valueOf(40), BigDecimal.valueOf(25), BigDecimal.valueOf(10), ZERO);
+            new VacationDaysTakenResult(TEN, BigDecimal.valueOf(40), BigDecimal.valueOf(25), ZERO);
 
         final AbsenceStatistics statistics = new AbsenceStatistics(Year.of(2024), Map.of(vacationType, monthlyAbsenceDaysByType), vacationDaysTaken);
         when(absenceStatisticsService.createStatistics(any(), eq(person))).thenReturn(statistics);
@@ -100,7 +100,7 @@ class AbsenceStatisticsViewControllerSecurityIT extends SingleTenantTestContaine
         person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final VacationDaysTakenResult emptyVacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO, ZERO);
+        final VacationDaysTakenResult emptyVacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO);
         when(absenceStatisticsService.createStatistics(any(), eq(person)))
             .thenReturn(new AbsenceStatistics(Year.now(), Map.of(), emptyVacationDaysTaken));
 
@@ -109,7 +109,7 @@ class AbsenceStatisticsViewControllerSecurityIT extends SingleTenantTestContaine
         )
             .andExpect(status().isOk())
             // proves the page is actually rendered, including the year selector fragment and the mount
-            // points of the three (still lifeless until Task 08) charts
+            // points of the three charts
             .andExpect(content().string(containsString("/web/absence/statistics?year=")))
             .andExpect(content().string(containsString("id=\"monthly-chart\"")))
             .andExpect(content().string(containsString("id=\"distribution-chart\"")))

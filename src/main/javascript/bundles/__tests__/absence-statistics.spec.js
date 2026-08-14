@@ -274,12 +274,30 @@ describe("absence-statistics", function () {
       expect(radialBar.endAngle).toBe(270);
     });
 
-    it("formats the bar label as a percentage of the given series value", async function () {
+    it("shows the percentage centered in the hollow middle, not alongside the arc", async function () {
       setAbsenceStatistics();
       await loadModule();
 
-      const { formatter } = ringChart().options.plotOptions.radialBar.barLabels;
-      expect(formatter("Stand heute", { seriesIndex: 0, w: { globals: { series: [67] } } })).toBe("67%");
+      const { dataLabels } = ringChart().options.plotOptions.radialBar;
+      expect(dataLabels.value.show).toBe(true);
+      expect(dataLabels.name.show).toBe(false);
+      expect(ringChart().options.plotOptions.radialBar.barLabels).toBeUndefined();
+    });
+
+    it("formats the centered label as a percentage of the given value", async function () {
+      setAbsenceStatistics();
+      await loadModule();
+
+      const { formatter } = ringChart().options.plotOptions.radialBar.dataLabels.value;
+      expect(formatter(67)).toBe("67%");
+    });
+
+    it("rounds the centered label to a whole number, so a precise percentage doesn't overflow the hollow center", async function () {
+      setAbsenceStatistics();
+      await loadModule();
+
+      const { formatter } = ringChart().options.plotOptions.radialBar.dataLabels.value;
+      expect(formatter(66.667)).toBe("67%");
     });
 
     it("disables the tooltip and legend", async function () {

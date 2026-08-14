@@ -118,7 +118,7 @@ class VacationDaysTakenTest {
     }
 
     @Test
-    void averageAndSumOnlyReflectPersonsPresentInTheMap() {
+    void sumOnlyReflectsPersonsPresentInTheMap() {
 
         // a person without a vacation account for the year simply never becomes an entry here -
         // there is no other state this class could pick such a person up from.
@@ -137,7 +137,6 @@ class VacationDaysTakenTest {
         final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), input);
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo("30"); // 10 + 20
-        assertThat(actual.averageVacationDaysTakenPerPerson()).isEqualByComparingTo("15"); // 30 / 2
     }
 
     @Test
@@ -188,7 +187,6 @@ class VacationDaysTakenTest {
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo(ZERO);
         assertThat(actual.validEntitlement()).isEqualByComparingTo(ZERO);
         assertThat(actual.percentage()).isEqualByComparingTo(ZERO);
-        assertThat(actual.averageVacationDaysTakenPerPerson()).isEqualByComparingTo(ZERO);
         assertThat(actual.expiredRemainingVacationDays()).isEqualByComparingTo(ZERO);
     }
 }

@@ -179,6 +179,8 @@ const distributionOptions = {
     colors: ["var(--uv-chart-container-background)"],
   },
   tooltip: {
+    // same follow-cursor behaviour as the monthly chart's tooltip, for a consistent feel
+    followCursor: true,
     custom: function ({ seriesIndex, w }) {
       const type = types[seriesIndex];
       return tooltipTitle(type.name, [
@@ -240,23 +242,30 @@ const ringOptions = {
       position: "front",
       hollow: {
         margin: 0,
-        size: "34%",
+        // roomy hollow center for the percentage label sitting inside it
+        size: "62%",
         background: "var(--uv-chart-container-background)",
         position: "front",
       },
       track: {
         background: "var(--uv-chart-border)",
       },
+      // centered in the hollow middle, not barLabels (which draws the value alongside the arc
+      // itself - built for the sick note gauge's two concentric rings, where each ring needs its
+      // own adjacent label; with only one ring here, that positioning cut across the arc instead
+      // of sitting cleanly next to it).
       dataLabels: {
         name: { show: false },
-        value: { show: false },
-      },
-      barLabels: {
-        enabled: true,
-        offsetX: -8,
-        fontSize: "16px",
-        formatter: function (seriesName, { seriesIndex, w }) {
-          return `${w.globals.series[seriesIndex]}%`;
+        value: {
+          show: true,
+          fontSize: "22px",
+          fontWeight: 600,
+          offsetY: 8,
+          // rounded to a whole number - the underlying percentage carries more precision (see
+          // VacationDaysTaken) than a gauge label needs
+          formatter: function (value) {
+            return `${Math.round(value)}%`;
+          },
         },
       },
     },

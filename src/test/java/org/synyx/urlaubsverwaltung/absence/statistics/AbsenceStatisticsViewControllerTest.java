@@ -92,7 +92,7 @@ class AbsenceStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO, ZERO);
+        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO);
         final AbsenceStatistics selectedYearStatistics = new AbsenceStatistics(year, Map.of(), vacationDaysTaken);
         when(absenceStatisticsService.createStatistics(year, person)).thenReturn(selectedYearStatistics);
 
@@ -113,7 +113,7 @@ class AbsenceStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO, ZERO);
+        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, ZERO, ZERO);
         final AbsenceStatistics selectedYearStatistics = new AbsenceStatistics(year, Map.of(), vacationDaysTaken);
         when(absenceStatisticsService.createStatistics(year, person)).thenReturn(selectedYearStatistics);
 
@@ -142,7 +142,7 @@ class AbsenceStatisticsViewControllerTest {
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> monthlyAbsenceDaysByType =
             Map.of(smallType, smallTypeDays, bigType, bigTypeDays);
 
-        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, new BigDecimal("67"), ZERO, ZERO);
+        final VacationDaysTakenResult vacationDaysTaken = new VacationDaysTakenResult(ZERO, ZERO, new BigDecimal("67"), ZERO);
         final AbsenceStatistics selectedYearStatistics = new AbsenceStatistics(year, monthlyAbsenceDaysByType, vacationDaysTaken);
         when(absenceStatisticsService.createStatistics(year, person)).thenReturn(selectedYearStatistics);
 

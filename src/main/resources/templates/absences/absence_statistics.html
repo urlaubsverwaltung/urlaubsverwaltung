@@ -10,7 +10,7 @@
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{absences.statistics.header.title(${selectedYearStatistics.year.value})}">
-      Abwesenheiten – Auswertung
+      Abwesenheitsstatistik
     </title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/absence-statistics.css}" />
@@ -52,7 +52,7 @@
         th:replace="~{fragments/section-heading::section-heading(~{::absence-statistics-heading-body}, ~{::absence-statistics-heading-actions})}"
       >
         <th:block th:ref="absence-statistics-heading-body">
-          <h1 th:text="#{absences.statistics.title}">Auswertung für das Jahr</h1>
+          <h1 th:text="#{absences.statistics.title}">Abwesenheitsstatistik für das Jahr</h1>
           <div
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/absence/statistics?year=|, selectedYear=${selectedYearStatistics.year.value})}"
           ></div>
@@ -65,8 +65,8 @@
           <h2 class="font-bold text-base" th:text="#{absences.statistics.chart.title}">Abwesenheitstage je Monat</h2>
         </div>
         <p class="text-sm" th:text="#{absences.statistics.chart.description}">
-          Werktage nach individueller Arbeitszeit, tagesgenau auf die Monate verteilt. Farben entsprechen der in den
-          Einstellungen konfigurierten Farbe der Abwesenheitsart.
+          Anzahl der Abwesenheitstage entsprechend der individuellen Arbeitszeit im Unternehmen/deiner Abteilung. Farben
+          entsprechen der in den Einstellungen konfigurierten Farbe der Abwesenheitsart.
         </p>
 
         <div class="mt-4 absence-statistics-chart-container">
@@ -79,14 +79,11 @@
           <h2 id="distribution-heading" class="font-bold text-base" th:text="#{absences.statistics.distribution.title}">
             Verteilung der Abwesenheitsarten
           </h2>
-          <p
-            class="text-sm"
-            th:text="#{absences.statistics.distribution.description(${selectedYearStatistics.year.value})}"
-          >
-            Absolute Tage im Kalenderjahr.
+          <p class="text-sm" th:text="#{absences.statistics.distribution.description}">
+            Anteil der Abwesenheitstage je Abwesenheitsart
           </p>
           <div class="mt-4 absence-statistics-panel-body">
-            <div id="distribution-chart" class="absence-statistics-chart"></div>
+            <div id="distribution-chart"></div>
             <ul class="absence-statistics-legend" id="type-legend">
               <li th:each="type : ${absenceGraphStatistic.types}">
                 <span
@@ -120,42 +117,28 @@
             Genommener Urlaub
           </h2>
           <p class="text-sm" th:text="#{absences.statistics.vacation.description}">
-            Anteil des bereits genommenen bzw. geplanten Erholungsurlaubs am gültigen Anspruch.
+            Anteil des bereits genommenen bzw. geplanten Erholungsurlaubs am vorhandenen Anspruch.
           </p>
           <div class="mt-4 absence-statistics-panel-body">
             <div id="vacation-ring" class="absence-statistics-gauge"></div>
             <div class="absence-statistics-gauge-facts">
               <div class="absence-statistics-fact">
                 <span class="absence-statistics-fact-label" th:text="#{absences.statistics.vacation.today.label}">
-                  Stand heute
+                  Zum heutigen Stichtag
                 </span>
                 <span
                   class="absence-statistics-fact-value"
                   th:text="#{absences.statistics.vacation.today.value(
                     ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.vacationDaysTaken, 1, (selectedYearStatistics.vacationDaysTaken.vacationDaysTaken % 1 == 0 ? 0 : 1))},
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.validEntitlement, 1, (selectedYearStatistics.vacationDaysTaken.validEntitlement % 1 == 0 ? 0 : 1))},
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.percentage, 1, 1)}
+                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.validEntitlement, 1, (selectedYearStatistics.vacationDaysTaken.validEntitlement % 1 == 0 ? 0 : 1))}
                   )}"
                 >
-                  2.674 von 3.986 Tagen genommen/geplant · 67 %
-                </span>
-              </div>
-              <div class="absence-statistics-fact absence-statistics-fact--secondary">
-                <span class="absence-statistics-fact-label" th:text="#{absences.statistics.vacation.average.label}">
-                  Pro Mitarbeitende
-                </span>
-                <span
-                  class="absence-statistics-fact-value"
-                  th:text="#{absences.statistics.vacation.average.value(
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.averageVacationDaysTakenPerPerson, 1, (selectedYearStatistics.vacationDaysTaken.averageVacationDaysTakenPerPerson % 1 == 0 ? 0 : 1))}
-                  )}"
-                >
-                  ø 20,9 Tage genommen/geplant
+                  2.674 von 3.986 Tagen genommen bzw. geplant
                 </span>
               </div>
               <div class="absence-statistics-fact absence-statistics-fact--secondary">
                 <span class="absence-statistics-fact-label" th:text="#{absences.statistics.vacation.expired.label}">
-                  Resturlaub verfallen
+                  Verfallender Resturlaub
                 </span>
                 <span
                   class="absence-statistics-fact-value"

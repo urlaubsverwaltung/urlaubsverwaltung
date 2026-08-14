@@ -5,7 +5,7 @@
 
 ## Ziel
 
-Der Rechenkern für den Ring: aus Urlaubskonten und den offenen Urlaubstagen je Person werden Summe, Anspruch, Prozentwert, Durchschnitt und verfallener Resturlaub — für einen Stichtag.
+Der Rechenkern für den Ring: aus Urlaubskonten und den offenen Urlaubstagen je Person werden Summe, Anspruch, Prozentwert und verfallener Resturlaub — für einen Stichtag.
 
 ## Umsetzung
 
@@ -17,7 +17,9 @@ Eingabe:
 
 (`Year` fällt als Eingabe weg: die Berechnung braucht nichts als den Stichtag und die aufgelösten Konten — welches Jahr das ist, weiß nur der Aufrufer und muss hier nicht durchgereicht werden.)
 
-Ausgabe: Summe genommener bzw. geplanter Tage, Summe des noch gültigen Anspruchs, Prozentwert, Durchschnitt genommener bzw. geplanter Tage pro Person, Summe verfallener Resturlaubstage.
+Ausgabe: Summe genommener bzw. geplanter Tage, Summe des noch gültigen Anspruchs, Prozentwert, Summe verfallener Resturlaubstage.
+
+(Ein Durchschnitt pro Person war ursprünglich Teil der Ausgabe, ist aber im Refinement nach dem ersten visuellen Review wieder rausgeflogen: Personen mit sehr unterschiedlichem Urlaubsanspruch — 5 Tage neben 35 Tage — würden in einer einzigen Durchschnittszahl vermischt, die dadurch nichts Sinnvolles mehr aussagt.)
 
 Regeln:
 
@@ -25,7 +27,7 @@ Regeln:
 - Genommene bzw. geplante Tage einer Person = gültiger Anspruch minus `getLeftVacationDays(...)`. Prozentwert = genommene/geplante Tage geteilt durch **noch gültigen** Anspruch — also `100 % − (verbleibende Tage / Anspruch)`, rechnerisch dieselbe Zahl wie ein „verbleibend"-Prozentwert, nur umgekehrt ausgewiesen. Verfallener Resturlaub fällt aus Zähler *und* Nenner; der Wert springt am Verfallsdatum also nicht.
 - Verfallene Tage werden separat aufsummiert und ausgewiesen (`VacationDaysLeft#getExpiredRemainingVacationDays`).
 - Stichtag: laufendes Jahr → heute; vergangenes Jahr → 31.12. des Jahres; zukünftiges Jahr → 01.01. des Jahres. Welcher Stichtag gilt, entscheidet der Aufrufer; dieses Modul rechnet nur.
-- Personen ohne Urlaubskonto für das Jahr gehen in keine der Zahlen ein — weder in Summe noch in Nenner noch in den Divisor des Durchschnitts. Es wird **kein** Hinweis auf ihre Zahl erzeugt.
+- Personen ohne Urlaubskonto für das Jahr gehen in keine der Zahlen ein — weder in Summe noch in Nenner. Es wird **kein** Hinweis auf ihre Zahl erzeugt.
 - Ist der Anspruch in Summe 0, ist der Prozentwert 0 und keine Division durch Null.
 - Eine Deckelung bei über 100 % ist nicht nötig: Anträge über den gültigen Anspruch hinaus sind im System nicht möglich.
 
@@ -37,8 +39,7 @@ Regeln:
 - Stichtag vor dem Verfallsdatum: Resturlaub ist in Zähler und Nenner enthalten
 - Stichtag nach dem Verfallsdatum: Prozentwert bleibt gegenüber vorher unverändert, wenn kein Urlaub genommen wurde
 - verfallene Tage werden korrekt aufsummiert
-- Person ohne Urlaubskonto verändert weder Summe noch Durchschnitt
-- Durchschnitt pro Person bezieht sich nur auf Personen mit Konto
+- Person ohne Urlaubskonto verändert die Summe nicht
 - Person mit abweichendem Verfallsdatum wird individuell behandelt
 - Anspruchssumme 0 ergibt Prozentwert 0 ohne Ausnahme
 
