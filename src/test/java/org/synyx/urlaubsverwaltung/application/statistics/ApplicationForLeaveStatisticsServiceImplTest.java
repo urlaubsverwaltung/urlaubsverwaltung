@@ -44,9 +44,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
-class ApplicationForLeaveStatisticsServiceTest {
+class ApplicationForLeaveStatisticsServiceImplTest {
 
-    private ApplicationForLeaveStatisticsService sut;
+    private ApplicationForLeaveStatisticsServiceImpl sut;
 
     @Mock
     private PersonService personService;
@@ -63,7 +63,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsService(personService, personBasedataService, departmentService,
+        sut = new ApplicationForLeaveStatisticsServiceImpl(personService, personBasedataService, departmentService,
             applicationService, applicationForLeaveStatisticsBuilder, vacationTypeService);
     }
 
