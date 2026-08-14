@@ -24,12 +24,10 @@ import static org.synyx.urlaubsverwaltung.util.CalcUtil.isZero;
 class VacationDaysTaken {
 
     private static final int PERCENTAGE_SCALE = 3;
-    private static final int AVERAGE_SCALE = 2;
 
     /**
      * Calculates the taken/planned vacation days, the still-valid entitlement, the percentage of the former
-     * relative to the latter, the average taken/planned days per person and the sum of expired remaining vacation
-     * days, for the given stichtag.
+     * relative to the latter, and the sum of expired remaining vacation days, for the given stichtag.
      *
      * <p>
      * Persons without a vacation account for the year are expected to already be absent from
@@ -72,11 +70,6 @@ class VacationDaysTaken {
             ? ZERO
             : takenSum.divide(validEntitlementSum, PERCENTAGE_SCALE, HALF_UP).multiply(valueOf(100));
 
-        final int personCount = vacationDaysLeftByAccount.size();
-        final BigDecimal averagePerPerson = personCount == 0
-            ? ZERO
-            : takenSum.divide(valueOf(personCount), AVERAGE_SCALE, HALF_UP);
-
-        return new VacationDaysTakenResult(takenSum, validEntitlementSum, percentage, averagePerPerson, expiredSum);
+        return new VacationDaysTakenResult(takenSum, validEntitlementSum, percentage, expiredSum);
     }
 }

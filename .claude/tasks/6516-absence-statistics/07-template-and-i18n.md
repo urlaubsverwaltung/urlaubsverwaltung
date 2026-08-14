@@ -20,7 +20,7 @@ Aufbau der Seite:
 
 1. Überschrift mit Jahresauswahl
 2. `<h2>` „Abwesenheitstage je Monat" mit Beschreibung, darunter der Diagramm-Container über die volle Breite
-3. Zweispaltiger Bereich: links „Verteilung der Abwesenheitsarten" (Diagramm-Host plus Legendenliste), rechts „Genommener Urlaub" (Ring-Host plus Kennzahlen: Stand heute, Durchschnitt pro Mitarbeitende, verfallener Resturlaub). Auf schmalen Breiten untereinander.
+3. Zweispaltiger Bereich: links „Verteilung der Abwesenheitsarten" (Diagramm-Host plus Legendenliste), rechts „Genommener Urlaub" (Ring-Host plus Kennzahlen: Stichtag, verfallender Resturlaub). Auf schmalen Breiten untereinander.
 
 Keine Kennzahlenzeile mehr — die Seite geht direkt von der Jahresauswahl in das Monatsdiagramm über.
 
@@ -34,7 +34,7 @@ Zahlenformatierung über die vorhandenen Mittel (`fragments/number::number` bzw.
 
 Alle Texte über `messages*.properties`, gepflegt in `messages.properties` (Deutsch, Vorgabe), `messages_en.properties`, `messages_de_AT.properties`, `messages_el.properties`. Schlüsselpräfix `absences.statistics.` in Anlehnung an `sicknotes.statistics.`.
 
-Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Überschriften und Beschreibungen der beiden Bereiche, Label für „Stand heute", Label für den Durchschnitt pro Mitarbeitende, Label für verfallenen Resturlaub, Hinweis auf inaktive Abwesenheitsarten.
+Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Überschriften und Beschreibungen der beiden Bereiche, Stichtag-Label, Label für verfallenden Resturlaub, Hinweis auf inaktive Abwesenheitsarten.
 
 ## Definition of Done
 
@@ -49,3 +49,5 @@ Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Ü
 - `<script defer type="module" asset:src="absence_statistics.js">` verlangt einen Eintrag im Asset-Manifest, sonst schlägt das Rendering hart fehl (anders als ein fehlendes CSS, das nur einen 404 im Browser gibt). Deshalb legt dieser Task bereits einen minimalen Platzhalter `src/main/javascript/bundles/absence-statistics.js` an (leere IIFE) — Task 08 ersetzt den Inhalt durch die echte Diagramm-Logik, die Datei selbst bleibt bestehen.
 - `AbsenceStatistics.year()` ist ein `java.time.Year`, kein `int` — anders als bei `SickNoteStatistics.getYear()`. Für `{0, number, #}`-Übersetzungen und den `year-selector` wird deshalb `${selectedYearStatistics.year.value}` verwendet, nicht `${selectedYearStatistics.year}`.
 - Die Rendering-Prüfung („Template rendert … fehlerfrei") läuft in `AbsenceStatisticsViewControllerSecurityIT` (echter Spring-Kontext, Thymeleaf inklusive) statt im `standaloneSetup`-Test aus Task 05, der gar nicht rendert. Dort jetzt auch ein Test mit echten Diagrammdaten (`ensureYearWithDataRendersSuccessfully`) sowie die Rollen-Tests, die zuvor nur „Controller lief" geprüft haben, jetzt aber echtes `status().isOk()` mit Inhaltsprüfung.
+- Visuelles Review nach Fertigstellung von Task 08 hat „Durchschnitt pro Mitarbeitende" wieder gestrichen (Personen mit stark unterschiedlichem Urlaubsanspruch würden in einer Zahl vermischt) — die Kennzahl war nie sinnvoll und wurde end-to-end entfernt, nicht nur aus dem Template: `VacationDaysTakenResult`/`VacationDaysTaken` (Task 03) haben das Feld nicht mehr, `absences.statistics.vacation.average.*` existiert in keiner `messages`-Datei mehr.
+- Weiteres visuelles Review: die Prozentzahl in „Zum heutigen Stichtag" war redundant zum bereits im Ring dargestellten Prozentwert direkt daneben — aus `absences.statistics.vacation.today.value` entfernt (dritter Platzhalter, `{2} %`, komplett gestrichen statt nur ausgeblendet). Gleichzeitig „genommen/geplant" zu „genommen bzw. geplant" (bzw. `taken/planned` zu `taken or planned`) umformuliert, in allen vier `messages`-Dateien.
