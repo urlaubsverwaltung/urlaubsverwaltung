@@ -33,6 +33,6 @@ Eine Person, die inzwischen deaktiviert ist, bleibt für ein Jahr enthalten, in 
 
 ## Definition of Done
 
-- [ ] Package angelegt, `AbsenceStatisticsPersons` implementiert
-- [ ] Tests grün, alle oben genannten Fälle abgedeckt
-- [ ] Keine Nutzung von `Person#isActive` als Jahresfilter
+- [x] Package angelegt, `AbsenceStatisticsPersons` implementiert
+- [x] Tests grün, alle oben genannten Fälle abgedeckt
+- [x] Keine Nutzung von `Person#isActive` als Jahresfilter

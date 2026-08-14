@@ -10,7 +10,7 @@ Die Kerne 02–04 hängen nur am Package aus 01 und können unabhängig voneinan
 
 | # | Task | Abhängig von | Status |
 | --- | --- | --- | --- |
-| 01 | [Package und Personenauflösung](01-persons.md) | — | offen |
+| 01 | [Package und Personenauflösung](01-persons.md) | — | erledigt |
 | 02 | [Monatsaufteilung der Abwesenheitstage](02-monthly-absence-days.md) | 01 | offen |
 | 03 | [Verbleibende Urlaubstage](03-remaining-vacation-days.md) | 01 | offen |
 | 04 | [Statistik-Service](04-statistics-service.md) | 01, 02, 03 | offen |
