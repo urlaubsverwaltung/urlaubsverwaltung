@@ -107,6 +107,14 @@
       margin-top: --spacing(10);
       padding: 0 --spacing(4) --spacing(4) --spacing(4);
       overflow: auto;
+
+      p {
+        max-width: 50ch;
+      }
+
+      p + p {
+        margin-top: --spacing(4);
+      }
     }
 
     @variant dark {
