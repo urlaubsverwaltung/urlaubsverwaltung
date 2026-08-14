@@ -139,18 +139,35 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final Duration averagePrev = prevStats.average();
         final Duration averageGrowth = average.minus(averagePrev);
 
-        final OvertimeDistributionDto overtimeDistributionDto = new OvertimeDistributionDto(stats.personCount(), List.of(
-            new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
-            new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
-            new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
-            new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
-        )));
+        final List<Integer[]> ranges = List.of(
+            new Integer[]{ 0, 5 },
+            new Integer[]{ 5, 15 },
+            new Integer[]{ 15, 25 },
+            new Integer[]{ 25, null }
+        );
+
+        final List<OvertimeDistributionEntryDto> distributionDtos =
+            ranges.stream().map(range -> toOvertimeDistributionEntryDto(range, stats)).toList();
 
         return new OvertimeStatDto(
             toOvertimeDurationDto(average),
             toOvertimeDurationDto(averageGrowth),
-            overtimeDistributionDto
+            new OvertimeDistributionDto(stats.personCount(), distributionDtos)
         );
+    }
+
+    private static OvertimeDistributionEntryDto toOvertimeDistributionEntryDto(Integer[] range, OvertimeStatistic stats) {
+        final Integer rangeStart = range[0];
+        final Integer rangeEnd = range[1];
+
+        final int value;
+        if (rangeEnd == null) {
+            value = stats.numberOfPersonsWithDurationGreaterOrEqual(hours(rangeStart));
+        } else {
+            value = stats.numberOfPersonsWithDurationBetween(hours(rangeStart), hours(rangeEnd));
+        }
+
+        return new OvertimeDistributionEntryDto(range[0], range[1], value);
     }
 
     private SickDaysStatDto sickDaysStatistic(Person signedInUser, DateRange dateRange) {
