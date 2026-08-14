@@ -17,7 +17,7 @@ Die Kerne 02–04 hängen nur am Package aus 01 und können unabhängig voneinan
 | 05 | [View-Controller und Route](05-view-controller.md) | 04 | erledigt |
 | 06 | [Navigation](06-navigation.md) | 05 | erledigt |
 | 07 | [Template und Übersetzungen](07-template-and-i18n.md) | 05 | erledigt |
-| 08 | [Diagramme im Frontend](08-frontend-charts.md) | 07 | offen |
+| 08 | [Diagramme im Frontend](08-frontend-charts.md) | 07 | erledigt |
 | 09 | [Abnahme](09-verification.md) | 01–08 | offen |
 
 ## Entscheidungen auf einen Blick

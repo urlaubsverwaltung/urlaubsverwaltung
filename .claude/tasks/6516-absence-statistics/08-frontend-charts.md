@@ -36,7 +36,14 @@ Die Serien-Sichtbarkeitspersistenz (`apexOptionsWithPersistence`) ist optional. 
 
 ## Definition of Done
 
-- [ ] Alle drei Diagramme rendern mit echten Daten
-- [ ] Helles und dunkles Design gleichwertig, Umschaltung zur Laufzeit aktualisiert die Diagramme
-- [ ] Kein horizontales Scrollen der Seite auf schmalen Breiten
-- [ ] `npm run lint` und `npx vitest run` grün
+- [x] Alle drei Diagramme rendern mit echten Daten
+- [x] Helles und dunkles Design gleichwertig, Umschaltung zur Laufzeit aktualisiert die Diagramme
+- [x] Kein horizontales Scrollen der Seite auf schmalen Breiten (Layout aus dem bereits abgenommenen Mockup übernommen — `flex-wrap`, einspaltiges Band unter `md`; endgültige Sichtprüfung ist Sache von Task 09)
+- [x] `npm run lint` und `npx vitest run` grün
+
+## Anmerkungen
+
+- Serien-Sichtbarkeitspersistenz (`apexOptionsWithPersistence`) bewusst weggelassen: laut Task optional, nur für kartesische Diagramme (Balken) nutzbar — nicht für Kuchen oder Ring —, und diese neue Seite hat noch keinen bestehenden lokalen Zustand, den es zu erhalten gälte.
+- Das Kuchendiagramm braucht ein eigenes Modul: `sick-notes-statistics.js` importiert nur `bar`/`line`/`radialBar`, hier kommt zusätzlich `import "apexcharts/pie";` dazu.
+- Der Ring hat keine passende `--absence-color-*`-Farbe (keine Abwesenheitsart entspricht "genommen"). Neuer Token `--absence-vacation-ring-color` lokal in `absence-statistics.css` definiert (hell/dunkel), statt `theme.css` anzufassen — Task 08 berührt laut Kopfzeile nur `bundles/`.
+- Beim Schreiben des Tooltip-Zahlenformats ist aufgefallen, dass eine feste `Intl.NumberFormat("de-DE", …)` für nicht-deutschsprachige Nutzer falsch formatierte Zahlen im Tooltip gezeigt hätte, während die serverseitige Legende korrekt lokalisiert. Behoben über `document.documentElement.lang` (gesetzt via `th:lang` in `_layout.html`) — derselbe Mechanismus, den `company-overview.js` bereits nutzt.
