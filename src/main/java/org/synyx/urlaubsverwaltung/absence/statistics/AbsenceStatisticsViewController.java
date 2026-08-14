@@ -107,7 +107,7 @@ class AbsenceStatisticsViewController implements HasLaunchpad, HasPersonSearch {
             : yearSum.divide(totalYearSum, SHARE_SCALE, HALF_UP).multiply(valueOf(100));
 
         return new AbsenceTypeDto(vacationType.getLabel(locale), vacationType.getColor(),
-            monthlyAbsenceDaysByType.daysByMonth(), yearSum, share);
+            monthlyAbsenceDaysByType.daysByMonth(), yearSum, share, vacationType.isActive());
     }
 
     // changing this GraphDto, you may have to increase the local-storage version key in JavaScript to keep the
@@ -115,6 +115,6 @@ class AbsenceStatisticsViewController implements HasLaunchpad, HasPersonSearch {
     record GraphDto(List<AbsenceTypeDto> types, BigDecimal vacationDaysTakenPercentage) {
     }
 
-    record AbsenceTypeDto(String name, VacationTypeColor color, List<BigDecimal> monthlyDays, BigDecimal yearSum, BigDecimal share) {
+    record AbsenceTypeDto(String name, VacationTypeColor color, List<BigDecimal> monthlyDays, BigDecimal yearSum, BigDecimal share, boolean active) {
     }
 }
