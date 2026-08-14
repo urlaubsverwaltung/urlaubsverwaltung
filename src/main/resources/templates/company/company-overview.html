@@ -286,11 +286,34 @@
                     <svg th:replace="~{icon/briefcase-medical::svg(className='w-4 h-4')}"></svg>
                     <span th:text="#{company.overview.distribution.sick-days.title}"> Kranktage - wie verteilt? </span>
                   </div>
+                  <button popovertarget="stats-sick-days-distribution-description">
+                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                    <span class="sr-only" th:text="#{company.overview.distribution.sick-days.info.button}"
+                      >Informationen zu Kranktage</span
+                    >
+                  </button>
                 </div>
                 <div
                   class="stat-card__body"
                   th:with="entries=${sickDaysStatistic.distribution.entries}, max=${sickDaysStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
+                  <div popover="hint" id="stats-sick-days-distribution-description" class="stat-card-info-popover">
+                    <button
+                      class="stat-card-info-close-button"
+                      popovertarget="stats-sick-days-distribution-description"
+                      popovertargetaction="hide"
+                    >
+                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+                      <span class="sr-only" th:text="#{company.overview.card.info.button.clos}">Schließen</span>
+                    </button>
+                    <div class="stat-card-info-text">
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph1}">Paragraph 1</p>
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph2}">Paragraph 2</p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </div>
+                  </div>
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
                       <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
