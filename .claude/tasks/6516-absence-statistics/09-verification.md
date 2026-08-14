@@ -20,16 +20,15 @@ Rechnen:
 - [ ] Ein halber Tag zählt als 0,5.
 - [ ] Bei einer Teilzeitperson zählt ein arbeitsfreier Wochentag nicht.
 - [ ] Ein Antrag mit `WAITING` erscheint im Diagramm; nach Ablehnung verschwindet er wieder.
-- [ ] Die Summe der Jahreswerte je Art entspricht der Gesamtzahl in der Kennzahlenkarte.
 - [ ] Die Anteile im Kuchendiagramm addieren sich auf 100 %.
 
 Urlaubstage:
 
-- [ ] Der Prozentwert macht am Verfallsdatum keinen Sprung, wenn zwischenzeitlich kein Urlaub genommen wurde.
+- [ ] Der Prozentwert im Ring macht am Verfallsdatum keinen Sprung, wenn zwischenzeitlich kein Urlaub genommen wurde.
 - [ ] Verfallene Tage werden separat ausgewiesen.
-- [ ] Die Prognose zum 31.12. liegt unter dem Stand heute, wenn im Restjahr Urlaub genehmigt ist.
-- [ ] Bei einem vergangenen Jahr sind beide Stichtage identisch.
+- [ ] Bei einem vergangenen Jahr wird der Stichtag 31.12. jenes Jahres verwendet, bei einem Zukunftsjahr der 01.01.
 - [ ] Eine Person ohne Urlaubskonto verändert die Zahlen nicht und wird nirgends erwähnt.
+- [ ] Der Ring füllt sich Richtung 100 %, je mehr Urlaub im Jahr genommen bzw. geplant ist — nicht umgekehrt.
 
 Personenkreis und Berechtigungen:
 
@@ -42,11 +41,11 @@ Darstellung:
 
 - [ ] Ein Jahr vor Einführung der Anwendung rendert leere Diagramme ohne Fehler.
 - [ ] Ein Zukunftsjahr zeigt bereits genehmigte Planung.
-- [ ] Eine inzwischen deaktivierte Abwesenheitsart erscheint in einem historischen Jahr.
-- [ ] Eine Art ohne Tage in Jahr und Vorjahr erscheint nirgends.
-- [ ] Vorjahreswerte stehen an allen Kennzahlen und an jeder Abwesenheitsart.
+- [ ] Eine inzwischen deaktivierte Abwesenheitsart erscheint in einem historischen Jahr, in dem sie genutzt wurde.
+- [ ] Eine Art ohne Tage im gewählten Jahr erscheint nirgends.
+- [ ] Nirgends auf der Seite steht ein Vorjahreswert — weder Kennzahl noch Abwesenheitsart noch Ring.
 - [ ] Helles und dunkles Design sind gleichwertig lesbar.
-- [ ] Auf schmaler Breite rücken Kuchen und Gauge untereinander, die Seite scrollt nicht horizontal.
+- [ ] Auf schmaler Breite rücken Kuchen und Ring untereinander, die Seite scrollt nicht horizontal.
 - [ ] Jahresauswahl und Legenden sind per Tastatur erreichbar, Fokus ist sichtbar.
 
 ## Bewusst nicht geprüft

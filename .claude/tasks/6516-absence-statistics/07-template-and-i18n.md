@@ -20,10 +20,11 @@ Aufbau der Seite:
 
 1. Überschrift mit Jahresauswahl
 2. `<h2>` „Abwesenheitstage je Monat" mit Beschreibung, darunter der Diagramm-Container über die volle Breite
-3. Kennzahlenzeile mit `statistic-summary-card-box`: Abwesenheitstage gesamt und ø pro Mitarbeitende, jeweils mit Vorjahreswert in Klammern und `title`-Tooltip
-4. Zweispaltiger Bereich: links „Verteilung der Abwesenheitsarten" (Diagramm-Host plus Legendenliste), rechts „Verbleibende Urlaubstage" (Gauge-Host plus Kennzahlen). Auf schmalen Breiten untereinander.
+3. Zweispaltiger Bereich: links „Verteilung der Abwesenheitsarten" (Diagramm-Host plus Legendenliste), rechts „Genommener Urlaub" (Ring-Host plus Kennzahlen: Stand heute, Durchschnitt pro Mitarbeitende, verfallener Resturlaub). Auf schmalen Breiten untereinander.
 
-Die Legende des Kuchendiagramms wird serverseitig als Liste gerendert — Farbe, Name, absolute Tage, Anteil, Vorjahreswert. Sie ist damit auch ohne JavaScript lesbar und muss nicht im Bundle aufgebaut werden.
+Keine Kennzahlenzeile mehr — die Seite geht direkt von der Jahresauswahl in das Monatsdiagramm über.
+
+Die Legende des Kuchendiagramms wird serverseitig als Liste gerendert — Farbe, Name, absolute Tage, Anteil. Sie ist damit auch ohne JavaScript lesbar und muss nicht im Bundle aufgebaut werden.
 
 Kein Leerzustandszweig: ein Jahr ohne Daten rendert dieselbe Struktur mit leeren Diagrammen.
 
@@ -33,7 +34,7 @@ Zahlenformatierung über die vorhandenen Mittel (`fragments/number::number` bzw.
 
 Alle Texte über `messages*.properties`, gepflegt in `messages.properties` (Deutsch, Vorgabe), `messages_en.properties`, `messages_de_AT.properties`, `messages_el.properties`. Schlüsselpräfix `absences.statistics.` in Anlehnung an `sicknotes.statistics.`.
 
-Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Überschriften und Beschreibungen der drei Bereiche, Kennzahlenlabel, Gauge-Label für Stichtag und Prognose, Label für verfallenen Resturlaub, Vorjahres-Tooltip, Hinweis auf inaktive Abwesenheitsarten.
+Benötigt werden mindestens: Seitentitel, Überschrift, Achsentitel „Tage", Überschriften und Beschreibungen der beiden Bereiche, Label für „Stand heute", Label für den Durchschnitt pro Mitarbeitende, Label für verfallenen Resturlaub, Hinweis auf inaktive Abwesenheitsarten.
 
 ## Definition of Done
 

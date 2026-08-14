@@ -5,7 +5,7 @@
 
 ## Ziel
 
-Ein `@Service`, der die Daten beschafft, die drei Kerne zusammensetzt und ein Ergebnisobjekt je Jahr liefert.
+Ein `@Service`, der die Daten beschafft, die drei Kerne zusammensetzt und ein Ergebnisobjekt für ein Jahr liefert.
 
 ## Umsetzung
 
@@ -23,12 +23,11 @@ Beschaffung:
 Zusammensetzung:
 
 - `MonthlyAbsenceDays` für Monatswerte und Jahressummen je Art
-- `RemainingVacationDays` für die Urlaubskennzahlen, mit den Stichtagen nach Regel aus Task 03 (dieser Service entscheidet, welche Stichtage gelten — er kennt `Clock` und das gefragte Jahr)
-- Gesamtsumme aller Abwesenheitstage und Durchschnitt pro Mitarbeitende
+- `VacationDaysTaken` für die Urlaubskennzahlen, mit dem Stichtag nach Regel aus Task 03 (dieser Service entscheidet, welcher Stichtag gilt — er kennt `Clock` und das gefragte Jahr)
 
 Das Ergebnisobjekt `AbsenceStatistics` ist ein Wertobjekt ohne eigene Beschaffung.
 
-Aufrufmuster: der Controller ruft den Service zweimal, für das gewählte Jahr und für das Vorjahr. Innerhalb eines Aufrufs sollen Personen, Kalender und Konten genau einmal beschafft und durch die Kerne gereicht werden — `ApplicationForLeaveStatisticsBuilder` macht das bereits so und begründet es dort im Kommentar.
+Aufrufmuster: der Controller ruft den Service **einmal**, für das gewählte Jahr — es gibt keinen Vorjahresvergleich mehr auf der Seite. Personen, Kalender und Konten sollen innerhalb eines Aufrufs genau einmal beschafft und durch die Kerne gereicht werden — `ApplicationForLeaveStatisticsBuilder` macht das bereits so und begründet es dort im Kommentar.
 
 Leere Eingaben (keine Personen, keine Anträge) müssen ein leeres, aber vollständiges Ergebnis liefern: zwölf Monatswerte, keine Arten, Urlaubskennzahlen auf 0. Kein Sonderpfad, keine Ausnahme.
 
@@ -38,7 +37,7 @@ Leere Eingaben (keine Personen, keine Anträge) müssen ein leeres, aber vollst�
 
 - Anträge werden für das ganze Jahr und mit `activeStatuses()` angefragt
 - der Personenkreis stammt aus `AbsenceStatisticsPersons`
-- Stichtagsregel: laufendes Jahr, vergangenes Jahr, zukünftiges Jahr ergeben die erwarteten Stichtage
+- Stichtagsregel: laufendes Jahr, vergangenes Jahr, zukünftiges Jahr ergeben den erwarteten Stichtag
 - leerer Personenkreis führt zu einem leeren Ergebnis ohne Ausnahme und ohne unnötige Folgeabfragen
 
 ## Definition of Done
