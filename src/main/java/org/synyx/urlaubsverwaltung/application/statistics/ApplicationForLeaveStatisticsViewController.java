@@ -66,7 +66,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
     private static final String SEARCH_PARAM = "query";
 
     private final PersonService personService;
-    private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
+    private final ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
@@ -76,7 +76,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
     private final Clock clock;
 
     ApplicationForLeaveStatisticsViewController(
-        PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
+        PersonService personService, ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware,
         PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
