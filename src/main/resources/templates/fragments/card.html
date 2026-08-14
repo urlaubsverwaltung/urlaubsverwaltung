@@ -1,0 +1,30 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Statistic Card Fragments</title>
+  </head>
+  <body>
+    <th:block th:fragment="card-info-button(target, label)">
+      <button th:popovertarget="${target}">
+        <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+        <span class="sr-only" th:text="${label}">Label</span>
+      </button>
+    </th:block>
+
+    <th:block th:fragment="card-info-popover(id, content)">
+      <div popover="hint" th:id="${id}" class="card-info-popover">
+        <button class="card-info-popover-close-button" th:popovertarget="${id}" popovertargetaction="hide">
+          <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+          <span class="sr-only" th:text="#{company.overview.card.info.button.clos}">Schließen</span>
+        </button>
+        <div class="card-info-popover__content">
+          <th:block th:replace="${content}">
+            <p>Paragraph 1</p>
+            <p>Paragraph 2</p>
+            <p>Paragraph 3</p>
+          </th:block>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

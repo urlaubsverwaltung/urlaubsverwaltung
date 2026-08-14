@@ -96,14 +96,47 @@
             <div class="mt-4 grid gap-4 grid-cols-1 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
               <div class="stat-card stat-card--kpi">
                 <div class="stat-card__header stat-card__header--no-border">
-                  <span
-                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
-                    th:text="#{company.overview.metrics.overtime.avg}"
+                  <div>
+                    <span
+                      class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                      th:text="#{company.overview.metrics.overtime.avg}"
+                    >
+                      Ø Mehrarbeit / Kopf
+                    </span>
+                  </div>
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-overtime-rate-description', label=#{company.overview.metrics.overtime.avg.info.button})}"
                   >
-                    Ø Mehrarbeit / Kopf
-                  </span>
+                    Informationen zu Ø Mehrarbeit / Kopf
+                  </button>
                 </div>
                 <div class="stat-card__body">
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-overtime-rate-description', content=~{::stats-overtime-rate-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-overtime-rate-tooltip-content">
+                      <p th:text="#{company.overview.metrics.overtime.avg.info.tooltip.paragraph1}">
+                        Durchschnittliche Überstunden über den ausgewählten Zeitraum.
+                      </p>
+                      <p th:text="#{company.overview.metrics.overtime.info.tooltip.definition}">
+                        Entscheidend ist, wie viele Überstunden am Ende tatsächlich übrig bleiben. Werden 2 Überstunden
+                        geleistet und später wieder vollständig abgebaut, zählen diese als 0 Überstunden.
+                      </p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
+                  </div>
+                  <div popover="hint" id="stats-overtime-rate-description" class="stat-card-info-popover">
+                    <button
+                      class="stat-card-info-close-button"
+                      popovertarget="stats-overtime-rate-description"
+                      popovertargetaction="hide"
+                    >
+                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+                      <span class="sr-only" th:text="#{company.overview.card.info.button.clos}">Schließen</span>
+                    </button>
+                  </div>
                   <span class="stat-card__value">
                     <span
                       data-animate-number
@@ -125,28 +158,24 @@
                   >
                     Gesundheitsquote
                   </span>
-                  <button popovertarget="stats-health-rate-description">
-                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
-                    <span class="sr-only" th:text="#{company.overview.metrics.health-rate.info.button}"
-                      >Informationen zur Gesundheitsquote</span
-                    >
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-health-rate-description', label=#{company.overview.metrics.health-rate.info.button})}"
+                  >
+                    Informationen zur Gesundheitsquote
                   </button>
                 </div>
                 <div class="stat-card__body">
-                  <div popover="hint" id="stats-health-rate-description" class="stat-card-info-popover">
-                    <button
-                      class="stat-card-info-close-button"
-                      popovertarget="stats-health-rate-description"
-                      popovertargetaction="hide"
-                    >
-                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
-                      <span class="sr-only" th:text="#{company.overview.metrics.health-rate.info.button.close}"
-                        >Schließen</span
-                      >
-                    </button>
-                    <p class="stat-card-info-text" th:text="#{company.overview.metrics.health-rate.info.tooltip}">
-                      Anzahl der Krankheitstage (inkl. Kind-Krank) im Verhältnis zu den Soll-Arbeitstagen.
-                    </p>
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-health-rate-description', content=~{::stats-health-rate-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-health-rate-tooltip-content">
+                      <p th:text="#{company.overview.metrics.health-rate.info.tooltip}">
+                        Anzahl der Krankheitstage (inkl. Kind-Krank) im Verhältnis zu den Soll-Arbeitstagen.
+                      </p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
                   </div>
                   <span class="stat-card__value">
                     <span data-animate-number th:text="${#numbers.formatPercent(sickDaysStatistic.healthRate, 0, 2)}"
@@ -180,11 +209,33 @@
                     <svg th:replace="~{icon/clock-arrow-up::svg(className='w-4 h-4')}"></svg>
                     <span th:text="#{company.overview.distribution.overtime.title}"> Mehrarbeit - wie verteilt? </span>
                   </div>
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-overtime-distribution-description', label=#{company.overview.distribution.overtime.info.button})}"
+                  >
+                    Informationen zur Mehrarbeit
+                  </button>
                 </div>
                 <div
                   class="stat-card__body"
                   th:with="entries=${overtimeStatistic.distribution.entries}, max=${overtimeStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-overtime-distribution-description', content=~{::stats-overtime-distribution-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-overtime-distribution-tooltip-content">
+                      <p th:text="#{company.overview.distribution.overtime.info.tooltip.paragraph1}">
+                        Der Graph zeigt, wie viele Personen wie viele Überstunden haben. Die Personen werden dazu nach
+                        der Höhe ihres aktuellen Überstundenstands gruppiert.
+                      </p>
+                      <p th:text="#{company.overview.metrics.overtime.info.tooltip.definition}">
+                        Entscheidend ist, wie viele Überstunden am Ende tatsächlich übrig bleiben. Werden 5 Überstunden
+                        geleistet und später wieder vollständig abgebaut, zählen diese als 0 Überstunden.
+                      </p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
+                  </div>
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
                       <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
@@ -224,11 +275,27 @@
                     <svg th:replace="~{icon/briefcase-medical::svg(className='w-4 h-4')}"></svg>
                     <span th:text="#{company.overview.distribution.sick-days.title}"> Kranktage - wie verteilt? </span>
                   </div>
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-sick-days-distribution-description', label=#{company.overview.distribution.sick-days.info.button})}"
+                  >
+                    Informationen zu Kranktage
+                  </button>
                 </div>
                 <div
                   class="stat-card__body"
                   th:with="entries=${sickDaysStatistic.distribution.entries}, max=${sickDaysStatistic.distribution.max}, maxBarHeight=150, minBarHeight=3"
                 >
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-sick-days-distribution-description', content=~{::stats-sick-days-distribution-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-sick-days-distribution-tooltip-content">
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph1}">Paragraph 1</p>
+                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph2}">Paragraph 2</p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
+                  </div>
                   <ol class="bar-chart">
                     <li th:each="entry, stat : ${entries}" class="bar-chart__item">
                       <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
