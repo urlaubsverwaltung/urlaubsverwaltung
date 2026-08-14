@@ -34,19 +34,24 @@ Sichtbare Arten sind nur solche mit Tagen im gewählten Jahr — das `active`-Fl
 
 ## Tests
 
-`AbsenceStatisticsViewControllerTest` mit MockMvc, Vorbild `SickNoteStatisticsViewControllerTest`:
+Zwei Testklassen statt einer — `SickNoteStatisticsViewControllerTest` als Vorbild deckt nur die Verdrahtung ab, weil ihr `standaloneSetup` keine Spring Security verdrahtet und `@PreAuthorize` damit gar nicht greifen kann. Berechtigungen werden im Repo statt dessen über eine separate `*SecurityIT`-Klasse geprüft (Vorbild: `OvertimeStatisticsViewControllerSecurityIT`, `@SpringBootTest` + `webAppContextSetup(...).apply(springSecurity())`).
 
-- Zugriff erlaubt für `OFFICE`, `BOSS`, `DEPARTMENT_HEAD`, `SECOND_STAGE_AUTHORITY`
-- Zugriff verweigert für `USER` und andere Rollen
+`AbsenceStatisticsViewControllerTest` mit MockMvc (`standaloneSetup`):
+
 - ohne `year`-Parameter wird das laufende Jahr verwendet
 - mit `year`-Parameter wird das gefragte Jahr verwendet
 - erwarteter View-Name und die oben genannten Model-Attribute sind gesetzt
 - Arten sind absteigend nach Jahressumme sortiert
-- eine Art ohne Tage im gewählten Jahr ist nicht enthalten
+- (eine Art ohne Tage im gewählten Jahr taucht schon in `MonthlyAbsenceDaysTest` nicht auf — hier gibt es nichts zusätzlich zu filtern, das Graph-DTO mappt nur, was `AbsenceStatistics` bereits liefert)
+
+`AbsenceStatisticsViewControllerSecurityIT` mit vollem Spring-Kontext, Testcontainers:
+
+- Zugriff verweigert (403) für `USER`, `INACTIVE`, ohne dass der Controller überhaupt aufgerufen wird
+- Zugriff erlaubt für `OFFICE`, `BOSS`, `DEPARTMENT_HEAD`, `SECOND_STAGE_AUTHORITY` — geprüft daran, dass der Controller tatsächlich ausgeführt wird, nicht daran, dass die Seite rendert (das Template kommt erst mit Task 07; bis dahin wirft das Rendering erwartungsgemäß eine `TemplateInputException`, die der Test explizit abfängt und verifiziert)
 
 ## Definition of Done
 
-- [ ] Route erreichbar, Berechtigungen greifen
-- [ ] Graph-DTO enthält Monatswerte, Jahressummen und den Ring-Prozentwert
-- [ ] Sortierung im Mapping, nicht im Template
-- [ ] Tests grün
+- [x] Route erreichbar, Berechtigungen greifen
+- [x] Graph-DTO enthält Monatswerte, Jahressummen und den Ring-Prozentwert
+- [x] Sortierung im Mapping, nicht im Template
+- [x] Tests grün
