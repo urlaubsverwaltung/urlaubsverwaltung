@@ -44,6 +44,6 @@ Zusätzlich soll das Modul die Jahressumme je Art liefern — das ist dieselbe R
 
 ## Definition of Done
 
-- [ ] `MonthlyAbsenceDays` implementiert, ohne Spring- und Datenbankbezug
-- [ ] Jahressumme je Art wird vom selben Modul geliefert
-- [ ] Tests grün, alle oben genannten Fälle abgedeckt
+- [x] `MonthlyAbsenceDays` implementiert, ohne Spring- und Datenbankbezug
+- [x] Jahressumme je Art wird vom selben Modul geliefert
+- [x] Tests grün, alle oben genannten Fälle abgedeckt
