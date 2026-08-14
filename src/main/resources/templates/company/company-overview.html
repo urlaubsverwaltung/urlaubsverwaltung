@@ -96,14 +96,44 @@
             <div class="mt-4 grid gap-4 grid-cols-1 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
               <div class="stat-card stat-card--kpi">
                 <div class="stat-card__header stat-card__header--no-border">
-                  <span
-                    class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
-                    th:text="#{company.overview.metrics.overtime.avg}"
-                  >
-                    Ø Mehrarbeit / Kopf
-                  </span>
+                  <div>
+                    <span
+                      class="text-sm text-gray-500 dark:text-zinc-400 dark:font-bold"
+                      th:text="#{company.overview.metrics.overtime.avg}"
+                    >
+                      Ø Mehrarbeit / Kopf
+                    </span>
+                  </div>
+                  <button popovertarget="stats-overtime-rate-description">
+                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                    <span class="sr-only" th:text="#{company.overview.metrics.overtime.avg.info.button}"
+                      >Informationen zu Ø Mehrarbeit / Kopf</span
+                    >
+                  </button>
                 </div>
                 <div class="stat-card__body">
+                  <div popover="hint" id="stats-overtime-rate-description" class="stat-card-info-popover">
+                    <button
+                      class="stat-card-info-close-button"
+                      popovertarget="stats-overtime-rate-description"
+                      popovertargetaction="hide"
+                    >
+                      <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
+                      <span class="sr-only" th:text="#{company.overview.card.info.button.clos}">Schließen</span>
+                    </button>
+                    <div class="stat-card-info-text">
+                      <p th:text="#{company.overview.metrics.overtime.avg.info.tooltip.paragraph1}">
+                        Durchschnittliche Überstunden über den ausgewählten Zeitraum.
+                      </p>
+                      <p th:text="#{company.overview.metrics.overtime.info.tooltip.definition}">
+                        Entscheidend ist, wie viele Überstunden am Ende tatsächlich übrig bleiben. Werden 2 Überstunden
+                        geleistet und später wieder vollständig abgebaut, zählen diese als 0 Überstunden.
+                      </p>
+                      <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
+                        Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
+                      </p>
+                    </div>
+                  </div>
                   <span class="stat-card__value">
                     <span
                       data-animate-number
@@ -205,7 +235,7 @@
                         Der Graph zeigt, wie viele Personen wie viele Überstunden haben. Die Personen werden dazu nach
                         der Höhe ihres aktuellen Überstundenstands gruppiert.
                       </p>
-                      <p th:text="#{company.overview.distribution.overtime.info.tooltip.paragraph2}">
+                      <p th:text="#{company.overview.metrics.overtime.info.tooltip.definition}">
                         Entscheidend ist, wie viele Überstunden am Ende tatsächlich übrig bleiben. Werden 5 Überstunden
                         geleistet und später wieder vollständig abgebaut, zählen diese als 0 Überstunden.
                       </p>
