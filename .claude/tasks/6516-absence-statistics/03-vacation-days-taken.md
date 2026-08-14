@@ -12,9 +12,10 @@ Der Rechenkern für den Ring: aus Urlaubskonten und den offenen Urlaubstagen je 
 Neue Klasse `VacationDaysTaken` — rein, ohne Spring. Beschaffung der Konten ist Aufgabe von Task 04.
 
 Eingabe:
-- `Year`
 - je Person das Urlaubskonto und die daraus abgeleiteten offenen Tage (`VacationDaysLeft`)
 - ein Stichtag
+
+(`Year` fällt als Eingabe weg: die Berechnung braucht nichts als den Stichtag und die aufgelösten Konten — welches Jahr das ist, weiß nur der Aufrufer und muss hier nicht durchgereicht werden.)
 
 Ausgabe: Summe genommener bzw. geplanter Tage, Summe des noch gültigen Anspruchs, Prozentwert, Durchschnitt genommener bzw. geplanter Tage pro Person, Summe verfallener Resturlaubstage.
 
@@ -43,6 +44,6 @@ Regeln:
 
 ## Definition of Done
 
-- [ ] `VacationDaysTaken` implementiert, ohne Spring- und Datenbankbezug
-- [ ] Verfallslogik über `VacationDaysLeft`, nicht nachgebaut
-- [ ] Tests grün, alle oben genannten Fälle abgedeckt
+- [x] `VacationDaysTaken` implementiert, ohne Spring- und Datenbankbezug
+- [x] Verfallslogik über `VacationDaysLeft`, nicht nachgebaut
+- [x] Tests grün, alle oben genannten Fälle abgedeckt
