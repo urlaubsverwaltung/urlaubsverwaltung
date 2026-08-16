@@ -227,9 +227,11 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarService.getPersonCalendar(personId);
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
-            final var path = "web/persons/%d/calendar?secret=%s".formatted(personId, personCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/web/persons/{personId}/calendar")
+                .queryParam("secret", personCalendar.getSecret())
+                .buildAndExpand(personId)
+                .toUriString();
 
             dto.setCalendarUrl(url);
             dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
@@ -268,9 +270,11 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
             final var maybeDepartmentCalendar = Optional.ofNullable(departmentCalendarByDepartmentId.get(departmentId));
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
-                final var path = "web/departments/%s/persons/%s/calendar?secret=%s".formatted(departmentId, personId, departmentCalendar.getSecret());
-                final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                final var url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/web/departments/{departmentId}/persons/{personId}/calendar")
+                    .queryParam("secret", departmentCalendar.getSecret())
+                    .buildAndExpand(departmentId, personId)
+                    .toUriString();
 
                 departmentCalendarDto.setCalendarUrl(url);
                 departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
@@ -295,9 +299,11 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
         if (maybeCompanyCalendar.isPresent()) {
 
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final var path = "web/company/persons/%d/calendar?secret=%s".formatted(personId, companyCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/web/company/persons/{personId}/calendar")
+                .queryParam("secret", companyCalendar.getSecret())
+                .buildAndExpand(personId)
+                .toUriString();
 
             companyCalendarDto.setCalendarUrl(url);
             companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
