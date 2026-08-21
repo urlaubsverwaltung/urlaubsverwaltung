@@ -165,7 +165,17 @@
               <p th:text="#{absences.statistics.vacation.info.tooltip.paragraph2}">Paragraph 2</p>
             </th:block>
           </div>
-          <div class="mt-4 absence-statistics-panel-body">
+          <div
+            class="mt-4 absence-statistics-panel-body"
+            th:with="
+              vacationDaysTaken=${selectedYearStatistics.vacationDaysTaken.vacationDaysTaken},
+              validEntitlement=${selectedYearStatistics.vacationDaysTaken.validEntitlement},
+              expiredRemainingVacationDays=${selectedYearStatistics.vacationDaysTaken.expiredRemainingVacationDays},
+              vacationDaysTakenText=${#numbers.formatDecimal(vacationDaysTaken, 1, (vacationDaysTaken % 1 == 0 ? 0 : 1))},
+              validEntitlementText=${#numbers.formatDecimal(validEntitlement, 1, (validEntitlement % 1 == 0 ? 0 : 1))},
+              expiredRemainingVacationDaysText=${#numbers.formatDecimal(expiredRemainingVacationDays, 1, (expiredRemainingVacationDays % 1 == 0 ? 0 : 1))}
+            "
+          >
             <div id="vacation-ring" class="absence-statistics-gauge"></div>
             <div class="absence-statistics-gauge-facts">
               <div class="absence-statistics-fact">
@@ -174,10 +184,7 @@
                 </span>
                 <span
                   class="absence-statistics-fact-value"
-                  th:text="#{absences.statistics.vacation.today.value(
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.vacationDaysTaken, 1, (selectedYearStatistics.vacationDaysTaken.vacationDaysTaken % 1 == 0 ? 0 : 1))},
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.validEntitlement, 1, (selectedYearStatistics.vacationDaysTaken.validEntitlement % 1 == 0 ? 0 : 1))}
-                  )}"
+                  th:text="#{absences.statistics.vacation.today.value(${vacationDaysTakenText}, ${validEntitlementText})}"
                 >
                   2.674 von 3.986 Tagen genommen bzw. geplant
                 </span>
@@ -188,9 +195,7 @@
                 </span>
                 <span
                   class="absence-statistics-fact-value"
-                  th:text="#{absences.statistics.vacation.expired.value(
-                    ${#numbers.formatDecimal(selectedYearStatistics.vacationDaysTaken.expiredRemainingVacationDays, 1, (selectedYearStatistics.vacationDaysTaken.expiredRemainingVacationDays % 1 == 0 ? 0 : 1))}
-                  )}"
+                  th:text="#{absences.statistics.vacation.expired.value(${expiredRemainingVacationDaysText})}"
                 >
                   47 Tage
                 </span>
