@@ -38,8 +38,6 @@ public class AbsenceStatisticsService {
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
-    private final MonthlyAbsenceDays monthlyAbsenceDays;
-    private final VacationDaysTaken vacationDaysTaken;
     private final Clock clock;
 
     AbsenceStatisticsService(
@@ -57,8 +55,6 @@ public class AbsenceStatisticsService {
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
-        this.monthlyAbsenceDays = new MonthlyAbsenceDays();
-        this.vacationDaysTaken = new VacationDaysTaken();
         this.clock = clock;
     }
 
@@ -73,7 +69,7 @@ public class AbsenceStatisticsService {
 
         final List<Person> persons = absenceStatisticsPersons.relevantPersons(signedInUser, year);
         if (persons.isEmpty()) {
-            return new AbsenceStatistics(year, Map.of(), vacationDaysTaken.calculate(stichtag(year), Map.of()));
+            return new AbsenceStatistics(year, Map.of(), VacationDaysTaken.calculate(stichtag(year), Map.of()));
         }
 
         final DateRange yearRange = DateRange.ofYear(year);
@@ -87,7 +83,7 @@ public class AbsenceStatisticsService {
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, year);
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> monthlyAbsenceDaysByType =
-            monthlyAbsenceDays.calculate(year, applications, workingTimeCalendarsByPerson);
+            MonthlyAbsenceDays.calculate(year, applications, workingTimeCalendarsByPerson);
 
         final List<Account> accounts = accountService.getHolidaysAccount(year.getValue(), persons);
         final Map<Account, HolidayAccountVacationDays> vacationDaysLeftByAccount =
@@ -95,7 +91,7 @@ public class AbsenceStatisticsService {
         final Map<Account, VacationDaysLeft> vacationDaysLeftYearByAccount = vacationDaysLeftByAccount.entrySet().stream()
             .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().vacationDaysYear()));
 
-        final VacationDaysTakenResult vacationDaysTakenResult = vacationDaysTaken.calculate(stichtag(year), vacationDaysLeftYearByAccount);
+        final VacationDaysTakenResult vacationDaysTakenResult = VacationDaysTaken.calculate(stichtag(year), vacationDaysLeftYearByAccount);
 
         return new AbsenceStatistics(year, monthlyAbsenceDaysByType, vacationDaysTakenResult);
     }

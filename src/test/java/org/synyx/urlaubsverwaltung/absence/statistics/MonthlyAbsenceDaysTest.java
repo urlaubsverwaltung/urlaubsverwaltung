@@ -33,8 +33,6 @@ class MonthlyAbsenceDaysTest {
 
     private static final StaticMessageSource MESSAGE_SOURCE = new StaticMessageSource();
 
-    private final MonthlyAbsenceDays sut = new MonthlyAbsenceDays();
-
     private static Person person(long id) {
         final Person person = new Person();
         person.setId(id);
@@ -80,7 +78,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         final List<BigDecimal> daysByMonth = actual.get(vacationType).daysByMonth();
         assertThat(daysByMonth.get(2)).isEqualByComparingTo("5"); // march, index 2
@@ -106,7 +104,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         final List<BigDecimal> daysByMonth = actual.get(vacationType).daysByMonth();
         assertThat(daysByMonth.get(0)).isEqualByComparingTo("3"); // january
@@ -128,12 +126,12 @@ class MonthlyAbsenceDaysTest {
             LocalDate.of(2024, 12, 1), LocalDate.of(2025, 1, 31));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actualPastYear =
-            sut.calculate(Year.of(2024), List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(Year.of(2024), List.of(application), Map.of(person, calendar));
         assertThat(actualPastYear.get(vacationType).daysByMonth().get(11)).isEqualByComparingTo("2"); // december
         assertThat(actualPastYear.get(vacationType).yearSum()).isEqualByComparingTo("2");
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actualNextYear =
-            sut.calculate(Year.of(2025), List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(Year.of(2025), List.of(application), Map.of(person, calendar));
         assertThat(actualNextYear.get(vacationType).daysByMonth().get(0)).isEqualByComparingTo("3"); // january
         assertThat(actualNextYear.get(vacationType).yearSum()).isEqualByComparingTo("3");
     }
@@ -151,7 +149,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = new WorkingTimeCalendar(Map.of(date, fullWorkday()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         assertThat(actual.get(vacationType).daysByMonth().get(2)).isEqualByComparingTo("0.5");
         assertThat(actual.get(vacationType).yearSum()).isEqualByComparingTo("0.5");
@@ -173,7 +171,7 @@ class MonthlyAbsenceDaysTest {
             LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), freeWeekday, noWorkday());
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         assertThat(actual.get(vacationType).daysByMonth().get(2)).isEqualByComparingTo("4");
     }
@@ -195,7 +193,7 @@ class MonthlyAbsenceDaysTest {
             LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), holiday, publicHoliday);
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         assertThat(actual.get(vacationType).daysByMonth().get(2)).isEqualByComparingTo("4");
     }
@@ -214,7 +212,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = new WorkingTimeCalendar(Map.of(date, fullWorkday()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         assertThat(actual.get(vacationType).daysByMonth().get(2)).isEqualByComparingTo("1");
     }
@@ -235,7 +233,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(applicationA, applicationB), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(applicationA, applicationB), Map.of(person, calendar));
 
         assertThat(actual.get(vacationTypeA).daysByMonth().get(2)).isEqualByComparingTo("1");
         assertThat(actual.get(vacationTypeB).daysByMonth().get(2)).isEqualByComparingTo("1");
@@ -255,7 +253,7 @@ class MonthlyAbsenceDaysTest {
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(year, List.of(application), Map.of(person, calendar));
+            MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
 
         assertThat(actual).isEmpty();
     }
@@ -264,7 +262,7 @@ class MonthlyAbsenceDaysTest {
     void emptyApplicationListYieldsAnEmptyResultWithoutException() {
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
-            sut.calculate(Year.of(2024), List.of(), Map.of());
+            MonthlyAbsenceDays.calculate(Year.of(2024), List.of(), Map.of());
 
         assertThat(actual).isEmpty();
     }

@@ -24,9 +24,13 @@ import java.util.Optional;
  * handed in already resolved. Application status filtering happens before this class is called; every application
  * passed in is counted.
  */
-class MonthlyAbsenceDays {
+final class MonthlyAbsenceDays {
 
     private static final int MONTHS_PER_YEAR = 12;
+
+    private MonthlyAbsenceDays() {
+        // static calculator, not meant to be instantiated
+    }
 
     /**
      * Splits the given applications into working days per {@link VacationType} and month for the given year.
@@ -43,7 +47,7 @@ class MonthlyAbsenceDays {
      *                                     are skipped
      * @return monthly absence days and year sum per vacation type that has at least one day in the given year
      */
-    Map<VacationType<?>, MonthlyAbsenceDaysByType> calculate(Year year, List<Application> applications,
+    static Map<VacationType<?>, MonthlyAbsenceDaysByType> calculate(Year year, List<Application> applications,
                                                               Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
         final DateRange yearRange = DateRange.ofYear(year);

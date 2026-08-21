@@ -16,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class VacationDaysTakenTest {
 
-    private final VacationDaysTaken sut = new VacationDaysTaken();
-
     private static Person person(long id) {
         final Person person = new Person();
         person.setId(id);
@@ -59,7 +57,7 @@ class VacationDaysTakenTest {
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), input);
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo("8");
         assertThat(actual.validEntitlement()).isEqualByComparingTo("60");
@@ -73,7 +71,7 @@ class VacationDaysTakenTest {
         final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "3", "0");
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
 
         // before expiry: the full 10 remaining days count, not just the 2 non-expiring ones
         assertThat(actual.validEntitlement()).isEqualByComparingTo("40"); // 30 + 10
@@ -87,8 +85,8 @@ class VacationDaysTakenTest {
         final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "0", "0");
 
-        final VacationDaysTakenResult before = sut.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
-        final VacationDaysTakenResult after = sut.calculate(LocalDate.of(2024, 4, 1), Map.of(account, left));
+        final VacationDaysTakenResult before = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
+        final VacationDaysTakenResult after = VacationDaysTaken.calculate(LocalDate.of(2024, 4, 1), Map.of(account, left));
 
         assertThat(before.percentage()).isEqualByComparingTo(ZERO);
         assertThat(after.percentage()).isEqualByComparingTo(ZERO);
@@ -111,7 +109,7 @@ class VacationDaysTakenTest {
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 4, 1), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 4, 1), input);
 
         // A: 10 - 2 = 8 expired, B: 4 - 1 = 3 expired
         assertThat(actual.expiredRemainingVacationDays()).isEqualByComparingTo("11");
@@ -134,7 +132,7 @@ class VacationDaysTakenTest {
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), input);
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo("30"); // 10 + 20
     }
@@ -158,7 +156,7 @@ class VacationDaysTakenTest {
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = sut.calculate(stichtag, input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(stichtag, input);
 
         // A already lost the 8 expired days (10 - 2), B has not yet -> 8 expired in total, not 16
         assertThat(actual.expiredRemainingVacationDays()).isEqualByComparingTo("8");
@@ -173,7 +171,7 @@ class VacationDaysTakenTest {
         final Account account = account(person, "0", "0", "0", true, LocalDate.of(2024, 3, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "0", "0");
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
 
         assertThat(actual.validEntitlement()).isEqualByComparingTo(ZERO);
         assertThat(actual.percentage()).isEqualByComparingTo(ZERO);
@@ -182,7 +180,7 @@ class VacationDaysTakenTest {
     @Test
     void emptyInputYieldsAnEmptyResultWithoutException() {
 
-        final VacationDaysTakenResult actual = sut.calculate(LocalDate.of(2024, 1, 15), Map.of());
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of());
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo(ZERO);
         assertThat(actual.validEntitlement()).isEqualByComparingTo(ZERO);
