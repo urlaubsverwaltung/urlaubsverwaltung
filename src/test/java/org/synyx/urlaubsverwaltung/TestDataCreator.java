@@ -52,6 +52,12 @@ public final class TestDataCreator {
         // Hide constructor for util class
     }
 
+    public static Person createPerson(Long id) {
+        final Person person = new Person();
+        person.setId(id);
+        return person;
+    }
+
     public static Person createPerson(String username, Role... roles) {
         final Person person = new Person(username, username, username, username + "@example.org");
         person.setPermissions(List.of(roles));
