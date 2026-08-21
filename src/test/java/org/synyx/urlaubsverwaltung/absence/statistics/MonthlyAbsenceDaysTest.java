@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -73,7 +77,7 @@ class MonthlyAbsenceDaysTest {
 
         // monday 2024-03-04 to friday 2024-03-08 -> 5 working days
         final Application application = application(person, vacationType, FULL,
-            LocalDate.of(2024, 3, 4), LocalDate.of(2024, 3, 8));
+            LocalDate.of(2024, MARCH, 4), LocalDate.of(2024, MARCH, 8));
 
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
@@ -99,7 +103,7 @@ class MonthlyAbsenceDaysTest {
 
         // monday 2024-01-29 to friday 2024-02-02 -> jan 29,30,31 + feb 1,2
         final Application application = application(person, vacationType, FULL,
-            LocalDate.of(2024, 1, 29), LocalDate.of(2024, 2, 2));
+            LocalDate.of(2024, JANUARY, 29), LocalDate.of(2024, FEBRUARY, 2));
 
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
@@ -120,10 +124,10 @@ class MonthlyAbsenceDaysTest {
 
         // monday 2024-12-30 to friday 2025-01-03 -> dec 30,31 + jan 1,2,3
         final Application application = application(person, vacationType, FULL,
-            LocalDate.of(2024, 12, 30), LocalDate.of(2025, 1, 3));
+            LocalDate.of(2024, DECEMBER, 30), LocalDate.of(2025, JANUARY, 3));
 
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(
-            LocalDate.of(2024, 12, 1), LocalDate.of(2025, 1, 31));
+            LocalDate.of(2024, DECEMBER, 1), LocalDate.of(2025, JANUARY, 31));
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actualPastYear =
             MonthlyAbsenceDays.calculate(Year.of(2024), List.of(application), Map.of(person, calendar));
@@ -142,7 +146,7 @@ class MonthlyAbsenceDaysTest {
         final Person person = person(1L);
         final VacationType<?> vacationType = vacationType(1000L);
         final Year year = Year.of(2024);
-        final LocalDate date = LocalDate.of(2024, 3, 4);
+        final LocalDate date = LocalDate.of(2024, MARCH, 4);
 
         final Application application = application(person, vacationType, MORNING, date, date);
 
@@ -164,11 +168,11 @@ class MonthlyAbsenceDaysTest {
 
         // monday 2024-03-04 to friday 2024-03-08, wednesday is this person's free weekday
         final Application application = application(person, vacationType, FULL,
-            LocalDate.of(2024, 3, 4), LocalDate.of(2024, 3, 8));
+            LocalDate.of(2024, MARCH, 4), LocalDate.of(2024, MARCH, 8));
 
-        final LocalDate freeWeekday = LocalDate.of(2024, 3, 6);
+        final LocalDate freeWeekday = LocalDate.of(2024, MARCH, 6);
         final WorkingTimeCalendar calendar = calendarWithOverride(
-            LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), freeWeekday, noWorkday());
+            LocalDate.of(2024, MARCH, 1), LocalDate.of(2024, MARCH, 31), freeWeekday, noWorkday());
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
             MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
@@ -185,12 +189,12 @@ class MonthlyAbsenceDaysTest {
 
         // monday 2024-03-04 to friday 2024-03-08, wednesday is a public holiday
         final Application application = application(person, vacationType, FULL,
-            LocalDate.of(2024, 3, 4), LocalDate.of(2024, 3, 8));
+            LocalDate.of(2024, MARCH, 4), LocalDate.of(2024, MARCH, 8));
 
-        final LocalDate holiday = LocalDate.of(2024, 3, 6);
+        final LocalDate holiday = LocalDate.of(2024, MARCH, 6);
         final WorkingDayInformation publicHoliday = new WorkingDayInformation(DayLength.ZERO, PUBLIC_HOLIDAY, PUBLIC_HOLIDAY);
         final WorkingTimeCalendar calendar = calendarWithOverride(
-            LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31), holiday, publicHoliday);
+            LocalDate.of(2024, MARCH, 1), LocalDate.of(2024, MARCH, 31), holiday, publicHoliday);
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
             MonthlyAbsenceDays.calculate(year, List.of(application), Map.of(person, calendar));
@@ -204,7 +208,7 @@ class MonthlyAbsenceDaysTest {
         final Person person = person(1L);
         final VacationType<?> vacationType = vacationType(1000L);
         final Year year = Year.of(2024);
-        final LocalDate date = LocalDate.of(2024, 3, 4);
+        final LocalDate date = LocalDate.of(2024, MARCH, 4);
 
         final Application application = application(person, vacationType, FULL, date, date);
         assertThat(application.getStatus()).isEqualTo(WAITING);
@@ -226,9 +230,9 @@ class MonthlyAbsenceDaysTest {
         final Year year = Year.of(2024);
 
         final Application applicationA = application(person, vacationTypeA, FULL,
-            LocalDate.of(2024, 3, 4), LocalDate.of(2024, 3, 4));
+            LocalDate.of(2024, MARCH, 4), LocalDate.of(2024, MARCH, 4));
         final Application applicationB = application(person, vacationTypeB, FULL,
-            LocalDate.of(2024, 3, 5), LocalDate.of(2024, 3, 5));
+            LocalDate.of(2024, MARCH, 5), LocalDate.of(2024, MARCH, 5));
 
         final WorkingTimeCalendar calendar = workingTimeCalendarMondayToFriday(year.atDay(1), year.atDay(year.length()));
 
@@ -245,7 +249,7 @@ class MonthlyAbsenceDaysTest {
         final Person person = person(1L);
         final VacationType<?> vacationTypeWithoutDays = vacationType(1000L);
         final Year year = Year.of(2024);
-        final LocalDate saturday = LocalDate.of(2024, 3, 9);
+        final LocalDate saturday = LocalDate.of(2024, MARCH, 9);
 
         // saturday, not a working day -> contributes zero days
         final Application application = application(person, vacationTypeWithoutDays, FULL, saturday, saturday);

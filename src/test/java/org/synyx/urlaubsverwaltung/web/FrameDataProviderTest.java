@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +20,8 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -249,7 +250,7 @@ class FrameDataProviderTest {
     }
 
     @Test
-    void postHandleNoCompanyApplicationsLinkForUserRole() {
+    void postHandleNoCompanyLinksForUserRole() {
         mockSettings(true, false, false, false);
 
         final Person person = new Person();
@@ -265,7 +266,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isInstanceOfSatisfying(NavigationDto.class, dto ->
-                assertThat(dto.company()).doesNotContain(companyApplicationsLink()));
+                assertThat(dto.company()).isEmpty());
     }
 
     @Test

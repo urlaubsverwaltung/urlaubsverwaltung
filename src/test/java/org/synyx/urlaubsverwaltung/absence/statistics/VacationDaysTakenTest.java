@@ -12,6 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class VacationDaysTakenTest {
@@ -24,7 +30,7 @@ class VacationDaysTakenTest {
 
     private static Account account(Person person, String actualVacationDays, String remainingVacationDays,
                                     String remainingVacationDaysNotExpiring, boolean doExpire, LocalDate expiryDate) {
-        final Account account = new Account(person, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31),
+        final Account account = new Account(person, LocalDate.of(2024, JANUARY, 1), LocalDate.of(2024, DECEMBER, 31),
             doExpire, expiryDate, ZERO, new BigDecimal(remainingVacationDays), new BigDecimal(remainingVacationDaysNotExpiring), "");
         account.setActualVacationDays(new BigDecimal(actualVacationDays));
         return account;
@@ -45,19 +51,19 @@ class VacationDaysTakenTest {
 
         // 30 annual + 10 remaining, 3 used before expiry -> taken 3, validEntitlement 40
         final Person personA = person(1);
-        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
+        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftA = vacationDaysLeft(accountA, "3", "0");
 
         // 20 annual + 0 remaining, 5 used before expiry -> taken 5, validEntitlement 20
         final Person personB = person(2);
-        final Account accountB = account(personB, "20", "0", "0", true, LocalDate.of(2024, 3, 31));
+        final Account accountB = account(personB, "20", "0", "0", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftB = vacationDaysLeft(accountB, "5", "0");
 
         final Map<Account, VacationDaysLeft> input = new LinkedHashMap<>();
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), input);
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo("8");
         assertThat(actual.validEntitlement()).isEqualByComparingTo("60");
@@ -68,10 +74,10 @@ class VacationDaysTakenTest {
     void stichtagBeforeExpiryDateUsesFullRemainingVacationInNumeratorAndDenominator() {
 
         final Person person = person(1);
-        final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
+        final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "3", "0");
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), Map.of(account, left));
 
         // before expiry: the full 10 remaining days count, not just the 2 non-expiring ones
         assertThat(actual.validEntitlement()).isEqualByComparingTo("40"); // 30 + 10
@@ -82,11 +88,11 @@ class VacationDaysTakenTest {
     void stichtagAfterExpiryDatePercentageUnchangedWhenNothingWasTaken() {
 
         final Person person = person(1);
-        final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
+        final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "0", "0");
 
-        final VacationDaysTakenResult before = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
-        final VacationDaysTakenResult after = VacationDaysTaken.calculate(LocalDate.of(2024, 4, 1), Map.of(account, left));
+        final VacationDaysTakenResult before = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), Map.of(account, left));
+        final VacationDaysTakenResult after = VacationDaysTaken.calculate(LocalDate.of(2024, APRIL, 1), Map.of(account, left));
 
         assertThat(before.percentage()).isEqualByComparingTo(ZERO);
         assertThat(after.percentage()).isEqualByComparingTo(ZERO);
@@ -98,18 +104,18 @@ class VacationDaysTakenTest {
     void expiredDaysAreSummedAcrossPersons() {
 
         final Person personA = person(1);
-        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
+        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftA = vacationDaysLeft(accountA, "0", "0");
 
         final Person personB = person(2);
-        final Account accountB = account(personB, "25", "4", "1", true, LocalDate.of(2024, 3, 31));
+        final Account accountB = account(personB, "25", "4", "1", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftB = vacationDaysLeft(accountB, "0", "0");
 
         final Map<Account, VacationDaysLeft> input = new LinkedHashMap<>();
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 4, 1), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, APRIL, 1), input);
 
         // A: 10 - 2 = 8 expired, B: 4 - 1 = 3 expired
         assertThat(actual.expiredRemainingVacationDays()).isEqualByComparingTo("11");
@@ -121,18 +127,18 @@ class VacationDaysTakenTest {
         // a person without a vacation account for the year simply never becomes an entry here -
         // there is no other state this class could pick such a person up from.
         final Person personA = person(1);
-        final Account accountA = account(personA, "30", "0", "0", true, LocalDate.of(2024, 3, 31));
+        final Account accountA = account(personA, "30", "0", "0", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftA = vacationDaysLeft(accountA, "10", "0");
 
         final Person personB = person(2);
-        final Account accountB = account(personB, "30", "0", "0", true, LocalDate.of(2024, 3, 31));
+        final Account accountB = account(personB, "30", "0", "0", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftB = vacationDaysLeft(accountB, "20", "0");
 
         final Map<Account, VacationDaysLeft> input = new LinkedHashMap<>();
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), input);
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo("30"); // 10 + 20
     }
@@ -140,16 +146,16 @@ class VacationDaysTakenTest {
     @Test
     void personWithDifferentExpiryDateIsHandledIndividually() {
 
-        final LocalDate stichtag = LocalDate.of(2024, 5, 1);
+        final LocalDate stichtag = LocalDate.of(2024, MAY, 1);
 
         // expiry already passed at the stichtag
         final Person personA = person(1);
-        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, 3, 31));
+        final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftA = vacationDaysLeft(accountA, "0", "0");
 
         // expiry not yet reached at the same stichtag
         final Person personB = person(2);
-        final Account accountB = account(personB, "30", "10", "2", true, LocalDate.of(2024, 6, 30));
+        final Account accountB = account(personB, "30", "10", "2", true, LocalDate.of(2024, JUNE, 30));
         final VacationDaysLeft leftB = vacationDaysLeft(accountB, "0", "0");
 
         final Map<Account, VacationDaysLeft> input = new LinkedHashMap<>();
@@ -168,10 +174,10 @@ class VacationDaysTakenTest {
     void zeroEntitlementSumYieldsZeroPercentageWithoutException() {
 
         final Person person = person(1);
-        final Account account = account(person, "0", "0", "0", true, LocalDate.of(2024, 3, 31));
+        final Account account = account(person, "0", "0", "0", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft left = vacationDaysLeft(account, "0", "0");
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of(account, left));
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), Map.of(account, left));
 
         assertThat(actual.validEntitlement()).isEqualByComparingTo(ZERO);
         assertThat(actual.percentage()).isEqualByComparingTo(ZERO);
@@ -180,7 +186,7 @@ class VacationDaysTakenTest {
     @Test
     void emptyInputYieldsAnEmptyResultWithoutException() {
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, 1, 15), Map.of());
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(LocalDate.of(2024, JANUARY, 15), Map.of());
 
         assertThat(actual.vacationDaysTaken()).isEqualByComparingTo(ZERO);
         assertThat(actual.validEntitlement()).isEqualByComparingTo(ZERO);
