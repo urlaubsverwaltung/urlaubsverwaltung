@@ -8,6 +8,7 @@ import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
+import { tooltipTitleHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 
 // Series-visibility persistence (apexOptionsWithPersistence) is intentionally not used here - it's
 // optional per the task, only supports cartesian chart types (not the pie or the ring below), and
@@ -37,16 +38,11 @@ function colorOf(type) {
 }
 
 function tooltipTitle(title, rows) {
-  return `<div class="absence-statistics-tooltip-title">${title}</div>${rows.join("")}`;
+  return tooltipTitleHtml("absence-statistics", title, rows);
 }
 
 function tooltipRow(color, text) {
-  return `
-    <div class="absence-statistics-tooltip-row">
-      <span class="absence-statistics-tooltip-swatch" style="background-color: ${color}"></span>
-      <span>${text}</span>
-    </div>
-  `;
+  return tooltipRowHtml("absence-statistics", color, text);
 }
 
 const { theme } = useTheme();
