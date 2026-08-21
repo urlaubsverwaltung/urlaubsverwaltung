@@ -8,6 +8,8 @@ import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
+import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
+import { tooltipTitleHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 
 // the chart hosts are empty until this bundle has executed, so css/bundles/sick-note-statistics.css
 // reserves these sizes up front to keep the page from reflowing. keep both in sync.
@@ -84,19 +86,14 @@ function buildTooltipRow({ series: seriesValues, dataPointIndex, w }, seriesInde
   const valueText =
     previousValue === undefined ? `${round1(value)}${unit}` : formatTooltipValue(value, previousValue, unit);
 
-  return `
-    <div class="sicknote-statistics-tooltip-row">
-      <span class="sicknote-statistics-tooltip-swatch" style="background-color: ${color}"></span>
-      <span>${name}: ${valueText}</span>
-    </div>
-  `;
+  return tooltipRowHtml("sicknote-statistics", color, `${name}: ${valueText}`);
 }
 
 // the month is taken from the model rather than from w.globals.labels: apexcharts infers a numeric
 // x-axis for the line chart, which leaves the month index there instead of the name.
 function buildTooltip(dataPointIndex, rows) {
   const month = xaxisLabels[dataPointIndex];
-  return `<div class="sicknote-statistics-tooltip-title">${month}</div>${rows.join("")}`;
+  return tooltipTitleHtml("sicknote-statistics", month, rows);
 }
 
 // bar series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
@@ -119,26 +116,9 @@ const options = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
-    toolbar: {
-      show: false,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
-  states: {
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  states: noHoverStates,
   legend: {
     position: "top",
     horizontalAlign: "right",
@@ -239,26 +219,9 @@ const sickRateOptions = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
-    toolbar: {
-      show: false,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
-  states: {
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  states: noHoverStates,
   legend: {
     position: "top",
     horizontalAlign: "right",
@@ -335,30 +298,13 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
     width: `${GAUGE_SIZE}px`,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    toolbar: {
-      show: false,
-    },
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
   series: dataseriesValuesForAtLeastOneSickNotePercent,
-  states: {
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  states: noHoverStates,
   plotOptions: {
     radialBar: {
       offsetY: 0,
