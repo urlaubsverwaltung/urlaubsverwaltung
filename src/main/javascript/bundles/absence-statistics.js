@@ -20,7 +20,7 @@ const CHART_HEIGHT = 400;
 const PIE_SIZE = 220;
 const RING_SIZE = 180;
 
-// backend sends types already sorted descending by year sum (Task 05's DTO mapping), so series,
+// backend sends types already sorted descending by year sum, so series,
 // pie and legend all share the same order without this bundle re-deriving it.
 const types = globalThis.absenceStatistics.types || [];
 const xaxisLabels = globalThis.absenceStatistics.xaxisLabels;
