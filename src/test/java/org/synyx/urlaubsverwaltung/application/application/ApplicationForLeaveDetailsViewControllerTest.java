@@ -119,7 +119,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, responsiblePersonService,
             accountService, applicationService, applicationInteractionService, commentService, workDaysCountService,
-            commentValidator, departmentService, workingTimeService, defaultPersonSuggestionUrlStrategy,
+            commentValidator, departmentService, new ApplicationForLeavePermissionEvaluator(departmentService), workingTimeService, defaultPersonSuggestionUrlStrategy,
             personSearchUiFragmentSupplier, clock);
     }
 
@@ -666,7 +666,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
 
         when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(boss));
 
@@ -713,7 +712,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(departmentHead));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
         when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(departmentHead));
 
@@ -785,7 +783,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
         when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(boss));
 
@@ -839,8 +836,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person person = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -856,7 +851,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -993,6 +987,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
@@ -1008,6 +1004,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(flash().attribute("cancelSuccess", true))
@@ -1025,6 +1023,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
@@ -1041,6 +1041,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
@@ -1056,6 +1058,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         Application application = applicationOfPerson(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(flash().attribute("cancelSuccess", true))
@@ -1080,6 +1084,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Application application = applicationOfPerson(signedInPerson, vacationType);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound());
 
@@ -1099,6 +1105,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
             return null;
         }).when(commentValidator).validate(any(), any());
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=cancel"));
@@ -1112,6 +1120,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person signedInPerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(signedInPerson)));
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
@@ -1133,6 +1143,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
             errors.rejectValue("text", "errors");
             return null;
         }).when(commentValidator).validate(any(), any());
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
@@ -1332,9 +1344,9 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void addCommentThrowsAccessDeniedIfPersonHasNotEnoughPermissions() {
+    void addCommentThrowsAccessDeniedIfPersonIsNotResponsibleForThePerson() {
 
-        final Person signedInPerson = personWithRole(BOSS);
+        final Person signedInPerson = personWithRole(USER);
         final Person person = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -1346,7 +1358,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void addCommentThrowsAccessDeniedForDepartmentHeadOfPerson() {
+    void addCommentIsAllowedForDepartmentHeadOfPersonWithoutApplicationAddRole() throws Exception {
 
         final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
         final Person person = somePerson();
@@ -1355,13 +1367,12 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
 
-        assertThatThrownBy(() ->
-            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
+        perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+            .andExpect(status().isFound());
     }
 
     @Test
-    void addCommentThrowsAccessDeniedForSecondStageAuthorityOfPerson() {
+    void addCommentIsAllowedForSecondStageAuthorityOfPersonWithoutApplicationAddRole() throws Exception {
 
         final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
         final Person person = somePerson();
@@ -1370,9 +1381,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
 
-        assertThatThrownBy(() ->
-            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
+        perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+            .andExpect(status().isFound());
     }
 
     @Test
@@ -1463,7 +1473,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
 
         assertThatThrownBy(() ->
             perform(post("/web/application/" + APPLICATION_ID + "/remind"))
@@ -1478,7 +1487,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
 
         assertThatThrownBy(() ->
             perform(post("/web/application/" + APPLICATION_ID + "/remind"))

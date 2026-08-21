@@ -60,7 +60,6 @@ import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
@@ -84,6 +83,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
 
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
@@ -98,7 +98,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
     private final Clock clock;
 
     ApplicationForLeaveFormViewController(
-        PersonService personService, DepartmentService departmentService, AccountService accountService,
+        PersonService personService, DepartmentService departmentService,
+        ApplicationForLeavePermissionEvaluator permissionEvaluator, AccountService accountService,
         VacationTypeService vacationTypeService,
         VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
         ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
@@ -109,6 +110,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
+        this.permissionEvaluator = permissionEvaluator;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
@@ -157,6 +159,10 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Person signedInUser = personService.getSignedInUser();
         final Person person = getPersonByRequestParam(personId).orElse(signedInUser);
 
+        if (!permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person)) {
+            throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
+        }
+
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
@@ -184,7 +190,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Person person = ofNullable(applicationForLeaveForm.getPerson())
             .orElse(signedInUser);
 
-        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
+        if (!permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person)) {
             throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
@@ -230,7 +236,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
-        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
+        if (!permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person)) {
             throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
@@ -266,7 +272,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeaveForm.getPerson()).orElse(signedInUser);
 
-        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
+        if (!permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person)) {
             throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
@@ -302,7 +308,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Person applier = personService.getSignedInUser();
         final Person person = ofNullable(appForm.getPerson()).orElse(applier);
 
-        if (!isPersonAllowedToExecuteRoleOn(applier, APPLICATION_ADD, person)) {
+        if (!permissionEvaluator.isAllowedToApplyForPerson(applier, person)) {
             throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(applier.getId(), person.getId()));
         }
 
@@ -353,9 +359,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Application application = maybeApplication.get();
         final Person person = application.getPerson();
 
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
-        if (!isAllowedToEditApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority)) {
+        if (!permissionEvaluator.of(signedInUser, application).isAllowedToEdit()) {
             return "application/application-not-editable";
         }
 
@@ -393,9 +397,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         final Application application = maybeApplication.get();
         final Person person = application.getPerson();
 
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
-        if (!isAllowedToEditApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority)) {
+        if (!permissionEvaluator.of(signedInUser, application).isAllowedToEdit()) {
             redirectAttributes.addFlashAttribute("editError", true);
             return "redirect:/web/application/" + applicationId;
         }
@@ -588,21 +590,6 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
         holidayReplacementDto.setDepartments(departmentNamesForPerson(holidayReplacementEntity.getPerson(), departments));
         return holidayReplacementDto;
-    }
-
-    private boolean isPersonAllowedToExecuteRoleOn(Person applier, Role role, Person person) {
-
-        if (applier.equals(person) || applier.hasRole(OFFICE)) {
-            return true;
-        }
-
-        if (applier.hasRole(role)) {
-            return applier.hasRole(BOSS)
-                || departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)
-                || departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person);
-        }
-
-        return false;
     }
 
     private List<Person> getManagedPersons(Person signedInUser) {

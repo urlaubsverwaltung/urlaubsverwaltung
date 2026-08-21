@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -35,11 +37,6 @@ import java.util.SortedMap;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 
 @Controller
 @RequestMapping("/")
@@ -51,6 +48,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
 
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
@@ -60,6 +58,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
     ApplicationsViewController(
         PersonService personService,
         DepartmentService departmentService,
+        ApplicationForLeavePermissionEvaluator permissionEvaluator,
         ApplicationService applicationService,
         WorkDaysCountService workDaysCountService,
         VacationTypeViewModelService vacationTypeViewModelService,
@@ -68,6 +67,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
+        this.permissionEvaluator = permissionEvaluator;
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
@@ -178,16 +178,14 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+        final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, applicationForLeave);
 
-        final boolean allowedToEdit = isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+        final boolean allowedToEdit = permissions.isAllowedToEdit();
 
-        final boolean allowedToRevoke = isAllowedToRevokeApplication(applicationForLeave, signedInUser, requiresApprovalToCancel);
-        final boolean allowedToCancel = isAllowedToCancelApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
-        final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
-        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
+        final boolean allowedToCancel = permissions.isAllowedToCancel();
+        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
+        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
