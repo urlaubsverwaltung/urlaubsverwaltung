@@ -18,12 +18,16 @@ import static org.synyx.urlaubsverwaltung.util.CalcUtil.isZero;
  *
  * <p>
  * A pure calculation without Spring or database concerns of its own — accounts and their derived
- * {@link VacationDaysLeft} are handed in already resolved; fetching them is Task 04's job. Which stichtag applies
- * for a given year is decided by the caller, not here.
+ * {@link VacationDaysLeft} are handed in already resolved. Which stichtag applies for a given year is decided by
+ * the caller, not here.
  */
-class VacationDaysTaken {
+final class VacationDaysTaken {
 
     private static final int PERCENTAGE_SCALE = 3;
+
+    private VacationDaysTaken() {
+        // static calculator, not meant to be instantiated
+    }
 
     /**
      * Calculates the taken/planned vacation days, the still-valid entitlement, the percentage of the former
@@ -38,7 +42,7 @@ class VacationDaysTaken {
      *                                    days
      * @return the aggregated result for the given stichtag
      */
-    VacationDaysTakenResult calculate(LocalDate stichtag, Map<Account, VacationDaysLeft> vacationDaysLeftByAccount) {
+    static VacationDaysTakenResult calculate(LocalDate stichtag, Map<Account, VacationDaysLeft> vacationDaysLeftByAccount) {
 
         BigDecimal takenSum = ZERO;
         BigDecimal validEntitlementSum = ZERO;
