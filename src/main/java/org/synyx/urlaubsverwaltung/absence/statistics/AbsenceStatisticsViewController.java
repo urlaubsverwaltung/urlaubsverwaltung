@@ -110,8 +110,6 @@ class AbsenceStatisticsViewController implements HasLaunchpad, HasPersonSearch {
             monthlyAbsenceDaysByType.daysByMonth(), yearSum, share, vacationType.isActive());
     }
 
-    // changing this GraphDto, you may have to increase the local-storage version key in JavaScript to keep the
-    // local state clean - mirrors the same warning on SickNoteStatisticsViewController.GraphDto.
     record GraphDto(List<AbsenceTypeDto> types, BigDecimal vacationDaysTakenPercentage) {
     }
 
