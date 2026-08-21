@@ -8,21 +8,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
 import org.synyx.urlaubsverwaltung.person.PersonActivePeriod;
+import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
@@ -102,7 +100,7 @@ class AbsenceStatisticsServiceTest {
             applicationService, workingTimeCalendarService, accountService, vacationDaysService, clock);
     }
 
-    private void givenOfficePersons(Person signedInUser, List<Person> allPersons) {
+    private void givenOfficePersons(List<Person> allPersons) {
         when(personService.getAllPersons()).thenReturn(allPersons);
         final Map<PersonId, List<PersonActivePeriod>> activePeriods = allPersons.stream()
             .collect(java.util.stream.Collectors.toMap(Person::getIdAsPersonId,
@@ -118,7 +116,7 @@ class AbsenceStatisticsServiceTest {
 
             final Person signedInUser = person(1, OFFICE);
             final Person member = person(2);
-            givenOfficePersons(signedInUser, List.of(member));
+            givenOfficePersons(List.of(member));
 
             when(applicationService.getApplicationsForACertainPeriodAndStatus(any(LocalDate.class), any(LocalDate.class), anyList(), anyList())).thenReturn(List.of());
             when(workingTimeCalendarService.getWorkingTimesByPersons(any(), any(Year.class))).thenReturn(Map.of());
@@ -137,7 +135,7 @@ class AbsenceStatisticsServiceTest {
             final Person signedInUser = person(1, OFFICE);
             final Person memberA = person(2);
             final Person memberB = person(3);
-            givenOfficePersons(signedInUser, List.of(memberA, memberB));
+            givenOfficePersons(List.of(memberA, memberB));
 
             when(applicationService.getApplicationsForACertainPeriodAndStatus(any(LocalDate.class), any(LocalDate.class), anyList(), anyList())).thenReturn(List.of());
             when(workingTimeCalendarService.getWorkingTimesByPersons(any(), any(Year.class))).thenReturn(Map.of());
@@ -176,9 +174,9 @@ class AbsenceStatisticsServiceTest {
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
-            givenOfficePersons(signedInUser, List.of(member));
+            givenOfficePersons(List.of(member));
 
-            givenAccountsAndCalendars(member, account);
+            givenAccountsAndCalendars(account);
 
             final AbsenceStatistics actual = sut.createStatistics(Year.of(2024), signedInUser);
 
@@ -194,9 +192,9 @@ class AbsenceStatisticsServiceTest {
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
-            givenOfficePersons(signedInUser, List.of(member));
+            givenOfficePersons(List.of(member));
 
-            givenAccountsAndCalendars(member, account);
+            givenAccountsAndCalendars(account);
 
             final AbsenceStatistics actual = sut.createStatistics(Year.of(2023), signedInUser);
 
@@ -213,9 +211,9 @@ class AbsenceStatisticsServiceTest {
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
-            givenOfficePersons(signedInUser, List.of(member));
+            givenOfficePersons(List.of(member));
 
-            givenAccountsAndCalendars(member, account);
+            givenAccountsAndCalendars(account);
 
             final AbsenceStatistics actual = sut.createStatistics(Year.of(2025), signedInUser);
 
@@ -223,7 +221,7 @@ class AbsenceStatisticsServiceTest {
             assertThat(actual.vacationDaysTaken().expiredRemainingVacationDays()).isEqualByComparingTo(BigDecimal.ZERO);
         }
 
-        private void givenAccountsAndCalendars(Person member, Account account) {
+        private void givenAccountsAndCalendars(Account account) {
             when(applicationService.getApplicationsForACertainPeriodAndStatus(any(LocalDate.class), any(LocalDate.class), anyList(), anyList())).thenReturn(List.of());
             when(workingTimeCalendarService.getWorkingTimesByPersons(any(), any(Year.class))).thenReturn(Map.of());
             when(accountService.getHolidaysAccount(anyInt(), anyList())).thenReturn(List.of(account));

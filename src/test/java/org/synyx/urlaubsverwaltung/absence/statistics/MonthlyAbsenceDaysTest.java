@@ -257,7 +257,6 @@ class MonthlyAbsenceDaysTest {
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actual =
             sut.calculate(year, List.of(application), Map.of(person, calendar));
 
-        assertThat(actual).doesNotContainKey(vacationTypeWithoutDays);
         assertThat(actual).isEmpty();
     }
 
