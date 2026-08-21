@@ -56,12 +56,8 @@ final class MonthlyAbsenceDays {
         for (Application application : applications) {
 
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(application.getPerson());
-            if (workingTimeCalendar == null) {
-                continue;
-            }
-
             final Optional<DateRange> overlapWithYear = yearRange.overlap(application.getDateRange());
-            if (overlapWithYear.isEmpty()) {
+            if (workingTimeCalendar == null || overlapWithYear.isEmpty()) {
                 continue;
             }
 
@@ -89,7 +85,7 @@ final class MonthlyAbsenceDays {
                 continue;
             }
 
-            final BigDecimal[] monthlyDays = daysByTypeAndMonth.computeIfAbsent(application.getVacationType(), type -> newEmptyMonths());
+            final BigDecimal[] monthlyDays = daysByTypeAndMonth.computeIfAbsent(application.getVacationType(), _ -> newEmptyMonths());
             monthlyDays[month - 1] = monthlyDays[month - 1].add(days);
         }
     }

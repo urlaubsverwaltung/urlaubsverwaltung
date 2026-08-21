@@ -32,6 +32,9 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -47,7 +50,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 class AbsenceStatisticsServiceTest {
 
     private static final ZoneId ZONE = ZoneId.of("UTC");
-    private static final LocalDate TODAY = LocalDate.of(2024, 6, 15);
+    private static final LocalDate TODAY = LocalDate.of(2024, JUNE, 15);
 
     private AbsenceStatisticsService sut;
 
@@ -126,7 +129,7 @@ class AbsenceStatisticsServiceTest {
             sut.createStatistics(Year.of(2024), signedInUser);
 
             verify(applicationService).getApplicationsForACertainPeriodAndStatus(
-                LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), List.of(member), activeStatuses());
+                LocalDate.of(2024, JANUARY, 1), LocalDate.of(2024, DECEMBER, 31), List.of(member), activeStatuses());
         }
 
         @Test
@@ -170,7 +173,7 @@ class AbsenceStatisticsServiceTest {
 
             // expiry after "today" (2024-06-15) but before the year's own Dec 31 -> distinguishes "today" from
             // the past-year rule, which would use Dec 31 and thus see it as already expired
-            final LocalDate expiryDate = LocalDate.of(2024, 12, 1);
+            final LocalDate expiryDate = LocalDate.of(2024, DECEMBER, 1);
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
@@ -188,7 +191,7 @@ class AbsenceStatisticsServiceTest {
 
             // expiry between Dec 31, 2023 (correct stichtag) and "today" 2024-06-15 (wrong, if today were used
             // instead) -> distinguishes the two
-            final LocalDate expiryDate = LocalDate.of(2024, 1, 15);
+            final LocalDate expiryDate = LocalDate.of(2024, JANUARY, 15);
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
@@ -207,7 +210,7 @@ class AbsenceStatisticsServiceTest {
 
             // expiry between Jan 1, 2025 (correct stichtag) and Dec 31, 2025 (wrong, if the past-year rule were
             // mistakenly applied) -> distinguishes the two
-            final LocalDate expiryDate = LocalDate.of(2025, 6, 1);
+            final LocalDate expiryDate = LocalDate.of(2025, JUNE, 1);
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
             final Person member = person(2);
             final Person signedInUser = person(1, OFFICE);
