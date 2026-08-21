@@ -7,6 +7,7 @@ import "apexcharts/pie";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
+import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
 
 // Series-visibility persistence (apexOptionsWithPersistence) is intentionally not used here - it's
 // optional per the task, only supports cartesian chart types (not the pie or the ring below), and
@@ -65,27 +66,14 @@ const monthlyOptions = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
-    toolbar: {
-      show: false,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
   theme: {
     mode: themeMode(),
   },
   series: types.map((type) => ({ name: type.name, data: type.monthlyDays })),
   colors: types.map(colorOf),
-  states: {
-    hover: {
-      filter: { type: "none" },
-    },
-    active: {
-      filter: { type: "none" },
-    },
-  },
+  states: noHoverStates,
   legend: {
     position: "top",
     horizontalAlign: "left",
@@ -149,13 +137,7 @@ const distributionOptions = {
     width: PIE_SIZE,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
-    toolbar: {
-      show: false,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
   theme: {
     mode: themeMode(),
@@ -163,10 +145,7 @@ const distributionOptions = {
   series: types.map((type) => type.yearSum),
   labels: types.map((type) => type.name),
   colors: types.map(colorOf),
-  states: {
-    hover: { filter: { type: "none" } },
-    active: { filter: { type: "none" } },
-  },
+  states: noHoverStates,
   legend: {
     show: false,
   },
@@ -208,23 +187,14 @@ const ringOptions = {
     width: RING_SIZE,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    animations: {
-      enabled: !reducedMotion.value,
-      speed: 200,
-    },
-    toolbar: {
-      show: false,
-    },
+    ...chartDefaults(reducedMotion.value),
   },
   theme: {
     mode: themeMode(),
   },
   series: [vacationDaysTakenPercentage],
   colors: ["var(--absence-vacation-ring-color)"],
-  states: {
-    hover: { filter: { type: "none" } },
-    active: { filter: { type: "none" } },
-  },
+  states: noHoverStates,
   stroke: {
     lineCap: "round",
   },
