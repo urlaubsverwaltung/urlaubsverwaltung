@@ -86,12 +86,32 @@
   @apply rounded-xs;
 }
 
-/* --- two-column band: distribution + vacation taken, stacked below `md` --- */
+/*
+ * Anchor for the "i" info-button popover of each of the three panels on this page (see
+ * fragments/card::card-info-button / card-info-popover and
+ * src/main/css/components/card-info-popover.css). None of the three panels has a border, so the
+ * popover overlay can fill the anchor box edge-to-edge without a margin.
+ */
+.absence-statistics-info-anchor {
+  --card-info-popover-margin: 0;
+  --card-info-background-color: var(--uv-chart-container-background);
+  --card-info-border-radius: var(--radius-lg);
+
+  anchor-scope: --card-info-popover-anchor;
+  anchor-name: --card-info-popover-anchor;
+}
+
+/*
+ * --- two-column band: distribution + vacation taken, stacked below `md` ---
+ * align-items is the grid default (stretch) so both panels share the height of the taller one
+ * once they sit side by side - .absence-statistics-panel-body below then grows into that extra
+ * height and centers its content in it, rather than leaving dead space at the bottom of the
+ * shorter panel.
+ */
 .absence-statistics-band {
   display: grid;
   grid-template-columns: 1fr;
   gap: --spacing(6);
-  align-items: start;
 }
 
 .absence-statistics-panel {
@@ -104,6 +124,7 @@
 }
 
 .absence-statistics-panel-body {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

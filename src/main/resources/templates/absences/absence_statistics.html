@@ -60,14 +60,26 @@
         <th:block th:ref="absence-statistics-heading-actions"> </th:block>
       </div>
 
-      <div>
+      <div class="absence-statistics-info-anchor">
         <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
           <h2 class="font-bold text-base" th:text="#{absences.statistics.chart.title}">Abwesenheitstage je Monat</h2>
+          <button
+            th:replace="~{fragments/card::card-info-button(target='absence-statistics-chart-description', label=#{absences.statistics.chart.info.button})}"
+          >
+            Informationen zu Abwesenheitstage je Monat
+          </button>
         </div>
         <p class="text-sm" th:text="#{absences.statistics.chart.description}">
-          Anzahl der Abwesenheitstage entsprechend der individuellen Arbeitszeit im Unternehmen/deiner Abteilung. Farben
-          entsprechen der in den Einstellungen konfigurierten Farbe der Abwesenheitsart.
+          Anzahl der Abwesenheitstage entsprechend der individuellen Arbeitszeit im Unternehmen/deiner Abteilung.
         </p>
+        <div
+          th:replace="~{fragments/card::card-info-popover(id='absence-statistics-chart-description', content=~{::absence-statistics-chart-tooltip-content})}"
+        >
+          <th:block th:ref="absence-statistics-chart-tooltip-content">
+            <p th:text="#{absences.statistics.chart.info.tooltip.paragraph1}">Paragraph 1</p>
+            <p th:text="#{absences.statistics.chart.info.tooltip.paragraph2}">Paragraph 2</p>
+          </th:block>
+        </div>
 
         <div class="mt-4 absence-statistics-chart-container">
           <div id="monthly-chart" class="absence-statistics-chart"></div>
@@ -75,13 +87,32 @@
       </div>
 
       <div class="mt-8 absence-statistics-band">
-        <section class="absence-statistics-panel" aria-labelledby="distribution-heading">
-          <h2 id="distribution-heading" class="font-bold text-base" th:text="#{absences.statistics.distribution.title}">
-            Verteilung der Abwesenheitsarten
-          </h2>
+        <section class="absence-statistics-panel absence-statistics-info-anchor" aria-labelledby="distribution-heading">
+          <div class="flex flex-col @3xl/main:flex-row justify-between gap-1">
+            <h2
+              id="distribution-heading"
+              class="font-bold text-base"
+              th:text="#{absences.statistics.distribution.title}"
+            >
+              Verteilung der Abwesenheitsarten
+            </h2>
+            <button
+              th:replace="~{fragments/card::card-info-button(target='absence-statistics-distribution-description', label=#{absences.statistics.distribution.info.button})}"
+            >
+              Informationen zur Verteilung der Abwesenheitsarten
+            </button>
+          </div>
           <p class="text-sm" th:text="#{absences.statistics.distribution.description}">
             Anteil der Abwesenheitstage je Abwesenheitsart
           </p>
+          <div
+            th:replace="~{fragments/card::card-info-popover(id='absence-statistics-distribution-description', content=~{::absence-statistics-distribution-tooltip-content})}"
+          >
+            <th:block th:ref="absence-statistics-distribution-tooltip-content">
+              <p th:text="#{absences.statistics.distribution.info.tooltip.paragraph1}">Paragraph 1</p>
+              <p th:text="#{absences.statistics.distribution.info.tooltip.paragraph2}">Paragraph 2</p>
+            </th:block>
+          </div>
           <div class="mt-4 absence-statistics-panel-body">
             <div id="distribution-chart"></div>
             <ul class="absence-statistics-legend" id="type-legend">
@@ -112,13 +143,28 @@
           </div>
         </section>
 
-        <section class="absence-statistics-panel" aria-labelledby="vacation-heading">
-          <h2 id="vacation-heading" class="font-bold text-base" th:text="#{absences.statistics.vacation.title}">
-            Genommener Urlaub
-          </h2>
+        <section class="absence-statistics-panel absence-statistics-info-anchor" aria-labelledby="vacation-heading">
+          <div class="flex flex-col @3xl/main:flex-row justify-between gap-1">
+            <h2 id="vacation-heading" class="font-bold text-base" th:text="#{absences.statistics.vacation.title}">
+              Genommener Urlaub
+            </h2>
+            <button
+              th:replace="~{fragments/card::card-info-button(target='absence-statistics-vacation-description', label=#{absences.statistics.vacation.info.button})}"
+            >
+              Informationen zum genommenen Urlaub
+            </button>
+          </div>
           <p class="text-sm" th:text="#{absences.statistics.vacation.description}">
-            Anteil des bereits genommenen bzw. geplanten Erholungsurlaubs am vorhandenen Anspruch.
+            Anteil des genommenen Erholungsurlaubs am vorhandenen Anspruch.
           </p>
+          <div
+            th:replace="~{fragments/card::card-info-popover(id='absence-statistics-vacation-description', content=~{::absence-statistics-vacation-tooltip-content})}"
+          >
+            <th:block th:ref="absence-statistics-vacation-tooltip-content">
+              <p th:text="#{absences.statistics.vacation.info.tooltip.paragraph1}">Paragraph 1</p>
+              <p th:text="#{absences.statistics.vacation.info.tooltip.paragraph2}">Paragraph 2</p>
+            </th:block>
+          </div>
           <div class="mt-4 absence-statistics-panel-body">
             <div id="vacation-ring" class="absence-statistics-gauge"></div>
             <div class="absence-statistics-gauge-facts">
