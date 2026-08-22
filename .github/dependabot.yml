@@ -80,6 +80,10 @@ updates:
     labels:
       - "type: dependencies"
       - "github_actions"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
 
   - package-ecosystem: "docker-compose"
     directories:
