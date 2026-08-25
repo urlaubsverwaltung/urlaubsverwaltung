@@ -27,11 +27,10 @@ updates:
           - "eslint-*"
           - "@eslint/*"
           - "@babel/eslint-parser"
-      jest:
+      vitest:
         patterns:
-          - "jest"
-          - "jest-*"
-          - "babel-jest"
+          - "vitest"
+          - "@vitest/*"
       postcss:
         patterns:
           - "postcss"
