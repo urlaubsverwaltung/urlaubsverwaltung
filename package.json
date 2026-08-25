@@ -69,7 +69,7 @@
     "rollup": "4.62.5",
     "rollup-plugin-esbuild": "6.2.1",
     "tailwindcss": "4.3.3",
-    "vitest": "4.1.5"
+    "vitest": "4.1.11"
   },
   "lint-staged": {
     "*.{js,html,svg,css}": [
