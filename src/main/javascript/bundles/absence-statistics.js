@@ -153,6 +153,13 @@ const distributionOptions = {
     width: 2,
     colors: ["var(--uv-chart-container-background)"],
   },
+  // ApexCharts pushes a slice outward on click by default; the numbers live in the legend beside
+  // the pie, not in the slices, so that offset has nothing to reveal and just looks like a glitch.
+  plotOptions: {
+    pie: {
+      expandOnClick: false,
+    },
+  },
   tooltip: {
     // same follow-cursor behaviour as the monthly chart's tooltip, for a consistent feel
     followCursor: true,
