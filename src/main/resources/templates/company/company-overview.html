@@ -351,8 +351,13 @@
                     th:replace="~{fragments/card::card-info-popover(id='stats-remaining-vacation-days-description', content=~{::stats-remainingvacation-days-tooltip-content})}"
                   >
                     <th:block th:ref="stats-remainingvacation-days-tooltip-content">
-                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph1}">Paragraph 1</p>
-                      <p th:text="#{company.overview.distribution.sick-days.info.tooltip.paragraph2}">Paragraph 2</p>
+                      <p th:text="#{company.overview.distribution.remaining-vacation-days.info.tooltip.paragraph1}">
+                        Der Graph zeigt, wie viele Personen wie viele offene Urlaubstage haben.
+                      </p>
+                      <p th:text="#{company.overview.distribution.remaining-vacation-days.info.tooltip.paragraph2}">
+                        Als offen gelten Urlaubstage, die noch nicht durch einen genehmigten oder wartenden
+                        Urlaubsantrag verplant sind.
+                      </p>
                       <p th:text="#{company.overview.card.info.tooltip.asGivenDateRangeInfo}">
                         Die Auswertung bezieht sich auf den ausgewählten Zeitraum.
                       </p>
