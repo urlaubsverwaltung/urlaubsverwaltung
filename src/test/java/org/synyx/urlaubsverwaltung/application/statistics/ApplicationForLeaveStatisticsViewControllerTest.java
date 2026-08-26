@@ -74,7 +74,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
+    private ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService;
     @Mock
     private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     @Mock

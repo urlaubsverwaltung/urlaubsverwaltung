@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
+import org.synyx.urlaubsverwaltung.company.VacationDaysStatDto.RemainingVacationDaysDistributionDto;
+import org.synyx.urlaubsverwaltung.company.VacationDaysStatDto.RemainingVacationDaysDistributionEntryDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -40,6 +42,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
     private final PersonService personService;
     private final HealthOvertimeStatisticService overtimeStatisticService;
     private final HealthSickDaysStatisticService sickDaysStatisticService;
+    private final HealthVacationDaysStatisticService vacationDaysStatisticService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -48,6 +51,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         PersonService personService,
         HealthOvertimeStatisticService overtimeStatisticService,
         HealthSickDaysStatisticService sickDaysStatisticService,
+        HealthVacationDaysStatisticService vacationDaysStatisticService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
@@ -55,6 +59,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         this.personService = personService;
         this.overtimeStatisticService = overtimeStatisticService;
         this.sickDaysStatisticService = sickDaysStatisticService;
+        this.vacationDaysStatisticService = vacationDaysStatisticService;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -76,12 +81,14 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
         final OvertimeStatDto overtimeStatDto = overtimeStatistic(signedInUser, dateRange, previousDateRange);
         final SickDaysStatDto sickDaysStatDto = sickDaysStatistic(signedInUser, dateRange);
+        final VacationDaysStatDto vacationDaysStatDto = vacationDaysStatistic(signedInUser, dateRange);
 
         model.addAttribute("viewMode", viewMode.name().toLowerCase());
         model.addAttribute("dateRangeStart", toLocalDate(dateRange.start));
         model.addAttribute("dateRangeEnd", toLocalDate(dateRange.end));
         model.addAttribute("overtimeStatistic", overtimeStatDto);
         model.addAttribute("sickDaysStatistic", sickDaysStatDto);
+        model.addAttribute("vacationDaysStatistic", vacationDaysStatDto);
 
         return "company/company-overview";
     }
@@ -132,18 +139,35 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final Duration averagePrev = prevStats.average();
         final Duration averageGrowth = average.minus(averagePrev);
 
-        final OvertimeDistributionDto overtimeDistributionDto = new OvertimeDistributionDto(stats.personCount(), List.of(
-            new OvertimeDistributionEntryDto(0, 5, stats.numberOfPersonsWithDurationBetween(hours(0), hours(5))),
-            new OvertimeDistributionEntryDto(5, 15, stats.numberOfPersonsWithDurationBetween(hours(5), hours(15))),
-            new OvertimeDistributionEntryDto(15, 25, stats.numberOfPersonsWithDurationBetween(hours(15), hours(25))),
-            new OvertimeDistributionEntryDto(25, null, stats.numberOfPersonsWithDurationGreaterOrEqual(hours(25))
-        )));
+        final List<Integer[]> ranges = List.of(
+            new Integer[]{ 0, 5 },
+            new Integer[]{ 5, 15 },
+            new Integer[]{ 15, 25 },
+            new Integer[]{ 25, null }
+        );
+
+        final List<OvertimeDistributionEntryDto> distributionDtos =
+            ranges.stream().map(range -> toOvertimeDistributionEntryDto(range, stats)).toList();
 
         return new OvertimeStatDto(
             toOvertimeDurationDto(average),
             toOvertimeDurationDto(averageGrowth),
-            overtimeDistributionDto
+            new OvertimeDistributionDto(stats.personCount(), distributionDtos)
         );
+    }
+
+    private static OvertimeDistributionEntryDto toOvertimeDistributionEntryDto(Integer[] range, OvertimeStatistic stats) {
+        final Integer rangeStart = range[0];
+        final Integer rangeEnd = range[1];
+
+        final int value;
+        if (rangeEnd == null) {
+            value = stats.numberOfPersonsWithDurationGreaterOrEqual(hours(rangeStart));
+        } else {
+            value = stats.numberOfPersonsWithDurationBetween(hours(rangeStart), hours(rangeEnd));
+        }
+
+        return new OvertimeDistributionEntryDto(range[0], range[1], value);
     }
 
     private SickDaysStatDto sickDaysStatistic(Person signedInUser, DateRange dateRange) {
@@ -158,6 +182,44 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final int nrOfShouldWorkDays = stats.shouldWorkDays().intValue();
 
         return new SickDaysStatDto(healthRate, nrOfSickDays, nrOfShouldWorkDays, stats.distribution());
+    }
+
+    private VacationDaysStatDto vacationDaysStatistic(Person signedInUser, DateRange dateRange) {
+
+        final LocalDate from = toLocalDate(dateRange.start);
+        final LocalDate to = toLocalDate(dateRange.end);
+
+        final VacationDaysStatistic stats = vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, from, to);
+
+        final List<Double[]> ranges = List.of(
+            new Double[]{  0.0, 10.0 },
+            new Double[]{ 10.0, 18.0 },
+            new Double[]{ 18.0, 25.0 },
+            new Double[]{ 25.0, null }
+        );
+
+        final List<RemainingVacationDaysDistributionEntryDto> distributionDtos =
+            ranges.stream().map(range -> toDistributionEntryDto(range, stats)).toList();
+
+        return new VacationDaysStatDto(
+            new RemainingVacationDaysDistributionDto(stats.personCount(), distributionDtos)
+        );
+    }
+
+    private static RemainingVacationDaysDistributionEntryDto toDistributionEntryDto(Double[] range, VacationDaysStatistic stats) {
+
+        final Double rangeStart = range[0];
+        final Double rangeEnd = range[1];
+
+        final int value;
+
+        if (rangeEnd == null) {
+            value = stats.numberOfPersonsWithRemainingVacationDaysGreaterThan(rangeStart);
+        } else {
+            value = stats.numberOfPersonsWithRemainingVacationDaysBetween(rangeStart, rangeEnd);
+        }
+
+        return new RemainingVacationDaysDistributionEntryDto(rangeStart, rangeEnd, value);
     }
 
     record DateRange(Instant start, Instant end) {}

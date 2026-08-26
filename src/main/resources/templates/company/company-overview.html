@@ -329,6 +329,77 @@
                   </p>
                 </div>
               </div>
+              <div class="stat-card">
+                <div class="stat-card__header stat-card__header--bordered">
+                  <div class="flex gap-2 items-center">
+                    <svg th:replace="~{icon/sun::svg(className='w-4 h-4')}"></svg>
+                    <span th:text="#{company.overview.distribution.remaining-vacation-days.title}"
+                      >Offene Erholung - wie verteilt?</span
+                    >
+                  </div>
+                  <button
+                    th:replace="~{fragments/card::card-info-button(target='stats-remaining-vacation-days-description', label=#{company.overview.distribution.remaining-vacation-days.info.button})}"
+                  >
+                    Informationen zu offene Erholung
+                  </button>
+                </div>
+                <div
+                  class="stat-card__body"
+                  th:with="entries=${vacationDaysStatistic.remainingVacationDaysDistribution.entries}, max=${vacationDaysStatistic.remainingVacationDaysDistribution.max}, maxBarHeight=150, minBarHeight=3"
+                >
+                  <div
+                    th:replace="~{fragments/card::card-info-popover(id='stats-remaining-vacation-days-description', content=~{::stats-remainingvacation-days-tooltip-content})}"
+                  >
+                    <th:block th:ref="stats-remainingvacation-days-tooltip-content">
+                      <p th:text="#{company.overview.distribution.remaining-vacation-days.info.tooltip.paragraph1}">
+                        Der Graph zeigt, wie viele Personen wie viele offene Urlaubstage haben.
+                      </p>
+                      <p th:text="#{company.overview.distribution.remaining-vacation-days.info.tooltip.paragraph2}">
+                        Als offen gelten Urlaubstage, die noch nicht durch einen genehmigten oder wartenden
+                        Urlaubsantrag verplant sind.
+                      </p>
+                      <p th:text="#{company.overview.distribution.remaining-vacation-days.info.tooltip.paragraph3}">
+                        Die Zahlen zeigen den aktuellen Stand zum heutigen Tag, unabhängig vom ausgewählten Zeitraum.
+                      </p>
+                    </th:block>
+                  </div>
+                  <ol class="bar-chart">
+                    <li
+                      th:each="entry, stat : ${entries}"
+                      class="bar-chart__item"
+                      th:with="startFormatted=${entry.rangeStart() == null ? null : #numbers.formatDecimal(entry.rangeStart(), 1, entry.rangeStart() % 1 == 0 ? 0 : 1)}, endFormatted=${entry.rangeEnd() == null ? null : #numbers.formatDecimal(entry.rangeEnd(), 1, entry.rangeEnd() % 1 == 0 ? 0 : 1)}"
+                    >
+                      <span class="bar-chart__bar-container" th:style="|height: ${maxBarHeight}px|">
+                        <span
+                          class="bar-chart__bar"
+                          th:style="|height:${entry.value() == 0 ? minBarHeight : entry.value() * maxBarHeight / max}px;|"
+                        >
+                          <span
+                            class="bar-chart__value"
+                            th:aria-label="#{company.overview.distribution.remaining-vacation-days.amountEmployees(${entry.value()})}"
+                            th:text="${entry.value()}"
+                            >42</span
+                          >
+                        </span>
+                      </span>
+                      <span
+                        class="bar-chart__label"
+                        th:text="${startFormatted == null ? '&lt; ' + endFormatted : (endFormatted == null ? '&gt; ' + startFormatted : startFormatted + ' - ' + endFormatted)} + ' Tage'"
+                      >
+                        &lt; 10 Tage
+                      </span>
+                    </li>
+                  </ol>
+                  <p
+                    class="mt-4 text-sm text-gray-500 dark:text-zinc-400"
+                    th:with="last=${vacationDaysStatistic.remainingVacationDaysDistribution.entries.last}"
+                    th:text="#{company.overview.distribution.remaining-vacation-days.description(${last.value()}, ${last.rangeStart()})}"
+                  >
+                    Verteilung der offenen Urlaubstage im Unternehmen. 4 Personen haben über 25 Tage offen. Grundlage z.
+                    B. für eine Urlaubsplanungs-Runde im Team.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </turbo-frame>

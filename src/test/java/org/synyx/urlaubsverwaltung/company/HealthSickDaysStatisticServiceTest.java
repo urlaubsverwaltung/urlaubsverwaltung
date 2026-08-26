@@ -100,7 +100,7 @@ class HealthSickDaysStatisticServiceTest {
     @Test
     void ensureHealthRateIsZeroWhenFullSickRate() {
 
-        final Person viewer = createPerson("viewer");
+        final Person viewer = createPerson(1L);
         final LocalDate from = LocalDate.of(2026, JANUARY, 1);
         final LocalDate to = LocalDate.of(2026, JANUARY, 31);
 
@@ -131,7 +131,7 @@ class HealthSickDaysStatisticServiceTest {
     @Test
     void ensureTotalNumberOfSickDaysIsTakenFromStatistics() {
 
-        final Person viewer = createPerson("viewer");
+        final Person viewer = createPerson(1L);
         final LocalDate from = LocalDate.of(2026, JANUARY, 1);
         final LocalDate to = LocalDate.of(2026, JANUARY, 31);
 
@@ -160,9 +160,9 @@ class HealthSickDaysStatisticServiceTest {
         final LocalDate from = LocalDate.of(2026, JANUARY, 1);
         final LocalDate to = LocalDate.of(2026, JANUARY, 31);
 
-        final Person personWithTwoSickDays = createPerson("two-sick-days");
-        final Person personWithFiveSickDays = createPerson("five-sick-days");
-        final Person personWithTenSickDays = createPerson("ten-sick-days");
+        final Person personWithTwoSickDays = createPerson(1L);
+        final Person personWithFiveSickDays = createPerson(2L);
+        final Person personWithTenSickDays = createPerson(3L);
 
         final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
         when(statistics.getSickRate()).thenReturn(BigDecimal.ZERO);

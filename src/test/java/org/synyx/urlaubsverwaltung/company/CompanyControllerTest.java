@@ -8,10 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDistributionEntryDto;
 import org.synyx.urlaubsverwaltung.company.OvertimeStatDto.OvertimeDurationDto;
 import org.synyx.urlaubsverwaltung.company.SickDaysStatistic.HealthRate;
+import org.synyx.urlaubsverwaltung.company.VacationDaysStatDto.RemainingVacationDaysDistributionDto;
+import org.synyx.urlaubsverwaltung.company.VacationDaysStatDto.RemainingVacationDaysDistributionEntryDto;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeType;
@@ -28,6 +31,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -57,6 +62,8 @@ class CompanyControllerTest {
     private HealthOvertimeStatisticService overtimeStatisticService;
     @Mock
     private HealthSickDaysStatisticService sickDaysStatisticService;
+    @Mock
+    private HealthVacationDaysStatisticService vacationDaysStatisticService;
     @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
@@ -91,7 +98,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsAbsent() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty(), emptySickDaysStatistic());
@@ -105,7 +112,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewDefaultsToMonthViewModeWhenViewParamIsInvalid() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         stubCurrentAndPreviousRange(signedInUser, currentMonth.atDay(1), today, OvertimeStatistic.empty(), emptySickDaysStatistic());
@@ -119,7 +126,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewUsesQuarterDateRange() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate start = currentMonth.minusMonths(2).atDay(1);
@@ -137,7 +144,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewUsesYearDateRange() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate start = Year.of(currentMonth.getYear()).atDay(1);
@@ -159,7 +166,7 @@ class CompanyControllerTest {
         final Clock nearMidnightUtcClock = Clock.fixed(Instant.parse("2026-01-14T23:30:00Z"), UTC);
         final CompanyController sutAtBerlinMidnight = sutWithClock(nearMidnightUtcClock);
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate berlinToday = LocalDate.of(2026, JANUARY, 15);
@@ -176,7 +183,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewComputesAverageGrowthAndDistribution() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final OvertimeStatistic current = statisticOf(hours(3), hours(10), hours(20), hours(30));
@@ -189,6 +196,7 @@ class CompanyControllerTest {
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(current);
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(previous);
         when(sickDaysStatisticService.getSickDaysStatistics(signedInUser, start, end)).thenReturn(emptySickDaysStatistic());
+        when(vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, start, end)).thenReturn(emptyVacationDaysStatistic());
 
         final OvertimeStatDto expected = new OvertimeStatDto(
             new OvertimeDurationDto(false, 15, 45),
@@ -211,7 +219,7 @@ class CompanyControllerTest {
     @Test
     void ensureOverviewComputesSickDaysStatistic() throws Exception {
 
-        final Person signedInUser = new Person();
+        final Person signedInUser = anyPerson(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate start = currentMonth.atDay(1);
@@ -224,6 +232,51 @@ class CompanyControllerTest {
             .andExpect(model().attribute("sickDaysStatistic", equalTo(new SickDaysStatDto(0.75, 9, 20, SickDaysStatistic.Distribution.empty()))));
     }
 
+    @Test
+    void ensureOverviewComputesVacationDaysStatistic() throws Exception {
+
+        final Person signedInUser = anyPerson(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate start = currentMonth.atDay(1);
+
+        final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = new HashMap<>();
+        statisticsByPerson.put(anyPerson(2L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(5)));
+        statisticsByPerson.put(anyPerson(3L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(12)));
+        statisticsByPerson.put(anyPerson(4L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(15)));
+        statisticsByPerson.put(anyPerson(5L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(19)));
+        statisticsByPerson.put(anyPerson(6L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(22)));
+        statisticsByPerson.put(anyPerson(7L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(24)));
+        statisticsByPerson.put(anyPerson(8L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(26)));
+        statisticsByPerson.put(anyPerson(9L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(28)));
+        statisticsByPerson.put(anyPerson(10L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(30)));
+        statisticsByPerson.put(anyPerson(11L), statisticsWithRemainingVacationDays(BigDecimal.valueOf(40)));
+
+        final VacationDaysStatistic vacationDaysStatistic = new VacationDaysStatistic(statisticsByPerson);
+
+        stubCurrentAndPreviousRange(signedInUser, start, today, OvertimeStatistic.empty(), emptySickDaysStatistic());
+        when(vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, start, today)).thenReturn(vacationDaysStatistic);
+
+        final VacationDaysStatDto expected = new VacationDaysStatDto(
+            new RemainingVacationDaysDistributionDto(10, List.of(
+                new RemainingVacationDaysDistributionEntryDto(0.0, 10.0, 1),
+                new RemainingVacationDaysDistributionEntryDto(10.0, 18.0, 2),
+                new RemainingVacationDaysDistributionEntryDto(18.0, 25.0, 3),
+                new RemainingVacationDaysDistributionEntryDto(25.0, null, 4)
+            ))
+        );
+
+        perform(get("/web/company/overview").param("view", "month"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("vacationDaysStatistic", equalTo(expected)));
+    }
+
+    private Person anyPerson(long id) {
+        final Person person = new Person();
+        person.setId(id);
+        return person;
+    }
+
     private void stubCurrentAndPreviousRange(Person signedInUser, LocalDate start, LocalDate end, OvertimeStatistic statistic, SickDaysStatistic sickDaysStatistic) {
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(start), toInstant(end))).thenReturn(statistic);
 
@@ -231,6 +284,7 @@ class CompanyControllerTest {
         when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(statistic);
 
         when(sickDaysStatisticService.getSickDaysStatistics(signedInUser, start, end)).thenReturn(sickDaysStatistic);
+        when(vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, start, end)).thenReturn(emptyVacationDaysStatistic());
     }
 
     private static LocalDate[] toPreviousRange(LocalDate start, LocalDate end) {
@@ -279,8 +333,18 @@ class CompanyControllerTest {
         return new SickDaysStatistic(new HealthRate(0), ZERO, ZERO, SickDaysStatistic.Distribution.empty());
     }
 
+    private static VacationDaysStatistic emptyVacationDaysStatistic() {
+        return new VacationDaysStatistic(Map.of());
+    }
+
+    private static ApplicationForLeaveStatistics statisticsWithRemainingVacationDays(BigDecimal remainingVacationDays) {
+        final ApplicationForLeaveStatistics statistics = mock(ApplicationForLeaveStatistics.class);
+        when(statistics.getLeftVacationDaysForYear()).thenReturn(remainingVacationDays);
+        return statistics;
+    }
+
     private CompanyController sutWithClock(Clock clock) {
-        return new CompanyController(personService, overtimeStatisticService, sickDaysStatisticService,
+        return new CompanyController(personService, overtimeStatisticService, sickDaysStatisticService, vacationDaysStatisticService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
