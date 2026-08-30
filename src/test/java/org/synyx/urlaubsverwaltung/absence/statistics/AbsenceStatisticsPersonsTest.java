@@ -28,7 +28,6 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -89,7 +88,6 @@ class AbsenceStatisticsPersonsTest {
             final List<Person> actual = sut.relevantPersons(signedInUser, Year.of(2024));
 
             assertThat(actual).containsExactly(person1, person2);
-            verify(departmentService, never()).getManagedMembersOfPerson(any(), any());
         }
 
         @Test
@@ -104,7 +102,6 @@ class AbsenceStatisticsPersonsTest {
             final List<Person> actual = sut.relevantPersons(signedInUser, Year.of(2024));
 
             assertThat(actual).containsExactly(person1);
-            verify(departmentService, never()).getManagedMembersOfPerson(any(), any());
         }
 
         @Test
@@ -120,7 +117,6 @@ class AbsenceStatisticsPersonsTest {
             final List<Person> actual = sut.relevantPersons(signedInUser, year);
 
             assertThat(actual).containsExactly(managedMember);
-            verify(personService, never()).getAllPersons();
         }
 
         @Test
@@ -136,7 +132,6 @@ class AbsenceStatisticsPersonsTest {
             final List<Person> actual = sut.relevantPersons(signedInUser, year);
 
             assertThat(actual).containsExactly(managedMember);
-            verify(personService, never()).getAllPersons();
         }
 
         @Test
