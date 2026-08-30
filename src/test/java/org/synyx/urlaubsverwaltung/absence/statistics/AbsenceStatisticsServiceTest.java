@@ -166,7 +166,7 @@ class AbsenceStatisticsServiceTest {
     }
 
     @Nested
-    class StichtagRule {
+    class AsOfDateRule {
 
         @Test
         void currentYearUsesToday() {
@@ -189,7 +189,7 @@ class AbsenceStatisticsServiceTest {
         @Test
         void pastYearUsesDecemberThirtyFirstOfThatYear() {
 
-            // expiry between Dec 31, 2023 (correct stichtag) and "today" 2024-06-15 (wrong, if today were used
+            // expiry between Dec 31, 2023 (correct as-of date) and "today" 2024-06-15 (wrong, if today were used
             // instead) -> distinguishes the two
             final LocalDate expiryDate = LocalDate.of(2024, JANUARY, 15);
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);
@@ -208,7 +208,7 @@ class AbsenceStatisticsServiceTest {
         @Test
         void futureYearUsesJanuaryFirstOfThatYear() {
 
-            // expiry between Jan 1, 2025 (correct stichtag) and Dec 31, 2025 (wrong, if the past-year rule were
+            // expiry between Jan 1, 2025 (correct as-of date) and Dec 31, 2025 (wrong, if the past-year rule were
             // mistakenly applied) -> distinguishes the two
             final LocalDate expiryDate = LocalDate.of(2025, JUNE, 1);
             final Account account = account(1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.ZERO, expiryDate);

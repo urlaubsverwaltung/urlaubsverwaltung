@@ -14,11 +14,11 @@ import static org.synyx.urlaubsverwaltung.util.CalcUtil.isZero;
 
 /**
  * Splits vacation entitlement into what has already been taken or planned versus what is still valid, for a single
- * stichtag.
+ * as-of date.
  *
  * <p>
  * A pure calculation without Spring or database concerns of its own — accounts and their derived
- * {@link VacationDaysLeft} are handed in already resolved. Which stichtag applies for a given year is decided by
+ * {@link VacationDaysLeft} are handed in already resolved. Which as-of date applies for a given year is decided by
  * the caller, not here.
  */
 final class VacationDaysTaken {
@@ -31,18 +31,18 @@ final class VacationDaysTaken {
 
     /**
      * Calculates the taken/planned vacation days, the still-valid entitlement, the percentage of the former
-     * relative to the latter, and the sum of expired remaining vacation days, for the given stichtag.
+     * relative to the latter, and the sum of expired remaining vacation days, for the given as-of date.
      *
      * <p>
      * Persons without a vacation account for the year are expected to already be absent from
      * {@code vacationDaysLeftByAccount} — they do not influence any of the returned numbers.
      *
-     * @param stichtag                    the date to evaluate expiry and entitlement against
+     * @param asOfDate                   the date to evaluate expiry and entitlement against
      * @param vacationDaysLeftByAccount   each person's vacation account together with their derived left vacation
      *                                    days
-     * @return the aggregated result for the given stichtag
+     * @return the aggregated result for the given as-of date
      */
-    static VacationDaysTakenResult calculate(LocalDate stichtag, Map<Account, VacationDaysLeft> vacationDaysLeftByAccount) {
+    static VacationDaysTakenResult calculate(LocalDate asOfDate, Map<Account, VacationDaysLeft> vacationDaysLeftByAccount) {
 
         BigDecimal takenSum = ZERO;
         BigDecimal validEntitlementSum = ZERO;
@@ -59,10 +59,10 @@ final class VacationDaysTaken {
             // the entitlement as it was ever granted, before usage is subtracted - VacationDaysLeft only ever
             // exposes what's *left*, so the gross numbers have to come from the account itself.
             final BigDecimal grossEntitlement = account.getActualVacationDays().add(account.getRemainingVacationDays());
-            final BigDecimal expired = vacationDaysLeft.getExpiredRemainingVacationDays(stichtag, expiryDate);
+            final BigDecimal expired = vacationDaysLeft.getExpiredRemainingVacationDays(asOfDate, expiryDate);
             final BigDecimal validEntitlement = grossEntitlement.subtract(expired);
 
-            final BigDecimal leftVacationDays = vacationDaysLeft.getLeftVacationDays(stichtag, doRemainingVacationDaysExpire, expiryDate);
+            final BigDecimal leftVacationDays = vacationDaysLeft.getLeftVacationDays(asOfDate, doRemainingVacationDaysExpire, expiryDate);
             final BigDecimal taken = validEntitlement.subtract(leftVacationDays);
 
             takenSum = takenSum.add(taken);

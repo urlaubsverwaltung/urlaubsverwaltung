@@ -71,7 +71,7 @@ class VacationDaysTakenTest {
     }
 
     @Test
-    void stichtagBeforeExpiryDateUsesFullRemainingVacationInNumeratorAndDenominator() {
+    void asOfDateBeforeExpiryDateUsesFullRemainingVacationInNumeratorAndDenominator() {
 
         final Person person = person(1);
         final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
@@ -85,7 +85,7 @@ class VacationDaysTakenTest {
     }
 
     @Test
-    void stichtagAfterExpiryDatePercentageUnchangedWhenNothingWasTaken() {
+    void asOfDateAfterExpiryDatePercentageUnchangedWhenNothingWasTaken() {
 
         final Person person = person(1);
         final Account account = account(person, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
@@ -146,14 +146,14 @@ class VacationDaysTakenTest {
     @Test
     void personWithDifferentExpiryDateIsHandledIndividually() {
 
-        final LocalDate stichtag = LocalDate.of(2024, MAY, 1);
+        final LocalDate asOfDate = LocalDate.of(2024, MAY, 1);
 
-        // expiry already passed at the stichtag
+        // expiry already passed at the as-of date
         final Person personA = person(1);
         final Account accountA = account(personA, "30", "10", "2", true, LocalDate.of(2024, MARCH, 31));
         final VacationDaysLeft leftA = vacationDaysLeft(accountA, "0", "0");
 
-        // expiry not yet reached at the same stichtag
+        // expiry not yet reached at the same as-of date
         final Person personB = person(2);
         final Account accountB = account(personB, "30", "10", "2", true, LocalDate.of(2024, JUNE, 30));
         final VacationDaysLeft leftB = vacationDaysLeft(accountB, "0", "0");
@@ -162,7 +162,7 @@ class VacationDaysTakenTest {
         input.put(accountA, leftA);
         input.put(accountB, leftB);
 
-        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(stichtag, input);
+        final VacationDaysTakenResult actual = VacationDaysTaken.calculate(asOfDate, input);
 
         // A already lost the 8 expired days (10 - 2), B has not yet -> 8 expired in total, not 16
         assertThat(actual.expiredRemainingVacationDays()).isEqualByComparingTo("8");

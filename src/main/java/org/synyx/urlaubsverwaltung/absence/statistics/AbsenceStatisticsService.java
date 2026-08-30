@@ -71,7 +71,7 @@ public class AbsenceStatisticsService {
 
         final List<Person> persons = absenceStatisticsPersons.relevantPersons(signedInUser, year);
         if (persons.isEmpty()) {
-            return new AbsenceStatistics(year, Map.of(), VacationDaysTaken.calculate(stichtag(year), Map.of()));
+            return new AbsenceStatistics(year, Map.of(), VacationDaysTaken.calculate(asOfDate(year), Map.of()));
         }
 
         final DateRange yearRange = DateRange.ofYear(year);
@@ -93,16 +93,16 @@ public class AbsenceStatisticsService {
         final Map<Account, VacationDaysLeft> vacationDaysLeftYearByAccount = vacationDaysLeftByAccount.entrySet().stream()
             .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().vacationDaysYear()));
 
-        final VacationDaysTakenResult vacationDaysTakenResult = VacationDaysTaken.calculate(stichtag(year), vacationDaysLeftYearByAccount);
+        final VacationDaysTakenResult vacationDaysTakenResult = VacationDaysTaken.calculate(asOfDate(year), vacationDaysLeftYearByAccount);
 
         return new AbsenceStatistics(year, monthlyAbsenceDaysByType, vacationDaysTakenResult);
     }
 
     /**
-     * The stichtag {@link VacationDaysTaken} is evaluated at: today for the current year, the year's own Dec 31st
+     * The as-of date {@link VacationDaysTaken} is evaluated at: today for the current year, the year's own Dec 31st
      * for a past year, and the year's own Jan 1st for a future year.
      */
-    private LocalDate stichtag(Year year) {
+    private LocalDate asOfDate(Year year) {
 
         final Year currentYear = Year.now(clock);
 

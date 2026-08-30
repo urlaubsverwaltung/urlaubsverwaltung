@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.absence.statistics;
 import java.math.BigDecimal;
 
 /**
- * Result of {@link VacationDaysTaken#calculate}, for a single stichtag.
+ * Result of {@link VacationDaysTaken#calculate}, for a single as-of date.
  *
  * @param vacationDaysTaken             sum of taken/planned vacation days across all considered persons
  * @param validEntitlement              sum of the still-valid entitlement (expired remainder already excluded)
