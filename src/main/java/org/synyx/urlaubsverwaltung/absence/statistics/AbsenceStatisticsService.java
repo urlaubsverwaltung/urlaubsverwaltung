@@ -83,8 +83,15 @@ public class AbsenceStatisticsService {
             MonthlyAbsenceDays.calculate(year, applications, workingTimeCalendarsByPerson);
 
         final List<Account> accounts = accountService.getHolidaysAccount(year.getValue(), persons);
+
+        // next year's accounts carry how much of *this* year's entitlement has already been booked into next
+        // January. Without them VacationDaysLeft#vacationDaysUsedNextYear stays zero, the left days come out too
+        // high and the taken days therefore too low, understating how much vacation is still open.
+        // OverviewViewController passes them for the same reason.
+        final List<Account> accountsNextYear = accountService.getHolidaysAccount(year.getValue() + 1, persons);
+
         final Map<Account, HolidayAccountVacationDays> vacationDaysLeftByAccount =
-            vacationDaysService.getVacationDaysLeft(accounts, yearRange, List.of(), workingTimeCalendarsByPerson);
+            vacationDaysService.getVacationDaysLeft(accounts, yearRange, accountsNextYear, workingTimeCalendarsByPerson);
         final Map<Account, VacationDaysLeft> vacationDaysLeftYearByAccount = vacationDaysLeftByAccount.entrySet().stream()
             .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().vacationDaysYear()));
 

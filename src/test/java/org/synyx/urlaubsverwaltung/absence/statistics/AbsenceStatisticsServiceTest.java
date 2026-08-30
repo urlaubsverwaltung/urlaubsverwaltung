@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
@@ -117,6 +118,31 @@ class AbsenceStatisticsServiceTest {
 
             verify(applicationService).getApplicationsForACertainPeriodAndStatus(
                 LocalDate.of(2024, JANUARY, 1), LocalDate.of(2024, DECEMBER, 31), List.of(member), activeStatuses());
+        }
+
+        @Test
+        void nextYearsAccountsArePassedSoDaysAlreadyBookedIntoJanuaryCount() {
+
+            final Person signedInUser = person(1, OFFICE);
+            final Person member = person(2);
+            givenRelevantPersons(List.of(member));
+
+            final Account account = account(1, BigDecimal.valueOf(30), BigDecimal.ZERO, BigDecimal.ZERO,
+                LocalDate.of(2024, APRIL, 1));
+            final Account accountNextYear = account(2, BigDecimal.valueOf(30), BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5), LocalDate.of(2025, APRIL, 1));
+
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(any(LocalDate.class), any(LocalDate.class), anyList(), anyList())).thenReturn(List.of());
+            when(workingTimeCalendarService.getWorkingTimesByPersons(any(), any(Year.class))).thenReturn(Map.of());
+            when(accountService.getHolidaysAccount(2024, List.of(member))).thenReturn(List.of(account));
+            when(accountService.getHolidaysAccount(2025, List.of(member))).thenReturn(List.of(accountNextYear));
+            when(vacationDaysService.getVacationDaysLeft(eq(List.of(account)), any(DateRange.class), anyList(), any()))
+                .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft(account), vacationDaysLeft(account))));
+
+            sut.createStatistics(Year.of(2024), signedInUser);
+
+            verify(vacationDaysService).getVacationDaysLeft(eq(List.of(account)), any(DateRange.class),
+                eq(List.of(accountNextYear)), any());
         }
 
         @Test
@@ -216,7 +242,9 @@ class AbsenceStatisticsServiceTest {
             when(applicationService.getApplicationsForACertainPeriodAndStatus(any(LocalDate.class), any(LocalDate.class), anyList(), anyList())).thenReturn(List.of());
             when(workingTimeCalendarService.getWorkingTimesByPersons(any(), any(Year.class))).thenReturn(Map.of());
             when(accountService.getHolidaysAccount(anyInt(), anyList())).thenReturn(List.of(account));
-            when(vacationDaysService.getVacationDaysLeft(eq(List.of(account)), any(DateRange.class), eq(List.of()), any()))
+            // these tests are about which as-of date is used, not about which accounts are handed over -
+            // nextYearsAccountsArePassedSoDaysAlreadyBookedIntoJanuaryCount covers that
+            when(vacationDaysService.getVacationDaysLeft(eq(List.of(account)), any(DateRange.class), anyList(), any()))
                 .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft(account), vacationDaysLeft(account))));
         }
     }
