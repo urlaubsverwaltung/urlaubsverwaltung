@@ -834,10 +834,10 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyApplicationsLink(boolean rootActive, boolean overviewActive, boolean statisticsActive) {
-        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", "sun", rootActive)
+        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", "sun", rootActive, "navigation-applications-link")
             .withSubItems(List.of(
                 new NavigationItemDto("company-application-overview-link", "/web/application/statistics", "nav.company.applications.overview", "", overviewActive),
-                new NavigationItemDto("company-application-statistics-link", "/web/absence/statistics", "nav.company.applications.statistics", "", statisticsActive)
+                new NavigationItemDto("company-application-statistics-link", "/web/absence/statistics", "nav.company.applications.statistics", "", statisticsActive, "navigation-applications-statistics-link")
             ));
     }
 

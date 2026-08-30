@@ -187,11 +187,11 @@ public class FrameDataProvider implements DataProviderInterface {
             final boolean rootActive = overviewActive || statisticsActive;
 
             final NavigationItemDto rootItem =
-                new NavigationItemDto("company-application-link", overview, "nav.company.applications", "sun", rootActive);
+                new NavigationItemDto("company-application-link", overview, "nav.company.applications", "sun", rootActive, "navigation-applications-link");
 
             elements.add(rootItem.withSubItems(List.of(
                 new NavigationItemDto("company-application-overview-link", overview, "nav.company.applications.overview", "", overviewActive),
-                new NavigationItemDto("company-application-statistics-link", statistics, "nav.company.applications.statistics", "", statisticsActive)
+                new NavigationItemDto("company-application-statistics-link", statistics, "nav.company.applications.statistics", "", statisticsActive, "navigation-applications-statistics-link")
             )));
         }
 
