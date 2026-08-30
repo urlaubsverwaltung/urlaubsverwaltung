@@ -12,7 +12,7 @@ import java.util.Map;
  * @param year                        the year the statistics were calculated for
  * @param monthlyAbsenceDaysByType    monthly absence days and year sum per vacation type that has at least one day
  *                                    in {@code year}; unsorted, sorting for display is the view controller's job
- * @param vacationDaysTaken           taken/valid/percentage/average/expired vacation day numbers for the stichtag
+ * @param vacationDaysTaken           taken/valid/percentage/expired vacation day numbers for the stichtag
  *                                    that applies to {@code year}
  */
 record AbsenceStatistics(
