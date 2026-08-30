@@ -24,8 +24,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * perspective of a signed-in person.
  *
  * <p>
- * This is a pure mapping without any Spring or database concerns of its own — collaborators are handed in via
- * the constructor.
+ * Unlike {@link MonthlyAbsenceDays} and {@link VacationDaysTaken}, this is not a pure calculation: it reads from
+ * {@link PersonService}, {@link DepartmentService} and {@link PersonActivePeriodService}. It carries no Spring
+ * annotations of its own though — the collaborators are handed in via the constructor.
  */
 class AbsenceStatisticsPersons {
 
