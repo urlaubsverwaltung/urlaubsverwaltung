@@ -1,14 +1,14 @@
-import { tooltipTitleHtml, tooltipRowHtml } from "../chart-tooltip";
+import { tooltipHtml, tooltipRowHtml } from "../chart-tooltip";
 
-describe("tooltipTitleHtml", () => {
+describe("tooltipHtml", () => {
   test("renders a title followed by the joined rows", () => {
-    const html = tooltipTitleHtml("absence-statistics", "March", ["<row-a>", "<row-b>"]);
+    const html = tooltipHtml("absence-statistics", "March", ["<row-a>", "<row-b>"]);
 
     expect(html).toBe('<div class="absence-statistics-tooltip-title">March</div><row-a><row-b>');
   });
 
   test("renders a title with no rows", () => {
-    const html = tooltipTitleHtml("overtime-statistics", "March", []);
+    const html = tooltipHtml("overtime-statistics", "March", []);
 
     expect(html).toBe('<div class="overtime-statistics-tooltip-title">March</div>');
   });

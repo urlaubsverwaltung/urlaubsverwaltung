@@ -8,7 +8,7 @@ import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
-import { tooltipTitleHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
+import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 
 const statistics = globalThis.overtimeStatistics;
 
@@ -114,7 +114,7 @@ const options = {
 
       const colorOfSeries = (offset) => (entry) => w.config.colors[yearsOldestFirst.indexOf(entry) * 2 + offset];
 
-      return tooltipTitleHtml("overtime-statistics", month, [
+      return tooltipHtml("overtime-statistics", month, [
         block(statistics.accruedName, (entry) => entry.accruedText, colorOfSeries(0)),
         block(statistics.reductionName, (entry) => entry.reductionText, colorOfSeries(1)),
         block(
@@ -204,7 +204,7 @@ const balanceOptions = {
       const rows = statistics.balanceSeries.map((entry, index) =>
         tooltipRow(w.config.colors[index], String(entry.year), entry.valuesText[dataPointIndex]),
       );
-      return tooltipTitleHtml("overtime-statistics", month, rows);
+      return tooltipHtml("overtime-statistics", month, rows);
     },
   },
 };

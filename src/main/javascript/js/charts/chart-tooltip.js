@@ -5,11 +5,11 @@
  * keeps styling this markup with its own CSS - only the JS shape (title + rows) is shared here.
  *
  * @param {string} classPrefix CSS class prefix, e.g. "absence-statistics"
- * @param {string} title tooltip title, usually the hovered x-axis label
+ * @param {string} title the tooltip's title, usually the hovered x-axis label
  * @param {string[]} rows pre-built row HTML, e.g. from {@link tooltipRowHtml}
  * @return {string} the tooltip's HTML
  */
-export function tooltipTitleHtml(classPrefix, title, rows) {
+export function tooltipHtml(classPrefix, title, rows) {
   return `<div class="${classPrefix}-tooltip-title">${title}</div>${rows.join("")}`;
 }
 

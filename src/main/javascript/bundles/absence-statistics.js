@@ -8,7 +8,7 @@ import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
-import { tooltipTitleHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
+import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 
 // Series-visibility persistence (apexOptionsWithPersistence) is intentionally not used here - it's
 // optional per the task, only supports cartesian chart types (not the pie or the ring below), and
@@ -37,8 +37,8 @@ function colorOf(type) {
   return `var(--absence-color-${type.color})`;
 }
 
-function tooltipTitle(title, rows) {
-  return tooltipTitleHtml("absence-statistics", title, rows);
+function tooltip(title, rows) {
+  return tooltipHtml("absence-statistics", title, rows);
 }
 
 function tooltipRow(color, text) {
@@ -114,7 +114,7 @@ const monthlyOptions = {
         </div>
       `;
 
-      return `${tooltipTitle(xaxisLabels[dataPointIndex], rows)}${totalRow}`;
+      return `${tooltip(xaxisLabels[dataPointIndex], rows)}${totalRow}`;
     },
   },
 };
@@ -165,7 +165,7 @@ const distributionOptions = {
     followCursor: true,
     custom: function ({ seriesIndex, w }) {
       const type = types[seriesIndex];
-      return tooltipTitle(type.name, [
+      return tooltip(type.name, [
         tooltipRow(
           w.config.colors[seriesIndex],
           `${decimal.format(type.yearSum)} ${yaxisTitle} · ${decimal.format(type.share)} %`,

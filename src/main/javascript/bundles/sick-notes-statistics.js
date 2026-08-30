@@ -9,7 +9,7 @@ import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
-import { tooltipTitleHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
+import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 
 // the chart hosts are empty until this bundle has executed, so css/bundles/sick-note-statistics.css
 // reserves these sizes up front to keep the page from reflowing. keep both in sync.
@@ -93,7 +93,7 @@ function buildTooltipRow({ series: seriesValues, dataPointIndex, w }, seriesInde
 // x-axis for the line chart, which leaves the month index there instead of the name.
 function buildTooltip(dataPointIndex, rows) {
   const month = xaxisLabels[dataPointIndex];
-  return tooltipTitleHtml("sicknote-statistics", month, rows);
+  return tooltipHtml("sicknote-statistics", month, rows);
 }
 
 // bar series are laid out as [previousYearCategory0, previousYearCategory1, ..., currentYearCategory0, ...];
