@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.statistics;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -31,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
  * {@link VacationDaysTaken}, into an {@link AbsenceStatistics} for a single year.
  */
 @Service
+@Transactional(readOnly = true)
 public class AbsenceStatisticsService {
 
     private final AbsenceStatisticsPersons absenceStatisticsPersons;
@@ -65,7 +67,7 @@ public class AbsenceStatisticsService {
      * @param signedInUser person requesting the statistics
      * @return the assembled statistics; empty but exception-free when nobody is relevant for the given person/year
      */
-    AbsenceStatistics createStatistics(Year year, Person signedInUser) {
+    public AbsenceStatistics createStatistics(Year year, Person signedInUser) {
 
         final List<Person> persons = absenceStatisticsPersons.relevantPersons(signedInUser, year);
         if (persons.isEmpty()) {
