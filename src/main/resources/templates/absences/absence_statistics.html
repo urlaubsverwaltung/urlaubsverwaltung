@@ -9,9 +9,9 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{absences.statistics.header.title(${selectedYearStatistics.year.value})}">
-      Abwesenheitsstatistik
-    </title>
+    <title
+      th:replace="~{fragments/page-title::page-title(#{absences.statistics.header.title(${selectedYearStatistics.year.value})})}"
+    ></title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/absence-statistics.css}" />
     </th:block>
