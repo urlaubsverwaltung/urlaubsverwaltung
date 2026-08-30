@@ -48,8 +48,8 @@ function tooltipRow(color, text) {
 const { theme } = useTheme();
 const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
-function themeMode() {
-  return theme.value === "dark" ? "dark" : "light";
+function themeMode(value = theme.value) {
+  return value === "dark" ? "dark" : "light";
 }
 
 /* ---------------------------------------------------------------- *
@@ -249,7 +249,7 @@ const ringChart = new ApexCharts(document.querySelector("#vacation-ring"), ringO
 void ringChart.render();
 
 theme.subscribe(async function (nextTheme) {
-  const mode = nextTheme === "dark" ? "dark" : "light";
+  const mode = themeMode(nextTheme);
   await Promise.all([
     monthlyChart.updateOptions({ theme: { mode } }),
     distributionChart.updateOptions({ theme: { mode } }),
