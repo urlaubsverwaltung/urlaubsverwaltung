@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.person.PersonActivePeriod;
 import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import java.util.Map;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -72,7 +74,7 @@ class AbsenceStatisticsServiceTest {
     @Captor
     private ArgumentCaptor<List<Person>> personsCaptor;
 
-    private static Person person(long id, org.synyx.urlaubsverwaltung.person.Role... roles) {
+    private static Person person(long id, Role... roles) {
         final Person person = new Person();
         person.setId(id);
         person.setPermissions(List.of(roles));
@@ -106,7 +108,7 @@ class AbsenceStatisticsServiceTest {
     private void givenOfficePersons(List<Person> allPersons) {
         when(personService.getAllPersons()).thenReturn(allPersons);
         final Map<PersonId, List<PersonActivePeriod>> activePeriods = allPersons.stream()
-            .collect(java.util.stream.Collectors.toMap(Person::getIdAsPersonId,
+            .collect(toMap(Person::getIdAsPersonId,
                 p -> List.of(new PersonActivePeriod(p.getIdAsPersonId(), Instant.EPOCH))));
         when(personActivePeriodService.getActivePeriodsOverlapping(any(), any(), any())).thenReturn(activePeriods);
     }
