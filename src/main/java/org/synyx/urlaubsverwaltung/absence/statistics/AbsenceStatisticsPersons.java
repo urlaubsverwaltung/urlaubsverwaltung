@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.statistics;
 
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonActivePeriod;
@@ -25,9 +26,10 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  *
  * <p>
  * Unlike {@link MonthlyAbsenceDays} and {@link VacationDaysTaken}, this is not a pure calculation: it reads from
- * {@link PersonService}, {@link DepartmentService} and {@link PersonActivePeriodService}. It carries no Spring
- * annotations of its own though — the collaborators are handed in via the constructor.
+ * {@link PersonService}, {@link DepartmentService} and {@link PersonActivePeriodService}, and is therefore a bean
+ * of its own rather than something {@link AbsenceStatisticsService} constructs.
  */
+@Service
 class AbsenceStatisticsPersons {
 
     private final PersonService personService;

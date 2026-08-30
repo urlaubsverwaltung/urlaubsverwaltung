@@ -11,10 +11,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonActivePeriodService;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -43,16 +40,14 @@ public class AbsenceStatisticsService {
     private final Clock clock;
 
     AbsenceStatisticsService(
-        PersonService personService,
-        DepartmentService departmentService,
-        PersonActivePeriodService personActivePeriodService,
+        AbsenceStatisticsPersons absenceStatisticsPersons,
         ApplicationService applicationService,
         WorkingTimeCalendarService workingTimeCalendarService,
         AccountService accountService,
         VacationDaysService vacationDaysService,
         Clock clock
     ) {
-        this.absenceStatisticsPersons = new AbsenceStatisticsPersons(personService, departmentService, personActivePeriodService);
+        this.absenceStatisticsPersons = absenceStatisticsPersons;
         this.applicationService = applicationService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.accountService = accountService;
