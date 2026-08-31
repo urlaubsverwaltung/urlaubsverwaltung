@@ -55,6 +55,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
+    @SuppressWarnings("java:S107") // "Constructors should not have too many parameters" - collaborators injected by spring
     ApplicationsViewController(
         PersonService personService,
         DepartmentService departmentService,

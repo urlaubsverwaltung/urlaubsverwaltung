@@ -348,7 +348,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
-        final Person person = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
         final boolean allowedToDeclineCancellationRequest = permissionEvaluator.of(signedInUser, application).isAllowedToDeclineCancellationRequest();
@@ -413,7 +412,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
-        final Person person = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
         final boolean allowedToCommentApplication = permissionEvaluator.of(signedInUser, application).isAllowedToComment();

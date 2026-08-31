@@ -28,7 +28,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;

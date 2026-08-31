@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static java.time.Month.AUGUST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -133,8 +134,8 @@ class ApplicationForLeaveDetailsViewControllerSecurityIT extends SingleTenantTes
         application.setId(APPLICATION_ID);
         application.setPerson(applicationPerson);
         application.setStatus(ALLOWED);
-        application.setStartDate(LocalDate.of(2025, 8, 4));
-        application.setEndDate(LocalDate.of(2025, 8, 8));
+        application.setStartDate(LocalDate.of(2025, AUGUST, 4));
+        application.setEndDate(LocalDate.of(2025, AUGUST, 8));
         application.setVacationType(ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(VacationCategory.HOLIDAY)
