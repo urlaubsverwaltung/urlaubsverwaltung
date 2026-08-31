@@ -73,7 +73,7 @@ class OvertimeStatisticsService {
      * @param year to create the statistics for
      * @return company wide overtime figures of the given year
      */
-    OvertimeStatistics getStatistics(Year year) {
+    public OvertimeStatistics getStatistics(Year year) {
 
         final List<Person> persons = personService.getAllPersonsHavingAccountInYear(year);
         if (persons.isEmpty()) {
@@ -102,7 +102,7 @@ class OvertimeStatisticsService {
      *
      * @return company wide overtime figures over the whole history
      */
-    OvertimeTotals getTotals() {
+    public OvertimeTotals getTotals() {
 
         final List<Person> persons = personService.getActivePersons();
         if (persons.isEmpty()) {

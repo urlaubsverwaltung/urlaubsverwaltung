@@ -1,0 +1,261 @@
+@reference "../config.css";
+
+:root {
+  /* used by the vacation-taken ring only - no VacationType maps to it, so it isn't one of the
+     --absence-color-* tokens. */
+  --absence-vacation-ring-color: var(--color-blue-500);
+
+  @variant dark {
+    --absence-vacation-ring-color: var(--color-blue-400);
+  }
+}
+
+.absence-statistics-chart-container {
+  padding: --spacing(2);
+  @apply rounded-lg;
+  background-color: var(--uv-chart-container-background);
+}
+
+.absence-statistics-chart {
+  @apply rounded-md;
+  overflow: hidden;
+  padding: --spacing(1);
+  background-color: var(--uv-chart-background);
+
+  /*
+   * Reserve the box apexcharts will fill. This element is empty until the chart bundle has been
+   * downloaded and executed - without a reservation the page paints with a collapsed chart and
+   * then reflows by the full chart height once apexcharts sets its own min-height here.
+   * apexcharts reserves the canvas height only (CHART_HEIGHT in absence-statistics.js - keep the
+   * 400px in sync), the padding of this border-box element comes on top of it.
+   *
+   * Only the monthly chart uses this class - the pie and the ring are small, fixed-size charts
+   * styled directly by #distribution-chart / .absence-statistics-gauge instead, so this padding
+   * and min-height never apply to them (a shared class here previously widened the pie's box
+   * beyond its intended 220px and pushed it into the legend next to it).
+   */
+  min-height: calc(400px + --spacing(2));
+}
+
+/*
+ * ApexCharts injects its own theme-aware background/border/shadow for .apexcharts-tooltip via a
+ * shared, globally-injected stylesheet (the same one regardless of chart type) - in principle that
+ * alone should be enough. In practice the pie chart's tooltip rendered without that background
+ * (see-through), while the bar chart's didn't, for reasons that trace into ApexCharts' own
+ * non-cartesian tooltip-positioning code rather than anything in this file. Rather than depend on
+ * that, the wrapper's look is fully owned here instead, identically for every chart on this page.
+ */
+#monthly-chart .apexcharts-tooltip,
+#distribution-chart .apexcharts-tooltip {
+  background-color: var(--uv-chart-container-background);
+  border: 1px solid var(--uv-chart-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.15);
+  /* text color owned here too, for the same reason as the background above - ApexCharts ties
+     both to the same (here, apparently not reliably applied) theme class. */
+  @apply text-black;
+  @apply dark:text-zinc-100;
+}
+
+/* content layout only - the wrapper background/text color above already make these opaque and
+   legible */
+.absence-statistics-tooltip-title {
+  padding: --spacing(2) --spacing(3) --spacing(1);
+  font-weight: 600;
+}
+
+.absence-statistics-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: --spacing(2);
+  padding: --spacing(1) --spacing(3);
+  font-size: 0.8125rem;
+}
+
+.absence-statistics-tooltip-row--total {
+  margin-top: --spacing(1);
+  border-top: 1px solid var(--uv-chart-border);
+  padding-top: --spacing(2);
+  font-weight: 600;
+}
+
+.absence-statistics-tooltip-swatch {
+  flex-shrink: 0;
+  width: --spacing(2.5);
+  height: --spacing(2.5);
+  @apply rounded-xs;
+}
+
+/*
+ * Anchor for the "i" info-button popover of each of the three panels on this page (see
+ * fragments/card::card-info-button / card-info-popover and
+ * src/main/css/components/card-info-popover.css). None of the three panels has a border, so the
+ * popover overlay can fill the anchor box edge-to-edge without a margin.
+ */
+.absence-statistics-info-anchor {
+  --card-info-popover-margin: 0;
+  --card-info-background-color: var(--uv-chart-container-background);
+  --card-info-border-radius: var(--radius-lg);
+
+  anchor-scope: --card-info-popover-anchor;
+  anchor-name: --card-info-popover-anchor;
+}
+
+/*
+ * --- two-column band: distribution + vacation taken, stacked below `md` ---
+ * align-items is the grid default (stretch) so both panels share the height of the taller one
+ * once they sit side by side - .absence-statistics-panel-body below then grows into that extra
+ * height and centers its content in it, rather than leaving dead space at the bottom of the
+ * shorter panel.
+ */
+.absence-statistics-band {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: --spacing(6);
+}
+
+.absence-statistics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(4);
+  padding: --spacing(4);
+  @apply rounded-lg;
+  background-color: var(--uv-chart-container-background);
+}
+
+.absence-statistics-panel-body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: --spacing(5);
+}
+
+/*
+ * The pie and the ring sit in a flex row next to their descriptions (legend / facts), so an
+ * unreserved box shifts that text sideways too once the chart bundle has executed. PIE_SIZE /
+ * RING_SIZE in absence-statistics.js - keep the pixel values in sync.
+ */
+#distribution-chart {
+  flex: 0 0 auto;
+  width: 220px;
+  min-height: 220px;
+}
+
+.absence-statistics-gauge {
+  flex: 0 0 auto;
+  width: 180px;
+  min-height: 180px;
+}
+
+/* --- pie legend carrying the numbers (no separate cards per type) --- */
+.absence-statistics-legend {
+  flex: 1 1 20rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+
+  li {
+    display: grid;
+    grid-template-columns: 0.75rem 1fr auto;
+    align-items: baseline;
+    gap: --spacing(2);
+    padding-bottom: --spacing(2);
+    border-bottom: 1px solid var(--uv-chart-border);
+    font-size: 0.875rem;
+  }
+
+  li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.absence-statistics-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  align-self: center;
+}
+
+.absence-statistics-type-name {
+  @apply text-black;
+  @apply dark:text-zinc-100;
+}
+
+.absence-statistics-inactive-hint {
+  margin-left: --spacing(1.5);
+  font-size: 0.75rem;
+  @apply text-gray-500;
+  @apply dark:text-zinc-400;
+}
+
+.absence-statistics-type-values {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  @apply text-black;
+  @apply dark:text-zinc-100;
+}
+
+.absence-statistics-share {
+  @apply text-gray-500;
+  @apply dark:text-zinc-400;
+  font-weight: 400;
+}
+
+/* --- vacation taken ring facts --- */
+.absence-statistics-gauge-facts {
+  flex: 1 1 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(3);
+  font-size: 0.875rem;
+}
+
+.absence-statistics-fact {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(0.5);
+}
+
+.absence-statistics-fact-label {
+  @apply text-gray-500;
+  @apply dark:text-zinc-400;
+}
+
+.absence-statistics-fact-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  @apply text-black;
+  @apply dark:text-zinc-100;
+}
+
+.absence-statistics-fact--secondary .absence-statistics-fact-value {
+  font-weight: 400;
+}
+
+@variant sm {
+  .absence-statistics-chart-container {
+    padding: --spacing(4);
+    border: 1px solid var(--uv-chart-border);
+  }
+}
+
+@variant md {
+  .absence-statistics-chart-container {
+    padding: --spacing(5);
+  }
+
+  .absence-statistics-chart {
+    padding: --spacing(4);
+    min-height: calc(400px + --spacing(8));
+  }
+
+  .absence-statistics-band {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}

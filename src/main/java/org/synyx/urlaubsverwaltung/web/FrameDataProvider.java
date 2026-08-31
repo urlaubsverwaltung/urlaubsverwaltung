@@ -178,8 +178,21 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewApplications) {
-            final String applications = "/web/application/statistics";
-            elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", "sun", url.equals(applications)));
+
+            final String overview = "/web/application/statistics";
+            final String statistics = "/web/absence/statistics";
+
+            final boolean overviewActive = url.equals(overview);
+            final boolean statisticsActive = url.equals(statistics);
+            final boolean rootActive = overviewActive || statisticsActive;
+
+            final NavigationItemDto rootItem =
+                new NavigationItemDto("company-application-link", overview, "nav.company.applications", "sun", rootActive, "navigation-applications-link");
+
+            elements.add(rootItem.withSubItems(List.of(
+                new NavigationItemDto("company-application-overview-link", overview, "nav.company.applications.overview", "", overviewActive),
+                new NavigationItemDto("company-application-statistics-link", statistics, "nav.company.applications.statistics", "", statisticsActive, "navigation-applications-statistics-link")
+            )));
         }
 
         final boolean canViewSickNotes = sickNotePermissionEvaluator.isAllowedToViewSickNotesOfOtherPersons(user);
