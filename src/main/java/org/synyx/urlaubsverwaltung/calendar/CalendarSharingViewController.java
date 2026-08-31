@@ -227,9 +227,7 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarService.getPersonCalendar(personId);
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
-            final var path = "web/persons/%d/calendar?secret=%s".formatted(personId, personCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = calendarUrl("/web/persons/{personId}/calendar", personCalendar.getSecret(), personId);
 
             dto.setCalendarUrl(url);
             dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
@@ -268,9 +266,7 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
             final var maybeDepartmentCalendar = Optional.ofNullable(departmentCalendarByDepartmentId.get(departmentId));
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
-                final var path = "web/departments/%s/persons/%s/calendar?secret=%s".formatted(departmentId, personId, departmentCalendar.getSecret());
-                final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                final var url = calendarUrl("/web/departments/{departmentId}/persons/{personId}/calendar", departmentCalendar.getSecret(), departmentId, personId);
 
                 departmentCalendarDto.setCalendarUrl(url);
                 departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
@@ -295,15 +291,32 @@ public class CalendarSharingViewController implements HasLaunchpad, HasPersonSea
         if (maybeCompanyCalendar.isPresent()) {
 
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final var path = "web/company/persons/%d/calendar?secret=%s".formatted(personId, companyCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = calendarUrl("/web/company/persons/{personId}/calendar", companyCalendar.getSecret(), personId);
 
             companyCalendarDto.setCalendarUrl(url);
             companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
         }
 
         return companyCalendarDto;
+    }
+
+    /**
+     * Builds the absolute subscription URL of a calendar, keeping the context path the application is deployed
+     * under. {@link ServletUriComponentsBuilder#fromCurrentContextPath()} preserves scheme, host, port and context
+     * path, so the link stays valid behind a reverse proxy with a non-root context path.
+     *
+     * @param path         path of the calendar, relative to the context path, with {@code {placeholders}}
+     * @param secret       secret of the calendar, appended as {@code secret} query parameter
+     * @param uriVariables values for the placeholders of {@code path}, in order of appearance
+     * @return the absolute, encoded calendar subscription URL
+     */
+    private static String calendarUrl(String path, String secret, Object... uriVariables) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path(path)
+            .queryParam("secret", secret)
+            .buildAndExpand(uriVariables)
+            .encode()
+            .toUriString();
     }
 
     private Person getPersonOrThrow(long personId) {
