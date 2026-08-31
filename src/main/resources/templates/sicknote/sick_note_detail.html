@@ -109,19 +109,15 @@
           </p>
         </th:block>
 
-        <div class="actions">
+        <div class="actions" th:with="redirectTo=${shortcut ? '/web/sicknote/submitted' : null}">
           <th:block th:if="${canAcceptSickNote}">
             <form
               id="allow"
               class="alert alert-success"
               th:classappend="${action eq 'allow' ? '' : 'hidden'}"
               method="post"
-              th:with="isShortcut=${param.shortcut != null && #lists.contains(param.shortcut, 'true')},
-                       redirectTo=@{/web/sicknote/submitted},
-                       acceptUrl=@{/web/sicknote/__${sickNote.id}__/accept},
-                       acceptExtensionUrl=@{/web/sicknote/__${sickNote.id}__/extension/accept},
-                       actionUrl=@{${extensionRequested ? acceptExtensionUrl : acceptUrl} (redirect=${isShortcut ? redirectTo : null})}"
-              th:action="@{__${actionUrl}__}"
+              th:action="@{${extensionRequested ? '/web/sicknote/{sickNoteId}/extension/accept' : '/web/sicknote/{sickNoteId}/accept'}
+                           (sickNoteId=${sickNote.id}, redirect=${redirectTo})}"
               th:object="${comment}"
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
@@ -164,8 +160,7 @@
               class="alert alert-danger"
               th:classappend="${(action == 'cancel') ? '' : 'hidden'}"
               method="post"
-              th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/cancel?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/cancel'}"
-              th:action="@{__${actionUrl}__}"
+              th:action="@{/web/sicknote/{sickNoteId}/cancel(sickNoteId=${sickNote.id}, redirect=${redirectTo})}"
               th:object="${comment}"
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
