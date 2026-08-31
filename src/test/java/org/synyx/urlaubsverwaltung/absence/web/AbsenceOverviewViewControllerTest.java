@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -57,7 +58,9 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -3968,8 +3971,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange))
-            .thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(dateRange)))
+            .thenReturn(Map.of(person, Map.of(dateRange, new WorkingTime(person, firstOfMonth, GERMANY_BADEN_WUERTTEMBERG, false))));
 
         when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(new PublicHoliday(december24, MORNING, "Heiligabend")));
@@ -4031,8 +4034,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange))
-            .thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(dateRange)))
+            .thenReturn(Map.of(person, Map.of(dateRange, new WorkingTime(person, firstOfMonth, GERMANY_BADEN_WUERTTEMBERG, false))));
 
         when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(new PublicHoliday(december24, NOON, "Heiligabend")));
@@ -5123,8 +5126,10 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate start = LocalDate.of(2022, JANUARY, 1);
         final LocalDate end = LocalDate.of(2022, JANUARY, 31);
         final DateRange dateRange = new DateRange(start, end);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(personWithCustomPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(personDefaultPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, GERMANY_RHEINLAND_PFALZ));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(dateRange))).thenReturn(Map.of(
+            personWithCustomPublicHolidays, Map.of(dateRange, new WorkingTime(personWithCustomPublicHolidays, start, GERMANY_BADEN_WUERTTEMBERG, false)),
+            personDefaultPublicHolidays, Map.of(dateRange, new WorkingTime(personDefaultPublicHolidays, start, GERMANY_RHEINLAND_PFALZ, false))
+        ));
 
         when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
         when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_RHEINLAND_PFALZ)).thenReturn(emptyList());

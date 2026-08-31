@@ -34,6 +34,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -370,6 +371,87 @@ class WorkingTimeServiceImplTest {
                 entry(new DateRange(LocalDate.of(2021, NOVEMBER, 1), LocalDate.of(2021, NOVEMBER, 14)), GERMANY_BADEN_WUERTTEMBERG),
                 entry(new DateRange(LocalDate.of(2021, NOVEMBER, 15), LocalDate.of(2021, NOVEMBER, 30)), GERMANY_RHEINLAND_PFALZ)
             );
+    }
+
+    @Test
+    void getWorkingTimesByPersonsAndDateRangeLoadsWorkingTimesOfAllPersonsWithASingleQuery() {
+
+        final Person marlene = new Person();
+        marlene.setId(1L);
+        final Person peter = new Person();
+        peter.setId(2L);
+
+        final WorkingTimeEntity marleneWorkingTime = new WorkingTimeEntity();
+        marleneWorkingTime.setId(1L);
+        marleneWorkingTime.setPerson(marlene);
+        marleneWorkingTime.setValidFrom(LocalDate.of(2020, JANUARY, 1));
+        marleneWorkingTime.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity peterWorkingTime = new WorkingTimeEntity();
+        peterWorkingTime.setId(2L);
+        peterWorkingTime.setPerson(peter);
+        peterWorkingTime.setValidFrom(LocalDate.of(2020, JANUARY, 1));
+        peterWorkingTime.setFederalStateOverride(GERMANY_BAYERN);
+
+        when(workingTimeRepository.findByPersonIn(List.of(marlene, peter)))
+            .thenReturn(List.of(marleneWorkingTime, peterWorkingTime));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, JANUARY, 31));
+        final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = sut.getWorkingTimesByPersonsAndDateRange(List.of(marlene, peter), dateRange);
+
+        assertThat(workingTimesByPerson).containsOnlyKeys(marlene, peter);
+        assertThat(workingTimesByPerson.get(marlene)).containsOnlyKeys(dateRange);
+        assertThat(workingTimesByPerson.get(marlene).get(dateRange).getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(workingTimesByPerson.get(peter)).containsOnlyKeys(dateRange);
+        assertThat(workingTimesByPerson.get(peter).get(dateRange).getFederalState()).isEqualTo(GERMANY_BAYERN);
+
+        // batched: a single query for all persons instead of one query per person
+        verify(workingTimeRepository).findByPersonIn(List.of(marlene, peter));
+        verify(workingTimeRepository, never()).findByPersonOrderByValidFromDesc(any());
+    }
+
+    @Test
+    void getWorkingTimesByPersonsAndDateRangeSplitsTheDateRangeOnEveryWorkingTimeOfAPerson() {
+
+        final Person marlene = new Person();
+        marlene.setId(1L);
+
+        final WorkingTimeEntity older = new WorkingTimeEntity();
+        older.setId(1L);
+        older.setPerson(marlene);
+        older.setValidFrom(LocalDate.of(2020, JANUARY, 1));
+        older.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity newer = new WorkingTimeEntity();
+        newer.setId(2L);
+        newer.setPerson(marlene);
+        newer.setValidFrom(LocalDate.of(2022, JANUARY, 15));
+        newer.setFederalStateOverride(GERMANY_BAYERN);
+
+        when(workingTimeRepository.findByPersonIn(List.of(marlene))).thenReturn(List.of(older, newer));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, JANUARY, 31));
+        final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = sut.getWorkingTimesByPersonsAndDateRange(List.of(marlene), dateRange);
+
+        final DateRange olderDateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, JANUARY, 14));
+        final DateRange newerDateRange = new DateRange(LocalDate.of(2022, JANUARY, 15), LocalDate.of(2022, JANUARY, 31));
+        assertThat(workingTimesByPerson.get(marlene)).containsOnlyKeys(olderDateRange, newerDateRange);
+        assertThat(workingTimesByPerson.get(marlene).get(olderDateRange).getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(workingTimesByPerson.get(marlene).get(newerDateRange).getFederalState()).isEqualTo(GERMANY_BAYERN);
+    }
+
+    @Test
+    void getWorkingTimesByPersonsAndDateRangeMapsPersonsWithoutWorkingTimesToAnEmptyMap() {
+
+        final Person marlene = new Person();
+        marlene.setId(1L);
+
+        when(workingTimeRepository.findByPersonIn(List.of(marlene))).thenReturn(List.of());
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, JANUARY, 31));
+        final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = sut.getWorkingTimesByPersonsAndDateRange(List.of(marlene), dateRange);
+
+        assertThat(workingTimesByPerson).containsExactly(entry(marlene, Map.of()));
     }
 
     @Test

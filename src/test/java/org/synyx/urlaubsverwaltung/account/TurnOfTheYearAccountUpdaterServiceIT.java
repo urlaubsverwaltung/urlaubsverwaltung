@@ -24,7 +24,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.TWO;
@@ -67,10 +66,8 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
         when(personService.getActivePersons()).thenReturn(List.of(person, person2));
 
         final Account account1 = createHolidaysAccount(person, 2021);
-        when(accountService.getHolidaysAccount(2021, person)).thenReturn(Optional.of(account1));
-
         final Account account2 = createHolidaysAccount(person2, 2021);
-        when(accountService.getHolidaysAccount(2021, person2)).thenReturn(Optional.of(account2));
+        when(accountService.getHolidaysAccount(2021, List.of(person, person2))).thenReturn(List.of(account1, account2));
 
         final Account newAccount1 = createHolidaysAccount(person, 2022);
         newAccount1.setRemainingVacationDays(TEN);

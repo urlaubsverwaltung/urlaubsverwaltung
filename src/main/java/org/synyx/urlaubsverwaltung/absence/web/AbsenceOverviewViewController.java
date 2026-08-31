@@ -212,7 +212,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                                                                         Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
 
         final LocalDate today = LocalDate.now(clock);
-        final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
         final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.startDate(), dateRange.endDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
@@ -222,9 +221,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
+        // load the working times of all persons with a single query instead of one query per person
+        final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(personList, dateRange);
+
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
-            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));
+            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
         for (LocalDate date : dateRange) {
@@ -247,11 +249,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
                 final Person person = personByView.get(personView);
 
-                final List<WorkingTime> personWorkingTimeList = workingTimeList
-                    .stream()
-                    .filter(workingTime -> workingTime.getPerson().equals(person))
-                    .sorted(comparing(WorkingTime::getValidFrom).reversed())
-                    .toList();
+                final Map<DateRange, WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(person, Map.of());
 
                 final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
                     .stream()
@@ -264,26 +262,25 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor))
                     .build();
 
-                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimeList)));
+                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes)));
             }
         }
 
         return new ArrayList<>(monthsByNr.values());
     }
 
-    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
-        return workingTimeList
-            .stream()
-            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
+    private boolean isWorkday(LocalDate date, Map<DateRange, WorkingTime> workingTimesByDateRange) {
+        return workingTimesByDateRange.entrySet().stream()
+            .filter(entry -> entry.getKey().isOverlapping(new DateRange(date, date)))
             .findFirst()
-            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
+            .map(entry -> entry.getValue().isWorkingDay(date.getDayOfWeek()))
             .orElse(false);
     }
 
-    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
-        return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange) {
+        return workingTimesByDateRange
             .entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
             .flatMap(List::stream)
             .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 

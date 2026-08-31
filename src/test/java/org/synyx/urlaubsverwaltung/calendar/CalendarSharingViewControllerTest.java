@@ -329,8 +329,10 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337L, 1L)).thenReturn(Optional.of(anyDepartmentCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(42L, 1L)).thenReturn(Optional.empty());
+        final DepartmentCalendar barfuslaeuferCalendar = anyDepartmentCalendar();
+        barfuslaeuferCalendar.setDepartmentId(1337L);
+        barfuslaeuferCalendar.setPerson(person);
+        when(departmentCalendarService.getCalendarsForPerson(1L)).thenReturn(List.of(barfuslaeuferCalendar));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))

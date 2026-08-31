@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -58,10 +60,14 @@ public class TurnOfTheYearAccountUpdaterService {
         final int year = Year.now(clock).getValue();
         final List<Person> activePersons = personService.getActivePersons();
 
+        // load all last year's accounts with a single query instead of one query per person
+        final Map<Person, Account> lastYearAccountByPerson = accountService.getHolidaysAccount(year - 1, activePersons).stream()
+            .collect(toMap(Account::getPerson, identity(), (first, second) -> first));
+
         // get all their accounts and calculate the remaining vacation days for the new year
         final List<Account> updatedAccounts = new ArrayList<>();
         for (Person person : activePersons) {
-            final Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
+            final Optional<Account> accountLastYear = Optional.ofNullable(lastYearAccountByPerson.get(person));
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
                 LOG.info("Updating account of person with id {}", person.getId());
                 final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear.get());

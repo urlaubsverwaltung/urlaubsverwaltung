@@ -15,13 +15,11 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,9 +67,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         account3.setId(3L);
 
         when(personService.getActivePersons()).thenReturn(asList(user1, user2, user3));
-        when(accountService.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
-        when(accountService.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
-        when(accountService.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
+        when(accountService.getHolidaysAccount(LAST_YEAR, asList(user1, user2, user3)))
+            .thenReturn(asList(account1, account2, account3));
 
         final Account newAccount = mock(Account.class);
         when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
@@ -85,11 +82,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         verify(personService).getActivePersons();
 
-        verify(accountService, times(3))
-            .getHolidaysAccount(anyInt(), any(Person.class));
-        verify(accountService).getHolidaysAccount(LAST_YEAR, user1);
-        verify(accountService).getHolidaysAccount(LAST_YEAR, user2);
-        verify(accountService).getHolidaysAccount(LAST_YEAR, user3);
+        // all last year's accounts are loaded with a single query instead of one query per person
+        verify(accountService).getHolidaysAccount(LAST_YEAR, asList(user1, user2, user3));
 
         verify(accountInteractionService, times(3))
             .autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
