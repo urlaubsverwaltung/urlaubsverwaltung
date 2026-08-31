@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.web.SafeRedirectUrl;
 import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -49,6 +51,8 @@ import java.util.SortedMap;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
@@ -143,7 +147,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         @PathVariable("applicationId") Long applicationId,
         @RequestParam(value = "year", required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
-        @RequestParam(value = "shortcut", required = false, defaultValue = "false") boolean shortcut,
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
         Model model, Locale locale
     ) throws UnknownApplicationForLeaveException {
 
@@ -159,7 +163,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         }
 
         final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
-        prepareDetailView(application, year, action, shortcut, model, locale, signedInUser);
+        prepareDetailView(application, year, action, redirectUrl, model, locale, signedInUser);
 
         return "application/application-detail";
     }
@@ -196,7 +200,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-            return REDIRECT_WEB_APPLICATION + applicationId + "?action=allow";
+            return redirectToActionOf(applicationId, "allow", redirectUrl);
         }
 
         final Application allowedApplicationForLeave;
@@ -213,11 +217,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
             redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
         }
 
-        if ("/web/application".equals(redirectUrl)) {
-            return "redirect:" + redirectUrl;
-        }
-
-        return REDIRECT_WEB_APPLICATION + applicationId;
+        return redirectToApplicationDetailOr(redirectUrl, applicationId);
     }
 
     /*
@@ -285,21 +285,13 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
 
-            if (redirectUrl != null) {
-                return REDIRECT_WEB_APPLICATION + applicationId + "?action=reject&shortcut=true";
-            }
-
-            return REDIRECT_WEB_APPLICATION + applicationId + "?action=reject";
+            return redirectToActionOf(applicationId, "reject", redirectUrl);
         }
 
         applicationInteractionService.reject(application, signedInUser, Optional.ofNullable(comment.getText()));
         redirectAttributes.addFlashAttribute("rejectSuccess", true);
 
-        if ("/web/application".equals(redirectUrl)) {
-            return "redirect:" + redirectUrl;
-        }
-
-        return REDIRECT_WEB_APPLICATION + applicationId;
+        return redirectToApplicationDetailOr(redirectUrl, applicationId);
     }
 
     /*
@@ -458,7 +450,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         return "redirect:/web/application/" + application.getId();
     }
 
-    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Locale locale, Person signedInUser) {
+    private void prepareDetailView(Application application, int year, String action, @Nullable String redirectUrl, Model model, Locale locale, Person signedInUser) {
 
         // signed in user
         model.addAttribute("signedInUser", signedInUser);
@@ -545,7 +537,40 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         model.addAttribute("selectedYear", year);
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("action", requireNonNullElse(action, ""));
-        model.addAttribute("shortcut", shortcut);
+        model.addAttribute("redirect", SafeRedirectUrl.ofKnownOrigin(redirectUrl).orElse(null));
+    }
+
+    /**
+     * Redirects to the page the action was started from, falling back to the detail page of the application when no
+     * such page was handed over - or when it is not a page an action can be started from, see {@link SafeRedirectUrl}.
+     *
+     * @param redirectUrl   page the action was started from, may be {@code null}
+     * @param applicationId application to fall back to
+     * @return the view name to redirect to
+     */
+    private static String redirectToApplicationDetailOr(@Nullable String redirectUrl, Long applicationId) {
+        return SafeRedirectUrl.ofKnownOrigin(redirectUrl)
+            .map("redirect:"::concat)
+            .orElse(REDIRECT_WEB_APPLICATION + applicationId);
+    }
+
+    /**
+     * Redirects back to the action of the detail page, keeping the page the action was started from so that a second
+     * attempt still returns there.
+     *
+     * @param applicationId application the action belongs to
+     * @param action        action to reopen on the detail page
+     * @param redirectUrl   page the action was started from, may be {@code null}
+     * @return the view name to redirect to
+     */
+    private static String redirectToActionOf(Long applicationId, String action, @Nullable String redirectUrl) {
+        final String origin = safeRedirectUrlOrEmpty(redirectUrl);
+        return REDIRECT_WEB_APPLICATION + applicationId + "?action=" + action
+            + (origin.isEmpty() ? "" : "&redirect=" + encode(origin, UTF_8));
+    }
+
+    private static String safeRedirectUrlOrEmpty(@Nullable String redirectUrl) {
+        return SafeRedirectUrl.ofKnownOrigin(redirectUrl).orElse("");
     }
 
     private List<Person> getPossibleManagersToRefer(Person personOfInterest, Person signedInUser, Application application) {

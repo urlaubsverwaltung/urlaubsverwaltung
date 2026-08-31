@@ -12,6 +12,8 @@ import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -1817,6 +1819,27 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/sicknote/submitted"))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/application"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "/web/application,             /web/application",
+        "/web/application/replacement, /web/application/replacement",
+        "/web/sicknote/submitted,      /web/sicknote/submitted"
+    })
+    void ensureEachTabHandsItselfOverAsThePageAnActionReturnsTo(String url, String expectedOriginPath) throws Exception {
+
+        // every tab has to be reachable, the submitted sick notes need the feature and the permission for that
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get(url))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("originPath", expectedOriginPath));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -580,6 +582,34 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .andExpect(redirectedUrl("/web/application"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/replacement", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void allowApplicationRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/allow")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl(redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void allowApplicationIgnoresARedirectThatIsNotAnOriginOfTheAction(String redirect) throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/allow")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/57"));
+    }
+
     @Test
     void allowApplicationRedirectsNotToRedirectUrlIfNotChecked() throws Exception {
 
@@ -923,6 +953,32 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .param("redirect", "/web/application"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/replacement", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void rejectApplicationRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/reject")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl(redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void rejectApplicationIgnoresARedirectThatIsNotAnOriginOfTheAction(String redirect) throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/reject")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/57"));
     }
 
     @Test

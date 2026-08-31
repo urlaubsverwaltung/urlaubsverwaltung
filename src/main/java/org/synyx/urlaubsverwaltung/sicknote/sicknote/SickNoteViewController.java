@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.web.SafeRedirectUrl;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -53,6 +55,8 @@ import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNullElse;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -154,7 +158,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     public String sickNoteDetails(
         @PathVariable("id") Long id,
         @RequestParam(value = "action", required = false) String action,
-        @RequestParam(value = "shortcut", required = false) boolean shortcut,
         @RequestParam(value = "redirect", required = false) String redirect,
         Model model
     ) throws UnknownSickNoteException {
@@ -199,7 +202,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
             model.addAttribute("action", requireNonNullElse(action, ""));
-            model.addAttribute("shortcut", shortcut);
             model.addAttribute("redirect", redirect);
 
             return "sicknote/sick_note_detail";
@@ -414,7 +416,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         sickNoteCommentFormValidator.validate(comment, errors);
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", errors);
-            return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
+            return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(encode(safeRedirectUrlOrEmpty(redirectUrl), UTF_8));
         }
 
         final SickNote acceptedSickNote = sickNoteInteractionService.accept(sickNote, signedInUser, comment.getText());
@@ -516,7 +518,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         sickNoteCommentFormValidator.validate(comment, errors);
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", errors);
-            return "redirect:/web/sicknote/" + id + "?action=cancel&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
+            return "redirect:/web/sicknote/" + id + "?action=cancel&redirect=%s".formatted(encode(safeRedirectUrlOrEmpty(redirectUrl), UTF_8));
         }
 
         final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser, comment.getText());
@@ -525,18 +527,25 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);
         }
 
-        if ("/web/sicknote/submitted".equals(redirectUrl)) {
-            return "redirect:" + redirectUrl;
-        }
-
-        return "redirect:/web/sicknote/" + cancelledSickNote.getId();
+        return redirectToSickNoteDetailOr(redirectUrl, cancelledSickNote.getId());
     }
 
-    private String redirectToSickNoteDetailOr(String redirectUrl, Long sickNoteId) {
-        if ("/web/sicknote/submitted".equals(redirectUrl)) {
-            return "redirect:" + redirectUrl;
-        }
-        return "redirect:/web/sicknote/" + sickNoteId;
+    /**
+     * Redirects to the page the action was started from, falling back to the detail page of the sick note when no
+     * such page was handed over - or when it would leave this application, see {@link SafeRedirectUrl}.
+     *
+     * @param redirectUrl page the action was started from, may be {@code null}
+     * @param sickNoteId  sick note to fall back to
+     * @return the view name to redirect to
+     */
+    private String redirectToSickNoteDetailOr(@Nullable String redirectUrl, Long sickNoteId) {
+        return SafeRedirectUrl.ofKnownOrigin(redirectUrl)
+            .map("redirect:"::concat)
+            .orElse("redirect:/web/sicknote/" + sickNoteId);
+    }
+
+    private static String safeRedirectUrlOrEmpty(@Nullable String redirectUrl) {
+        return SafeRedirectUrl.ofKnownOrigin(redirectUrl).orElse("");
     }
 
     private List<Person> getManagedPersons(Person signedInUser) {

@@ -1423,6 +1423,68 @@ class SickNoteViewControllerTest {
             .andExpect(redirectedUrl("/web/sicknote/42"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/sicknote/submitted", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void ensureAcceptSickNoteRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(new Person()).status(SUBMITTED).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(sickNoteInteractionService.accept(sickNote, signedInPerson, null))
+            .thenReturn(SickNote.builder().id(15L).person(new Person()).status(ACTIVE).build());
+
+        perform(post("/web/sicknote/15/accept").param("redirect", redirect))
+            .andExpect(view().name("redirect:" + redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void ensureCancelSickNoteRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        perform(post("/web/sicknote/15/cancel").param("redirect", redirect))
+            .andExpect(view().name("redirect:" + redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/\\evil.example.org", "web/application", "/web/hijacked/"})
+    void ensureCancelSickNoteIgnoresARedirectLeavingTheApplication(String redirect) throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        perform(post("/web/sicknote/15/cancel").param("redirect", redirect))
+            .andExpect(view().name("redirect:/web/sicknote/1"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void ensureAcceptSickNoteIgnoresARedirectLeavingTheApplication(String redirect) throws Exception {
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(new Person()).status(SUBMITTED).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(sickNoteInteractionService.accept(sickNote, signedInPerson, null))
+            .thenReturn(SickNote.builder().id(15L).person(new Person()).status(ACTIVE).build());
+
+        perform(post("/web/sicknote/15/accept").param("redirect", redirect))
+            .andExpect(view().name("redirect:/web/sicknote/15"));
+    }
+
     @Test
     void acceptSubmittedSickNote() throws Exception {
 

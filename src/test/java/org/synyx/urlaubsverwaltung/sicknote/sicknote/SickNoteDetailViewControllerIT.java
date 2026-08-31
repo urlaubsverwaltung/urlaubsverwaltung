@@ -107,30 +107,32 @@ class SickNoteDetailViewControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void allowFormActionRedirectsToSubmittedWithoutContextPathInTheQueryParameter() throws Exception {
+    void allowFormActionCarriesTheOriginWithoutContextPathInTheQueryParameter() throws Exception {
 
         mockMvc.perform(get("/ctx/web/sicknote/42").contextPath("/ctx")
                 .param("action", "allow")
-                .param("shortcut", "true")
+                .param("redirect", "/web/application")
                 .locale(Locale.GERMAN)
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(
-                "action=\"/ctx/web/sicknote/42/accept?redirect=/web/sicknote/submitted\"")));
+                "action=\"/ctx/web/sicknote/42/accept?redirect=/web/application\"")));
     }
 
     @Test
-    void shortcutIsReadAsBooleanAndNotComparedToTheLiteralTrue() throws Exception {
+    void anyPathOfThisApplicationIsHandedOnAsTheRedirectOfTheActionForms() throws Exception {
 
-        // the controller binds shortcut as boolean, so Spring accepts on/yes/1 as well
+        // the page the action was started from decides where to return to, not a hardcoded target
         mockMvc.perform(get("/ctx/web/sicknote/42").contextPath("/ctx")
                 .param("action", "allow")
-                .param("shortcut", "1")
+                .param("redirect", "/web/persons/5/sicknotes")
                 .locale(Locale.GERMAN)
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(
-                "action=\"/ctx/web/sicknote/42/accept?redirect=/web/sicknote/submitted\"")));
+                "action=\"/ctx/web/sicknote/42/accept?redirect=/web/persons/5/sicknotes\"")))
+            .andExpect(content().string(containsString(
+                "action=\"/ctx/web/sicknote/42/cancel?redirect=/web/persons/5/sicknotes\"")));
     }
 
     @Test
@@ -145,16 +147,16 @@ class SickNoteDetailViewControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void cancelFormActionRedirectsToSubmittedWithoutContextPathInTheQueryParameter() throws Exception {
+    void cancelFormActionCarriesTheOriginWithoutContextPathInTheQueryParameter() throws Exception {
 
         mockMvc.perform(get("/ctx/web/sicknote/42").contextPath("/ctx")
                 .param("action", "cancel")
-                .param("shortcut", "true")
+                .param("redirect", "/web/application")
                 .locale(Locale.GERMAN)
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(
-                "action=\"/ctx/web/sicknote/42/cancel?redirect=/web/sicknote/submitted\"")));
+                "action=\"/ctx/web/sicknote/42/cancel?redirect=/web/application\"")));
     }
 
     @Test
@@ -162,14 +164,14 @@ class SickNoteDetailViewControllerIT extends SingleTenantTestContainersBase {
 
         mockMvc.perform(get("/web/sicknote/42")
                 .param("action", "allow")
-                .param("shortcut", "true")
+                .param("redirect", "/web/application")
                 .locale(Locale.GERMAN)
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(
-                "action=\"/web/sicknote/42/accept?redirect=/web/sicknote/submitted\"")))
+                "action=\"/web/sicknote/42/accept?redirect=/web/application\"")))
             .andExpect(content().string(containsString(
-                "action=\"/web/sicknote/42/cancel?redirect=/web/sicknote/submitted\"")));
+                "action=\"/web/sicknote/42/cancel?redirect=/web/application\"")));
     }
 
     private static OidcLoginRequestPostProcessor oidcSubject(Person person, List<Role> roles) {
