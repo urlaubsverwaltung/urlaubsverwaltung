@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.verify;
@@ -148,7 +148,7 @@ class CalendarSharingViewControllerTest {
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
-            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", containsString("/web/company/persons/1/calendar?secret="))))
+            .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", is("http://localhost/web/company/persons/1/calendar?secret=s3cr3t"))))
             .andExpect(status().isOk());
     }
 
@@ -337,7 +337,7 @@ class CalendarSharingViewControllerTest {
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
-            .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", containsString("web/departments/1337/persons/1/calendar?secret=")))))
+            .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", is("http://localhost/web/departments/1337/persons/1/calendar?secret=s3cr3t")))))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", nullValue()))))
             .andExpect(status().isOk());
     }
@@ -503,7 +503,7 @@ class CalendarSharingViewControllerTest {
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
-            .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", containsString("/web/persons/1/calendar?secret="))))
+            .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", is("http://localhost/web/persons/1/calendar?secret=s3cr3t"))))
             .andExpect(status().isOk());
     }
 
@@ -646,28 +646,99 @@ class CalendarSharingViewControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void personCalendarUrlIsAbsoluteWithSecretAsQueryParameter() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(personCalendarService.getPersonCalendar(1L))
+            .thenReturn(Optional.of(new PersonCalendar(person, Period.parse("P1Y"), "s3cr3t")));
+
+        perform(get("/web/calendars/share/persons/1"))
+            .andExpect(model().attribute("privateCalendarShare",
+                hasProperty("calendarUrl", is("http://localhost/web/persons/1/calendar?secret=s3cr3t"))))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void personCalendarUrlKeepsContextPath() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(personCalendarService.getPersonCalendar(1L))
+            .thenReturn(Optional.of(new PersonCalendar(person, Period.parse("P1Y"), "s3cr3t")));
+
+        perform(get("/ctx/web/calendars/share/persons/1").contextPath("/ctx"))
+            .andExpect(model().attribute("privateCalendarShare",
+                hasProperty("calendarUrl", is("http://localhost/ctx/web/persons/1/calendar?secret=s3cr3t"))))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void departmentCalendarUrlKeepsContextPath() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Department barfuslaeufer = createDepartment("barfußläufer");
+        barfuslaeufer.setId(1337L);
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(barfuslaeufer));
+        when(departmentCalendarService.getCalendarsForPerson(1L))
+            .thenReturn(List.of(new DepartmentCalendar(1337L, person, Period.parse("P1Y"), "s3cr3t")));
+
+        perform(get("/ctx/web/calendars/share/persons/1/departments/1337").contextPath("/ctx"))
+            .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl",
+                is("http://localhost/ctx/web/departments/1337/persons/1/calendar?secret=s3cr3t")))))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void companyCalendarUrlKeepsContextPath() throws Exception {
+
+        final Person bossPerson = new Person("boss", "Boss", "Bruce", "boss@example.org");
+        bossPerson.setId(2L);
+        bossPerson.setPermissions(List.of(USER, BOSS));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        when(personService.getSignedInUser()).thenReturn(bossPerson);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(companyCalendarService.getCompanyCalendar(1))
+            .thenReturn(Optional.of(new CompanyCalendar(person, Period.parse("P1Y"), "s3cr3t")));
+
+        perform(get("/ctx/web/calendars/share/persons/1").contextPath("/ctx"))
+            .andExpect(model().attribute("companyCalendarShare",
+                hasProperty("calendarUrl", is("http://localhost/ctx/web/company/persons/1/calendar?secret=s3cr3t"))))
+            .andExpect(status().isOk());
+    }
+
     private PersonCalendar anyPersonCalendar() {
 
-        final PersonCalendar personCalendar = new PersonCalendar();
-        personCalendar.setCalendarPeriod(Period.parse("P1Y"));
-
-        return personCalendar;
+        return new PersonCalendar(null, Period.parse("P1Y"), "s3cr3t");
     }
 
     private DepartmentCalendar anyDepartmentCalendar() {
 
-        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
-        departmentCalendar.setCalendarPeriod(Period.parse("P1Y"));
-
-        return departmentCalendar;
+        return new DepartmentCalendar(null, null, Period.parse("P1Y"), "s3cr3t");
     }
 
     private CompanyCalendar anyCompanyCalendar() {
 
-        final CompanyCalendar companyCalendar = new CompanyCalendar();
-        companyCalendar.setCalendarPeriod(Period.parse("P1Y"));
-
-        return companyCalendar;
+        return new CompanyCalendar(null, Period.parse("P1Y"), "s3cr3t");
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
