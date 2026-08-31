@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
@@ -114,20 +113,25 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     @GetMapping("/sicknote/submitted")
     public String showApplicationWithSickNoteSubmittedContent(Model model, Locale locale) {
+
+        // the tab is not rendered without this permission, so activating it would leave the page without any active
+        // tab at all - show the applications instead
+        if (!isAllowedToAccessSickNoteSubmissions(personService.getSignedInUser())) {
+            return "redirect:/web/application";
+        }
+
         prepareApplicationModels(model, locale, Tab.SICK_NOTE);
         return "application/application-overview";
     }
 
     private void prepareApplicationModels(Model model, Locale locale, Tab activeTab) {
 
-        final SickNoteSettings sickNoteSettings = settingsService.getSettings().getSickNoteSettings();
-
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
         model.addAttribute("canAccessCancellationRequests", isAllowedToAccessCancellationRequest(signedInUser));
         model.addAttribute("canAccessOtherApplications", isAllowedToAccessOtherApplications(signedInUser));
-        model.addAttribute("canAccessSickNoteSubmissions", sickNoteSettings.getUserIsAllowedToSubmitSickNotes() && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser));
+        model.addAttribute("canAccessSickNoteSubmissions", isAllowedToAccessSickNoteSubmissions(signedInUser));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
@@ -142,6 +146,18 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         prepareApplicationCancellationRequests(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
 
         model.addAttribute("activeContent", activeTab.name);
+    }
+
+    /**
+     * Whether the submitted sick notes tab is shown to the given user at all - the feature has to be enabled and the
+     * user needs the permission to work on submitted sick notes.
+     *
+     * @param signedInUser user asking for the tab
+     * @return {@code true} if the tab is shown, {@code false} otherwise
+     */
+    private boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
+        return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()
+            && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser);
     }
 
     private void prepareUserApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> memberOfSecondStageAuthority, Locale locale) {
