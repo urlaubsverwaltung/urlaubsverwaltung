@@ -303,6 +303,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
     public String cancelApplication(
         @PathVariable("applicationId") Long applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
         RedirectAttributes redirectAttributes
     ) throws UnknownApplicationForLeaveException {
 
@@ -333,7 +334,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         commentValidator.validate(comment, errors);
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-            return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
+            return redirectToActionOf(applicationId, "cancel", redirectUrl);
         }
 
         if (requiresApprovalToCancel) {
@@ -344,7 +345,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         redirectAttributes.addFlashAttribute("cancelSuccess", true);
 
-        return REDIRECT_WEB_APPLICATION + applicationId;
+        return redirectToApplicationDetailOr(redirectUrl, applicationId);
     }
 
     /*
@@ -354,6 +355,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
     public String declineCancellationRequestApplication(
         @PathVariable("applicationId") Long applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
         RedirectAttributes redirectAttributes
     ) throws UnknownApplicationForLeaveException {
 
@@ -376,11 +378,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         commentValidator.validate(comment, errors);
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-            return REDIRECT_WEB_APPLICATION + applicationId + "?action=decline-cancellation-request";
+            return redirectToActionOf(applicationId, "decline-cancellation-request", redirectUrl);
         }
 
         applicationInteractionService.declineCancellationRequest(application, signedInUser, Optional.ofNullable(comment.getText()));
-        return REDIRECT_WEB_APPLICATION + applicationId;
+
+        return redirectToApplicationDetailOr(redirectUrl, applicationId);
     }
 
     /*

@@ -28,6 +28,7 @@ public final class SafeRedirectUrl {
             "/web/application",
             "/web/application/replacement",
             "/web/sicknote/submitted",
+            "/web/persons/{personId}/applications",
             "/web/persons/{personId}/sicknotes",
             "/web/person/{personId}/overview"
         )

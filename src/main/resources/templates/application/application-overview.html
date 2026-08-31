@@ -207,7 +207,7 @@
                 </a>
                 <a
                   class="button flex-1 justify-center"
-                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel')}"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', redirect=${originPath})}"
                   th:if="${userRequestForLeave.cancelAllowed}"
                 >
                   <svg
@@ -479,7 +479,7 @@
                       </a>
                       <a
                         class="button flex-1 justify-center"
-                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel')}"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', redirect=${originPath})}"
                         th:if="${otherRequestForLeave.cancelAllowed}"
                       >
                         <svg
@@ -698,7 +698,7 @@
                     <a
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel')}"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/trash-2::svg(className='w-5 h-5 @5xl/main:w-4 @5xl/main:h-4 mr-1')}" />
                       <span class="sr-only @lg/main:not-sr-only">
@@ -708,7 +708,7 @@
                     <a
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request')}"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/slash::svg(className='w-5 h-5 @5xl/main:w-4 @5xl/main:h-4 mr-1')}" />
                       <span class="sr-only @lg/main:not-sr-only">

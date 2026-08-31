@@ -1142,6 +1142,34 @@ class ApplicationForLeaveDetailsViewControllerTest {
         verify(applicationInteractionService).directCancel(eq(application), eq(signedInPerson), any());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/persons/5/applications", "/web/person/5/overview"})
+    void cancelApplicationRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(waitingApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/cancel")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl(redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void cancelApplicationIgnoresARedirectThatIsNotAnOriginOfTheAction(String redirect) throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(waitingApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/cancel")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+    }
+
     @Test
     void cancelApplicationRedirectsToApplicationIfValidationFails() throws Exception {
 
@@ -1245,6 +1273,34 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=decline-cancellation-request"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/persons/5/applications", "/web/person/5/overview"})
+    void declineCancellationRequestRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl(redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void declineCancellationRequestIgnoresARedirectThatIsNotAnOriginOfTheAction(String redirect) throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request")
+            .param("redirect", redirect))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
     }
 
     @Test
