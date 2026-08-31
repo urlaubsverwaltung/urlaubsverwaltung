@@ -1802,6 +1802,23 @@ class ApplicationForLeaveViewControllerTest {
             .build();
     }
 
+    @Test
+    void ensureSubmittedSickNotesRedirectsToTheApplicationsWhenTheTabIsNotAccessible() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Settings settings = new Settings();
+        settings.getSickNoteSettings().setUserIsAllowedToSubmitSickNotes(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        perform(get("/web/sicknote/submitted"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/application"));
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
     }
