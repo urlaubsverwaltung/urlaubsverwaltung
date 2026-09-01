@@ -343,71 +343,71 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void showApplicationDetailSignedInUserIsDepartmentHeadOfPerson() throws Exception {
+    void showApplicationDetailDepartmentHeadOfPersonIsAllowedToAllowTemporarily() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
 
         final Locale locale = GERMAN;
         final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
         final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
             .category(HOLIDAY)
             .build();
 
-        final Person person = new Person();
-        person.setId(1L);
-
         final Application application = applicationOfPerson(person, vacationType);
+        application.setTwoStageApproval(true);
 
         when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHead.setId(2L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(departmentHead);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(departmentHead), any(Person.class))).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        perform(
-            get("/web/application/" + APPLICATION_ID)
-                .locale(locale)
-        )
+        perform(get("/web/application/" + APPLICATION_ID).locale(locale))
             .andExpect(view().name("application/application-detail"))
-            .andExpect(model().attribute("isDepartmentHeadOfPerson", true));
+            .andExpect(model().attribute("isAllowedToAllowTemporarilyApplication", true));
     }
 
     @Test
-    void showApplicationDetailSignedInUserIsSecondStageAuthorityOfPerson() throws Exception {
+    void showApplicationDetailBossIsNotAllowedToAllowTemporarilyAlthoughDepartmentHeadOfPerson() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
 
         final Locale locale = GERMAN;
         final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
         final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
             .category(HOLIDAY)
             .build();
 
-        final Person person = new Person();
-        person.setId(1L);
-
         final Application application = applicationOfPerson(person, vacationType);
+        application.setTwoStageApproval(true);
 
         when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        final Person ssa = new Person("ssa", "ssa", "ssa", "ssa@example.org");
-        ssa.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(ssa);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(ssa), any(Person.class))).thenReturn(true);
+        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+        boss.setId(2L);
+        boss.setPermissions(List.of(USER, BOSS, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(boss);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(boss, person)).thenReturn(true);
 
-        perform(
-            get("/web/application/" + APPLICATION_ID)
-                .locale(locale)
-        )
+        perform(get("/web/application/" + APPLICATION_ID).locale(locale))
             .andExpect(view().name("application/application-detail"))
-            .andExpect(model().attribute("isSecondStageAuthorityOfPerson", true));
+            .andExpect(model().attribute("isAllowedToAllowTemporarilyApplication", false));
     }
 
     @Test

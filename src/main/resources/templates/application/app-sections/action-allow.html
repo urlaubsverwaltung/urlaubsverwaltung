@@ -24,7 +24,7 @@
 
       <button
         th:if="${isAllowedToAllowWaitingApplication}"
-        th:with="messageKey=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval ? 'action.temporary_allow' : 'action.allow'}"
+        th:with="messageKey=${isAllowedToAllowTemporarilyApplication ? 'action.temporary_allow' : 'action.allow'}"
         class="icon-link bg-transparent hover:text-emerald-500"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');
@@ -46,7 +46,7 @@
         class="alert alert-success"
         th:classappend="${action eq 'allow' ? '' : 'hidden'}"
         method="post"
-        th:with="temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
+        th:with="temporary=${isAllowedToAllowTemporarilyApplication}"
         th:action="@{/web/application/{applicationId}/allow(applicationId=${app.id}, redirect=${redirect})}"
         th:object="${comment}"
       >

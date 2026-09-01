@@ -483,11 +483,10 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         // Signed in person is allowed to manage
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
 
         model.addAttribute("isAllowedToAllowWaitingApplication", permissions.isAllowedToAllowWaiting());
         model.addAttribute("isAllowedToAllowTemporaryAllowedApplication", permissions.isAllowedToAllowTemporaryAllowed());
+        model.addAttribute("isAllowedToAllowTemporarilyApplication", permissions.isAllowedToAllowTemporarily());
 
         model.addAttribute("isAllowedToRejectApplication", permissions.isAllowedToReject());
 
@@ -509,8 +508,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         }
         model.addAttribute("isAllowedToCommentApplication", permissions.isAllowedToComment());
 
-        model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
-        model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
         model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
         model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 
