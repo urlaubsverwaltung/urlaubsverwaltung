@@ -196,7 +196,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept());
             model.addAttribute("canEditSickNote", permissions.isAllowedToEdit(sickNote));
             model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert());
-            model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel());
+            model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel(sickNote));
             model.addAttribute("canCommentSickNote", permissions.isAllowedToComment());
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
@@ -510,7 +510,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToCancel()) {
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToCancel(sickNote)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to cancel the sick note of user '%s'".formatted(signedInUser.getId(), sickNote.getPerson().getId()));
         }
 

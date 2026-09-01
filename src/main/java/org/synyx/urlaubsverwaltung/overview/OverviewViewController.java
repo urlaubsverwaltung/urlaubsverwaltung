@@ -344,7 +344,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 sickNote.getStatus(),
                 sickNote.getSickNoteType(),
                 permissions.isAllowedToEdit(sickNote),
-                permissions.isAllowedToCancel()
+                permissions.isAllowedToCancel(sickNote)
             )).toList();
     }
 

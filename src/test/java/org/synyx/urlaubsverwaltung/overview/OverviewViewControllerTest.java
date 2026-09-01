@@ -70,6 +70,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -1083,6 +1084,53 @@ class OverviewViewControllerTest {
             .isNotNull()
             .hasFieldOrPropertyWithValue("numberOfShownSickNotes", 2)
             .hasFieldOrPropertyWithValue("numberOfTotalSickNotes", 2);
+    }
+
+    @Test
+    void ensureSickNotesOverviewOffersNoActionsForSickNotesThatAreNotActive() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person office = new Person();
+        office.setId(1L);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(office));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, office)).thenReturn(true);
+        stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
+
+        final LocalDate localDate = LocalDate.parse("2021-06-10");
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+
+        final SickNote activeSickNote = SickNote.builder()
+            .startDate(localDate.minusDays(5))
+            .endDate(localDate.minusDays(4))
+            .status(SickNoteStatus.ACTIVE)
+            .sickNoteType(sickNoteType)
+            .person(office)
+            .build();
+
+        final SickNote cancelledSickNote = SickNote.builder()
+            .startDate(localDate.minusDays(3))
+            .endDate(localDate.minusDays(2))
+            .status(SickNoteStatus.CANCELLED)
+            .sickNoteType(sickNoteType)
+            .person(office)
+            .build();
+
+        when(sickNoteService.getByPersonAndPeriod(eq(office), any(), any())).thenReturn(List.of(activeSickNote, cancelledSickNote));
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2021"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final SickNotesOverviewDTO sickNotesOverview = (SickNotesOverviewDTO) mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview.sickNotes())
+            .extracting(SickNoteDto::status, SickNoteDto::allowedToEdit, SickNoteDto::allowedToCancel)
+            .containsExactlyInAnyOrder(
+                tuple(SickNoteStatus.ACTIVE, true, true),
+                tuple(SickNoteStatus.CANCELLED, false, false)
+            );
     }
 
     // APPLICATION OVERVIEW COUNT TESTS

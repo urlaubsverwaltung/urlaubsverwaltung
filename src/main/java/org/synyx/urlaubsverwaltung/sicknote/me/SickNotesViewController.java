@@ -162,7 +162,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
             sickNote.getStatus(),
             sickNote.getSickNoteType(),
             permissions.isAllowedToEdit(sickNote),
-            permissions.isAllowedToCancel()
+            permissions.isAllowedToCancel(sickNote)
         );
     }
 }

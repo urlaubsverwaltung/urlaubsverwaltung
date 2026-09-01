@@ -264,6 +264,19 @@ class SickNotePermissionEvaluatorTest {
             assertThat(permissions.isAllowedToEdit(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
             assertThat(permissions.isAllowedToAdd()).isTrue();
         }
+
+        @ParameterizedTest
+        @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+        void ensureNobodyMayEditInactiveSickNote(SickNoteStatus status) {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToEdit(sickNote(OTHER_PERSON_ID, status))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+        void ensurePersonMayNotEditOwnInactiveSickNote(SickNoteStatus status) {
+            final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(signedInUser, signedInUser).isAllowedToEdit(sickNote(SIGNED_IN_USER_ID, status))).isFalse();
+        }
     }
 
     @Nested
@@ -287,35 +300,46 @@ class SickNotePermissionEvaluatorTest {
 
         @Test
         void ensureOfficeMayCancel() {
-            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToCancel()).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isTrue();
         }
 
         @Test
         void ensureBossWithSickNoteCancelMayCancel() {
-            assertThat(permissionsOnUnmanagedPerson(BOSS, SICK_NOTE_CANCEL).isAllowedToCancel()).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(BOSS, SICK_NOTE_CANCEL).isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isTrue();
         }
 
         @Test
         void ensureDepartmentHeadWithSickNoteCancelMayCancelForManagedMember() {
-            assertThat(permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_CANCEL).isAllowedToCancel()).isTrue();
+            assertThat(permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_CANCEL).isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isTrue();
+        }
+
+        @Test
+        void ensureSubmittedSickNoteMayBeCancelled() {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToCancel(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
         void ensureDepartmentHeadWithSickNoteCancelMayNotCancelForPersonOutsideOfDepartment() {
-            assertThat(permissionsOnUnmanagedPerson(DEPARTMENT_HEAD, SICK_NOTE_CANCEL).isAllowedToCancel()).isFalse();
+            assertThat(permissionsOnUnmanagedPerson(DEPARTMENT_HEAD, SICK_NOTE_CANCEL).isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
         }
 
         @Test
         void ensureSickNoteEditDoesNotAllowToCancel() {
             final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT);
-            assertThat(permissions.isAllowedToCancel()).isFalse();
+            assertThat(permissions.isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
             assertThat(permissions.isAllowedToAccept()).isTrue();
         }
 
         @Test
         void ensurePersonMayNotCancelOwnSickNote() {
             final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.of(signedInUser, signedInUser).isAllowedToCancel()).isFalse();
+            assertThat(sut.of(signedInUser, signedInUser).isAllowedToCancel(sickNote(SIGNED_IN_USER_ID, ACTIVE))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+        void ensureNobodyMayCancelInactiveSickNote(SickNoteStatus status) {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToCancel(sickNote(OTHER_PERSON_ID, status))).isFalse();
         }
     }
 
@@ -427,7 +451,7 @@ class SickNotePermissionEvaluatorTest {
             final SickNotePermissions permissions = sut.of(signedInUser, sickNotePerson);
             permissions.isAllowedToView();
             permissions.isAllowedToAccept();
-            permissions.isAllowedToCancel();
+            permissions.isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE));
             permissions.isAllowedToComment();
 
             verify(departmentService).isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson);

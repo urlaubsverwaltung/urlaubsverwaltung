@@ -82,12 +82,15 @@ public final class SickNotePermissions {
     }
 
     /**
+     * A sick note that is no longer active, i.e. cancelled or converted into an application for leave, cannot be
+     * edited by anyone.
+     *
      * @param sickNote sick note to be edited, has to belong to the person of these permissions
      * @return {@code true} if the user may edit the given sick note, {@code false} otherwise
      */
     public boolean isAllowedToEdit(SickNote sickNote) {
-        return isAllowedToMaintain(SICK_NOTE_EDIT)
-            || (isSamePerson() && sickNote.isSubmitted());
+        return sickNote.isActive()
+            && (isAllowedToMaintain(SICK_NOTE_EDIT) || (isSamePerson() && sickNote.isSubmitted()));
     }
 
     /**
@@ -99,10 +102,14 @@ public final class SickNotePermissions {
     }
 
     /**
-     * @return {@code true} if the user may cancel a sick note of the person, {@code false} otherwise
+     * A sick note that is no longer active, i.e. cancelled or converted into an application for leave, cannot be
+     * cancelled again.
+     *
+     * @param sickNote sick note to be cancelled, has to belong to the person of these permissions
+     * @return {@code true} if the user may cancel the given sick note, {@code false} otherwise
      */
-    public boolean isAllowedToCancel() {
-        return isAllowedToMaintain(SICK_NOTE_CANCEL);
+    public boolean isAllowedToCancel(SickNote sickNote) {
+        return sickNote.isActive() && isAllowedToMaintain(SICK_NOTE_CANCEL);
     }
 
     /**
