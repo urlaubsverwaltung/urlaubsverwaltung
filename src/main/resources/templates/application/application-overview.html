@@ -318,7 +318,7 @@
         </div>
       </div>
 
-      <th:block th:if="${canAccessOtherApplications || canAccessSickNoteSubmissions}">
+      <th:block th:if="${canAccessOtherAbsences}">
         <div
           th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{})}"
         >

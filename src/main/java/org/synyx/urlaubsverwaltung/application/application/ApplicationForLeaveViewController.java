@@ -133,9 +133,12 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
+        final boolean canAccessOtherApplications = isAllowedToAccessOtherApplications(signedInUser);
+        final boolean canAccessSickNoteSubmissions = isAllowedToAccessSickNoteSubmissions(signedInUser);
         model.addAttribute("canAccessCancellationRequests", isAllowedToAccessCancellationRequest(signedInUser));
-        model.addAttribute("canAccessOtherApplications", isAllowedToAccessOtherApplications(signedInUser));
-        model.addAttribute("canAccessSickNoteSubmissions", isAllowedToAccessSickNoteSubmissions(signedInUser));
+        model.addAttribute("canAccessOtherApplications", canAccessOtherApplications);
+        model.addAttribute("canAccessSickNoteSubmissions", canAccessSickNoteSubmissions);
+        model.addAttribute("canAccessOtherAbsences", canAccessOtherApplications || canAccessSickNoteSubmissions);
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
