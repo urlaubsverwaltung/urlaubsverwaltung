@@ -285,12 +285,12 @@
               <h2 th:text="#{sicknote.extend.submitted.extension-title}">Krankmeldung verlängern</h2>
             </div>
           </div>
-          <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
+          <th:block th:if="${canAcceptSickNoteExtension}">
             <p class="mt-4" th:text="#{sicknote.extend.submitted.wants-to-extend.hint(${sickNote.person.niceName})}">
               Max Muster möchte die Krankmeldung erweitern.
             </p>
           </th:block>
-          <th:block th:if="${#bools.isFalse(canAcceptSubmittedExtension)}">
+          <th:block th:unless="${canAcceptSickNoteExtension}">
             <p class="mt-4" th:text="#{sicknote.extend.submitted.has-to-be-accepted.hint}">
               Eine berechtigte Person muss die geänderte Krankmeldung akzeptieren.
             </p>
