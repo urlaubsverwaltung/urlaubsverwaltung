@@ -190,6 +190,41 @@ class ApplicationForLeavePermissionEvaluatorTest {
             assertThat(permissionsOnUnmanagedPerson(TEMPORARY_ALLOWED, BOSS).isAllowedToReject()).isTrue();
             assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS).isAllowedToReject()).isFalse();
         }
+
+        @Test
+        void ensureDepartmentHeadMayNotRejectApplicationOfOwnSecondStageAuthority() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
+            final Person secondStageAuthority = person(OTHER_PERSON_ID, SECOND_STAGE_AUTHORITY);
+
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(false);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(true);
+
+            final ApplicationForLeavePermissions permissions = sut.of(departmentHead, application(secondStageAuthority, WAITING));
+
+            // refusing is deciding just as granting is
+            assertThat(permissions.isAllowedToReject()).isFalse();
+            assertThat(permissions.isAllowedToAllowWaiting()).isFalse();
+
+            // but the application can still be handed on to somebody who decides about it, with a reason
+            assertThat(permissions.isAllowedToRefer()).isTrue();
+            assertThat(permissions.isAllowedToComment()).isTrue();
+        }
+
+        @Test
+        void ensureSecondStageAuthorityOfThePersonMayRejectEvenIfThatPersonIsTheirOwnApprover() {
+
+            final Person signedInUser = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+            final Person other = person(OTHER_PERSON_ID, SECOND_STAGE_AUTHORITY);
+
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, other)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, other)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(other, signedInUser)).thenReturn(true);
+
+            // the rule holds back a department head, not somebody who is a second stage authority themselves
+            assertThat(sut.of(signedInUser, application(other, WAITING)).isAllowedToReject()).isTrue();
+        }
     }
 
     @Nested

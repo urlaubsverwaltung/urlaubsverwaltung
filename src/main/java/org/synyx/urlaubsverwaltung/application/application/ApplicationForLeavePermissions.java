@@ -41,8 +41,8 @@ public final class ApplicationForLeavePermissions {
 
     /**
      * Whether the user may allow a waiting application. A boss decides about every application, including their own. A
-     * department head does not decide about the application of a person that is their own second stage authority,
-     * because that person decides about the department head. Depending on the department, a department head may allow it
+     * department head does not decide about the application of a person that is their own second stage authority, see
+     * {@link #isNotDecidingAboutTheirOwnApprover()}. Depending on the department, a department head may allow it
      * temporarily only, see {@link #isAllowedToAllowTemporarily()}.
      *
      * @return {@code true} if the user may allow the waiting application, {@code false} otherwise
@@ -51,7 +51,7 @@ public final class ApplicationForLeavePermissions {
         return application.hasStatus(WAITING)
             && (signedInUser.hasRole(BOSS)
             || (secondStageAuthorityOfPerson && isNotOwnApplication())
-            || (departmentHeadOfPerson && isNotOwnApplication() && !personIsSecondStageAuthorityOfSignedInUser));
+            || (departmentHeadOfPerson && isNotOwnApplication() && isNotDecidingAboutTheirOwnApprover()));
     }
 
     /**
@@ -79,14 +79,18 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
-     * Nobody rejects their own application, withdrawing it is revoking, see {@link #isAllowedToRevoke()}.
+     * Nobody rejects their own application, withdrawing it is revoking, see {@link #isAllowedToRevoke()}. Refusing an
+     * application is deciding about it just as granting it is, so a department head does not reject the application of
+     * their own second stage authority either, see {@link #isNotDecidingAboutTheirOwnApprover()}.
      *
      * @return {@code true} if the user may reject the application, {@code false} otherwise
      */
     public boolean isAllowedToReject() {
         return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
             && isNotOwnApplication()
-            && (signedInUser.hasRole(BOSS) || isManagerOfPerson());
+            && (signedInUser.hasRole(BOSS)
+            || secondStageAuthorityOfPerson
+            || (departmentHeadOfPerson && isNotDecidingAboutTheirOwnApprover()));
     }
 
     /**
@@ -183,6 +187,19 @@ public final class ApplicationForLeavePermissions {
     private boolean isAllowedToAdminister(Role role) {
         return signedInUser.hasRole(OFFICE)
             || ((signedInUser.hasRole(BOSS) || isManagerOfPerson()) && signedInUser.hasRole(role));
+    }
+
+    /**
+     * Whether the person of the application is <em>not</em> the second stage authority that decides about the
+     * applications of the signed in user. A department head neither grants nor refuses the leave of their own
+     * approver.
+     *
+     * <p>The rule stops at deciding. A department head may still refer the application to somebody who can decide
+     * about it and say why, see {@link #isAllowedToRefer()} and {@link #isAllowedToComment()} - taking those away
+     * would leave them without a way to hand the application on.
+     */
+    private boolean isNotDecidingAboutTheirOwnApprover() {
+        return !personIsSecondStageAuthorityOfSignedInUser;
     }
 
     private boolean isManagerOfPerson() {
