@@ -37,11 +37,7 @@
         </div>
 
         <div class="mb-4">
-          <label
-            th:with="commentMandatory=${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}"
-            th:text="|${commentMandatory == true ? #messages.msg('action.comment.mandatory') : #messages.msg('action.comment.optional')}:|"
-            for="text-decline-cancellation-request"
-          ></label>
+          <label th:text="|#{action.comment.mandatory}:|" for="text-decline-cancellation-request"></label>
           <textarea id="text-decline-cancellation-request" rows="2" name="text" th:errorclass="error"></textarea>
         </div>
 
