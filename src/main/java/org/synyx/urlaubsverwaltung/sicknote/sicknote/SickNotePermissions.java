@@ -10,6 +10,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 /**
  * Permissions of a user on sick notes of one certain person, see
@@ -94,11 +95,16 @@ public final class SickNotePermissions {
     }
 
     /**
-     * @return {@code true} if the user may convert a sick note of the person into an application for leave,
+     * Only a sick note with status {@link SickNoteStatus#ACTIVE} may be converted. A submitted one has to be accepted
+     * first, a cancelled or already converted one cannot be converted at all. Note that this is narrower than
+     * {@link SickNote#isActive()}, which also holds for a submitted sick note.
+     *
+     * @param sickNote sick note to be converted, has to belong to the person of these permissions
+     * @return {@code true} if the user may convert the given sick note into an application for leave,
      * {@code false} otherwise
      */
-    public boolean isAllowedToConvert() {
-        return signedInUser.hasRole(OFFICE);
+    public boolean isAllowedToConvert(SickNote sickNote) {
+        return ACTIVE.equals(sickNote.getStatus()) && signedInUser.hasRole(OFFICE);
     }
 
     /**

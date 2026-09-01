@@ -284,14 +284,20 @@ class SickNotePermissionEvaluatorTest {
 
         @Test
         void ensureOnlyOfficeMayConvert() {
-            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToConvert()).isTrue();
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToConvert(sickNote(OTHER_PERSON_ID, ACTIVE))).isTrue();
         }
 
         @ParameterizedTest
         @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerWithEveryTaskRoleMayNotConvert(Role role) {
             final Person signedInUser = person(SIGNED_IN_USER_ID, role, SICK_NOTE_VIEW, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT);
-            assertThat(sut.of(signedInUser, person(OTHER_PERSON_ID, USER)).isAllowedToConvert()).isFalse();
+            assertThat(sut.of(signedInUser, person(OTHER_PERSON_ID, USER)).isAllowedToConvert(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "CANCELLED", "CONVERTED_TO_VACATION"})
+        void ensureOnlyASickNoteWithStatusActiveMayBeConverted(SickNoteStatus status) {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToConvert(sickNote(OTHER_PERSON_ID, status))).isFalse();
         }
     }
 

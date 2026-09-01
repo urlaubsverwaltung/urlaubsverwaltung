@@ -195,7 +195,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
             model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept());
             model.addAttribute("canEditSickNote", permissions.isAllowedToEdit(sickNote));
-            model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert());
+            model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert(sickNote));
             model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel(sickNote));
             model.addAttribute("canCommentSickNote", permissions.isAllowedToComment());
 
@@ -460,7 +460,9 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
-        if (!sickNote.isActive()) {
+        final Person signedInUser = personService.getSignedInUser();
+
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToConvert(sickNote)) {
             return "redirect:/web/sicknote/" + id;
         }
 
@@ -480,6 +482,12 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     ) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
+        final Person signedInUser = personService.getSignedInUser();
+
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToConvert(sickNote)) {
+            throw new AccessDeniedException("User '%s' has not the correct permissions to convert the sick note of user '%s'".formatted(signedInUser.getId(), sickNote.getPerson().getId()));
+        }
+
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
         if (errors.hasErrors()) {
@@ -492,7 +500,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         final Application application = generateApplicationForLeave(sickNoteConvertForm);
-        sickNoteInteractionService.convert(sickNote, application, personService.getSignedInUser());
+        sickNoteInteractionService.convert(sickNote, application, signedInUser);
 
         return "redirect:/web/sicknote/" + id;
     }

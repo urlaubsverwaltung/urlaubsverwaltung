@@ -1196,6 +1196,22 @@ class SickNoteViewControllerTest {
     }
 
     @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureGetSickNoteDetailsCannotConvertSickNoteWithStatusOtherThanActive(SickNoteStatus status) throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(new Person()).status(status).build()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+
+        perform(get("/web/sicknote/15"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
+            .andExpect(model().attribute("canConvertSickNote", false));
+    }
+
+    @ParameterizedTest
     @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
     void ensureGetSickNoteDetailsOfInactiveSickNoteCanNeitherBeEditedNorCancelled(SickNoteStatus status) throws Exception {
 
@@ -1780,6 +1796,7 @@ class SickNoteViewControllerTest {
 
         when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         perform(post("/web/sicknote/15/convert").param("vacationType", "42"))
             .andExpect(status().isFound())
@@ -1833,13 +1850,29 @@ class SickNoteViewControllerTest {
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
-    @Test
-    void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureGetConvertSickNoteToVacationRedirectsToDetailsWhenStatusIsNotActive(SickNoteStatus status) throws Exception {
 
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(CANCELLED).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(status).build()));
 
         perform(get("/web/sicknote/15/convert"))
             .andExpect(view().name("redirect:/web/sicknote/15"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensurePostConvertSickNoteToVacationIsForbiddenWhenStatusIsNotActive(SickNoteStatus status) {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(status).build()));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/sicknote/15/convert").param("vacationType", "42"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(sickNoteInteractionService);
     }
 
     @Test
@@ -1847,6 +1880,7 @@ class SickNoteViewControllerTest {
 
         overtimeActive(false);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
@@ -1862,6 +1896,7 @@ class SickNoteViewControllerTest {
 
         overtimeActive(true);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
@@ -1878,6 +1913,7 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
 
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         perform(get("/web/sicknote/15/convert"))
             .andExpect(view().name("sicknote/sick_note_convert"));
@@ -1896,6 +1932,7 @@ class SickNoteViewControllerTest {
 
         overtimeActive(false);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
@@ -1919,6 +1956,7 @@ class SickNoteViewControllerTest {
 
         overtimeActive(true);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
@@ -1948,7 +1986,7 @@ class SickNoteViewControllerTest {
         when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
 
-        final Person signedInPerson = new Person();
+        final Person signedInPerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/sicknote/15/convert")
@@ -1969,7 +2007,7 @@ class SickNoteViewControllerTest {
         when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
 
-        final Person signedInPerson = new Person();
+        final Person signedInPerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/sicknote/15/convert")

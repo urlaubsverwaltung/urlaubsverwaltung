@@ -58,7 +58,7 @@
                   <span th:text="#{action.edit}" class="sr-only"></span>
                 </a>
               </th:block>
-              <th:block th:if="${canConvertSickNote && sickNote.status.name == 'ACTIVE'}">
+              <th:block th:if="${canConvertSickNote}">
                 <a
                   th:href="@{/web/sicknote/__${sickNote.id}__/convert}"
                   class="icon-link"
