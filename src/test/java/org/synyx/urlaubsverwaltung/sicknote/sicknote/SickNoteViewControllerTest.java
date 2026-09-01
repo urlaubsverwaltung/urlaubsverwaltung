@@ -90,6 +90,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 @ExtendWith(MockitoExtension.class)
@@ -818,7 +819,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(somePerson);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(somePerson).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(somePerson).status(ACTIVE).build()));
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
 
@@ -832,7 +833,7 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
             .endDate(LocalDate.of(2025, FEBRUARY, 20))
-            .person(new Person()).build()));
+            .person(new Person()).status(ACTIVE).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
@@ -864,7 +865,7 @@ class SickNoteViewControllerTest {
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
@@ -884,7 +885,7 @@ class SickNoteViewControllerTest {
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -905,7 +906,7 @@ class SickNoteViewControllerTest {
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -966,7 +967,7 @@ class SickNoteViewControllerTest {
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -984,7 +985,7 @@ class SickNoteViewControllerTest {
         person.setId(2L);
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -1115,7 +1116,7 @@ class SickNoteViewControllerTest {
         final Person person = new Person();
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
@@ -1152,7 +1153,7 @@ class SickNoteViewControllerTest {
         final Person person = new Person();
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
             .startDate(LocalDate.of(2025, FEBRUARY, 10))
-            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).build()));
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(person).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
@@ -1192,6 +1193,23 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/15"))
             .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute(can, true));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureGetSickNoteDetailsOfInactiveSickNoteCanNeitherBeEditedNorCancelled(SickNoteStatus status) throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20)).person(new Person()).status(status).build()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+
+        perform(get("/web/sicknote/15"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
+            .andExpect(model().attribute("canEditSickNote", false))
+            .andExpect(model().attribute("canDeleteSickNote", false));
     }
 
     @Test
@@ -2030,6 +2048,20 @@ class SickNoteViewControllerTest {
         assertThatThrownBy(() ->
             perform(post("/web/sicknote/15/cancel"))
         ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureInactiveSickNoteCannotBeCancelledAgain(SickNoteStatus status) {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().id(1L).person(new Person()).status(status).build()));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/sicknote/15/cancel"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(sickNoteInteractionService);
     }
 
     private void userIsAllowedToSubmitSickNotes(boolean allowed) {

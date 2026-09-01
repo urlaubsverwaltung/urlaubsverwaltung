@@ -10,6 +10,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +30,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -41,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
@@ -553,6 +557,45 @@ class SickNotesViewControllerTest {
             .andExpect(model().attribute("sickNotes", hasSize(1)))
             .andExpect(model().attribute("sickNotes",
                 hasItem(hasProperty("allowedToEdit", is(false)))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureSickNoteThatIsNotActiveOffersNoActionsToOfficeUser(SickNoteStatus status) throws Exception {
+        final Person person = new Person();
+        person.setId(36L);
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(37L);
+        signedInUser.setPermissions(List.of(Role.OFFICE));
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setId(1L);
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("key");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .startDate(LocalDate.of(2022, JANUARY, 2))
+            .endDate(LocalDate.of(2022, JANUARY, 4))
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType)
+            .status(status)
+            .build();
+
+        when(personService.getPersonByID(36L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "36")))
+            .andExpect(status().isOk())
+            .andExpect(view().name("me/sicknotes"))
+            .andExpect(model().attribute("sickNotes", hasSize(1)))
+            .andExpect(model().attribute("sickNotes",
+                hasItem(allOf(hasProperty("allowedToEdit", is(false)), hasProperty("allowedToCancel", is(false))))));
     }
 
     @Test
