@@ -407,6 +407,29 @@ class ApplicationForLeavePermissionEvaluatorTest {
     }
 
     @Nested
+    class CommentMandatoryToCancel {
+
+        @Test
+        void ensureNoCommentIsNeededToCancelAnOwnApplicationDirectly() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(person, application(person, ALLOWED)).isCommentMandatoryToCancel()).isFalse();
+        }
+
+        @Test
+        void ensureCommentIsNeededToRequestCancellationOfAnOwnApplication() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED)).isCommentMandatoryToCancel()).isTrue();
+        }
+
+        @Test
+        void ensureCommentIsNeededToCancelTheApplicationOfSomebodyElse() {
+            final Person office = person(SIGNED_IN_USER_ID, OFFICE);
+            final Application application = applicationRequiringApprovalToCancel(person(OTHER_PERSON_ID, USER), ALLOWED);
+            assertThat(sut.of(office, application).isCommentMandatoryToCancel()).isTrue();
+        }
+    }
+
+    @Nested
     class DeclineCancellationRequest {
 
         @Test

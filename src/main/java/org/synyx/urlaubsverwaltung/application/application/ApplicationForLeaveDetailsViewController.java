@@ -312,9 +312,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
                 "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
 
-        // comment is mandatory if cancel for another user or cancellation request of own
-        final boolean isCommentMandatory = allowedToStartCancellationRequest || !signedInUser.equals(application.getPerson());
-        comment.setMandatory(isCommentMandatory);
+        comment.setMandatory(permissions.isCommentMandatoryToCancel());
 
         commentValidator.validate(comment, errors);
         if (errors.hasErrors()) {
@@ -493,6 +491,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         model.addAttribute("isAllowedToCancelApplication", permissions.isAllowedToCancel());
         model.addAttribute("isAllowedToCancelDirectlyApplication", permissions.isAllowedToCancelDirectly());
         model.addAttribute("isAllowedToStartCancellationRequest", permissions.isAllowedToStartCancellationRequest());
+        model.addAttribute("isCommentMandatoryToCancelApplication", permissions.isCommentMandatoryToCancel());
 
         model.addAttribute("isAllowedToDeclineCancellationRequest", permissions.isAllowedToDeclineCancellationRequest());
 

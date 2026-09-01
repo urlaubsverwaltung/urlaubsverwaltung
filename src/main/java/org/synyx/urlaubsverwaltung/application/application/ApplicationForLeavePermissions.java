@@ -157,6 +157,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether a comment has to be given to cancel the application. Cancelling the application of somebody else has to
+     * be explained, and so has asking for the cancellation of an own one - whoever decides about the request has to
+     * know what it is about. Cancelling an own application without asking anybody needs no comment.
+     *
+     * @return {@code true} if a comment is mandatory to cancel the application, {@code false} otherwise
+     */
+    public boolean isCommentMandatoryToCancel() {
+        return isAllowedToStartCancellationRequest() || isNotOwnApplication();
+    }
+
+    /**
      * @return {@code true} if the user may decline a cancellation request of the application, {@code false} otherwise
      */
     public boolean isAllowedToDeclineCancellationRequest() {

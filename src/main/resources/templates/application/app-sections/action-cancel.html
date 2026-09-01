@@ -60,7 +60,7 @@
 
         <div class="mb-4">
           <label
-            th:with="commentMandatory=${app.person.id != signedInUser.id || app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED' || app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}"
+            th:with="commentMandatory=${isCommentMandatoryToCancelApplication}"
             th:text="|${commentMandatory == true ? #messages.msg('action.comment.mandatory') : #messages.msg('action.comment.optional')}:|"
             for="text-cancel"
             >Kommentar, optional</label
