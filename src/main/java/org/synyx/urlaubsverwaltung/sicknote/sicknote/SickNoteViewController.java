@@ -179,21 +179,22 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             model.addAttribute("doesSickPayDaysEnd", !sickNote.getEndDate().isBefore(sickNote.getStartDate().plusDays(maximumSickPayDays)));
             model.addAttribute("numberSickPayDaysSinceEnd", ChronoUnit.DAYS.between(sickPayDaysEndDate, LocalDate.now(clock)) + 1);
 
-            sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)
-                .ifPresentOrElse(
-                    extension -> {
-                        model.addAttribute("extensionRequested", true);
-                        model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
-                        model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
-                    },
-                    () ->
-                        model.addAttribute("extensionRequested", false)
-                );
+            final Optional<SickNoteExtension> submittedExtension = sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote);
+            submittedExtension.ifPresentOrElse(
+                extension -> {
+                    model.addAttribute("extensionRequested", true);
+                    model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
+                    model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
+                },
+                () ->
+                    model.addAttribute("extensionRequested", false)
+            );
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept());
+            model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept(sickNote));
+            model.addAttribute("canAcceptSickNoteExtension", submittedExtension.isPresent() && permissions.isAllowedToAcceptExtension());
             model.addAttribute("canEditSickNote", permissions.isAllowedToEdit(sickNote));
             model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert(sickNote));
             model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel(sickNote));
@@ -408,7 +409,7 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         final SickNote sickNote = getSickNote(sickNoteId);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAccept()) {
+        if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAccept(sickNote)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to accept the sick note of user '%s'".formatted(signedInUser.getId(), sickNote.getPerson().getId()));
         }
 

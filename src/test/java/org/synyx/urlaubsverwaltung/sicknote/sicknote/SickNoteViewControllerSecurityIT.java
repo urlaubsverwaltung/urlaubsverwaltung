@@ -30,6 +30,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 /**
  * The unit tests of {@link SickNoteViewController} use a standalone {@code MockMvc} setup, which does not apply method
@@ -77,7 +78,7 @@ class SickNoteViewControllerSecurityIT extends SingleTenantTestContainersBase {
     @ValueSource(strings = {"USER", "BOSS", "SICK_NOTE_VIEW", "SICK_NOTE_ADD", "SICK_NOTE_CANCEL", "SICK_NOTE_COMMENT"})
     void ensureAcceptSickNoteIsForbiddenWithoutSickNoteEditRole(final String role) throws Exception {
         perform(post("/web/sicknote/" + SICK_NOTE_ID + "/accept")
-            .with(oidcLogin().authorities(signIn("USER", role)))
+            .with(oidcLogin().authorities(signIn(SUBMITTED, "USER", role)))
             .with(csrf())
         ).andExpect(status().isForbidden());
     }
@@ -86,7 +87,7 @@ class SickNoteViewControllerSecurityIT extends SingleTenantTestContainersBase {
     @ValueSource(strings = {"OFFICE", "SICK_NOTE_EDIT"})
     void ensureAcceptSickNoteIsAllowedForRole(final String role) throws Exception {
         perform(post("/web/sicknote/" + SICK_NOTE_ID + "/accept")
-            .with(oidcLogin().authorities(signIn("USER", "BOSS", role)))
+            .with(oidcLogin().authorities(signIn(SUBMITTED, "USER", "BOSS", role)))
             .with(csrf())
         ).andExpect(status().is3xxRedirection());
     }
@@ -130,6 +131,10 @@ class SickNoteViewControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     private SimpleGrantedAuthority[] signIn(String... roles) {
+        return signIn(ACTIVE, roles);
+    }
+
+    private SimpleGrantedAuthority[] signIn(SickNoteStatus sickNoteStatus, String... roles) {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -143,7 +148,7 @@ class SickNoteViewControllerSecurityIT extends SingleTenantTestContainersBase {
             .person(sickNotePerson)
             .startDate(LocalDate.of(2025, 8, 4))
             .endDate(LocalDate.of(2025, 8, 8))
-            .status(ACTIVE)
+            .status(sickNoteStatus)
             .build();
 
         when(personService.getSignedInUser()).thenReturn(signedInUser);
