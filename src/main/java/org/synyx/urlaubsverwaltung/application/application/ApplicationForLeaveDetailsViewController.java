@@ -177,7 +177,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         final Person person = application.getPerson();
 
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        if (!(permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed())) {
+        if (!permissions.isAllowedToAllowInAnyWay()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to allow application for leave of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -480,6 +480,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         model.addAttribute("isAllowedToAllowWaitingApplication", permissions.isAllowedToAllowWaiting());
         model.addAttribute("isAllowedToAllowTemporaryAllowedApplication", permissions.isAllowedToAllowTemporaryAllowed());
         model.addAttribute("isAllowedToAllowTemporarilyApplication", permissions.isAllowedToAllowTemporarily());
+        model.addAttribute("isAllowedToAllowApplicationInAnyWay", permissions.isAllowedToAllowInAnyWay());
 
         model.addAttribute("isAllowedToRejectApplication", permissions.isAllowedToReject());
 

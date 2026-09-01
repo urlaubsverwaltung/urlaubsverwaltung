@@ -94,7 +94,7 @@
           ></th:block>
 
           <th:block
-            th:if="${isAllowedToAllowWaitingApplication || isAllowedToAllowTemporaryAllowedApplication}"
+            th:if="${isAllowedToAllowApplicationInAnyWay}"
             th:replace="~{application/app-sections/action-allow::form}"
           ></th:block>
 

@@ -161,6 +161,30 @@ class ApplicationForLeavePermissionEvaluatorTest {
     }
 
     @Nested
+    class AllowInAnyWay {
+
+        @Test
+        void ensureManagerMayAllowAWaitingApplication() {
+            assertThat(permissionsOnManagedPerson(WAITING, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureManagerMayAllowATemporaryAllowedApplication() {
+            assertThat(permissionsOnManagedPerson(TEMPORARY_ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureNobodyAllowsAnAlreadyAllowedApplication() {
+            assertThat(permissionsOnManagedPerson(ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isFalse();
+        }
+
+        @Test
+        void ensureUnrelatedUserMayNotAllow() {
+            assertThat(permissionsOnUnmanagedPerson(WAITING, USER).isAllowedToAllowInAnyWay()).isFalse();
+        }
+    }
+
+    @Nested
     class Reject {
 
         @ParameterizedTest

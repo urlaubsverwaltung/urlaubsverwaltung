@@ -65,6 +65,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether the user may allow the application at all, no matter whether it is waiting or allowed temporarily
+     * already. Guards everything that leads to an allowed application, the allow form of the detail page as well as
+     * the approve buttons of the application lists.
+     *
+     * @return {@code true} if the user may allow the application in any way, {@code false} otherwise
+     */
+    public boolean isAllowedToAllowInAnyWay() {
+        return isAllowedToAllowWaiting() || isAllowedToAllowTemporaryAllowed();
+    }
+
+    /**
      * Whether allowing the application results in a temporary approval only, which is the case for a department head of
      * a department with two stage approval.
      *
