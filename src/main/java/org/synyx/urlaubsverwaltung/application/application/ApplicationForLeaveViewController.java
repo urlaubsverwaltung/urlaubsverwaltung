@@ -266,9 +266,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
         final boolean isAllowedToEdit = permissions.isAllowedToEdit();
         final boolean isAllowedToTemporaryApprove = permissions.isAllowedToAllowTemporarily();
-        final boolean isAllowedToApprove = permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed();
-        final boolean isAllowedToCancel = permissions.isAllowedToRevoke() || permissions.isAllowedToCancel()
-            || permissions.isAllowedToCancelDirectly() || permissions.isAllowedToStartCancellationRequest();
+        final boolean isAllowedToApprove = permissions.isAllowedToAllowInAnyWay();
+        final boolean isAllowedToCancel = permissions.isAllowedToCancelInAnyWay();
         final boolean isAllowedToReject = permissions.isAllowedToReject();
 
         return ApplicationForLeaveDto.builder()
