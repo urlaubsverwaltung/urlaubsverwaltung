@@ -40,6 +40,7 @@ public class ApplicationDto {
     private boolean allowedToCancel;
     private boolean allowedToCancelDirectly;
     private boolean allowedToStartCancellationRequest;
+    private boolean allowedToCancelInAnyWay;
 
     public Long getId() {
         return id;
@@ -241,6 +242,14 @@ public class ApplicationDto {
         this.allowedToStartCancellationRequest = allowedToStartCancellationRequest;
     }
 
+    public boolean isAllowedToCancelInAnyWay() {
+        return allowedToCancelInAnyWay;
+    }
+
+    public void setAllowedToCancelInAnyWay(boolean allowedToCancelInAnyWay) {
+        this.allowedToCancelInAnyWay = allowedToCancelInAnyWay;
+    }
+
     @Override
     public String toString() {
         return "ApplicationDto{" +
@@ -267,6 +276,7 @@ public class ApplicationDto {
             ", allowedToCancel=" + allowedToCancel +
             ", allowedToCancelDirectly=" + allowedToCancelDirectly +
             ", allowedToStartCancellationRequest=" + allowedToStartCancellationRequest +
+            ", allowedToCancelInAnyWay=" + allowedToCancelInAnyWay +
             '}';
     }
 }

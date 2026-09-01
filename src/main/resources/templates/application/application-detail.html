@@ -109,7 +109,7 @@
           ></th:block>
 
           <th:block
-            th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication || isAllowedToStartCancellationRequest}"
+            th:if="${isAllowedToCancelApplicationInAnyWay}"
             th:replace="~{application/app-sections/action-cancel::form}"
           ></th:block>
 

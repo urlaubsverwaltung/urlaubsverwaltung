@@ -303,11 +303,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         final boolean requiresApprovalToCancel = application.getVacationType().isRequiresApprovalToCancel();
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        final boolean allowedToRevokeApplication = permissions.isAllowedToRevoke();
-        final boolean allowedToCancelApplication = permissions.isAllowedToCancel();
-        final boolean allowedToCancelDirectlyApplication = permissions.isAllowedToCancelDirectly();
-        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
-        if (!(allowedToRevokeApplication || allowedToCancelApplication || allowedToCancelDirectlyApplication || allowedToStartCancellationRequest)) {
+        if (!permissions.isAllowedToCancelInAnyWay()) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel or revoke application " +
                 "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
@@ -487,9 +483,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         model.addAttribute("isAllowedToRejectApplication", permissions.isAllowedToReject());
 
-        model.addAttribute("isAllowedToRevokeApplication", permissions.isAllowedToRevoke());
-        model.addAttribute("isAllowedToCancelApplication", permissions.isAllowedToCancel());
-        model.addAttribute("isAllowedToCancelDirectlyApplication", permissions.isAllowedToCancelDirectly());
+        model.addAttribute("isAllowedToCancelApplicationRightAway", permissions.isAllowedToCancelRightAway());
+        model.addAttribute("isAllowedToCancelApplicationInAnyWay", permissions.isAllowedToCancelInAnyWay());
         model.addAttribute("isAllowedToStartCancellationRequest", permissions.isAllowedToStartCancellationRequest());
         model.addAttribute("isCommentMandatoryToCancelApplication", permissions.isCommentMandatoryToCancel());
 

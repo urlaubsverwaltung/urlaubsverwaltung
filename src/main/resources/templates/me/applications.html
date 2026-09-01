@@ -244,7 +244,7 @@
                     <a
                       class="button flex-1 justify-center"
                       th:href="@{/web/application/{app} (app=${app.id}, action='cancel', redirect=|/web/persons/${person.id}/applications?year=${selectedYear}|)}"
-                      th:if="${app.allowedToRevoke || app.allowedToCancel || app.allowedToCancelDirectly || app.allowedToStartCancellationRequest}"
+                      th:if="${app.allowedToCancelInAnyWay}"
                     >
                       <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 shrink-0')}"></svg>
                       <span

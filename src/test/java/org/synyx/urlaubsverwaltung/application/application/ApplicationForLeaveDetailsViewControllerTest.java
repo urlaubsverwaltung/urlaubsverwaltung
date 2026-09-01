@@ -304,7 +304,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(get("/web/application/" + APPLICATION_ID).locale(locale))
             .andExpect(view().name("application/application-detail"))
             .andExpect(model().attribute("isAllowedToStartCancellationRequest", true))
-            .andExpect(model().attribute("isAllowedToCancelApplication", false));
+            .andExpect(model().attribute("isAllowedToCancelApplicationRightAway", false))
+            .andExpect(model().attribute("isAllowedToCancelApplicationInAnyWay", true));
     }
 
     @Test

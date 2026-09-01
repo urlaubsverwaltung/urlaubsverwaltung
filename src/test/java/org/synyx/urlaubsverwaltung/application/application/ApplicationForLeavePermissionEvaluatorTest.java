@@ -407,6 +407,36 @@ class ApplicationForLeavePermissionEvaluatorTest {
     }
 
     @Nested
+    class CancelInAnyWay {
+
+        @Test
+        void ensurePersonMayCancelOwnWaitingApplicationRightAway() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, WAITING));
+            assertThat(permissions.isAllowedToCancelRightAway()).isTrue();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensurePersonAskingForCancellationMayNotCancelRightAway() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED));
+            assertThat(permissions.isAllowedToCancelRightAway()).isFalse();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureUnrelatedUserMayNotCancelAtAll() {
+            final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
+            final Application application = applicationRequiringApprovalToCancel(person(OTHER_PERSON_ID, USER), ALLOWED);
+
+            final ApplicationForLeavePermissions permissions = sut.of(signedInUser, application);
+            assertThat(permissions.isAllowedToCancelRightAway()).isFalse();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isFalse();
+        }
+    }
+
+    @Nested
     class CommentMandatoryToCancel {
 
         @Test

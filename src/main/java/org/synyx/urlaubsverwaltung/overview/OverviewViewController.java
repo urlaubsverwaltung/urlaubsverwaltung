@@ -398,6 +398,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final boolean allowedToCancel = permissions.isAllowedToCancel();
         final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
         final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
+        final boolean allowedToCancelInAnyWay = permissions.isAllowedToCancelInAnyWay();
 
         return new ApplicationDto(
             applicationForLeave.getId(),
@@ -424,7 +425,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             allowedToRevoke,
             allowedToCancel,
             allowedToCancelDirectly,
-            allowedToStartCancellationRequest
+            allowedToStartCancellationRequest,
+            allowedToCancelInAnyWay
         );
     }
 

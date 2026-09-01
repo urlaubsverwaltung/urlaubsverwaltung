@@ -7,7 +7,7 @@
   <body>
     <th:block th:fragment="buttons">
       <button
-        th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}"
+        th:if="${isAllowedToCancelApplicationRightAway}"
         class="icon-link bg-transparent hover:text-red-500"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');

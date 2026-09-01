@@ -144,6 +144,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether the user may end the application right away, no matter how - by revoking it, by cancelling an allowed
+     * one or by cancelling it without asking anybody. The counterpart is
+     * {@link #isAllowedToStartCancellationRequest()}, which the user has to fall back to when this one does not hold.
+     *
+     * @return {@code true} if the user may cancel or revoke the application without asking, {@code false} otherwise
+     */
+    public boolean isAllowedToCancelRightAway() {
+        return isAllowedToRevoke() || isAllowedToCancel() || isAllowedToCancelDirectly();
+    }
+
+    /**
      * Whether the user may ask for the cancellation of an already allowed application. Only the person itself and the
      * management of that person may ask for it, and only if they may not cancel it right away.
      *
@@ -165,6 +176,17 @@ public final class ApplicationForLeavePermissions {
      */
     public boolean isCommentMandatoryToCancel() {
         return isAllowedToStartCancellationRequest() || isNotOwnApplication();
+    }
+
+    /**
+     * Whether the user may get rid of the application at all - either right away or by asking somebody to cancel it.
+     * Guards everything that leads to the cancellation of an application, the cancel form of the detail page as well
+     * as the delete buttons of the application lists.
+     *
+     * @return {@code true} if the user may cancel the application in any way, {@code false} otherwise
+     */
+    public boolean isAllowedToCancelInAnyWay() {
+        return isAllowedToCancelRightAway() || isAllowedToStartCancellationRequest();
     }
 
     /**

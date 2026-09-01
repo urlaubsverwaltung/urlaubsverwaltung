@@ -206,7 +206,7 @@
               <div class="opacity-100! flex items-center justify-end">
                 <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
                   <a
-                    th:if="${app.allowedToRevoke || app.allowedToCancel || app.allowedToCancelDirectly || app.allowedToStartCancellationRequest}"
+                    th:if="${app.allowedToCancelInAnyWay}"
                     class="button flex-1 justify-center"
                     th:href="@{/web/application/{app} (app=${app.id}, action='cancel', redirect=|/web/person/${person.id}/overview?year=${selectedYear}|)}"
                   >
