@@ -165,12 +165,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether the user may edit the application. Nobody edits an application that is not active any more, see
+     * {@link #isStillActive()} - a revoked, rejected or cancelled application cannot be reanimated, therefore changing
+     * its data would have no effect. Saying something about it is still possible, see {@link #isAllowedToComment()}.
+     *
      * @return {@code true} if the user may edit the application, {@code false} otherwise
      */
     public boolean isAllowedToEdit() {
-        return (application.hasStatus(WAITING) && isOwnApplication())
+        return isStillActive()
+            && ((application.hasStatus(WAITING) && isOwnApplication())
             || signedInUser.hasRole(OFFICE)
-            || (isManagerOfPerson() && signedInUser.hasRole(APPLICATION_EDIT));
+            || (isManagerOfPerson() && signedInUser.hasRole(APPLICATION_EDIT)));
     }
 
     /**
@@ -200,6 +205,14 @@ public final class ApplicationForLeavePermissions {
      */
     private boolean isNotDecidingAboutTheirOwnApprover() {
         return !personIsSecondStageAuthorityOfSignedInUser;
+    }
+
+    /**
+     * Whether the application still takes effect, which is the case for the
+     * {@link ApplicationStatus#activeStatuses() active statuses} only.
+     */
+    private boolean isStillActive() {
+        return ApplicationStatus.activeStatuses().stream().anyMatch(application::hasStatus);
     }
 
     private boolean isManagerOfPerson() {

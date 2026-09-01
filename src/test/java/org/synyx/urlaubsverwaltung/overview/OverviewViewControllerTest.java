@@ -1304,7 +1304,9 @@ class OverviewViewControllerTest {
             departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
 
             final Application first = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            first.setStatus(ALLOWED);
             final Application second = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+            second.setStatus(ALLOWED);
 
             when(settingsService.getSettings()).thenReturn(new Settings());
             when(personService.getSignedInUser()).thenReturn(departmentHead);
@@ -1312,7 +1314,7 @@ class OverviewViewControllerTest {
             when(departmentService.isSignedInUserAllowedToAccessPersonData(departmentHead, person)).thenReturn(true);
             when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
             when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(List.of(first, second));
-            stubWorkDaysCountForApplications(ONE);
+            stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
             final ModelAndView mav = perform(get("/web/person/1/overview")
                 .param("year", String.valueOf(TODAY.getYear()))

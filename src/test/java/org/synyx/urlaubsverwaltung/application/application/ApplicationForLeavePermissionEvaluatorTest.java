@@ -311,6 +311,18 @@ class ApplicationForLeavePermissionEvaluatorTest {
         void ensureBossMayNotEditWithoutApplicationEditRole() {
             assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
         }
+
+        @ParameterizedTest
+        @EnumSource(value = ApplicationStatus.class, names = {"REVOKED", "REJECTED", "CANCELLED"})
+        void ensureOfficeMayNotEditAnInactiveApplication(ApplicationStatus status) {
+            assertThat(permissionsOnUnmanagedPerson(status, OFFICE).isAllowedToEdit()).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = ApplicationStatus.class, names = {"REVOKED", "REJECTED", "CANCELLED"})
+        void ensureManagerMayNotEditAnInactiveApplication(ApplicationStatus status) {
+            assertThat(permissionsOnManagedPerson(status, DEPARTMENT_HEAD, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
+        }
     }
 
     @Nested
