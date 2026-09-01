@@ -160,7 +160,7 @@ class SickNotePermissionEvaluatorTest {
         void ensureSickNoteEditDoesNotAllowToAdd() {
             final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT);
             assertThat(permissions.isAllowedToAdd()).isFalse();
-            assertThat(permissions.isAllowedToAccept()).isTrue();
+            assertThat(permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
     }
 
@@ -187,37 +187,65 @@ class SickNotePermissionEvaluatorTest {
     class Accept {
 
         @Test
-        void ensureOfficeMayAccept() {
-            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToAccept()).isTrue();
+        void ensureOfficeMayAcceptSubmittedSickNote() {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
-        void ensureBossWithSickNoteEditMayAccept() {
-            assertThat(permissionsOnUnmanagedPerson(BOSS, SICK_NOTE_EDIT).isAllowedToAccept()).isTrue();
+        void ensureBossWithSickNoteEditMayAcceptSubmittedSickNote() {
+            assertThat(permissionsOnUnmanagedPerson(BOSS, SICK_NOTE_EDIT).isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
-        void ensureDepartmentHeadWithSickNoteEditMayAcceptForManagedMember() {
-            assertThat(permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT).isAllowedToAccept()).isTrue();
+        void ensureDepartmentHeadWithSickNoteEditMayAcceptSubmittedSickNoteOfManagedMember() {
+            assertThat(permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT).isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
         void ensureSickNoteAddDoesNotAllowToAccept() {
             final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_ADD);
-            assertThat(permissions.isAllowedToAccept()).isFalse();
+            assertThat(permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isFalse();
             assertThat(permissions.isAllowedToAdd()).isTrue();
         }
 
         @Test
         void ensurePersonMayNotAcceptOwnSickNote() {
             final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
-            assertThat(sut.of(signedInUser, signedInUser).isAllowedToAccept()).isFalse();
+            assertThat(sut.of(signedInUser, signedInUser).isAllowedToAccept(sickNote(SIGNED_IN_USER_ID, SUBMITTED))).isFalse();
         }
 
         @Test
-        void ensureAcceptingAnExtensionFollowsTheSameRuleAsAccepting() {
-            final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT);
-            assertThat(permissions.isAllowedToAcceptExtension()).isEqualTo(permissions.isAllowedToAccept());
+        void ensureNobodyMayAcceptAnAlreadyAcceptedSickNote() {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToAccept(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+        void ensureNobodyMayAcceptInactiveSickNote(SickNoteStatus status) {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToAccept(sickNote(OTHER_PERSON_ID, status))).isFalse();
+        }
+
+        @Test
+        void ensureOfficeMayAcceptAnExtension() {
+            assertThat(permissionsOnUnmanagedPerson(OFFICE).isAllowedToAcceptExtension()).isTrue();
+        }
+
+        @Test
+        void ensureDepartmentHeadWithSickNoteEditMayAcceptAnExtensionOfManagedMember() {
+            assertThat(permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT).isAllowedToAcceptExtension()).isTrue();
+        }
+
+        @Test
+        void ensureAcceptingAnExtensionDoesNotRequireASubmittedSickNote() {
+            final SickNotePermissions permissions = permissionsOnUnmanagedPerson(OFFICE);
+            assertThat(permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
+            assertThat(permissions.isAllowedToAcceptExtension()).isTrue();
+        }
+
+        @Test
+        void ensurePersonMayNotAcceptAnExtensionOfOwnSickNote() {
+            final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(signedInUser, signedInUser).isAllowedToAcceptExtension()).isFalse();
         }
 
         @Test
@@ -333,7 +361,7 @@ class SickNotePermissionEvaluatorTest {
         void ensureSickNoteEditDoesNotAllowToCancel() {
             final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT);
             assertThat(permissions.isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
-            assertThat(permissions.isAllowedToAccept()).isTrue();
+            assertThat(permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
@@ -371,7 +399,7 @@ class SickNotePermissionEvaluatorTest {
         void ensureSickNoteEditDoesNotAllowToComment() {
             final SickNotePermissions permissions = permissionsOnManagedPerson(DEPARTMENT_HEAD, SICK_NOTE_EDIT);
             assertThat(permissions.isAllowedToComment()).isFalse();
-            assertThat(permissions.isAllowedToAccept()).isTrue();
+            assertThat(permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED))).isTrue();
         }
 
         @Test
@@ -456,7 +484,7 @@ class SickNotePermissionEvaluatorTest {
 
             final SickNotePermissions permissions = sut.of(signedInUser, sickNotePerson);
             permissions.isAllowedToView();
-            permissions.isAllowedToAccept();
+            permissions.isAllowedToAccept(sickNote(OTHER_PERSON_ID, SUBMITTED));
             permissions.isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE));
             permissions.isAllowedToComment();
 

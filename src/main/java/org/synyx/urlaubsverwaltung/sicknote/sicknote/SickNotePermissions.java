@@ -66,20 +66,25 @@ public final class SickNotePermissions {
     }
 
     /**
-     * @return {@code true} if the user may accept a submitted sick note of the person, {@code false} otherwise
+     * Only a sick note with status {@link SickNoteStatus#SUBMITTED} may be accepted. An already accepted, cancelled or
+     * converted one has nothing left to accept.
+     *
+     * @param sickNote sick note to be accepted, has to belong to the person of these permissions
+     * @return {@code true} if the user may accept the given sick note, {@code false} otherwise
      */
-    public boolean isAllowedToAccept() {
-        return isAllowedToMaintain(SICK_NOTE_EDIT);
+    public boolean isAllowedToAccept(SickNote sickNote) {
+        return sickNote.isSubmitted() && isAllowedToMaintain(SICK_NOTE_EDIT);
     }
 
     /**
-     * Accepting a submitted extension changes the end date of an existing sick note and is therefore governed by the
-     * very same rule as accepting a sick note.
+     * Accepting a submitted extension changes the end date of an existing sick note. It needs the same role as
+     * accepting a sick note, but not the same state: an extension is handed in for a sick note that is already
+     * accepted, therefore no sick note is passed in here.
      *
      * @return {@code true} if the user may accept a submitted extension of the person, {@code false} otherwise
      */
     public boolean isAllowedToAcceptExtension() {
-        return isAllowedToAccept();
+        return isAllowedToMaintain(SICK_NOTE_EDIT);
     }
 
     /**

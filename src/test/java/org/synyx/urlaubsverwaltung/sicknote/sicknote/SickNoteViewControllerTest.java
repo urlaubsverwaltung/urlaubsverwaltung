@@ -39,11 +39,14 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -930,13 +933,95 @@ class SickNoteViewControllerTest {
             .status(SUBMITTED)
             .build()));
 
-        // the very same flag renders the button to accept a submitted sick note extension, therefore it has to match
-        // the permission of the endpoint accepting it
         perform(get("/web/sicknote/15"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("canAcceptSickNote", true))
             .andExpect(model().attribute("canDeleteSickNote", false))
             .andExpect(model().attribute("canCommentSickNote", false));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureGetSickNoteDetailsDoesNotAllowToAcceptASickNoteThatWasNotSubmitted(SickNoteStatus status) throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = personWithRole(OFFICE);
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = personWithRole(USER);
+        person.setId(2L);
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20))
+            .person(person)
+            .status(status)
+            .build()));
+
+        perform(get("/web/sicknote/15"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("canAcceptSickNote", false))
+            .andExpect(model().attribute("canAcceptSickNoteExtension", false));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsAllowsToAcceptTheExtensionOfAnAlreadyAcceptedSickNote() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = personWithRole(OFFICE);
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = personWithRole(USER);
+        person.setId(2L);
+        final SickNote sickNote = SickNote.builder()
+            .id(15L)
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20))
+            .person(person)
+            .status(ACTIVE)
+            .build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)).thenReturn(Optional.of(
+            new SickNoteExtension(1L, 15L, LocalDate.of(2025, FEBRUARY, 25), SickNoteExtensionStatus.SUBMITTED, BigDecimal.valueOf(3))
+        ));
+
+        // an extension is handed in for a sick note that is already accepted - accepting the extension therefore must
+        // not depend on the sick note being submitted
+        perform(get("/web/sicknote/15"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("extensionRequested", true))
+            .andExpect(model().attribute("canAcceptSickNote", false))
+            .andExpect(model().attribute("canAcceptSickNoteExtension", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsDoesNotAllowThePersonToAcceptTheExtensionOfOwnSickNote() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = personWithRole(USER);
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(15L)
+            .startDate(LocalDate.of(2025, FEBRUARY, 10))
+            .endDate(LocalDate.of(2025, FEBRUARY, 20))
+            .person(signedInUser)
+            .status(ACTIVE)
+            .build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)).thenReturn(Optional.of(
+            new SickNoteExtension(1L, 15L, LocalDate.of(2025, FEBRUARY, 25), SickNoteExtensionStatus.SUBMITTED, BigDecimal.valueOf(3))
+        ));
+
+        perform(get("/web/sicknote/15"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("extensionRequested", true))
+            .andExpect(model().attribute("canAcceptSickNoteExtension", false));
     }
 
     @Test
@@ -1573,6 +1658,21 @@ class SickNoteViewControllerTest {
             .param("text", "comment"));
 
         verify(sickNoteInteractionService).accept(any(SickNote.class), eq(signedInPerson), eq("comment"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureAcceptSickNoteIsDeniedForASickNoteThatWasNotSubmitted(SickNoteStatus status) {
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(new Person()).status(status).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/sicknote/15/accept"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(sickNoteInteractionService);
     }
 
     @Test
