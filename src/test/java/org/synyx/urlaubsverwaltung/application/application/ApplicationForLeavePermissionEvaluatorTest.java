@@ -150,6 +150,24 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensureNothingIsAllowedTemporarilyButAWaitingApplication() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
+            final Person member = person(OTHER_PERSON_ID, USER);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
+
+            // the temporary approval is the first of two stages - there is nothing to approve temporarily about an
+            // application that is not waiting for its first approval any more
+            for (ApplicationStatus status : List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED, REJECTED)) {
+                final Application application = application(member, status);
+                application.setTwoStageApproval(true);
+                assertThat(sut.of(departmentHead, application).isAllowedToAllowTemporarily())
+                    .describedAs("status %s", status)
+                    .isFalse();
+            }
+        }
+
+        @Test
         void ensureBossNeverAllowsTemporarilyOnly() {
 
             final Person boss = person(SIGNED_IN_USER_ID, BOSS);
