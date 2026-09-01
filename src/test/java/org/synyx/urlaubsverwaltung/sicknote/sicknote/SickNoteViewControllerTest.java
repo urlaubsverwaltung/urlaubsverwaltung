@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -1421,6 +1422,105 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote").param("person.id", "1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/sicknote/42"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/sicknote/submitted", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void ensureAcceptSickNoteRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(new Person()).status(SUBMITTED).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(sickNoteInteractionService.accept(sickNote, signedInPerson, null))
+            .thenReturn(SickNote.builder().id(15L).person(new Person()).status(ACTIVE).build());
+
+        perform(post("/web/sicknote/15/accept").param("redirect", redirect))
+            .andExpect(view().name("redirect:" + redirect));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "/web/application,                        /ctx/web/application",
+        "/web/persons/5/sicknotes?year=2022,      /ctx/web/persons/5/sicknotes?year=2022"
+    })
+    void ensureRedirectToTheOriginKeepsTheContextPath(String redirect, String expectedLocation) throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        // the origin is handed over without the context path - a link expression applies it to the url it builds,
+        // not to a query parameter of it - and RedirectView puts it back on exactly once
+        perform(post("/ctx/web/sicknote/15/cancel").contextPath("/ctx")
+            .param("redirect", redirect))
+            .andExpect(redirectedUrl(expectedLocation));
+    }
+
+    @Test
+    void ensureOriginThatAlreadyCarriesTheContextPathIsIgnored() throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        // guards against a link prefixing the origin itself, which would redirect to /ctx/ctx/web/application
+        perform(post("/ctx/web/sicknote/15/cancel").contextPath("/ctx")
+            .param("redirect", "/ctx/web/application"))
+            .andExpect(redirectedUrl("/ctx/web/sicknote/1"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/persons/5/sicknotes", "/web/person/5/overview"})
+    void ensureCancelSickNoteRedirectsToThePageTheActionWasStartedFrom(String redirect) throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        perform(post("/web/sicknote/15/cancel").param("redirect", redirect))
+            .andExpect(view().name("redirect:" + redirect));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/\\evil.example.org", "web/application", "/web/hijacked/"})
+    void ensureCancelSickNoteIgnoresARedirectLeavingTheApplication(String redirect) throws Exception {
+
+        final Person signedInUser = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, null)).thenReturn(sickNote);
+
+        perform(post("/web/sicknote/15/cancel").param("redirect", redirect))
+            .andExpect(view().name("redirect:/web/sicknote/1"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"//evil.example.org", "https://evil.example.org", "/web/hijacked/"})
+    void ensureAcceptSickNoteIgnoresARedirectLeavingTheApplication(String redirect) throws Exception {
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(new Person()).status(SUBMITTED).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(sickNoteInteractionService.accept(sickNote, signedInPerson, null))
+            .thenReturn(SickNote.builder().id(15L).person(new Person()).status(ACTIVE).build());
+
+        perform(post("/web/sicknote/15/accept").param("redirect", redirect))
+            .andExpect(view().name("redirect:/web/sicknote/15"));
     }
 
     @Test

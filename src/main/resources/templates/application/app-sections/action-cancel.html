@@ -46,7 +46,7 @@
         th:classappend="${action eq 'cancel' ? '' : 'hidden'}"
         method="post"
         th:with="deleteRequest=${app.vacationType.requiresApprovalToCancel == true && (app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}"
-        th:action="@{/web/application/__${app.id}__/cancel}"
+        th:action="@{/web/application/{applicationId}/cancel(applicationId=${app.id}, redirect=${redirect})}"
         th:object="${comment}"
       >
         <div class="mb-4">

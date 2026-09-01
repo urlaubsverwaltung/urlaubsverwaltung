@@ -109,7 +109,7 @@
           </p>
         </th:block>
 
-        <div class="actions" th:with="redirectTo=${shortcut ? '/web/sicknote/submitted' : null}">
+        <div class="actions" th:with="redirectTo=${redirect}">
           <th:block th:if="${canAcceptSickNote}">
             <form
               id="allow"
@@ -120,8 +120,6 @@
                            (sickNoteId=${sickNote.id}, redirect=${redirectTo})}"
               th:object="${comment}"
             >
-              <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
-              <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
               <div class="mb-4">
                 <strong class="font-medium">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
@@ -163,8 +161,6 @@
               th:action="@{/web/sicknote/{sickNoteId}/cancel(sickNoteId=${sickNote.id}, redirect=${redirectTo})}"
               th:object="${comment}"
             >
-              <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
-              <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
               <div class="mb-4">
                 <strong class="font-medium" th:text="#{action.sicknote.delete.request.confirm}">
                   Soll diese Krankmeldung wirklich storniert werden?

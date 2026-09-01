@@ -181,7 +181,7 @@
                 </a>
                 <a
                   class="button flex-1 justify-center"
-                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', shortcut=true)}"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', redirect=${originPath})}"
                   th:if="${userRequestForLeave.approveAllowed}"
                 >
                   <svg
@@ -195,7 +195,7 @@
                 </a>
                 <a
                   class="button flex-1 justify-center"
-                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', redirect=${originPath})}"
                   th:if="${userRequestForLeave.rejectAllowed}"
                 >
                   <svg
@@ -207,7 +207,7 @@
                 </a>
                 <a
                   class="button flex-1 justify-center"
-                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', shortcut=true)}"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', redirect=${originPath})}"
                   th:if="${userRequestForLeave.cancelAllowed}"
                 >
                   <svg
@@ -457,7 +457,7 @@
                         th:if="${otherRequestForLeave.approveAllowed}"
                         class="button flex-1"
                         href="#"
-                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', redirect=${originPath})}"
                       >
                         <svg th:replace="~{icon/check::svg(className='w-5 h-5 @lg/main:w-4 @lg/main:h-4 mr-1')}"></svg>
                         <span class="sr-only @lg/main:not-sr-only">
@@ -470,7 +470,7 @@
                         th:if="${otherRequestForLeave.rejectAllowed}"
                         class="button flex-1"
                         href="#"
-                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', redirect=${originPath})}"
                       >
                         <svg th:replace="~{icon/slash::svg(className='w-5 h-5 @lg/main:w-4 @lg/main:h-4 mr-1')}"></svg>
                         <span class="sr-only @lg/main:not-sr-only">
@@ -479,7 +479,7 @@
                       </a>
                       <a
                         class="button flex-1 justify-center"
-                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', redirect=${originPath})}"
                         th:if="${otherRequestForLeave.cancelAllowed}"
                       >
                         <svg
@@ -590,7 +590,7 @@
                     <a
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='allow', shortcut=true)}"
+                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='allow', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/check::svg(className='w-5 h-5 @lg/main:w-4 @lg/main:h-4 mr-1')}"></svg>
                       <span class="sr-only @lg/main:not-sr-only">
@@ -601,7 +601,7 @@
                       th:if="${not otherSickNote.extensionSubmitted}"
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='cancel', shortcut=true)}"
+                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='cancel', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/trash-2::svg(className='w-5 h-5 @lg/main:w-4 @lg/main:h-4 mr-1')}"></svg>
                       <span class="sr-only @lg/main:not-sr-only">
@@ -698,7 +698,7 @@
                     <a
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/trash-2::svg(className='w-5 h-5 @5xl/main:w-4 @5xl/main:h-4 mr-1')}" />
                       <span class="sr-only @lg/main:not-sr-only">
@@ -708,7 +708,7 @@
                     <a
                       class="button flex-1"
                       href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', redirect=${originPath})}"
                     >
                       <svg th:replace="~{icon/slash::svg(className='w-5 h-5 @5xl/main:w-4 @5xl/main:h-4 mr-1')}" />
                       <span class="sr-only @lg/main:not-sr-only">

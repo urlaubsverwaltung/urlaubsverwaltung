@@ -146,6 +146,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         prepareApplicationCancellationRequests(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
 
         model.addAttribute("activeContent", activeTab.name);
+        // shortcut actions started on this page hand it over as the page to return to, see SafeRedirectUrl
+        model.addAttribute("originPath", activeTab.path);
     }
 
     /**
@@ -495,14 +497,16 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     }
 
     private enum Tab {
-        APPLICATION("application"),
-        REPLACEMENT("replacement"),
-        SICK_NOTE("sicknote");
+        APPLICATION("application", "/web/application"),
+        REPLACEMENT("replacement", "/web/application/replacement"),
+        SICK_NOTE("sicknote", "/web/sicknote/submitted");
 
         private final String name;
+        private final String path;
 
-        Tab(String name) {
+        Tab(String name, String path) {
             this.name = name;
+            this.path = path;
         }
     }
 }

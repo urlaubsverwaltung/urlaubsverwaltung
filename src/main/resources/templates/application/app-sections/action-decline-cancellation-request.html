@@ -29,7 +29,7 @@
         class="alert alert-danger"
         th:classappend="${action eq 'decline-cancellation-request' ? '' : 'hidden'}"
         method="post"
-        th:action="@{/web/application/__${app.id}__/decline-cancellation-request}"
+        th:action="@{/web/application/{applicationId}/decline-cancellation-request(applicationId=${app.id}, redirect=${redirect})}"
         th:object="${comment}"
       >
         <div class="mb-4">
