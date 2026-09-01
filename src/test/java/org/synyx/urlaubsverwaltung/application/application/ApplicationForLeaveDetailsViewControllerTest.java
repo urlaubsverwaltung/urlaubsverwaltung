@@ -277,69 +277,34 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void showApplicationDetailSignedInUserIsBoss() throws Exception {
+    void showApplicationDetailPersonIsAllowedToStartCancellationRequestOfOwnAllowedApplication() throws Exception {
 
         final Locale locale = GERMAN;
         final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
         final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
             .category(HOLIDAY)
             .build();
 
-        final Person person = new Person();
+        final Person person = new Person("user", "user", "user", "user@example.org");
         person.setId(1L);
+        person.setPermissions(List.of(USER));
 
         final Application application = applicationOfPerson(person, vacationType);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
-        boss.setPermissions(List.of(USER, BOSS));
-        when(personService.getSignedInUser()).thenReturn(boss);
-
-        perform(
-            get("/web/application/" + APPLICATION_ID)
-                .locale(locale)
-        )
+        perform(get("/web/application/" + APPLICATION_ID).locale(locale))
             .andExpect(view().name("application/application-detail"))
-            .andExpect(model().attribute("isBoss", true));
-    }
-
-    @Test
-    void showApplicationDetailSignedInUserIsOffice() throws Exception {
-
-        final Locale locale = GERMAN;
-        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
-        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
-            .messageKey("message-key")
-            .requiresApprovalToApply(true)
-            .requiresApprovalToCancel(true)
-            .category(HOLIDAY)
-            .build();
-
-        final Person person = new Person();
-        person.setId(1L);
-
-        final Application application = applicationOfPerson(person, vacationType);
-
-        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
-        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
-        final Person office = new Person("office", "office", "office", "office@example.org");
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
-
-        perform(
-            get("/web/application/" + APPLICATION_ID)
-                .locale(locale)
-        )
-            .andExpect(view().name("application/application-detail"))
-            .andExpect(model().attribute("isOffice", true));
+            .andExpect(model().attribute("isAllowedToStartCancellationRequest", true))
+            .andExpect(model().attribute("isAllowedToCancelApplication", false));
     }
 
     @Test

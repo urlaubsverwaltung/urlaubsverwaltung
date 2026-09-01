@@ -63,7 +63,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.COMMENTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -507,9 +506,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
             model.addAttribute("referredPerson", new ReferredPerson());
         }
         model.addAttribute("isAllowedToCommentApplication", permissions.isAllowedToComment());
-
-        model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
-        model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 
         // UNSPECIFIC ATTRIBUTES
         model.addAttribute("selectedYear", year);
