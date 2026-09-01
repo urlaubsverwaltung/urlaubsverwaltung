@@ -37,7 +37,6 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REVOKED;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 
 @Service
 @Transactional
@@ -124,32 +123,20 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) throws NotPrivilegedToApproveException {
 
-        // Boss is a very mighty dude
-        if (privilegedUser.hasRole(BOSS)) {
-            return allowFinally(application, privilegedUser, comment);
+        final ApplicationForLeavePermissions permissions = permissionEvaluator.of(privilegedUser, application);
+
+        // a department head of a department with two stage approval allows it for the second stage authority to decide
+        if (permissions.isAllowedToAllowTemporarily()) {
+            return allowTemporary(application, privilegedUser, comment);
         }
 
-        // Second stage authority has almost the same power (except on own applications)
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(privilegedUser, application.getPerson());
-        final boolean isOwnApplication = application.getPerson().equals(privilegedUser);
-        if (isSecondStageAuthorityOfPerson && !isOwnApplication) {
-            return allowFinally(application, privilegedUser, comment);
-        }
-
-        // Department head can be mighty only in some cases
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(privilegedUser, application.getPerson());
-        final boolean isPersonSecondStageAuthorityOfApprover = departmentService.isSecondStageAuthorityAllowedToManagePerson(application.getPerson(), privilegedUser);
-        if (isDepartmentHeadOfPerson && !isOwnApplication && !isPersonSecondStageAuthorityOfApprover) {
-            if (application.isTwoStageApproval()) {
-                return allowTemporary(application, privilegedUser, comment);
-            }
+        if (permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed()) {
             return allowFinally(application, privilegedUser, comment);
         }
 
         throw new NotPrivilegedToApproveException(format(
-            "because is not department is %s " +
-                "or is own application %s " +
-                "or is the application of ssa %s", isDepartmentHeadOfPerson, isOwnApplication, isPersonSecondStageAuthorityOfApprover));
+            "User '%s' is not allowed to allow the application for leave with id %d in status %s",
+            privilegedUser.getId(), application.getId(), application.getStatus()));
     }
 
     @Override
@@ -195,14 +182,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     private Application allowTemporary(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
 
-        final boolean alreadyAllowed = applicationForLeave.hasStatus(TEMPORARY_ALLOWED) || applicationForLeave.hasStatus(ALLOWED);
-        if (alreadyAllowed) {
-            // Early return - do nothing if expected status already set
-            LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
-
-            return applicationForLeave;
-        }
-
         applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(LocalDate.now(clock));
@@ -220,12 +199,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
-
-        if (applicationForLeave.hasStatus(ALLOWED)) {
-            // Early return - do nothing if expected status already set
-            LOG.info("Application for leave is already in an allowed status, do nothing: {}", applicationForLeave);
-            return applicationForLeave;
-        }
 
         applicationForLeave.setStatus(ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
