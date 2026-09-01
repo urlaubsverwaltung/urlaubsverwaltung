@@ -16,6 +16,8 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -25,7 +27,6 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -54,13 +55,7 @@ import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
-import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -91,6 +86,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
     private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
+    private final ApplicationForLeavePermissionEvaluator applicationForLeavePermissionEvaluator;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -103,6 +99,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         SickNoteService sickNoteService, OvertimeService overtimeService,
         SettingsService settingsService, DepartmentService departmentService,
         SickNotePermissionEvaluator sickNotePermissionEvaluator,
+        ApplicationForLeavePermissionEvaluator applicationForLeavePermissionEvaluator,
         VacationTypeViewModelService vacationTypeViewModelService, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
@@ -116,6 +113,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         this.settingsService = settingsService;
         this.departmentService = departmentService;
         this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
+        this.applicationForLeavePermissionEvaluator = applicationForLeavePermissionEvaluator;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -251,10 +249,13 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 .toList();
 
             // future applications on top, the past one at the bottom
-            applicationsForLeave = Stream.of(pastApplications, currentApplications, futureApplications)
+            final List<ApplicationForLeave> shownApplications = Stream.of(pastApplications, currentApplications, futureApplications)
                 .flatMap(List::stream)
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(a -> applicationDto(a, signedInUser, locale))
+                .toList();
+            final Function<Application, ApplicationForLeavePermissions> permissionsOf = applicationForLeavePermissionEvaluator.of(signedInUser, shownApplications);
+            applicationsForLeave = shownApplications.stream()
+                .map(a -> applicationDto(a, permissionsOf.apply(a), locale))
                 .toList();
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
@@ -263,7 +264,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationsForLeave,
             usedDaysOverview,
             person.equals(signedInUser),
-            !person.equals(signedInUser) && (signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)),
+            !person.equals(signedInUser) && applicationForLeavePermissionEvaluator.isAllowedToApplyForPerson(signedInUser, person),
             applicationsForLeave.size(),
             applications.size()
         ));
@@ -386,21 +387,17 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, ApplicationForLeavePermissions permissions, Locale locale) {
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+        final boolean allowedToEdit = permissions.isAllowedToEdit();
 
-        final boolean allowedToEdit = isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
-
-        final boolean allowedToRevoke = isAllowedToRevokeApplication(applicationForLeave, signedInUser, requiresApprovalToCancel);
-        final boolean allowedToCancel = isAllowedToCancelApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
-        final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
-        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
+        final boolean allowedToCancel = permissions.isAllowedToCancel();
+        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
+        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
 
         return new ApplicationDto(
             applicationForLeave.getId(),
@@ -437,10 +434,4 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         return account.doRemainingVacationDaysExpire() && !isBeforeExpiryDate && hasExpiredRemainingVacationDays;
     }
 
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
-        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, personToShowDetails)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, personToShowDetails);
-        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
-    }
 }

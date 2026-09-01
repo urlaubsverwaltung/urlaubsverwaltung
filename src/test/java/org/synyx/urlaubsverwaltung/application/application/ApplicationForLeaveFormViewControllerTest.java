@@ -134,7 +134,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
+        sut = new ApplicationForLeaveFormViewController(personService, departmentService, new ApplicationForLeavePermissionEvaluator(departmentService), accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
             dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), defaultPersonSuggestionUrlStrategy,
             personSearchUiFragmentSupplier, clock);
@@ -482,6 +482,7 @@ class ApplicationForLeaveFormViewControllerTest {
         applier.setFirstName("Applier");
         applier.setLastName("Name");
         when(personService.getSignedInUser()).thenReturn(applier);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(true);
 
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
@@ -516,6 +517,7 @@ class ApplicationForLeaveFormViewControllerTest {
         applier.setFirstName("Applier");
         applier.setLastName("Name");
         when(personService.getSignedInUser()).thenReturn(applier);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(true);
 
         final LocalDate now = LocalDate.now(clock);
         final LocalDate validFrom = now.withMonth(JANUARY.getValue()).withDayOfMonth(1);

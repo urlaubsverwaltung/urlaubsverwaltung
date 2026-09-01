@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -60,6 +61,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     private final ApplicationService applicationService;
     private final SubmittedSickNoteService sickNoteService;
     private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -71,7 +73,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     ApplicationForLeaveViewController(
         ApplicationService applicationService, SubmittedSickNoteService sickNoteService,
-        SickNotePermissionEvaluator sickNotePermissionEvaluator, WorkDaysCountService workDaysCountService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator, ApplicationForLeavePermissionEvaluator permissionEvaluator,
+        WorkDaysCountService workDaysCountService,
         DepartmentService departmentService, PersonService personService, SettingsService settingsService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
         MessageSource messageSource, Clock clock
@@ -79,6 +82,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
+        this.permissionEvaluator = permissionEvaluator;
         this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
@@ -139,11 +143,27 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         // prepare everything as we don't know whether to render 'userApplications' or 'userHolidayReplacements'
         // when activeTab matches 'submitted sick notes' for instance.
         // however, we could consider the referer header. feel free to improve this :-)
-        prepareUserApplications(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final List<ApplicationForLeave> cancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+
+        // every application of the page is known before the first of them is rendered, so the memberships the
+        // permissions depend on are read once for the request instead of once per tab
+        final List<ApplicationForLeave> allApplications = Stream.of(userApplications, otherApplications, cancellationRequests)
+            .flatMap(List::stream)
+            .toList();
+        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, allApplications);
+        final Predicate<Person> allowedToAccessPersonData = allowedToAccessPersonData(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+
+        model.addAttribute("userApplications", mapToApplicationForLeaveDtoList(userApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareUserHolidayReplacements(model, signedInUser, locale);
-        prepareOtherApplications(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        model.addAttribute("otherApplications", mapToApplicationForLeaveDtoList(otherApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareOtherSubmittedSickNotes(model, signedInUser, locale);
-        prepareApplicationCancellationRequests(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+
+        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(cancellationRequests, permissionsOf, allowedToAccessPersonData, locale);
+        if (!cancellationDtoList.isEmpty()) {
+            model.addAttribute("applications_cancellation_request", cancellationDtoList);
+        }
 
         model.addAttribute("activeContent", activeTab.name);
         // shortcut actions started on this page hand it over as the page to return to, see SafeRedirectUrl
@@ -162,10 +182,23 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
             && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser);
     }
 
-    private void prepareUserApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> memberOfSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
-        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, membersOfDepartmentHead, memberOfSecondStageAuthority, locale);
-        model.addAttribute("userApplications", userApplicationsDtos);
+    /**
+     * Whether the signed in user may see who the application belongs to, see
+     * {@link DepartmentService#isSignedInUserAllowedToAccessPersonData(Person, Person)}. Answered from the memberships
+     * that were read for this request already - asking the service would read them again for every listed
+     * application.
+     */
+    private static Predicate<Person> allowedToAccessPersonData(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
+
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
+            return person -> true;
+        }
+
+        final Set<Person> managedPersons = Stream.of(membersAsDepartmentHead, membersAsSecondStageAuthority)
+            .flatMap(List::stream)
+            .collect(toUnmodifiableSet());
+
+        return person -> signedInUser.equals(person) || managedPersons.contains(person);
     }
 
     private void prepareUserHolidayReplacements(Model model, Person signedInUser, Locale locale) {
@@ -174,24 +207,10 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
-    private void prepareOtherApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> membersOfSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority);
-        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority, locale);
-        model.addAttribute("otherApplications", otherApplicationsDtos);
-    }
-
     private void prepareOtherSubmittedSickNotes(Model model, Person signedInUser, Locale locale) {
         final List<SubmittedSickNote> sickNotes = sickNoteService.findSubmittedSickNotes(getPersonsForRelevantSubmittedSickNotes(signedInUser));
         final List<SubmittedSickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(sickNotes, locale);
         model.addAttribute("otherSickNotes", otherSickNotesDtos);
-    }
-
-    private void prepareApplicationCancellationRequests(Model model, Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
-        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
-        if (!cancellationDtoList.isEmpty()) {
-            model.addAttribute("applications_cancellation_request", cancellationDtoList);
-        }
     }
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
@@ -225,40 +244,29 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(
         List<ApplicationForLeave> applications,
-        Person signedInUser,
-        List<Person> membersAsDepartmentHead,
-        List<Person> membersAsSecondStageAuthority,
+        Function<Application, ApplicationForLeavePermissions> permissionsOf,
+        Predicate<Person> allowedToAccessPersonData,
         Locale locale
     ) {
         return applications.stream()
-            .map(applicationForLeave -> {
-                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
-                return toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale, allowedToAccessPersonData);
-            })
+            .map(applicationForLeave -> toView(applicationForLeave, permissionsOf.apply(applicationForLeave), messageSource,
+                locale, allowedToAccessPersonData.test(applicationForLeave.getPerson())))
             .toList();
     }
 
-    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersOfDepartmentHead,
-                                                 List<Person> membersOfSecondStageAuthority, MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
+    private ApplicationForLeaveDto toView(ApplicationForLeave application, ApplicationForLeavePermissions permissions,
+                                                 MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
-        final boolean isAllowed = application.hasStatus(ALLOWED);
-        final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
         final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
-        final boolean twoStageApproval = application.isTwoStageApproval();
 
-        final boolean isBoss = signedInUser.hasRole(BOSS);
-        final boolean isOffice = signedInUser.hasRole(OFFICE);
-        final boolean isDepartmentHeadOfPerson = membersOfDepartmentHead.contains(person);
-        final boolean isSecondStageAuthorityOfPerson = membersOfSecondStageAuthority.contains(person);
-        final boolean isOwn = person.equals(signedInUser);
-
-        final boolean isAllowedToEdit = isWaiting && isOwn;
-        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHeadOfPerson && !isOwn) && !isBoss && !isSecondStageAuthorityOfPerson;
-        final boolean isAllowedToApprove = (isWaiting && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn))) || (isTemporaryAllowed && (isBoss || (isSecondStageAuthorityOfPerson && !isOwn)));
-        final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
-        final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
+        final boolean isAllowedToEdit = permissions.isAllowedToEdit();
+        final boolean isAllowedToTemporaryApprove = permissions.isAllowedToAllowTemporarily();
+        final boolean isAllowedToApprove = permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed();
+        final boolean isAllowedToCancel = permissions.isAllowedToRevoke() || permissions.isAllowedToCancel()
+            || permissions.isAllowedToCancelDirectly() || permissions.isAllowedToStartCancellationRequest();
+        final boolean isAllowedToReject = permissions.isAllowedToReject();
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())

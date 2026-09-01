@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -31,15 +33,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.function.Function;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 
 @Controller
 @RequestMapping("/")
@@ -51,15 +49,18 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
 
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
+    @SuppressWarnings("java:S107") // "Constructors should not have too many parameters" - collaborators injected by spring
     ApplicationsViewController(
         PersonService personService,
         DepartmentService departmentService,
+        ApplicationForLeavePermissionEvaluator permissionEvaluator,
         ApplicationService applicationService,
         WorkDaysCountService workDaysCountService,
         VacationTypeViewModelService vacationTypeViewModelService,
@@ -68,6 +69,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
+        this.permissionEvaluator = permissionEvaluator;
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
@@ -150,9 +152,11 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             applicationsForLeave = List.of();
             usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
         } else {
-            applicationsForLeave = toApplicationsForLeave(applications).stream()
+            final List<ApplicationForLeave> applicationsOfPerson = toApplicationsForLeave(applications);
+            final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, applicationsOfPerson);
+            applicationsForLeave = applicationsOfPerson.stream()
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(applicationForLeave -> applicationDto(applicationForLeave, signedInUser, locale))
+                .map(applicationForLeave -> applicationDto(applicationForLeave, permissionsOf.apply(applicationForLeave), locale))
                 .toList();
             usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
         }
@@ -172,22 +176,18 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, ApplicationForLeavePermissions permissions, Locale locale) {
 
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
 
-        final boolean requiresApprovalToCancel = applicationForLeave.getVacationType().isRequiresApprovalToCancel();
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, applicationForLeave.getPerson());
+        final boolean allowedToEdit = permissions.isAllowedToEdit();
 
-        final boolean allowedToEdit = isAllowedToEditApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
-
-        final boolean allowedToRevoke = isAllowedToRevokeApplication(applicationForLeave, signedInUser, requiresApprovalToCancel);
-        final boolean allowedToCancel = isAllowedToCancelApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
-        final boolean allowedToCancelDirectly = isAllowedToCancelDirectlyApplication(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
-        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(applicationForLeave, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel);
+        final boolean allowedToRevoke = permissions.isAllowedToRevoke();
+        final boolean allowedToCancel = permissions.isAllowedToCancel();
+        final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
+        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());

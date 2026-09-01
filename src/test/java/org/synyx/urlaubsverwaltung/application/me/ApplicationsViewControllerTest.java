@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
 import static java.math.BigDecimal.ONE;
 import static java.time.Month.JANUARY;
@@ -103,7 +104,7 @@ class ApplicationsViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationsViewController(
-            personService, departmentService, applicationService,
+            personService, departmentService, new ApplicationForLeavePermissionEvaluator(departmentService), applicationService,
             workDaysCountService, vacationTypeViewModelService, personSearchUiFragmentSupplier, clock
         );
     }
@@ -224,7 +225,6 @@ class ApplicationsViewControllerTest {
         when(vacationType.getLabel(any(Locale.class))).thenReturn("label");
         when(vacationType.getCategory()).thenReturn(HOLIDAY);
         when(vacationType.getColor()).thenReturn(ORANGE);
-        when(vacationType.isRequiresApprovalToCancel()).thenReturn(false);
         application.setVacationType(vacationType);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -344,8 +344,7 @@ class ApplicationsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(deptHead);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(false);
+        when(departmentService.getMembersForDepartmentHead(deptHead)).thenReturn(List.of(applicationPerson));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(deptHead, applicationPerson)).thenReturn(true);
 
         final Application application = createApplication(1L, applicationPerson, WAITING, false);
@@ -373,8 +372,7 @@ class ApplicationsViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isSignedInUserAllowedToAccessPersonData(deptHead, applicationPerson)).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(deptHead, applicationPerson)).thenReturn(false);
+        when(departmentService.getMembersForDepartmentHead(deptHead)).thenReturn(List.of(applicationPerson));
 
         final Application application = createApplication(1L, applicationPerson, WAITING, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -401,8 +399,7 @@ class ApplicationsViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isSignedInUserAllowedToAccessPersonData(ssa, applicationPerson)).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(ssa, applicationPerson)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, applicationPerson)).thenReturn(true);
+        when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(List.of(applicationPerson));
 
         final Application application = createApplication(1L, applicationPerson, WAITING, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -528,8 +525,6 @@ class ApplicationsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(boss, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
 
         final Application application = createApplication(1L, applicationPerson, ALLOWED, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -556,8 +551,6 @@ class ApplicationsViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
         when(departmentService.isSignedInUserAllowedToAccessPersonData(boss, applicationPerson)).thenReturn(true);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(boss, applicationPerson)).thenReturn(false);
 
         final Application application = createApplication(1L, applicationPerson, ALLOWED, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
@@ -584,8 +577,6 @@ class ApplicationsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(officeUser, applicationPerson)).thenReturn(true);
         when(departmentService.getAssignedDepartmentsOfMember(applicationPerson)).thenReturn(List.of());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(officeUser, applicationPerson)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(officeUser, applicationPerson)).thenReturn(false);
 
         final Application application = createApplication(1L, applicationPerson, ALLOWED, false);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(

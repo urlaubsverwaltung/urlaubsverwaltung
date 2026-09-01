@@ -56,6 +56,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -91,6 +92,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -135,7 +137,7 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-            departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
             vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
 
         lenient().when(settingsService.getSettings()).thenReturn(new Settings());
@@ -1184,7 +1186,7 @@ class OverviewViewControllerTest {
         void setUpWithFixedClock() {
             sut = new OverviewViewController(personService, accountService, vacationDaysService,
                 workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
-                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService),
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
                 vacationTypeViewModelService, personSearchUiFragmentSupplier,
                 Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
 
@@ -1292,6 +1294,39 @@ class OverviewViewControllerTest {
             final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
             assertThat(applicationOverview).isNotNull();
             return applicationOverview;
+        }
+
+        @Test
+        void ensurePermissionsOfTheShownApplicationsAreResolvedForTheWholeList() throws Exception {
+
+            final Person departmentHead = new Person();
+            departmentHead.setId(2L);
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
+
+            final Application first = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            final Application second = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+
+            when(settingsService.getSettings()).thenReturn(new Settings());
+            when(personService.getSignedInUser()).thenReturn(departmentHead);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(departmentHead, person)).thenReturn(true);
+            when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
+            when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(List.of(first, second));
+            stubWorkDaysCountForApplications(ONE);
+
+            final ModelAndView mav = perform(get("/web/person/1/overview")
+                .param("year", String.valueOf(TODAY.getYear()))
+                .locale(GERMAN)
+            ).andReturn().getModelAndView();
+
+            assertThat(mav).isNotNull();
+            final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::allowedToEdit)
+                .containsExactly(true, true);
+
+            // the memberships answer the permissions of every shown application, not of one of them
+            verify(departmentService).getMembersForDepartmentHead(departmentHead);
         }
 
         private Application application(LocalDate startDate, LocalDate endDate) {
