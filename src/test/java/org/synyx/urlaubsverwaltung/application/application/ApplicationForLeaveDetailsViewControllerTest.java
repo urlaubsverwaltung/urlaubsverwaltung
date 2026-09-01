@@ -1156,6 +1156,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(waitingApplication()));
 
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
         perform(post("/web/application/" + APPLICATION_ID + "/cancel")
             .param("redirect", redirect))
             .andExpect(status().isFound())
@@ -1169,6 +1171,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person signedInPerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(waitingApplication()));
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel")
             .param("redirect", redirect))
