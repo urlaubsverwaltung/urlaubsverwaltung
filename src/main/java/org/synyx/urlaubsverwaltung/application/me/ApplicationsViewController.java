@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.function.Function;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -151,9 +152,11 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
             applicationsForLeave = List.of();
             usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
         } else {
-            applicationsForLeave = toApplicationsForLeave(applications).stream()
+            final List<ApplicationForLeave> applicationsOfPerson = toApplicationsForLeave(applications);
+            final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, applicationsOfPerson);
+            applicationsForLeave = applicationsOfPerson.stream()
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(applicationForLeave -> applicationDto(applicationForLeave, signedInUser, locale))
+                .map(applicationForLeave -> applicationDto(applicationForLeave, permissionsOf.apply(applicationForLeave), locale))
                 .toList();
             usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
         }
@@ -173,13 +176,11 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, ApplicationForLeavePermissions permissions, Locale locale) {
 
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
-
-        final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, applicationForLeave);
 
         final boolean allowedToEdit = permissions.isAllowedToEdit();
 

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -38,6 +39,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -141,11 +143,27 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         // prepare everything as we don't know whether to render 'userApplications' or 'userHolidayReplacements'
         // when activeTab matches 'submitted sick notes' for instance.
         // however, we could consider the referer header. feel free to improve this :-)
-        prepareUserApplications(model, signedInUser, locale);
+        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final List<ApplicationForLeave> cancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+
+        // every application of the page is known before the first of them is rendered, so the memberships the
+        // permissions depend on are read once for the request instead of once per tab
+        final List<ApplicationForLeave> allApplications = Stream.of(userApplications, otherApplications, cancellationRequests)
+            .flatMap(List::stream)
+            .toList();
+        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, allApplications);
+        final Predicate<Person> allowedToAccessPersonData = allowedToAccessPersonData(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+
+        model.addAttribute("userApplications", mapToApplicationForLeaveDtoList(userApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareUserHolidayReplacements(model, signedInUser, locale);
-        prepareOtherApplications(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        model.addAttribute("otherApplications", mapToApplicationForLeaveDtoList(otherApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareOtherSubmittedSickNotes(model, signedInUser, locale);
-        prepareApplicationCancellationRequests(model, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+
+        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(cancellationRequests, permissionsOf, allowedToAccessPersonData, locale);
+        if (!cancellationDtoList.isEmpty()) {
+            model.addAttribute("applications_cancellation_request", cancellationDtoList);
+        }
 
         model.addAttribute("activeContent", activeTab.name);
         // shortcut actions started on this page hand it over as the page to return to, see SafeRedirectUrl
@@ -164,10 +182,23 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
             && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser);
     }
 
-    private void prepareUserApplications(Model model, Person signedInUser, Locale locale) {
-        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
-        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, locale);
-        model.addAttribute("userApplications", userApplicationsDtos);
+    /**
+     * Whether the signed in user may see who the application belongs to, see
+     * {@link DepartmentService#isSignedInUserAllowedToAccessPersonData(Person, Person)}. Answered from the memberships
+     * that were read for this request already - asking the service would read them again for every listed
+     * application.
+     */
+    private static Predicate<Person> allowedToAccessPersonData(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
+
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
+            return person -> true;
+        }
+
+        final Set<Person> managedPersons = Stream.of(membersAsDepartmentHead, membersAsSecondStageAuthority)
+            .flatMap(List::stream)
+            .collect(toUnmodifiableSet());
+
+        return person -> signedInUser.equals(person) || managedPersons.contains(person);
     }
 
     private void prepareUserHolidayReplacements(Model model, Person signedInUser, Locale locale) {
@@ -176,24 +207,10 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
-    private void prepareOtherApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> membersOfSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority);
-        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, locale);
-        model.addAttribute("otherApplications", otherApplicationsDtos);
-    }
-
     private void prepareOtherSubmittedSickNotes(Model model, Person signedInUser, Locale locale) {
         final List<SubmittedSickNote> sickNotes = sickNoteService.findSubmittedSickNotes(getPersonsForRelevantSubmittedSickNotes(signedInUser));
         final List<SubmittedSickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(sickNotes, locale);
         model.addAttribute("otherSickNotes", otherSickNotesDtos);
-    }
-
-    private void prepareApplicationCancellationRequests(Model model, Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
-        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
-        if (!cancellationDtoList.isEmpty()) {
-            model.addAttribute("applications_cancellation_request", cancellationDtoList);
-        }
     }
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
@@ -227,15 +244,13 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(
         List<ApplicationForLeave> applications,
-        Person signedInUser,
+        Function<Application, ApplicationForLeavePermissions> permissionsOf,
+        Predicate<Person> allowedToAccessPersonData,
         Locale locale
     ) {
-        final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, applications);
         return applications.stream()
-            .map(applicationForLeave -> {
-                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
-                return toView(applicationForLeave, permissionsOf.apply(applicationForLeave), messageSource, locale, allowedToAccessPersonData);
-            })
+            .map(applicationForLeave -> toView(applicationForLeave, permissionsOf.apply(applicationForLeave), messageSource,
+                locale, allowedToAccessPersonData.test(applicationForLeave.getPerson())))
             .toList();
     }
 

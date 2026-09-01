@@ -92,6 +92,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -1293,6 +1294,39 @@ class OverviewViewControllerTest {
             final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
             assertThat(applicationOverview).isNotNull();
             return applicationOverview;
+        }
+
+        @Test
+        void ensurePermissionsOfTheShownApplicationsAreResolvedForTheWholeList() throws Exception {
+
+            final Person departmentHead = new Person();
+            departmentHead.setId(2L);
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
+
+            final Application first = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+            final Application second = application(TODAY.plusMonths(2), TODAY.plusMonths(2).plusDays(2));
+
+            when(settingsService.getSettings()).thenReturn(new Settings());
+            when(personService.getSignedInUser()).thenReturn(departmentHead);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(departmentHead, person)).thenReturn(true);
+            when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
+            when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(List.of(first, second));
+            stubWorkDaysCountForApplications(ONE);
+
+            final ModelAndView mav = perform(get("/web/person/1/overview")
+                .param("year", String.valueOf(TODAY.getYear()))
+                .locale(GERMAN)
+            ).andReturn().getModelAndView();
+
+            assertThat(mav).isNotNull();
+            final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+            assertThat(applicationOverview.applications())
+                .extracting(ApplicationDto::allowedToEdit)
+                .containsExactly(true, true);
+
+            // the memberships answer the permissions of every shown application, not of one of them
+            verify(departmentService).getMembersForDepartmentHead(departmentHead);
         }
 
         private Application application(LocalDate startDate, LocalDate endDate) {

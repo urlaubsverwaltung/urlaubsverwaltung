@@ -57,6 +57,9 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -1074,6 +1077,62 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(view().name("application/application-overview"));
+    }
+
+    @Test
+    void ensureTheMembershipsAreReadOncePerRequestAndNotOncePerTab() throws Exception {
+        stubWorkDaysCountByYear();
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("");
+
+        final Person departmentHeadAndSecondStageAuth = new Person();
+        departmentHeadAndSecondStageAuth.setId(1L);
+        departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
+        departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
+
+        final Person memberOfDepartment = new Person();
+        memberOfDepartment.setId(2L);
+        memberOfDepartment.setFirstName("memberOfDepartment");
+        memberOfDepartment.setPermissions(List.of(USER));
+
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(List.of(memberOfDepartment));
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(List.of(memberOfDepartment));
+
+        // one application per tab, so a resolve per tab would show up as a third read
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))
+            .thenReturn(List.of(applicationOf(1L, departmentHeadAndSecondStageAuth, WAITING)));
+        when(applicationService.getForStatesAndPerson(List.of(WAITING), List.of(memberOfDepartment)))
+            .thenReturn(List.of(applicationOf(2L, memberOfDepartment, WAITING)));
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(memberOfDepartment)))
+            .thenReturn(List.of(applicationOf(3L, memberOfDepartment, TEMPORARY_ALLOWED)));
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(memberOfDepartment)))
+            .thenReturn(List.of(applicationOf(4L, memberOfDepartment, ALLOWED_CANCELLATION_REQUESTED)));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("applications_cancellation_request", hasSize(1)));
+
+        // once to select the applications of the page, once to answer the permissions of all of them
+        verify(departmentService, times(2)).getMembersForDepartmentHead(departmentHeadAndSecondStageAuth);
+        verify(departmentService, times(2)).getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth);
+        // and never one query per listed application
+        verify(departmentService, never()).isDepartmentHeadAllowedToManagePerson(any(), any());
+        verify(departmentService, never()).isSecondStageAuthorityAllowedToManagePerson(any(), any());
+        verify(departmentService, never()).isSignedInUserAllowedToAccessPersonData(any(), any());
+    }
+
+    private Application applicationOf(long id, Person person, ApplicationStatus status) {
+        final Application application = new Application();
+        application.setId(id);
+        application.setVacationType(anyVacationType());
+        application.setPerson(person);
+        application.setStatus(status);
+        application.setStartDate(LocalDate.MAX);
+        application.setEndDate(LocalDate.MAX);
+        application.setDayLength(FULL);
+        return application;
     }
 
     @Test

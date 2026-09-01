@@ -249,10 +249,13 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 .toList();
 
             // future applications on top, the past one at the bottom
-            applicationsForLeave = Stream.of(pastApplications, currentApplications, futureApplications)
+            final List<ApplicationForLeave> shownApplications = Stream.of(pastApplications, currentApplications, futureApplications)
                 .flatMap(List::stream)
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(a -> applicationDto(a, signedInUser, locale))
+                .toList();
+            final Function<Application, ApplicationForLeavePermissions> permissionsOf = applicationForLeavePermissionEvaluator.of(signedInUser, shownApplications);
+            applicationsForLeave = shownApplications.stream()
+                .map(a -> applicationDto(a, permissionsOf.apply(a), locale))
                 .toList();
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
@@ -384,12 +387,10 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         return new ApplicationVacationTypeDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
-    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, Person signedInUser, Locale locale) {
+    private ApplicationDto applicationDto(ApplicationForLeave applicationForLeave, ApplicationForLeavePermissions permissions, Locale locale) {
         final List<PersonDto> holidayReplacements = applicationForLeave.getHolidayReplacements().stream()
             .map(hr -> new PersonDto(hr.getPerson().getGravatarURL(), hr.getPerson().getNiceName(), hr.getPerson().getInitials()))
             .toList();
-
-        final ApplicationForLeavePermissions permissions = applicationForLeavePermissionEvaluator.of(signedInUser, applicationForLeave);
 
         final boolean allowedToEdit = permissions.isAllowedToEdit();
 
