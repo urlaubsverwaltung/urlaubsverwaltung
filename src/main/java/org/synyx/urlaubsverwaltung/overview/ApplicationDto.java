@@ -37,6 +37,7 @@ record ApplicationDto(
     boolean allowedToRevoke,
     boolean allowedToCancel,
     boolean allowedToCancelDirectly,
-    boolean allowedToStartCancellationRequest
+    boolean allowedToStartCancellationRequest,
+    boolean allowedToCancelInAnyWay
 ) {
 }

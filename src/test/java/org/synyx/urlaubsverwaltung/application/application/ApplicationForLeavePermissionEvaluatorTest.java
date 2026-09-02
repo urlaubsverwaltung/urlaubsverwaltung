@@ -150,6 +150,24 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensureNothingIsAllowedTemporarilyButAWaitingApplication() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
+            final Person member = person(OTHER_PERSON_ID, USER);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
+
+            // the temporary approval is the first of two stages - there is nothing to approve temporarily about an
+            // application that is not waiting for its first approval any more
+            for (ApplicationStatus status : List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED, REJECTED)) {
+                final Application application = application(member, status);
+                application.setTwoStageApproval(true);
+                assertThat(sut.of(departmentHead, application).isAllowedToAllowTemporarily())
+                    .describedAs("status %s", status)
+                    .isFalse();
+            }
+        }
+
+        @Test
         void ensureBossNeverAllowsTemporarilyOnly() {
 
             final Person boss = person(SIGNED_IN_USER_ID, BOSS);
@@ -157,6 +175,30 @@ class ApplicationForLeavePermissionEvaluatorTest {
             twoStage.setTwoStageApproval(true);
 
             assertThat(sut.of(boss, twoStage).isAllowedToAllowTemporarily()).isFalse();
+        }
+    }
+
+    @Nested
+    class AllowInAnyWay {
+
+        @Test
+        void ensureManagerMayAllowAWaitingApplication() {
+            assertThat(permissionsOnManagedPerson(WAITING, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureManagerMayAllowATemporaryAllowedApplication() {
+            assertThat(permissionsOnManagedPerson(TEMPORARY_ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureNobodyAllowsAnAlreadyAllowedApplication() {
+            assertThat(permissionsOnManagedPerson(ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToAllowInAnyWay()).isFalse();
+        }
+
+        @Test
+        void ensureUnrelatedUserMayNotAllow() {
+            assertThat(permissionsOnUnmanagedPerson(WAITING, USER).isAllowedToAllowInAnyWay()).isFalse();
         }
     }
 
@@ -403,6 +445,59 @@ class ApplicationForLeavePermissionEvaluatorTest {
             final ApplicationForLeavePermissions permissions = sut.of(office, application);
             assertThat(permissions.isAllowedToCancel()).isTrue();
             assertThat(permissions.isAllowedToStartCancellationRequest()).isFalse();
+        }
+    }
+
+    @Nested
+    class CancelInAnyWay {
+
+        @Test
+        void ensurePersonMayCancelOwnWaitingApplicationRightAway() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, WAITING));
+            assertThat(permissions.isAllowedToCancelRightAway()).isTrue();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensurePersonAskingForCancellationMayNotCancelRightAway() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED));
+            assertThat(permissions.isAllowedToCancelRightAway()).isFalse();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isTrue();
+        }
+
+        @Test
+        void ensureUnrelatedUserMayNotCancelAtAll() {
+            final Person signedInUser = person(SIGNED_IN_USER_ID, USER);
+            final Application application = applicationRequiringApprovalToCancel(person(OTHER_PERSON_ID, USER), ALLOWED);
+
+            final ApplicationForLeavePermissions permissions = sut.of(signedInUser, application);
+            assertThat(permissions.isAllowedToCancelRightAway()).isFalse();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isFalse();
+        }
+    }
+
+    @Nested
+    class CommentMandatoryToCancel {
+
+        @Test
+        void ensureNoCommentIsNeededToCancelAnOwnApplicationDirectly() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(person, application(person, ALLOWED)).isCommentMandatoryToCancel()).isFalse();
+        }
+
+        @Test
+        void ensureCommentIsNeededToRequestCancellationOfAnOwnApplication() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+            assertThat(sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED)).isCommentMandatoryToCancel()).isTrue();
+        }
+
+        @Test
+        void ensureCommentIsNeededToCancelTheApplicationOfSomebodyElse() {
+            final Person office = person(SIGNED_IN_USER_ID, OFFICE);
+            final Application application = applicationRequiringApprovalToCancel(person(OTHER_PERSON_ID, USER), ALLOWED);
+            assertThat(sut.of(office, application).isCommentMandatoryToCancel()).isTrue();
         }
     }
 

@@ -962,7 +962,8 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/15"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("canAcceptSickNote", false))
-            .andExpect(model().attribute("canAcceptSickNoteExtension", false));
+            .andExpect(model().attribute("canAcceptSickNoteExtension", false))
+            .andExpect(model().attribute("canAcceptSickNoteOrExtension", false));
     }
 
     @Test
@@ -994,7 +995,8 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("extensionRequested", true))
             .andExpect(model().attribute("canAcceptSickNote", false))
-            .andExpect(model().attribute("canAcceptSickNoteExtension", true));
+            .andExpect(model().attribute("canAcceptSickNoteExtension", true))
+            .andExpect(model().attribute("canAcceptSickNoteOrExtension", true));
     }
 
     @Test

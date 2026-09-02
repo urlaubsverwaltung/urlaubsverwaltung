@@ -63,7 +63,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.COMMENTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -178,7 +177,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
         final Person person = application.getPerson();
 
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        if (!(permissions.isAllowedToAllowWaiting() || permissions.isAllowedToAllowTemporaryAllowed())) {
+        if (!permissions.isAllowedToAllowInAnyWay()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to allow application for leave of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -304,18 +303,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         final boolean requiresApprovalToCancel = application.getVacationType().isRequiresApprovalToCancel();
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        final boolean allowedToRevokeApplication = permissions.isAllowedToRevoke();
-        final boolean allowedToCancelApplication = permissions.isAllowedToCancel();
-        final boolean allowedToCancelDirectlyApplication = permissions.isAllowedToCancelDirectly();
-        final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
-        if (!(allowedToRevokeApplication || allowedToCancelApplication || allowedToCancelDirectlyApplication || allowedToStartCancellationRequest)) {
+        if (!permissions.isAllowedToCancelInAnyWay()) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel or revoke application " +
                 "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
 
-        // comment is mandatory if cancel for another user or cancellation request of own
-        final boolean isCommentMandatory = allowedToStartCancellationRequest || !signedInUser.equals(application.getPerson());
-        comment.setMandatory(isCommentMandatory);
+        comment.setMandatory(permissions.isCommentMandatoryToCancel());
 
         commentValidator.validate(comment, errors);
         if (errors.hasErrors()) {
@@ -483,18 +476,18 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
 
         // Signed in person is allowed to manage
         final ApplicationForLeavePermissions permissions = permissionEvaluator.of(signedInUser, application);
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
-        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
 
         model.addAttribute("isAllowedToAllowWaitingApplication", permissions.isAllowedToAllowWaiting());
         model.addAttribute("isAllowedToAllowTemporaryAllowedApplication", permissions.isAllowedToAllowTemporaryAllowed());
+        model.addAttribute("isAllowedToAllowTemporarilyApplication", permissions.isAllowedToAllowTemporarily());
+        model.addAttribute("isAllowedToAllowApplicationInAnyWay", permissions.isAllowedToAllowInAnyWay());
 
         model.addAttribute("isAllowedToRejectApplication", permissions.isAllowedToReject());
 
-        model.addAttribute("isAllowedToRevokeApplication", permissions.isAllowedToRevoke());
-        model.addAttribute("isAllowedToCancelApplication", permissions.isAllowedToCancel());
-        model.addAttribute("isAllowedToCancelDirectlyApplication", permissions.isAllowedToCancelDirectly());
+        model.addAttribute("isAllowedToCancelApplicationRightAway", permissions.isAllowedToCancelRightAway());
+        model.addAttribute("isAllowedToCancelApplicationInAnyWay", permissions.isAllowedToCancelInAnyWay());
         model.addAttribute("isAllowedToStartCancellationRequest", permissions.isAllowedToStartCancellationRequest());
+        model.addAttribute("isCommentMandatoryToCancelApplication", permissions.isCommentMandatoryToCancel());
 
         model.addAttribute("isAllowedToDeclineCancellationRequest", permissions.isAllowedToDeclineCancellationRequest());
 
@@ -508,11 +501,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad, HasPerso
             model.addAttribute("referredPerson", new ReferredPerson());
         }
         model.addAttribute("isAllowedToCommentApplication", permissions.isAllowedToComment());
-
-        model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
-        model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
-        model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
-        model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 
         // UNSPECIFIC ATTRIBUTES
         model.addAttribute("selectedYear", year);

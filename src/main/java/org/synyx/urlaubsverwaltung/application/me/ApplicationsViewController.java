@@ -188,6 +188,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         final boolean allowedToCancel = permissions.isAllowedToCancel();
         final boolean allowedToCancelDirectly = permissions.isAllowedToCancelDirectly();
         final boolean allowedToStartCancellationRequest = permissions.isAllowedToStartCancellationRequest();
+        final boolean allowedToCancelInAnyWay = permissions.isAllowedToCancelInAnyWay();
 
         final ApplicationDto dto = new ApplicationDto();
         dto.setId(applicationForLeave.getId());
@@ -215,6 +216,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         dto.setAllowedToCancel(allowedToCancel);
         dto.setAllowedToCancelDirectly(allowedToCancelDirectly);
         dto.setAllowedToStartCancellationRequest(allowedToStartCancellationRequest);
+        dto.setAllowedToCancelInAnyWay(allowedToCancelInAnyWay);
         return dto;
     }
 }

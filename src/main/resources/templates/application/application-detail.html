@@ -94,7 +94,7 @@
           ></th:block>
 
           <th:block
-            th:if="${isAllowedToAllowWaitingApplication || isAllowedToAllowTemporaryAllowedApplication}"
+            th:if="${isAllowedToAllowApplicationInAnyWay}"
             th:replace="~{application/app-sections/action-allow::form}"
           ></th:block>
 
@@ -109,7 +109,7 @@
           ></th:block>
 
           <th:block
-            th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication || isAllowedToStartCancellationRequest}"
+            th:if="${isAllowedToCancelApplicationInAnyWay}"
             th:replace="~{application/app-sections/action-cancel::form}"
           ></th:block>
 

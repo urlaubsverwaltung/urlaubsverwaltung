@@ -7,7 +7,7 @@
   <body>
     <th:block th:fragment="buttons">
       <button
-        th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}"
+        th:if="${isAllowedToCancelApplicationRightAway}"
         class="icon-link bg-transparent hover:text-red-500"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');
@@ -45,7 +45,7 @@
         class="alert alert-danger"
         th:classappend="${action eq 'cancel' ? '' : 'hidden'}"
         method="post"
-        th:with="deleteRequest=${app.vacationType.requiresApprovalToCancel == true && (app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}"
+        th:with="deleteRequest=${isAllowedToStartCancellationRequest}"
         th:action="@{/web/application/{applicationId}/cancel(applicationId=${app.id}, redirect=${redirect})}"
         th:object="${comment}"
       >
@@ -60,7 +60,7 @@
 
         <div class="mb-4">
           <label
-            th:with="commentMandatory=${app.person.id != signedInUser.id || app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED' || app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}"
+            th:with="commentMandatory=${isCommentMandatoryToCancelApplication}"
             th:text="|${commentMandatory == true ? #messages.msg('action.comment.mandatory') : #messages.msg('action.comment.optional')}:|"
             for="text-cancel"
             >Kommentar, optional</label

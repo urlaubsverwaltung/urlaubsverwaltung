@@ -193,8 +193,11 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", permissions.isAllowedToAccept(sickNote));
-            model.addAttribute("canAcceptSickNoteExtension", submittedExtension.isPresent() && permissions.isAllowedToAcceptExtension());
+            final boolean canAcceptSickNote = permissions.isAllowedToAccept(sickNote);
+            final boolean canAcceptSickNoteExtension = submittedExtension.isPresent() && permissions.isAllowedToAcceptExtension();
+            model.addAttribute("canAcceptSickNote", canAcceptSickNote);
+            model.addAttribute("canAcceptSickNoteExtension", canAcceptSickNoteExtension);
+            model.addAttribute("canAcceptSickNoteOrExtension", canAcceptSickNote || canAcceptSickNoteExtension);
             model.addAttribute("canEditSickNote", permissions.isAllowedToEdit(sickNote));
             model.addAttribute("canConvertSickNote", permissions.isAllowedToConvert(sickNote));
             model.addAttribute("canDeleteSickNote", permissions.isAllowedToCancel(sickNote));

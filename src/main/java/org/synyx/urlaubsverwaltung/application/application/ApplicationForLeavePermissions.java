@@ -65,6 +65,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether the user may allow the application at all, no matter whether it is waiting or allowed temporarily
+     * already. Guards everything that leads to an allowed application, the allow form of the detail page as well as
+     * the approve buttons of the application lists.
+     *
+     * @return {@code true} if the user may allow the application in any way, {@code false} otherwise
+     */
+    public boolean isAllowedToAllowInAnyWay() {
+        return isAllowedToAllowWaiting() || isAllowedToAllowTemporaryAllowed();
+    }
+
+    /**
      * Whether allowing the application results in a temporary approval only, which is the case for a department head of
      * a department with two stage approval.
      *
@@ -144,6 +155,17 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
+     * Whether the user may end the application right away, no matter how - by revoking it, by cancelling an allowed
+     * one or by cancelling it without asking anybody. The counterpart is
+     * {@link #isAllowedToStartCancellationRequest()}, which the user has to fall back to when this one does not hold.
+     *
+     * @return {@code true} if the user may cancel or revoke the application without asking, {@code false} otherwise
+     */
+    public boolean isAllowedToCancelRightAway() {
+        return isAllowedToRevoke() || isAllowedToCancel() || isAllowedToCancelDirectly();
+    }
+
+    /**
      * Whether the user may ask for the cancellation of an already allowed application. Only the person itself and the
      * management of that person may ask for it, and only if they may not cancel it right away.
      *
@@ -154,6 +176,28 @@ public final class ApplicationForLeavePermissions {
             && requiresApprovalToCancel()
             && (isOwnApplication() || signedInUser.hasRole(BOSS) || isManagerOfPerson())
             && !isAllowedToCancel();
+    }
+
+    /**
+     * Whether a comment has to be given to cancel the application. Cancelling the application of somebody else has to
+     * be explained, and so has asking for the cancellation of an own one - whoever decides about the request has to
+     * know what it is about. Cancelling an own application without asking anybody needs no comment.
+     *
+     * @return {@code true} if a comment is mandatory to cancel the application, {@code false} otherwise
+     */
+    public boolean isCommentMandatoryToCancel() {
+        return isAllowedToStartCancellationRequest() || isNotOwnApplication();
+    }
+
+    /**
+     * Whether the user may get rid of the application at all - either right away or by asking somebody to cancel it.
+     * Guards everything that leads to the cancellation of an application, the cancel form of the detail page as well
+     * as the delete buttons of the application lists.
+     *
+     * @return {@code true} if the user may cancel the application in any way, {@code false} otherwise
+     */
+    public boolean isAllowedToCancelInAnyWay() {
+        return isAllowedToCancelRightAway() || isAllowedToStartCancellationRequest();
     }
 
     /**
