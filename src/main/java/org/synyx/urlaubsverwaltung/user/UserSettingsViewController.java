@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.user;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -32,6 +31,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private static final Theme DEFAULT_THEME = Theme.SYSTEM;
 
     private final PersonService personService;
     private final UserSettingsService userSettingsService;
@@ -132,11 +133,16 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     private Theme themeNameToTheme(String themeName) {
+        if (themeName == null) {
+            LOG.info("no theme given, falling back to Theme.{}.", DEFAULT_THEME);
+            return DEFAULT_THEME;
+        }
+
         try {
             return Theme.valueOf(themeName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            LOG.error("tried to map unknown name={} to Theme.", themeName, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "theme does not exist.");
+            LOG.info("tried to map unknown name={} to Theme, falling back to Theme.{}.", themeName, DEFAULT_THEME);
+            return DEFAULT_THEME;
         }
     }
 

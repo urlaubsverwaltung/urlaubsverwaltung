@@ -43,19 +43,19 @@ class UserSettingsDtoValidatorTest {
     }
 
     @Test
-    void ensureThrowsErrorIfThemeIsNotProvided() {
+    void ensureValidIfThemeIsNotProvided() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setLocale(Locale.GERMAN);
         sut.validate(userSettingsDto, errors);
-        verify(errors).reject("Theme is not available");
+        verifyNoInteractions(errors);
     }
 
     @Test
-    void ensureThrowsErrorIfThemeIsNotSupported() {
+    void ensureValidIfThemeIsNotSupported() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setLocale(Locale.GERMAN);
         userSettingsDto.setTheme("someTheme");
         sut.validate(userSettingsDto, errors);
-        verify(errors).reject("Theme is not available");
+        verifyNoInteractions(errors);
     }
 }
