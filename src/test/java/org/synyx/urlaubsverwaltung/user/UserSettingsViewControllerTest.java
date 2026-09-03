@@ -114,7 +114,7 @@ class UserSettingsViewControllerTest {
                 )
             ))
             .andExpect(model().attribute("userSettings",
-                hasProperty("theme", is("DARK"))
+                hasProperty("theme", is(Theme.DARK))
             ))
             .andExpect(model().attribute("supportedThemes", contains(
                 allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
@@ -153,7 +153,7 @@ class UserSettingsViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"UNKNOWN_THEME", ""})
+    @ValueSource(strings = {"UNKNOWN_THEME", "", "someTheme"})
     void ensureUpdateUserSettingsFallsBackToSystemThemeWhenThemeNameIsUnknown(String givenThemeName) throws Exception {
 
         final Person signedInPerson = new Person();
@@ -223,6 +223,7 @@ class UserSettingsViewControllerTest {
             .locale(Locale.ITALIAN)
         )
             .andExpect(status().isOk())
+            .andExpect(model().attribute("userSettings", hasProperty("theme", is(Theme.SYSTEM))))
             .andExpect(model().attribute("supportedThemes", contains(
                 hasProperty("value", is("SYSTEM")),
                 hasProperty("value", is("LIGHT")),

@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,18 +22,12 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import java.util.List;
 import java.util.Locale;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
 @RequestMapping("/web")
 class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
-
-    private static final Theme DEFAULT_THEME = Theme.SYSTEM;
 
     private final PersonService personService;
     private final UserSettingsService userSettingsService;
@@ -58,6 +53,11 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.messageSource = messageSource;
+    }
+
+    @InitBinder
+    public void initBinder(DataBinder binder) {
+        binder.registerCustomEditor(Theme.class, new ThemePropertyEditor());
     }
 
     @Override
@@ -103,9 +103,7 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
             return "user/user-settings";
         }
 
-        final Theme theme = themeNameToTheme(userSettingsDto.getTheme());
-        final Locale userLocale = userSettingsDto.getLocale();
-        userSettingsService.updateUserPreference(signedInUser, theme, userLocale);
+        userSettingsService.updateUserPreference(signedInUser, userSettingsDto.getTheme(), userSettingsDto.getLocale());
 
         return "redirect:/web/person/%s/settings".formatted(personId);
     }
@@ -118,7 +116,7 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
 
     private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
-        userSettingsDto.setTheme(userSettings.theme().name());
+        userSettingsDto.setTheme(userSettings.theme());
         userSettings.locale().ifPresent(userSettingsDto::setLocale);
 
         return userSettingsDto;
@@ -130,20 +128,6 @@ class UserSettingsViewController implements HasLaunchpad, HasPersonSearch {
             themeToThemeDto(Theme.LIGHT, locale),
             themeToThemeDto(Theme.DARK, locale)
         );
-    }
-
-    private Theme themeNameToTheme(String themeName) {
-        if (themeName == null) {
-            LOG.info("no theme given, falling back to Theme.{}.", DEFAULT_THEME);
-            return DEFAULT_THEME;
-        }
-
-        try {
-            return Theme.valueOf(themeName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            LOG.info("tried to map unknown name={} to Theme, falling back to Theme.{}.", themeName, DEFAULT_THEME);
-            return DEFAULT_THEME;
-        }
     }
 
     private ThemeDto themeToThemeDto(Theme theme, Locale locale) {
