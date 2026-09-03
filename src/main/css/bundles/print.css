@@ -101,6 +101,15 @@
     overflow: visible !important;
   }
 
+  /* on top of that body is the app shell's grid (topbar cells, navigation and
+     content in their own grid areas) - Firefox does not fragment a grid
+     container across pages, it pushes the whole content row to the next page
+     and leaves the first one blank. The chrome around the content is hidden
+     for print anyway, so plain block layout is all that is left to do. */
+  body {
+    display: block !important;
+  }
+
   #main {
     overflow: visible !important;
     margin-top: 0 !important;
