@@ -27,6 +27,11 @@ updates:
           - "eslint-*"
           - "@eslint/*"
           - "@babel/eslint-parser"
+        exclude-patterns:
+          - "eslint-plugin-unicorn"
+      eslint-plugin-unicorn:
+        patterns:
+          - "eslint-plugin-unicorn"
       vitest:
         patterns:
           - "vitest"
