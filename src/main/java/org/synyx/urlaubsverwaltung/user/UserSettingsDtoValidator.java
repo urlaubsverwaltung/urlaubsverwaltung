@@ -21,11 +21,6 @@ class UserSettingsDtoValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         final UserSettingsDto userSettingsDto = (UserSettingsDto) target;
 
-        final String theme = userSettingsDto.getTheme();
-        if (availableThemesDoesNotContain(theme)) {
-            errors.reject("Theme is not available");
-        }
-
         final Locale locale = userSettingsDto.getLocale();
         if (locale != null && supportedLocaleDoesNotContain(locale)) {
             errors.reject("Locale is not available");
@@ -34,9 +29,5 @@ class UserSettingsDtoValidator implements Validator {
 
     private static boolean supportedLocaleDoesNotContain(Locale locale) {
         return stream(SupportedLocale.values()).noneMatch(supportedLocale -> supportedLocale.getLocale().equals(locale));
-    }
-
-    private static boolean availableThemesDoesNotContain(String theme) {
-        return stream(Theme.values()).noneMatch(availableTheme -> availableTheme.name().equals(theme));
     }
 }

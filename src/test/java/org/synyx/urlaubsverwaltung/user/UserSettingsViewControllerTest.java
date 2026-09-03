@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
-import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
@@ -115,7 +114,7 @@ class UserSettingsViewControllerTest {
                 )
             ))
             .andExpect(model().attribute("userSettings",
-                hasProperty("theme", is("DARK"))
+                hasProperty("theme", is(Theme.DARK))
             ))
             .andExpect(model().attribute("supportedThemes", contains(
                 allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
@@ -153,8 +152,9 @@ class UserSettingsViewControllerTest {
             .andExpect(redirectedUrl("/web/person/42/settings"));
     }
 
-    @Test
-    void ensureUpdateUserSettingsThrowsWhenThemeNameIsUnknown() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"UNKNOWN_THEME", "", "someTheme"})
+    void ensureUpdateUserSettingsFallsBackToSystemThemeWhenThemeNameIsUnknown(String givenThemeName) throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(42L);
@@ -162,11 +162,30 @@ class UserSettingsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/person/42/settings")
-            .param("theme", "UNKNOWN_THEME")
+            .param("theme", givenThemeName)
             .locale(Locale.GERMANY)
         )
-            .andExpect(status().isBadRequest())
-            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/person/42/settings"));
+
+        verify(userSettingsService).updateUserPreference(signedInPerson, Theme.SYSTEM, null);
+    }
+
+    @Test
+    void ensureUpdateUserSettingsFallsBackToSystemThemeWhenThemeIsNotGiven() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(42L);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        perform(post("/web/person/42/settings")
+            .locale(Locale.GERMANY)
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/person/42/settings"));
+
+        verify(userSettingsService).updateUserPreference(signedInPerson, Theme.SYSTEM, null);
     }
 
     @Test
@@ -204,6 +223,7 @@ class UserSettingsViewControllerTest {
             .locale(Locale.ITALIAN)
         )
             .andExpect(status().isOk())
+            .andExpect(model().attribute("userSettings", hasProperty("theme", is(Theme.SYSTEM))))
             .andExpect(model().attribute("supportedThemes", contains(
                 hasProperty("value", is("SYSTEM")),
                 hasProperty("value", is("LIGHT")),
