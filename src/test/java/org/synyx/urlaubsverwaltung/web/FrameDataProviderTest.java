@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -629,6 +630,42 @@ class FrameDataProviderTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
+    void ensureOfficeIsAllowedToAddOvertimeWhenSyncIsActive(boolean privilegedOnly) {
+        mockSettings(true, privilegedOnly, true, true, false);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "USER"})
+    void ensureNonOfficeIsNotAllowedToAddOvertimeWhenSyncIsActive(Role role) {
+        mockSettings(true, false, true, true, false);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(role));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
     void ensureAvatarSettingsIsInModel(boolean gravatarEnabled) {
         mockSettings(false, false, gravatarEnabled, false);
 
@@ -885,9 +922,14 @@ class FrameDataProviderTest {
     }
 
     private void mockSettings(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly, boolean gravatarEnabled, boolean submitSicknotesEnabled) {
+        mockSettings(overtimeFeatureActive, overtimeWritePrivilegedOnly, false, gravatarEnabled, submitSicknotesEnabled);
+    }
+
+    private void mockSettings(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly, boolean overtimeSyncActive, boolean gravatarEnabled, boolean submitSicknotesEnabled) {
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(overtimeFeatureActive);
         overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
+        overtimeSettings.setOvertimeSyncActive(overtimeSyncActive);
 
         final AvatarSettings avatarSettings = new AvatarSettings();
         avatarSettings.setGravatarEnabled(gravatarEnabled);

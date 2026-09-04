@@ -259,7 +259,8 @@ public class FrameDataProvider implements DataProviderInterface {
 
     private boolean isUserAllowedToWriteOvertime(Person signedInUser, OvertimeSettings overtimeSettings) {
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
-        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime && !overtimeSettings.isOvertimeSyncActive();
+        boolean officeUser = signedInUser.hasRole(OFFICE);
+        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime && (officeUser || !overtimeSettings.isOvertimeSyncActive());
     }
 
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {
