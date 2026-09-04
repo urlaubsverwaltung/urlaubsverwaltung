@@ -1031,6 +1031,74 @@ class OvertimeServiceImplTest {
         assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtime)).isTrue();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void ensureOfficeIsAllowedToUpdateOwnAndOthersOvertimeIfOvertimeSyncIsActive(boolean overtimeWritePrivilegedOnly) {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+
+        final Person personOfOvertime = new Person();
+        personOfOvertime.setId(2L);
+
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, true, true));
+
+        final Overtime overtimeOfOthers = new Overtime(
+            new OvertimeId(1L),
+            personOfOvertime.getIdAsPersonId(),
+            new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
+            Duration.ofHours(1),
+            UV_INTERNAL,
+            Instant.now(clock)
+        );
+        final Overtime ownOvertime = new Overtime(
+            new OvertimeId(2L),
+            signedInUser.getIdAsPersonId(),
+            new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
+            Duration.ofHours(1),
+            UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtimeOfOthers)).isTrue();
+        assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, signedInUser, ownOvertime)).isTrue();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+    void ensureNonOfficePersonIsNotAllowedToUpdateOwnOrOthersOvertimeIfOvertimeSyncIsActive(Role role) {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, role));
+
+        final Person personOfOvertime = new Person();
+        personOfOvertime.setId(2L);
+
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, true));
+
+        final Overtime overtimeOfOthers = new Overtime(
+            new OvertimeId(1L),
+            personOfOvertime.getIdAsPersonId(),
+            new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
+            Duration.ofHours(1),
+            UV_INTERNAL,
+            Instant.now(clock)
+        );
+        final Overtime ownOvertime = new Overtime(
+            new OvertimeId(2L),
+            signedInUser.getIdAsPersonId(),
+            new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
+            Duration.ofHours(1),
+            UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtimeOfOthers)).isFalse();
+        assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, signedInUser, ownOvertime)).isFalse();
+    }
+
     @Test
     void ensureUserIsNotAllowedToUpdateOwnOvertimeWithPrivilegedRestriction() {
 

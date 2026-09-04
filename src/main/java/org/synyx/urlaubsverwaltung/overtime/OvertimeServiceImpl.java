@@ -477,15 +477,22 @@ class OvertimeServiceImpl implements OvertimeService {
     /**
      * Is signedInUser person allowed to update the overtime record of personOfOvertime.
      * Update is only allowed if it is not an external overtime record.
+     * If overtime sync is active, only OFFICE is allowed to update a manual overtime record - for any person,
+     * including themselves - consistent with the create restriction.
      * <pre>
-     *  |                        | others | own   |  others | own  |
-     *  |------------------------|--------|-------|---------|------|
-     *  | PrivilegedOnly         | true   |       |  false  |      |
-     *  | OFFICE                 | true   | true  |  true   | true |
-     *  | BOSS                   | true   | true  |  false  | true |
-     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
-     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
-     *  | USER                   | false  | false |  false  | true |
+     *  |                        | sync active | others | own   |  others | own  |
+     *  |------------------------|-------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | false       | true   |       |  false  |      |
+     *  | OFFICE                 | false       | true   | true  |  true   | true |
+     *  | BOSS                   | false       | true   | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | false       | true   | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | false       | true   | true  |  false  | true |
+     *  | USER                   | false       | false  | false |  false  | true |
+     *  | OFFICE                 | true        | true   | true  |  true   | true |
+     *  | BOSS                   | true        | false  | false |  false  | false|
+     *  | SECOND_STAGE_AUTHORITY | true        | false  | false |  false  | false|
+     *  | DEPARTMENT_HEAD        | true        | false  | false |  false  | false|
+     *  | USER                   | true        | false  | false |  false  | false|
      * </pre>
      *
      * @param signedInUser     person which updates an overtime record
@@ -495,11 +502,13 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
+        final boolean officeUser = signedInUser.hasRole(OFFICE);
         return overtimeSettings.isOvertimeActive()
             && !overtime.type().equals(EXTERNAL)
+            && (officeUser || !overtimeSettings.isOvertimeSyncActive())
             &&
             (
-                signedInUser.hasRole(OFFICE)
+                officeUser
                     || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
                     || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
             );
