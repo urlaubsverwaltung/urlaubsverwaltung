@@ -135,7 +135,10 @@ function hydrateDatepicker(duetDateElement, options) {
       getJSON(
         `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
       ).then(pick("absences")),
-    ]).then(([publicHolidays, absences]) => {
+      getJSON(
+        `${urlPrefix}/persons/${personId}/blackout-periods?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+      ).then(pick("blackoutPeriods")),
+    ]).then(([publicHolidays, absences, blackoutPeriods]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
@@ -157,7 +160,8 @@ function hydrateDatepicker(duetDateElement, options) {
 
         const absencesForDate = findByDate(absences.value, date);
         const publicHolidaysForDate = findByDate(publicHolidays.value, date);
-        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
+        const blackoutPeriodsForDate = findByDate(blackoutPeriods.value, date);
+        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate, blackoutPeriodsForDate);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
 
         let icon;

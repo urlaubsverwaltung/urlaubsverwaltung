@@ -155,6 +155,13 @@ duet-date-picker[disabled] input {
   --font-color: var(--uv-cal-public-holiday-color);
 }
 
+.duet-date__day.datepicker-day-blackout,
+.duet-date__day.datepicker-day-blackout:not(.is-month) {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+}
+
 .duet-date__day.datepicker-day-today {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
   @apply shadow-cyan-600;
