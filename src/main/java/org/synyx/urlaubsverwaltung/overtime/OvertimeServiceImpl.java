@@ -434,7 +434,9 @@ class OvertimeServiceImpl implements OvertimeService {
 
     /**
      * Is signedInUser person allowed to create the overtime record of personOfOvertime.
-     * If overtime is active and overtime sync is inactive, the user is allowed to create the overtime record:
+     * If overtime is active and overtime sync is inactive, the user is allowed to create the overtime record.
+     * If overtime sync is active, only OFFICE is allowed to create a manual overtime record - for any person,
+     * including themselves - since overtime is otherwise expected to originate from the synchronized system.
      * <pre>
      *  |                        |overtime active| sync active| others | own   |  others | own  |
      *  |------------------------|---------------|------------|--------|-------|---------|------|
@@ -444,9 +446,13 @@ class OvertimeServiceImpl implements OvertimeService {
      *  | SECOND_STAGE_AUTHORITY | true          | false      | true   | true  |  false  | true |
      *  | DEPARTMENT_HEAD        | true          | false      | true   | true  |  false  | true |
      *  | USER                   | true          | false      | false  | false |  false  | true |
+     *  | OFFICE                 | true          | true       | true   | true  |  true   | true |
+     *  | BOSS                   | true          | true       | false  | false |  false  | false|
+     *  | SECOND_STAGE_AUTHORITY | true          | true       | false  | false |  false  | false|
+     *  | DEPARTMENT_HEAD        | true          | true       | false  | false |  false  | false|
+     *  | USER                   | true          | true       | false  | false |  false  | false|
      *
      *  if overtime is inactive, the user is not allowed to create the overtime records
-     *  if overtime sync is active, the user is not allowed to create the overtime records
      * </pre>
      *
      * @param signedInUser     person which creates overtime record
@@ -456,11 +462,12 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public boolean isUserIsAllowedToCreateOvertime(Person signedInUser, Person personOfOvertime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
+        final boolean officeUser = signedInUser.hasRole(OFFICE);
         return overtimeSettings.isOvertimeActive()
-            && !overtimeSettings.isOvertimeSyncActive()
+            && (officeUser || !overtimeSettings.isOvertimeSyncActive())
             &&
             (
-                signedInUser.hasRole(OFFICE)
+                officeUser
                     || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
                     || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
             );

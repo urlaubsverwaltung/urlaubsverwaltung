@@ -847,6 +847,32 @@ class OvertimeServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
+    void ensureOfficeIsAllowedToCreateOwnAndOthersOvertimeIfOvertimeSyncIsActive(boolean overtimeWritePrivilegedOnly) {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+        final Person personOfOvertime = new Person();
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, true, true));
+
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isTrue();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, signedInUser)).isTrue();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+    void ensureNonOfficePersonIsNotAllowedToCreateOwnOrOthersOvertimeIfOvertimeSyncIsActive(Role role) {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, role));
+        final Person personOfOvertime = new Person();
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, true));
+
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isFalse();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, signedInUser)).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
     void ensureCannotCreateOvertimeIfOvertimeIsNotActive(boolean overtimeWritePrivilegedOnly) {
 
         final Person signedInUser = new Person();
