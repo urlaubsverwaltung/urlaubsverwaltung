@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
@@ -86,6 +87,31 @@ class OvertimeStatisticsViewControllerTest {
             .andExpect(model().attribute("selectedYear", 2024))
             .andExpect(model().attribute("currentYear", 2026))
             .andExpect(view().name("overtime/overtime_statistics"));
+    }
+
+    @Test
+    void ensureAsOfDateIsTodayForTheCurrentYear() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
+
+        perform(get("/web/overtime/statistics"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("asOfDate", LocalDate.of(2026, 7, 31)));
+    }
+
+    @Test
+    void ensureAsOfDateIsTodayForAPastYear() throws Exception {
+
+        // the date says when the figures were calculated, not which period they cover, therefore it stays today
+        // even when an already finished year is shown
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2024), months(ZERO), months(ZERO));
+
+        perform(get("/web/overtime/statistics").param("year", "2024"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("asOfDate", LocalDate.of(2026, 7, 31)));
     }
 
     @Test

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>as-of-date</title>
+  </head>
+  <body>
+    <!--
+      Says when the figures of a statistic were calculated. Shown on every statistics page in the actions slot of the
+      page heading, so that an exported or printed page still tells the reader how current its numbers are.
+    -->
+    <div th:fragment="as-of-date(date)" class="text-sm">
+      <th:block th:text="#{filter.validity}">Stand</th:block>
+      <th:block th:text="${#temporals.format(date, 'dd.MM.yyyy')}">01.09.2026</th:block>
+    </div>
+  </body>
+</html>
