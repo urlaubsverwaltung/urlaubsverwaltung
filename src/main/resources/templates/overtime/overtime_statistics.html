@@ -77,7 +77,9 @@
           <th:block th:ref="overtime-statistics-heading-body">
             <h1 th:text="#{overtime.statistics.title}">Überstundenstatistik</h1>
           </th:block>
-          <th:block th:ref="overtime-statistics-heading-actions"> </th:block>
+          <th:block th:ref="overtime-statistics-heading-actions">
+            <div th:replace="~{fragments/as-of-date::as-of-date(${asOfDate})}"></div>
+          </th:block>
         </div>
         <div class="statistic-summary-container">
           <h2 class="statistic-summary-container-title text-base" th:text="#{overtime.statistics.totals.title}">

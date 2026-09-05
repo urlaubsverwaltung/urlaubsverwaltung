@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
 
         model.addAttribute("selectedYear", selectedYear.getValue());
         model.addAttribute("currentYear", currentYear.getValue());
+        // says when these figures were calculated, therefore today - independent of the selected year
+        model.addAttribute("asOfDate", LocalDate.now(clock));
         model.addAttribute("overtimeGraph", toGraphDto(statistics, previousStatistics, locale));
         model.addAttribute("overtimeYearSummary", toYearSummaryDto(statistics, locale));
         model.addAttribute("overtimeBalanceGraph", toBalanceGraphDto(statistics, previousStatistics, locale));

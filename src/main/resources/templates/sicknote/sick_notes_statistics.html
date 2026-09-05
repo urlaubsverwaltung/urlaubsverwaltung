@@ -65,17 +65,13 @@
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${selectedYearStatistics.year})}"
           ></div>
         </th:block>
-        <th:block th:ref="absences-statistics-heading-actions"> </th:block>
+        <th:block th:ref="absences-statistics-heading-actions">
+          <div th:replace="~{fragments/as-of-date::as-of-date(${selectedYearStatistics.asOfDate})}"></div>
+        </th:block>
       </div>
 
       <div>
-        <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
-          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
-          <div class="text-sm @3xl/main:font-bold @3xl/main:text-right @3xl/main:px-3">
-            <th:block th:text="#{filter.validity}"></th:block>
-            <th:block th:text="${#temporals.format(selectedYearStatistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
-          </div>
-        </div>
+        <h2 class="mt-8 font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
 
         <div class="mt-4 sicknote-statistics-chart-container">
           <div id="sicknote-statistic-chart" class="sicknote-statistics-chart"></div>

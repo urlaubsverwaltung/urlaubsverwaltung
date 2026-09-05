@@ -57,7 +57,9 @@
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/absence/statistics?year=|, selectedYear=${selectedYearStatistics.year.value})}"
           ></div>
         </th:block>
-        <th:block th:ref="absence-statistics-heading-actions"> </th:block>
+        <th:block th:ref="absence-statistics-heading-actions">
+          <div th:replace="~{fragments/as-of-date::as-of-date(${asOfDate})}"></div>
+        </th:block>
       </div>
 
       <div class="absence-statistics-info-anchor">
