@@ -163,8 +163,10 @@ const options = {
     width: 2,
     colors: ["transparent"],
   },
+  // four stacked series across twelve months would put up to 48 numbers into the plot, which is
+  // unreadable - the exact values are available in the tooltip instead
   dataLabels: {
-    enabled: true,
+    enabled: false,
   },
   xaxis: {
     categories: xaxisLabels,
