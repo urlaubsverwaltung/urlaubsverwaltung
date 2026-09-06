@@ -213,28 +213,27 @@
   display: flex;
   flex-direction: column;
   gap: --spacing(3);
-  font-size: 0.875rem;
 }
 
+/*
+ * A single metric next to the ring. Label and value carry statistic-summary-card__label /
+ * __content, so they read at the same size as the metrics of the sick note and overtime
+ * statistics; only the card box around them is missing, because these already sit inside a panel
+ * with that background. Everything below is layout, no sizes - those belong to the shared classes
+ * in components/statistic-summary.css.
+ */
 .absence-statistics-fact {
   display: flex;
   flex-direction: column;
-  gap: --spacing(0.5);
+  gap: --spacing(2);
+
+  .statistic-summary-card__content {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-.absence-statistics-fact-label {
-  @apply text-gray-500;
-  @apply dark:text-zinc-400;
-}
-
-.absence-statistics-fact-value {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  @apply text-black;
-  @apply dark:text-zinc-100;
-}
-
-.absence-statistics-fact--secondary .absence-statistics-fact-value {
+/* the expired-remaining-days fact is supporting information - same size, regular weight */
+.absence-statistics-fact--secondary .statistic-summary-card__content {
   font-weight: 400;
 }
 

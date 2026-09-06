@@ -82,10 +82,10 @@
           </th:block>
         </div>
         <div class="statistic-summary-container">
-          <h2 class="statistic-summary-container-title text-base" th:text="#{overtime.statistics.totals.title}">
+          <h2 class="statistic-summary-container-title" th:text="#{overtime.statistics.totals.title}">
             Gesamtbestand - alle Jahre
           </h2>
-          <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.totals.description}">
+          <p class="statistic-description" th:text="#{overtime.statistics.totals.description}">
             Alle je erfassten Überstunden über die gesamte Historie. Unabhängig von der Jahresauswahl darunter.
           </p>
           <div class="statistic-summary-card-box">
@@ -133,8 +133,8 @@
 
         <div class="flex flex-col gap-8">
           <div>
-            <h2 class="font-bold text-base" th:text="#{overtime.statistics.chart.title}">Überstunden je Monat</h2>
-            <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.chart.description}">
+            <h3 class="statistic-panel-title" th:text="#{overtime.statistics.chart.title}">Überstunden je Monat</h3>
+            <p class="statistic-description" th:text="#{overtime.statistics.chart.description}">
               Aufgebaute Überstunden werden nach oben, abgebaute nach unten dargestellt.
             </p>
 
@@ -146,12 +146,12 @@
           <div>
             <div class="statistic-summary-container">
               <h3
-                class="statistic-summary-container-title text-base"
+                class="statistic-summary-container-title"
                 th:text="#{overtime.statistics.summary.title(${selectedYear})}"
               >
                 Im Jahr
               </h3>
-              <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.summary.description}">
+              <p class="statistic-description" th:text="#{overtime.statistics.summary.description}">
                 Summe der aufgebauten, abgebauten und noch offenen Überstunden
               </p>
               <div class="statistic-summary-card-box">
@@ -188,10 +188,10 @@
           </div>
 
           <div>
-            <h2 class="font-bold text-base" th:text="#{overtime.statistics.balance.title}">
+            <h3 class="statistic-panel-title" th:text="#{overtime.statistics.balance.title}">
               Überstundenverlauf im Jahresvergleich
-            </h2>
-            <p class="mt-1 text-gray-500 dark:text-zinc-400" th:text="#{overtime.statistics.balance.description}">
+            </h3>
+            <p class="statistic-description" th:text="#{overtime.statistics.balance.description}">
               Im Jahr kumulierte Überstunden im Vergleich mit dem Vorjahr
             </p>
             <div class="mt-4 overtime-statistics-chart-container">
