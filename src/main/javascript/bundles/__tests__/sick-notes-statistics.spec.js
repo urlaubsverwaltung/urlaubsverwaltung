@@ -182,6 +182,13 @@ describe("sick-notes-statistics", function () {
       expect(options.states.active.filter.type).toBe("none");
     });
 
+    it("does not label every single bar segment", async function () {
+      setSicknoteStatistic();
+      await loadModule();
+
+      expect(barChart().options.dataLabels.enabled).toBe(false);
+    });
+
     it("configures the tooltip as shared, non-intersecting and cursor-following", async function () {
       setSicknoteStatistic();
       await loadModule();
