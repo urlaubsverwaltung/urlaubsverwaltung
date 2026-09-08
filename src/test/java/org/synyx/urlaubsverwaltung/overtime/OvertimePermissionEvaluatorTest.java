@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
@@ -214,6 +215,125 @@ class OvertimePermissionEvaluatorTest {
         @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerMayNotCommentForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
             assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToComment()).isFalse();
+        }
+    }
+
+    @Nested
+    class CreateForOtherPersons {
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
+        void ensureOnlyOfficeMayCreateForOthersWithoutPrivilegedRestriction(Role role) {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, role))).isFalse();
+        }
+
+        @Test
+        void ensureOfficeMayCreateForOthersWithoutPrivilegedRestriction() {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
+        void ensurePrivilegedMayCreateForOthersWithPrivilegedRestriction(Role role) {
+            settings(true, false, true);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, role))).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayCreateForOthersWhenOvertimeIsNotActive() {
+            settings(false, false, true);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+        }
+
+        @Test
+        void ensureNobodyMayCreateForOthersWhenOvertimeSyncIsActive() {
+            settings(true, true, true);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+        }
+    }
+
+    @Nested
+    class CreateForAnyPerson {
+
+        @Test
+        void ensureEveryoneMayCreateOvertimeWithoutPrivilegedRestriction() {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER))).isTrue();
+        }
+
+        @Test
+        void ensureUserMayNotCreateOvertimeWithPrivilegedRestriction() {
+            settings(true, false, true);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
+        void ensurePrivilegedMayCreateOvertimeWithPrivilegedRestriction(Role role) {
+            settings(true, false, true);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, role))).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayCreateOvertimeWhenOvertimeIsNotActive() {
+            settings(false, false, false);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+        }
+
+        @Test
+        void ensureNobodyMayCreateOvertimeWhenOvertimeSyncIsActive() {
+            settings(true, true, false);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+        }
+    }
+
+    @Nested
+    class ViewOvertimeOfAllPersons {
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+        void ensureOfficeAndBossMayViewOvertimeOfAllPersons(Role role) {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfAllPersons(person(SIGNED_IN_USER_ID, USER, role))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureNobodyElseMayViewOvertimeOfAllPersons(Role role) {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfAllPersons(person(SIGNED_IN_USER_ID, USER, role))).isFalse();
+        }
+
+        @Test
+        void ensureNobodyMayViewOvertimeOfAllPersonsWhenOvertimeIsNotActive() {
+            settings(false, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfAllPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+        }
+    }
+
+    @Nested
+    class DepartmentLookups {
+
+        @Test
+        void ensureDepartmentMembershipsAndSettingsAreLookedUpOnlyOnce() {
+            final Person signedInUser = person(SIGNED_IN_USER_ID, USER, DEPARTMENT_HEAD);
+            final Person overtimePerson = person(OTHER_PERSON_ID, USER);
+
+            settings(true, false, true);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(false);
+
+            final OvertimePermissions permissions = sut.of(signedInUser, overtimePerson);
+            permissions.isAllowedToView();
+            permissions.isAllowedToAdd();
+            permissions.isAllowedToEdit(overtime(UV_INTERNAL));
+            permissions.isAllowedToComment();
+
+            verify(departmentService).isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson);
+            verify(departmentService).isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson);
+            verify(settingsService).getSettings();
         }
     }
 

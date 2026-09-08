@@ -5,6 +5,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+
 /**
  * Single source of truth for the question "who may interact with overtime?".
  *
@@ -46,5 +49,51 @@ public class OvertimePermissionEvaluator {
             overtimeSettings.isOvertimeActive(),
             overtimeSettings.isOvertimeSyncActive(),
             overtimeSettings.isOvertimeWritePrivilegedOnly());
+    }
+
+    /**
+     * Whether the given user may record overtime for somebody else at all. In contrast to
+     * {@link OvertimePermissions#isAllowedToAdd()} this permission is not bound to a single person - it decides whether
+     * the overtime form offers a person to pick, for which persons overtime may be recorded is decided per person.
+     *
+     * @param signedInUser user asking for permissions
+     * @return {@code true} if the user may record overtime for at least one other person, {@code false} otherwise
+     */
+    public boolean isAllowedToCreateOvertimeForOtherPersons(Person signedInUser) {
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return isWritable(overtimeSettings)
+            && (signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly()));
+    }
+
+    /**
+     * Whether the given user may record overtime at all - for themselves or for somebody else. Guards the "record
+     * overtime" entry of the navigation.
+     *
+     * @param signedInUser user asking for permissions
+     * @return {@code true} if the user may record overtime for anybody, {@code false} otherwise
+     */
+    public boolean isAllowedToCreateOvertimeForAnyPerson(Person signedInUser) {
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return isWritable(overtimeSettings)
+            && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
+    }
+
+    /**
+     * Whether the given user may see the overtime of every person, which guards the company wide overtime statistics.
+     *
+     * @param signedInUser user asking for permissions
+     * @return {@code true} if the user may see the overtime of all persons, {@code false} otherwise
+     */
+    public boolean isAllowedToViewOvertimeOfAllPersons(Person signedInUser) {
+        return settingsService.getSettings().getOvertimeSettings().isOvertimeActive()
+            && signedInUser.hasAnyRole(OFFICE, BOSS);
+    }
+
+    /**
+     * Whether overtime may be written at all, no matter by whom - it has to be switched on and must not be
+     * synchronised from an external system.
+     */
+    private static boolean isWritable(OvertimeSettings overtimeSettings) {
+        return overtimeSettings.isOvertimeActive() && !overtimeSettings.isOvertimeSyncActive();
     }
 }
