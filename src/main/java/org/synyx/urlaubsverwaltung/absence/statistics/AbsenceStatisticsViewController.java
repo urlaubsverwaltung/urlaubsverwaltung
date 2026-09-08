@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
@@ -80,6 +81,8 @@ class AbsenceStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
         model.addAttribute("absenceGraphStatistic", toGraphDto(selectedYearStatistics, locale));
         model.addAttribute("currentYear", Year.now(clock).getValue());
+        // says when these figures were calculated, therefore today - independent of the selected year
+        model.addAttribute("asOfDate", LocalDate.now(clock));
 
         return "absences/absence_statistics";
     }
