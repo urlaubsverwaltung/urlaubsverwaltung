@@ -181,6 +181,28 @@ class OvertimePermissionEvaluatorTest {
         void ensureManagerMayNotEditForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
             assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
         }
+
+        @Test
+        void ensurePersonMayEditOwnOvertimeWithoutPrivilegedRestriction() {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, USER).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @Test
+        void ensurePersonMayNotEditOwnOvertimeWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, USER).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
+        void ensurePrivilegedPersonMayEditOwnOvertimeWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, role).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyMayEditForOthersWithoutPrivilegedRestriction(Role role) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, role).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
     }
 
     @Nested
@@ -215,6 +237,23 @@ class OvertimePermissionEvaluatorTest {
         @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
         void ensureManagerMayNotCommentForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
             assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToComment()).isFalse();
+        }
+
+        @Test
+        void ensurePersonMayNotCommentOwnOvertimeWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, USER).isAllowedToComment()).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
+        void ensurePrivilegedPersonMayCommentOwnOvertimeWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, role).isAllowedToComment()).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyMayCommentForOthersWithoutPrivilegedRestriction(Role role) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, role).isAllowedToComment()).isFalse();
         }
     }
 
