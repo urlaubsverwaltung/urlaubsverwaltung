@@ -8,16 +8,23 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -78,24 +85,177 @@ class OvertimePermissionEvaluatorTest {
         }
     }
 
+    @Nested
+    class Add {
+
+        @Test
+        void ensureOfficeMayAddForEveryone() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE).isAllowedToAdd()).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayAddWhenOvertimeIsNotActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, false, false).isAllowedToAdd()).isFalse();
+        }
+
+        @Test
+        void ensureNobodyMayAddWhenOvertimeSyncIsActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true).isAllowedToAdd()).isFalse();
+        }
+
+        @Test
+        void ensurePersonMayAddOwnOvertimeWithoutPrivilegedRestriction() {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, USER).isAllowedToAdd()).isTrue();
+        }
+
+        @Test
+        void ensurePersonMayNotAddOwnOvertimeWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, USER).isAllowedToAdd()).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
+        void ensurePrivilegedPersonMayAddOwnOvertimeWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(SIGNED_IN_USER_ID, false, false, role).isAllowedToAdd()).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyMayAddForOthersWithoutPrivilegedRestriction(Role role) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, role).isAllowedToAdd()).isFalse();
+        }
+
+        @Test
+        void ensureBossMayAddForEveryoneWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, BOSS).isAllowedToAdd()).isTrue();
+        }
+
+        @Test
+        void ensureDepartmentHeadMayAddForManagedMemberWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, true, false, DEPARTMENT_HEAD).isAllowedToAdd()).isTrue();
+        }
+
+        @Test
+        void ensureSecondStageAuthorityMayAddForManagedMemberWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, true, SECOND_STAGE_AUTHORITY).isAllowedToAdd()).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureManagerMayNotAddForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToAdd()).isFalse();
+        }
+    }
+
+    @Nested
+    class Edit {
+
+        @Test
+        void ensureOfficeMayEditForEveryone() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayEditAnExternalOvertime() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE).isAllowedToEdit(overtime(EXTERNAL))).isFalse();
+        }
+
+        @Test
+        void ensureEditIsAllowedWhenOvertimeSyncIsActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayEditWhenOvertimeIsNotActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, false, false).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
+
+        @Test
+        void ensureDepartmentHeadMayEditForManagedMemberWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, true, false, DEPARTMENT_HEAD).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureManagerMayNotEditForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
+    }
+
+    @Nested
+    class Comment {
+
+        @Test
+        void ensureOfficeMayCommentForEveryone() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE).isAllowedToComment()).isTrue();
+        }
+
+        @Test
+        void ensureCommentIsAllowedWhenOvertimeSyncIsActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true).isAllowedToComment()).isTrue();
+        }
+
+        @Test
+        void ensureNobodyMayCommentWhenOvertimeIsNotActive() {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, false, false).isAllowedToComment()).isFalse();
+        }
+
+        @Test
+        void ensurePersonMayCommentOwnOvertimeWithoutPrivilegedRestriction() {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, USER).isAllowedToComment()).isTrue();
+        }
+
+        @Test
+        void ensureDepartmentHeadMayCommentForManagedMemberWithPrivilegedRestriction() {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, true, false, DEPARTMENT_HEAD).isAllowedToComment()).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureManagerMayNotCommentForPersonOutsideOfDepartmentWithPrivilegedRestriction(Role role) {
+            assertThat(permissionsOnPrivilegedOnly(OTHER_PERSON_ID, false, false, role).isAllowedToComment()).isFalse();
+        }
+    }
+
     private OvertimePermissions permissionsOnManagedPerson(Role role) {
-        final Person signedInUser = person(SIGNED_IN_USER_ID, USER, role);
-        final Person overtimePerson = person(OTHER_PERSON_ID, USER);
-        settings(true, false, false);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson))
-            .thenReturn(role == DEPARTMENT_HEAD);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson))
-            .thenReturn(role == SECOND_STAGE_AUTHORITY);
-        return sut.of(signedInUser, overtimePerson);
+        return permissionsOn(OTHER_PERSON_ID, role == DEPARTMENT_HEAD, role == SECOND_STAGE_AUTHORITY, role);
     }
 
     private OvertimePermissions permissionsOnUnmanagedPerson(Role role) {
+        return permissionsOn(OTHER_PERSON_ID, false, false, role);
+    }
+
+    private OvertimePermissions permissionsOn(long overtimePersonId, boolean departmentHead, boolean secondStageAuthority, Role role) {
+        return permissionsOn(overtimePersonId, departmentHead, secondStageAuthority, role, true, false, false);
+    }
+
+    private OvertimePermissions permissionsOn(long overtimePersonId, boolean departmentHead, boolean secondStageAuthority,
+                                              Role role, boolean overtimeActive, boolean syncActive) {
+        return permissionsOn(overtimePersonId, departmentHead, secondStageAuthority, role, overtimeActive, syncActive, false);
+    }
+
+    private OvertimePermissions permissionsOnPrivilegedOnly(long overtimePersonId, boolean departmentHead,
+                                                            boolean secondStageAuthority, Role role) {
+        return permissionsOn(overtimePersonId, departmentHead, secondStageAuthority, role, true, false, true);
+    }
+
+    private OvertimePermissions permissionsOn(long overtimePersonId, boolean departmentHead, boolean secondStageAuthority,
+                                              Role role, boolean overtimeActive, boolean syncActive, boolean writePrivilegedOnly) {
+
         final Person signedInUser = person(SIGNED_IN_USER_ID, USER, role);
-        final Person overtimePerson = person(OTHER_PERSON_ID, USER);
-        settings(true, false, false);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(false);
+        final Person overtimePerson = overtimePersonId == SIGNED_IN_USER_ID ? signedInUser : person(overtimePersonId, USER);
+
+        settings(overtimeActive, syncActive, writePrivilegedOnly);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(departmentHead);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(secondStageAuthority);
+
         return sut.of(signedInUser, overtimePerson);
+    }
+
+    private static Overtime overtime(OvertimeType type) {
+        return new Overtime(new OvertimeId(1L), new PersonId(OTHER_PERSON_ID),
+            new DateRange(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 1)),
+            Duration.ofHours(1), type, Instant.now());
     }
 
     private void settings(boolean overtimeActive, boolean syncActive, boolean writePrivilegedOnly) {

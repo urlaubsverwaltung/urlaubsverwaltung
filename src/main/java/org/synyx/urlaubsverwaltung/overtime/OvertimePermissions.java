@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -48,6 +49,48 @@ public final class OvertimePermissions {
             || signedInUser.hasRole(OFFICE)
             || signedInUser.hasRole(BOSS)
             || isManagerOfPerson();
+    }
+
+    /**
+     * Whether the user may record overtime for the person. Not possible while overtime is synchronised from an external
+     * system - the records come from there.
+     *
+     * @return {@code true} if the user may record overtime for the person, {@code false} otherwise
+     */
+    public boolean isAllowedToAdd() {
+        return isAllowedToMaintain() && !overtimeSyncActive;
+    }
+
+    /**
+     * Whether the user may change the given overtime. An {@link OvertimeType#EXTERNAL} record belongs to the system that
+     * delivered it and is editable by nobody.
+     *
+     * @param overtime overtime to be edited, has to belong to the person of these permissions
+     * @return {@code true} if the user may edit the given overtime, {@code false} otherwise
+     */
+    public boolean isAllowedToEdit(Overtime overtime) {
+        return isAllowedToMaintain() && !EXTERNAL.equals(overtime.type());
+    }
+
+    /**
+     * @return {@code true} if the user may comment overtime of the person, {@code false} otherwise
+     */
+    public boolean isAllowedToComment() {
+        return isAllowedToMaintain();
+    }
+
+    /**
+     * Whether the user may maintain the overtime of the person at all. {@code OFFICE} always may. Beyond that it
+     * depends on {@code overtimeWritePrivilegedOnly}: when it is switched on, a privileged user maintains their own
+     * overtime and - as {@code BOSS} everyone's, as a manager that of the members they are responsible for; when it is
+     * switched off, everyone maintains their own overtime and nobody else's.
+     */
+    private boolean isAllowedToMaintain() {
+        return overtimeActive
+            && (signedInUser.hasRole(OFFICE)
+            || (overtimeWritePrivilegedOnly
+            ? signedInUser.isPrivileged() && (isSamePerson() || signedInUser.hasRole(BOSS) || isManagerOfPerson())
+            : isSamePerson()));
     }
 
     private boolean isManagerOfPerson() {
