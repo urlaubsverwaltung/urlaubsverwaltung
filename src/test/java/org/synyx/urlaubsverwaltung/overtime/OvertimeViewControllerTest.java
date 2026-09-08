@@ -66,6 +66,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -693,6 +694,8 @@ class OvertimeViewControllerTest {
         signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
+        mockSettingsWithOvertimeActive();
+
         assertThatThrownBy(() -> perform(get("/web/overtime/new").param("person", "5")))
                 .hasCause(new AccessDeniedException("User '1' has not the correct permissions to record overtime for user '5'"));
     }
@@ -834,6 +837,8 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
+
+        mockSettingsWithOvertimeActive();
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
                 .hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '5'"));
@@ -1093,6 +1098,8 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
+        mockSettingsWithOvertimeActive();
+
         assertThatThrownBy(() -> perform(
                 post("/web/overtime")
                         .param("person.id", "4")
@@ -1312,6 +1319,8 @@ class OvertimeViewControllerTest {
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
+        mockSettingsWithOvertimeActive();
+
         assertThatThrownBy(() -> perform(
                 post("/web/overtime/2")
                         .param("id", "2")
@@ -1368,7 +1377,7 @@ class OvertimeViewControllerTest {
     }
 
     @Test
-    void updateOvertimeRecordAsOfficeChangingOvertimePerson() {
+    void updateOvertimeRecordAsOfficeChangingOvertimePerson() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
@@ -1390,8 +1399,10 @@ class OvertimeViewControllerTest {
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
+        mockSettingsWithOvertimeActive();
+
         final String otherPersonId = "5";
-        assertThatThrownBy(() -> perform(
+        perform(
                 post("/web/overtime/2")
                         .param("id", "2")
                         .param("person.id", otherPersonId)
@@ -1399,7 +1410,20 @@ class OvertimeViewControllerTest {
                         .param("endDate", "02.07.2019")
                         .param("hours", "8")
                         .param("comment", "To much work")
-        )).hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '4'"));
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "EDITED"));
+
+        // the person of the form is ignored, the record of its real owner is updated
+        verify(personService, never()).getPersonByID(5L);
+        verify(overtimeService).updateOvertime(
+            new OvertimeId(2L),
+            new DateRange(LocalDate.of(2019, JULY, 2), LocalDate.of(2019, JULY, 2)),
+            ofHours(8),
+            signedInPerson.getIdAsPersonId(),
+            "To much work"
+        );
     }
 
     @Test
@@ -1432,6 +1456,8 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
+
+        mockSettingsWithOvertimeActive();
 
         assertThatThrownBy(() ->
                 perform(post("/web/overtime/2/comment"))
