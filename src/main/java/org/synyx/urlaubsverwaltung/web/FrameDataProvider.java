@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.overtime.OvertimePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -36,6 +37,7 @@ public class FrameDataProvider implements DataProviderInterface {
     private final PersonService personService;
     private final SettingsService settingsService;
     private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
+    private final OvertimePermissionEvaluator overtimePermissionEvaluator;
     private final MenuProperties menuProperties;
     private final String applicationVersion;
 
@@ -44,12 +46,14 @@ public class FrameDataProvider implements DataProviderInterface {
         PersonService personService,
         SettingsService settingsService,
         SickNotePermissionEvaluator sickNotePermissionEvaluator,
+        OvertimePermissionEvaluator overtimePermissionEvaluator,
         MenuProperties menuProperties,
         @Value("${info.app.version}") String applicationVersion
     ) {
         this.personService = personService;
         this.settingsService = settingsService;
         this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
+        this.overtimePermissionEvaluator = overtimePermissionEvaluator;
         this.menuProperties = menuProperties;
         this.applicationVersion = applicationVersion;
     }
@@ -78,7 +82,7 @@ public class FrameDataProvider implements DataProviderInterface {
             // TODO not used anymore -> check in favGroup
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
             // TODO not used anymore -> check in favGroup
-            modelAndView.addObject("navigationOvertimeAddAccess", isUserAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
+            modelAndView.addObject("navigationOvertimeAddAccess", overtimePermissionEvaluator.isAllowedToCreateOvertimeForAnyPerson(user));
             modelAndView.addObject("gravatarEnabled", settings.getAvatarSettings().isGravatarEnabled());
         }
     }
@@ -99,7 +103,6 @@ public class FrameDataProvider implements DataProviderInterface {
         final String url = request.getRequestURI();
 
         final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
-        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
 
         final String application = "/web/application/new";
         elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", "", url.equals(application), "create-application-link"));
@@ -109,7 +112,7 @@ public class FrameDataProvider implements DataProviderInterface {
             elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", "", url.equals(sickNote), "create-sicknote-link"));
         }
 
-        if (isUserAllowedToWriteOvertime(user, overtimeSettings)) {
+        if (overtimePermissionEvaluator.isAllowedToCreateOvertimeForAnyPerson(user)) {
             final String overtime = "/web/overtime/new";
             elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", "", url.equals(overtime), "create-overtime-link"));
         }
@@ -214,7 +217,7 @@ public class FrameDataProvider implements DataProviderInterface {
             )));
         }
 
-        final boolean canViewOvertimes = user.hasAnyRole(OFFICE, BOSS) && overtimeEnabled(settings.getOvertimeSettings());
+        final boolean canViewOvertimes = overtimePermissionEvaluator.isAllowedToViewOvertimeOfAllPersons(user);
         if (canViewOvertimes) {
             final String overtimeStatistics = "/web/overtime/statistics";
             elements.add(new NavigationItemDto("company-overtime-link", overtimeStatistics, "nav.company.overtimes", "clock-arrow-up", url.equals(overtimeStatistics)));
@@ -255,11 +258,6 @@ public class FrameDataProvider implements DataProviderInterface {
 
     private boolean overtimeEnabled(OvertimeSettings overtimeSettings) {
         return overtimeSettings.isOvertimeActive();
-    }
-
-    private boolean isUserAllowedToWriteOvertime(Person signedInUser, OvertimeSettings overtimeSettings) {
-        boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
-        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime && !overtimeSettings.isOvertimeSyncActive();
     }
 
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {
