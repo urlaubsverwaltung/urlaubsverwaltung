@@ -170,7 +170,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
         model.addAttribute("person", person);
 
-        final Predicate<Overtime> userIsAllowedToUpdateOvertime = permissions::isAllowedToEdit;
+        final Predicate<Overtime> isAllowedToEdit = permissions::isAllowedToEdit;
 
         final List<Application> overtimeAbsences = getOvertimeAbsences(selectedYear, person);
         final Map<PersonId, WorkingTimeCalendar> workingTimeCalendarByPersonId = getWorkingTimeCalendars(overtimeAbsences);
@@ -182,7 +182,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
             overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
-            userIsAllowedToUpdateOvertime,
+            isAllowedToEdit,
             (id, _) -> workingTimeCalendarByPersonId.get(id),
             selectedYear
         );

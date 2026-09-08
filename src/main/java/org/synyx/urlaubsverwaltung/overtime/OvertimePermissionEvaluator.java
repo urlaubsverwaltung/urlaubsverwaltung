@@ -55,6 +55,8 @@ public class OvertimePermissionEvaluator {
      * Whether the given user may record overtime for somebody else at all. In contrast to
      * {@link OvertimePermissions#isAllowedToAdd()} this permission is not bound to a single person - it decides whether
      * the overtime form offers a person to pick, for which persons overtime may be recorded is decided per person.
+     * Like every write permission it is also gated on overtime being active and not synchronised from an external
+     * system.
      *
      * @param signedInUser user asking for permissions
      * @return {@code true} if the user may record overtime for at least one other person, {@code false} otherwise

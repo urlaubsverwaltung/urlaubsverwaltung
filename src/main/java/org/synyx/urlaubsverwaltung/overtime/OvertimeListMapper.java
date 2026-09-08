@@ -32,7 +32,7 @@ final class OvertimeListMapper {
         Duration totalOvertimeLastYear,
         Duration leftOvertime,
         Person signedInUser,
-        Predicate<Overtime> isUserIsAllowedToEditOvertime,
+        Predicate<Overtime> isAllowedToEdit,
         WorkingTimeCalendarSupplier workingTimeCalendarSupplier,
         int selectedYear
     ) {
@@ -40,7 +40,7 @@ final class OvertimeListMapper {
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
         Duration sum = totalOvertimeLastYear;
 
-        final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, workingTimeCalendarSupplier, isUserIsAllowedToEditOvertime);
+        final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, workingTimeCalendarSupplier, isAllowedToEdit);
         for (final OvertimeListRecordDto overtimeEntry : allOvertimes) {
             sum = sum.plus(overtimeEntry.getDurationByYear().getOrDefault(selectedYear, Duration.ZERO));
             overtimeListRecordDtos.add(new OvertimeListRecordDto(overtimeEntry, sum, overtimeEntry.getDurationByYear()));
@@ -56,10 +56,10 @@ final class OvertimeListMapper {
         List<Overtime> overtimes,
         Person signInUser,
         WorkingTimeCalendarSupplier workingTimeCalendarSupplier,
-        Predicate<Overtime> isUserIsAllowedToEditOvertime
+        Predicate<Overtime> isAllowedToEdit
     ) {
 
-        final Stream<OvertimeListRecordDto> byOvertimes = byOvertimes(overtimes, isUserIsAllowedToEditOvertime);
+        final Stream<OvertimeListRecordDto> byOvertimes = byOvertimes(overtimes, isAllowedToEdit);
         final Stream<OvertimeListRecordDto> byAbsences = byAbsences(overtimeAbsences, signInUser, workingTimeCalendarSupplier);
 
         return concat(byOvertimes, byAbsences)
@@ -98,7 +98,7 @@ final class OvertimeListMapper {
             });
     }
 
-    private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, Predicate<Overtime> isUserIsAllowedToEditOvertime) {
+    private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, Predicate<Overtime> isAllowedToEdit) {
         return overtimes.stream()
             .map(overtime ->
                 new OvertimeListRecordDto(
@@ -112,7 +112,7 @@ final class OvertimeListMapper {
                     "",
                     OVERTIME.name(),
                     overtime.type().equals(OvertimeType.EXTERNAL),
-                    isUserIsAllowedToEditOvertime.test(overtime)
+                    isAllowedToEdit.test(overtime)
                 )
             );
     }

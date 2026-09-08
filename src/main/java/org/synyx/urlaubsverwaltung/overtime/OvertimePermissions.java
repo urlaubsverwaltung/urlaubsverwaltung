@@ -65,7 +65,8 @@ public final class OvertimePermissions {
      * Whether the user may change the given overtime. An {@link OvertimeType#EXTERNAL} record belongs to the system that
      * delivered it and is editable by nobody.
      *
-     * @param overtime overtime to be edited, has to belong to the person of these permissions
+     * @param overtime overtime to be edited, meant to be called with an overtime that belongs to the person of these
+     *                 permissions
      * @return {@code true} if the user may edit the given overtime, {@code false} otherwise
      */
     public boolean isAllowedToEdit(Overtime overtime) {
