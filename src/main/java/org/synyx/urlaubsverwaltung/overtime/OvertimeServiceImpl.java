@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -46,7 +45,6 @@ import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Transactional
 @Service
@@ -60,7 +58,6 @@ class OvertimeServiceImpl implements OvertimeService {
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final OvertimeMailService overtimeMailService;
-    private final SettingsService settingsService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
@@ -71,7 +68,6 @@ class OvertimeServiceImpl implements OvertimeService {
         PersonService personService,
         WorkingTimeCalendarService workingTimeCalendarService,
         OvertimeMailService overtimeMailService,
-        SettingsService settingsService,
         ApplicationEventPublisher applicationEventPublisher,
         Clock clock
     ) {
@@ -81,7 +77,6 @@ class OvertimeServiceImpl implements OvertimeService {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.overtimeMailService = overtimeMailService;
-        this.settingsService = settingsService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
     }
@@ -433,101 +428,6 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     /**
-     * Is signedInUser person allowed to create the overtime record of personOfOvertime.
-     * If overtime is active and overtime sync is inactive, the user is allowed to create the overtime record:
-     * <pre>
-     *  |                        |overtime active| sync active| others | own   |  others | own  |
-     *  |------------------------|---------------|------------|--------|-------|---------|------|
-     *  | PrivilegedOnly         | true          | false      | true   |       |  false  |      |
-     *  | OFFICE                 | true          | false      | true   | true  |  true   | true |
-     *  | BOSS                   | true          | false      | true   | true  |  false  | true |
-     *  | SECOND_STAGE_AUTHORITY | true          | false      | true   | true  |  false  | true |
-     *  | DEPARTMENT_HEAD        | true          | false      | true   | true  |  false  | true |
-     *  | USER                   | true          | false      | false  | false |  false  | true |
-     *
-     *  if overtime is inactive, the user is not allowed to create the overtime records
-     *  if overtime sync is active, the user is not allowed to create the overtime records
-     * </pre>
-     *
-     * @param signedInUser     person which creates overtime record
-     * @param personOfOvertime person which the overtime record belongs to
-     * @return @code{true} if allowed, otherwise @code{false}
-     */
-    @Override
-    public boolean isUserIsAllowedToCreateOvertime(Person signedInUser, Person personOfOvertime) {
-        final OvertimeSettings overtimeSettings = getOvertimeSettings();
-        return overtimeSettings.isOvertimeActive()
-            && !overtimeSettings.isOvertimeSyncActive()
-            &&
-            (
-                signedInUser.hasRole(OFFICE)
-                    || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
-                    || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
-            );
-    }
-
-
-    /**
-     * Is signedInUser person allowed to update the overtime record of personOfOvertime.
-     * Update is only allowed if it is not an external overtime record.
-     * <pre>
-     *  |                        | others | own   |  others | own  |
-     *  |------------------------|--------|-------|---------|------|
-     *  | PrivilegedOnly         | true   |       |  false  |      |
-     *  | OFFICE                 | true   | true  |  true   | true |
-     *  | BOSS                   | true   | true  |  false  | true |
-     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
-     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
-     *  | USER                   | false  | false |  false  | true |
-     * </pre>
-     *
-     * @param signedInUser     person which updates an overtime record
-     * @param personOfOvertime person which the overtime record belongs to
-     * @return @code{true} if allowed, otherwise @code{false}
-     */
-    @Override
-    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
-        final OvertimeSettings overtimeSettings = getOvertimeSettings();
-        return overtimeSettings.isOvertimeActive()
-            && !overtime.type().equals(EXTERNAL)
-            &&
-            (
-                signedInUser.hasRole(OFFICE)
-                    || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
-                    || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
-            );
-    }
-
-    /**
-     * Is signedInUser person allowed to add a comment the overtime record of personOfOvertime.
-     * <pre>
-     *  |                        | others | own   |  others | own  |
-     *  |------------------------|--------|-------|---------|------|
-     *  | PrivilegedOnly         | true   |       |  false  |      |
-     *  | OFFICE                 | true   | true  |  true   | true |
-     *  | BOSS                   | true   | true  |  false  | true |
-     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
-     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
-     *  | USER                   | false  | false |  false  | true |
-     * </pre>
-     *
-     * @param signedInUser     person which adds an overtime comment
-     * @param personOfOvertime person which the overtime record belongs to
-     * @return @code{true} if allowed, otherwise @code{false}
-     */
-    @Override
-    public boolean isUserIsAllowedToAddOvertimeComment(Person signedInUser, Person personOfOvertime) {
-        final OvertimeSettings overtimeSettings = getOvertimeSettings();
-        return overtimeSettings.isOvertimeActive()
-            &&
-            (
-                signedInUser.hasRole(OFFICE)
-                    || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
-                    || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
-            );
-    }
-
-    /**
      * Deletes all {@link OvertimeEntity} in the database of person with id.
      *
      * @param event deletion event with the id of the person which is deleted
@@ -564,10 +464,6 @@ class OvertimeServiceImpl implements OvertimeService {
                 reductionDateRange.plus(overtimeReduction.reductionDateRange)
             );
         }
-    }
-
-    private OvertimeSettings getOvertimeSettings() {
-        return settingsService.getSettings().getOvertimeSettings();
     }
 
     private void publishOvertimeCreatedEvent(OvertimeEntity saved) {
