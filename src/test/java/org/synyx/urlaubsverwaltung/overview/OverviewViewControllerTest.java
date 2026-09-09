@@ -40,6 +40,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
+import org.synyx.urlaubsverwaltung.overtime.OvertimePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -138,6 +139,7 @@ class OverviewViewControllerTest {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+            new OvertimePermissionEvaluator(departmentService, settingsService),
             vacationTypeViewModelService, personSearchUiFragmentSupplier, clock);
 
         lenient().when(settingsService.getSettings()).thenReturn(new Settings());
@@ -747,6 +749,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewAddsOvertimeInformationToModel() throws Exception {
         final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person();
@@ -756,7 +759,6 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
@@ -769,6 +771,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewOvertimeInformationIsAddedWithCorrectValues() throws Exception {
         final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person();
@@ -789,7 +792,6 @@ class OverviewViewControllerTest {
         );
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of(overtime));
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(3));
 
@@ -809,16 +811,18 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewOvertimeInformationUserNotAllowedToCreateOvertime() throws Exception {
         final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeWritePrivilegedOnly(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person();
         person.setId(1L);
+        person.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
@@ -844,7 +848,6 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, 2021)).thenReturn(List.of());
-        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, 2021)).thenReturn(Duration.ZERO);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
@@ -1187,6 +1190,7 @@ class OverviewViewControllerTest {
             sut = new OverviewViewController(personService, accountService, vacationDaysService,
                 workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
                 departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
                 vacationTypeViewModelService, personSearchUiFragmentSupplier,
                 Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
 

@@ -155,34 +155,6 @@ public interface OvertimeService {
     Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end);
 
     /**
-     * Is signedInUser allowed to create an overtime records of given personOfOvertime.
-     *
-     * @param signedInUser     person which create overtime record
-     * @param personOfOvertime person which the overtime record belongs to
-     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
-     */
-    boolean isUserIsAllowedToCreateOvertime(Person signedInUser, Person personOfOvertime);
-
-    /**
-     * Is signedInUser allowed to update an overtime records of given personOfOvertime.
-     *
-     * @param signedInUser     person which updates overtime record
-     * @param personOfOvertime person which the overtime record belongs to
-     * @param overtime         overtime to update
-     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
-     */
-    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime);
-
-    /**
-     * Is signedInUser allowed to add an overtime comment records of given personOfOvertime.
-     *
-     * @param signedInUser     person which updates overtime record
-     * @param personOfOvertime person which the overtime record belongs to
-     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
-     */
-    boolean isUserIsAllowedToAddOvertimeComment(Person signedInUser, Person personOfOvertime);
-
-    /**
      * Get all overtime hours of the given person.
      *
      * @param personId id of the given person

@@ -24,6 +24,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.overtime.OvertimePermissions;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -87,6 +89,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
     private final DepartmentService departmentService;
     private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final ApplicationForLeavePermissionEvaluator applicationForLeavePermissionEvaluator;
+    private final OvertimePermissionEvaluator overtimePermissionEvaluator;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -100,6 +103,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         SettingsService settingsService, DepartmentService departmentService,
         SickNotePermissionEvaluator sickNotePermissionEvaluator,
         ApplicationForLeavePermissionEvaluator applicationForLeavePermissionEvaluator,
+        OvertimePermissionEvaluator overtimePermissionEvaluator,
         VacationTypeViewModelService vacationTypeViewModelService, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
@@ -114,6 +118,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         this.departmentService = departmentService;
         this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.applicationForLeavePermissionEvaluator = applicationForLeavePermissionEvaluator;
+        this.overtimePermissionEvaluator = overtimePermissionEvaluator;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
@@ -358,12 +363,14 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final List<Overtime> shownOvertimes = entriesClosestToToday(overtimes, Overtime::startDate, today,
             NUMBER_OF_PAST_OVERTIMES_ON_OVERVIEW, NUMBER_OF_FUTR_OVERTIMES_ON_OVERVIEW);
 
+        final OvertimePermissions permissions = overtimePermissionEvaluator.of(signedInUser, person);
+
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
             settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
-            overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person),
+            permissions.isAllowedToAdd(),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person),
-            mapToShownOvertimesDto(overtimeService, person, signedInUser, shownOvertimes),
+            mapToShownOvertimesDto(permissions, shownOvertimes),
             shownOvertimes.size(),
             overtimes.size()
         );
@@ -371,7 +378,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
     }
 
-    private static @NonNull List<OvertimeRecordDto> mapToShownOvertimesDto(OvertimeService overtimeService, Person person, Person signedInUser, List<Overtime> shownOvertimes) {
+    private static @NonNull List<OvertimeRecordDto> mapToShownOvertimesDto(OvertimePermissions permissions, List<Overtime> shownOvertimes) {
         return shownOvertimes.stream()
             .map(overtime -> new OvertimeRecordDto(
                 overtime.id().value(),
@@ -379,7 +386,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 overtime.endDate(),
                 overtime.duration(),
                 overtime.type().equals(EXTERNAL),
-                overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)
+                permissions.isAllowedToEdit(overtime)
             )).toList();
     }
 

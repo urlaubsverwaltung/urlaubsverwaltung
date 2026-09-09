@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -48,7 +49,8 @@ class FrameDataProviderTest {
     @BeforeEach
     void setUp() {
         sut = new FrameDataProvider(personService, settingsService,
-            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsService), new MenuProperties(), "version");
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsService),
+            new OvertimePermissionEvaluator(mock(DepartmentService.class), settingsService), new MenuProperties(), "version");
     }
 
     @Test

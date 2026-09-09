@@ -77,6 +77,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final SettingsService settingsService;
+    private final OvertimePermissionEvaluator overtimePermissionEvaluator;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
@@ -90,6 +91,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         WorkingTimeCalendarService workingTimeCalendarService,
         VacationTypeViewModelService vacationTypeViewModelService,
         SettingsService settingsService,
+        OvertimePermissionEvaluator overtimePermissionEvaluator,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
@@ -102,6 +104,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.settingsService = settingsService;
+        this.overtimePermissionEvaluator = overtimePermissionEvaluator;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.clock = clock;
@@ -154,7 +157,8 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        final OvertimePermissions permissions = overtimePermissionEvaluator.of(signedInUser, person);
+        if (!permissions.isAllowedToView()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to see overtime records of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -166,8 +170,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
         model.addAttribute("person", person);
 
-        final Predicate<Overtime> userIsAllowedToUpdateOvertime =
-            overtime -> overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
+        final Predicate<Overtime> isAllowedToEdit = permissions::isAllowedToEdit;
 
         final List<Application> overtimeAbsences = getOvertimeAbsences(selectedYear, person);
         final Map<PersonId, WorkingTimeCalendar> workingTimeCalendarByPersonId = getWorkingTimeCalendars(overtimeAbsences);
@@ -179,7 +182,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
             overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
-            userIsAllowedToUpdateOvertime,
+            isAllowedToEdit,
             (id, _) -> workingTimeCalendarByPersonId.get(id),
             selectedYear
         );
@@ -189,7 +192,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
 
-        final boolean userIsAllowedToCreateOvertime = overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person);
+        final boolean userIsAllowedToCreateOvertime = permissions.isAllowedToAdd();
         model.addAttribute("userIsAllowedToCreateOvertime", userIsAllowedToCreateOvertime);
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
@@ -227,7 +230,8 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+        final OvertimePermissions permissions = overtimePermissionEvaluator.of(signedInUser, person);
+        if (!permissions.isAllowedToView()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to see overtime records of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -256,8 +260,8 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("comment", new OvertimeCommentFormDto());
-        model.addAttribute("userIsAllowedToUpdateOvertime", overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime));
-        model.addAttribute("userIsAllowedToAddOvertimeComment", overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person));
+        model.addAttribute("userIsAllowedToUpdateOvertime", permissions.isAllowedToEdit(overtime));
+        model.addAttribute("userIsAllowedToAddOvertimeComment", permissions.isAllowedToComment());
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         return "overtime/overtime_details";
@@ -275,7 +279,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
             person = signedInUser;
         }
 
-        if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
+        if (!overtimePermissionEvaluator.of(signedInUser, person).isAllowedToAdd()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to record overtime for user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -295,7 +299,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtimeFormDto.getPerson();
 
-        if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
+        if (!overtimePermissionEvaluator.of(signedInUser, person).isAllowedToAdd()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to record overtime for user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -322,7 +326,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
-        if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
+        if (!overtimePermissionEvaluator.of(signedInUser, person).isAllowedToEdit(overtime)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to edit overtime record of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -354,7 +358,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
-        if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
+        if (!overtimePermissionEvaluator.of(signedInUser, person).isAllowedToEdit(overtime)) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to edit overtime record of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -385,7 +389,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
-        if (!overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person)) {
+        if (!overtimePermissionEvaluator.of(signedInUser, person).isAllowedToComment()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to add overtime comment of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
@@ -416,8 +420,7 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
-        boolean canAddOvertimeForAnotherUser = signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
-        model.addAttribute("canAddOvertimeForAnotherUser", canAddOvertimeForAnotherUser);
+        model.addAttribute("canAddOvertimeForAnotherUser", overtimePermissionEvaluator.isAllowedToCreateOvertimeForOtherPersons(signedInUser));
 
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
 
