@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
@@ -233,37 +234,107 @@ class SickNoteServiceImplTest {
     }
 
     @Test
-    void ensureSickNoteOfLastWorkDayWithPersonNotWorkingYesterday() {
+    void ensureSickNoteOfLastWorkDayWhenWeekendIsBetweenSickNoteAndToday() {
 
         final Person person = new Person();
         person.setId(1L);
 
-        final LocalDate now = LocalDate.now(fixedClock);
-        final LocalDate startDate = now.minusDays(2);
-        final LocalDate endDate = now.minusDays(2);
+        // 2021-06-28 is a monday, the sick note ended on the friday before
+        final LocalDate monday = LocalDate.now(fixedClock);
+        final LocalDate friday = monday.minusDays(3);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
         entity.setPerson(person);
-        entity.setStartDate(startDate);
-        entity.setEndDate(endDate);
+        entity.setStartDate(friday);
+        entity.setEndDate(friday);
 
-        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now))
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), monday))
             .thenReturn(Optional.of(entity));
 
-        // TODO fixme... implementation is wrong... since it only checks for map entry size of two, instead of checking actual working days
-        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(endDate, now.minusDays(1));
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, now)))
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(friday, monday);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(friday, monday)))
             .thenReturn(Map.of(person, workingTimeCalendar));
 
-        final WorkingTimeCalendar entityWorkingTimeCalendar = workingTimeCalendarMondayToSunday(startDate, endDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate)))
+        final WorkingTimeCalendar entityWorkingTimeCalendar = workingTimeCalendarMondayToFriday(friday, friday);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(friday, friday)))
             .thenReturn(Map.of(person, entityWorkingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder().build();
         when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
 
         final Optional<SickNote> actual = sut.getSickNoteOfYesterdayOrLastWorkDay(person);
+        assertThat(actual).isPresent().get().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureSickNoteOfLastWorkDayWhenPersonDoesNotWorkOnTheDaysInBetween() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        // 2021-06-28 is a monday, the sick note ended on the thursday before, the person does not work on fridays
+        final LocalDate monday = LocalDate.now(fixedClock);
+        final LocalDate thursday = monday.minusDays(4);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(thursday);
+        entity.setEndDate(thursday);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), monday))
+            .thenReturn(Optional.of(entity));
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(thursday, monday, date -> date.isEqual(thursday) || date.isEqual(monday));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(thursday, monday)))
+            .thenReturn(Map.of(person, workingTimeCalendar));
+
+        final WorkingTimeCalendar entityWorkingTimeCalendar = workingTimeCalendarMondayToSunday(thursday, thursday);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(thursday, thursday)))
+            .thenReturn(Map.of(person, entityWorkingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
+
+        final Optional<SickNote> actual = sut.getSickNoteOfYesterdayOrLastWorkDay(person);
+        assertThat(actual).isPresent().get().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureSickNoteOfLastWorkDayWhenTodayIsNotAWorkDay() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        // 2021-06-27 is a sunday, the sick note ended on the friday before
+        final Clock sundayClock = Clock.fixed(Instant.parse("2021-06-27T00:00:00.00Z"), UTC);
+        final SickNoteServiceImpl sutOnSunday = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, sickNoteMapper, sundayClock);
+
+        final LocalDate sunday = LocalDate.now(sundayClock);
+        final LocalDate friday = sunday.minusDays(2);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(friday);
+        entity.setEndDate(friday);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), sunday))
+            .thenReturn(Optional.of(entity));
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(friday, sunday);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(friday, sunday)))
+            .thenReturn(Map.of(person, workingTimeCalendar));
+
+        final WorkingTimeCalendar entityWorkingTimeCalendar = workingTimeCalendarMondayToFriday(friday, friday);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(friday, friday)))
+            .thenReturn(Map.of(person, entityWorkingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
+
+        final Optional<SickNote> actual = sutOnSunday.getSickNoteOfYesterdayOrLastWorkDay(person);
         assertThat(actual).isPresent().get().isSameAs(sickNote);
     }
 

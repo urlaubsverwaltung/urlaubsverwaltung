@@ -37,6 +37,15 @@ public interface SickNoteService {
      */
     List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
+    /**
+     * Get the sick note of the given person that ended on the last day the person worked before today, which is
+     * yesterday or, if the person did not work since then, an earlier day - the friday before a weekend for instance.
+     * Only a {@link SickNoteStatus#SUBMITTED} or {@link SickNoteStatus#ACTIVE} sick note is taken into account, a still
+     * ongoing one is not.
+     *
+     * @param person defines the owner of the sick note
+     * @return optional sick note of the last work day of the given person
+     */
     Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person person);
 
     /**

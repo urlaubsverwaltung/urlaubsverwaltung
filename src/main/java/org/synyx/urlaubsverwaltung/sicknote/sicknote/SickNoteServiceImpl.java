@@ -81,11 +81,8 @@ class SickNoteServiceImpl implements SickNoteService {
         if (lastSickNote.isPresent()) {
 
             final SickNoteEntity sickNoteEntity = lastSickNote.get();
-            final boolean isSickNoteOfYesterday = sickNoteEntity.getEndDate().isEqual(now.minusDays(1));
-            final boolean isSickNoteOfLastWorkDay = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(sickNoteEntity.getEndDate(), now))
-                    .get(person).workingDays().size() == 2;
 
-            if (isSickNoteOfYesterday || isSickNoteOfLastWorkDay) {
+            if (endsOnLastWorkDayBefore(sickNoteEntity, now)) {
                 final WorkingTimeCalendar workingTimes = getWorkingTimeCalendar(sickNoteEntity);
                 return Optional.of(sickNoteMapper.toSickNote(sickNoteEntity, workingTimes));
             }
@@ -189,6 +186,32 @@ class SickNoteServiceImpl implements SickNoteService {
         entity.setEndOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend());
         entity.setStatus(sickNote.getStatus());
         return entity;
+    }
+
+    /**
+     * Whether the given sick note ends on the last day the person worked before the given date. That is the case if the
+     * next work day following the end of the sick note is the given date itself, in other words: every day in between is
+     * a day the person does not work on - a weekend, a public holiday or a day off. A sick note ending on the day before
+     * the given date always does.
+     *
+     * @param sickNoteEntity sick note to check, has to end before the given date
+     * @param date           date to look back from, usually today
+     * @return {@code true} if no work day lies between the end of the sick note and the given date
+     */
+    private boolean endsOnLastWorkDayBefore(SickNoteEntity sickNoteEntity, LocalDate date) {
+
+        final Person person = sickNoteEntity.getPerson();
+        final LocalDate endDate = sickNoteEntity.getEndDate();
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService
+            .getWorkingTimesByPersons(List.of(person), new DateRange(endDate, date))
+            .get(person);
+
+        // the calendar ends with the given date, therefore no next work day at all means the person does not work
+        // on any of the days in between - and not on the given date either.
+        return workingTimeCalendar.nextWorkingFollowingTo(endDate)
+            .map(nextWorkDay -> !nextWorkDay.isBefore(date))
+            .orElse(true);
     }
 
     private WorkingTimeCalendar getWorkingTimeCalendar(SickNoteEntity sickNoteEntity) {
