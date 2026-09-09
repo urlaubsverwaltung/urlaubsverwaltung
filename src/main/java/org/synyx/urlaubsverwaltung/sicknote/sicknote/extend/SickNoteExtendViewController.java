@@ -99,6 +99,8 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     public String extendSickNoteView(Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
+        ensureAllowedToSubmitSickNotes(signedInUser);
+
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
             return "sicknote/sick_note_extended_not_found";
@@ -130,6 +132,8 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         final boolean isCreateExtendSubmit = !hasUserSelectedCustomDate && !hasUserSelectedDays;
 
         final Person signedInUser = personService.getSignedInUser();
+        ensureAllowedToSubmitSickNotes(signedInUser);
+
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
             return "sicknote/sick_note_extended_not_found";
@@ -222,6 +226,13 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         }
     }
 
+
+    private void ensureAllowedToSubmitSickNotes(Person signedInUser) {
+        // extending a sick note is handing in a sick note, which has to be enabled in the settings
+        if (!sickNotePermissionEvaluator.of(signedInUser, signedInUser).isAllowedToSubmit()) {
+            throw new AccessDeniedException("User '%s' is not allowed to hand in a sick note".formatted(signedInUser.getId()));
+        }
+    }
 
     private Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person signedInUser) {
         final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);

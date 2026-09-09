@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -31,6 +32,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -72,19 +74,21 @@ class SickNoteExtendViewControllerTest {
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.systemUTC();
+    private final Settings settings = new Settings();
 
     @BeforeEach
     void setUp() {
+        settings.getSickNoteSettings().setUserIsAllowedToSubmitSickNotes(true);
         sut = new SickNoteExtendViewController(personService, workingTimeCalendarService,
             sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
-            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWithDefaultSettings()),
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
             sickNoteExtendValidator, dateFormatAware, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             clock);
     }
 
-    private static SettingsService settingsServiceWithDefaultSettings() {
+    private static SettingsService settingsServiceWith(Settings settings) {
         final SettingsService settingsService = mock(SettingsService.class);
-        lenient().when(settingsService.getSettings()).thenReturn(new Settings());
+        lenient().when(settingsService.getSettings()).thenReturn(settings);
         return settingsService;
     }
 
@@ -222,6 +226,46 @@ class SickNoteExtendViewControllerTest {
             .andExpect(view().name("sicknote/sick_note_extended_not_found"));
 
         verifyNoInteractions(sickNoteExtensionService);
+    }
+
+    @Test
+    void ensureExtendViewIsForbiddenWhenSubmissionOfSickNotesIsDisabled() {
+
+        settings.getSickNoteSettings().setUserIsAllowedToSubmitSickNotes(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/extend"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(sickNoteService);
+    }
+
+    @Test
+    void ensureExtendingSickNoteIsForbiddenWhenSubmissionOfSickNotesIsDisabled() {
+
+        settings.getSickNoteSettings().setUserIsAllowedToSubmitSickNotes(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        assertThatThrownBy(() ->
+            perform(
+                post("/web/sicknote/extend")
+                    .param("sickNoteId", "1")
+                    .param("endDate", "2024-09-27")
+            )
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(sickNoteExtensionInteractionService);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
