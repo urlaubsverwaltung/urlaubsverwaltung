@@ -73,16 +73,18 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person person) {
+    public Optional<SickNote> getSickNoteToExtend(Person person) {
 
         final LocalDate now = LocalDate.now(clock);
-        final Optional<SickNoteEntity> lastSickNote = sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now);
+        final Optional<SickNoteEntity> lastSickNote = sickNoteRepository.findFirstByPersonAndStatusInAndStartDateIsLessThanEqualOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now);
 
         if (lastSickNote.isPresent()) {
 
             final SickNoteEntity sickNoteEntity = lastSickNote.get();
+            // the sick note starts today or earlier, therefore it covers today if it has not ended yet
+            final boolean coversToday = !sickNoteEntity.getEndDate().isBefore(now);
 
-            if (endsOnLastWorkDayBefore(sickNoteEntity, now)) {
+            if (coversToday || endsOnLastWorkDayBefore(sickNoteEntity, now)) {
                 final WorkingTimeCalendar workingTimes = getWorkingTimeCalendar(sickNoteEntity);
                 return Optional.of(sickNoteMapper.toSickNote(sickNoteEntity, workingTimes));
             }
@@ -194,7 +196,7 @@ class SickNoteServiceImpl implements SickNoteService {
      * a day the person does not work on - a weekend, a public holiday or a day off. A sick note ending on the day before
      * the given date always does.
      *
-     * @param sickNoteEntity sick note to check, has to end before the given date
+     * @param sickNoteEntity sick note to check, has to end before the given date, see {@code coversToday}
      * @param date           date to look back from, usually today
      * @return {@code true} if no work day lies between the end of the sick note and the given date
      */

@@ -221,7 +221,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(dayLength).build()));
+        when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(dayLength).build()));
 
         perform(get("/web/sicknote/new").param("person", "1"))
             .andExpect(status().isOk())
@@ -238,7 +238,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(FULL).build()));
+        when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(FULL).build()));
 
         perform(get("/web/sicknote/new").param("person", "1"))
             .andExpect(status().is3xxRedirection())
@@ -263,7 +263,7 @@ class SickNoteViewControllerTest {
             .andExpect(view().name("sicknote/sick_note_form"));
 
         // only the person itself may hand in a sick note, therefore an extension is out of question here
-        verify(sickNoteService, never()).getSickNoteOfYesterdayOrLastWorkDay(any());
+        verify(sickNoteService, never()).getSickNoteToExtend(any());
     }
 
     @Test

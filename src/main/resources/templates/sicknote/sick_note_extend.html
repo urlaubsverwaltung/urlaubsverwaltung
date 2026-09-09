@@ -137,22 +137,24 @@
             >
               einschließlich morgen
             </span>
-            <button
-              class="button sicknote-extend-button"
-              th:aria-pressed="${selectedExtend == 'end-of-week'}"
-              th:text="#{sicknote.extend.duration.end-of-week.label}"
-              name="extend"
-              value="end-of-week"
-            >
-              Ende der Woche
-            </button>
-            <span
-              class="extend-label"
-              th:with="word=${'<span class=extend-label_date>' + untilEndOfWeekWord + '</span>'}"
-              th:utext="#{sicknote.extend.duration.hint.label(${word})}"
-            >
-              einschließlich xxx
-            </span>
+            <th:block th:if="${canExtendUntilEndOfWeek}">
+              <button
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == 'end-of-week'}"
+                th:text="#{sicknote.extend.duration.end-of-week.label}"
+                name="extend"
+                value="end-of-week"
+              >
+                Ende der Woche
+              </button>
+              <span
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + untilEndOfWeekWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
+                einschließlich xxx
+              </span>
+            </th:block>
             <input
               type="date"
               id="extend-to-date-input"
@@ -165,7 +167,7 @@
               data-auto-submit="submit-date-button"
               data-auto-submit-delay="100"
               th:value="${extendToDate}"
-              th:min="${#temporals.format(today, 'yyyy-MM-dd')}"
+              th:min="${#temporals.format(earliestExtendToDate, 'yyyy-MM-dd')}"
               th:data-iso-value="${#temporals.format(extendToDate, 'yyyy-MM-dd')}"
             />
             <span>

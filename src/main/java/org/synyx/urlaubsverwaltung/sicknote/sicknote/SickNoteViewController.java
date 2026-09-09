@@ -261,12 +261,12 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         // extending a sick note is handing in a sick note, therefore it is offered to the person itself only
         if (permissions.isAllowedToSubmit()) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
-            final Optional<SickNote> sickNoteOfYesterdayOrLastWorkDay = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson);
-            if (!noRedirect && (sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull())) {
-                LOG.info("sick note of last work day found");
+            final Optional<SickNote> sickNoteToExtend = sickNoteService.getSickNoteToExtend(sickNotePerson);
+            if (!noRedirect && (sickNoteToExtend.isPresent() && sickNoteToExtend.get().getDayLength().isFull())) {
+                LOG.info("sick note to extend found");
                 return "redirect:/web/sicknote/extend";
             } else {
-                LOG.info("no sick note of last work day found");
+                LOG.info("no sick note to extend found");
             }
         }
 
