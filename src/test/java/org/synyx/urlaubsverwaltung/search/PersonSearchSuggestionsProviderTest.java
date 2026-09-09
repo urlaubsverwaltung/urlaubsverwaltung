@@ -85,7 +85,7 @@ class PersonSearchSuggestionsProviderTest {
         final Person departmentHead = person(1L, "Department", "Head", DEPARTMENT_HEAD);
         final Person hit = person(2L, "Marlene", "Muster");
 
-        when(departmentService.getManagedMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("mar")))
+        when(departmentService.getManagedActiveMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("mar")))
             .thenReturn(new PageImpl<>(List.of(hit)));
 
         final List<PersonSuggestion> suggestions = sut.personSuggestions(departmentHead, "mar", MAIN_LINK);
@@ -188,7 +188,7 @@ class PersonSearchSuggestionsProviderTest {
 
         final Person departmentHead = person(1L, "Department", "Head", DEPARTMENT_HEAD);
 
-        when(departmentService.getManagedMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("dep")))
+        when(departmentService.getManagedActiveMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("dep")))
             .thenReturn(new PageImpl<>(List.of(departmentHead)));
 
         final List<PersonSuggestion> suggestions = sut.personSuggestions(departmentHead, "dep", MAIN_LINK);
@@ -204,7 +204,7 @@ class PersonSearchSuggestionsProviderTest {
         final Person departmentHead = person(1L, "Department", "Head", DEPARTMENT_HEAD);
         final Person hit = person(2L, "Marlene", "Muster");
 
-        when(departmentService.getManagedMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("mar")))
+        when(departmentService.getManagedActiveMembersOfPerson(eq(departmentHead), any(PersonPageable.class), eq("mar")))
             .thenReturn(new PageImpl<>(List.of(hit)));
 
         final List<PersonSuggestion> suggestions = sut.personSuggestions(departmentHead, "mar", MAIN_LINK);

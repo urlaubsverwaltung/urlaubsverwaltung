@@ -193,7 +193,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -206,7 +206,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -219,7 +219,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -235,7 +235,7 @@ class PersonsViewControllerTest {
         person.setId(2L);
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination",
@@ -556,7 +556,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(false);
 
@@ -1189,7 +1189,7 @@ class PersonsViewControllerTest {
 
     private void mockDefaultPageRequest(Person signedInUser) {
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
     }
 
     private static Person personWithRole(Role... role) {

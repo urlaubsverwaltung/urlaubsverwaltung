@@ -195,7 +195,7 @@ public interface DepartmentService {
      * @param query          query firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, PersonPageable personPageable, String query);
+    Page<Person> getManagedActiveMembersOfPerson(Person person, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link List} of all managed and active {@link Person}s.

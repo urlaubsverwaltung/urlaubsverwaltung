@@ -124,9 +124,9 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, PersonPageable pageable, String query) {
+    public Page<Person> getManagedActiveMembersOfPerson(Person person, PersonPageable pageable, String query) {
         final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, pageable, query, not(Person::isInactive));
+        return managedMembersOfPerson(personId, pageable, query, Person::isActive);
     }
 
     @Override

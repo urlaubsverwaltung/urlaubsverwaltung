@@ -63,7 +63,7 @@ class PersonSearchSuggestionsProvider {
         }
 
         if (person.isDepartmentPrivileged()) {
-            return departmentService.getManagedMembersOfPerson(person, pageRequest, query);
+            return departmentService.getManagedActiveMembersOfPerson(person, pageRequest, query);
         }
 
         return new PageImpl<>(List.of(person), pageRequest.toPageable(), 1);

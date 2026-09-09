@@ -210,7 +210,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons(personPageRequest, query);
         } else {
-            return departmentService.getManagedMembersOfPerson(signedInUser, personPageRequest, query);
+            return departmentService.getManagedActiveMembersOfPerson(signedInUser, personPageRequest, query);
         }
     }
 
