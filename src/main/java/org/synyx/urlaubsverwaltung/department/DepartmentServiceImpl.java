@@ -79,7 +79,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Person> getManagedMembersOfPerson(Person person, Year year) {
 
         final Map<PersonId, List<DepartmentMembership>> activeMembershipsOfYear = departmentMembershipService.getActiveMembershipsOfYear(year);
-        final Set<DepartmentMembership> onlyMembers = extractMemberMemberships(activeMembershipsOfYear);
+        final Set<DepartmentMembership> onlyMembers = extractCurrentMemberMemberships(activeMembershipsOfYear);
 
         if (onlyMembers.isEmpty()) {
             return List.of();
@@ -106,11 +106,17 @@ class DepartmentServiceImpl implements DepartmentService {
         return personService.getAllPersonsByIds(managedPersonIds);
     }
 
-    private static Set<DepartmentMembership> extractMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
+    /**
+     * The memberships of everybody who was a member of a department in the given year and still is. A membership that
+     * has ended in the meantime is history and does not make somebody a managed member any more, even though the
+     * person was part of the department during that year.
+     */
+    private static Set<DepartmentMembership> extractCurrentMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
         return membershipsByPersonId.values()
             .stream()
             .flatMap(Collection::stream)
-            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .filter(DepartmentMembership::isMemberMembership)
+            .filter(DepartmentMembership::isCurrent)
             .collect(toSet());
     }
 

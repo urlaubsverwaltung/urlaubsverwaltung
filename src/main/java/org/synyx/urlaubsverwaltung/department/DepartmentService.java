@@ -173,6 +173,10 @@ public interface DepartmentService {
      * Members must have been added to the department in or before the given year.
      * (Requesting members for 2024 will not return members that were added in 2025.)
      *
+     * <p>
+     * Members must also still be part of the department. Somebody who was a member during the given year but has
+     * left the department since is not returned - the membership is over, so the person is not managed any more.
+     *
      * @param person person to get managed members for
      * @param year   to restrict the result set
      * @return empty list when person has no authority to manage other person, otherwise all managed members for the person

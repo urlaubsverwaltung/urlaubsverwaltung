@@ -180,6 +180,106 @@ class DepartmentServiceImplTest {
         }
 
         @Test
+        void ensureGetManagedMembersOfPersonYearExcludesMembersThatHaveLeftTheDepartment() {
+
+            final PersonId departmentHeadId = new PersonId(1L);
+            final Person departmentHead = new Person();
+            departmentHead.setId(departmentHeadId.value());
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final PersonId stillMemberId = new PersonId(2L);
+            final Person stillMember = new Person();
+            stillMember.setId(stillMemberId.value());
+
+            final PersonId leftMemberId = new PersonId(3L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+            final Instant leftLastYear = lastYear.atDay(300).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    departmentHeadId, List.of(
+                        new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, joinedLastYear)
+                    ),
+                    stillMemberId, List.of(
+                        new DepartmentMembership(stillMemberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    ),
+                    // was a member during the year, but the membership has ended in the meantime
+                    leftMemberId, List.of(
+                        new DepartmentMembership(leftMemberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear, Optional.of(leftLastYear))
+                    )
+                ));
+
+            when(personService.getAllPersonsByIds(Set.of(stillMemberId))).thenReturn(List.of(stillMember));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
+            assertThat(actual).containsExactly(stillMember);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"}, mode = INCLUDE)
+        void ensureGetManagedMembersOfPersonYearExcludesMembersThatHaveLeftTheDepartmentFor(Role role) {
+
+            final Person bossOrOfficePerson = new Person();
+            bossOrOfficePerson.setId(1L);
+            bossOrOfficePerson.setPermissions(List.of(USER, role));
+
+            final PersonId stillMemberId = new PersonId(2L);
+            final Person stillMember = new Person();
+            stillMember.setId(stillMemberId.value());
+
+            final PersonId leftMemberId = new PersonId(3L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+            final Instant leftLastYear = lastYear.atDay(300).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    stillMemberId, List.of(
+                        new DepartmentMembership(stillMemberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    ),
+                    leftMemberId, List.of(
+                        new DepartmentMembership(leftMemberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear, Optional.of(leftLastYear))
+                    )
+                ));
+
+            when(personService.getAllPersonsByIds(Set.of(stillMemberId))).thenReturn(List.of(stillMember));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(bossOrOfficePerson, lastYear);
+            assertThat(actual).containsExactly(stillMember);
+        }
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearIsEmptyWhenEveryMemberHasLeftTheDepartment() {
+
+            final PersonId departmentHeadId = new PersonId(1L);
+            final Person departmentHead = new Person();
+            departmentHead.setId(departmentHeadId.value());
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final PersonId leftMemberId = new PersonId(3L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+            final Instant leftLastYear = lastYear.atDay(300).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    departmentHeadId, List.of(
+                        new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, joinedLastYear)
+                    ),
+                    leftMemberId, List.of(
+                        new DepartmentMembership(leftMemberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear, Optional.of(leftLastYear))
+                    )
+                ));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
+            assertThat(actual).isEmpty();
+        }
+
+        @Test
         void ensureGetManagedMembersOfPersonYearIsEmptyForManagerWithoutMembershipInThatYear() {
 
             final PersonId departmentHeadId = new PersonId(1L);

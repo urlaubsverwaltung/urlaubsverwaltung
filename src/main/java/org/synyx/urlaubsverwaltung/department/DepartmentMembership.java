@@ -28,6 +28,16 @@ public record DepartmentMembership(
     }
 
     /**
+     * Checks if the membership is still valid, which is the case when it has no end date. A membership that has
+     * ended is history: the person is not part of the department any more.
+     *
+     * @return {@code true} if the membership has not ended, {@code false} otherwise
+     */
+    public boolean isCurrent() {
+        return validTo.isEmpty();
+    }
+
+    /**
      * Checks if the membership is a management membership.
      *
      * @return {@code true} if the membership is a management membership, {@code false} otherwise
