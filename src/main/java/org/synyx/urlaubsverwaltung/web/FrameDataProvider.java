@@ -90,7 +90,7 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final List<NavigationItemDto> favoriteItems = navFavoritesGroup(request, settings, user);
         final List<NavigationItemDto> basicItems = navBasicGroup(request, settings, user);
-        final List<NavigationItemDto> companyItems = navCompanyGroup(request, settings, user);
+        final List<NavigationItemDto> companyItems = navCompanyGroup(request, user);
         final List<NavigationItemDto> settingItems = navSettingsGroup(request, settings, user);
 
         return new NavigationDto(favoriteItems, basicItems, companyItems, settingItems);
@@ -155,7 +155,7 @@ public class FrameDataProvider implements DataProviderInterface {
         return elements;
     }
 
-    private List<NavigationItemDto> navCompanyGroup(HttpServletRequest request, Settings settings, Person user) {
+    private List<NavigationItemDto> navCompanyGroup(HttpServletRequest request, Person user) {
         final List<NavigationItemDto> elements = new ArrayList<>();
 
         final String url = request.getRequestURI();

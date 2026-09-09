@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.SEPTEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -413,7 +414,7 @@ class OvertimePermissionEvaluatorTest {
 
     private static Overtime overtime(OvertimeType type) {
         return new Overtime(new OvertimeId(1L), new PersonId(OTHER_PERSON_ID),
-            new DateRange(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 1)),
+            new DateRange(LocalDate.of(2026, SEPTEMBER, 1), LocalDate.of(2026, SEPTEMBER, 1)),
             Duration.ofHours(1), type, Instant.now());
     }
 
