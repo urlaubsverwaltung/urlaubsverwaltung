@@ -1,10 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.export;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -17,21 +13,20 @@ import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
-import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -44,7 +39,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Transactional
 class ApplicationForLeaveExportService {
 
-    private static final Logger LOG = getLogger(lookup().lookupClass());
+    private static final Comparator<Person> BY_NICE_NAME =
+        comparing((Person person) -> person.getFirstName().toLowerCase()).thenComparing(person -> person.getLastName().toLowerCase());
 
     private final ApplicationService applicationService;
     private final DepartmentService departmentService;
@@ -64,67 +60,83 @@ class ApplicationForLeaveExportService {
     }
 
     /**
-     * Returns a list of all application for leaves that the person is allowed to access.
+     * Returns the export of every person the given person is allowed to access.
      *
      * @param person to ask for the export
      * @param from   a specific date
      * @param to     a specific date
-     * @return list of all {@link ApplicationForLeaveExport} that the person can access
+     * @return all {@link ApplicationForLeaveExport} the person can access, ordered by first and last name
      */
-    Page<ApplicationForLeaveExport> getAll(Person person, LocalDate from, LocalDate to, PageableSearchQuery pageableSearchQuery) {
+    List<ApplicationForLeaveExport> getAll(Person person, LocalDate from, LocalDate to) {
 
-        final Pageable pageable = pageableSearchQuery.getPageable();
+        final List<Person> members = accessibleMembers(person).stream().sorted(BY_NICE_NAME).toList();
 
-        final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
-        final List<Person> relevantMembers = relevantMembersPage.getContent();
-        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
-
-        if (relevantPersonIds.isEmpty()) {
-            return Page.empty();
-        }
-
-        final List<Application> applications = getApplications(person, relevantMembers, from, to);
-
-        final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
-        for (Person member : relevantMembers) {
-            applicationsByPerson.putIfAbsent(member, List.of());
-        }
-
-
-        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
-        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
-        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
-
-        Stream<ApplicationForLeaveExport> exportsStream = applicationsByPerson.entrySet()
-            .stream()
-            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId, workDaysByYearByApplication));
-
-        if (relevantMembersPage.getPageable().isUnpaged()) {
-            // we don't have to restrict the statistics if persons page is paged and or sorted already.
-            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
-            exportsStream = exportsStream
-                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-                .limit(pageable.getPageSize());
-        }
-
-        final List<ApplicationForLeaveExport> content = exportsStream
-            .sorted(new SortComparator<>(ApplicationForLeaveExport.class, pageable.getSort()))
-            .toList();
-
-        return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
+        return exportsOf(person, members, from, to);
     }
 
-    private Function<Map.Entry<Person, List<Application>>, ApplicationForLeaveExport> toApplicationForLeaveExport(Map<PersonId, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons, Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication) {
-        return personListEntry ->
-        {
-            final Person person = personListEntry.getKey();
-            final PersonId personId = person.getIdAsPersonId();
-            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).personnelNumber();
-            final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
-            final List<ApplicationForLeave> applicationForLeaves = personListEntry.getValue().stream()
-                .map(app -> new ApplicationForLeave(app, workDaysByYearByApplication.get(app))).toList();
-            return new ApplicationForLeaveExport(personnelNumber, person.getFirstName(), person.getLastName(), applicationForLeaves, departments);
-        };
+    /**
+     * Returns the export of the given persons.
+     *
+     * <p>
+     * This export is not a statistic, therefore it cannot be sorted by statistics values. The caller decides which
+     * persons to export instead - the persons visible on the statistics page, for instance, no matter how that page
+     * has been sorted.
+     *
+     * @param person    to ask for the export
+     * @param from      a specific date
+     * @param to        a specific date
+     * @param personIds persons to export, person ids the given person must not access are ignored
+     * @return the {@link ApplicationForLeaveExport}s of the given persons, in the order of the given personIds
+     */
+    List<ApplicationForLeaveExport> getAllForPersons(Person person, LocalDate from, LocalDate to, List<PersonId> personIds) {
+
+        if (personIds.isEmpty()) {
+            return List.of();
+        }
+
+        final Map<PersonId, Person> accessibleMemberById = accessibleMembers(person).stream()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
+
+        final List<Person> members = personIds.stream()
+            .map(accessibleMemberById::get)
+            .filter(Objects::nonNull)
+            .toList();
+
+        return exportsOf(person, members, from, to);
+    }
+
+    private List<ApplicationForLeaveExport> exportsOf(Person person, List<Person> members, LocalDate from, LocalDate to) {
+
+        if (members.isEmpty()) {
+            return List.of();
+        }
+
+        final List<Long> memberIds = members.stream().map(Person::getId).toList();
+
+        final List<Application> applications = getApplications(person, members, from, to);
+        final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
+
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(memberIds);
+        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(members);
+        final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = workDaysCountService.getWorkDaysCountByYearForApplications(applications);
+
+        return members.stream()
+            .map(member -> toApplicationForLeaveExport(member, applicationsByPerson.getOrDefault(member, List.of()),
+                basedataByPersonId, departmentsByPersonId, workDaysByYearByApplication))
+            .toList();
+    }
+
+    private static ApplicationForLeaveExport toApplicationForLeaveExport(
+        Person person, List<Application> applications, Map<PersonId, PersonBasedata> basedataForPersons,
+        Map<PersonId, List<String>> departmentsForPersons, Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication) {
+
+        final PersonId personId = person.getIdAsPersonId();
+        final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).personnelNumber();
+        final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
+        final List<ApplicationForLeave> applicationForLeaves = applications.stream()
+            .map(app -> new ApplicationForLeave(app, workDaysByYearByApplication.get(app))).toList();
+
+        return new ApplicationForLeaveExport(personnelNumber, person.getFirstName(), person.getLastName(), applicationForLeaves, departments);
     }
 
     private List<Application> getApplications(Person person, List<Person> members, LocalDate from, LocalDate to) {
@@ -135,22 +147,15 @@ class ApplicationForLeaveExportService {
         return List.of();
     }
 
-    private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
-
-        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
-
-        // this has been / is a bug, we don't want to fix right now...
-        // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
-        if (pageRequest.isUnpaged()) {
-            LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
-            final Pageable pageable = pageableSearchQuery.getPageable();
-            pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        }
+    /**
+     * Every person the given person is allowed to see. Not paginated - the caller restricts the export itself.
+     */
+    private List<Person> accessibleMembers(Person person) {
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
+            return personService.getActivePersons(PersonPageRequest.unpaged(), "").getContent();
         }
 
-        return departmentService.getManagedActiveMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
+        return departmentService.getManagedActiveMembersOfPerson(person, PersonPageRequest.unpaged(), "").getContent();
     }
 }

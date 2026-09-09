@@ -1,16 +1,14 @@
 package org.synyx.urlaubsverwaltung.application.export;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -22,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
@@ -32,6 +29,7 @@ import java.util.TreeMap;
 
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -45,6 +43,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveExportServiceTest {
 
+    private static final LocalDate FROM = LocalDate.of(2023, JANUARY, 1);
+    private static final LocalDate TO = LocalDate.of(2023, JANUARY, 31);
+
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -56,7 +57,6 @@ class ApplicationForLeaveExportServiceTest {
     @Mock
     private WorkDaysCountService workDaysCountService;
 
-
     private ApplicationForLeaveExportService sut;
 
     @BeforeEach
@@ -64,205 +64,190 @@ class ApplicationForLeaveExportServiceTest {
         sut = new ApplicationForLeaveExportService(applicationService, departmentService, personBasedataService, personService, workDaysCountService);
     }
 
-    @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
-    void getAllForOfficeOrBoss(Role role) {
+    @Nested
+    class GetAll {
 
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+        void ensuresEveryActivePersonIsExportedForOfficeOrBoss(Role role) {
+
+            final Person person = person(1L, role);
+            final Person user = person(2L, "Marlene", "Muster");
+
+            when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(user)));
+
+            final ApplicationForLeave app = application(user);
+            when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(user), FROM, TO)).thenReturn(List.of(app));
+            when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
+            when(personBasedataService.getBasedataByPersonId(List.of(2L))).thenReturn(Map.of(new PersonId(2L), new PersonBasedata(new PersonId(2L), "personnelNumber", "")));
+            when(departmentService.getDepartmentNamesByMembers(List.of(user))).thenReturn(Map.of(new PersonId(2L), List.of("department")));
+
+            final List<ApplicationForLeaveExport> export = sut.getAll(person, FROM, TO);
+
+            assertThat(export).hasSize(1);
+            assertThat(export.getFirst().getFirstName()).isEqualTo("Marlene");
+            assertThat(export.getFirst().getLastName()).isEqualTo("Muster");
+            assertThat(export.getFirst().getPersonalNumber()).isEqualTo("personnelNumber");
+            assertThat(export.getFirst().getDepartments()).containsExactly("department");
+            assertThat(export.getFirst().getApplicationForLeaves()).containsExactly(app);
+        }
+
+        @Test
+        void ensuresExportIsOrderedByFirstAndLastName() {
+
+            final Person office = person(1L, OFFICE);
+            final Person zoe = person(2L, "Zoe", "Zimmermann");
+            final Person anna = person(3L, "anna", "Bauer");
+            final Person annaAlbers = person(4L, "Anna", "Albers");
+
+            when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(zoe, anna, annaAlbers)));
+            when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of());
+            when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of());
+            when(personBasedataService.getBasedataByPersonId(any())).thenReturn(Map.of());
+            when(departmentService.getDepartmentNamesByMembers(any())).thenReturn(Map.of());
+
+            final List<ApplicationForLeaveExport> export = sut.getAll(office, FROM, TO);
+
+            assertThat(export)
+                .extracting(ApplicationForLeaveExport::getFirstName, ApplicationForLeaveExport::getLastName)
+                .containsExactly(
+                    tuple("Anna", "Albers"),
+                    tuple("anna", "Bauer"),
+                    tuple("Zoe", "Zimmermann")
+                );
+        }
+
+        @Test
+        void ensuresEmptyExportWhenPersonIsNotAllowedToSeeAnybody() {
+
+            final Person person = person(1L, USER);
+
+            when(departmentService.getManagedActiveMembersOfPerson(person, PersonPageRequest.unpaged(), ""))
+                .thenReturn(new PageImpl<>(List.of()));
+
+            final List<ApplicationForLeaveExport> export = sut.getAll(person, FROM, TO);
+
+            verifyNoMoreInteractions(departmentService);
+            verifyNoInteractions(applicationService, personBasedataService, workDaysCountService);
+
+            assertThat(export).isEmpty();
+        }
+    }
+
+    @Nested
+    class GetAllForPersons {
+
+        @Test
+        void ensuresOnlyTheGivenPersonsAreExported() {
+
+            final Person office = person(1L, OFFICE);
+            final Person marlene = person(2L, "Marlene", "Muster");
+            final Person klaus = person(3L, "Klaus", "Müller");
+            final Person notRequested = person(4L, "Juliane", "Huber");
+
+            when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(marlene, klaus, notRequested)));
+
+            final ApplicationForLeave app = application(klaus);
+            when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(klaus, marlene), FROM, TO)).thenReturn(List.of(app));
+            when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
+            when(personBasedataService.getBasedataByPersonId(List.of(3L, 2L))).thenReturn(Map.of());
+            when(departmentService.getDepartmentNamesByMembers(List.of(klaus, marlene))).thenReturn(Map.of());
+
+            final List<ApplicationForLeaveExport> export = sut.getAllForPersons(office, FROM, TO, List.of(new PersonId(3L), new PersonId(2L)));
+
+            assertThat(export)
+                .extracting(ApplicationForLeaveExport::getFirstName)
+                .containsExactly("Klaus", "Marlene");
+        }
+
+        @Test
+        void ensuresTheGivenOrderIsKeptSinceItIsTheOrderOfTheVisiblePersons() {
+
+            final Person office = person(1L, OFFICE);
+            final Person anna = person(2L, "Anna", "Albers");
+            final Person zoe = person(3L, "Zoe", "Zimmermann");
+
+            when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(anna, zoe)));
+            when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of());
+            when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of());
+            when(personBasedataService.getBasedataByPersonId(any())).thenReturn(Map.of());
+            when(departmentService.getDepartmentNamesByMembers(any())).thenReturn(Map.of());
+
+            final List<ApplicationForLeaveExport> export = sut.getAllForPersons(office, FROM, TO, List.of(new PersonId(3L), new PersonId(2L)));
+
+            assertThat(export)
+                .extracting(ApplicationForLeaveExport::getFirstName)
+                .containsExactly("Zoe", "Anna");
+        }
+
+        @Test
+        void ensuresPersonIdsTheSignedInUserMustNotAccessAreIgnored() {
+
+            final Person departmentHead = person(1L, Role.DEPARTMENT_HEAD);
+            final Person managedMember = person(2L, "Marlene", "Muster");
+
+            when(departmentService.getManagedActiveMembersOfPerson(departmentHead, PersonPageRequest.unpaged(), ""))
+                .thenReturn(new PageImpl<>(List.of(managedMember)));
+
+            when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of());
+            when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of());
+            when(personBasedataService.getBasedataByPersonId(List.of(2L))).thenReturn(Map.of());
+            when(departmentService.getDepartmentNamesByMembers(List.of(managedMember))).thenReturn(Map.of());
+
+            // 42 is not managed by the department head
+            final List<ApplicationForLeaveExport> export = sut.getAllForPersons(departmentHead, FROM, TO, List.of(new PersonId(2L), new PersonId(42L)));
+
+            assertThat(export)
+                .extracting(ApplicationForLeaveExport::getFirstName)
+                .containsExactly("Marlene");
+        }
+
+        @Test
+        void ensuresEmptyExportWithoutPersonIds() {
+
+            final Person office = person(1L, OFFICE);
+
+            final List<ApplicationForLeaveExport> export = sut.getAllForPersons(office, FROM, TO, List.of());
+
+            verifyNoInteractions(personService, departmentService, applicationService, personBasedataService, workDaysCountService);
+
+            assertThat(export).isEmpty();
+        }
+
+        @Test
+        void ensuresEmptyExportWhenNoneOfThePersonIdsIsAccessible() {
+
+            final Person office = person(1L, OFFICE);
+            final Person other = person(2L, "Marlene", "Muster");
+
+            when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(other)));
+
+            final List<ApplicationForLeaveExport> export = sut.getAllForPersons(office, FROM, TO, List.of(new PersonId(42L)));
+
+            verifyNoInteractions(applicationService, personBasedataService, workDaysCountService);
+
+            assertThat(export).isEmpty();
+        }
+    }
+
+    private static Person person(Long id, Role... roles) {
         final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(role));
-
-        final Person user = new Person();
-        user.setId(2L);
-        user.setPermissions(List.of(USER));
-        user.setFirstName("Marlene");
-        user.setLastName("Muster");
-        final List<Person> personsForExport = List.of(user);
-        final PersonId userId = new PersonId(user.getId());
-
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
-        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
-
-        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
-        app.setId(1L);
-        app.setPerson(user);
-        when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
-        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
-
-        final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
-        when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
-
-        when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
-
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, pageableSearchQuery);
-
-        assertThat(export.getContent()).hasSize(1);
-
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
-        assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
-        assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
-        assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
-        assertThat(applicationForLeaveExport.getDepartments()).containsExactly("department");
-        assertThat(applicationForLeaveExport.getApplicationForLeaves()).containsExactly(app);
+        person.setId(id);
+        person.setPermissions(List.of(roles));
+        return person;
     }
 
-    @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
-    void getAllForDepartmentHeadOrSecondStageAuthority(Role role) {
-
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(role));
-
-        final Person departmentMember = new Person();
-        departmentMember.setId(2L);
-        departmentMember.setPermissions(List.of(USER));
-        departmentMember.setFirstName("Marlene");
-        departmentMember.setLastName("Muster");
-        final PersonId departmentMemberId = new PersonId(departmentMember.getId());
-        final List<Person> personsForExport = List.of(departmentMember);
-
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        when(departmentService.getManagedActiveMembersOfPerson(person, personPageRequest, ""))
-            .thenReturn(new PageImpl<>(List.of(departmentMember)));
-
-        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
-        app.setId(1L);
-        app.setPerson(departmentMember);
-        when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
-        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
-
-        final PersonBasedata personBasedata = new PersonBasedata(departmentMemberId, "personnelNumber", "");
-        when(personBasedataService.getBasedataByPersonId(List.of(departmentMember.getId()))).thenReturn(Map.of(departmentMemberId, personBasedata));
-
-        when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(departmentMemberId, List.of("department")));
-
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
-
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
-        assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
-        assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
-        assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
-        assertThat(applicationForLeaveExport.getDepartments()).containsExactly("department");
-        assertThat(applicationForLeaveExport.getApplicationForLeaves()).containsExactly(app);
+    private static Person person(Long id, String firstName, String lastName) {
+        final Person person = person(id, USER);
+        person.setFirstName(firstName);
+        person.setLastName(lastName);
+        return person;
     }
 
-    @Test
-    void getAllNotAllowed() {
-
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER));
-
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
-        when(departmentService.getManagedActiveMembersOfPerson(person, personPageRequest, ""))
-            .thenReturn(new PageImpl<>(List.of()));
-
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
-
-        verifyNoMoreInteractions(departmentService);
-        verifyNoInteractions(applicationService, personBasedataService);
-
-        assertThat(export.getContent()).isEmpty();
-    }
-
-    @Test
-    void getAllSortByPerson() {
-
-        final Person office = new Person();
-        office.setId(1L);
-        office.setPermissions(List.of(OFFICE));
-
-        final Person user = new Person();
-        user.setId(2L);
-        user.setPermissions(List.of(USER));
-        user.setFirstName("Marlene");
-        user.setLastName("Muster");
-        final List<Person> personsForExport = List.of(user);
-        final PersonId userId = new PersonId(user.getId());
-
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
-        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
-
-        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
+    private static ApplicationForLeave application(Person person) {
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
         app.setId(1L);
-        app.setPerson(user);
-        when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
-        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
-
-        final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
-        when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
-
-        when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
-
-        final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
-        final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
-
-        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery);
-
-        assertThat(export.getContent()).hasSize(1);
-
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
-        assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
-        assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
-        assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
-        assertThat(applicationForLeaveExport.getDepartments()).containsExactly("department");
-        assertThat(applicationForLeaveExport.getApplicationForLeaves()).containsExactly(app);
-    }
-
-    @Test
-    void getAllSortByNonPersonQuery() {
-
-        final Person office = new Person();
-        office.setId(1L);
-        office.setPermissions(List.of(OFFICE));
-
-        final Person user = new Person();
-        user.setId(2L);
-        user.setPermissions(List.of(USER));
-        user.setFirstName("Marlene");
-        user.setLastName("Muster");
-        final List<Person> personsForExport = List.of(user);
-        final PersonId userId = new PersonId(user.getId());
-
-        final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "totalAllowedVacationDays");
-        final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
-
-        // TODO #5850 this is actually wrong! the sut search sorts by statistics, persons must be fetched to the absence entity result set
-        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
-
-        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
-        final ApplicationForLeave app = new ApplicationForLeave(new Application(), new TreeMap<>());
-        app.setId(1L);
-        app.setPerson(user);
-        when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
-        when(workDaysCountService.getWorkDaysCountByYearForApplications(any())).thenReturn(Map.of(app, new TreeMap<>()));
-
-        final PersonBasedata personBasedata = new PersonBasedata(userId, "personnelNumber", "");
-        when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
-
-        when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
-
-        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery);
-
-        assertThat(export.getContent()).hasSize(1);
-
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
-        assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
-        assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
-        assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
-        assertThat(applicationForLeaveExport.getDepartments()).containsExactly("department");
-        assertThat(applicationForLeaveExport.getApplicationForLeaves()).containsExactly(app);
+        app.setPerson(person);
+        return app;
     }
 }

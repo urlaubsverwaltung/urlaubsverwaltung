@@ -3,11 +3,6 @@ package org.synyx.urlaubsverwaltung.application.export;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -31,7 +25,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 
-import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
@@ -60,14 +53,23 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         this.clock = clock;
     }
 
+    /**
+     * Exports the absences of the requested persons.
+     *
+     * <p>
+     * This export is not a statistic, therefore it knows nothing about the sorting of the statistics page it is
+     * linked from. The persons to export are named explicitly with {@code personIds} instead.
+     *
+     * @param allElements export every person instead of the given {@code personIds}
+     * @param personIds   persons to export, ids the signed-in user must not access are ignored
+     */
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/export")
     public ResponseEntity<ByteArrayResource> downloadCsvExport(
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
-        @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
+        @RequestParam(value = "personIds", required = false, defaultValue = "") List<Long> personIds,
         Locale locale
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
@@ -79,12 +81,10 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
-        final String adaptedQuery = allElements ? "" : query;
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
+        final List<ApplicationForLeaveExport> export = allElements
+            ? applicationForLeaveExportService.getAll(signedInUser, period.startDate(), period.endDate())
+            : applicationForLeaveExportService.getAllForPersons(signedInUser, period.startDate(), period.endDate(), personIds.stream().map(PersonId::new).toList());
 
-        final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.startDate(), period.endDate(), pageableSearchQuery);
-        final List<ApplicationForLeaveExport> export = exportPage.getContent();
         final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, locale, export);
 
         final HttpHeaders headers = new HttpHeaders();

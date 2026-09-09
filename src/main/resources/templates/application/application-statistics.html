@@ -72,7 +72,7 @@
                 <li>
                   <a
                     id="export-csv-download-link-all"
-                    th:href="@{/web/application/export (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                    th:href="@{/web/application/export (from=${from}, to=${to}, allElements=${true})}"
                     class="icon-link"
                     download
                   >
@@ -83,7 +83,7 @@
                 <li>
                   <a
                     id="export-csv-download-link"
-                    th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    th:href="@{/web/application/export (from=${from}, to=${to}, personIds=${statisticsPagination.page.content.![id]})}"
                     class="icon-link"
                     download
                   >

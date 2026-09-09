@@ -7,9 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -20,8 +17,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -38,6 +35,9 @@ import static java.math.BigDecimal.TEN;
 import static java.time.Month.AUGUST;
 import static java.time.Month.JANUARY;
 import static java.util.Locale.JAPANESE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -48,6 +48,10 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveExportViewControllerTest {
+
+    private static final LocalDate START_DATE = LocalDate.parse("2019-01-01");
+    private static final LocalDate END_DATE = LocalDate.parse("2019-08-01");
+    private static final FilterPeriod FILTER_PERIOD = new FilterPeriod(START_DATE, END_DATE);
 
     private ApplicationForLeaveExportViewController sut;
 
@@ -86,45 +90,65 @@ class ApplicationForLeaveExportViewControllerTest {
     }
 
     @Test
-    void ensuresToExportAbsencesForSelectionWithDefaultValues() throws Exception {
+    void ensuresToExportAbsencesOfTheGivenPersons() throws Exception {
 
         final Locale locale = JAPANESE;
+        final Person signedInUser = signedInUser();
 
-        final Person signedInUser = new Person();
-        signedInUser.setId(1L);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        final ApplicationForLeaveExport export = export(signedInUser);
+        when(applicationForLeaveExportService.getAllForPersons(signedInUser, START_DATE, END_DATE, List.of(new PersonId(21L), new PersonId(42L))))
+            .thenReturn(List.of(export));
 
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+        mockCsvFileFor(locale, List.of(export));
+        mockDateParsing(locale);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(HOLIDAY)
-            .visibleToEveryone(true)
-            .messageKey("messagekey.holiday")
-            .build();
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("personIds", "21", "42"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
 
-        final Application application = new Application();
-        application.setId(42L);
-        application.setPerson(signedInUser);
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ALLOWED);
-        application.setVacationType(vacationType);
+    @Test
+    void ensuresStatisticsSortingAndPaginationDoNotInfluenceTheExportedPersons() throws Exception {
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
+        final Locale locale = JAPANESE;
+        final Person signedInUser = signedInUser();
 
-        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        final ApplicationForLeaveExport export = export(signedInUser);
+        when(applicationForLeaveExportService.getAllForPersons(signedInUser, START_DATE, END_DATE, List.of(new PersonId(21L))))
+            .thenReturn(List.of(export));
 
-        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+        mockCsvFileFor(locale, List.of(export));
+        mockDateParsing(locale);
 
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("personIds", "21")
+            // leftovers of the statistics page the export must not care about
+            .param("page", "2")
+            .param("size", "50")
+            .param("sort", "statistics.leftVacationDaysForYear,asc")
+            .param("query", "hans"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void ensuresToExportAnEmptyAbsencesCsvWithoutPersonIds() throws Exception {
+
+        final Locale locale = JAPANESE;
+        final Person signedInUser = signedInUser();
+
+        when(applicationForLeaveExportService.getAllForPersons(signedInUser, START_DATE, END_DATE, List.of()))
+            .thenReturn(List.of());
+
+        mockCsvFileFor(locale, List.of());
+        mockDateParsing(locale);
 
         perform(get("/web/application/export")
             .locale(locale)
@@ -135,96 +159,16 @@ class ApplicationForLeaveExportViewControllerTest {
     }
 
     @Test
-    void ensuresToExportAbsencesForSelectionWithDifferentPageAndSize() throws Exception {
-
-        final Locale locale = JAPANESE;
-
-        final Person signedInUser = new Person();
-        signedInUser.setId(1L);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
-
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(HOLIDAY)
-            .visibleToEveryone(true)
-            .messageKey("messagekey.holiday")
-            .build();
-
-        final Application application = new Application();
-        application.setId(42L);
-        application.setPerson(signedInUser);
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ALLOWED);
-        application.setVacationType(vacationType);
-
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
-
-        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
-
-        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
-
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
-
-        perform(get("/web/application/export")
-            .locale(locale)
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019")
-            .param("page", "2")
-            .param("size", "50"))
-            .andExpect(status().isOk())
-            .andExpect(content().string("csv-resource"));
-    }
-
-    @Test
     void ensuresToExportAbsencesForAll() throws Exception {
 
         final Locale locale = JAPANESE;
+        final Person signedInUser = signedInUser();
 
-        final Person signedInUser = new Person();
-        signedInUser.setId(1L);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        final ApplicationForLeaveExport export = export(signedInUser);
+        when(applicationForLeaveExportService.getAll(signedInUser, START_DATE, END_DATE)).thenReturn(List.of(export));
 
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
-
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
-
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(HOLIDAY)
-            .visibleToEveryone(true)
-            .messageKey("messagekey.holiday")
-            .build();
-
-        final Application application = new Application();
-        application.setId(42L);
-        application.setPerson(signedInUser);
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ALLOWED);
-        application.setVacationType(vacationType);
-
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
-
-        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
-
-        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+        mockCsvFileFor(locale, List.of(export));
+        mockDateParsing(locale);
 
         perform(get("/web/application/export")
             .locale(locale)
@@ -236,17 +180,47 @@ class ApplicationForLeaveExportViewControllerTest {
     }
 
     @Test
-    void ensuresToExportAbsencesForAllWithSelectionParametersAndAllElementsShouldWin() throws Exception {
+    void ensuresAllElementsWinsOverGivenPersonIds() throws Exception {
 
         final Locale locale = JAPANESE;
+        final Person signedInUser = signedInUser();
 
+        final ApplicationForLeaveExport export = export(signedInUser);
+        when(applicationForLeaveExportService.getAll(signedInUser, START_DATE, END_DATE)).thenReturn(List.of(export));
+
+        mockCsvFileFor(locale, List.of(export));
+        mockDateParsing(locale);
+
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("allElements", "true")
+            .param("personIds", "21", "42"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+
+        verify(applicationForLeaveExportService, never()).getAllForPersons(any(), any(), any(), any());
+    }
+
+    private Person signedInUser() {
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
+        return signedInUser;
+    }
 
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+    private void mockDateParsing(Locale locale) {
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
+    }
+
+    private void mockCsvFileFor(Locale locale, List<ApplicationForLeaveExport> exports) {
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveCsvExportService.generateCSV(FILTER_PERIOD, locale, exports)).thenReturn(csvFile);
+    }
+
+    private static ApplicationForLeaveExport export(Person person) {
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
@@ -257,35 +231,16 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final Application application = new Application();
         application.setId(42L);
-        application.setPerson(signedInUser);
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
+        application.setPerson(person);
+        application.setStartDate(START_DATE);
+        application.setEndDate(END_DATE);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
         application.setVacationType(vacationType);
 
-        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(startDate.getYear(), TEN));
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysByYear(START_DATE.getYear(), TEN));
 
-        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
-
-        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
-
-        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
-        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
-
-        perform(get("/web/application/export")
-            .locale(locale)
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019")
-            .param("allElements", "true")
-            .param("page", "2")
-            .param("size", "50")
-            .param("query", "hans"))
-            .andExpect(status().isOk())
-            .andExpect(content().string("csv-resource"));
+        return new ApplicationForLeaveExport("1", person.getFirstName(), person.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
