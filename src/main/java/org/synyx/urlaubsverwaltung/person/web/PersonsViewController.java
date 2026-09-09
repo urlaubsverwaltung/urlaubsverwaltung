@@ -148,7 +148,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
                 personPage = active
-                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
+                    ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
                     : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
             }
         }

@@ -143,8 +143,8 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
-        final Predicate<Person> filter = nameContains(query).and(not(Person::isInactive));
+    public Page<Person> getManagedActiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
+        final Predicate<Person> filter = nameContains(query).and(Person::isActive);
         return managedMembersOfPersonAndDepartment(person, departmentId, pageable, filter);
     }
 

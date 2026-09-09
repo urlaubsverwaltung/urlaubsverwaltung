@@ -487,7 +487,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
@@ -523,7 +523,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
+        when(departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 

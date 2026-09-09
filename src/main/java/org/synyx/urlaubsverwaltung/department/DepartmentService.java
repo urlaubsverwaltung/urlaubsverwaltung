@@ -230,7 +230,7 @@ public interface DepartmentService {
      * @param query          query for firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
+    Page<Person> getManagedActiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the

@@ -1216,7 +1216,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1383,7 +1383,7 @@ class DepartmentServiceImplTest {
         final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2,
             Sort.by("lastName").and(Sort.by("firstName")));
 
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(2);
         assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
@@ -1418,7 +1418,7 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 10);
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         // membership is missing (neither department head nor second stage authority)
         assertThat(actual).isEqualTo(Page.empty());
@@ -1492,7 +1492,7 @@ class DepartmentServiceImplTest {
             .thenReturn(List.of(max, inactive));
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1529,7 +1529,7 @@ class DepartmentServiceImplTest {
             .thenReturn(List.of(max, inactive));
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1557,7 +1557,7 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual).isEqualTo(Page.empty());
         verifyNoInteractions(personService);
