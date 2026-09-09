@@ -71,7 +71,7 @@
       </div>
 
       <div>
-        <h2 class="mt-8 font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
+        <h2 class="mt-8 statistic-panel-title" th:text="#{sicknotes.statistics.chart.title}">Krankheitstage</h2>
 
         <div class="mt-4 sicknote-statistics-chart-container">
           <div id="sicknote-statistic-chart" class="sicknote-statistics-chart"></div>
@@ -83,7 +83,7 @@
           Krankheitstage
         </h3>
         <p
-          class="text-sm"
+          class="statistic-description"
           th:text="#{sicknotes.statistics.summary.days-per-year.description(${selectedYearStatistics.year})}"
         >
           Alle Krankheitstage in diesem Jahr zusammen gezählt.
@@ -175,7 +175,7 @@
           Krankheitstage pro Mitarbeitende
         </h3>
         <p
-          class="text-sm mt-0.5"
+          class="statistic-description"
           th:text="#{sicknotes.statistics.summary.days-per-person.description(${selectedYearStatistics.year})}"
         >
           Anzahl der Tage die deine Mitarbeitenden im Durchschnitt krank sind.
@@ -270,7 +270,7 @@
           Krankheitstage pro Mitarbeitende Dauer einer Krankmeldung
         </h3>
         <p
-          class="text-sm mt-0"
+          class="statistic-description"
           th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${selectedYearStatistics.year})}"
         >
           Anzahl der Tage die deine Mitarbeitenden im Durchschnitt je Krankmeldung abwesend sind.
@@ -362,7 +362,7 @@
 
       <div>
         <div class="mt-8">
-          <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.sick-rate.title}">Krankenquote</h2>
+          <h2 class="statistic-panel-title" th:text="#{sicknotes.statistics.chart.sick-rate.title}">Krankenquote</h2>
         </div>
 
         <div class="mt-4 sicknote-statistics-chart-container">
@@ -375,7 +375,7 @@
           Krankenquote
         </h3>
         <p
-          class="text-sm"
+          class="statistic-description"
           th:text="#{sicknotes.statistics.summary.sick-rate.description(${selectedYearStatistics.year})}"
         >
           Alle Krankheitstage im Jahr im Verhältnis zu den Sollarbeitstagen.
@@ -403,7 +403,7 @@
         <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sicknotes.title}">
           Krankmeldungen
         </h3>
-        <p class="text-sm" th:text="#{sicknotes.statistics.summary.sicknotes.description}">
+        <p class="statistic-description" th:text="#{sicknotes.statistics.summary.sicknotes.description}">
           Detailliertere Statistiken zur Anzahl von Krankmeldungen.
         </p>
         <div class="statistic-summary-card-box">

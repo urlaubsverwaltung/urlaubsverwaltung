@@ -1,14 +1,63 @@
 /*
- * Summary cards used by the statistics pages. Moved out of the sick note statistics bundle so the
- * overtime statistics can use the same cards instead of redefining these generic class names.
+ * The shared building blocks of the statistics pages under "Unternehmen" (sick notes, overtime,
+ * absences). The three pages are meant to read as one family, so every block has exactly one size
+ * and it is defined here - not per page with utility classes in the template. That drift is what
+ * made the same block render at three sizes across the three pages.
+ *
+ * Heading levels stay a per-page decision (h1 page title, h2 section, h3 subsection - whatever the
+ * document outline calls for); the classes below carry the look, not the level.
  */
-.statistic-summary-container {
-  .statistic-summary-container-title {
-    margin: 0;
-    @apply text-sm;
-    font-weight: 600;
-  }
 
+/* Title of a chart or of a panel wrapping one. */
+.statistic-panel-title {
+  margin: 0;
+  @apply text-base;
+  font-weight: 700;
+}
+
+/* Title of a block of summary cards. */
+.statistic-summary-container-title {
+  margin: 0;
+  @apply text-sm;
+  font-weight: 600;
+}
+
+/* The explanatory paragraph below either of the two titles above. */
+.statistic-description {
+  margin-top: --spacing(1);
+  @apply text-sm;
+  @apply text-gray-500;
+  @apply dark:text-zinc-400;
+}
+
+/*
+ * The label/value typography of a single metric. Defined outside .statistic-summary-card so the
+ * absence statistics can use the same sizes for its metrics next to the vacation ring, which are
+ * laid out as a plain list instead of as cards.
+ */
+.statistic-summary-card__label {
+  @apply text-sm;
+  @apply text-gray-500;
+  @apply dark:text-zinc-200;
+}
+
+.statistic-summary-card__content {
+  @apply text-xl;
+  font-weight: 600;
+  @apply text-black;
+  @apply dark:text-zinc-100;
+}
+
+.statistic-summary-card__content-previous {
+  margin-left: --spacing(1);
+  font-weight: 400;
+  cursor: help;
+  @apply text-sm;
+  @apply text-gray-500;
+  @apply dark:text-zinc-400;
+}
+
+.statistic-summary-container {
   .statistic-summary-card-box {
     --statistic-card-box-gap: --spacing(4);
     margin-top: --spacing(4);
@@ -31,28 +80,6 @@
       @apply rounded-md;
       @apply shadow-2xs;
       @apply dark:shadow-none;
-
-      .statistic-summary-card__label {
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-200;
-      }
-
-      .statistic-summary-card__content {
-        @apply text-xl;
-        font-weight: 600;
-        @apply text-black;
-        @apply dark:text-zinc-100;
-      }
-
-      .statistic-summary-card__content-previous {
-        margin-left: --spacing(1);
-        font-weight: 400;
-        cursor: help;
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-zinc-400;
-      }
     }
   }
 }

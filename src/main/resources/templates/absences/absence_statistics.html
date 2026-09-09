@@ -64,14 +64,14 @@
 
       <div class="absence-statistics-info-anchor">
         <div class="mt-8 flex flex-col @3xl/main:flex-row justify-between gap-1">
-          <h2 class="font-bold text-base" th:text="#{absences.statistics.chart.title}">Abwesenheitstage je Monat</h2>
+          <h2 class="statistic-panel-title" th:text="#{absences.statistics.chart.title}">Abwesenheitstage je Monat</h2>
           <button
             th:replace="~{fragments/card::card-info-button(target='absence-statistics-chart-description', label=#{absences.statistics.chart.info.button})}"
           >
             Informationen zu Abwesenheitstage je Monat
           </button>
         </div>
-        <p class="text-sm" th:text="#{absences.statistics.chart.description}">
+        <p class="statistic-description" th:text="#{absences.statistics.chart.description}">
           Anzahl der Abwesenheitstage entsprechend der individuellen Arbeitszeit im Unternehmen/deiner Abteilung.
         </p>
         <div
@@ -93,7 +93,7 @@
           <div class="flex flex-col @3xl/main:flex-row justify-between gap-1">
             <h2
               id="distribution-heading"
-              class="font-bold text-base"
+              class="statistic-panel-title"
               th:text="#{absences.statistics.distribution.title}"
             >
               Verteilung der Abwesenheitsarten
@@ -104,7 +104,7 @@
               Informationen zur Verteilung der Abwesenheitsarten
             </button>
           </div>
-          <p class="text-sm" th:text="#{absences.statistics.distribution.description}">
+          <p class="statistic-description" th:text="#{absences.statistics.distribution.description}">
             Anteil der Abwesenheitstage je Abwesenheitsart
           </p>
           <div
@@ -147,7 +147,7 @@
 
         <section class="absence-statistics-panel absence-statistics-info-anchor" aria-labelledby="vacation-heading">
           <div class="flex flex-col @3xl/main:flex-row justify-between gap-1">
-            <h2 id="vacation-heading" class="font-bold text-base" th:text="#{absences.statistics.vacation.title}">
+            <h2 id="vacation-heading" class="statistic-panel-title" th:text="#{absences.statistics.vacation.title}">
               Genommener Urlaub
             </h2>
             <button
@@ -156,7 +156,7 @@
               Informationen zum genommenen Urlaub
             </button>
           </div>
-          <p class="text-sm" th:text="#{absences.statistics.vacation.description}">
+          <p class="statistic-description" th:text="#{absences.statistics.vacation.description}">
             Anteil des genommenen Erholungsurlaubs am vorhandenen Anspruch.
           </p>
           <div
@@ -181,22 +181,22 @@
             <div id="vacation-ring" class="absence-statistics-gauge"></div>
             <div class="absence-statistics-gauge-facts">
               <div class="absence-statistics-fact">
-                <span class="absence-statistics-fact-label" th:text="#{absences.statistics.vacation.today.label}">
-                  Zum heutigen Stichtag
+                <span class="statistic-summary-card__label" th:text="#{absences.statistics.vacation.today.label}">
+                  Zum heutigen Stichtag genommen bzw. geplant
                 </span>
                 <span
-                  class="absence-statistics-fact-value"
+                  class="statistic-summary-card__content"
                   th:text="#{absences.statistics.vacation.today.value(${vacationDaysTakenText}, ${validEntitlementText})}"
                 >
-                  2.674 von 3.986 Tagen genommen bzw. geplant
+                  2.674 von 3.986 Tagen
                 </span>
               </div>
               <div class="absence-statistics-fact absence-statistics-fact--secondary">
-                <span class="absence-statistics-fact-label" th:text="#{absences.statistics.vacation.expired.label}">
+                <span class="statistic-summary-card__label" th:text="#{absences.statistics.vacation.expired.label}">
                   Verfallener Resturlaub
                 </span>
                 <span
-                  class="absence-statistics-fact-value"
+                  class="statistic-summary-card__content"
                   th:text="#{absences.statistics.vacation.expired.value(${expiredRemainingVacationDaysText})}"
                 >
                   47 Tage
