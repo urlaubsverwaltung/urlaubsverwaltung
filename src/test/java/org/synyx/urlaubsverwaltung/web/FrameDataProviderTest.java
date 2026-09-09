@@ -188,7 +188,7 @@ class FrameDataProviderTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
-    void postHandleNoCompanyOvertimeStatisticsLinkForDepartmentRoles(final String role) {
+    void postHandleCompanyOvertimeStatisticsLinkForDepartmentRoles(final String role) {
         mockSettings(true, false, false, false);
 
         final Person person = new Person();
@@ -204,7 +204,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isInstanceOfSatisfying(NavigationDto.class, dto ->
-                assertThat(dto.company()).isNotEmpty().doesNotContain(companyOvertimeLink()));
+                assertThat(dto.company()).contains(companyOvertimeLink()));
     }
 
     @Test
@@ -380,7 +380,8 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -427,7 +428,8 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -473,7 +475,8 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -520,7 +523,8 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyApplicationsLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyOvertimeLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });

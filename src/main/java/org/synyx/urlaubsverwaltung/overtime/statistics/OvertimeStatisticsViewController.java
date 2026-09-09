@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -28,20 +30,23 @@ import java.util.Optional;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
- * Controller for the company wide overtime statistics.
+ * Controller for the overtime statistics. Office and boss see the figures of everyone, a department head or second
+ * stage authority the figures of the members they manage - which persons that are is decided by
+ * {@link OvertimeStatisticsPersons}, the page itself looks the same for everyone.
  */
 @Controller
 @RequestMapping("/web/overtime/statistics")
-@PreAuthorize(IS_BOSS_OR_OFFICE)
+@PreAuthorize(IS_PRIVILEGED_USER)
 class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final int MINUTES_PER_HOUR = 60;
     private static final int DECIMAL_HOUR_SCALE = 2;
 
     private final OvertimeStatisticsService overtimeStatisticsService;
+    private final PersonService personService;
     private final SettingsService settingsService;
     private final MessageSource messageSource;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
@@ -50,6 +55,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
 
     OvertimeStatisticsViewController(
         OvertimeStatisticsService overtimeStatisticsService,
+        PersonService personService,
         SettingsService settingsService,
         MessageSource messageSource,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
@@ -57,6 +63,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         Clock clock
     ) {
         this.overtimeStatisticsService = overtimeStatisticsService;
+        this.personService = personService;
         this.settingsService = settingsService;
         this.messageSource = messageSource;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
@@ -65,7 +72,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
     }
 
     /**
-     * The page shows company wide figures and has no rows of its own a suggestion could point at, therefore a
+     * The page shows aggregated figures and has no rows of its own a suggestion could point at, therefore a
      * suggestion links to the person overview like on every other page without person rows.
      */
     @Override
@@ -92,9 +99,11 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final Year currentYear = Year.now(clock);
         final Year selectedYear = requestedYear.flatMap(OvertimeStatisticsViewController::toYear).orElse(currentYear);
 
-        final OvertimeStatistics statistics = overtimeStatisticsService.getStatistics(selectedYear);
+        final Person signedInUser = personService.getSignedInUser();
 
-        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1));
+        final OvertimeStatistics statistics = overtimeStatisticsService.getStatistics(selectedYear, signedInUser);
+
+        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1), signedInUser);
 
         model.addAttribute("selectedYear", selectedYear.getValue());
         model.addAttribute("currentYear", currentYear.getValue());
@@ -105,7 +114,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         model.addAttribute("overtimeBalanceGraph", toBalanceGraphDto(statistics, previousStatistics, locale));
 
         // deliberately without the selected year, these figures cover the whole history
-        final OvertimeTotals totals = overtimeStatisticsService.getTotals();
+        final OvertimeTotals totals = overtimeStatisticsService.getTotals(signedInUser);
         model.addAttribute("overtimeTotals", toTotalsDto(totals, locale));
 
         return "overtime/overtime_statistics";
@@ -252,8 +261,8 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
      * Figures over the whole history, formatted for humans.
      *
      * <p>
-     * These are shown above the year selector and do not react to it. The balance is the overtime the company still
-     * has open, which is the same figure every person sees as their own remaining overtime, summed up.
+     * These are shown above the year selector and do not react to it. The balance is the overtime that is still
+     * open, which is the same figure every person sees as their own remaining overtime, summed up.
      *
      * @param accrued   accrued overtime over the whole history
      * @param reduction reduced overtime over the whole history, without sign

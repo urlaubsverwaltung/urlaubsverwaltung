@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Duration;
@@ -54,13 +53,14 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory
 class OvertimeStatisticsServiceTest {
 
     private static final Year YEAR = Year.of(2026);
+    private static final Person SIGNED_IN_USER = person(99L);
 
     private OvertimeStatisticsService sut;
 
     @Mock
     private OvertimeService overtimeService;
     @Mock
-    private PersonService personService;
+    private OvertimeStatisticsPersons overtimeStatisticsPersons;
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -68,18 +68,18 @@ class OvertimeStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeStatisticsService(overtimeService, personService, applicationService, workingTimeCalendarService);
+        sut = new OvertimeStatisticsService(overtimeService, overtimeStatisticsPersons, applicationService, workingTimeCalendarService);
 
         // most tests are about the overtime records, so "no reduction applications" is the default
         lenient().when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of());
     }
 
     @Test
-    void ensureAccruedOvertimeIsSummedPerMonthOverAllPersons() {
+    void ensureAccruedOvertimeIsSummedPerMonthOverAllRelevantPersons() {
 
         final Person marie = person(1L);
         final Person klaus = person(2L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie, klaus));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie, klaus));
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(overtime(marie, "2026-01-05", "2026-01-05", Duration.ofHours(3))),
@@ -89,7 +89,7 @@ class OvertimeStatisticsServiceTest {
             )
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accruedByMonth()).hasSize(12);
         assertThat(statistics.accruedByMonth().get(JANUARY.getValue() - 1)).isEqualTo(Duration.ofHours(5));
@@ -101,7 +101,7 @@ class OvertimeStatisticsServiceTest {
     void ensureNegativeOvertimeRecordsCountAsReductionAndNotAsAccrual() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(
@@ -110,7 +110,7 @@ class OvertimeStatisticsServiceTest {
             )
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accruedByMonth().get(0)).isEqualTo(Duration.ofHours(6));
         assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(2));
@@ -120,13 +120,13 @@ class OvertimeStatisticsServiceTest {
     void ensureReductionIsReportedAsPositiveAmount() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(overtime(marie, "2026-02-02", "2026-02-02", Duration.ofHours(3).negated()))
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth().get(1)).isEqualTo(Duration.ofHours(3));
         assertThat(statistics.reductionByMonth().get(1).isNegative()).isFalse();
@@ -136,14 +136,14 @@ class OvertimeStatisticsServiceTest {
     void ensureOvertimeSpanningTwoMonthsIsSplitProRata() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         // 30.01. - 02.02. are four days, two in january and two in february
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(overtime(marie, "2026-01-30", "2026-02-02", Duration.ofHours(4)))
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accruedByMonth().get(0)).isEqualTo(Duration.ofHours(2));
         assertThat(statistics.accruedByMonth().get(1)).isEqualTo(Duration.ofHours(2));
@@ -153,27 +153,27 @@ class OvertimeStatisticsServiceTest {
     void ensureOvertimeSpanningTheYearBoundaryOnlyCountsItsShareOfTheSelectedYear() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         // 30.12.2025 - 02.01.2026 are four days, only the two days in 2026 belong to the selected year
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(overtime(marie, "2025-12-30", "2026-01-02", Duration.ofHours(8)))
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accruedByMonth().get(0)).isEqualTo(Duration.ofHours(4));
         assertThat(statistics.accrued()).isEqualTo(Duration.ofHours(4));
     }
 
     @Test
-    void ensureOnlyPersonsHavingAnAccountInTheSelectedYearAreConsidered() {
+    void ensureOnlyTheRelevantPersonsOfTheSelectedYearAreConsidered() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of());
 
-        sut.getStatistics(YEAR);
+        sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         final ArgumentCaptor<Collection<PersonId>> captor = ArgumentCaptor.captor();
         verify(overtimeService).getOvertimeForPersonsInDateRange(captor.capture(), any(), any());
@@ -184,10 +184,10 @@ class OvertimeStatisticsServiceTest {
     void ensureOvertimeIsRequestedForTheWholeSelectedYear() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of());
 
-        sut.getStatistics(YEAR);
+        sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         verify(overtimeService).getOvertimeForPersonsInDateRange(
             any(),
@@ -199,9 +199,9 @@ class OvertimeStatisticsServiceTest {
     @Test
     void ensureNoPersonsResultsInZeroForEveryMonthWithoutQueryingOvertime() {
 
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of());
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of());
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accruedByMonth()).hasSize(12).containsOnly(ZERO);
         assertThat(statistics.reductionByMonth()).hasSize(12).containsOnly(ZERO);
@@ -216,7 +216,7 @@ class OvertimeStatisticsServiceTest {
     void ensureTotalsAndBalance() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(
@@ -225,7 +225,7 @@ class OvertimeStatisticsServiceTest {
             )
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.accrued()).isEqualTo(Duration.ofHours(10));
         assertThat(statistics.reduction()).isEqualTo(Duration.ofHours(4));
@@ -236,7 +236,7 @@ class OvertimeStatisticsServiceTest {
     void ensureBalancePerMonthIsAccrualMinusReduction() {
 
         final Person marie = person(1L);
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(marie));
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(marie));
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(
@@ -245,7 +245,7 @@ class OvertimeStatisticsServiceTest {
             )
         ));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.balanceByMonth().get(0)).isEqualTo(Duration.ofHours(3).negated());
     }
@@ -254,13 +254,13 @@ class OvertimeStatisticsServiceTest {
     void ensureOvertimeReductionApplicationsCountAsReduction() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
 
         // 05.01. and 06.01., two full workdays, eight hours reduction means four hours per day
         overtimeReductionApplications(marie, application(marie, "2026-01-05", "2026-01-06", Duration.ofHours(8)));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(8));
         assertThat(statistics.accruedByMonth().get(0)).isEqualTo(ZERO);
@@ -270,14 +270,14 @@ class OvertimeStatisticsServiceTest {
     void ensureReductionCombinesNegativeRecordsAndApplications() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
 
         when(overtimeService.getOvertimeForPersonsInDateRange(any(), any(), any())).thenReturn(Map.of(
             marie.getIdAsPersonId(), List.of(overtime(marie, "2026-01-20", "2026-01-20", Duration.ofHours(3).negated()))
         ));
         overtimeReductionApplications(marie, application(marie, "2026-01-05", "2026-01-05", Duration.ofHours(2)));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(5));
     }
@@ -286,11 +286,11 @@ class OvertimeStatisticsServiceTest {
     void ensureOnlyApplicationsInActiveStatusesAreConsidered() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
         overtimeReductionApplications(marie);
 
-        sut.getStatistics(YEAR);
+        sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         final ArgumentCaptor<List<ApplicationStatus>> captor = ArgumentCaptor.captor();
         verify(applicationService).getForStatesAndPerson(captor.capture(), any(), any(), any());
@@ -301,14 +301,14 @@ class OvertimeStatisticsServiceTest {
     void ensureApplicationsOfOtherVacationCategoriesAreIgnored() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
 
         final Application holiday = application(marie, "2026-01-05", "2026-01-06", Duration.ofHours(8));
         holiday.setVacationType(createVacationType(2L, HOLIDAY, new StaticMessageSource()));
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(holiday));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth()).containsOnly(ZERO);
     }
@@ -317,13 +317,13 @@ class OvertimeStatisticsServiceTest {
     void ensureApplicationSpanningTwoMonthsIsSplitProRata() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
 
         // 30.01. - 02.02., four full workdays, eight hours means two hours per day
         overtimeReductionApplications(marie, application(marie, "2026-01-30", "2026-02-02", Duration.ofHours(8)));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(4));
         assertThat(statistics.reductionByMonth().get(1)).isEqualTo(Duration.ofHours(4));
@@ -333,13 +333,13 @@ class OvertimeStatisticsServiceTest {
     void ensureApplicationSpanningTheYearBoundaryOnlyCountsItsShareOfTheSelectedYear() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
 
         // 30.12.2025 - 02.01.2026, four full workdays, only the two days in 2026 belong to the selected year
         overtimeReductionApplications(marie, application(marie, "2025-12-30", "2026-01-02", Duration.ofHours(8)));
 
-        final OvertimeStatistics statistics = sut.getStatistics(YEAR);
+        final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(4));
         assertThat(statistics.reduction()).isEqualTo(Duration.ofHours(4));
@@ -350,7 +350,7 @@ class OvertimeStatisticsServiceTest {
 
         final Person marie = person(1L);
         final Person klaus = person(2L);
-        personsHavingAccount(marie, klaus);
+        relevantPersons(marie, klaus);
         noOvertimeRecords();
 
         overtimeReductionApplications(
@@ -359,7 +359,7 @@ class OvertimeStatisticsServiceTest {
             application(marie, "2026-11-02", "2026-11-03", Duration.ofHours(4))
         );
 
-        sut.getStatistics(YEAR);
+        sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         // one query for everyone, spanning every application - not one per person and not one per application
         verify(workingTimeCalendarService).getWorkingTimesByPersons(
@@ -372,11 +372,11 @@ class OvertimeStatisticsServiceTest {
     void ensureNoWorkingTimeCalendarIsLoadedWithoutAnyReductionApplication() {
 
         final Person marie = person(1L);
-        personsHavingAccount(marie);
+        relevantPersons(marie);
         noOvertimeRecords();
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of());
 
-        sut.getStatistics(YEAR);
+        sut.getStatistics(YEAR, SIGNED_IN_USER);
 
         verify(workingTimeCalendarService, never()).getWorkingTimesByPersons(any(), any(DateRange.class));
     }
@@ -389,7 +389,7 @@ class OvertimeStatisticsServiceTest {
 
             final Person marie = person(1L);
             final Person klaus = person(2L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie, klaus));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie, klaus));
 
             when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of(
                 marie.getIdAsPersonId(), List.of(
@@ -400,7 +400,7 @@ class OvertimeStatisticsServiceTest {
             ));
             when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(Duration.ofHours(4));
 
-            final OvertimeTotals totals = sut.getTotals();
+            final OvertimeTotals totals = sut.getTotals(SIGNED_IN_USER);
 
             assertThat(totals.accrued()).isEqualTo(Duration.ofHours(50));
             assertThat(totals.reduction()).isEqualTo(Duration.ofHours(10));
@@ -411,24 +411,24 @@ class OvertimeStatisticsServiceTest {
         void ensureReductionApplicationsAreCountedWithoutAnyDateRestriction() {
 
             final Person marie = person(1L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie));
             when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
             when(applicationService.getTotalOvertimeReductionOfPersons(List.of(marie))).thenReturn(Duration.ofHours(3));
 
-            assertThat(sut.getTotals().reduction()).isEqualTo(Duration.ofHours(3));
+            assertThat(sut.getTotals(SIGNED_IN_USER).reduction()).isEqualTo(Duration.ofHours(3));
         }
 
         @Test
         void ensureTheCurrentWorkforceIsUsedAndNotTheCohortOfAnyYear() {
 
             final Person marie = person(1L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie));
             when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
             when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(ZERO);
 
-            sut.getTotals();
+            sut.getTotals(SIGNED_IN_USER);
 
-            verify(personService, never()).getAllPersonsHavingAccountInYear(any());
+            verify(overtimeStatisticsPersons, never()).relevantPersonsOfYear(any(), any());
         }
 
         @Test
@@ -436,22 +436,22 @@ class OvertimeStatisticsServiceTest {
 
             final Person marie = person(1L);
             final Person klaus = person(2L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie, klaus));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie, klaus));
             when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of());
             when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(ZERO);
 
-            sut.getTotals();
+            sut.getTotals(SIGNED_IN_USER);
 
             verify(overtimeService).getAllOvertimesByPersonIds(List.of(marie.getIdAsPersonId(), klaus.getIdAsPersonId()));
             verify(applicationService).getTotalOvertimeReductionOfPersons(List.of(marie, klaus));
         }
 
         @Test
-        void ensureEmptyCompanyIsZeroEverywhereWithoutQueryingAnything() {
+        void ensureNoRelevantPersonsIsZeroEverywhereWithoutQueryingAnything() {
 
-            when(personService.getActivePersons()).thenReturn(List.of());
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of());
 
-            final OvertimeTotals totals = sut.getTotals();
+            final OvertimeTotals totals = sut.getTotals(SIGNED_IN_USER);
 
             assertThat(totals.accrued()).isEqualTo(ZERO);
             assertThat(totals.reduction()).isEqualTo(ZERO);
@@ -465,13 +465,13 @@ class OvertimeStatisticsServiceTest {
         void ensureBalanceIsNegativeWhenMoreWasReducedThanAccrued() {
 
             final Person marie = person(1L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie));
             when(overtimeService.getAllOvertimesByPersonIds(any())).thenReturn(Map.of(
                 marie.getIdAsPersonId(), List.of(overtime(marie, "2026-01-05", "2026-01-05", Duration.ofHours(2)))
             ));
             when(applicationService.getTotalOvertimeReductionOfPersons(any())).thenReturn(Duration.ofHours(9));
 
-            assertThat(sut.getTotals().balance()).isEqualTo(Duration.ofHours(7).negated());
+            assertThat(sut.getTotals(SIGNED_IN_USER).balance()).isEqualTo(Duration.ofHours(7).negated());
         }
 
         /**
@@ -482,7 +482,7 @@ class OvertimeStatisticsServiceTest {
         void ensureBalanceEqualsAllOvertimeRecordsMinusAllReductionApplications() {
 
             final Person marie = person(1L);
-            when(personService.getActivePersons()).thenReturn(List.of(marie));
+            when(overtimeStatisticsPersons.relevantPersonsOfWholeHistory(SIGNED_IN_USER)).thenReturn(List.of(marie));
 
             final List<Overtime> records = List.of(
                 overtime(marie, "2024-02-01", "2024-02-01", Duration.ofHours(12)),
@@ -496,12 +496,12 @@ class OvertimeStatisticsServiceTest {
             final Duration sumOfAllRecords = records.stream().map(Overtime::duration).reduce(ZERO, Duration::plus);
             final Duration leftOvertime = sumOfAllRecords.minus(Duration.ofHours(6));
 
-            assertThat(sut.getTotals().balance()).isEqualTo(leftOvertime);
+            assertThat(sut.getTotals(SIGNED_IN_USER).balance()).isEqualTo(leftOvertime);
         }
     }
 
-    private void personsHavingAccount(Person... persons) {
-        when(personService.getAllPersonsHavingAccountInYear(YEAR)).thenReturn(List.of(persons));
+    private void relevantPersons(Person... persons) {
+        when(overtimeStatisticsPersons.relevantPersonsOfYear(SIGNED_IN_USER, YEAR)).thenReturn(List.of(persons));
     }
 
     private void noOvertimeRecords() {

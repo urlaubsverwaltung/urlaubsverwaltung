@@ -122,7 +122,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
             member.setPermissions(List.of(USER));
 
             final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
-            when(departmentService.getManagedMembersOfPerson(personRequestingStatistics, personPageRequest, ""))
+            when(departmentService.getManagedActiveMembersOfPerson(personRequestingStatistics, personPageRequest, ""))
                 .thenReturn(new PageImpl<>(List.of(member)));
 
             final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
@@ -432,7 +432,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
             departmentMemberTwo.setPermissions(List.of(USER));
             departmentMemberTwo.setFirstName("Bernd");
 
-            when(departmentService.getManagedMembersOfPerson(eq(departmentManagement), any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
+            when(departmentService.getManagedActiveMembersOfPerson(eq(departmentManagement), any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
                 // note different sorting of persons to requested statistics sorting
                 // departmentMember must be second in the expected result
                 .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));

@@ -10,7 +10,7 @@ import static java.time.Duration.ZERO;
 import static java.util.Collections.nCopies;
 
 /**
- * Company wide overtime figures of a single year, broken down by month.
+ * Overtime figures of a single year, broken down by month, aggregated over a set of persons.
  *
  * <p>
  * Accrual and reduction are kept apart on purpose: a month with ten hours accrued and ten hours reduced is not the

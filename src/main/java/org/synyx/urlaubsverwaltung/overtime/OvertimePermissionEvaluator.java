@@ -6,7 +6,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Single source of truth for the question "who may interact with overtime?".
@@ -81,7 +83,7 @@ public class OvertimePermissionEvaluator {
     }
 
     /**
-     * Whether the given user may see the overtime of every person, which guards the company wide overtime statistics.
+     * Whether the given user may see the overtime of every person, no matter whether the user is responsible for them.
      *
      * @param signedInUser user asking for permissions
      * @return {@code true} if the user may see the overtime of all persons, {@code false} otherwise
@@ -89,6 +91,19 @@ public class OvertimePermissionEvaluator {
     public boolean isAllowedToViewOvertimeOfAllPersons(Person signedInUser) {
         return settingsService.getSettings().getOvertimeSettings().isOvertimeActive()
             && signedInUser.hasAnyRole(OFFICE, BOSS);
+    }
+
+    /**
+     * Whether the given user may see the overtime of any other person - either because the user is responsible for
+     * members or because the user may see the overtime of everyone. Guards the overtime statistics and its navigation
+     * entry; which persons the figures are aggregated over is decided when the statistics are loaded.
+     *
+     * @param signedInUser user asking for permissions
+     * @return {@code true} if the user may see the overtime of at least one other person, {@code false} otherwise
+     */
+    public boolean isAllowedToViewOvertimeOfOtherPersons(Person signedInUser) {
+        return settingsService.getSettings().getOvertimeSettings().isOvertimeActive()
+            && signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
     }
 
     /**

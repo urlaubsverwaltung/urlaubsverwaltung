@@ -151,6 +151,6 @@ class ApplicationForLeaveExportService {
             return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
         }
 
-        return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
+        return departmentService.getManagedActiveMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
     }
 }

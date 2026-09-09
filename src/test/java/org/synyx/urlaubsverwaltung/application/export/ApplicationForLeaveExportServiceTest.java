@@ -126,7 +126,7 @@ class ApplicationForLeaveExportServiceTest {
         final List<Person> personsForExport = List.of(departmentMember);
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
-        when(departmentService.getManagedMembersOfPerson(person, personPageRequest, ""))
+        when(departmentService.getManagedActiveMembersOfPerson(person, personPageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(departmentMember)));
 
         final LocalDate from = LocalDate.of(2023, JANUARY, 1);
@@ -161,7 +161,7 @@ class ApplicationForLeaveExportServiceTest {
         person.setPermissions(List.of(USER));
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
-        when(departmentService.getManagedMembersOfPerson(person, personPageRequest, ""))
+        when(departmentService.getManagedActiveMembersOfPerson(person, personPageRequest, ""))
             .thenReturn(new PageImpl<>(List.of()));
 
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");

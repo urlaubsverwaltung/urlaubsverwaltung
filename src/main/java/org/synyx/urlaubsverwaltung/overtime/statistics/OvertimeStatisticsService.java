@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarSupplier;
@@ -34,48 +33,49 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.overtime.statistics.OvertimeStatistics.MONTHS_PER_YEAR;
 
 /**
- * Creates the company wide {@link OvertimeStatistics}.
+ * Creates the {@link OvertimeStatistics} of the persons a signed-in person is responsible for.
  */
 @Service
 @Transactional(readOnly = true)
 class OvertimeStatisticsService {
 
     private final OvertimeService overtimeService;
-    private final PersonService personService;
+    private final OvertimeStatisticsPersons overtimeStatisticsPersons;
     private final ApplicationService applicationService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
 
     OvertimeStatisticsService(
         OvertimeService overtimeService,
-        PersonService personService,
+        OvertimeStatisticsPersons overtimeStatisticsPersons,
         ApplicationService applicationService,
         WorkingTimeCalendarService workingTimeCalendarService
     ) {
         this.overtimeService = overtimeService;
-        this.personService = personService;
+        this.overtimeStatisticsPersons = overtimeStatisticsPersons;
         this.applicationService = applicationService;
         this.workingTimeCalendarService = workingTimeCalendarService;
     }
 
     /**
-     * Creates the company wide overtime figures of the given year.
+     * Creates the overtime figures of the given year for everyone the signed-in person is responsible for.
      *
      * <p>
-     * Aggregated over everyone who had an account in that year. Using the cohort of the year instead of the currently
-     * active persons keeps past years stable: someone who left stays part of the years they worked in, and drops out
-     * of the years afterwards.
+     * Aggregated over the persons {@link OvertimeStatisticsPersons#relevantPersonsOfYear(Person, Year)} resolves -
+     * the cohort of the year, not the currently active persons, which keeps past years stable: someone who left stays
+     * part of the years they worked in, and drops out of the years afterwards.
      *
      * <p>
      * Reduction covers both ways it can happen in this application: a negative overtime record and an application of
-     * category overtime. Leaving the applications out would make the company balance disagree with what every person
-     * sees as their own remaining overtime.
+     * category overtime. Leaving the applications out would make the balance disagree with what every person sees as
+     * their own remaining overtime.
      *
-     * @param year to create the statistics for
-     * @return company wide overtime figures of the given year
+     * @param year         to create the statistics for
+     * @param signedInUser person requesting the statistics
+     * @return overtime figures of the given year, all zero when the signed-in person is responsible for nobody
      */
-    public OvertimeStatistics getStatistics(Year year) {
+    public OvertimeStatistics getStatistics(Year year, Person signedInUser) {
 
-        final List<Person> persons = personService.getAllPersonsHavingAccountInYear(year);
+        final List<Person> persons = overtimeStatisticsPersons.relevantPersonsOfYear(signedInUser, year);
         if (persons.isEmpty()) {
             return OvertimeStatistics.empty(year);
         }
@@ -90,21 +90,24 @@ class OvertimeStatisticsService {
     }
 
     /**
-     * Creates the company wide overtime figures over the whole history, without any reference to a year.
+     * Creates the overtime figures over the whole history, without any reference to a year, for everyone the
+     * signed-in person is responsible for.
      *
      * <p>
-     * Aggregated over the persons currently employed. Someone who left is not part of the overtime the company still
-     * has open, which is exactly the question these figures answer.
+     * Aggregated over the persons {@link OvertimeStatisticsPersons#relevantPersonsOfWholeHistory(Person)} resolves.
+     * Someone who left is not part of the overtime that is still open, which is exactly the question these figures
+     * answer.
      *
      * <p>
      * Without a date boundary nothing has to be spread pro rata, so this needs neither the monthly split nor the
      * working time calendars - the reduction of an application counts as a whole, no matter which year it falls into.
      *
-     * @return company wide overtime figures over the whole history
+     * @param signedInUser person requesting the statistics
+     * @return overtime figures over the whole history, all zero when the signed-in person is responsible for nobody
      */
-    public OvertimeTotals getTotals() {
+    public OvertimeTotals getTotals(Person signedInUser) {
 
-        final List<Person> persons = personService.getActivePersons();
+        final List<Person> persons = overtimeStatisticsPersons.relevantPersonsOfWholeHistory(signedInUser);
         if (persons.isEmpty()) {
             return OvertimeTotals.empty();
         }

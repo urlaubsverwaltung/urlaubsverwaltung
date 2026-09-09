@@ -216,7 +216,7 @@ public class FrameDataProvider implements DataProviderInterface {
             )));
         }
 
-        final boolean canViewOvertimes = overtimePermissionEvaluator.isAllowedToViewOvertimeOfAllPersons(user);
+        final boolean canViewOvertimes = overtimePermissionEvaluator.isAllowedToViewOvertimeOfOtherPersons(user);
         if (canViewOvertimes) {
             final String overtimeStatistics = "/web/overtime/statistics";
             elements.add(new NavigationItemDto("company-overtime-link", overtimeStatistics, "nav.company.overtimes", "clock-arrow-up", url.equals(overtimeStatistics)));

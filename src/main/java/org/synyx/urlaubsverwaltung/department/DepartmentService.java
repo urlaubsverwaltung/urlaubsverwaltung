@@ -173,6 +173,12 @@ public interface DepartmentService {
      * Members must have been added to the department in or before the given year.
      * (Requesting members for 2024 will not return members that were added in 2025.)
      *
+     * <p>
+     * Both sides of the relationship must also still exist. A member who was part of the department during the given
+     * year but has left it since is not returned, and a department head or second stage authority who has handed a
+     * department over gets none of its members - not even for the years in which they led it. A membership that has
+     * ended is history and grants nothing.
+     *
      * @param person person to get managed members for
      * @param year   to restrict the result set
      * @return empty list when person has no authority to manage other person, otherwise all managed members for the person
@@ -189,7 +195,7 @@ public interface DepartmentService {
      * @param query          query firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, PersonPageable personPageable, String query);
+    Page<Person> getManagedActiveMembersOfPerson(Person person, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link List} of all managed and active {@link Person}s.
@@ -224,7 +230,7 @@ public interface DepartmentService {
      * @param query          query for firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
+    Page<Person> getManagedActiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the

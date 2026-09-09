@@ -148,7 +148,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
                 personPage = active
-                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
+                    ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
                     : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
             }
         }
@@ -210,7 +210,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons(personPageRequest, query);
         } else {
-            return departmentService.getManagedMembersOfPerson(signedInUser, personPageRequest, query);
+            return departmentService.getManagedActiveMembersOfPerson(signedInUser, personPageRequest, query);
         }
     }
 

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -25,8 +26,8 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
- * The company wide balance has to be the same figure every person sees as their own remaining overtime. Both sides are
- * calculated by completely different code, so the identity is verified against a real database instead of mocks.
+ * The balance has to be the same figure every person sees as their own remaining overtime. Both sides are calculated
+ * by completely different code, so the identity is verified against a real database instead of mocks.
  */
 @SpringBootTest
 @Transactional
@@ -46,6 +47,7 @@ class OvertimeStatisticsServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureBalanceEqualsTheSummedRemainingOvertimeOfEveryPerson() {
 
+        final Person office = officePerson();
         final Person marie = personService.create("marie", "Marie", "Reichenbach", "marie@example.org");
         final Person klaus = personService.create("klaus", "Klaus", "Mustermann", "klaus@example.org");
 
@@ -58,19 +60,20 @@ class OvertimeStatisticsServiceIT extends SingleTenantTestContainersBase {
             .map(overtimeService::getLeftOvertimeForPerson)
             .reduce(ZERO, Duration::plus);
 
-        assertThat(sut.getTotals().balance()).isEqualTo(summedPersonalBalances);
+        assertThat(sut.getTotals(office).balance()).isEqualTo(summedPersonalBalances);
     }
 
     @Test
     void ensureAccrualAndReductionAddUpToTheBalance() {
 
+        final Person office = officePerson();
         final Person marie = personService.create("marie", "Marie", "Reichenbach", "marie@example.org");
 
         overtime(marie, "2024-02-01", Duration.ofHours(12));
         overtime(marie, "2024-06-01", Duration.ofHours(5).negated());
         overtimeReductionApplication(marie, "2025-03-03", Duration.ofHours(6));
 
-        final OvertimeTotals totals = sut.getTotals();
+        final OvertimeTotals totals = sut.getTotals(office);
 
         assertThat(totals.accrued()).isEqualTo(Duration.ofHours(12));
         assertThat(totals.reduction()).isEqualTo(Duration.ofHours(11));
@@ -78,8 +81,14 @@ class OvertimeStatisticsServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureAnEmptyCompanyDoesNotFail() {
-        assertThat(sut.getTotals().balance()).isEqualTo(ZERO);
+    void ensureNobodyWithOvertimeDoesNotFail() {
+        // the requesting office person is the only person in the database and has no overtime
+        assertThat(sut.getTotals(officePerson()).balance()).isEqualTo(ZERO);
+    }
+
+    private Person officePerson() {
+        return personService.create("office", "Ossi", "Office", "office@example.org",
+            List.of(), List.of(Role.USER, Role.OFFICE));
     }
 
     private void overtime(Person person, String date, Duration duration) {

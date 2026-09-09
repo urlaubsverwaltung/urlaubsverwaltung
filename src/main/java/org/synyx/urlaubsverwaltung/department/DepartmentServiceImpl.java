@@ -79,7 +79,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Person> getManagedMembersOfPerson(Person person, Year year) {
 
         final Map<PersonId, List<DepartmentMembership>> activeMembershipsOfYear = departmentMembershipService.getActiveMembershipsOfYear(year);
-        final Set<DepartmentMembership> onlyMembers = extractMemberMemberships(activeMembershipsOfYear);
+        final Set<DepartmentMembership> onlyMembers = extractCurrentMemberMemberships(activeMembershipsOfYear);
 
         if (onlyMembers.isEmpty()) {
             return List.of();
@@ -91,9 +91,14 @@ class DepartmentServiceImpl implements DepartmentService {
             // office or boss is allowed to manage all other persons
             managedPersonIds = onlyMembers.stream().map(DepartmentMembership::personId).collect(toSet());
         } else {
-            // otherwise we have to collect departments where the person is a department head or second stage authority
-            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.get(person.getIdAsPersonId()).stream()
+            // otherwise we have to collect the departments the person led in the given year and still leads - somebody
+            // who has handed a department over is not responsible for its members any more, not even for the years
+            // they led it.
+            // A manager can have no membership at all in the requested year - the year is a freely chosen request
+            // parameter, so this is a normal case and not a broken state.
+            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
                 .filter(DepartmentMembership::isManagementMembership)
+                .filter(DepartmentMembership::isCurrent)
                 .map(DepartmentMembership::departmentId)
                 .collect(toSet());
             managedPersonIds = onlyMembers.stream()
@@ -104,18 +109,24 @@ class DepartmentServiceImpl implements DepartmentService {
         return personService.getAllPersonsByIds(managedPersonIds);
     }
 
-    private static Set<DepartmentMembership> extractMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
+    /**
+     * The memberships of everybody who was a member of a department in the given year and still is. A membership that
+     * has ended in the meantime is history and does not make somebody a managed member any more, even though the
+     * person was part of the department during that year.
+     */
+    private static Set<DepartmentMembership> extractCurrentMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
         return membershipsByPersonId.values()
             .stream()
             .flatMap(Collection::stream)
-            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .filter(DepartmentMembership::isMemberMembership)
+            .filter(DepartmentMembership::isCurrent)
             .collect(toSet());
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, PersonPageable pageable, String query) {
+    public Page<Person> getManagedActiveMembersOfPerson(Person person, PersonPageable pageable, String query) {
         final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, pageable, query, not(Person::isInactive));
+        return managedMembersOfPerson(personId, pageable, query, Person::isActive);
     }
 
     @Override
@@ -132,8 +143,8 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
-        final Predicate<Person> filter = nameContains(query).and(not(Person::isInactive));
+    public Page<Person> getManagedActiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
+        final Predicate<Person> filter = nameContains(query).and(Person::isActive);
         return managedMembersOfPersonAndDepartment(person, departmentId, pageable, filter);
     }
 
