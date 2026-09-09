@@ -354,6 +354,30 @@ class OvertimePermissionEvaluatorTest {
     }
 
     @Nested
+    class ViewOvertimeOfOtherPersons {
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensurePrivilegedMayViewOvertimeOfOtherPersons(Role role) {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfOtherPersons(person(SIGNED_IN_USER_ID, USER, role))).isTrue();
+        }
+
+        @Test
+        void ensureUserMayNotViewOvertimeOfOtherPersons() {
+            settings(true, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfOtherPersons(person(SIGNED_IN_USER_ID, USER))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureNobodyMayViewOvertimeOfOtherPersonsWhenOvertimeIsNotActive(Role role) {
+            settings(false, false, false);
+            assertThat(sut.isAllowedToViewOvertimeOfOtherPersons(person(SIGNED_IN_USER_ID, USER, role))).isFalse();
+        }
+    }
+
+    @Nested
     class DepartmentLookups {
 
         @Test
