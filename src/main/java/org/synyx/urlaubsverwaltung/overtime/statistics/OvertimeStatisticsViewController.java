@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -42,6 +44,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
     private static final int DECIMAL_HOUR_SCALE = 2;
 
     private final OvertimeStatisticsService overtimeStatisticsService;
+    private final PersonService personService;
     private final SettingsService settingsService;
     private final MessageSource messageSource;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
@@ -50,6 +53,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
 
     OvertimeStatisticsViewController(
         OvertimeStatisticsService overtimeStatisticsService,
+        PersonService personService,
         SettingsService settingsService,
         MessageSource messageSource,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
@@ -57,6 +61,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         Clock clock
     ) {
         this.overtimeStatisticsService = overtimeStatisticsService;
+        this.personService = personService;
         this.settingsService = settingsService;
         this.messageSource = messageSource;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
@@ -92,9 +97,11 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final Year currentYear = Year.now(clock);
         final Year selectedYear = requestedYear.flatMap(OvertimeStatisticsViewController::toYear).orElse(currentYear);
 
-        final OvertimeStatistics statistics = overtimeStatisticsService.getStatistics(selectedYear);
+        final Person signedInUser = personService.getSignedInUser();
 
-        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1));
+        final OvertimeStatistics statistics = overtimeStatisticsService.getStatistics(selectedYear, signedInUser);
+
+        final OvertimeStatistics previousStatistics = overtimeStatisticsService.getStatistics(selectedYear.minusYears(1), signedInUser);
 
         model.addAttribute("selectedYear", selectedYear.getValue());
         model.addAttribute("currentYear", currentYear.getValue());
@@ -105,7 +112,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         model.addAttribute("overtimeBalanceGraph", toBalanceGraphDto(statistics, previousStatistics, locale));
 
         // deliberately without the selected year, these figures cover the whole history
-        final OvertimeTotals totals = overtimeStatisticsService.getTotals();
+        final OvertimeTotals totals = overtimeStatisticsService.getTotals(signedInUser);
         model.addAttribute("overtimeTotals", toTotalsDto(totals, locale));
 
         return "overtime/overtime_statistics";
@@ -252,8 +259,8 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
      * Figures over the whole history, formatted for humans.
      *
      * <p>
-     * These are shown above the year selector and do not react to it. The balance is the overtime the company still
-     * has open, which is the same figure every person sees as their own remaining overtime, summed up.
+     * These are shown above the year selector and do not react to it. The balance is the overtime that is still
+     * open, which is the same figure every person sees as their own remaining overtime, summed up.
      *
      * @param accrued   accrued overtime over the whole history
      * @param reduction reduced overtime over the whole history, without sign

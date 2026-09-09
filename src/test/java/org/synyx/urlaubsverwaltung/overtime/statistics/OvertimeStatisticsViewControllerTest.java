@@ -10,6 +10,8 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -29,6 +31,7 @@ import static java.util.Collections.nCopies;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,6 +49,8 @@ class OvertimeStatisticsViewControllerTest {
     @Mock
     private OvertimeStatisticsService statisticsService;
     @Mock
+    private PersonService personService;
+    @Mock
     private SettingsService settingsService;
     @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
@@ -53,6 +58,7 @@ class OvertimeStatisticsViewControllerTest {
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(Instant.parse("2026-07-31T10:15:00Z"), UTC);
+    private final Person signedInUser = person();
 
     @BeforeEach
     void setUp() {
@@ -61,13 +67,15 @@ class OvertimeStatisticsViewControllerTest {
         messageSource.addMessage("minutes.abbr", GERMAN, "Min.");
         messageSource.addMessage("overtime.person.zero", GERMAN, "keine");
 
-        sut = new OvertimeStatisticsViewController(statisticsService, settingsService, messageSource,
+        sut = new OvertimeStatisticsViewController(statisticsService, personService, settingsService, messageSource,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
 
-        // most tests are about the selected year, so an empty company wide history is the default
-        lenient().when(statisticsService.getTotals()).thenReturn(OvertimeTotals.empty());
+        // the page is rendered for the signed-in person, every request needs them
+        lenient().when(personService.getSignedInUser()).thenReturn(signedInUser);
+        // most tests are about the selected year, so an empty history is the default
+        lenient().when(statisticsService.getTotals(signedInUser)).thenReturn(OvertimeTotals.empty());
         // every request also loads the previous year for the comparison curve
-        lenient().when(statisticsService.getStatistics(any()))
+        lenient().when(statisticsService.getStatistics(any(), eq(signedInUser)))
             .thenAnswer(invocation -> OvertimeStatistics.empty(invocation.getArgument(0)));
     }
 
@@ -303,7 +311,7 @@ class OvertimeStatisticsViewControllerTest {
 
         overtimeFeature(true);
         statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
-        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofMinutes(21030)));
+        when(statisticsService.getTotals(signedInUser)).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofMinutes(21030)));
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
@@ -319,7 +327,7 @@ class OvertimeStatisticsViewControllerTest {
 
         overtimeFeature(true);
         statisticsOf(Year.of(2024), months(ZERO), months(ZERO));
-        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofHours(350)));
+        when(statisticsService.getTotals(signedInUser)).thenReturn(new OvertimeTotals(Duration.ofHours(427), Duration.ofHours(350)));
 
         final MvcResult result = perform(get("/web/overtime/statistics").param("year", "2024"))
             .andExpect(status().isOk())
@@ -327,7 +335,7 @@ class OvertimeStatisticsViewControllerTest {
 
         assertThat(totalsOf(result).accrued()).isEqualTo("427 Std.");
         // the totals are fetched without handing over any year
-        verify(statisticsService).getTotals();
+        verify(statisticsService).getTotals(signedInUser);
     }
 
     @Test
@@ -335,7 +343,7 @@ class OvertimeStatisticsViewControllerTest {
 
         overtimeFeature(true);
         statisticsOf(Year.of(2026), months(ZERO), months(ZERO));
-        when(statisticsService.getTotals()).thenReturn(new OvertimeTotals(ZERO, ZERO));
+        when(statisticsService.getTotals(signedInUser)).thenReturn(new OvertimeTotals(ZERO, ZERO));
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
@@ -429,7 +437,7 @@ class OvertimeStatisticsViewControllerTest {
     }
 
     private void statisticsOf(Year year, List<Duration> accrued, List<Duration> reduction) {
-        when(statisticsService.getStatistics(year)).thenReturn(new OvertimeStatistics(year, accrued, reduction));
+        when(statisticsService.getStatistics(year, signedInUser)).thenReturn(new OvertimeStatistics(year, accrued, reduction));
     }
 
     private static List<Duration> months(Duration duration) {
@@ -448,6 +456,12 @@ class OvertimeStatisticsViewControllerTest {
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(active);
         when(settingsService.getSettings()).thenReturn(settings);
+    }
+
+    private static Person person() {
+        final Person person = new Person("user", "Reichenbach", "Marie", "person@example.org");
+        person.setId(1L);
+        return person;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

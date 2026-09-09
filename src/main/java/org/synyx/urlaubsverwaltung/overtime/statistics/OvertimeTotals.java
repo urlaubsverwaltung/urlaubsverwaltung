@@ -5,10 +5,10 @@ import java.time.Duration;
 import static java.time.Duration.ZERO;
 
 /**
- * Company wide overtime figures over the whole history, without any reference to a year.
+ * Overtime figures over the whole history, without any reference to a year, aggregated over a set of persons.
  *
  * <p>
- * The balance answers "how much overtime does the company have open right now" and is by construction the same figure
+ * The balance answers "how much overtime is still open right now" and is by construction the same figure
  * every person sees as their own remaining overtime, summed up.
  *
  * @param accrued   accrued overtime over the whole history, never negative
