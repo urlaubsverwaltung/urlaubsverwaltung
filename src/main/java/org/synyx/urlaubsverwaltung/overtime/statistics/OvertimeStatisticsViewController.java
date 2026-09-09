@@ -30,14 +30,16 @@ import java.util.Optional;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
- * Controller for the company wide overtime statistics.
+ * Controller for the overtime statistics. Office and boss see the figures of everyone, a department head or second
+ * stage authority the figures of the members they manage - which persons that are is decided by
+ * {@link OvertimeStatisticsPersons}, the page itself looks the same for everyone.
  */
 @Controller
 @RequestMapping("/web/overtime/statistics")
-@PreAuthorize(IS_BOSS_OR_OFFICE)
+@PreAuthorize(IS_PRIVILEGED_USER)
 class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final int MINUTES_PER_HOUR = 60;
@@ -70,7 +72,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
     }
 
     /**
-     * The page shows company wide figures and has no rows of its own a suggestion could point at, therefore a
+     * The page shows aggregated figures and has no rows of its own a suggestion could point at, therefore a
      * suggestion links to the person overview like on every other page without person rows.
      */
     @Override

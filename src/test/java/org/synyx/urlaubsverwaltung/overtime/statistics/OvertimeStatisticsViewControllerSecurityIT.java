@@ -40,8 +40,8 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
     private SettingsService settingsService;
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
-    void ensureNoAccessForRolesWithoutCompanyWidePermission(final String role) throws Exception {
+    @ValueSource(strings = {"USER", "INACTIVE"})
+    void ensureNoAccessForRolesWithoutPermission(final String role) throws Exception {
 
         signedInUser();
         overtimeFeature(true);
@@ -52,8 +52,8 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"OFFICE", "BOSS"})
-    void ensureAccessAndRenderedPageForOfficeAndBoss(final String role) throws Exception {
+    @ValueSource(strings = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensureAccessAndRenderedPageForPermittedRoles(final String role) throws Exception {
 
         signedInUser();
         overtimeFeature(true);
@@ -71,7 +71,7 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"OFFICE", "BOSS"})
+    @ValueSource(strings = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void ensureNotFoundWhenOvertimeFeatureIsDeactivated(final String role) throws Exception {
 
         signedInUser();
@@ -86,7 +86,8 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
         final Person person = new Person("user", "Reichenbach", "Marie", "person@example.org");
         person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
-        // the real statistics service runs here, an empty company renders the page with zeros everywhere
+        // the real statistics service and the real department service run here - no persons and no department
+        // memberships in the test database render the page with zeros everywhere, for every role
         when(personService.getAllPersonsHavingAccountInYear(any())).thenReturn(List.of());
     }
 
