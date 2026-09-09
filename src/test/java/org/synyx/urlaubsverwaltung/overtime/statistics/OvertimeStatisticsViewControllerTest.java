@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.statistics;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -9,6 +10,8 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -44,6 +47,10 @@ class OvertimeStatisticsViewControllerTest {
     private OvertimeStatisticsService statisticsService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(Instant.parse("2026-07-31T10:15:00Z"), UTC);
 
@@ -54,13 +61,28 @@ class OvertimeStatisticsViewControllerTest {
         messageSource.addMessage("minutes.abbr", GERMAN, "Min.");
         messageSource.addMessage("overtime.person.zero", GERMAN, "keine");
 
-        sut = new OvertimeStatisticsViewController(statisticsService, settingsService, messageSource, clock);
+        sut = new OvertimeStatisticsViewController(statisticsService, settingsService, messageSource,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
 
         // most tests are about the selected year, so an empty company wide history is the default
         lenient().when(statisticsService.getTotals()).thenReturn(OvertimeTotals.empty());
         // every request also loads the previous year for the comparison curve
         lenient().when(statisticsService.getStatistics(any()))
             .thenAnswer(invocation -> OvertimeStatistics.empty(invocation.getArgument(0)));
+    }
+
+    @Nested
+    class PersonSearch {
+
+        @Test
+        void returnsInjectedFragmentSupplier() {
+            assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
+        }
+
+        @Test
+        void returnsInjectedStrategy() {
+            assertThat(sut.personSuggestionUrlStrategy()).isSameAs(defaultPersonSuggestionUrlStrategy);
+        }
     }
 
     @Test
