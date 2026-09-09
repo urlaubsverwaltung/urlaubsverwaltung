@@ -52,13 +52,14 @@ public final class OvertimePermissions {
     }
 
     /**
-     * Whether the user may record overtime for the person. Not possible while overtime is synchronised from an external
-     * system - the records come from there.
+     * Whether the user may record overtime for the person. While overtime is synchronised from an external system the
+     * records come from there - only {@link org.synyx.urlaubsverwaltung.person.Role#OFFICE} still records overtime by
+     * hand, to onboard a person or to pay overtime out for example.
      *
      * @return {@code true} if the user may record overtime for the person, {@code false} otherwise
      */
     public boolean isAllowedToAdd() {
-        return isAllowedToMaintain() && !overtimeSyncActive;
+        return isAllowedToMaintain() && (signedInUser.hasRole(OFFICE) || !overtimeSyncActive);
     }
 
     /**

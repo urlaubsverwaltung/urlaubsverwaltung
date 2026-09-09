@@ -22,6 +22,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * {@code overtimeWritePrivilegedOnly} is switched off, everyone maintains their own overtime and nobody else's. When it
  * is switched on, a privileged user maintains their own and - as {@code BOSS} everyone's, as a manager the overtime of
  * the members they are responsible for. {@code OFFICE} always maintains the overtime of everyone.
+ *
+ * <p>While overtime is synchronised from an external system the records come from there, so recording overtime by hand
+ * is reserved to {@code OFFICE}.
  */
 @Component
 public class OvertimePermissionEvaluator {
@@ -57,15 +60,15 @@ public class OvertimePermissionEvaluator {
      * Whether the given user may record overtime for somebody else at all. In contrast to
      * {@link OvertimePermissions#isAllowedToAdd()} this permission is not bound to a single person - it decides whether
      * the overtime form offers a person to pick, for which persons overtime may be recorded is decided per person.
-     * Like every write permission it is also gated on overtime being active and not synchronised from an external
-     * system.
+     * Like every write permission it is also gated on overtime being active and, while it is synchronised from an
+     * external system, on the user being {@code OFFICE}.
      *
      * @param signedInUser user asking for permissions
      * @return {@code true} if the user may record overtime for at least one other person, {@code false} otherwise
      */
     public boolean isAllowedToCreateOvertimeForOtherPersons(Person signedInUser) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
-        return isWritable(overtimeSettings)
+        return isWritableBy(signedInUser, overtimeSettings)
             && (signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly()));
     }
 
@@ -78,7 +81,7 @@ public class OvertimePermissionEvaluator {
      */
     public boolean isAllowedToCreateOvertimeForAnyPerson(Person signedInUser) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
-        return isWritable(overtimeSettings)
+        return isWritableBy(signedInUser, overtimeSettings)
             && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }
 
@@ -107,10 +110,11 @@ public class OvertimePermissionEvaluator {
     }
 
     /**
-     * Whether overtime may be written at all, no matter by whom - it has to be switched on and must not be
-     * synchronised from an external system.
+     * Whether the given user may write overtime at all - it has to be switched on and, while it is synchronised from an
+     * external system, only {@code OFFICE} writes records by hand.
      */
-    private static boolean isWritable(OvertimeSettings overtimeSettings) {
-        return overtimeSettings.isOvertimeActive() && !overtimeSettings.isOvertimeSyncActive();
+    private static boolean isWritableBy(Person signedInUser, OvertimeSettings overtimeSettings) {
+        return overtimeSettings.isOvertimeActive()
+            && (signedInUser.hasRole(OFFICE) || !overtimeSettings.isOvertimeSyncActive());
     }
 }

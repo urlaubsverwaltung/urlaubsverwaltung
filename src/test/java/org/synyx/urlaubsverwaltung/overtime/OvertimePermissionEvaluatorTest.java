@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -100,9 +101,28 @@ class OvertimePermissionEvaluatorTest {
             assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, false, false).isAllowedToAdd()).isFalse();
         }
 
-        @Test
-        void ensureNobodyMayAddWhenOvertimeSyncIsActive() {
-            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true).isAllowedToAdd()).isFalse();
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureOfficeMayAddForEveryoneWhenOvertimeSyncIsActive(boolean writePrivilegedOnly) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true, writePrivilegedOnly).isAllowedToAdd()).isTrue();
+        }
+
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureOfficeMayAddOwnOvertimeWhenOvertimeSyncIsActive(boolean writePrivilegedOnly) {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, OFFICE, true, true, writePrivilegedOnly).isAllowedToAdd()).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyButOfficeMayAddForManagedMemberWhenOvertimeSyncIsActive(Role role) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, true, true, role, true, true, true).isAllowedToAdd()).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyButOfficeMayAddOwnOvertimeWhenOvertimeSyncIsActive(Role role) {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, role, true, true, false).isAllowedToAdd()).isFalse();
         }
 
         @Test
@@ -288,9 +308,16 @@ class OvertimePermissionEvaluatorTest {
         }
 
         @Test
-        void ensureNobodyMayCreateForOthersWhenOvertimeSyncIsActive() {
+        void ensureOfficeMayCreateForOthersWhenOvertimeSyncIsActive() {
             settings(true, true, true);
-            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, OFFICE))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
+        void ensureNobodyButOfficeMayCreateForOthersWhenOvertimeSyncIsActive(Role role) {
+            settings(true, true, true);
+            assertThat(sut.isAllowedToCreateOvertimeForOtherPersons(person(SIGNED_IN_USER_ID, USER, role))).isFalse();
         }
     }
 
@@ -322,10 +349,18 @@ class OvertimePermissionEvaluatorTest {
             assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
         }
 
-        @Test
-        void ensureNobodyMayCreateOvertimeWhenOvertimeSyncIsActive() {
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureOfficeMayCreateOvertimeWhenOvertimeSyncIsActive(boolean writePrivilegedOnly) {
+            settings(true, true, writePrivilegedOnly);
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, OFFICE))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
+        void ensureNobodyButOfficeMayCreateOvertimeWhenOvertimeSyncIsActive(Role role) {
             settings(true, true, false);
-            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, OFFICE))).isFalse();
+            assertThat(sut.isAllowedToCreateOvertimeForAnyPerson(person(SIGNED_IN_USER_ID, USER, role))).isFalse();
         }
     }
 
