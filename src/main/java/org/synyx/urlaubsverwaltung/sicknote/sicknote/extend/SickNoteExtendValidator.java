@@ -36,7 +36,9 @@ class SickNoteExtendValidator implements Validator {
 
     private void validateEndDate(Errors errors, SickNoteExtendDto dto, SickNote sickNote) {
         final LocalDate sickNoteEndDate = sickNote.getEndDate();
-        if (!dto.getEndDate().isAfter(sickNoteEndDate)) {
+        final LocalDate nextEndDate = dto.getEndDate();
+        // a preview can be asked for without a date at all, which is no date after the end of the sick note either
+        if (nextEndDate == null || !nextEndDate.isAfter(sickNoteEndDate)) {
             final Object[] args = { dateFormatAware.format(sickNoteEndDate) };
             // DTO attribute name
             errors.rejectValue("endDate", ERROR_ENDDATE_FUTURE, args, "");

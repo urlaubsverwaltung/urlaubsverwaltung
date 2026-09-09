@@ -275,7 +275,7 @@ class SickNoteExtendViewControllerTest {
             .andExpect(model().attribute("earliestExtendToDate", LocalDate.of(2024, OCTOBER, 1)));
     }
 
-    private void sickNoteToExtend(Person person, LocalDate startDate, LocalDate endDate) {
+    private SickNote sickNoteToExtend(Person person, LocalDate startDate, LocalDate endDate) {
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SICK_NOTE);
@@ -292,6 +292,8 @@ class SickNoteExtendViewControllerTest {
         when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(sickNote));
         when(workingTimeCalendarService.getWorkingTimesByPersons(eq(List.of(person)), any(DateRange.class)))
             .thenReturn(Map.of(person, workingTimeCalendarMondayToFriday(startDate.minusDays(7), endDate.plusDays(14))));
+
+        return sickNote;
     }
 
     @Test
@@ -332,6 +334,35 @@ class SickNoteExtendViewControllerTest {
         ).hasCauseInstanceOf(AccessDeniedException.class);
 
         verifyNoInteractions(sickNoteExtensionInteractionService);
+    }
+
+    @Test
+    void ensurePreviewWithoutACustomDateRendersThePageAgain() throws Exception {
+
+        // the real validator, the page fails on the way into it, see #6489
+        final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
+            workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
+            new SickNoteExtendValidator(sickNoteService, dateFormatAware), dateFormatAware,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        final SickNote sickNote = sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        standaloneSetup(sutWithValidator).build()
+            .perform(
+                post("/web/sicknote/extend")
+                    .param("sickNoteId", "1")
+                    // the preview button of the custom date, submitted with an empty date field
+                    .param("custom-date-preview", "")
+            )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

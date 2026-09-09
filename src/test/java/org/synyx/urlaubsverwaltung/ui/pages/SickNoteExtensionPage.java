@@ -60,6 +60,14 @@ public class SickNoteExtensionPage {
     }
 
     /**
+     * Asks for the preview of the custom date. Does not wait for anything, the preview is rendered
+     * asynchronously.
+     */
+    public void clickCustomDatePreview() {
+        page.locator("#submit-date-button").click();
+    }
+
+    /**
      * Asserts that extending until the end of the week is not offered, which is the case when the sick note
      * does not end before it.
      */

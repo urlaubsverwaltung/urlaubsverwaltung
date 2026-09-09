@@ -223,6 +223,9 @@ class SickNoteUIIT {
         sickNoteExtensionPage.waitForVisible();
 
         sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
+        sickNoteExtensionPage.showsExtensionPreview(startDate, nextEndDate);
+        // asking for the preview of the very same date again is no reason to fail, see #6489
+        sickNoteExtensionPage.clickCustomDatePreview();
         submitExtension(page, sickNoteExtensionPage, startDate, nextEndDate);
     }
 
