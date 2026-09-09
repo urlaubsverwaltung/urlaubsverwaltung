@@ -92,7 +92,9 @@ class DepartmentServiceImpl implements DepartmentService {
             managedPersonIds = onlyMembers.stream().map(DepartmentMembership::personId).collect(toSet());
         } else {
             // otherwise we have to collect departments where the person is a department head or second stage authority
-            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.get(person.getIdAsPersonId()).stream()
+            // a manager can have no membership at all in the requested year - the year is a freely chosen request
+            // parameter, so this is a normal case and not a broken state
+            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
                 .filter(DepartmentMembership::isManagementMembership)
                 .map(DepartmentMembership::departmentId)
                 .collect(toSet());

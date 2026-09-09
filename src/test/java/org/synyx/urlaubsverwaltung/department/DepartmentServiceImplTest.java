@@ -180,6 +180,32 @@ class DepartmentServiceImplTest {
         }
 
         @Test
+        void ensureGetManagedMembersOfPersonYearIsEmptyForManagerWithoutMembershipInThatYear() {
+
+            final PersonId departmentHeadId = new PersonId(1L);
+            final Person departmentHead = new Person();
+            departmentHead.setId(departmentHeadId.value());
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final PersonId personId2 = new PersonId(2L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            // somebody is a member of a department, but the department head has no membership of that year at all -
+            // reachable via the year selector for any year before the manager joined
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    personId2, List.of(
+                        new DepartmentMembership(personId2, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    )
+                ));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
+            assertThat(actual).isEmpty();
+        }
+
+        @Test
         void ensureGetManagedMembersOfPersonYearForSecondStageAuthority() {
 
             final PersonId secondStageId = new PersonId(1L);
