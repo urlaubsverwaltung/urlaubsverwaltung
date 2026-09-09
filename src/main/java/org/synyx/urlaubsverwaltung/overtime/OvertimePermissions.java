@@ -52,13 +52,12 @@ public final class OvertimePermissions {
     }
 
     /**
-     * Whether the user may record overtime for the person. Not possible while overtime is synchronised from an external
-     * system - the records come from there.
+     * Whether the user may record overtime for the person.
      *
      * @return {@code true} if the user may record overtime for the person, {@code false} otherwise
      */
     public boolean isAllowedToAdd() {
-        return isAllowedToMaintain() && !overtimeSyncActive;
+        return isAllowedToMaintainManualRecord();
     }
 
     /**
@@ -70,7 +69,7 @@ public final class OvertimePermissions {
      * @return {@code true} if the user may edit the given overtime, {@code false} otherwise
      */
     public boolean isAllowedToEdit(Overtime overtime) {
-        return isAllowedToMaintain() && !EXTERNAL.equals(overtime.type());
+        return isAllowedToMaintainManualRecord() && !EXTERNAL.equals(overtime.type());
     }
 
     /**
@@ -92,6 +91,15 @@ public final class OvertimePermissions {
             || (overtimeWritePrivilegedOnly
             ? signedInUser.isPrivileged() && (isSamePerson() || signedInUser.hasRole(BOSS) || isManagerOfPerson())
             : isSamePerson()));
+    }
+
+    /**
+     * Whether the user may maintain a manual overtime record of the person. While overtime is synchronised from an
+     * external system the records come from there - only {@link org.synyx.urlaubsverwaltung.person.Role#OFFICE} still
+     * records and edits overtime by hand, to onboard a person or to pay overtime out for example.
+     */
+    private boolean isAllowedToMaintainManualRecord() {
+        return isAllowedToMaintain() && (signedInUser.hasRole(OFFICE) || !overtimeSyncActive);
     }
 
     private boolean isManagerOfPerson() {
