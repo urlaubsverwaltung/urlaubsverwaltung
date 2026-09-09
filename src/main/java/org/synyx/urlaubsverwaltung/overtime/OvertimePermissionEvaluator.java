@@ -23,8 +23,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * is switched on, a privileged user maintains their own and - as {@code BOSS} everyone's, as a manager the overtime of
  * the members they are responsible for. {@code OFFICE} always maintains the overtime of everyone.
  *
- * <p>While overtime is synchronised from an external system the records come from there, so recording overtime by hand
- * is reserved to {@code OFFICE}.
+ * <p>While overtime is synchronised from an external system the records come from there, so recording and editing
+ * overtime by hand is reserved to {@code OFFICE}.
  */
 @Component
 public class OvertimePermissionEvaluator {

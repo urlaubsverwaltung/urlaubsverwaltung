@@ -182,9 +182,28 @@ class OvertimePermissionEvaluatorTest {
             assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE).isAllowedToEdit(overtime(EXTERNAL))).isFalse();
         }
 
-        @Test
-        void ensureEditIsAllowedWhenOvertimeSyncIsActive() {
-            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureOfficeMayEditForEveryoneWhenOvertimeSyncIsActive(boolean writePrivilegedOnly) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, false, false, OFFICE, true, true, writePrivilegedOnly).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void ensureOfficeMayEditOwnOvertimeWhenOvertimeSyncIsActive(boolean writePrivilegedOnly) {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, OFFICE, true, true, writePrivilegedOnly).isAllowedToEdit(overtime(UV_INTERNAL))).isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyButOfficeMayEditForManagedMemberWhenOvertimeSyncIsActive(Role role) {
+            assertThat(permissionsOn(OTHER_PERSON_ID, true, true, role, true, true, true).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+        void ensureNobodyButOfficeMayEditOwnOvertimeWhenOvertimeSyncIsActive(Role role) {
+            assertThat(permissionsOn(SIGNED_IN_USER_ID, false, false, role, true, true, false).isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
         }
 
         @Test
