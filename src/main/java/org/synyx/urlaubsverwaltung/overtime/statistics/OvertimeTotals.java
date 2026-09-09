@@ -8,8 +8,8 @@ import static java.time.Duration.ZERO;
  * Overtime figures over the whole history, without any reference to a year, aggregated over a set of persons.
  *
  * <p>
- * The balance answers "how much overtime is still open right now" and is by construction the same figure
- * every person sees as their own remaining overtime, summed up.
+ * The balance answers "how much overtime is still open right now" and is by construction the same figure every
+ * person sees as their own remaining overtime, summed up.
  *
  * @param accrued   accrued overtime over the whole history, never negative
  * @param reduction reduced overtime over the whole history, given as a positive amount

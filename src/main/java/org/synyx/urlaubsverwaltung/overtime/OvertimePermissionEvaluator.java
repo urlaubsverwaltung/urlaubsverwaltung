@@ -102,9 +102,8 @@ public class OvertimePermissionEvaluator {
      * @return {@code true} if the user may see the overtime of at least one other person, {@code false} otherwise
      */
     public boolean isAllowedToViewOvertimeOfOtherPersons(Person signedInUser) {
-        return isAllowedToViewOvertimeOfAllPersons(signedInUser)
-            || (settingsService.getSettings().getOvertimeSettings().isOvertimeActive()
-            && signedInUser.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        return settingsService.getSettings().getOvertimeSettings().isOvertimeActive()
+            && signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
     }
 
     /**
