@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 
@@ -33,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @Controller
 @RequestMapping("/web/overtime/statistics")
 @PreAuthorize(IS_BOSS_OR_OFFICE)
-class OvertimeStatisticsViewController implements HasLaunchpad {
+class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final int MINUTES_PER_HOUR = 60;
     private static final int DECIMAL_HOUR_SCALE = 2;
@@ -41,18 +44,38 @@ class OvertimeStatisticsViewController implements HasLaunchpad {
     private final OvertimeStatisticsService overtimeStatisticsService;
     private final SettingsService settingsService;
     private final MessageSource messageSource;
+    private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     OvertimeStatisticsViewController(
         OvertimeStatisticsService overtimeStatisticsService,
         SettingsService settingsService,
         MessageSource messageSource,
+        PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.overtimeStatisticsService = overtimeStatisticsService;
         this.settingsService = settingsService;
         this.messageSource = messageSource;
+        this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    /**
+     * The page shows company wide figures and has no rows of its own a suggestion could point at, therefore a
+     * suggestion links to the person overview like on every other page without person rows.
+     */
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return defaultPersonSuggestionUrlStrategy;
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @GetMapping
