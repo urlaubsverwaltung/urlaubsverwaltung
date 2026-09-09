@@ -36,8 +36,8 @@ class OvertimeStatisticsPersons {
     /**
      * The persons of a single year. For office and boss everyone who had an account in that year, which keeps past
      * years stable: someone who left the company stays part of the years they worked in. A manager gets the members
-     * of the departments they were responsible for in that year, as far as those members are still part of the
-     * department - see {@link DepartmentService#getManagedMembersOfPerson(Person, Year)}.
+     * of the departments they were responsible for in that year and still are, as far as those members are still
+     * part of the department - see {@link DepartmentService#getManagedMembersOfPerson(Person, Year)}.
      *
      * @param signedInUser person requesting the statistics
      * @param year         year to resolve the persons for

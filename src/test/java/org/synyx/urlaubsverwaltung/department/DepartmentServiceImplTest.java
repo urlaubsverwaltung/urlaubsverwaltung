@@ -180,6 +180,77 @@ class DepartmentServiceImplTest {
         }
 
         @Test
+        void ensureGetManagedMembersOfPersonYearIsEmptyWhenTheManagementMembershipHasEnded() {
+
+            final PersonId departmentHeadId = new PersonId(1L);
+            final Person departmentHead = new Person();
+            departmentHead.setId(departmentHeadId.value());
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final PersonId memberId = new PersonId(2L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+            final Instant leftLastYear = lastYear.atDay(300).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    // led the department during the year, but does not lead it any more
+                    departmentHeadId, List.of(
+                        new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, joinedLastYear, Optional.of(leftLastYear))
+                    ),
+                    // the member is still part of the department, the manager is just not responsible for them any more
+                    memberId, List.of(
+                        new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    )
+                ));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
+            assertThat(actual).isEmpty();
+            // pins that no person is asked for at all - an unstubbed mock would return an empty list either way
+            verify(personService).getAllPersonsByIds(Set.of());
+        }
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearOnlyCoversDepartmentsTheManagerStillManages() {
+
+            final PersonId secondStageId = new PersonId(1L);
+            final Person secondStageAuthority = new Person();
+            secondStageAuthority.setId(secondStageId.value());
+            secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+            final PersonId stillManagedId = new PersonId(2L);
+            final Person stillManaged = new Person();
+            stillManaged.setId(stillManagedId.value());
+
+            final PersonId formerlyManagedId = new PersonId(3L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+            final Instant leftLastYear = lastYear.atDay(300).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    secondStageId, List.of(
+                        // still responsible for department 1, no longer for department 2
+                        new DepartmentMembership(secondStageId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, joinedLastYear),
+                        new DepartmentMembership(secondStageId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, joinedLastYear, Optional.of(leftLastYear))
+                    ),
+                    stillManagedId, List.of(
+                        new DepartmentMembership(stillManagedId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    ),
+                    formerlyManagedId, List.of(
+                        new DepartmentMembership(formerlyManagedId, 2L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    )
+                ));
+
+            when(personService.getAllPersonsByIds(Set.of(stillManagedId))).thenReturn(List.of(stillManaged));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(secondStageAuthority, lastYear);
+            assertThat(actual).containsExactly(stillManaged);
+        }
+
+        @Test
         void ensureGetManagedMembersOfPersonYearExcludesMembersThatHaveLeftTheDepartment() {
 
             final PersonId departmentHeadId = new PersonId(1L);
@@ -277,6 +348,8 @@ class DepartmentServiceImplTest {
 
             final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
             assertThat(actual).isEmpty();
+            // pins the early return - an unstubbed mock would return an empty list either way
+            verifyNoInteractions(personService);
         }
 
         @Test

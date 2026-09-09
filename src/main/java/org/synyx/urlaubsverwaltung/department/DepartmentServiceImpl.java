@@ -91,11 +91,14 @@ class DepartmentServiceImpl implements DepartmentService {
             // office or boss is allowed to manage all other persons
             managedPersonIds = onlyMembers.stream().map(DepartmentMembership::personId).collect(toSet());
         } else {
-            // otherwise we have to collect departments where the person is a department head or second stage authority
-            // a manager can have no membership at all in the requested year - the year is a freely chosen request
-            // parameter, so this is a normal case and not a broken state
+            // otherwise we have to collect the departments the person led in the given year and still leads - somebody
+            // who has handed a department over is not responsible for its members any more, not even for the years
+            // they led it.
+            // A manager can have no membership at all in the requested year - the year is a freely chosen request
+            // parameter, so this is a normal case and not a broken state.
             final Set<Long> managedDepartmentIds = activeMembershipsOfYear.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
                 .filter(DepartmentMembership::isManagementMembership)
+                .filter(DepartmentMembership::isCurrent)
                 .map(DepartmentMembership::departmentId)
                 .collect(toSet());
             managedPersonIds = onlyMembers.stream()

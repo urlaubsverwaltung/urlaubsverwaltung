@@ -174,8 +174,10 @@ public interface DepartmentService {
      * (Requesting members for 2024 will not return members that were added in 2025.)
      *
      * <p>
-     * Members must also still be part of the department. Somebody who was a member during the given year but has
-     * left the department since is not returned - the membership is over, so the person is not managed any more.
+     * Both sides of the relationship must also still exist. A member who was part of the department during the given
+     * year but has left it since is not returned, and a department head or second stage authority who has handed a
+     * department over gets none of its members - not even for the years in which they led it. A membership that has
+     * ended is history and grants nothing.
      *
      * @param person person to get managed members for
      * @param year   to restrict the result set
