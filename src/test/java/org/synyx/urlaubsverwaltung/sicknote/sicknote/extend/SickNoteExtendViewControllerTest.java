@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -275,7 +276,7 @@ class SickNoteExtendViewControllerTest {
             .andExpect(model().attribute("earliestExtendToDate", LocalDate.of(2024, OCTOBER, 1)));
     }
 
-    private void sickNoteToExtend(Person person, LocalDate startDate, LocalDate endDate) {
+    private SickNote sickNoteToExtend(Person person, LocalDate startDate, LocalDate endDate) {
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SICK_NOTE);
@@ -292,6 +293,8 @@ class SickNoteExtendViewControllerTest {
         when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(sickNote));
         when(workingTimeCalendarService.getWorkingTimesByPersons(eq(List.of(person)), any(DateRange.class)))
             .thenReturn(Map.of(person, workingTimeCalendarMondayToFriday(startDate.minusDays(7), endDate.plusDays(14))));
+
+        return sickNote;
     }
 
     @Test
@@ -332,6 +335,86 @@ class SickNoteExtendViewControllerTest {
         ).hasCauseInstanceOf(AccessDeniedException.class);
 
         verifyNoInteractions(sickNoteExtensionInteractionService);
+    }
+
+    @Test
+    void ensurePreviewOfACustomDateIsTheDateItself() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "1")
+                .param("startDate", "2024-09-23")
+                .param("extendToDate", "2024-09-27")
+                .param("custom-date-preview", "")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"))
+            .andExpect(model().attribute("selectedExtend", "custom"))
+            // monday to friday, all of them work days
+            .andExpect(model().attribute("sickNotePreviewNext", new SickNoteExtendPreviewDto(
+                LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 27), BigDecimal.valueOf(5))));
+    }
+
+    @Test
+    void ensurePreviewOfAQuickSelectionIsTheNextWorkDay() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "1")
+                .param("startDate", "2024-09-23")
+                // the datepicker submits its date with every submit, a quick selection must not use it
+                .param("extendToDate", "2024-09-27")
+                .param("extend", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"))
+            .andExpect(model().attribute("selectedExtend", "1"))
+            // monday to wednesday, the work day following the end of the sick note
+            .andExpect(model().attribute("sickNotePreviewNext", new SickNoteExtendPreviewDto(
+                LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 25), BigDecimal.valueOf(3))));
+    }
+
+    @Test
+    void ensurePreviewWithoutACustomDateRendersThePageAgain() throws Exception {
+
+        // the real validator, the page fails on the way into it, see #6489
+        final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
+            workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
+            new SickNoteExtendValidator(sickNoteService, dateFormatAware), dateFormatAware,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        final SickNote sickNote = sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        standaloneSetup(sutWithValidator).build()
+            .perform(
+                post("/web/sicknote/extend")
+                    .param("sickNoteId", "1")
+                    // the preview button of the custom date, submitted with an empty date field
+                    .param("custom-date-preview", "")
+            )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -62,8 +62,15 @@
 }
 
 @variant xs {
+  /*
+  every option is an action followed by its label, so they pair up on their own: one row each.
+  do not place them by hand - the end of the week is not always offered, and a fixed row would
+  leave a hole and tear the label of the datepicker away from it.
+  */
   .extend-action-grid {
     display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: auto auto;
     grid-column-gap: --spacing(4);
     grid-row-gap: --spacing(2);
     align-items: center;
@@ -73,42 +80,6 @@
     margin: unset !important;
   }
 
-  /* buttons */
-  .extend-action-grid > button:nth-of-type(1) {
-    grid-row: 1;
-    grid-column: 1;
-  }
-  .extend-action-grid > button:nth-of-type(2) {
-    grid-row: 2;
-    grid-column: 1;
-  }
-  .extend-action-grid > button:nth-of-type(3) {
-    grid-row: 3;
-    grid-column: 1;
-  }
-  .extend-action-grid > input[type="date"],
-  .extend-action-grid > duet-date-picker {
-    grid-row: 4;
-    grid-column: 1;
-  }
-
-  /* labels */
-  .extend-action-grid > span:nth-of-type(1) {
-    grid-row: 1;
-    grid-column: 2;
-  }
-  .extend-action-grid > span:nth-of-type(2) {
-    grid-row: 2;
-    grid-column: 2;
-  }
-  .extend-action-grid > span:nth-of-type(3) {
-    grid-row: 3;
-    grid-column: 2;
-  }
-  .extend-action-grid > label {
-    grid-row: 4;
-    grid-column: 2;
-  }
   .extend-label {
     margin-left: 0;
     margin-right: 0;
@@ -121,48 +92,13 @@
 }
 
 @variant md {
+  /* the same pairs side by side now, one column each */
   .extend-action-grid {
     display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: auto auto;
     grid-column-gap: --spacing(4);
     grid-row-gap: --spacing(1);
-    grid-template-columns: fit-content(1fr);
-  }
-
-  /* buttons */
-  .extend-action-grid > button:nth-of-type(1) {
-    grid-row: 1;
-    grid-column: 1;
-  }
-  .extend-action-grid > button:nth-of-type(2) {
-    grid-row: 1;
-    grid-column: 2;
-  }
-  .extend-action-grid > button:nth-of-type(3) {
-    grid-row: 1;
-    grid-column: 3;
-  }
-  .extend-action-grid > input[type="date"],
-  .extend-action-grid > duet-date-picker {
-    grid-row: 1;
-    grid-column: 4;
-  }
-
-  /* labels */
-  .extend-action-grid > span:nth-of-type(1) {
-    grid-row: 2;
-    grid-column: 1;
-  }
-  .extend-action-grid > span:nth-of-type(2) {
-    grid-row: 2;
-    grid-column: 2;
-  }
-  .extend-action-grid > span:nth-of-type(3) {
-    grid-row: 2;
-    grid-column: 3;
-  }
-  .extend-action-grid > label {
-    grid-row: 2;
-    grid-column: 4;
   }
 
   .extend-label {

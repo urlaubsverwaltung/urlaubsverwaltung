@@ -184,6 +184,8 @@ class SickNoteUIIT {
 
         // the weekend does not interrupt the sick note of the last work day, extending it is offered on monday
         extendSickNoteByOneWorkday(page, friday, monday);
+        // a quick selection re-renders the page, the datepicker of the custom date has to survive that
+        picksACustomDateAfterAQuickSelection(page, friday, monday.plusDays(1), monday.plusDays(3));
         // and the extension may go beyond the end of this week
         extendSickNoteToCustomDate(page, friday, mondayNextWeek);
         // the still running sick note is the one to extend, dates up to its end are no extension and not offered
@@ -215,6 +217,28 @@ class SickNoteUIIT {
         submitExtension(page, sickNoteExtensionPage, startDate, nextEndDate);
     }
 
+    /**
+     * Uses a quick selection first and picks a date in the datepicker afterwards, without handing the
+     * extension in. See <a href="https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/6489">#6489</a>.
+     *
+     * @param quickEndDate end date the quick selection of one work day results in
+     * @param customEndDate date to pick in the datepicker afterwards, in the same month
+     */
+    private void picksACustomDateAfterAQuickSelection(Page page, LocalDate startDate, LocalDate quickEndDate, LocalDate customEndDate) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
+
+        navigationPage.quickAdd.clickCreateNewSickNote();
+        sickNoteExtensionPage.waitForVisible();
+
+        sickNoteExtensionPage.clickPlusOneWorkday();
+        sickNoteExtensionPage.showsExtensionPreview(startDate, quickEndDate);
+
+        sickNoteExtensionPage.pickCustomNextEndDate(customEndDate);
+        sickNoteExtensionPage.showsCustomNextEndDate(customEndDate);
+        sickNoteExtensionPage.showsExtensionPreview(startDate, customEndDate);
+    }
+
     private void extendSickNoteToCustomDate(Page page, LocalDate startDate, LocalDate nextEndDate) {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
@@ -223,6 +247,9 @@ class SickNoteUIIT {
         sickNoteExtensionPage.waitForVisible();
 
         sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
+        sickNoteExtensionPage.showsExtensionPreview(startDate, nextEndDate);
+        // asking for the preview of the very same date again is no reason to fail, see #6489
+        sickNoteExtensionPage.clickCustomDatePreview();
         submitExtension(page, sickNoteExtensionPage, startDate, nextEndDate);
     }
 

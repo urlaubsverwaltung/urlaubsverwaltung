@@ -27,6 +27,10 @@ public class SickNoteExtensionPage {
     // pattern does not depend on locale currently. the user cannot customize it.
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter DATE_FULL_FORMATTER = DateTimeFormatter.ofPattern("EEEE, d. MMMM yyyy");
+    // the format `duet-date-picker` renders into its input, see the `de` datepicker localisation
+    private static final DateTimeFormatter DATE_PICKER_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
+    // the screen reader label of a day of the currently shown month, hard coded by duet-date-picker
+    private static final DateTimeFormatter DATE_PICKER_DAY_FORMATTER = DateTimeFormatter.ofPattern("d. MMMM");
 
     public SickNoteExtensionPage(Page page, MessageSource messageSource, Locale locale) {
         this.page = page;
@@ -52,11 +56,40 @@ public class SickNoteExtensionPage {
     }
 
     /**
+     * Picks the next end date in the datepicker instead of typing it. Does not wait for anything, the preview
+     * is rendered asynchronously.
+     *
+     * @param nextEndDate date to pick, has to be in the month the datepicker opens with
+     */
+    public void pickCustomNextEndDate(LocalDate nextEndDate) {
+        page.locator(DUET_CUSTOM_NEXT_END_DATE_PICKER_SELECTOR + " button.duet-date__toggle").click();
+        final String dayLabel = DATE_PICKER_DAY_FORMATTER.withLocale(locale).format(nextEndDate);
+        page.locator("%s .duet-date__day:has(.duet-date__vhidden:text-is('%s'))"
+            .formatted(DUET_CUSTOM_NEXT_END_DATE_PICKER_SELECTOR, dayLabel)).click();
+    }
+
+    /**
+     * Asserts the date the datepicker of the custom next end date shows.
+     */
+    public void showsCustomNextEndDate(LocalDate nextEndDate) {
+        assertThat(page.locator(DUET_CUSTOM_NEXT_END_DATE_SELECTOR))
+            .hasValue(DATE_PICKER_FORMATTER.withLocale(locale).format(nextEndDate));
+    }
+
+    /**
      * Extends the sick note by one work day following its end date.
      * Does not wait for anything, the preview is rendered asynchronously.
      */
     public void clickPlusOneWorkday() {
         page.locator("button[name=extend][value='1']").click();
+    }
+
+    /**
+     * Asks for the preview of the custom date. Does not wait for anything, the preview is rendered
+     * asynchronously.
+     */
+    public void clickCustomDatePreview() {
+        page.locator("#submit-date-button").click();
     }
 
     /**

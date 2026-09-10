@@ -283,7 +283,7 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         final SickNoteExtendPreviewDto sickNotePreviewNext;
         final String selectedExtend;
 
-        if (customDateSubmit.isPresent()) {
+        if (customDateSubmit.isPresent() && extendToDate != null) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), extendToDate);
             sickNotePreviewNext = new SickNoteExtendPreviewDto(sickNote.getStartDate(), extendToDate, nextWorkingDays);
             selectedExtend = "custom";
