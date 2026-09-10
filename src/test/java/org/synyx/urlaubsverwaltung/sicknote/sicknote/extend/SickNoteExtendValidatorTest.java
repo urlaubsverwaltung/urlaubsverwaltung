@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import static java.time.Month.AUGUST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,6 +88,22 @@ class SickNoteExtendValidatorTest {
 
         verify(errors).rejectValue("endDate", "sicknote.extend.validation.constraints.end-date.future.message",  new Object[]{"<any-formatted-date>"}, "");
         verify(errors).rejectValue("extendToDate", "sicknote.extend.validation.constraints.end-date.future.message",  new Object[]{"<any-formatted-date>"}, "");
+    }
+
+    @Test
+    void ensureNoErrorWhenTheEndDateIsAfterTheEndOfTheSickNote() {
+
+        final LocalDate sickNoteEndDate = LocalDate.of(2024, AUGUST, 8);
+        final SickNote sickNote = SickNote.builder().id(1L).endDate(sickNoteEndDate).build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        final SickNoteExtendDto dto = new SickNoteExtendDto();
+        dto.setSickNoteId(1L);
+        dto.setEndDate(LocalDate.of(2024, AUGUST, 9));
+
+        sut.validate(dto, errors);
+
+        verifyNoInteractions(errors);
     }
 
     @Test

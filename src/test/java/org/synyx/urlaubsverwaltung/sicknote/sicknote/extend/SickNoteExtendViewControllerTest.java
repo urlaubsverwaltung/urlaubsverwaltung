@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -334,6 +335,57 @@ class SickNoteExtendViewControllerTest {
         ).hasCauseInstanceOf(AccessDeniedException.class);
 
         verifyNoInteractions(sickNoteExtensionInteractionService);
+    }
+
+    @Test
+    void ensurePreviewOfACustomDateIsTheDateItself() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "1")
+                .param("startDate", "2024-09-23")
+                .param("extendToDate", "2024-09-27")
+                .param("custom-date-preview", "")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"))
+            .andExpect(model().attribute("selectedExtend", "custom"))
+            // monday to friday, all of them work days
+            .andExpect(model().attribute("sickNotePreviewNext", new SickNoteExtendPreviewDto(
+                LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 27), BigDecimal.valueOf(5))));
+    }
+
+    @Test
+    void ensurePreviewOfAQuickSelectionIsTheNextWorkDay() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "1")
+                .param("startDate", "2024-09-23")
+                // the datepicker submits its date with every submit, a quick selection must not use it
+                .param("extendToDate", "2024-09-27")
+                .param("extend", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"))
+            .andExpect(model().attribute("selectedExtend", "1"))
+            // monday to wednesday, the work day following the end of the sick note
+            .andExpect(model().attribute("sickNotePreviewNext", new SickNoteExtendPreviewDto(
+                LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 25), BigDecimal.valueOf(3))));
     }
 
     @Test
