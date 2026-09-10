@@ -44,6 +44,14 @@ public class OverviewPage {
         page.mouse().up();
     }
 
+    /**
+     * Clicks "add sick note" of the sick note section, which creates a sick note for the person of this overview.
+     * Does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickAddSickNote() {
+        page.locator("[data-test-id=add-sick-note]").click();
+    }
+
     public void clickDay(LocalDate date) {
         dayLocator(date).click();
     }

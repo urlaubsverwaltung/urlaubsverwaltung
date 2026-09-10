@@ -244,7 +244,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     ) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
-        final boolean userIsAllowedToSubmitSickNotes = isUserAllowedToSubmitSickNotes();
 
         final Person sickNotePerson = personId == null
             ? signedInUser
@@ -259,14 +258,15 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
             throw new AccessDeniedException("User '%s' has not the correct permissions to create a sick note".formatted(signedInUser.getId()));
         }
 
-        if (userIsAllowedToSubmitSickNotes) {
+        // extending a sick note is handing in a sick note, therefore it is offered to the person itself only
+        if (permissions.isAllowedToSubmit()) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
-            final Optional<SickNote> sickNoteOfYesterdayOrLastWorkDay = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson);
-            if (!noRedirect && (sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull())) {
-                LOG.info("sick note of last work day found");
+            final Optional<SickNote> sickNoteToExtend = sickNoteService.getSickNoteToExtend(sickNotePerson);
+            if (!noRedirect && (sickNoteToExtend.isPresent() && sickNoteToExtend.get().getDayLength().isFull())) {
+                LOG.info("sick note to extend found");
                 return "redirect:/web/sicknote/extend";
             } else {
-                LOG.info("no sick note of last work day found");
+                LOG.info("no sick note to extend found");
             }
         }
 
@@ -660,9 +660,5 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote, SickNoteExtension extension) {
         final BigDecimal workingDays = sickNote.getWorkDays().add(extension.additionalWorkdays());
         return new SickNoteExtendPreviewDto(sickNote.getStartDate(), extension.nextEndDate(), workingDays);
-    }
-
-    private boolean isUserAllowedToSubmitSickNotes() {
-        return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
     }
 }

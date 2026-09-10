@@ -54,7 +54,7 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
 
     List<SickNoteEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate startDate, LocalDate endDate);
 
-    Optional<SickNoteEntity> findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(Person person, List<SickNoteStatus> sickNoteStatus, LocalDate now);
+    Optional<SickNoteEntity> findFirstByPersonAndStatusInAndStartDateIsLessThanEqualOrderByEndDateDesc(Person person, List<SickNoteStatus> sickNoteStatus, LocalDate today);
 
     @Modifying
     List<SickNoteEntity> deleteByPerson(Person person);

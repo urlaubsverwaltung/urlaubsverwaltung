@@ -18,6 +18,7 @@
               class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/sicknote/new (person=${person.id})}"
+              data-test-id="add-sick-note"
             >
               <svg th:replace="~{icon/plus-square::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.sicknote}"></span>

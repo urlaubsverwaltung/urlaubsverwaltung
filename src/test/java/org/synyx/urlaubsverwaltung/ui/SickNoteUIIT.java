@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteExtensionPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteFormPage;
@@ -75,8 +76,10 @@ class SickNoteUIIT {
         @Bean
         @Primary
         public Clock clock() {
-            // use a fixed clock to avoid weekends or public holidays while creating sick notes
-            return Clock.fixed(Instant.parse("2022-02-01T00:00:00.00Z"), ZoneId.systemDefault());
+            // use a fixed clock to avoid weekends or public holidays while creating sick notes.
+            // 2022-02-07 is a monday, therefore the friday before is the last work day of a person
+            // that does not work on weekends.
+            return Clock.fixed(Instant.parse("2022-02-07T00:00:00.00Z"), ZoneId.systemDefault());
         }
 
         @Bean
@@ -85,6 +88,11 @@ class SickNoteUIIT {
             return sessionRepository -> sessionRepository.setCleanupCron(Scheduled.CRON_DISABLED);
         }
     }
+
+    private static final List<Integer> EVERY_DAY_OF_WEEK =
+        Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).toList();
+    private static final List<Integer> MONDAY_TO_FRIDAY =
+        Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).toList();
 
     @LocalServerPort
     private int port;
@@ -150,6 +158,106 @@ class SickNoteUIIT {
         sickNoteExtension(page, user, startDate, LocalDate.now(clock));
 
         navigationPage.logout();
+    }
+
+    @Test
+    void ensureUserCanExtendSickNoteAfterTheWeekendAndWhileItIsRunning(Page page) {
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+
+        final Person office = createPerson("Barbara", "Gordon", List.of(USER, OFFICE));
+        // does not work on weekends, therefore the friday is the last work day before the monday
+        final Person user = createPerson("Jason", "Todd", List.of(USER), MONDAY_TO_FRIDAY);
+
+        // 2022-02-07 is a monday
+        final LocalDate monday = LocalDate.now(clock);
+        final LocalDate friday = monday.minusDays(3);
+        final LocalDate mondayNextWeek = monday.plusDays(7);
+
+        login(loginPage, office);
+        navigationPage.settingsMenu.clickAbsence();
+        enableUserSickNoteCreation(page, true);
+        navigationPage.logout();
+
+        login(loginPage, user);
+        createSickNote(page, user, friday);
+
+        // the weekend does not interrupt the sick note of the last work day, extending it is offered on monday
+        extendSickNoteByOneWorkday(page, friday, monday);
+        // and the extension may go beyond the end of this week
+        extendSickNoteToCustomDate(page, friday, mondayNextWeek);
+        // the still running sick note is the one to extend, dates up to its end are no extension and not offered
+        showsExtensionOfRunningSickNote(page, mondayNextWeek.plusDays(1));
+        navigationPage.logout();
+
+        // office creates a sick note for the user instead of extending one of its own
+        login(loginPage, office);
+        addSickNoteForAnotherPerson(page, user);
+
+        // without the permission to hand in sick notes there is no way to the extension page at all
+        navigationPage.settingsMenu.clickAbsence();
+        enableUserSickNoteCreation(page, false);
+        navigationPage.logout();
+
+        login(loginPage, user);
+        navigationPage.quickAdd.showsNoCreateSickNoteLink();
+        navigationPage.logout();
+    }
+
+    private void extendSickNoteByOneWorkday(Page page, LocalDate startDate, LocalDate nextEndDate) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
+
+        navigationPage.quickAdd.clickCreateNewSickNote();
+        sickNoteExtensionPage.waitForVisible();
+
+        sickNoteExtensionPage.clickPlusOneWorkday();
+        submitExtension(page, sickNoteExtensionPage, startDate, nextEndDate);
+    }
+
+    private void extendSickNoteToCustomDate(Page page, LocalDate startDate, LocalDate nextEndDate) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
+
+        navigationPage.quickAdd.clickCreateNewSickNote();
+        sickNoteExtensionPage.waitForVisible();
+
+        sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
+        submitExtension(page, sickNoteExtensionPage, startDate, nextEndDate);
+    }
+
+    private void submitExtension(Page page, SickNoteExtensionPage sickNoteExtensionPage, LocalDate startDate, LocalDate nextEndDate) {
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
+
+        sickNoteExtensionPage.showsExtensionPreview(startDate, nextEndDate);
+        sickNoteExtensionPage.submit();
+
+        // the sick note has been handed in by the user and not been accepted yet, therefore it is edited right away
+        sickNoteDetailPage.waitForVisible();
+        sickNoteDetailPage.showsSickNoteDateFrom(startDate);
+        sickNoteDetailPage.showsSickNoteDateTo(nextEndDate);
+    }
+
+    private void showsExtensionOfRunningSickNote(Page page, LocalDate earliestNextEndDate) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
+
+        navigationPage.quickAdd.clickCreateNewSickNote();
+        sickNoteExtensionPage.waitForVisible();
+
+        sickNoteExtensionPage.showsNoEndOfWeekOption();
+        sickNoteExtensionPage.showsEarliestSelectableNextEndDate(earliestNextEndDate);
+    }
+
+    private void addSickNoteForAnotherPerson(Page page, Person person) {
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
+
+        page.navigate("http://localhost:" + port + "/web/person/" + person.getId() + "/overview");
+        overviewPage.clickAddSickNote();
+
+        sickNotePage.waitForVisible();
+        sickNotePage.personSelected(person.getNiceName());
     }
 
     private void enableUserSickNoteCreation(Page page, boolean enable) {
@@ -314,6 +422,10 @@ class SickNoteUIIT {
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
+        return createPerson(firstName, lastName, roles, EVERY_DAY_OF_WEEK);
+    }
+
+    private Person createPerson(String firstName, String lastName, List<Role> roles, List<Integer> workingDays) {
 
         final String email = "%s.%s@example.org".formatted(trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
         final Optional<Person> personByMailAddress = personService.getPersonByMailAddress(email);
@@ -325,7 +437,6 @@ class SickNoteUIIT {
         final Person savedPerson = personService.create(userId, firstName, lastName, email, List.of(), roles);
 
         final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).toList();
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 public class NavigationPage {
@@ -100,6 +101,14 @@ public class NavigationPage {
          */
         public void clickCreateNewSickNote() {
             page.locator(SICKNOTE_SELECTOR).click();
+        }
+
+        /**
+         * Asserts that the quick add menu is rendered, but does not offer to create a sick note.
+         */
+        public void showsNoCreateSickNoteLink() {
+            assertThat(page.locator(APPLICATION_SELECTOR)).hasCount(1);
+            assertThat(page.locator(SICKNOTE_SELECTOR)).hasCount(0);
         }
     }
 

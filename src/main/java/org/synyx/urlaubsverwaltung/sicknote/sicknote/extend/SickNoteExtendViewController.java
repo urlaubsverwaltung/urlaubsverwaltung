@@ -99,14 +99,15 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     public String extendSickNoteView(Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+        ensureAllowedToSubmitSickNotes(signedInUser);
+
+        final Optional<SickNote> maybeSickNote = getSickNoteToExtend(signedInUser);
         if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
             return "sicknote/sick_note_extended_not_found";
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        final LocalDate today = LocalDate.now(clock);
-        prepareModel(model, signedInUser, today, sickNote);
+        prepareModel(model, signedInUser, null, sickNote);
 
         final SickNoteExtendDto sickNoteExtension = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate());
         model.addAttribute("sickNoteExtension", sickNoteExtension);
@@ -130,7 +131,9 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         final boolean isCreateExtendSubmit = !hasUserSelectedCustomDate && !hasUserSelectedDays;
 
         final Person signedInUser = personService.getSignedInUser();
-        final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+        ensureAllowedToSubmitSickNotes(signedInUser);
+
+        final Optional<SickNote> maybeSickNote = getSickNoteToExtend(signedInUser);
         if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
             return "sicknote/sick_note_extended_not_found";
         }
@@ -223,8 +226,15 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     }
 
 
-    private Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person signedInUser) {
-        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+    private void ensureAllowedToSubmitSickNotes(Person signedInUser) {
+        // extending a sick note is handing in a sick note, which has to be enabled in the settings
+        if (!sickNotePermissionEvaluator.of(signedInUser, signedInUser).isAllowedToSubmit()) {
+            throw new AccessDeniedException("User '%s' is not allowed to hand in a sick note".formatted(signedInUser.getId()));
+        }
+    }
+
+    private Optional<SickNote> getSickNoteToExtend(Person signedInUser) {
+        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteToExtend(signedInUser);
         if (maybeSickNote.isPresent()) {
             final SickNote sickNote = maybeSickNote.get();
             if (!sickNote.getPerson().equals(signedInUser)) {
@@ -247,10 +257,14 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
+        // a sick note can only be extended beyond its end, which is in the future while it is still running
+        final LocalDate earliestExtendToDate = Collections.max(List.of(today, sickNote.getEndDate().plusDays(1)));
+
         model.addAttribute("sickNotePersonId", signedInUser.getId());
-        model.addAttribute("today", today);
+        model.addAttribute("earliestExtendToDate", earliestExtendToDate);
+        model.addAttribute("canExtendUntilEndOfWeek", endOfWeek().isAfter(sickNote.getEndDate()));
         model.addAttribute("sickNoteTypeChild", sickNote.getSickNoteType().getCategory().equals(SICK_NOTE_CHILD));
-        model.addAttribute("extendToDate", extendToDate == null ? today : extendToDate);
+        model.addAttribute("extendToDate", requireNonNullElse(extendToDate, earliestExtendToDate));
         model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(sickNote.getEndDate(), FormatStyle.FULL));
         model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FormatStyle.FULL));
         model.addAttribute("plusTwoWorkdaysWord", dateFormatAware.formatWord(plusTwoWorkdaysDate, FormatStyle.FULL));

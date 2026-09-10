@@ -37,7 +37,16 @@ public interface SickNoteService {
      */
     List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
-    Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person person);
+    /**
+     * Get the sick note of the given person that a further sick report would extend: the one that covers today or, if
+     * there is none, the one that ended on the last day the person worked before today - which is yesterday or, if the
+     * person did not work since then, an earlier day like the friday before a weekend. Only a
+     * {@link SickNoteStatus#SUBMITTED} or {@link SickNoteStatus#ACTIVE} sick note is taken into account.
+     *
+     * @param person defines the owner of the sick note
+     * @return optional sick note of the given person to extend
+     */
+    Optional<SickNote> getSickNoteToExtend(Person person);
 
     /**
      * Get all the sick notes that are reaching the end of sick pay.

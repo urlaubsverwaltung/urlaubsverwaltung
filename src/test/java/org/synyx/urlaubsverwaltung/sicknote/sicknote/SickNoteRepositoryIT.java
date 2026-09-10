@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.MARCH;
@@ -25,6 +26,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 @SpringBootTest
 @Transactional
@@ -313,6 +315,32 @@ class SickNoteRepositoryIT extends SingleTenantTestContainersBase {
 
         assertThat(sickNotes).hasSize(expectedSickNoteCount);
         return statistics.getPrepareStatementCount();
+    }
+
+    @Test
+    void ensureTheSickNoteToExtendIsTheStillRunningOne() {
+
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final LocalDate today = LocalDate.now(UTC);
+
+        final SickNoteEntity ended = createSickNote(person, today.minusDays(10), today.minusDays(8), ACTIVE);
+        sickNoteRepository.save(ended);
+
+        final SickNoteEntity running = createSickNote(person, today.minusDays(1), today.plusDays(2), ACTIVE);
+        sickNoteRepository.save(running);
+
+        // starts after today, therefore nothing to extend yet
+        final SickNoteEntity upcoming = createSickNote(person, today.plusDays(5), today.plusDays(6), ACTIVE);
+        sickNoteRepository.save(upcoming);
+
+        // covers today, but has been cancelled
+        final SickNoteEntity cancelled = createSickNote(person, today, today.plusDays(9), CANCELLED);
+        sickNoteRepository.save(cancelled);
+
+        final Optional<SickNoteEntity> actual = sickNoteRepository
+            .findFirstByPersonAndStatusInAndStartDateIsLessThanEqualOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), today);
+
+        assertThat(actual).hasValue(running);
     }
 
     private SickNoteEntity createSickNote(Person person, LocalDate startDate, LocalDate endDate, SickNoteStatus active) {

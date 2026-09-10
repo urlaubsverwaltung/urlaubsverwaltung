@@ -66,6 +66,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -220,7 +221,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(dayLength).build()));
+        when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(dayLength).build()));
 
         perform(get("/web/sicknote/new").param("person", "1"))
             .andExpect(status().isOk())
@@ -237,11 +238,32 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(FULL).build()));
+        when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(SickNote.builder().id(1L).dayLength(FULL).build()));
 
         perform(get("/web/sicknote/new").param("person", "1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/sicknote/extend"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteForAnotherPersonDoesNotRedirectToExtend() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person office = personWithRole(OFFICE, SICK_NOTE_ADD);
+        office.setId(1L);
+
+        final Person person = personWithId(2L);
+
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/sicknote/new").param("person", "2"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_form"));
+
+        // only the person itself may hand in a sick note, therefore an extension is out of question here
+        verify(sickNoteService, never()).getSickNoteToExtend(any());
     }
 
     @Test
