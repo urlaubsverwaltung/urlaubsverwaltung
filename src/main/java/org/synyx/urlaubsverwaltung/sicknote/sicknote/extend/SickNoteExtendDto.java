@@ -12,10 +12,12 @@ class SickNoteExtendDto {
     private BigDecimal workingDays;
 
     /**
-     * This field is only required for error styling with {@code `th:errorclass`}.
+     * The custom date of the form as the browser sent it, needed for the error styling with
+     * {@code `th:errorclass`}.
      *
      * <p>
-     * This has no value and does not have to be considered by us.
+     * It is what the date input renders as its value as well - {@code `th:field`} has a higher precedence
+     * than the {@code `th:value`} of the template and therefore wins over it.
      */
     private String extendToDate;
 

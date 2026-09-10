@@ -2,45 +2,35 @@ import "../js/common";
 import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 import { createDatepicker } from "../components/datepicker";
 
-// duet-date-picker is client side only -> html snippet from backend contains a `input type=date`.
-// to avoid flickering and complex logic instantiating the duet-date-picker again
-// we simply don't remove it but we update known attributes.
-// this `datepickers` list is to remember nodes that must note be removed after rendering.
-let datepickers = [];
-
 document.addEventListener("turbo:before-render", function (event) {
   // morph all the things!
   event.detail.render = (currentElement, newElement) => {
-    datepickers = [];
+    // duet-date-picker is client side only -> the html snippet from the backend contains an `input type=date`.
+    // that input carries the id the hydrated picker handed to its own inner input, so idiomorph matches the
+    // two and moves the input out of the picker instead of adding a new one. that leaves a picker without an
+    // input behind and a second, stale `extendToDate` field in the form.
+    // therefore the server side input is taken out of the new html and its changes are handed to the picker.
+    const datepickers = [];
+    for (const dateInput of newElement.querySelectorAll("input[type=date]")) {
+      const datepicker = document.querySelector(`duet-date-picker[name="${dateInput.getAttribute("name")}"]`);
+      if (datepicker) {
+        datepicker.classList.remove("sicknote-extend-button--selected", "error");
+        // if the datepicker should be selected it will be added now. same for errors
+        datepicker.classList.add(...dateInput.classList);
+        datepickers.push(datepicker);
+        dateInput.remove();
+      }
+    }
+
     Idiomorph.morph(currentElement, newElement, {
       callbacks: {
-        beforeNodeAdded(node) {
-          if (node.matches && node.matches("[type=date]")) {
-            for (const duet of document.querySelectorAll("duet-date-picker")) {
-              if (duet.getAttribute("name") === node.getAttribute("name")) {
-                duet.classList.remove("sicknote-extend-button--selected", "error");
-                // if the datepicker should be selected it will be added now. same for errors
-                duet.classList.add(...node.classList);
-                // do not add the date input since duet-date-picker is already initialized
-                datepickers.push(duet);
-                return false;
-              }
-            }
-          }
-        },
         beforeNodeRemoved(node) {
-          if (node.matches?.("duet-date-picker")) {
-            // do not remove duet-date-picker when it has been updated before
-            return datepickers.includes(node);
-          }
+          // the datepicker has no counterpart in the new html, it must survive the morph
+          return !datepickers.includes(node);
         },
       },
     });
   };
-});
-
-document.addEventListener("turbo:render", function () {
-  datepickers = [];
 });
 
 await createDatepicker("#extend-to-date-input", {
