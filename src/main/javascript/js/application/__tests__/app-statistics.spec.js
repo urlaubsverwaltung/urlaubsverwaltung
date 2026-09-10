@@ -3,8 +3,12 @@ import { createDatepicker } from "../../../components/datepicker";
 vi.mock("../../../components/datepicker", () => ({ createDatepicker: vi.fn() }));
 
 describe("app-statistics", function () {
+  let createDatepickerCalls;
+
   beforeAll(async function () {
     await import("../app-statistics");
+    // mocks are cleared before every test, therefore remember the calls of the module import
+    createDatepickerCalls = [...createDatepicker.mock.calls];
   });
 
   afterEach(function () {
@@ -32,8 +36,8 @@ describe("app-statistics", function () {
   }
 
   it("creates datepickers for the from/to inputs", function () {
-    expect(createDatepicker).toHaveBeenCalledWith("#from-date-input", expect.objectContaining({ urlPrefix: "" }));
-    expect(createDatepicker).toHaveBeenCalledWith("#to-date-input", expect.objectContaining({ urlPrefix: "" }));
+    expect(createDatepickerCalls).toContainEqual(["#from-date-input", expect.objectContaining({ urlPrefix: "" })]);
+    expect(createDatepickerCalls).toContainEqual(["#to-date-input", expect.objectContaining({ urlPrefix: "" })]);
   });
 
   describe("period form submit button", function () {

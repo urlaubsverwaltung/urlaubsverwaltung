@@ -46,7 +46,7 @@
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-replace": "6.0.3",
     "@tailwindcss/postcss": "4.3.3",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "5.0.0",
     "concurrently": "10.0.5",
     "cross-env": "10.1.0",
     "cssnano": "9.0.3",
@@ -69,7 +69,7 @@
     "rollup": "4.63.1",
     "rollup-plugin-esbuild": "6.2.1",
     "tailwindcss": "4.3.3",
-    "vitest": "4.1.11"
+    "vitest": "5.0.0"
   },
   "lint-staged": {
     "*.{js,html,svg,css}": [
