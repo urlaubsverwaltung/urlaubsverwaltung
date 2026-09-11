@@ -38,6 +38,7 @@
       >
         <div
           id="persons-filter"
+          class="flex flex-wrap items-baseline gap-x-1 gap-y-2"
           th:fragment="persons-overview-heading-body"
           th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
         >
