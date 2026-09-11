@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.BoundingBox;
+
+import java.util.List;
 import com.microsoft.playwright.options.AriaRole;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -94,6 +96,65 @@ public class PersonsPage {
         org.assertj.core.api.Assertions.assertThat(dropdown.x)
             .describedAs("dropdown must start at the button, not at the edge of the screen")
             .isCloseTo(button.x, org.assertj.core.data.Offset.offset(1.0));
+    }
+
+    /**
+     * Asserts that every line of the (wrapped) person group button label starts at the same x. A button
+     * is centered by the user agent stylesheet, which only shows once its label wraps.
+     */
+    public void showsPersonGroupWithEveryLineLeftAligned() {
+
+        final List<?> clientRectLefts = (List<?>) page.evaluate("""
+            () => {
+              const button = document.querySelector('#person-group-popover-button');
+              const label = [...button.childNodes].find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+              const range = document.createRange();
+              range.selectNodeContents(label);
+              return [...range.getClientRects()].map(rect => Math.round(rect.left));
+            }
+            """);
+
+        final List<Integer> lineStarts = clientRectLefts.stream().map(left -> ((Number) left).intValue()).toList();
+
+        org.assertj.core.api.Assertions.assertThat(lineStarts)
+            .describedAs("the label has to wrap, otherwise this does not assert anything")
+            .hasSizeGreaterThan(1);
+
+        org.assertj.core.api.Assertions.assertThat(lineStarts)
+            .describedAs("every line of the wrapped label must start at the left edge of the button")
+            .containsOnly(lineStarts.getFirst());
+    }
+
+    /**
+     * Asserts that the chevron of the person group button keeps its shape. As a flex item it shrinks
+     * along with the button, which squashes it to a stroke next to a long label.
+     */
+    public void showsPersonGroupButtonWithUndistortedChevron() {
+
+        final BoundingBox chevron = page.locator("#person-group-popover-button > svg").boundingBox();
+
+        org.assertj.core.api.Assertions.assertThat(chevron.width)
+            .describedAs("the chevron must not be squashed, it is %sx%s", chevron.width, chevron.height)
+            .isCloseTo(chevron.height, org.assertj.core.data.Offset.offset(0.5));
+    }
+
+    /**
+     * Asserts that the person group button and the year button are separated by a gap once they no
+     * longer fit next to each other and are stacked.
+     */
+    public void showsGapBetweenStackedPersonGroupAndYearButton() {
+
+        final BoundingBox personGroup = getPersonGroupButtonLocator().boundingBox();
+        final BoundingBox year = page.locator("#year-selector-popover-button").boundingBox();
+        final double gap = year.y - (personGroup.y + personGroup.height);
+
+        org.assertj.core.api.Assertions.assertThat(year.y)
+            .describedAs("the buttons have to be stacked, otherwise this does not assert anything")
+            .isGreaterThan(personGroup.y);
+
+        org.assertj.core.api.Assertions.assertThat(gap)
+            .describedAs("stacked buttons must be separated by a gap")
+            .isGreaterThanOrEqualTo(4);
     }
 
     public void showsPersonGroup(String personGroupName) {

@@ -172,6 +172,15 @@
     color: currentColor;
     background-color: transparent;
     font-size: var(--uv-form-control-text-size);
+    /* the user agent stylesheet centers a button. that only shows once the label wraps - a long
+     * department name in the heading of the person overview, for instance. */
+    text-align: start;
+
+    /* the icon is a flex item next to the label and would shrink with the button, which squashes it
+     * to a stroke next to a long label. */
+    > svg {
+      flex-shrink: 0;
+    }
 
     &.popover-button--inherit {
       font-size: inherit;
