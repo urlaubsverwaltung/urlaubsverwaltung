@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -79,6 +82,8 @@ class PersonsUIIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
+    @Autowired
+    private DepartmentService departmentService;
 
     @TestConfiguration
     static class TestSessionConfig {
@@ -131,9 +136,40 @@ class PersonsUIIT {
         personsPage.showsNthPersons(1);
     }
 
+    @Test
+    void ensurePersonGroupDropdownIsScrollableWhenItExceedsTheAvailableSpace(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        for (int i = 1; i <= 30; i++) {
+            createDepartment("Abteilung %02d".formatted(i));
+        }
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // a viewport smaller than the dropdown content is required to reach the entries at the very end.
+        page.setViewportSize(1280, 400);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup("Inaktive Mitarbeitende");
+
+        personsPage.showsPersonGroup("Inaktive Mitarbeitende");
+    }
+
     private void login(Page page, Person person) {
         final LoginPage loginPage = new LoginPage(page, port);
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+    }
+
+    private Department createDepartment(String name) {
+        final Department department = new Department();
+        department.setName(name);
+        return departmentService.create(department);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {

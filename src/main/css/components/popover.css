@@ -230,6 +230,13 @@
     top: --spacing(1);
     position-area: block-end span-inline-start;
 
+    /* without a max-height the menu grows with its content (`height: fit-content`), overflows the
+     * viewport and the user agent `overflow: auto` never kicks in - entries at the end would be
+     * unreachable. */
+    max-height: 62svh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
     padding: 5px 0;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.15);
@@ -297,6 +304,11 @@
   .popover-menu:has(duet-date-picker) {
     transform: none;
     backdrop-filter: none;
+
+    /* the date picker renders its own popups outside of the popover bounds - clipping or scrolling
+     * them away would cut the calendar off. */
+    max-height: none;
+    overflow: visible;
 
     @variant dark {
       /* solid background because the translucent one relies on backdrop-blur */
