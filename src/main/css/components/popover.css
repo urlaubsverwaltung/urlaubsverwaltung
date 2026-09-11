@@ -228,13 +228,22 @@
 
   .popover-menu {
     top: --spacing(1);
-    position-area: block-end span-inline-start;
+    /* open towards the inline-end, so a wide menu uses the room right of its button instead of the
+     * sliver left of it. `flip-inline` sends menus of buttons at the end of a heading back the other
+     * way, so those keep opening towards the inline-start. */
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-inline;
 
     /* without a max-height the menu grows with its content (`height: fit-content`), overflows the
      * viewport and the user agent `overflow: auto` never kicks in - entries at the end would be
-     * unreachable. */
+     * unreachable. the same holds for the width: a long entry pushes the menu over the edge of the
+     * screen, where it can neither be read nor clicked. */
     max-height: 62svh;
-    overflow-y: auto;
+    max-width: calc(100vw - --spacing(4));
+    /* keep a gap to the edge of the screen when the menu is wide enough to reach it. `flip-inline`
+     * moves the margin along to the other side. */
+    margin-inline-end: --spacing(4);
+    overflow: auto;
     overscroll-behavior: contain;
 
     padding: 5px 0;
@@ -274,7 +283,9 @@
           font-weight: 400;
           line-height: 1.42857143;
           color: #333333;
-          white-space: nowrap;
+          /* a long entry wraps instead of widening the menu beyond the screen. `anywhere` also breaks
+           * the long compound words department names tend to be made of. */
+          overflow-wrap: anywhere;
 
           @apply dark:text-zinc-200;
 

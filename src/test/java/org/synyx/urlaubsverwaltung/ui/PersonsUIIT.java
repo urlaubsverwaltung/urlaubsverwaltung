@@ -161,12 +161,63 @@ class PersonsUIIT {
         personsPage.showsPersonGroup("Inaktive Mitarbeitende");
     }
 
+    @Test
+    void ensurePersonGroupDropdownStaysWithinTheViewportWithLongDepartmentNames(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment("Abteilung für außerordentlich lange Abteilungsnamen zur Prüfung des Zeilenumbruchs im Auswahlmenü");
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // the long department name makes the dropdown wider than the space left of the button.
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+
+        personsPage.showsPersonGroupDropdownWithinViewport();
+    }
+
+    @Test
+    void ensurePersonGroupDropdownOpensToTheRightOfTheButton(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment("Abteilung für außerordentlich lange Abteilungsnamen zur Prüfung des Zeilenumbruchs im Auswahlmenü");
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+
+        personsPage.showsPersonGroupDropdownOpeningToTheRight();
+    }
+
     private void login(Page page, Person person) {
         final LoginPage loginPage = new LoginPage(page, port);
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
     }
 
     private Department createDepartment(String name) {
+
+        final Optional<Department> existingDepartment = departmentService.getAllDepartments().stream()
+            .filter(department -> department.getName().equals(name))
+            .findFirst();
+        if (existingDepartment.isPresent()) {
+            return existingDepartment.get();
+        }
+
         final Department department = new Department();
         department.setName(name);
         return departmentService.create(department);
