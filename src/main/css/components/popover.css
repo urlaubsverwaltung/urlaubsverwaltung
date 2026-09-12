@@ -172,6 +172,15 @@
     color: currentColor;
     background-color: transparent;
     font-size: var(--uv-form-control-text-size);
+    /* the user agent stylesheet centers a button. that only shows once the label wraps - a long
+     * department name in the heading of the person overview, for instance. */
+    text-align: start;
+
+    /* the icon is a flex item next to the label and would shrink with the button, which squashes it
+     * to a stroke next to a long label. */
+    > svg {
+      flex-shrink: 0;
+    }
 
     &.popover-button--inherit {
       font-size: inherit;
@@ -228,7 +237,23 @@
 
   .popover-menu {
     top: --spacing(1);
-    position-area: block-end span-inline-start;
+    /* open towards the inline-end, so a wide menu uses the room right of its button instead of the
+     * sliver left of it. `flip-inline` sends menus of buttons at the end of a heading back the other
+     * way, so those keep opening towards the inline-start. */
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-inline;
+
+    /* without a max-height the menu grows with its content (`height: fit-content`), overflows the
+     * viewport and the user agent `overflow: auto` never kicks in - entries at the end would be
+     * unreachable. the same holds for the width: a long entry pushes the menu over the edge of the
+     * screen, where it can neither be read nor clicked. */
+    max-height: 62svh;
+    max-width: calc(100vw - --spacing(4));
+    /* keep a gap to the edge of the screen when the menu is wide enough to reach it. `flip-inline`
+     * moves the margin along to the other side. */
+    margin-inline-end: --spacing(4);
+    overflow: auto;
+    overscroll-behavior: contain;
 
     padding: 5px 0;
     background-color: white;
@@ -267,7 +292,9 @@
           font-weight: 400;
           line-height: 1.42857143;
           color: #333333;
-          white-space: nowrap;
+          /* a long entry wraps instead of widening the menu beyond the screen. `anywhere` also breaks
+           * the long compound words department names tend to be made of. */
+          overflow-wrap: anywhere;
 
           @apply dark:text-zinc-200;
 
@@ -297,6 +324,11 @@
   .popover-menu:has(duet-date-picker) {
     transform: none;
     backdrop-filter: none;
+
+    /* the date picker renders its own popups outside of the popover bounds - clipping or scrolling
+     * them away would cut the calendar off. */
+    max-height: none;
+    overflow: visible;
 
     @variant dark {
       /* solid background because the translucent one relies on backdrop-blur */

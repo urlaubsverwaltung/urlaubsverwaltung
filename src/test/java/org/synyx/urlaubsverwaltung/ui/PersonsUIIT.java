@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -59,6 +62,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @UiTest
 class PersonsUIIT {
 
+    private static final String LONG_DEPARTMENT_NAME =
+        "Abteilung für außerordentlich lange Abteilungsnamen zur Prüfung des Zeilenumbruchs im Auswahlmenü";
+
     @LocalServerPort
     private int port;
 
@@ -79,6 +85,8 @@ class PersonsUIIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
+    @Autowired
+    private DepartmentService departmentService;
 
     @TestConfiguration
     static class TestSessionConfig {
@@ -131,9 +139,159 @@ class PersonsUIIT {
         personsPage.showsNthPersons(1);
     }
 
+    @Test
+    void ensurePersonGroupDropdownIsScrollableWhenItExceedsTheAvailableSpace(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        for (int i = 1; i <= 30; i++) {
+            createDepartment("Abteilung %02d".formatted(i));
+        }
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // a viewport smaller than the dropdown content is required to reach the entries at the very end.
+        page.setViewportSize(1280, 400);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup("Inaktive Mitarbeitende");
+
+        personsPage.showsPersonGroup("Inaktive Mitarbeitende");
+    }
+
+    @Test
+    void ensurePersonGroupDropdownStaysWithinTheViewportWithLongDepartmentNames(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment(LONG_DEPARTMENT_NAME);
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // the long department name makes the dropdown wider than the space left of the button.
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+
+        personsPage.showsPersonGroupDropdownWithinViewport();
+    }
+
+    @Test
+    void ensurePersonGroupDropdownOpensToTheRightOfTheButton(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment(LONG_DEPARTMENT_NAME);
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+
+        personsPage.showsPersonGroupDropdownOpeningToTheRight();
+    }
+
+    @Test
+    void ensureSelectedPersonGroupIsLeftAlignedWhenItsNameWraps(Page page) {
+
+        final String longDepartmentName = LONG_DEPARTMENT_NAME;
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment(longDepartmentName);
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // narrow enough for the name of the selected department to wrap in the heading.
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup(longDepartmentName);
+        personsPage.showsPersonGroup(longDepartmentName);
+
+        personsPage.showsPersonGroupWithEveryLineLeftAligned();
+    }
+
+    @Test
+    void ensureChevronOfPersonGroupButtonKeepsItsShapeWithALongDepartmentName(Page page) {
+
+        final PersonsPage personsPage = showPersonOverviewWithLongDepartmentSelected(page);
+
+        personsPage.showsPersonGroupButtonWithUndistortedChevron();
+    }
+
+    @Test
+    void ensureStackedPersonGroupAndYearButtonAreSeparatedByAGap(Page page) {
+
+        final PersonsPage personsPage = showPersonOverviewWithLongDepartmentSelected(page);
+
+        personsPage.showsGapBetweenStackedPersonGroupAndYearButton();
+    }
+
+    /**
+     * Shows the person overview with a department selected whose name is long enough to wrap, in a
+     * viewport narrow enough for the year button to be pushed into the next line.
+     */
+    private PersonsPage showPersonOverviewWithLongDepartmentSelected(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment(LONG_DEPARTMENT_NAME);
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup(LONG_DEPARTMENT_NAME);
+        personsPage.showsPersonGroup(LONG_DEPARTMENT_NAME);
+
+        return personsPage;
+    }
+
     private void login(Page page, Person person) {
         final LoginPage loginPage = new LoginPage(page, port);
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+    }
+
+    private Department createDepartment(String name) {
+
+        final Optional<Department> existingDepartment = departmentService.getAllDepartments().stream()
+            .filter(department -> department.getName().equals(name))
+            .findFirst();
+        if (existingDepartment.isPresent()) {
+            return existingDepartment.get();
+        }
+
+        final Department department = new Department();
+        department.setName(name);
+        return departmentService.create(department);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
