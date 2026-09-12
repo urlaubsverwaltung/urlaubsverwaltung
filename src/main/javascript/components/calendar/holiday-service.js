@@ -74,6 +74,18 @@ export const HolidayService = (function () {
     };
   }
 
+  function cacheBlackoutPeriods(year) {
+    const blackoutPeriodCache = (_CACHE["blackoutPeriod"] = _CACHE["blackoutPeriod"] || {});
+
+    return function (data) {
+      blackoutPeriodCache[year] = blackoutPeriodCache[year] || [];
+
+      for (let blackoutPeriod of data.blackoutPeriods) {
+        blackoutPeriodCache[year].push(blackoutPeriod);
+      }
+    };
+  }
+
   function getAbsencesForDate(date) {
     const year = getYear(date);
     const formattedDate = format(date, "yyyy-MM-dd");
@@ -90,6 +102,15 @@ export const HolidayService = (function () {
     const publicHolidaysForYear = cache[year] || [];
 
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
+  }
+
+  function getBlackoutPeriodsForDate(date) {
+    const year = getYear(date);
+    const formattedDate = format(date, "yyyy-MM-dd");
+    const cache = _CACHE["blackoutPeriod"] || {};
+    const blackoutPeriodsForYear = cache[year] || [];
+
+    return blackoutPeriodsForYear.filter((blackoutPeriod) => blackoutPeriod.date === formattedDate);
   }
 
   const HolidayService = {
@@ -229,6 +250,10 @@ export const HolidayService = (function () {
       return isPublicHolidayNoon(getPublicHolidaysForDate(date));
     },
 
+    isBlackoutPeriod(date) {
+      return getBlackoutPeriodsForDate(date).length > 0;
+    },
+
     getDescription: function (date) {
       // there can be more than one public holiday on the same day (e.g. a fixed and a movable one
       // falling on the same date in a special year), so join the descriptions of all of them.
@@ -342,6 +367,16 @@ export const HolidayService = (function () {
         { "absence-types": "vacation,sick_note,no_workday" },
         "absences",
         cacheAbsences,
+      );
+    },
+
+    fetchBlackoutPeriods: function (year) {
+      return this.fetchAndCache(
+        "/persons/" + personId + "/blackout-periods",
+        year,
+        {},
+        "blackoutPeriod",
+        cacheBlackoutPeriods,
       );
     },
   };

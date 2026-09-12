@@ -1,0 +1,143 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head th:replace="~{_layout::head(title=~{::title})}">
+    <title th:text="#{blackoutperiod.header.title}"></title>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::blackoutperiod-list-heading-body}, ~{::blackoutperiod-list-heading-actions})}"
+      >
+        <th:block th:ref="blackoutperiod-list-heading-body">
+          <h1 th:text="#{blackoutperiod.title}">Urlaubssperren</h1>
+        </th:block>
+        <th:block th:ref="blackoutperiod-list-heading-actions">
+          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
+            <a
+              th:href="@{/web/blackoutperiod/new}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+            >
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.blackoutperiod.create}"></span>
+            </a>
+          </div>
+        </th:block>
+      </div>
+
+      <th:block
+        th:if="${createdBlackoutPeriodTitle != null or updatedBlackoutPeriodTitle != null or deletedBlackoutPeriodTitle != null}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+      >
+        <th:block th:ref="feedback-success-body">
+          <p
+            th:if="${createdBlackoutPeriodTitle != null}"
+            th:text="#{blackoutperiod.action.create.success(${createdBlackoutPeriodTitle})}"
+          ></p>
+          <p
+            th:if="${updatedBlackoutPeriodTitle != null}"
+            th:text="#{blackoutperiod.action.edit.success(${updatedBlackoutPeriodTitle})}"
+          ></p>
+          <p
+            th:if="${deletedBlackoutPeriodTitle != null}"
+            th:text="#{blackoutperiod.action.delete.success(${deletedBlackoutPeriodTitle})}"
+          ></p>
+        </th:block>
+      </th:block>
+
+      <p th:if="${#lists.isEmpty(blackoutPeriods)}" th:text="#{blackoutperiod.none}"></p>
+      <table th:if="${not #lists.isEmpty(blackoutPeriods)}" id="blackoutperiod-table" class="list-table text-sm">
+        <caption class="sr-only" th:text="#{blackoutperiod.title}">
+          Blackout periods
+        </caption>
+        <thead class="hidden @5xl/main:table-header-group">
+          <tr>
+            <th th:text="#{blackoutperiod.data.title}" scope="col"></th>
+            <th th:text="#{blackoutperiod.data.period}" class="whitespace-nowrap" scope="col"></th>
+            <th th:text="#{blackoutperiod.data.scope}" scope="col"></th>
+            <th th:text="#{blackoutperiod.data.vacationTypes}" scope="col"></th>
+            <th scope="col">
+              <!--placeholder to ensure correct number of th-->
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="blackoutPeriod : ${blackoutPeriods}">
+            <td>
+              <div class="font-bold">
+                <th:block th:text="${blackoutPeriod.title}"></th:block>
+              </div>
+            </td>
+            <td class="whitespace-nowrap">
+              <th:block th:text="${{blackoutPeriod.startDate}}"></th:block>
+              &ndash;
+              <th:block th:text="${{blackoutPeriod.endDate}}"></th:block>
+            </td>
+            <td th:text="${blackoutPeriod.scopeLabel}"></td>
+            <td th:text="${blackoutPeriod.vacationTypesLabel}"></td>
+            <td th:with="dialogId=|modal-cancel-${blackoutPeriod.id}|">
+              <dialog
+                th:id="${dialogId}"
+                th:aria-labelledby="${'modal-label-' + blackoutPeriod.id}"
+                class="modal"
+                closedby="any"
+              >
+                <form
+                  method="post"
+                  th:action="@{/web/blackoutperiod/__${blackoutPeriod.id}__/delete}"
+                  class="modal__content"
+                >
+                  <div class="modal__header">
+                    <h4
+                      th:text="#{action.blackoutperiod.delete}"
+                      th:id="${'modal-label-' + blackoutPeriod.id}"
+                      class="modal__header__title"
+                    >
+                      Löschen
+                    </h4>
+                    <button type="button" class="modal__close-button" th:commandfor="${dialogId}" command="close">
+                      <svg th:replace="~{icon/x-circle::svg(className='w-8 h-8')}"></svg>
+                    </button>
+                  </div>
+                  <div
+                    th:text="#{action.blackoutperiod.delete.confirm(${blackoutPeriod.title})}"
+                    class="modal__body"
+                  ></div>
+                  <div class="modal__footer flex justify-around">
+                    <button autofocus class="button-danger" type="submit" th:text="#{action.blackoutperiod.delete}">
+                      Delete
+                    </button>
+                    <button
+                      th:text="#{action.cancel}"
+                      class="button"
+                      type="button"
+                      th:commandfor="${dialogId}"
+                      command="close"
+                    ></button>
+                  </div>
+                </form>
+              </dialog>
+
+              <div class="flex gap-2 justify-end">
+                <a class="button" th:href="@{/web/blackoutperiod/__${blackoutPeriod.id}__/edit}">
+                  <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
+                  <th:block th:text="#{action.edit}" />
+                </a>
+                <button class="button" th:commandfor="${dialogId}" command="show-modal">
+                  <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 mr-1')}"></svg>
+                  <th:block th:text="#{action.blackoutperiod.delete}" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
