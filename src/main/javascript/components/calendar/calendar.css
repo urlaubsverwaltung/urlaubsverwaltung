@@ -111,6 +111,21 @@
   display: block;
 }
 
+/* SWIPE GESTURE (mobile single-month view) */
+
+/* current & target month while a horizontal swipe is in progress, positioned
+   so both can be transform-translated in lockstep with the finger */
+.calendar-month-container.calendar-month-swipe-active {
+  display: block !important;
+  left: 0 !important;
+  z-index: 1;
+}
+
+/* only applied once the touch ends, so mid-drag movement follows the finger 1:1 */
+.calendar-month-container.calendar-month-swipe-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
 @variant sm {
   .calendar-month-container:nth-child(5) {
     --width: 80vw;
