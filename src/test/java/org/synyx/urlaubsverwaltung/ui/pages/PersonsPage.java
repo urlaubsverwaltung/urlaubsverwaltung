@@ -56,12 +56,26 @@ public class PersonsPage {
     }
 
     public void openPersonGroupDropdown() {
+        awaitTurboStreamsApplied();
         getPersonGroupButtonLocator().click();
         assertThat(page.locator("#person-group-selection-popover")).isVisible();
     }
 
     public void selectPersonGroup(String personGroupName) {
         getPersonGroupLocator(personGroupName).click();
+        // the button of the selected person group is the first element of the heading turbo replaces,
+        // so waiting for it puts us into the rendered page instead of the one we are leaving.
+        assertThat(getPersonGroupButtonLocator()).hasText(personGroupName);
+        awaitTurboStreamsApplied();
+    }
+
+    /**
+     * Waits until turbo has applied the {@code turbo-stream} elements of the rendered page. The person
+     * overview replaces its whole heading with one of them, which detaches the buttons within - an
+     * element measured before that is gone by the time its bounding box is read.
+     */
+    private void awaitTurboStreamsApplied() {
+        assertThat(page.locator("turbo-stream")).hasCount(0);
     }
 
     /**
