@@ -119,7 +119,7 @@
                   <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
                     Soll diese Krankmeldung wirklich angenommen werden?
                   </th:block>
-                  <th:block th:if="${extensionRequested}">
+                  <th:block th:if="${extensionRequested}" th:text="#{action.sicknote.extension.allow}">
                     Soll die Verlängerung der Krankmeldung wirklich angenommen werden?
                   </th:block>
                 </strong>
@@ -133,7 +133,9 @@
               <div class="mb-0 flex justify-between gap-4">
                 <button type="submit" class="button-main-green w-56">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.acceptSicknote}">Annehmen</th:block>
-                  <th:block th:if="${extensionRequested}">Verlängerung Annehmen</th:block>
+                  <th:block th:if="${extensionRequested}" th:text="#{sicknote.extend.accept.button.text}"
+                    >Verlängerung Annehmen</th:block
+                  >
                 </button>
                 <button
                   type="button"
