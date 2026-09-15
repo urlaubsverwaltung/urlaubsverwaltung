@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.validation.Errors;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
@@ -27,7 +28,10 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -336,6 +340,107 @@ class SettingsAbsenceTypesViewControllerTest {
                 ))
                 .build()
         ));
+    }
+
+    @Test
+    void ensureSaveSettingsIgnoresRemovedAbsenceTypeRow() throws Exception {
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].id", "1")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].label", "label-1")
+                .param("absenceTypeSettings.items[0].requiresApprovalToApply", "true")
+                .param("absenceTypeSettings.items[0].requiresApprovalToCancel", "true")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                .param("absenceTypeSettings.items[0].visibleToEveryone", "true")
+                // items[1] has been removed in the browser and therefore posts nothing at all
+                .param("absenceTypeSettings.items[2].active", "true")
+                .param("absenceTypeSettings.items[2].requiresApprovalToApply", "true")
+                .param("absenceTypeSettings.items[2].requiresApprovalToCancel", "true")
+                .param("absenceTypeSettings.items[2].color", "YELLOW")
+                .param("absenceTypeSettings.items[2].visibleToEveryone", "false")
+                .param("absenceTypeSettings.items[2].labels[0].locale", "de")
+                .param("absenceTypeSettings.items[2].labels[0].label", "Biertag")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].active", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].messageKey", "message-key-2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "3")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/settings/absence-types"))
+            .andExpect(flash().attribute("success", true));
+
+        verify(vacationTypeService).updateVacationTypes(List.of(
+            new VacationTypeUpdate(1L, true, true, true, CYAN, true, null)
+        ));
+
+        verify(vacationTypeService).createVacationTypes(List.of(
+            CustomVacationType.builder(messageSource)
+                .active(true)
+                .category(OTHER)
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(false)
+                .labels(List.of(new VacationTypeLabel(GERMAN, "Biertag")))
+                .build()
+        ));
+    }
+
+    @Test
+    void ensureAddAbsenceTypeWithTurboFrameIgnoresRemovedAbsenceTypeRow() throws Exception {
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("add-absence-type", "")
+                .header("Turbo-Frame", "frame-absence-type")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].id", "1")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].label", "label-1")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                // items[1] has been removed in the browser and therefore posts nothing at all
+                .param("absenceTypeSettings.items[2].active", "true")
+                .param("absenceTypeSettings.items[2].color", "YELLOW")
+                .param("absenceTypeSettings.items[2].labels[0].locale", "de")
+                .param("absenceTypeSettings.items[2].labels[0].label", "Biertag")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("newAbsenceTypeIndex", 2))
+            .andExpect(view().name("settings/absence-types/absence-types::#frame-absence-type"));
+
+        verifyNoInteractions(vacationTypeService);
+    }
+
+    @Test
+    void ensureSaveSettingsWithErrorsRendersAbsenceTypesWithoutRemovedRow() throws Exception {
+
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.reject("settings.error");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].id", "1")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                // items[1] has been removed in the browser and therefore posts nothing at all
+                .param("absenceTypeSettings.items[2].active", "true")
+                .param("absenceTypeSettings.items[2].color", "YELLOW")
+                .param("absenceTypeSettings.items[2].labels[0].locale", "de")
+                .param("absenceTypeSettings.items[2].labels[0].label", "Biertag")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("settings/absence-types/settings_absence_types"))
+            .andExpect(model().attribute("settings",
+                hasProperty("absenceTypeSettings", hasProperty("items", hasSize(2)))));
+
+        verifyNoInteractions(vacationTypeService);
     }
 
     private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
