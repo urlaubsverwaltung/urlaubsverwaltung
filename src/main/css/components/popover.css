@@ -257,9 +257,12 @@
 
     /* without a max-height the menu grows with its content (`height: fit-content`), overflows the
      * viewport and the user agent `overflow: auto` never kicks in - entries at the end would be
-     * unreachable. the same holds for the width: a long entry pushes the menu over the edge of the
-     * screen, where it can neither be read nor clicked. */
-    max-height: 62svh;
+     * unreachable. the menu opens below its button and `position-area` makes exactly that room its
+     * containing block, so the percentage is the room below the button - no viewport fraction to
+     * guess at. `--spacing(1)` leaves the gap to the button, `--spacing(4)` one to the bottom edge
+     * of the screen. the same holds for the width: a long entry pushes the menu over the edge of
+     * the screen, where it can neither be read nor clicked. */
+    max-height: calc(100% - --spacing(1) - --spacing(4));
     max-width: calc(100vw - --spacing(4));
     /* keep a gap to the edge of the screen when the menu is wide enough to reach it. `flip-inline`
      * moves the margin along to the other side. */
