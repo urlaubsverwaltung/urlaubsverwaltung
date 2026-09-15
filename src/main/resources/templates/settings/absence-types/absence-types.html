@@ -171,6 +171,21 @@
                       ></p>
                     </th:block>
                   </th:block>
+                  <div th:if="${absenceType.id == null}" class="flex ml-7 @3xl/main:ml-6">
+                    <button
+                      type="button"
+                      class="p-0 bg-transparent"
+                      data-absence-type-remove
+                      data-test-id="remove-absence-type-button"
+                    >
+                      <span
+                        class="flex items-center text-sm text-black/50 hover:text-black/100 focus:text-black/100 dark:text-zinc-200/50 dark:hover:text-zinc-200 dark:focus:text-zinc-200 transition-colors"
+                      >
+                        <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 mr-0.5')}"></svg>
+                        <th:block th:text="#{settings.absenceTypes.action.remove.label}">Entfernen</th:block>
+                      </span>
+                    </button>
+                  </div>
                 </div>
                 <div class="absence-type-card__approve-to-apply">
                   <label
