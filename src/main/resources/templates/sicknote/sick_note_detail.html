@@ -301,7 +301,7 @@
             <details class="[&>summary>svg]:open:rotate-90">
               <summary class="cursor-pointer flex items-center gap-1">
                 <svg th:replace="~{icon/chevron-right::svg(className='w-4 h-4 transition-transform')}"></svg>
-                Vorschau der Verlängerung
+                <th:block th:text="#{sicknote.extend.preview.summary.text}">Vorschau der Verlängerung</th:block>
               </summary>
               <div class="mt-4">
                 <th:block
