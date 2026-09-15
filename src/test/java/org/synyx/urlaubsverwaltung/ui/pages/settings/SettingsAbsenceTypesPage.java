@@ -20,8 +20,28 @@ public class SettingsAbsenceTypesPage {
         page.locator("[data-test-id=vacation-type] .absence-type-card__label span:empty").waitFor(new Locator.WaitForOptions().setState(ATTACHED));
     }
 
+    /**
+     * Waits until the absence type list has been rendered. {@link Locator#count()} does not wait by itself,
+     * so counting rows right after the navigation would count an empty page.
+     */
+    public void waitForVisible() {
+        page.locator("[data-test-id=vacation-type]").first().waitFor();
+    }
+
+    public Locator vacationTypes() {
+        return page.locator("[data-test-id=vacation-type]");
+    }
+
     public Locator lastVacationType() {
         return page.locator("[data-test-id=vacation-type]").last();
+    }
+
+    public void removeVacationType(Locator absenceTypeLocator) {
+        absenceTypeLocator.locator("[data-test-id=remove-absence-type-button]").click();
+    }
+
+    public Locator saveSuccessFeedback() {
+        return page.locator("[data-test-id=feedback-box].alert-success");
     }
 
     public void setVacationTypeLabel(Locator absenceTypeLocator, Locale locale, String value) {
