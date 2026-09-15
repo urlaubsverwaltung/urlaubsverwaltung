@@ -64,6 +64,8 @@ class PersonsUIIT {
 
     private static final String LONG_DEPARTMENT_NAME =
         "Abteilung für außerordentlich lange Abteilungsnamen zur Prüfung des Zeilenumbruchs im Auswahlmenü";
+    private static final String COMPOUND_DEPARTMENT_NAME =
+        "Donaudampfschifffahrtsgesellschaftskapitänskajütenverwaltungsabteilung";
 
     @LocalServerPort
     private int port;
@@ -247,6 +249,30 @@ class PersonsUIIT {
         final PersonsPage personsPage = showPersonOverviewWithLongDepartmentSelected(page);
 
         personsPage.showsGapBetweenStackedPersonGroupAndYearButton();
+    }
+
+    @Test
+    void ensureACompoundDepartmentNameDoesNotPushThePersonOverviewOverTheEdgeOfTheScreen(Page page) {
+
+        final Person anne = createPerson("Anne", "Roth", List.of(USER, OFFICE));
+        createDepartment(COMPOUND_DEPARTMENT_NAME);
+
+        login(page, anne);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        personsPage.showsPersonRow(0, "Anne Roth");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // narrower than the name, which has no space to wrap at.
+        page.setViewportSize(803, 700);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup(COMPOUND_DEPARTMENT_NAME);
+        personsPage.showsPersonGroup(COMPOUND_DEPARTMENT_NAME);
+
+        personsPage.showsPersonOverviewWithoutHorizontalScrollbar();
     }
 
     /**

@@ -171,6 +171,28 @@ public class PersonsPage {
             .isGreaterThanOrEqualTo(4);
     }
 
+    /**
+     * Asserts that the person overview does not scroll horizontally. A department name can be a single
+     * compound word, which without a break opportunity sets the width of the heading and pushes the
+     * whole page over the edge of the screen.
+     */
+    public void showsPersonOverviewWithoutHorizontalScrollbar() {
+
+        final List<?> widths = (List<?>) page.evaluate("""
+            () => {
+              const content = document.querySelector('#main');
+              return [content.scrollWidth, content.clientWidth];
+            }
+            """);
+
+        final int scrollWidth = ((Number) widths.getFirst()).intValue();
+        final int clientWidth = ((Number) widths.getLast()).intValue();
+
+        org.assertj.core.api.Assertions.assertThat(scrollWidth)
+            .describedAs("the person overview must fit the screen, it is %spx wide within %spx", scrollWidth, clientWidth)
+            .isLessThanOrEqualTo(clientWidth);
+    }
+
     public void showsPersonGroup(String personGroupName) {
         assertThat(getPersonGroupButtonLocator()).hasText(personGroupName);
     }

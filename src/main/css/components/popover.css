@@ -187,6 +187,18 @@
     }
   }
 
+  .popover-button {
+    /* a department name can be a single compound word. without a break opportunity it sets the
+     * min-content width of the heading of the person overview and pushes the page over the edge of
+     * the screen, where nothing but the horizontal scrollbar is left of it. `anywhere` is the only
+     * value that lowers the min-content width - `break-word` leaves the button demanding the width
+     * of the whole word. */
+    overflow-wrap: anywhere;
+    /* break the word at a syllable where the browser has a hyphenation dictionary. chromium ships
+     * none and falls back to the break above. */
+    hyphens: auto;
+  }
+
   .popover-button-select {
     border: 1px solid var(--color-gray-300);
     border-radius: var(--uv-input-border-radius);
