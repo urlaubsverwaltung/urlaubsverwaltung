@@ -32,7 +32,7 @@
         <turbo-frame id="frame-company-overview">
           <p
             class="mt-8 font-bold text-base"
-            th:with="from=${#temporals.format(dateRangeStart, 'dd.MM.yyyy')}, to=${#temporals.format(dateRangeEnd, 'dd.MM.yyyy')}"
+            th:with="from=${#temporals.format(dateRangeStart, #messages.msg('pattern.date'))}, to=${#temporals.format(dateRangeEnd, #messages.msg('pattern.date'))}"
             th:text="#{company.overview.description(${from}, ${to})}"
           >
             Aggregierte Auswertung ohne Personenbezug - $von $bis

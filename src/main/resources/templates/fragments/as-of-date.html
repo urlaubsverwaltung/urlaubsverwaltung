@@ -11,7 +11,7 @@
     -->
     <div th:fragment="as-of-date(date)" class="text-sm">
       <th:block th:text="#{filter.validity}">Stand</th:block>
-      <th:block th:text="${#temporals.format(date, 'dd.MM.yyyy')}">01.09.2026</th:block>
+      <th:block th:text="${#temporals.format(date, #messages.msg('pattern.date'))}">01.09.2026</th:block>
     </div>
   </body>
 </html>

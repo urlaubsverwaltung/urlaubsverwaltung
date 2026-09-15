@@ -275,7 +275,7 @@
               <td th:text="#{sicknote.data.sick_pay_days.short}"></td>
               <td>
                 <span
-                  th:text="#{sicknote.data.sick_pay_days(${numberSickPayDaysSinceEnd}, ${#temporals.format(sickPayDaysEndDate, 'E, dd.MM.yyyy')})}"
+                  th:text="#{sicknote.data.sick_pay_days(${numberSickPayDaysSinceEnd}, ${#temporals.format(sickPayDaysEndDate, #messages.msg('pattern.date.day-of-week.short'))})}"
                 ></span>
               </td>
             </tr>
