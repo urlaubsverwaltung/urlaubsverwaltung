@@ -384,7 +384,7 @@
                       </span>
                       <span
                         class="bar-chart__label"
-                        th:text="${startFormatted == null ? '&lt; ' + endFormatted : (endFormatted == null ? '&gt; ' + startFormatted : startFormatted + ' - ' + endFormatted)} + ' Tage'"
+                        th:text="${startFormatted == null} ? #{company.overview.distribution.remaining-vacation-days.entry.min(${endFormatted})} : (${endFormatted == null} ? #{company.overview.distribution.remaining-vacation-days.entry.max(${startFormatted})} : #{company.overview.distribution.remaining-vacation-days.entry.range(${startFormatted}, ${endFormatted})})"
                       >
                         &lt; 10 Tage
                       </span>
