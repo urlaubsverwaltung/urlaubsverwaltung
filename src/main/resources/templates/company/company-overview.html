@@ -253,7 +253,7 @@
                       </span>
                       <span
                         class="bar-chart__label"
-                        th:text="${entry.rangeEnd() == null ? '>' + entry.rangeStart() + 'h' : entry.rangeStart() + '-' + entry.rangeEnd() + 'h'}"
+                        th:text="${entry.rangeEnd() == null} ? #{company.overview.distribution.overtime.entry.max(${entry.rangeStart()})} : #{company.overview.distribution.overtime.entry.range(${entry.rangeStart()}, ${entry.rangeEnd()})}"
                       >
                         0h bis 5h
                       </span>
