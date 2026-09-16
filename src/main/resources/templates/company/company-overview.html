@@ -32,7 +32,7 @@
         <turbo-frame id="frame-company-overview">
           <p
             class="mt-8 font-bold text-base"
-            th:with="from=${#temporals.format(dateRangeStart, 'dd.MM.yyyy')}, to=${#temporals.format(dateRangeEnd, 'dd.MM.yyyy')}"
+            th:with="from=${#temporals.format(dateRangeStart, #messages.msg('pattern.date'))}, to=${#temporals.format(dateRangeEnd, #messages.msg('pattern.date'))}"
             th:text="#{company.overview.description(${from}, ${to})}"
           >
             Aggregierte Auswertung ohne Personenbezug - $von $bis
@@ -253,7 +253,7 @@
                       </span>
                       <span
                         class="bar-chart__label"
-                        th:text="${entry.rangeEnd() == null ? '>' + entry.rangeStart() + 'h' : entry.rangeStart() + '-' + entry.rangeEnd() + 'h'}"
+                        th:text="${entry.rangeEnd() == null} ? #{company.overview.distribution.overtime.entry.max(${entry.rangeStart()})} : #{company.overview.distribution.overtime.entry.range(${entry.rangeStart()}, ${entry.rangeEnd()})}"
                       >
                         0h bis 5h
                       </span>
@@ -384,7 +384,7 @@
                       </span>
                       <span
                         class="bar-chart__label"
-                        th:text="${startFormatted == null ? '&lt; ' + endFormatted : (endFormatted == null ? '&gt; ' + startFormatted : startFormatted + ' - ' + endFormatted)} + ' Tage'"
+                        th:text="${startFormatted == null} ? #{company.overview.distribution.remaining-vacation-days.entry.min(${endFormatted})} : (${endFormatted == null} ? #{company.overview.distribution.remaining-vacation-days.entry.max(${startFormatted})} : #{company.overview.distribution.remaining-vacation-days.entry.range(${startFormatted}, ${endFormatted})})"
                       >
                         &lt; 10 Tage
                       </span>
