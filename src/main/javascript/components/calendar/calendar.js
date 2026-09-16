@@ -109,6 +109,7 @@ const View = (function () {
   let assert;
   let holidayService;
   let i18n;
+  let canApplyForLeave;
 
   const TMPL = {
     container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
@@ -296,6 +297,12 @@ const View = (function () {
         return true;
       }
 
+      // a day without an absence leads to the "apply for leave" form only,
+      // which is of no use without the permission to apply for this person.
+      if (!canApplyForLeave) {
+        return false;
+      }
+
       const isPast = assert.isPast(date);
 
       if (isPast) {
@@ -376,11 +383,12 @@ const View = (function () {
   };
 
   return {
-    create: function (_rootElement, _assert, _holidayService, _i18n) {
+    create: function (_rootElement, _assert, _holidayService, _i18n, _canApplyForLeave) {
       rootElement = _rootElement;
       assert = _assert;
       holidayService = _holidayService;
       i18n = _i18n;
+      canApplyForLeave = _canApplyForLeave;
       return View;
     },
   };
@@ -389,10 +397,11 @@ const View = (function () {
 const Controller = (function () {
   let view;
   let holidayService;
+  let canApplyForLeave;
 
   const datepickerHandlers = {
     mousedown: function (event) {
-      if (event.button !== mouseButtons.left) {
+      if (event.button !== mouseButtons.left || !canApplyForLeave) {
         return;
       }
 
@@ -417,6 +426,10 @@ const Controller = (function () {
     },
 
     mouseover: function () {
+      if (!canApplyForLeave) {
+        return;
+      }
+
       if (document.body.classList.contains(CSS.mousedown)) {
         const dateThis = getDateFromElement(this);
         const dateSelected = new Date(view.getRootElement().dataset[DATA.selected]);
@@ -600,9 +613,10 @@ const Controller = (function () {
   };
 
   return {
-    create: function (_holidayService, _view) {
+    create: function (_holidayService, _view, _canApplyForLeave) {
       holidayService = _holidayService;
       view = _view;
+      canApplyForLeave = _canApplyForLeave;
       return Controller;
     },
   };
@@ -613,12 +627,12 @@ export const Calendar = (function () {
   let date;
 
   return {
-    init: function (rootElement, holidayService, referenceDate, i18n) {
+    init: function (rootElement, holidayService, referenceDate, i18n, { canApplyForLeave = false } = {}) {
       date = referenceDate;
 
       const assertions = Assertion.create();
-      view = View.create(rootElement, assertions, holidayService, i18n);
-      const controller = Controller.create(holidayService, view);
+      view = View.create(rootElement, assertions, holidayService, i18n, canApplyForLeave);
+      const controller = Controller.create(holidayService, view, canApplyForLeave);
 
       view.display(date);
       controller.bind();

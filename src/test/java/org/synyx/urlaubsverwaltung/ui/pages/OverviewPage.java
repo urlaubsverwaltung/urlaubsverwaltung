@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class OverviewPage {
 
     public static final Pattern URL_PATTERN = Pattern.compile("/web/person/\\d+/overview");
@@ -54,6 +56,24 @@ public class OverviewPage {
 
     public void clickDay(LocalDate date) {
         dayLocator(date).click();
+    }
+
+    /**
+     * Whether the given day of the calendar offers to apply for leave. A day is not selectable when the signed in user
+     * is not allowed to apply for leave for the person of this overview. Such a day does not invite a click, therefore
+     * it must not be rendered with a pointer cursor either.
+     */
+    public void assertDayIsNotSelectable(LocalDate date) {
+        assertThat(dayLocator(date)).hasCSS("cursor", "default");
+        assertThat(dayLocator(date)).hasAttribute("data-datepicker-selectable", "false");
+    }
+
+    /**
+     * A day the signed in user may act on - apply for leave or open the absence of that day - invites a click.
+     */
+    public void assertDayIsSelectable(LocalDate date) {
+        assertThat(dayLocator(date)).hasCSS("cursor", "pointer");
+        assertThat(dayLocator(date)).hasAttribute("data-datepicker-selectable", "true");
     }
 
     private Locator dayLocator(LocalDate date) {

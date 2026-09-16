@@ -265,11 +265,15 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(applications, year, workDaysCountService);
         }
 
+        final boolean allowedToApplyForPerson = applicationForLeavePermissionEvaluator.isAllowedToApplyForPerson(signedInUser, person);
+        final boolean personIsSignedInUser = person.equals(signedInUser);
+
         model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(
             applicationsForLeave,
             usedDaysOverview,
-            person.equals(signedInUser),
-            !person.equals(signedInUser) && applicationForLeavePermissionEvaluator.isAllowedToApplyForPerson(signedInUser, person),
+            allowedToApplyForPerson,
+            personIsSignedInUser,
+            !personIsSignedInUser && allowedToApplyForPerson,
             applicationsForLeave.size(),
             applications.size()
         ));

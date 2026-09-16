@@ -18,6 +18,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -38,6 +40,7 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -57,6 +60,7 @@ import static java.time.Month.MARCH;
 import static java.util.Locale.GERMAN;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -102,6 +106,8 @@ class OverviewCalendarUIIT {
     @Autowired
     private PersonService personService;
     @Autowired
+    private DepartmentService departmentService;
+    @Autowired
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
@@ -128,6 +134,7 @@ class OverviewCalendarUIIT {
 
         // Click on a day in the next month
         final LocalDate date = LocalDate.of(2022, MARCH, 15);
+        overviewPage.assertDayIsSelectable(date);
         overviewPage.clickDay(date);
 
         // Ensure navigation to ApplicationPage
@@ -170,6 +177,53 @@ class OverviewCalendarUIIT {
         navigationPage.logout();
     }
 
+
+    @Test
+    void departmentHeadWithoutApplicationAddCannotStartLeaveApplicationFromCalendarOfMember(Page page) {
+        page.clock().setFixedTime(clock.instant().toEpochMilli());
+
+        final Person departmentHead = createPerson("Lucius", "Fox", List.of(USER, DEPARTMENT_HEAD));
+        final Person member = createPerson("Barbara", "Gordon", List.of(USER));
+        createDepartment("Wayne Enterprises", departmentHead, member);
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+
+        loginPage.login(new LoginPage.Credentials(departmentHead.getEmail(), departmentHead.getEmail()));
+
+        page.waitForURL(OverviewPage.URL_PATTERN);
+
+        // the department head may see the overview of the member, but must not apply for leave for them
+        page.navigate("http://localhost:%d/web/person/%d/overview".formatted(port, member.getId()));
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(member.getNiceName(), FIXED_DATE.getYear()));
+
+        final LocalDate date = LocalDate.of(2022, MARCH, 15);
+        overviewPage.assertDayIsNotSelectable(date);
+
+        overviewPage.clickDay(date);
+
+        // still on the overview of the member, no application form was opened
+        assertThat(page).hasURL(Pattern.compile("/web/person/%d/overview$".formatted(member.getId())));
+
+        navigationPage.logout();
+    }
+
+    private Department createDepartment(String name, Person departmentHead, Person member) {
+
+        final Optional<Department> existingDepartment = departmentService.getAllDepartments().stream()
+            .filter(department -> department.getName().equals(name))
+            .findFirst();
+        if (existingDepartment.isPresent()) {
+            return existingDepartment.get();
+        }
+
+        final Department department = new Department();
+        department.setName(name);
+        department.setDepartmentHeads(List.of(departmentHead));
+        department.setMembers(List.of(member));
+        return departmentService.create(department);
+    }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
 

@@ -2,7 +2,7 @@ import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { personId, webPrefix, apiPrefix, i18n: i18nMessages } = globalThis.uv;
+  const { personId, webPrefix, apiPrefix, canApplyForLeave, i18n: i18nMessages } = globalThis.uv;
 
   const i18n = (key) => i18nMessages?.[key] ?? `/i18n:${key}/`;
   const getUrlParameter = (name) => new URL(globalThis.location).searchParams.get(name);
@@ -32,7 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await Promise.all(fetchPromises);
 
     const calendarParentElement = document.querySelector("#datepicker");
-    Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
+    Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n, {
+      canApplyForLeave: canApplyForLeave === true,
+    });
   };
 
   await initCalendar();

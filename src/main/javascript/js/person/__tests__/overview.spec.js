@@ -30,7 +30,7 @@ describe("person/overview", function () {
     };
   }
 
-  async function renderAndLoad({ i18n } = {}) {
+  async function renderAndLoad({ i18n, canApplyForLeave } = {}) {
     document.body.innerHTML = `<div id="datepicker"></div>`;
 
     const holidayServiceInstance = fakeHolidayService();
@@ -43,6 +43,7 @@ describe("person/overview", function () {
       webPrefix: "/web",
       apiPrefix: "/api",
       i18n,
+      canApplyForLeave,
     };
 
     document.dispatchEvent(new Event("DOMContentLoaded", { bubbles: true, cancelable: true }));
@@ -100,6 +101,29 @@ describe("person/overview", function () {
 
     const date = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][2];
     expect(date).toEqual(new Date(2024, 5, 15));
+  });
+
+  describe("canApplyForLeave", function () {
+    it("hands the permission to the calendar", async function () {
+      await renderAndLoad({ canApplyForLeave: true });
+
+      const options = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][4];
+      expect(options).toEqual({ canApplyForLeave: true });
+    });
+
+    it("hands a missing permission to the calendar", async function () {
+      await renderAndLoad({ canApplyForLeave: false });
+
+      const options = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][4];
+      expect(options).toEqual({ canApplyForLeave: false });
+    });
+
+    it("defaults to no permission when it is not configured at all", async function () {
+      await renderAndLoad({ canApplyForLeave: undefined });
+
+      const options = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][4];
+      expect(options).toEqual({ canApplyForLeave: false });
+    });
   });
 
   describe("i18n", function () {
