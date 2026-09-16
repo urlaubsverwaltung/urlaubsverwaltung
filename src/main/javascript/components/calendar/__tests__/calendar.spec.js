@@ -123,6 +123,152 @@ describe("calendar", () => {
     expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
   });
 
+  describe("when the signed in user is not allowed to apply for leave for the person", () => {
+    it("does not redirect to new application when clicking on an empty day", async () => {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      holidayService.bookHoliday = vi.fn();
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService, { canApplyForLeave: false });
+
+      const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      expect(someDay).toBeTruthy();
+      someDay.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      someDay.click();
+
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+    });
+
+    it("renders an empty day as not selectable", async () => {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService, { canApplyForLeave: false });
+
+      const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      expect(someDay.dataset.datepickerSelectable).toBe("false");
+    });
+
+    it("does not select days when dragging over the calendar", async () => {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService, { canApplyForLeave: false });
+
+      const dayFrom = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      const dayTo = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-18"]`);
+      dayFrom.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      dayTo.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+
+      expect(document.querySelectorAll(`.datepicker-day-selected`)).toHaveLength(0);
+    });
+
+    it("still marks a day with an absence as selectable", async () => {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [
+            {
+              date: "2017-12-15",
+              absenceType: "VACATION",
+              id: 1337,
+              absent: "FULL",
+              absentNumeric: 1,
+              status: "ALLOWED",
+              typeId: 1,
+            },
+          ],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService, { canApplyForLeave: false });
+
+      // the day leads to the absence, therefore it stays clickable and keeps the pointer cursor
+      const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      expect(someDay.dataset.datepickerSelectable).toBe("true");
+    });
+
+    it("still redirects to an existing application when clicking on a day with an absence", async () => {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [
+            {
+              date: "2017-12-15",
+              absenceType: "VACATION",
+              id: 1337,
+              absent: "FULL",
+              absentNumeric: 1,
+              status: "ALLOWED",
+              typeId: 1,
+            },
+          ],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      holidayService.navigateToApplicationForLeave = vi.fn();
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService, { canApplyForLeave: false });
+
+      const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      expect(someDay).toBeTruthy();
+      someDay.click();
+
+      expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
+    });
+  });
+
   describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
     "ensure correct rendering when clicking %s ",
     (buttonSelector) => {
@@ -502,7 +648,7 @@ describe("calendar", () => {
     return globalThis.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
   }
 
-  function renderCalendar(holidayService) {
+  function renderCalendar(holidayService, { canApplyForLeave = true } = {}) {
     // note: Date is mocked in calendarTestSetup to return a fixed date value
     const referenceDate = new Date();
     const i18n = (messageKey) => `i18n:${messageKey}`;
@@ -511,6 +657,7 @@ describe("calendar", () => {
       holidayService,
       referenceDate,
       i18n,
+      { canApplyForLeave },
     );
   }
 
