@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
@@ -94,6 +95,8 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad, HasPers
                                     @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
                                     Model model) {
 
+        dropRemovedAbsenceTypes(settingsDto);
+
         final AbsenceTypeSettingsItemDto newAbsenceType = new AbsenceTypeSettingsItemDto();
         newAbsenceType.setActive(false);
         newAbsenceType.setLabel(null);
@@ -130,6 +133,8 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad, HasPers
     @PreAuthorize(IS_OFFICE)
     public String settingsSaved(@Valid @ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
+
+        dropRemovedAbsenceTypes(settingsDto);
 
         validator.validate(settingsDto, errors);
 
@@ -178,6 +183,27 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad, HasPers
     private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
         final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = specialLeaveSettingsService.getSpecialLeaveSettings();
         return SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsDto(specialLeaveSettingsItems);
+    }
+
+    /**
+     * An absence type that has not been persisted yet can be removed in the browser without a round trip - its
+     * row simply disappears. That leaves a gap in the indexed request parameters (e.g.
+     * {@code absenceTypeSettings.items[1]}) which the data binder materialises as an empty item. Drop those.
+     *
+     * <p>A row that was rendered but left blank always posts its label translations, so it survives this filter
+     * and is still rejected by the validator.</p>
+     */
+    private static void dropRemovedAbsenceTypes(SettingsAbsenceTypesDto settingsDto) {
+        final AbsenceTypeSettingsDto absenceTypeSettings = settingsDto.getAbsenceTypeSettings();
+        absenceTypeSettings.setItems(
+            absenceTypeSettings.getItems().stream()
+                .filter(not(SettingsAbsenceTypesViewController::isRemovedAbsenceType))
+                .toList()
+        );
+    }
+
+    private static boolean isRemovedAbsenceType(AbsenceTypeSettingsItemDto item) {
+        return item.getId() == null && item.getLabels() == null;
     }
 
     private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {

@@ -99,6 +99,52 @@ describe("absence-types", function () {
     expect(document.querySelector("li:nth-child(1)").dataset.enabled).toBe("false");
   });
 
+  it("removes the absence type row of the clicked remove button", async function () {
+    await setupHtml(`
+      <ul id="absence-type-list">
+        <li id="absence-type-0">
+          <button type="button" data-absence-type-remove data-test-id="remove-0">remove</button>
+        </li>
+        <li id="absence-type-1">
+          <button type="button" data-absence-type-remove data-test-id="remove-1">remove</button>
+        </li>
+      </ul>
+      <button data-test-id="add-absence-type-button">add</button>
+    `);
+
+    document.querySelector("[data-test-id=remove-0]").click();
+
+    expect(document.querySelector("#absence-type-0")).toBeNull();
+    expect(document.querySelector("#absence-type-1")).not.toBeNull();
+  });
+
+  it("moves focus to the add button after removing a row", async function () {
+    await setupHtml(`
+      <ul id="absence-type-list">
+        <li id="absence-type-0">
+          <button type="button" data-absence-type-remove data-test-id="remove-0">remove</button>
+        </li>
+      </ul>
+      <button data-test-id="add-absence-type-button">add</button>
+    `);
+
+    document.querySelector("[data-test-id=remove-0]").click();
+
+    expect(document.activeElement).toBe(document.querySelector("[data-test-id=add-absence-type-button]"));
+  });
+
+  it("keeps a row that has no remove button", async function () {
+    await setupHtml(`
+      <ul id="absence-type-list">
+        <li id="absence-type-0"><span>Erholungsurlaub</span></li>
+      </ul>
+    `);
+
+    document.querySelector("#absence-type-0 span").click();
+
+    expect(document.querySelector("#absence-type-0")).not.toBeNull();
+  });
+
   async function setupHtml(html) {
     document.body.innerHTML = html;
     await import("../absence-types");

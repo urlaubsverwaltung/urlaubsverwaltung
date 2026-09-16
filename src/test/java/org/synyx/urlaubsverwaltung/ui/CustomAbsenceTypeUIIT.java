@@ -137,6 +137,36 @@ class CustomAbsenceTypeUIIT {
         navigationPage.logout();
     }
 
+    @Test
+    void ensureUnsavedCustomVacationTypeCanBeRemoved(Page page) {
+
+        final Person person = createPerson("eGrant", "Elena", List.of(USER, OFFICE));
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
+
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+
+        navigationPage.settingsMenu.clickAbsenceTypes();
+        settingsAbsenceTypesPage.waitForVisible();
+
+        final int vacationTypesBefore = settingsAbsenceTypesPage.vacationTypes().count();
+
+        settingsAbsenceTypesPage.addNewVacationType();
+        assertThat(settingsAbsenceTypesPage.vacationTypes()).hasCount(vacationTypesBefore + 1);
+
+        // removing the row happens in the browser, without a round trip
+        settingsAbsenceTypesPage.removeVacationType(settingsAbsenceTypesPage.lastVacationType());
+        assertThat(settingsAbsenceTypesPage.vacationTypes()).hasCount(vacationTypesBefore);
+
+        // this is the regression of #4517: the blank row used to make the form unsavable
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        assertThat(settingsAbsenceTypesPage.saveSuccessFeedback()).isVisible();
+
+        navigationPage.logout();
+    }
+
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
 
         final String email = "%s.%s@example.org".formatted(trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
