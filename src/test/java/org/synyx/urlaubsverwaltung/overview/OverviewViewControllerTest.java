@@ -981,6 +981,76 @@ class OverviewViewControllerTest {
     }
 
     @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveWhenPersonEqualsSignedInUser() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/1/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeave()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCanAddApplicationForLeaveWhenDepartmentHeadAndApplicationAdd() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeave()).isTrue();
+    }
+
+    @Test
+    void ensureApplicationOverviewCannotAddApplicationForLeaveWhenDepartmentHeadWithoutApplicationAdd() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(Collections.emptyList());
+
+        final ResultActions actions = perform(get("/web/person/2/overview"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final ApplicationOverviewDto applicationOverview = (ApplicationOverviewDto) mav.getModel().get("applicationOverviewInformation");
+        assertThat(applicationOverview).isNotNull();
+        assertThat(applicationOverview.canAddApplicationForLeave()).isFalse();
+    }
+
+    @Test
     void ensureApplicationOverviewCanAddForMyselfIsFalseWhenViewingAnotherPerson() throws Exception {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
