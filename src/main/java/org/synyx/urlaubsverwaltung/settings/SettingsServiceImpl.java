@@ -17,7 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Service
 @EnableConfigurationProperties(OvertimeProperties.class)
-public class SettingsServiceImpl implements SettingsService {
+class SettingsServiceImpl implements SettingsService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -27,7 +27,7 @@ public class SettingsServiceImpl implements SettingsService {
     private final SettingsCache settingsCache;
 
     @Autowired
-    public SettingsServiceImpl(
+    SettingsServiceImpl(
         SettingsRepository settingsRepository,
         OvertimeProperties overtimeProperties,
         ApplicationEventPublisher applicationEventPublisher,
