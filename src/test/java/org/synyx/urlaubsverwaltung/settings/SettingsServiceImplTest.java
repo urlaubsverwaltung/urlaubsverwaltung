@@ -203,6 +203,24 @@ class SettingsServiceImplTest {
     }
 
     @Test
+    void ensureSaveDropsTheCachedSettingsEvenWhenWritingFails() {
+
+        when(settingsRepository.findAll()).thenAnswer(invocation -> {
+            final Settings settingsFromDatabase = new Settings();
+            settingsFromDatabase.getOvertimeSettings().setOvertimeActive(false);
+            return List.of(settingsFromDatabase);
+        });
+        when(settingsRepository.save(any(Settings.class))).thenThrow(new RuntimeException("database is gone"));
+
+        final Settings settings = sut.getSettings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+
+        assertThatThrownBy(() -> sut.save(settings)).isInstanceOf(RuntimeException.class);
+
+        assertThat(sut.getSettings().getOvertimeSettings().isOvertimeActive()).isFalse();
+    }
+
+    @Test
     void ensureOvertimeSettingsActivatedEventIsFiredWhenTheCallerModifiedSettingsThatWereCachedBefore() {
 
         when(settingsRepository.findAll()).thenAnswer(invocation -> {
