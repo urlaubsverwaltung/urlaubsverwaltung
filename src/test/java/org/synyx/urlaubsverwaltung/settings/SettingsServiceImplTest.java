@@ -10,8 +10,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsActivatedEvent;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsDeactivatedEvent;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantId;
 
+import java.time.Clock;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,9 +35,17 @@ class SettingsServiceImplTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
+    private final TenantContextHolder tenantContextHolder = new TenantContextHolder() {
+        @Override
+        public Optional<TenantId> getCurrentTenantId() {
+            return Optional.of(new TenantId("default"));
+        }
+    };
+
     @BeforeEach
     void setUp() {
-        sut = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(), applicationEventPublisher);
+        sut = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(), applicationEventPublisher,
+            new SettingsCache(tenantContextHolder, Clock.systemUTC()));
     }
 
     @Test
@@ -81,7 +94,8 @@ class SettingsServiceImplTest {
         final OvertimeProperties overtimeProperties = new OvertimeProperties();
         overtimeProperties.setSyncActive(true);
 
-        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, overtimeProperties, applicationEventPublisher);
+        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, overtimeProperties,
+            applicationEventPublisher, new SettingsCache(tenantContextHolder, Clock.systemUTC()));
         settingsService.insertDefaultSettings();
 
         verify(settingsRepository).save(settingsArgumentCaptor.capture());
@@ -95,7 +109,8 @@ class SettingsServiceImplTest {
 
         final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
 
-        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(), applicationEventPublisher);
+        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(),
+            applicationEventPublisher, new SettingsCache(tenantContextHolder, Clock.systemUTC()));
         settingsService.insertDefaultSettings();
 
         verify(settingsRepository).save(settingsArgumentCaptor.capture());
@@ -151,5 +166,57 @@ class SettingsServiceImplTest {
 
         verify(applicationEventPublisher, never()).publishEvent(any(OvertimeSettingsActivatedEvent.class));
         verify(applicationEventPublisher, never()).publishEvent(any(OvertimeSettingsDeactivatedEvent.class));
+    }
+
+    @Test
+    void ensureGetSettingsLoadsFromTheDatabaseOnlyOnce() {
+
+        final Settings settings = new Settings();
+        when(settingsRepository.findAll()).thenReturn(List.of(settings));
+
+        final Settings firstSettings = sut.getSettings();
+        final Settings secondSettings = sut.getSettings();
+
+        assertThat(firstSettings).isSameAs(settings);
+        assertThat(secondSettings).isSameAs(settings);
+        verify(settingsRepository).findAll();
+    }
+
+    @Test
+    void ensureSaveInvalidatesTheCachedSettings() {
+
+        final Settings oldSettings = new Settings();
+        final Settings newSettings = new Settings();
+
+        final AtomicReference<Settings> databaseRow = new AtomicReference<>(oldSettings);
+        when(settingsRepository.findAll()).thenAnswer(invocation -> List.of(databaseRow.get()));
+        when(settingsRepository.save(newSettings)).thenAnswer(invocation -> {
+            databaseRow.set(invocation.getArgument(0));
+            return invocation.getArgument(0);
+        });
+
+        assertThat(sut.getSettings()).isSameAs(oldSettings);
+
+        sut.save(newSettings);
+
+        assertThat(sut.getSettings()).isSameAs(newSettings);
+    }
+
+    @Test
+    void ensureOvertimeSettingsActivatedEventIsFiredWhenTheCallerModifiedSettingsThatWereCachedBefore() {
+
+        when(settingsRepository.findAll()).thenAnswer(invocation -> {
+            final Settings settingsFromDatabase = new Settings();
+            settingsFromDatabase.getOvertimeSettings().setOvertimeActive(false);
+            return List.of(settingsFromDatabase);
+        });
+        when(settingsRepository.save(any(Settings.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final Settings settings = sut.getSettings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+
+        sut.save(settings);
+
+        verify(applicationEventPublisher).publishEvent(any(OvertimeSettingsActivatedEvent.class));
     }
 }
