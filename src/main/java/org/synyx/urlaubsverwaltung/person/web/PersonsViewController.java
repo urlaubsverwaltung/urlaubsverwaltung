@@ -23,10 +23,12 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonPageable;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -261,6 +263,8 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
         final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, Year.of(year), holidaysAccountsNextYear);
 
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(persons.stream().map(Person::getId).toList());
+
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
@@ -299,7 +303,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
                 .initials(person.getInitials())
                 .lastName(lastName);
 
-            personBasedataService.getBasedataByPersonId(person.getId())
+            Optional.ofNullable(basedataByPersonId.get(person.getIdAsPersonId()))
                 .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.personnelNumber()));
 
             if (departmentSelected) {

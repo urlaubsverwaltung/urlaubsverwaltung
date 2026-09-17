@@ -766,7 +766,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
         when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
-        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(new PersonId(2L), "42", null)));
+        when(personBasedataService.getBasedataByPersonId(List.of(2L, 3L))).thenReturn(Map.of(new PersonId(2L), new PersonBasedata(new PersonId(2L), "42", null)));
 
         perform(get("/web/person"))
             .andExpect(
