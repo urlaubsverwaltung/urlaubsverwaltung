@@ -17,31 +17,39 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Service
 @EnableConfigurationProperties(OvertimeProperties.class)
-public class SettingsServiceImpl implements SettingsService {
+class SettingsServiceImpl implements SettingsService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsRepository settingsRepository;
     private final OvertimeProperties overtimeProperties;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final SettingsCache settingsCache;
 
     @Autowired
-    public SettingsServiceImpl(
+    SettingsServiceImpl(
         SettingsRepository settingsRepository,
         OvertimeProperties overtimeProperties,
-        ApplicationEventPublisher applicationEventPublisher
+        ApplicationEventPublisher applicationEventPublisher,
+        SettingsCache settingsCache
     ) {
         this.settingsRepository = settingsRepository;
         this.overtimeProperties = overtimeProperties;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.settingsCache = settingsCache;
     }
 
     @Override
     public Settings save(Settings settings) {
 
-        final boolean previousOvertimeActive = getSettings().getOvertimeSettings().isOvertimeActive();
+        // first, so that nothing below can leave settings modified by the caller in the cache
+        settingsCache.invalidate();
+
+        // not from the cache - the caller may have modified the instance it read from there
+        final boolean previousOvertimeActive = loadSettings().getOvertimeSettings().isOvertimeActive();
 
         final Settings savedSettings = settingsRepository.save(settings);
+        settingsCache.invalidate();
         LOG.info("Updated settings: {}", savedSettings);
 
         publishOvertimeSettingsChangeEvent(previousOvertimeActive, savedSettings);
@@ -60,8 +68,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Settings getSettings() {
-        return settingsRepository.findAll().stream().findFirst()
-            .orElseThrow(() -> new IllegalStateException("No settings found in database!"));
+        return settingsCache.get(this::loadSettings);
     }
 
     @Override
@@ -75,8 +82,14 @@ public class SettingsServiceImpl implements SettingsService {
             settings.getOvertimeSettings().setOvertimeSyncActive(overtimeProperties.isSyncActive());
 
             final Settings savedSettings = settingsRepository.save(settings);
+            settingsCache.invalidate();
             applicationEventPublisher.publishEvent(new InitialDefaultSettingsSavedEvent());
             LOG.info("Saved initial settings {}", savedSettings);
         }
+    }
+
+    private Settings loadSettings() {
+        return settingsRepository.findAll().stream().findFirst()
+            .orElseThrow(() -> new IllegalStateException("No settings found in database!"));
     }
 }
