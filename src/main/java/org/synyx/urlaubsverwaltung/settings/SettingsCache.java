@@ -61,9 +61,15 @@ class SettingsCache {
         final long invalidationsBeforeLoad = invalidations.get();
         final Settings settings = loader.get();
 
-        // an invalidation during the load means these settings are already stale - hand them out, but do not cache them
-        if (invalidations.get() == invalidationsBeforeLoad) {
-            cache.put(tenantId, new CachedSettings(settings, now));
+        // cached first and dropped again afterwards, never the other way around: an invalidation either bumps the
+        // counter before the check below, or it removes the entry that was put here - checking before the put would
+        // leave a window in which neither happens and these already stale settings stay cached
+        final CachedSettings loadedSettings = new CachedSettings(settings, now);
+        cache.put(tenantId, loadedSettings);
+
+        if (invalidations.get() != invalidationsBeforeLoad) {
+            // compared by identity, so that settings another thread cached meanwhile survive
+            cache.computeIfPresent(tenantId, (tenant, cached) -> cached == loadedSettings ? null : cached);
         }
 
         return settings;
