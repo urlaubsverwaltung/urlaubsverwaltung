@@ -149,6 +149,24 @@ class SettingsCacheTest {
         assertThat(loader.count()).isOne();
     }
 
+    @Test
+    void ensureSettingsLoadedBeforeAnInvalidationAreNotCached() {
+
+        final SettingsCache sut = new SettingsCache(new TestTenantContextHolder("default"), clock);
+        final CountingLoader loader = new CountingLoader();
+
+        // a write lands while these settings are being loaded
+        final Settings staleSettings = sut.get(() -> {
+            sut.invalidate();
+            return loader.get();
+        });
+
+        final Settings freshSettings = sut.get(loader);
+
+        assertThat(freshSettings).isNotSameAs(staleSettings);
+        assertThat(loader.count()).isEqualTo(2);
+    }
+
     private static final class CountingLoader implements Supplier<Settings> {
 
         private final AtomicInteger count = new AtomicInteger();

@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 /**
@@ -27,6 +28,10 @@ class SettingsCache {
     private final TenantContextHolder tenantContextHolder;
     private final Clock clock;
     private final Map<TenantId, CachedSettings> cache = new ConcurrentHashMap<>();
+
+    // intentionally global rather than per tenant: a write for one tenant may then suppress
+    // another tenant's concurrent cache fill, which only costs one extra load
+    private final AtomicLong invalidations = new AtomicLong();
 
     SettingsCache(TenantContextHolder tenantContextHolder, Clock clock) {
         this.tenantContextHolder = tenantContextHolder;
@@ -53,8 +58,13 @@ class SettingsCache {
             return cachedSettings.settings();
         }
 
+        final long invalidationsBeforeLoad = invalidations.get();
         final Settings settings = loader.get();
-        cache.put(tenantId, new CachedSettings(settings, now));
+
+        // an invalidation during the load means these settings are already stale - hand them out, but do not cache them
+        if (invalidations.get() == invalidationsBeforeLoad) {
+            cache.put(tenantId, new CachedSettings(settings, now));
+        }
 
         return settings;
     }
@@ -63,6 +73,7 @@ class SettingsCache {
      * Drops the cached settings of the current tenant.
      */
     void invalidate() {
+        invalidations.incrementAndGet();
         tenantContextHolder.getCurrentTenantId().ifPresent(cache::remove);
     }
 
