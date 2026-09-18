@@ -202,7 +202,7 @@
                 >
                   <div
                     class="cal-day"
-                    th:classappend="|${day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${day.workday ? '' : ' no-workday'}|"
+                    th:classappend="|${day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${day.type.blackoutPeriod ? ' blackout-period' : ''}${day.workday ? '' : ' no-workday'}|"
                   >
                     <div th:if="${not day.workday}" class="no-workday-marker" aria-hidden="true">
                       <svg th:replace="~{icon/slash::svg(className='no-workday-icon w-5 h-5 -translate-y-px')}"></svg>
@@ -297,6 +297,12 @@
                   <div class="cal-day public-holiday-full"></div>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="#{absences.overview.public-holiday}"></td>
+              </tr>
+              <tr>
+                <td class="vacationOverview-legend-colorbox">
+                  <div class="cal-day blackout-period"></div>
+                </td>
+                <td class="vacationOverview-legend-text" th:text="#{absences.overview.blackout-period}"></td>
               </tr>
               <tr>
                 <td class="vacationOverview-legend-colorbox">

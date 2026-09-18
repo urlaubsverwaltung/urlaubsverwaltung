@@ -1,0 +1,200 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title
+      th:with="blackoutPeriodTitleMessageKey=${blackoutPeriod.id == null ? 'blackoutperiod.data.header.title.new' : 'blackoutperiod.data.header.title.edit'}"
+      th:text="#{__${blackoutPeriodTitleMessageKey}__(${blackoutPeriod.title})}"
+    ></title>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        /*]]>*/
+      </script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('blackout_period_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="blackout_period_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <form
+        method="post"
+        th:with="action=${blackoutPeriod.id == null ? '/web/blackoutperiod/new' : '/web/blackoutperiod/' + blackoutPeriod.id}"
+        th:action="@{__${action}__}"
+        th:object="${blackoutPeriod}"
+        class="uv-form uv-form-grid"
+      >
+        <button type="submit" class="hidden"></button>
+        <input type="hidden" th:field="*{id}" />
+        <input th:if="${confirmRequired}" type="hidden" name="confirm" value="true" />
+
+        <p
+          class="uv-form__global-feedback alert alert-danger"
+          th:if="${#fields.hasGlobalErrors()}"
+          th:errors="*{global}"
+        ></p>
+
+        <div
+          role="group"
+          aria-describedby="group-blackoutperiod-data-description"
+          th:with="blackoutPeriodTitleMessageKey=${blackoutPeriod.id == null ? 'blackoutperiod.data.header.title.new' : 'blackoutperiod.data.header.title.edit'}"
+        >
+          <h2
+            id="group-blackoutperiod-data-description"
+            class="uv-form-legend"
+            th:text="#{__${blackoutPeriodTitleMessageKey}__(${blackoutPeriod.title})}"
+          >
+            Urlaubssperre
+          </h2>
+
+          <div class="uv-form__group">
+            <th:block th:if="${confirmRequired}">
+              <div class="uv-form__group-error alert alert-danger text-sm">
+                <p th:text="#{blackoutperiod.conflict.warning}"></p>
+                <ul>
+                  <li th:each="conflict : ${conflictingApplications}">
+                    <th:block th:text="${conflict.personName}"></th:block>:
+                    <th:block th:text="${{conflict.startDate}}"></th:block>
+                    &ndash;
+                    <th:block th:text="${{conflict.endDate}}"></th:block>
+                    (<th:block th:text="${conflict.vacationTypeLabel}"></th:block>)
+                  </li>
+                </ul>
+              </div>
+            </th:block>
+
+            <div class="uv-form__input-row">
+              <label for="title" class="is-required" th:text="|#{blackoutperiod.data.title}:|"> Titel </label>
+              <input id="title" type="text" th:field="*{title}" th:errorclass="error" />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('title')}">
+                <th:block th:errors="*{title}"> title Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="startDate" class="is-required" th:text="|#{blackoutperiod.data.startDate}:|"> Beginn </label>
+              <input
+                id="startDate"
+                th:field="*{startDate}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                autocomplete="off"
+                th:data-iso-value="${blackoutPeriod.startDateIsoValue}"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
+                <th:block th:errors="*{startDate}"> startDate Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="endDate" class="is-required" th:text="|#{blackoutperiod.data.endDate}:|"> Ende </label>
+              <input
+                id="endDate"
+                th:field="*{endDate}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                autocomplete="off"
+                th:data-iso-value="${blackoutPeriod.endDateIsoValue}"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
+                <th:block th:errors="*{endDate}"> endDate Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-blackoutperiod-departments-description">
+          <h2
+            id="group-blackoutperiod-departments-description"
+            class="uv-form-legend"
+            th:text="#{blackoutperiod.data.departments}"
+          >
+            Abteilungen
+          </h2>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span th:text="#{blackoutperiod.data.departments.description}"></span>
+            </p>
+
+            <p th:if="${#lists.isEmpty(departmentOptions)}" th:text="#{blackoutperiod.data.departments.none}"></p>
+
+            <ul th:unless="${#lists.isEmpty(departmentOptions)}" class="flex flex-col gap-1">
+              <li th:each="departmentOption : ${departmentOptions}">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="departmentIds"
+                    th:value="${departmentOption.id}"
+                    th:checked="${departmentOption.selected}"
+                  />
+                  <th:block th:text="${departmentOption.label}"></th:block>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-blackoutperiod-vacationtypes-description">
+          <h2
+            id="group-blackoutperiod-vacationtypes-description"
+            class="uv-form-legend"
+            th:text="#{blackoutperiod.data.vacationTypes}"
+          >
+            Urlaubsarten
+          </h2>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span th:text="#{blackoutperiod.data.vacationTypes.description}"></span>
+            </p>
+
+            <ul class="flex flex-col gap-1">
+              <li th:each="vacationTypeOption : ${vacationTypeOptions}">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="vacationTypeIds"
+                    th:value="${vacationTypeOption.id}"
+                    th:checked="${vacationTypeOption.selected}"
+                  />
+                  <th:block th:text="${vacationTypeOption.label}"></th:block>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button
+              type="submit"
+              class="button-main-green w-56"
+              th:text="${confirmRequired} ? #{blackoutperiod.conflict.confirm} : #{action.save}"
+            >
+              Speichern
+            </button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
+      </form>
+    </main>
+  </body>
+</html>
