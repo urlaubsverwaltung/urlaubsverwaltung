@@ -32,5 +32,6 @@
   <include relativeToChangelogFile="true" file="changelog-6.14.0-restore-sick-note-accepted-notification.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.15.0-remaining-vacation-days-management-notifications.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.17.0-add-index-for-username-ignore-case.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.11.0-add-blackout-period.xml"/>
 
 </databaseChangeLog>
