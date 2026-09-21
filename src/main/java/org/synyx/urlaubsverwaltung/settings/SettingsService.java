@@ -14,10 +14,6 @@ public interface SettingsService {
     Settings save(Settings settings);
 
     /**
-     * Returns the settings of the application. The settings are cached in memory, so the returned
-     * instance is shared: modify it only to pass it to {@link #save(Settings)} right away, which
-     * drops the cached settings.
-     *
      * @return settings for the application
      */
     Settings getSettings();
