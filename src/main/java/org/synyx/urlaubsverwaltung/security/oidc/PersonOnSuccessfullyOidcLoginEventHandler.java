@@ -51,6 +51,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             optionalPerson = personService.getPersonByMailAddress(emailAddress);
         }
 
+        final Person person;
         if (optionalPerson.isPresent()) {
 
             final Person existentPerson = optionalPerson.get();
@@ -60,13 +61,16 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
                     "person lookup. Existing username '{}' is replaced with '{}'.", existentPerson.getUsername(), userUniqueID);
             }
 
-            personService.update(existentPerson.getIdAsPersonId(),
+            person = personService.update(existentPerson.getIdAsPersonId(),
                 PersonUpdate.ofPersonalData(userUniqueID, firstName, lastName, emailAddress));
 
         } else {
-            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
-            personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            person = personService.create(userUniqueID, firstName, lastName, emailAddress);
         }
+
+        // not only on creation: the person signing in could have been provisioned beforehand,
+        // e.g. via the person api, while nobody holds the office role yet.
+        personService.appointAsOfficeUserIfNoOfficeUserPresent(person);
     }
 
     private String extractIdentifier(OidcUser oidcUser) {

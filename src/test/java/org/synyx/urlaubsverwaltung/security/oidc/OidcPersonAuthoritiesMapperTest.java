@@ -26,6 +26,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
@@ -82,6 +84,7 @@ class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(new Person()));
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER");
@@ -103,9 +106,50 @@ class OidcPersonAuthoritiesMapperTest {
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
         when(personService.getPersonByMailAddress(email)).thenReturn(person);
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(new Person()));
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER");
+    }
+
+    @Test
+    void ensureExistingPersonGetsOfficeRoleIfNoOfficeUserIsPresent() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        // person was provisioned before anybody signed in, nobody holds the office role yet
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of(USER));
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(personForLogin));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of());
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), OFFICE.name(), "OIDC_USER");
+    }
+
+    @Test
+    void ensureExistingOfficeUserDoesNotTriggerALookupForOtherOfficeUsers() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(personForLogin));
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), OFFICE.name(), "OIDC_USER");
+        verify(personService, never()).getActivePersonsByRole(OFFICE);
     }
 
     @Test

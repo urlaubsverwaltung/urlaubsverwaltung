@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -160,6 +161,36 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
                 new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
+        }
+
+        @Test
+        void ensureExistingPersonIsAppointedAsOfficeUser() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email
+            ));
+
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+
+            final Person updatedPerson = new Person(uniqueID, familyName, givenName, email);
+            updatedPerson.setId(1L);
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
+            when(personService.update(eq(new PersonId(1L)), any(PersonUpdate.class))).thenReturn(updatedPerson);
+
+            sut.handle(event);
+
+            // the person could have been provisioned before anybody logged in, so the office role
+            // has to be granted on an update as well - not only when the person is created
+            verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(updatedPerson);
         }
     }
 

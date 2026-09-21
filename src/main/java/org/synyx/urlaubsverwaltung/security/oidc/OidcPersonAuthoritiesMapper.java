@@ -51,20 +51,34 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
-        return resolvePerson(oidcUserAuthority)
-            .map(this::extractPermissions).orElseGet(this::generateListOfRoles)
+
+        final Collection<Role> permissions = resolvePerson(oidcUserAuthority)
+            .map(this::extractPermissions)
+            .orElseGet(() -> List.of(USER));
+
+        return withOfficeRoleIfNoOfficeUserPresent(permissions)
             .stream()
             .map(Role::name)
             .map(SimpleGrantedAuthority::new)
             .toList();
     }
 
+    /**
+     * The person signing in is appointed as office user when there is no active office user, see
+     * {@link PersonService#appointAsOfficeUserIfNoOfficeUserPresent(Person)}. Authorities are mapped
+     * before the person is created or updated, therefore the office role has to be anticipated here.
+     * Otherwise the person would have to sign in a second time to make use of it.
+     *
+     * @param permissions of the person signing in, or {@link Role#USER} if the person does not exist yet
+     * @return the given permissions, with {@link Role#OFFICE} added if no active office user is present
+     */
+    private Collection<Role> withOfficeRoleIfNoOfficeUserPresent(Collection<Role> permissions) {
 
-    private List<Role> generateListOfRoles() {
-        if (personService.getActivePersonsByRole(OFFICE).isEmpty()) {
-            return List.of(OFFICE, USER);
+        if (permissions.contains(OFFICE) || !personService.getActivePersonsByRole(OFFICE).isEmpty()) {
+            return permissions;
         }
-        return List.of(USER);
+
+        return Stream.concat(Stream.of(OFFICE), permissions.stream()).toList();
     }
 
     private Collection<Role> extractPermissions(Person person) {
