@@ -6,20 +6,16 @@ import org.springframework.stereotype.Service;
 public class SettingsImportService {
 
     private final SettingsRepository settingsRepository;
-    private final SettingsCache settingsCache;
 
-    public SettingsImportService(SettingsRepository settingsRepository, SettingsCache settingsCache) {
+    public SettingsImportService(SettingsRepository settingsRepository) {
         this.settingsRepository = settingsRepository;
-        this.settingsCache = settingsCache;
     }
 
     public void deleteAll() {
         settingsRepository.deleteAll();
-        settingsCache.invalidate();
     }
 
     public void importSettings(Settings settings) {
         settingsRepository.save(settings);
-        settingsCache.invalidate();
     }
 }
