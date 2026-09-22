@@ -949,7 +949,7 @@ class PersonsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/person"));
         final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
 
-        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().getFirst();
         assertThat(personOptgroup.labelMessageKey()).isEqualTo("persons.sort.optgroup.person.label");
     }
 
@@ -994,7 +994,7 @@ class PersonsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/person"));
         final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
 
-        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().getFirst();
         final List<HtmlOptionDto> options = personOptgroup.options();
 
         assertThat(options).hasSize(4);
@@ -1076,7 +1076,7 @@ class PersonsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/person"));
         final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
 
-        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().getFirst();
         final List<HtmlOptionDto> options = personOptgroup.options();
 
         assertThat(options.get(0).selected()).isTrue();
@@ -1097,7 +1097,7 @@ class PersonsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/person").param("sort", "person.firstName,DESC"));
         final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
 
-        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().getFirst();
         final List<HtmlOptionDto> options = personOptgroup.options();
 
         assertThat(options.get(0).selected()).isFalse();
@@ -1117,7 +1117,7 @@ class PersonsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/person").param("sort", "person.lastName,ASC"));
         final HtmlSelectDto htmlSelectDto = extractSortSelect(resultActions);
 
-        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = htmlSelectDto.optgroups().getFirst();
         final List<HtmlOptionDto> options = personOptgroup.options();
 
         assertThat(options.get(2).selected()).isTrue();

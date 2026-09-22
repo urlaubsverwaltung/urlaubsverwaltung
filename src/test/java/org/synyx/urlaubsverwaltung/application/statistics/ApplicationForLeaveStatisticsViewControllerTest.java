@@ -276,7 +276,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         assertThat(statistics).hasSize(1);
 
-        final ApplicationForLeaveStatisticsDto dto = statistics.get(0);
+        final ApplicationForLeaveStatisticsDto dto = statistics.getFirst();
         assertThat(dto).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
         assertThat(dto.getFirstName()).isEqualTo("Firstname");
         assertThat(dto.getLastName()).isEqualTo("Lastname");
@@ -315,8 +315,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
 
         assertThat(statistics).hasSize(1);
-        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
-        assertThat(statistics.get(0).getFirstName()).isEqualTo("Max");
+        assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.getFirst().getFirstName()).isEqualTo("Max");
     }
 
     @ParameterizedTest
@@ -345,8 +345,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
 
         assertThat(statistics).hasSize(1);
-        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
-        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
+        assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.getFirst().getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -377,8 +377,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
 
         assertThat(statistics).hasSize(1);
-        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
-        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
+        assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.getFirst().getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -407,8 +407,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
 
         assertThat(statistics).hasSize(1);
-        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
-        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
+        assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.getFirst().getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -439,8 +439,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         @SuppressWarnings("unchecked") final List<ApplicationForLeaveStatisticsDto> statistics = (List<ApplicationForLeaveStatisticsDto>) resultActions.andReturn().getModelAndView().getModel().get("statistics");
 
         assertThat(statistics).hasSize(1);
-        assertThat(statistics.get(0)).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
-        assertThat(statistics.get(0).getFirstName()).isEqualTo("John");
+        assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
+        assertThat(statistics.getFirst().getFirstName()).isEqualTo("John");
     }
 
     @ParameterizedTest
@@ -704,7 +704,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get(givenRequestUrl));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
-        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().getFirst();
 
         assertThat(personOptgroup.labelMessageKey()).isEqualTo("applications.sort.optgroup.person.label");
 
@@ -809,7 +809,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("sort", "person.firstName,ASC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
-        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().getFirst();
 
         final HtmlOptionDto selectedOption = personOptgroup.options().stream()
             .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.firstName.asc"))
@@ -841,7 +841,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("sort", "person.lastName,DESC"));
 
         final HtmlSelectDto sortSelect = (HtmlSelectDto) resultActions.andReturn().getModelAndView().getModel().get("sortSelect");
-        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().get(0);
+        final HtmlOptgroupDto personOptgroup = sortSelect.optgroups().getFirst();
 
         final HtmlOptionDto selectedOption = personOptgroup.options().stream()
             .filter(opt -> opt.textMessageKey().equals("applications.statistics.sort.lastName.desc"))

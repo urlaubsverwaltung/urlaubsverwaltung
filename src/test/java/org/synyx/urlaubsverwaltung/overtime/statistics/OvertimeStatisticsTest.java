@@ -22,7 +22,7 @@ class OvertimeStatisticsTest {
             months(ZERO)
         );
 
-        assertThat(statistics.cumulativeBalanceByMonth().get(0)).isEqualTo(Duration.ofHours(5));
+        assertThat(statistics.cumulativeBalanceByMonth().getFirst()).isEqualTo(Duration.ofHours(5));
     }
 
     @Test

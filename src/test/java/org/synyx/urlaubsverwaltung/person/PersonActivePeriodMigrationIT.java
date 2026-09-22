@@ -87,7 +87,7 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
 
         final List<PersonActivePeriodEntity> periods = sut.findAllByPersonIdOrderByValidFromAsc(person.getId());
         assertThat(periods).hasSize(1);
-        assertThat(periods.get(0).getValidTo()).isNull();
+        assertThat(periods.getFirst().getValidTo()).isNull();
 
         // compare as a date (not an absolute instant) to stay independent of the DB session's timezone
         final LocalDate validFromDate = jdbcTemplate.queryForObject(
@@ -110,6 +110,6 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
 
         final List<PersonActivePeriodEntity> periods = sut.findAllByPersonIdOrderByValidFromAsc(person.getId());
         assertThat(periods).hasSize(1);
-        assertThat(periods.get(0).getValidTo()).isNotNull();
+        assertThat(periods.getFirst().getValidTo()).isNotNull();
     }
 }

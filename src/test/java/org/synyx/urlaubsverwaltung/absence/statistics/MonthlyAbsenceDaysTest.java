@@ -136,7 +136,7 @@ class MonthlyAbsenceDaysTest {
 
         final Map<VacationType<?>, MonthlyAbsenceDaysByType> actualNextYear =
             MonthlyAbsenceDays.calculate(Year.of(2025), List.of(application), Map.of(person, calendar));
-        assertThat(actualNextYear.get(vacationType).daysByMonth().get(0)).isEqualByComparingTo("3"); // january
+        assertThat(actualNextYear.get(vacationType).daysByMonth().getFirst()).isEqualByComparingTo("3"); // january
         assertThat(actualNextYear.get(vacationType).yearSum()).isEqualByComparingTo("3");
     }
 

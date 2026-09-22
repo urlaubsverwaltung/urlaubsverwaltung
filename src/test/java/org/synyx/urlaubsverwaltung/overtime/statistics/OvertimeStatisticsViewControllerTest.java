@@ -176,9 +176,9 @@ class OvertimeStatisticsViewControllerTest {
 
         assertThat(graph.accrued()).hasSize(12);
         assertThat(graph.reduction()).hasSize(12);
-        assertThat(graph.accrued().get(0)).isEqualByComparingTo(new BigDecimal("2.50"));
+        assertThat(graph.accrued().getFirst()).isEqualByComparingTo(new BigDecimal("2.50"));
         // reduction is handed over negated, so the bars point downwards from the zero line
-        assertThat(graph.reduction().get(0)).isEqualByComparingTo(new BigDecimal("-2.00"));
+        assertThat(graph.reduction().getFirst()).isEqualByComparingTo(new BigDecimal("-2.00"));
     }
 
     @Test
@@ -191,9 +191,9 @@ class OvertimeStatisticsViewControllerTest {
 
         final OvertimeStatisticsViewController.MonthlySeriesDto graph = selectedSeriesOf(result);
 
-        assertThat(graph.accruedText().get(0)).isEqualTo("2 Std. 30 Min.");
-        assertThat(graph.reductionText().get(0)).isEqualTo("2 Std.");
-        assertThat(graph.balanceText().get(0)).isEqualTo("30 Min.");
+        assertThat(graph.accruedText().getFirst()).isEqualTo("2 Std. 30 Min.");
+        assertThat(graph.reductionText().getFirst()).isEqualTo("2 Std.");
+        assertThat(graph.balanceText().getFirst()).isEqualTo("30 Min.");
     }
 
     @Test
@@ -209,7 +209,7 @@ class OvertimeStatisticsViewControllerTest {
         assertThat(graphOf(result).series())
             .extracting(OvertimeStatisticsViewController.MonthlySeriesDto::year)
             .containsExactly(2026, 2025);
-        assertThat(graphOf(result).series().get(1).accrued().get(0)).isEqualByComparingTo(new BigDecimal("1.00"));
+        assertThat(graphOf(result).series().get(1).accrued().getFirst()).isEqualByComparingTo(new BigDecimal("1.00"));
     }
 
     @Test
@@ -235,7 +235,7 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        assertThat(selectedSeriesOf(result).balanceText().get(0)).isEqualTo("-2 Std.");
+        assertThat(selectedSeriesOf(result).balanceText().getFirst()).isEqualTo("-2 Std.");
     }
 
     @Test
@@ -359,7 +359,7 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        final OvertimeStatisticsViewController.BalanceSeriesDto selectedYear = balanceGraphOf(result).series().get(0);
+        final OvertimeStatisticsViewController.BalanceSeriesDto selectedYear = balanceGraphOf(result).series().getFirst();
 
         assertThat(selectedYear.year()).isEqualTo(2026);
         assertThat(selectedYear.values()).hasSize(12);
@@ -406,8 +406,8 @@ class OvertimeStatisticsViewControllerTest {
 
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
-        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(0)).isEqualTo("30 Min.");
-        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(1)).isEqualTo("1 Std.");
+        assertThat(balanceGraphOf(result).series().getFirst().valuesText().get(0)).isEqualTo("30 Min.");
+        assertThat(balanceGraphOf(result).series().getFirst().valuesText().get(1)).isEqualTo("1 Std.");
     }
 
     @Test
@@ -420,7 +420,7 @@ class OvertimeStatisticsViewControllerTest {
         final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
 
         // the curve must end where the card says the year ended, otherwise the page contradicts itself
-        assertThat(balanceGraphOf(result).series().get(0).valuesText().get(11))
+        assertThat(balanceGraphOf(result).series().getFirst().valuesText().get(11))
             .isEqualTo(yearSummaryOf(result).balance());
     }
 
@@ -449,7 +449,7 @@ class OvertimeStatisticsViewControllerTest {
     }
 
     private static OvertimeStatisticsViewController.MonthlySeriesDto selectedSeriesOf(MvcResult result) {
-        return graphOf(result).series().get(0);
+        return graphOf(result).series().getFirst();
     }
 
     private void overtimeFeature(boolean active) {

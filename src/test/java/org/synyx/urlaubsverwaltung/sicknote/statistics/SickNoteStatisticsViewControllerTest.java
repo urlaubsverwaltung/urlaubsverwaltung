@@ -182,9 +182,9 @@ class SickNoteStatisticsViewControllerTest {
 
         assertThat(graphDto.sickRateDataSeries()).hasSize(2);
 
-        final SickNoteStatisticsViewController.DataSeries currentYearRate = graphDto.sickRateDataSeries().get(0);
+        final SickNoteStatisticsViewController.DataSeries currentYearRate = graphDto.sickRateDataSeries().getFirst();
         assertThat(currentYearRate.year()).isEqualTo(year.getValue());
-        assertThat(currentYearRate.data().get(0)).isEqualByComparingTo(BigDecimal.valueOf(100));
+        assertThat(currentYearRate.data().getFirst()).isEqualByComparingTo(BigDecimal.valueOf(100));
         assertThat(currentYearRate.data().subList(1, 12)).allMatch(rate -> rate.compareTo(ZERO) == 0);
 
         final SickNoteStatisticsViewController.DataSeries previousYearRate = graphDto.sickRateDataSeries().get(1);

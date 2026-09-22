@@ -38,7 +38,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
 
         final List<PersonActivePeriod> activePeriods = sut.getActivePeriods(person.getIdAsPersonId());
         assertThat(activePeriods).hasSize(1);
-        assertThat(activePeriods.get(0).validTo()).isEmpty();
+        assertThat(activePeriods.getFirst().validTo()).isEmpty();
     }
 
     @Test
@@ -57,7 +57,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
 
         final List<PersonActivePeriod> afterDeactivation = sut.getActivePeriods(new PersonId(personId));
         assertThat(afterDeactivation).hasSize(1);
-        assertThat(afterDeactivation.get(0).validTo()).isPresent();
+        assertThat(afterDeactivation.getFirst().validTo()).isPresent();
 
         personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER)));
         entityManager.flush();

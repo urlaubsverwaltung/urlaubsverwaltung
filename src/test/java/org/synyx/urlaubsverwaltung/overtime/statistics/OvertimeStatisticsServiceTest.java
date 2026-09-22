@@ -112,8 +112,8 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.accruedByMonth().get(0)).isEqualTo(Duration.ofHours(6));
-        assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(2));
+        assertThat(statistics.accruedByMonth().getFirst()).isEqualTo(Duration.ofHours(6));
+        assertThat(statistics.reductionByMonth().getFirst()).isEqualTo(Duration.ofHours(2));
     }
 
     @Test
@@ -162,7 +162,7 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.accruedByMonth().get(0)).isEqualTo(Duration.ofHours(4));
+        assertThat(statistics.accruedByMonth().getFirst()).isEqualTo(Duration.ofHours(4));
         assertThat(statistics.accrued()).isEqualTo(Duration.ofHours(4));
     }
 
@@ -247,7 +247,7 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.balanceByMonth().get(0)).isEqualTo(Duration.ofHours(3).negated());
+        assertThat(statistics.balanceByMonth().getFirst()).isEqualTo(Duration.ofHours(3).negated());
     }
 
     @Test
@@ -262,8 +262,8 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(8));
-        assertThat(statistics.accruedByMonth().get(0)).isEqualTo(ZERO);
+        assertThat(statistics.reductionByMonth().getFirst()).isEqualTo(Duration.ofHours(8));
+        assertThat(statistics.accruedByMonth().getFirst()).isEqualTo(ZERO);
     }
 
     @Test
@@ -279,7 +279,7 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(5));
+        assertThat(statistics.reductionByMonth().getFirst()).isEqualTo(Duration.ofHours(5));
     }
 
     @Test
@@ -341,7 +341,7 @@ class OvertimeStatisticsServiceTest {
 
         final OvertimeStatistics statistics = sut.getStatistics(YEAR, SIGNED_IN_USER);
 
-        assertThat(statistics.reductionByMonth().get(0)).isEqualTo(Duration.ofHours(4));
+        assertThat(statistics.reductionByMonth().getFirst()).isEqualTo(Duration.ofHours(4));
         assertThat(statistics.reduction()).isEqualTo(Duration.ofHours(4));
     }
 
