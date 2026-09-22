@@ -14,7 +14,7 @@
       th:replace="~{fragments/page-title::page-title(#{overview.header.title(${person.niceName}, ${selectedYear})})}"
     ></title>
     <th:block th:fragment="scripts">
-      <script th:inline="javascript">
+      <script>
         /*<![CDATA[*/
         window.uv = window.uv || {};
         window.uv.personId = /*[[${person.id}]]*/ "personId";

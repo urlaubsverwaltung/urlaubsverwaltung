@@ -12,7 +12,7 @@
   >
     <title th:replace="~{fragments/page-title::page-title(#{sicknotes.header.title})}"></title>
     <th:block th:fragment="scripts">
-      <script th:inline="javascript">
+      <script>
         /*<![CDATA[*/
         window.uv = window.uv || {};
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";

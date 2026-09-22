@@ -15,7 +15,7 @@
       th:replace="~{fragments/page-title::page-title(${editMode} ? #{sicknote.edit.header.title} : #{sicknote.create.header.title})}"
     ></title>
     <th:block th:fragment="scripts">
-      <script th:inline="javascript">
+      <script>
         /*<![CDATA[*/
         window.uv = window.uv || {};
         window.uv.personId = /*[[${sickNote.person == null ? userId : sickNote.person.id}]]*/ "personId";

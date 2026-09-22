@@ -34,7 +34,7 @@
     <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b" />
     <meta name="turbo-root" th:content="@{/web}" />
 
-    <script th:inline="javascript">
+    <script>
       window.uv = window.uv || {};
       window.uv.language = /*[[${language}]]*/ "de";
       window.uv.userId = /*[[${userId}]]*/ 0;

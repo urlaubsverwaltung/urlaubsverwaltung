@@ -14,7 +14,7 @@
       th:replace="~{fragments/page-title::page-title(${applicationForLeaveForm != null && applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit})}"
     ></title>
     <th:block th:fragment="scripts">
-      <script th:inline="javascript">
+      <script>
         /*<![CDATA[*/
         window.uv = window.uv || {};
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
