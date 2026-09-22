@@ -19,14 +19,6 @@ final class PersonDTOMapper {
         // Utility classes should not have public constructors java:S1118
     }
 
-    static Person toPerson(PersonDTO personDTO) {
-        final Person person = new Person(personDTO.username(), personDTO.lastName(), personDTO.firstName(), personDTO.email());
-        person.setId(personDTO.id());
-        person.setPermissions(toRoles(personDTO));
-        person.setNotifications(toMailNotifications(personDTO));
-        return person;
-    }
-
     static PersonUpdate toPersonUpdate(PersonDTO personDTO) {
         return PersonUpdate
             .ofPersonalData(personDTO.username(), personDTO.firstName(), personDTO.lastName(), personDTO.email())

@@ -420,13 +420,37 @@ class PersonServiceImplTest {
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
         person.setPermissions(List.of(USER));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         assertThat(person.getPermissions()).containsOnly(USER);
 
-        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
         assertThat(personWithOfficeRole.getPermissions())
             .hasSize(2)
             .contains(USER, OFFICE);
+    }
+
+    @Test
+    void ensureAppointPersonAsOfficeUserPublishesPermissionsChangedEvent() {
+
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(emptyList());
+        when(personRepository.save(any())).then(returnsFirstArg());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+
+        sut.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
+
+        verify(applicationEventPublisher).publishEvent(personPermissionsChangedEventArgumentCaptor.capture());
+        final PersonPermissionsChangedEvent event = personPermissionsChangedEventArgumentCaptor.getValue();
+        assertThat(event.personId()).isEqualTo(1L);
+        assertThat(event.previousPermissions()).containsExactly(USER);
+        assertThat(event.currentPermissions()).containsExactlyInAnyOrder(USER, OFFICE);
+        assertThat(event.grantedPermissions()).containsExactly(OFFICE);
+        assertThat(event.revokedPermissions()).isEmpty();
     }
 
     @Test
@@ -437,12 +461,27 @@ class PersonServiceImplTest {
         when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(List.of(officePerson));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
         person.setPermissions(List.of(USER));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         assertThat(person.getPermissions()).containsOnly(USER);
 
-        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
+        final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
         assertThat(personWithOfficeRole.getPermissions())
             .containsOnly(USER);
+
+        verify(personRepository, never()).save(any());
+    }
+
+    @Test
+    void ensureAppointPersonAsOfficeUserThrowsForUnknownPerson() {
+
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+        final PersonId personId = new PersonId(1L);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.appointAsOfficeUserIfNoOfficeUserPresent(personId))
+            .withMessage("Can not find a person for ID = 1");
     }
 
     @Test

@@ -270,7 +270,7 @@ class PersonServiceExtensionImplTest {
 
         final PersonDTO personDTO = anyPersonDTO(1L);
         final Person person = anyPerson();
-        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).thenReturn(person);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L))).thenReturn(person);
 
         final PersonDTO appointedPerson = sut.appointAsInitialUserIfNoInitialUserPresent(personDTO);
 
@@ -284,12 +284,6 @@ class PersonServiceExtensionImplTest {
         assertThat(appointedPerson.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
         assertThat(appointedPerson.enabled()).isTrue();
 
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(personArgumentCaptor.capture());
-
-        final Person personToBeAppointed = personArgumentCaptor.getValue();
-        assertThat(personToBeAppointed).isNotNull();
-        assertThat(personToBeAppointed.getId()).isOne();
-        assertThat(personToBeAppointed.getUsername()).isEqualTo("muster");
+        verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
     }
 }
