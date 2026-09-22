@@ -176,122 +176,56 @@ class SortComparatorTest {
         );
     }
 
-    static class StringBox {
-        private final String value;
-
-        StringBox(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
+    record StringBox(String value) {
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                StringBox stringBox = (StringBox) o;
+                return Objects.equals(value, stringBox.value);
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
+
+        @Override
+            public String toString() {
+                return "StringBox{" +
+                    "value='" + value + '\'' +
+                    '}';
             }
-            StringBox stringBox = (StringBox) o;
-            return Objects.equals(value, stringBox.value);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return "StringBox{" +
-                "value='" + value + '\'' +
-                '}';
-        }
-    }
-
-    static class SomeClassToSort {
-        private final int integer;
-        private final String string;
-        private final InnerClass innerClass;
-
-        SomeClassToSort(int integer, String string) {
-            this(integer, string, null);
-        }
-
-        SomeClassToSort(int integer, String string, InnerClass innerClass) {
-            this.integer = integer;
-            this.string = string;
-            this.innerClass = innerClass;
-        }
-
-        public int getInteger() {
-            return integer;
-        }
-
-        public String getString() {
-            return string;
-        }
-
-        public InnerClass getInnerClass() {
-            return innerClass;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+    record SomeClassToSort(int integer, String string, InnerClass innerClass) {
+            SomeClassToSort(int integer, String string) {
+                this(integer, string, null);
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
+
+        @Override
+            public String toString() {
+                return "SomeClassToSort{" +
+                    "integer=" + integer +
+                    ", string='" + string + '\'' +
+                    ", innerClass=" + innerClass +
+                    '}';
             }
-            SomeClassToSort that = (SomeClassToSort) o;
-            return integer == that.integer && Objects.equals(string, that.string) && Objects.equals(innerClass, that.innerClass);
         }
+
+    record InnerClass(BigDecimal bigDecimal) {
 
         @Override
-        public int hashCode() {
-            return Objects.hash(integer, string, innerClass);
-        }
-
-        @Override
-        public String toString() {
-            return "SomeClassToSort{" +
-                "integer=" + integer +
-                ", string='" + string + '\'' +
-                ", innerClass=" + innerClass +
-                '}';
-        }
-    }
-
-    static class InnerClass {
-        private final BigDecimal bigDecimal;
-
-        InnerClass(BigDecimal bigDecimal) {
-            this.bigDecimal = bigDecimal;
-        }
-
-        public BigDecimal getBigDecimal() {
-            return bigDecimal;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                InnerClass that = (InnerClass) o;
+                return Objects.equals(bigDecimal, that.bigDecimal);
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            InnerClass that = (InnerClass) o;
-            return Objects.equals(bigDecimal, that.bigDecimal);
-        }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(bigDecimal);
-        }
     }
 }
