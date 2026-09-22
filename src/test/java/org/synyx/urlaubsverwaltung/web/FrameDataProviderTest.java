@@ -669,9 +669,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false));
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false)));
     }
 
     @Test
@@ -692,9 +690,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.basic()).contains(basicAbsenceLink(true, false, true));
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.basic()).contains(basicAbsenceLink(true, false, true)));
     }
 
     @Test
@@ -715,9 +711,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false));
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.basic()).contains(basicAbsenceLink(true, true, false)));
     }
 
     @Test
@@ -738,9 +732,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.basic()).contains(basicAbsenceLink(false, false, false));
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.basic()).contains(basicAbsenceLink(false, false, false)));
     }
 
     private static NavigationItemDto createApplicationLink() {
