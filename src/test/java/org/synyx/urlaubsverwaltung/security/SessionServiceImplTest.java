@@ -15,7 +15,9 @@ import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,5 +75,18 @@ class SessionServiceImplTest {
         verify(sessionRepository).save(captor.capture());
         final Session session = captor.getValue();
         assertThat((Boolean) session.getAttribute("reloadAuthorities")).isNull();
+    }
+
+    @Test
+    void unmarkSessionToReloadAuthoritiesDoesNothingWhenSessionDoesNotExist() {
+
+        final String someSessionId = "SomeSessionId";
+        when(sessionRepository.findById(someSessionId)).thenReturn(null);
+
+        assertThatCode(() -> sut.unmarkSessionToReloadAuthorities(someSessionId))
+            .doesNotThrowAnyException();
+
+        verify(sessionRepository).findById(someSessionId);
+        verifyNoMoreInteractions(sessionRepository);
     }
 }

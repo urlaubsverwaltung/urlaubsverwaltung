@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @ConditionalOnSingleTenantMode
@@ -34,9 +35,12 @@ class SessionServiceImpl<S extends Session> implements SessionService {
 
     @Override
     public void unmarkSessionToReloadAuthorities(String sessionId) {
-        final S session = sessionRepository.findById(sessionId);
-        session.removeAttribute(RELOAD_AUTHORITIES);
-        sessionRepository.save(session);
+        // the session could have been expired or deleted in the meantime
+        Optional.ofNullable(sessionRepository.findById(sessionId))
+            .ifPresent(session -> {
+                session.removeAttribute(RELOAD_AUTHORITIES);
+                sessionRepository.save(session);
+            });
     }
 
     @EventListener
