@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.time.Duration.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +57,7 @@ class OvertimeStatisticsServiceIT extends SingleTenantTestContainersBase {
         overtime(klaus, "2025-09-01", Duration.ofHours(8));
         overtimeReductionApplication(marie, "2025-03-03", Duration.ofHours(6));
 
-        final Duration summedPersonalBalances = List.of(marie, klaus).stream()
+        final Duration summedPersonalBalances = Stream.of(marie, klaus)
             .map(overtimeService::getLeftOvertimeForPerson)
             .reduce(ZERO, Duration::plus);
 

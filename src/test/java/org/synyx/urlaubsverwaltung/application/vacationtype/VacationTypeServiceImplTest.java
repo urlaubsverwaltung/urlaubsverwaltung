@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -401,7 +402,7 @@ class VacationTypeServiceImplTest {
     }
 
     private List<VacationTypeEntity> existingProvidedDefaultsExcept(String excludedMessageKey) {
-        return List.of(
+        return Stream.of(
                 "application.data.vacationType.holiday",
                 "application.data.vacationType.specialleave",
                 "application.data.vacationType.unpaidleave",
@@ -418,7 +419,7 @@ class VacationTypeServiceImplTest {
                 "application.data.vacationType.training",
                 "application.data.vacationType.employmentBan",
                 "application.data.vacationType.educationalLeave"
-            ).stream()
+            )
             .filter(messageKey -> !messageKey.equals(excludedMessageKey))
             .map(messageKey -> {
                 final VacationTypeEntity entity = new VacationTypeEntity();
