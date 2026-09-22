@@ -128,9 +128,10 @@ class PersonServiceImpl implements PersonService {
     @Override
     @Transactional
     public Person update(PersonId personId, PersonUpdate personUpdate) {
+        return updatePerson(findPerson(personId), personUpdate);
+    }
 
-        final Person person = personRepository.findById(personId.value())
-            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
+    private Person updatePerson(Person person, PersonUpdate personUpdate) {
 
         final Collection<Role> previousPermissions = List.copyOf(person.getPermissions());
 
@@ -161,8 +162,7 @@ class PersonServiceImpl implements PersonService {
     @Transactional
     public void delete(PersonId personId, PersonId signedInUserId) {
 
-        final Person person = personRepository.findById(personId.value())
-            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
+        final Person person = findPerson(personId);
 
         applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
         accountInteractionService.deleteAllByPerson(person);
@@ -251,30 +251,30 @@ class PersonServiceImpl implements PersonService {
     }
 
     /**
-     * Adds {@link Role#OFFICE} to the roles of the given person if no
+     * Adds {@link Role#OFFICE} to the roles of the person with the given id if no
      * other active user with a office role is defined.
      *
-     * @param person that maybe gets the role {@link Role#OFFICE}
+     * @param personId of the person that maybe gets the role {@link Role#OFFICE}
      * @return saved {@link Person} with {@link Role#OFFICE} rights
      * if no other active person with {@link Role#OFFICE} is available.
      */
     @Override
-    public Person appointAsOfficeUserIfNoOfficeUserPresent(Person person) {
+    @Transactional
+    public Person appointAsOfficeUserIfNoOfficeUserPresent(PersonId personId) {
 
-        boolean activeOfficeUserAvailable = !getActivePersonsByRole(OFFICE).isEmpty();
+        final Person person = findPerson(personId);
+
+        final boolean activeOfficeUserAvailable = !getActivePersonsByRole(OFFICE).isEmpty();
         if (activeOfficeUserAvailable) {
             return person;
         }
 
         final List<Role> permissions = new ArrayList<>(person.getPermissions());
         permissions.add(OFFICE);
-        person.setPermissions(permissions);
-
-        final Person savedPerson = personRepository.save(person);
 
         LOG.info("Add 'OFFICE' role to person: {}", person);
 
-        return savedPerson;
+        return updatePerson(person, PersonUpdate.ofPermissions(permissions));
     }
 
     @Override
@@ -285,6 +285,11 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
+    }
+
+    private Person findPerson(PersonId personId) {
+        return personRepository.findById(personId.value())
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + personId.value()));
     }
 
     private void publishPermissionsChangedEventIfNecessary(Person updatedPerson, Collection<Role> previousPermissions) {

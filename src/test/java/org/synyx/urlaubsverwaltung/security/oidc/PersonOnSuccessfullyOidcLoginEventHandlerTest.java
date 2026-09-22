@@ -75,7 +75,9 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
             when(personService.getPersonByMailAddress(email)).thenReturn(Optional.empty());
-            when(personService.create(uniqueID, givenName, familyName, email)).thenReturn(new Person(uniqueID, familyName, givenName, email));
+            final Person createdPerson = new Person(uniqueID, familyName, givenName, email);
+            createdPerson.setId(1L);
+            when(personService.create(uniqueID, givenName, familyName, email)).thenReturn(createdPerson);
 
             sut.handle(event);
 
@@ -84,14 +86,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             verify(personService).create(uniqueID, givenName, familyName, email);
 
-            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-            verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(personArgumentCaptor.capture());
-
-            Person created = personArgumentCaptor.getValue();
-            assertThat(created.getUsername()).isEqualTo(uniqueID);
-            assertThat(created.getLastName()).isEqualTo(familyName);
-            assertThat(created.getFirstName()).isEqualTo(givenName);
-            assertThat(created.getEmail()).isEqualTo(email);
+            verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
         }
     }
 

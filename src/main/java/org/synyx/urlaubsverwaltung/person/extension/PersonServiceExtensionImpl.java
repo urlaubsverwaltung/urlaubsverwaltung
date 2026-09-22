@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.search.PageStreamSupport;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPerson;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonDTO;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonUpdate;
 
@@ -86,7 +85,7 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
 
     @Override
     public PersonDTO appointAsInitialUserIfNoInitialUserPresent(PersonDTO person) {
-        final Person updated = personService.appointAsOfficeUserIfNoOfficeUserPresent(toPerson(person));
+        final Person updated = personService.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(person.id()));
         return toPersonDTO(updated);
     }
 

@@ -187,14 +187,15 @@ public interface PersonService {
     Person getSignedInUser();
 
     /**
-     * Adds {@link Role#OFFICE} to the roles of the given person if no
+     * Adds {@link Role#OFFICE} to the roles of the person with the given id if no
      * other active user with a office role is defined.
      *
-     * @param person that maybe gets the role {@link Role#OFFICE}
+     * @param personId of the person that maybe gets the role {@link Role#OFFICE}
      * @return saved {@link Person} with {@link Role#OFFICE} rights
      * if no other active person with {@link Role#OFFICE} is available.
+     * @throws IllegalArgumentException if there is no person with the given id
      */
-    Person appointAsOfficeUserIfNoOfficeUserPresent(Person person);
+    Person appointAsOfficeUserIfNoOfficeUserPresent(PersonId personId);
 
     /**
      * Returns the number of all users that do not have the role INACTIVE.
