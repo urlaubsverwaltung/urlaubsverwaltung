@@ -21,6 +21,13 @@
         <th:block th:ref="blackoutperiod-list-heading-actions">
           <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
             <a
+              th:href="${showPast} ? @{/web/blackoutperiod} : @{/web/blackoutperiod(past=true)}"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              th:text="${showPast} ? #{blackoutperiod.list.showUpcoming} : #{blackoutperiod.list.showPast}"
+            >
+              Vergangene anzeigen
+            </a>
+            <a
               th:href="@{/web/blackoutperiod/new}"
               class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
             >
@@ -51,7 +58,10 @@
         </th:block>
       </th:block>
 
-      <p th:if="${#lists.isEmpty(blackoutPeriods)}" th:text="#{blackoutperiod.none}"></p>
+      <p
+        th:if="${#lists.isEmpty(blackoutPeriods)}"
+        th:text="${showPast} ? #{blackoutperiod.none.past} : #{blackoutperiod.none}"
+      ></p>
       <table th:if="${not #lists.isEmpty(blackoutPeriods)}" id="blackoutperiod-table" class="list-table text-sm">
         <caption class="sr-only" th:text="#{blackoutperiod.title}">
           Blackout periods
@@ -79,7 +89,10 @@
               &ndash;
               <th:block th:text="${{blackoutPeriod.endDate}}"></th:block>
             </td>
-            <td th:text="${blackoutPeriod.scopeLabel}"></td>
+            <td
+              th:text="${blackoutPeriod.scopeLabel}"
+              th:classappend="${blackoutPeriod.withoutDepartments} ? 'text-red-700 dark:text-red-400 font-bold' : ''"
+            ></td>
             <td th:text="${blackoutPeriod.vacationTypesLabel}"></td>
             <td th:with="dialogId=|modal-cancel-${blackoutPeriod.id}|">
               <dialog

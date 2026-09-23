@@ -24,12 +24,16 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.blackoutperiod.web.BlackoutPeriodFormMapper.mapToBlackoutPeriod;
@@ -51,6 +55,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     private final MessageSource messageSource;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final Clock clock;
 
     BlackoutPeriodViewController(
         BlackoutPeriodService blackoutPeriodService,
@@ -59,7 +64,8 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         BlackoutPeriodFormValidator validator,
         MessageSource messageSource,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
-        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        Clock clock
     ) {
         this.blackoutPeriodService = blackoutPeriodService;
         this.departmentService = departmentService;
@@ -68,6 +74,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         this.messageSource = messageSource;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.clock = clock;
     }
 
     @Override
@@ -82,13 +89,21 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @GetMapping("/blackoutperiod")
-    public String showAllBlackoutPeriods(Model model, Locale locale) {
+    public String showAllBlackoutPeriods(
+        @RequestParam(value = "past", required = false, defaultValue = "false") boolean past, Model model, Locale locale
+    ) {
+
+        final LocalDate today = LocalDate.now(clock);
+        final Comparator<BlackoutPeriod> byStartDate = comparing(BlackoutPeriod::getStartDate);
 
         final List<BlackoutPeriodListDto> blackoutPeriods = blackoutPeriodService.getAllBlackoutPeriods().stream()
+            .filter(blackoutPeriod -> past == blackoutPeriod.getEndDate().isBefore(today))
+            .sorted(past ? byStartDate.reversed() : byStartDate)
             .map(blackoutPeriod -> mapToListDto(blackoutPeriod, locale))
             .toList();
 
         model.addAttribute("blackoutPeriods", blackoutPeriods);
+        model.addAttribute("showPast", past);
 
         return "blackoutperiod/blackout_period_list";
     }
@@ -221,16 +236,21 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
 
     private BlackoutPeriodListDto mapToListDto(BlackoutPeriod blackoutPeriod, Locale locale) {
 
-        final String scopeLabel = blackoutPeriod.isCompanyWide()
-            ? messageSource.getMessage("blackoutperiod.scope.companyWide", new Object[]{}, locale)
-            : blackoutPeriod.getDepartments().stream().map(Department::getName).collect(joining(", "));
+        final String scopeLabel;
+        if (blackoutPeriod.isCompanyWide()) {
+            scopeLabel = messageSource.getMessage("blackoutperiod.scope.companyWide", new Object[]{}, locale);
+        } else if (blackoutPeriod.hasNoRemainingDepartments()) {
+            scopeLabel = messageSource.getMessage("blackoutperiod.scope.noDepartmentsLeft", new Object[]{}, locale);
+        } else {
+            scopeLabel = blackoutPeriod.getDepartments().stream().map(Department::getName).collect(joining(", "));
+        }
 
         final String vacationTypesLabel = blackoutPeriod.appliesToAllVacationTypes()
             ? messageSource.getMessage("blackoutperiod.scope.allVacationTypes", new Object[]{}, locale)
             : blackoutPeriod.getVacationTypes().stream().map(vacationType -> vacationType.getLabel(locale)).collect(joining(", "));
 
         return new BlackoutPeriodListDto(blackoutPeriod.getId(), blackoutPeriod.getTitle(), blackoutPeriod.getStartDate(),
-            blackoutPeriod.getEndDate(), scopeLabel, vacationTypesLabel);
+            blackoutPeriod.getEndDate(), scopeLabel, vacationTypesLabel, blackoutPeriod.hasNoRemainingDepartments());
     }
 
     private static List<BlackoutPeriodConflictDto> mapToConflictDtos(List<Application> applications, Locale locale) {
