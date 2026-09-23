@@ -20,6 +20,8 @@ final class BlackoutPeriodFormMapper {
         form.setTitle(blackoutPeriod.getTitle());
         form.setStartDate(blackoutPeriod.getStartDate());
         form.setEndDate(blackoutPeriod.getEndDate());
+        form.setCompanyWide(blackoutPeriod.isCompanyWide());
+        form.setAllVacationTypes(blackoutPeriod.appliesToAllVacationTypes());
         form.setDepartmentIds(blackoutPeriod.getDepartments().stream().map(Department::getId).toList());
         form.setVacationTypeIds(blackoutPeriod.getVacationTypes().stream().map(VacationType::getId).toList());
 
@@ -36,11 +38,14 @@ final class BlackoutPeriodFormMapper {
         blackoutPeriod.setTitle(form.getTitle());
         blackoutPeriod.setStartDate(form.getStartDate());
         blackoutPeriod.setEndDate(form.getEndDate());
-        blackoutPeriod.setDepartments(allDepartments.stream().filter(d -> selectedDepartmentIds.contains(d.getId())).toList());
-        blackoutPeriod.setVacationTypes(allVacationTypes.stream().filter(vt -> selectedVacationTypeIds.contains(vt.getId())).toList());
-
-        blackoutPeriod.setCompanyWide(form.getDepartmentIds().isEmpty());
-        blackoutPeriod.setAllVacationTypes(form.getVacationTypeIds().isEmpty());
+        blackoutPeriod.setCompanyWide(form.isCompanyWide());
+        blackoutPeriod.setAllVacationTypes(form.isAllVacationTypes());
+        blackoutPeriod.setDepartments(form.isCompanyWide()
+            ? List.of()
+            : allDepartments.stream().filter(d -> selectedDepartmentIds.contains(d.getId())).toList());
+        blackoutPeriod.setVacationTypes(form.isAllVacationTypes()
+            ? List.of()
+            : allVacationTypes.stream().filter(vt -> selectedVacationTypeIds.contains(vt.getId())).toList());
 
         return blackoutPeriod;
     }

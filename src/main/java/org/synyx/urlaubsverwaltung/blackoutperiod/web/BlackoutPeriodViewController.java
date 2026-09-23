@@ -192,12 +192,21 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
             .map(department -> new BlackoutPeriodOptionDto(department.getId(), department.getName(), selectedDepartmentIds.contains(department.getId())))
             .toList();
 
-        final List<BlackoutPeriodOptionDto> vacationTypeOptions = vacationTypeService.getActiveVacationTypes().stream()
-            .map(vacationType -> new BlackoutPeriodOptionDto(vacationType.getId(), vacationType.getLabel(locale), selectedVacationTypeIds.contains(vacationType.getId())))
+        final List<BlackoutPeriodOptionDto> vacationTypeOptions = vacationTypeService.getAllVacationTypes().stream()
+            .filter(vacationType -> vacationType.isActive() || selectedVacationTypeIds.contains(vacationType.getId()))
+            .map(vacationType -> new BlackoutPeriodOptionDto(vacationType.getId(), vacationTypeOptionLabel(vacationType, locale),
+                selectedVacationTypeIds.contains(vacationType.getId())))
             .toList();
 
         model.addAttribute("departmentOptions", departmentOptions);
         model.addAttribute("vacationTypeOptions", vacationTypeOptions);
+    }
+
+    private String vacationTypeOptionLabel(VacationType<?> vacationType, Locale locale) {
+        final String label = vacationType.getLabel(locale);
+        return vacationType.isActive()
+            ? label
+            : messageSource.getMessage("blackoutperiod.data.vacationTypes.inactive", new Object[]{label}, locale);
     }
 
     private static List<Department> selectedDepartments(BlackoutPeriodForm form, List<Department> allDepartments) {

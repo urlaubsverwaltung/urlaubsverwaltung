@@ -11,6 +11,8 @@ public class BlackoutPeriodForm {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean companyWide = true;
+    private boolean allVacationTypes = true;
     private List<Long> departmentIds = new ArrayList<>();
     private List<Long> vacationTypeIds = new ArrayList<>();
 
@@ -60,6 +62,22 @@ public class BlackoutPeriodForm {
         }
 
         return endDate.format(DateTimeFormatter.ISO_DATE);
+    }
+
+    public boolean isCompanyWide() {
+        return companyWide;
+    }
+
+    public void setCompanyWide(boolean companyWide) {
+        this.companyWide = companyWide;
+    }
+
+    public boolean isAllVacationTypes() {
+        return allVacationTypes;
+    }
+
+    public void setAllVacationTypes(boolean allVacationTypes) {
+        this.allVacationTypes = allVacationTypes;
     }
 
     public List<Long> getDepartmentIds() {

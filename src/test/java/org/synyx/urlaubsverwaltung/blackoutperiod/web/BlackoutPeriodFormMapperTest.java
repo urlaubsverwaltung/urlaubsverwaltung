@@ -76,6 +76,8 @@ class BlackoutPeriodFormMapperTest {
         form.setTitle("Vertriebssperre");
         form.setStartDate(LocalDate.of(2026, 12, 20));
         form.setEndDate(LocalDate.of(2027, 1, 5));
+        form.setCompanyWide(false);
+        form.setAllVacationTypes(false);
         form.setDepartmentIds(List.of(42L));
         form.setVacationTypeIds(List.of(1L));
 
@@ -104,5 +106,46 @@ class BlackoutPeriodFormMapperTest {
 
         assertThat(blackoutPeriod.isCompanyWide()).isTrue();
         assertThat(blackoutPeriod.appliesToAllVacationTypes()).isTrue();
+    }
+
+    @Test
+    void mapToBlackoutPeriodTakesFlagsAndDropsSelectionsCoveredByThem() {
+
+        final Department department = new Department();
+        department.setId(1L);
+        final VacationType<?> vacationType = createVacationType(2L, HOLIDAY, new StaticMessageSource());
+
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        form.setCompanyWide(true);
+        form.setAllVacationTypes(true);
+        form.setDepartmentIds(List.of(1L));
+        form.setVacationTypeIds(List.of(2L));
+
+        final BlackoutPeriod blackoutPeriod = BlackoutPeriodFormMapper.mapToBlackoutPeriod(form, List.of(department), List.of(vacationType));
+
+        assertThat(blackoutPeriod.isCompanyWide()).isTrue();
+        assertThat(blackoutPeriod.appliesToAllVacationTypes()).isTrue();
+        assertThat(blackoutPeriod.getDepartments()).isEmpty();
+        assertThat(blackoutPeriod.getVacationTypes()).isEmpty();
+    }
+
+    @Test
+    void mapToFormTakesFlags() {
+
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setCompanyWide(false);
+        blackoutPeriod.setAllVacationTypes(false);
+
+        final BlackoutPeriodForm form = BlackoutPeriodFormMapper.mapToForm(blackoutPeriod);
+
+        assertThat(form.isCompanyWide()).isFalse();
+        assertThat(form.isAllVacationTypes()).isFalse();
+    }
+
+    @Test
+    void newFormDefaultsToCompanyWideAndAllVacationTypes() {
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        assertThat(form.isCompanyWide()).isTrue();
+        assertThat(form.isAllVacationTypes()).isTrue();
     }
 }
