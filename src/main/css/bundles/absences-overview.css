@@ -128,6 +128,12 @@ svg.no-workday-icon {
   @apply opacity-75;
 }
 
+.blackout-period {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+}
+
 .public-holiday-morning {
   --background-color-left: var(--uv-cal-public-holiday-bg);
 }
@@ -138,12 +144,6 @@ svg.no-workday-icon {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
-}
-
-.blackout-period {
-  --background-color-left: var(--uv-cal-blackout-bg);
-  --background-color-right: var(--uv-cal-blackout-bg);
-  --font-color: var(--uv-cal-blackout-color);
 }
 
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
