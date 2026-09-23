@@ -93,13 +93,15 @@ class ApplicationForLeaveFormValidatorTest {
     @Mock
     private PersonService personService;
     @Mock
+    private ApplicationForLeavePermissionEvaluator permissionEvaluator;
+    @Mock
     private Errors errors;
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
             settingsService, overtimeService, vacationTypeService, new ApplicationMapper(vacationTypeService),
-            blackoutPeriodService, personService, Clock.systemUTC());
+            blackoutPeriodService, personService, permissionEvaluator, Clock.systemUTC());
     }
 
     // Supports --------------------------------------------------------------------------------------------------------
@@ -690,44 +692,61 @@ class ApplicationForLeaveFormValidatorTest {
 
     // Validate blackout period ------------------------------------------------------------------------------------
     @Test
-    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsNotValidForRegularUser() {
+    void ensureApplyingForThemselvesInABlackoutPeriodIsNotValidEvenForOffice() {
 
-        setupOvertimeSettings();
-
-        when(errors.hasErrors()).thenReturn(FALSE);
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
-            any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
-
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setTitle("Jahresabschluss");
-        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class), any()))
-            .thenReturn(Optional.of(blackoutPeriod));
-
-        final Person applier = new Person("applier", "Applier", "App", "applier@example.org");
-        when(personService.getSignedInUser()).thenReturn(applier);
+        setupBlackoutPeriodPreconditions();
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
+        final Person person = appForm.getPerson();
+        person.setId(1L);
+        person.setPermissions(List.of(Role.USER, Role.OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         sut.validate(appForm, errors);
 
         verify(errors).reject("application.error.blackoutPeriod", new Object[]{"Jahresabschluss"}, null);
-        verifyNoInteractions(calculationService);
+        verifyNoInteractions(calculationService, permissionEvaluator);
     }
 
     @Test
-    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForOffice() {
-        ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role.OFFICE);
+    void ensureApplyingForAnotherPersonInABlackoutPeriodIsValidWhenAllowedToApplyForThem() {
+
+        setupBlackoutPeriodPreconditions();
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(true);
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
+        appForm.getPerson().setId(1L);
+
+        final Person departmentHead = new Person("head", "Head", "Hannah", "head@example.org");
+        departmentHead.setId(2L);
+        departmentHead.setPermissions(List.of(Role.USER, Role.DEPARTMENT_HEAD, Role.APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        when(permissionEvaluator.isAllowedToApplyForPerson(departmentHead, appForm.getPerson())).thenReturn(true);
+
+        sut.validate(appForm, errors);
+
+        verify(errors, never()).reject(eq("application.error.blackoutPeriod"), any(Object[].class), any());
     }
 
     @Test
-    void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForBoss() {
-        ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role.BOSS);
+    void ensureApplyingForAnotherPersonInABlackoutPeriodIsNotValidWhenNotAllowedToApplyForThem() {
+
+        setupBlackoutPeriodPreconditions();
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
+        appForm.getPerson().setId(1L);
+
+        final Person applier = new Person("applier", "Applier", "App", "applier@example.org");
+        applier.setId(2L);
+        when(personService.getSignedInUser()).thenReturn(applier);
+        when(permissionEvaluator.isAllowedToApplyForPerson(applier, appForm.getPerson())).thenReturn(false);
+
+        sut.validate(appForm, errors);
+
+        verify(errors).reject("application.error.blackoutPeriod", new Object[]{"Jahresabschluss"}, null);
     }
 
-    private void ensureApplicationForLeaveFallingIntoBlackoutPeriodIsValidForPersonWithRole(Role role) {
+    private void setupBlackoutPeriodPreconditions() {
 
         setupOvertimeSettings();
 
@@ -737,22 +756,11 @@ class ApplicationForLeaveFormValidatorTest {
             any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(true);
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle("Jahresabschluss");
         when(blackoutPeriodService.findBlockingBlackoutPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class), any()))
             .thenReturn(Optional.of(blackoutPeriod));
-
-        final Person applier = new Person("office", "Office", "Ines", "office@example.org");
-        applier.setPermissions(List.of(role));
-        when(personService.getSignedInUser()).thenReturn(applier);
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors, never()).reject(eq("application.error.blackoutPeriod"), any(Object[].class), any());
     }
 
     // Validate overtime reduction -------------------------------------------------------------------------------------
