@@ -102,17 +102,11 @@ class BlackoutPeriodServiceImplTest {
     }
 
     @Test
-    void findBlockingBlackoutPeriod_returnsEmptyWhenPeriodsDoNotOverlap() {
+    void findBlockingBlackoutPeriod_returnsEmptyWithoutDepartmentLookupWhenNothingOverlaps() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-
-        final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
-        entity.setId(1L);
-        entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        person.setId(1L);
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10))).thenReturn(List.of());
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
@@ -120,13 +114,14 @@ class BlackoutPeriodServiceImplTest {
             person, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10), vacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
+        verifyNoInteractions(departmentService, vacationTypeService);
     }
 
     @Test
-    void findBlockingBlackoutPeriod_returnsPeriodWhenCompanyWideAndOverlapping() {
+    void findBlockingBlackoutPeriod_returnsPeriodWithoutDepartmentLookupWhenCompanyWideAndOverlapping() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        person.setId(1L);
 
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
@@ -135,7 +130,7 @@ class BlackoutPeriodServiceImplTest {
         entity.setEndDate(LocalDate.of(2027, 1, 5));
         entity.setCompanyWide(true);
         entity.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
@@ -144,43 +139,15 @@ class BlackoutPeriodServiceImplTest {
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Jahresabschluss");
+        verifyNoInteractions(departmentService);
     }
 
     @Test
     void findBlockingBlackoutPeriod_returnsEmptyWhenPersonNotInScopedDepartment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final Department scopedDepartment = createDepartment("Vertrieb");
-        scopedDepartment.setId(42L);
-        when(departmentService.getAllDepartments()).thenReturn(List.of(scopedDepartment));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-
-        final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
-        entity.setId(1L);
-        entity.setTitle("Vertriebssperre");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
-        entity.setDepartmentIds(Set.of(42L));
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
-
-        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
-
-        final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
-
-        assertThat(blockingBlackoutPeriod).isEmpty();
-    }
-
-    @Test
-    void findBlockingBlackoutPeriod_returnsPeriodWhenPersonIsInScopedDepartment() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final Department scopedDepartment = createDepartment("Vertrieb");
-        scopedDepartment.setId(42L);
-        when(departmentService.getAllDepartments()).thenReturn(List.of(scopedDepartment));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(scopedDepartment));
+        person.setId(1L);
+        when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(43L)));
 
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
@@ -189,7 +156,32 @@ class BlackoutPeriodServiceImplTest {
         entity.setEndDate(LocalDate.of(2027, 1, 5));
         entity.setDepartmentIds(Set.of(42L));
         entity.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+
+        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
+
+        final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
+            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+
+        assertThat(blockingBlackoutPeriod).isEmpty();
+        verify(departmentService, never()).getAllDepartments();
+    }
+
+    @Test
+    void findBlockingBlackoutPeriod_returnsPeriodWhenPersonIsInScopedDepartment() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(42L)));
+
+        final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
+        entity.setId(1L);
+        entity.setTitle("Vertriebssperre");
+        entity.setStartDate(LocalDate.of(2026, 12, 20));
+        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setDepartmentIds(Set.of(42L));
+        entity.setAllVacationTypes(true);
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
@@ -197,24 +189,25 @@ class BlackoutPeriodServiceImplTest {
             person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
+        assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Vertriebssperre");
+        verify(departmentService, never()).getAllDepartments();
+        verify(departmentService, never()).getAssignedDepartmentsOfMember(any());
     }
 
     @Test
     void findBlockingBlackoutPeriod_returnsEmptyWhenVacationTypeNotRestricted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
-
-        final VacationType<?> restrictedVacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(restrictedVacationType));
+        person.setId(1L);
 
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
         entity.setStartDate(LocalDate.of(2026, 12, 20));
         entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setCompanyWide(true);
         entity.setVacationTypeIds(Set.of(1L));
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> requestedVacationType = createVacationType(2L, SPECIALLEAVE, new StaticMessageSource());
 
@@ -222,19 +215,14 @@ class BlackoutPeriodServiceImplTest {
             person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), requestedVacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
+        verifyNoInteractions(departmentService, vacationTypeService);
     }
 
     @Test
-    void findBlackoutPeriodsForPerson_returnsOnlyPeriodsOverlappingAndApplicableToPerson() {
+    void findBlackoutPeriodsForPerson_returnsOnlyPeriodsApplicableToPersonOrderedByStartDate() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-
-        final Department scopedDepartment = createDepartment("Vertrieb");
-        scopedDepartment.setId(42L);
-        final Department otherDepartment = createDepartment("Marketing");
-        otherDepartment.setId(43L);
-        when(departmentService.getAllDepartments()).thenReturn(List.of(scopedDepartment, otherDepartment));
         when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(42L)));
 
         final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
@@ -258,18 +246,13 @@ class BlackoutPeriodServiceImplTest {
         otherDepartmentOnly.setEndDate(LocalDate.of(2026, 6, 10));
         otherDepartmentOnly.setDepartmentIds(Set.of(43L));
 
-        final BlackoutPeriodEntity outOfRange = new BlackoutPeriodEntity();
-        outOfRange.setId(4L);
-        outOfRange.setTitle("Nicht relevant");
-        outOfRange.setStartDate(LocalDate.of(2025, 1, 1));
-        outOfRange.setEndDate(LocalDate.of(2025, 1, 10));
-        outOfRange.setCompanyWide(true);
-
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(companyWide, scoped, otherDepartmentOnly, outOfRange));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+            .thenReturn(List.of(companyWide, scoped, otherDepartmentOnly));
 
         final List<BlackoutPeriod> result = sut.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
 
         assertThat(result).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
+        verify(departmentService, never()).getAllDepartments();
     }
 
     @Test
@@ -280,9 +263,6 @@ class BlackoutPeriodServiceImplTest {
         final Person marketing = new Person("marketing", "Marketing", "Mia", "marketing@example.org");
         marketing.setId(2L);
 
-        final Department salesDepartment = createDepartment("Vertrieb");
-        salesDepartment.setId(42L);
-        when(departmentService.getAllDepartments()).thenReturn(List.of(salesDepartment));
         when(departmentService.getDepartmentIdsByMembers(List.of(sales, marketing)))
             .thenReturn(Map.of(new PersonId(1L), Set.of(42L), new PersonId(2L), Set.of(43L)));
 
@@ -302,7 +282,8 @@ class BlackoutPeriodServiceImplTest {
         salesOnly.setDepartmentIds(Set.of(42L));
         salesOnly.setAllVacationTypes(true);
 
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(companyWide, salesOnly));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+            .thenReturn(List.of(companyWide, salesOnly));
 
         final Map<PersonId, List<BlackoutPeriod>> result =
             sut.findBlackoutPeriodsForPersons(List.of(sales, marketing), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
@@ -310,6 +291,70 @@ class BlackoutPeriodServiceImplTest {
         assertThat(result.get(new PersonId(1L))).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
         assertThat(result.get(new PersonId(2L))).extracting(BlackoutPeriod::getTitle).containsExactly("Jahresabschluss");
         verify(departmentService, never()).getAssignedDepartmentsOfMember(any());
+        verify(departmentService, never()).getAllDepartments();
+    }
+
+    @Test
+    void findBlackoutPeriodsForPersons_doesNotLookUpDepartmentsWhenOnlyCompanyWideBlackoutPeriodsOverlap() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
+        companyWide.setId(1L);
+        companyWide.setTitle("Jahresabschluss");
+        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
+        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setCompanyWide(true);
+        companyWide.setAllVacationTypes(true);
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31))).thenReturn(List.of(companyWide));
+
+        final Map<PersonId, List<BlackoutPeriod>> result =
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+
+        assertThat(result.get(new PersonId(1L))).extracting(BlackoutPeriod::getTitle).containsExactly("Jahresabschluss");
+        verifyNoInteractions(departmentService, vacationTypeService);
+    }
+
+    @Test
+    void findBlackoutPeriodsForPersons_resolvesVacationTypesOnceButNotTheDepartments() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(42L)));
+
+        final VacationType<?> holiday = createVacationType(1L, HOLIDAY, new StaticMessageSource());
+        final VacationType<?> specialLeave = createVacationType(2L, SPECIALLEAVE, new StaticMessageSource());
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holiday, specialLeave));
+
+        final BlackoutPeriodEntity restrictedToHoliday = new BlackoutPeriodEntity();
+        restrictedToHoliday.setId(1L);
+        restrictedToHoliday.setTitle("Vertriebssperre");
+        restrictedToHoliday.setStartDate(LocalDate.of(2026, 6, 1));
+        restrictedToHoliday.setEndDate(LocalDate.of(2026, 6, 10));
+        restrictedToHoliday.setDepartmentIds(Set.of(42L));
+        restrictedToHoliday.setVacationTypeIds(Set.of(1L));
+
+        final BlackoutPeriodEntity restrictedToSpecialLeave = new BlackoutPeriodEntity();
+        restrictedToSpecialLeave.setId(2L);
+        restrictedToSpecialLeave.setTitle("Jahresabschluss");
+        restrictedToSpecialLeave.setStartDate(LocalDate.of(2026, 12, 20));
+        restrictedToSpecialLeave.setEndDate(LocalDate.of(2027, 1, 5));
+        restrictedToSpecialLeave.setCompanyWide(true);
+        restrictedToSpecialLeave.setVacationTypeIds(Set.of(2L));
+
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+            .thenReturn(List.of(restrictedToSpecialLeave, restrictedToHoliday));
+
+        final List<BlackoutPeriod> result =
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)).get(new PersonId(1L));
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getVacationTypes()).containsExactly(holiday);
+        assertThat(result.get(0).getDepartments()).isEmpty();
+        assertThat(result.get(1).getVacationTypes()).containsExactly(specialLeave);
+        verify(vacationTypeService).getAllVacationTypes();
+        verify(departmentService, never()).getAllDepartments();
     }
 
     @Test
@@ -317,13 +362,13 @@ class BlackoutPeriodServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of());
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31))).thenReturn(List.of());
 
         final Map<PersonId, List<BlackoutPeriod>> result =
             sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
 
         assertThat(result).containsEntry(new PersonId(1L), List.of());
-        verify(departmentService, never()).getDepartmentIdsByMembers(any());
+        verifyNoInteractions(departmentService, vacationTypeService);
     }
 
     @Test
@@ -465,10 +510,10 @@ class BlackoutPeriodServiceImplTest {
     }
 
     @Test
-    void findBlockingBlackoutPeriod_returnsPeriodWhenVacationTypeIsRestricted() {
+    void findBlockingBlackoutPeriod_returnsPeriodWithItsVacationTypesWhenVacationTypeIsRestricted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        person.setId(1L);
 
         final VacationType<?> restrictedVacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(restrictedVacationType));
@@ -480,20 +525,22 @@ class BlackoutPeriodServiceImplTest {
         entity.setEndDate(LocalDate.of(2027, 1, 5));
         entity.setCompanyWide(true);
         entity.setVacationTypeIds(Set.of(1L));
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
             person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), restrictedVacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Jahresabschluss");
+        assertThat(blockingBlackoutPeriod.get().getVacationTypes()).containsExactly(restrictedVacationType);
+        verifyNoInteractions(departmentService);
     }
 
     @Test
     void findBlockingBlackoutPeriod_returnsEarliestOfMultipleMatchingPeriods() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        person.setId(1L);
 
         final BlackoutPeriodEntity later = new BlackoutPeriodEntity();
         later.setId(1L);
@@ -511,7 +558,7 @@ class BlackoutPeriodServiceImplTest {
         earlier.setCompanyWide(true);
         earlier.setAllVacationTypes(true);
 
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(later, earlier));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 23), LocalDate.of(2026, 12, 24))).thenReturn(List.of(later, earlier));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
@@ -574,7 +621,8 @@ class BlackoutPeriodServiceImplTest {
     void findBlockingBlackoutPeriod_returnsEmptyWhenDepartmentScopedBlackoutHasNoDepartmentsLeft() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        person.setId(1L);
+        when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(42L)));
 
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
@@ -583,9 +631,9 @@ class BlackoutPeriodServiceImplTest {
         entity.setEndDate(LocalDate.of(2027, 1, 5));
         entity.setCompanyWide(false);
         entity.setAllVacationTypes(true);
-        // department 99 has been deleted, getAllDepartments() does not return it anymore
-        entity.setDepartmentIds(Set.of(99L));
-        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+        // all departments of the blackout period have been deleted
+        entity.setDepartmentIds(Set.of());
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 

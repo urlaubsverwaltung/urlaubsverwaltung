@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -124,15 +125,22 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
     @Transactional(readOnly = true)
     public Optional<BlackoutPeriod> findBlockingBlackoutPeriod(Person person, LocalDate startDate, LocalDate endDate, VacationType<?> vacationType) {
 
-        final Set<Long> personDepartmentIds = departmentService.getAssignedDepartmentsOfMember(person).stream()
-            .map(Department::getId)
-            .collect(toSet());
+        final List<BlackoutPeriodEntity> candidates = blackoutPeriodRepository.findOverlapping(startDate, endDate).stream()
+            .filter(entity -> entity.isAllVacationTypes() || entity.getVacationTypeIds().contains(vacationType.getId()))
+            .toList();
 
-        return getAllBlackoutPeriods().stream()
-            .filter(period -> period.overlaps(startDate, endDate))
-            .filter(period -> period.isCompanyWide() || appliesToAnyOf(period, personDepartmentIds))
-            .filter(period -> period.appliesToAllVacationTypes() || appliesTo(period, vacationType))
-            .min(comparing(BlackoutPeriod::getStartDate));
+        if (candidates.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final Set<Long> personDepartmentIds = anyDepartmentScoped(candidates)
+            ? departmentService.getDepartmentIdsByMembers(List.of(person)).getOrDefault(person.getIdAsPersonId(), Set.of())
+            : Set.of();
+
+        return candidates.stream()
+            .filter(entity -> appliesToAnyOf(entity, personDepartmentIds))
+            .min(comparing(BlackoutPeriodEntity::getStartDate))
+            .map(entity -> mapToBlackoutPeriodWithoutDepartments(entity, vacationTypesByIdOf(List.of(entity))));
     }
 
     @Override
@@ -146,19 +154,28 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
     @Transactional(readOnly = true)
     public Map<PersonId, List<BlackoutPeriod>> findBlackoutPeriodsForPersons(List<Person> persons, LocalDate startDate, LocalDate endDate) {
 
-        final List<BlackoutPeriod> overlapping = getAllBlackoutPeriods().stream()
-            .filter(period -> period.overlaps(startDate, endDate))
+        if (persons.isEmpty()) {
+            return Map.of();
+        }
+
+        final List<BlackoutPeriodEntity> overlapping = blackoutPeriodRepository.findOverlapping(startDate, endDate).stream()
+            .sorted(comparing(BlackoutPeriodEntity::getStartDate))
             .toList();
 
-        final Map<PersonId, Set<Long>> departmentIdsByPerson = overlapping.isEmpty() || persons.isEmpty()
-            ? Map.of()
-            : departmentService.getDepartmentIdsByMembers(persons);
+        final Map<PersonId, Set<Long>> departmentIdsByPerson = anyDepartmentScoped(overlapping)
+            ? departmentService.getDepartmentIdsByMembers(persons)
+            : Map.of();
+
+        final Map<Long, VacationType<?>> vacationTypesById = vacationTypesByIdOf(overlapping);
+        final Map<BlackoutPeriodEntity, BlackoutPeriod> blackoutPeriodsByEntity = new LinkedHashMap<>();
+        overlapping.forEach(entity -> blackoutPeriodsByEntity.put(entity, mapToBlackoutPeriodWithoutDepartments(entity, vacationTypesById)));
 
         final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson = new HashMap<>();
         for (Person person : persons) {
             final Set<Long> departmentIds = departmentIdsByPerson.getOrDefault(person.getIdAsPersonId(), Set.of());
-            blackoutPeriodsByPerson.put(person.getIdAsPersonId(), overlapping.stream()
-                .filter(period -> period.isCompanyWide() || appliesToAnyOf(period, departmentIds))
+            blackoutPeriodsByPerson.put(person.getIdAsPersonId(), blackoutPeriodsByEntity.entrySet().stream()
+                .filter(entry -> appliesToAnyOf(entry.getKey(), departmentIds))
+                .map(Map.Entry::getValue)
                 .toList());
         }
 
@@ -189,8 +206,15 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         return relevantApplications.stream().sorted(comparing(Application::getStartDate)).toList();
     }
 
-    private static boolean appliesToAnyOf(BlackoutPeriod period, Set<Long> departmentIds) {
-        return period.getDepartments().stream().map(Department::getId).anyMatch(departmentIds::contains);
+    private static boolean anyDepartmentScoped(List<BlackoutPeriodEntity> entities) {
+        return entities.stream().anyMatch(entity -> !entity.isCompanyWide());
+    }
+
+    /**
+     * @return {@code true} if the blackout period is company-wide or scoped to one of the given departments
+     */
+    private static boolean appliesToAnyOf(BlackoutPeriodEntity entity, Set<Long> departmentIds) {
+        return entity.isCompanyWide() || entity.getDepartmentIds().stream().anyMatch(departmentIds::contains);
     }
 
     private static boolean appliesTo(BlackoutPeriod period, VacationType<?> vacationType) {
@@ -205,7 +229,32 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         return vacationTypeService.getAllVacationTypes().stream().collect(toMap(VacationType::getId, identity()));
     }
 
+    /**
+     * Resolves the vacation types of the given entities with a single lookup, and without any lookup if none of
+     * them is restricted to vacation types.
+     */
+    private Map<Long, VacationType<?>> vacationTypesByIdOf(List<BlackoutPeriodEntity> entities) {
+        final boolean anyRestricted = entities.stream().anyMatch(entity -> !entity.getVacationTypeIds().isEmpty());
+        return anyRestricted ? allVacationTypesById() : Map.of();
+    }
+
     private static BlackoutPeriod mapToBlackoutPeriod(BlackoutPeriodEntity entity, Map<Long, Department> departmentsById, Map<Long, VacationType<?>> vacationTypesById) {
+
+        final BlackoutPeriod blackoutPeriod = mapToBlackoutPeriodWithoutDepartments(entity, vacationTypesById);
+        blackoutPeriod.setDepartments(entity.getDepartmentIds().stream()
+            .map(departmentsById::get)
+            .filter(Objects::nonNull)
+            .sorted(comparing(department -> department.getName().toLowerCase()))
+            .toList());
+
+        return blackoutPeriod;
+    }
+
+    /**
+     * Maps everything but the departments, which are left empty. Intended for results that are only matched against
+     * persons by department ids, so neither departments nor their members and staff need to be loaded.
+     */
+    private static BlackoutPeriod mapToBlackoutPeriodWithoutDepartments(BlackoutPeriodEntity entity, Map<Long, VacationType<?>> vacationTypesById) {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(entity.getId());
@@ -216,11 +265,6 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         blackoutPeriod.setLastModification(entity.getLastModification());
         blackoutPeriod.setCompanyWide(entity.isCompanyWide());
         blackoutPeriod.setAllVacationTypes(entity.isAllVacationTypes());
-        blackoutPeriod.setDepartments(entity.getDepartmentIds().stream()
-            .map(departmentsById::get)
-            .filter(Objects::nonNull)
-            .sorted(comparing(department -> department.getName().toLowerCase()))
-            .toList());
         blackoutPeriod.setVacationTypes(entity.getVacationTypeIds().stream()
             .<VacationType<?>>map(vacationTypesById::get)
             .filter(Objects::nonNull)
