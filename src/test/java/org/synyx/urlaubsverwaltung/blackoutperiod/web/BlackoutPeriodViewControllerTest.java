@@ -409,6 +409,10 @@ class BlackoutPeriodViewControllerTest {
     @Test
     void updateBlackoutPeriodAppliesPathIdAndRedirects() throws Exception {
 
+        final BlackoutPeriod existingBlackoutPeriod = new BlackoutPeriod();
+        existingBlackoutPeriod.setId(1L);
+        when(blackoutPeriodService.getBlackoutPeriodById(1L)).thenReturn(Optional.of(existingBlackoutPeriod));
+
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
 
@@ -428,6 +432,21 @@ class BlackoutPeriodViewControllerTest {
         final ArgumentCaptor<BlackoutPeriod> captor = ArgumentCaptor.forClass(BlackoutPeriod.class);
         verify(blackoutPeriodService).update(captor.capture());
         assertThat(captor.getValue().getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void updateBlackoutPeriodThrowsForUnknownBlackoutPeriod() {
+
+        when(blackoutPeriodService.getBlackoutPeriodById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> perform(post("/web/blackoutperiod/1")
+            .param("title", "Jahresabschluss")
+            .param("startDate", "2026-12-20")
+            .param("endDate", "2027-01-05")
+            .param("confirm", "true")))
+            .hasCauseInstanceOf(UnknownBlackoutPeriodException.class);
+
+        verify(blackoutPeriodService, never()).update(any(BlackoutPeriod.class));
     }
 
     @Test
