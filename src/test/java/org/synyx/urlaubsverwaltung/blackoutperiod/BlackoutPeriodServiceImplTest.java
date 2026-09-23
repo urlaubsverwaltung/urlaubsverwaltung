@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentDeletedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -557,5 +558,34 @@ class BlackoutPeriodServiceImplTest {
         assertThat(captor.getValue().isAllVacationTypes()).isTrue();
         assertThat(created.isCompanyWide()).isTrue();
         assertThat(created.appliesToAllVacationTypes()).isTrue();
+    }
+
+    @Test
+    void removeDeletedDepartment_removesTheDepartmentFromAffectedBlackoutPeriodsAndKeepsThem() {
+
+        final BlackoutPeriodEntity affected = new BlackoutPeriodEntity();
+        affected.setId(1L);
+        affected.setDepartmentIds(Set.of(42L, 43L));
+
+        final BlackoutPeriodEntity onlyDeletedDepartment = new BlackoutPeriodEntity();
+        onlyDeletedDepartment.setId(2L);
+        onlyDeletedDepartment.setDepartmentIds(Set.of(42L));
+
+        final BlackoutPeriodEntity unaffected = new BlackoutPeriodEntity();
+        unaffected.setId(3L);
+        unaffected.setDepartmentIds(Set.of(43L));
+
+        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(affected, onlyDeletedDepartment, unaffected));
+
+        sut.removeDeletedDepartment(DepartmentDeletedEvent.of(42L));
+
+        @SuppressWarnings("unchecked")
+        final ArgumentCaptor<List<BlackoutPeriodEntity>> captor = ArgumentCaptor.forClass(List.class);
+        verify(blackoutPeriodRepository).saveAll(captor.capture());
+        assertThat(captor.getValue()).containsExactly(affected, onlyDeletedDepartment);
+        assertThat(affected.getDepartmentIds()).containsExactly(43L);
+        assertThat(onlyDeletedDepartment.getDepartmentIds()).isEmpty();
+        assertThat(unaffected.getDepartmentIds()).containsExactly(43L);
+        verify(blackoutPeriodRepository, never()).delete(any());
     }
 }
