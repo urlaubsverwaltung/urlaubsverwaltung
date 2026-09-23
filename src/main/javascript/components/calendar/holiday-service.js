@@ -254,6 +254,12 @@ export const HolidayService = (function () {
       return getBlackoutPeriodsForDate(date).length > 0;
     },
 
+    getBlackoutPeriodDescription(date) {
+      return getBlackoutPeriodsForDate(date)
+        .map((blackoutPeriod) => blackoutPeriod.description)
+        .join(" · ");
+    },
+
     getDescription: function (date) {
       // there can be more than one public holiday on the same day (e.g. a fixed and a movable one
       // falling on the same date in a special year), so join the descriptions of all of them.

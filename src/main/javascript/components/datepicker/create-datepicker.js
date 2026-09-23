@@ -113,6 +113,8 @@ function hydrateDatepicker(duetDateElement, options) {
       element.querySelector("[data-uv-icon]")?.remove();
       removeDatepickerCssClassesFromNode(element);
       removeAbsenceTypeStyleFromNode(element);
+      element.querySelector("[data-uv-blackout-description]")?.remove();
+      element.removeAttribute("title");
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
@@ -163,6 +165,17 @@ function hydrateDatepicker(duetDateElement, options) {
         const blackoutPeriodsForDate = findByDate(blackoutPeriods.value, date);
         addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate, blackoutPeriodsForDate);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
+
+        if (blackoutPeriodsForDate.length > 0) {
+          const description = blackoutPeriodsForDate.map((blackoutPeriod) => blackoutPeriod.description).join(" · ");
+          dayElement.title = description;
+          const srOnly = document.createElement("span");
+          srOnly.classList.add("sr-only");
+          srOnly.dataset.uvBlackoutDescription = "";
+          srOnly.textContent = description;
+          // appended after duet's own `.duet-date__vhidden` span, which is parsed above to get the date
+          dayElement.append(srOnly);
+        }
 
         let icon;
 
