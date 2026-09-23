@@ -203,7 +203,13 @@
                   <div
                     class="cal-day"
                     th:classappend="|${day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${day.type.blackoutPeriod ? ' blackout-period' : ''}${day.workday ? '' : ' no-workday'}|"
+                    th:title="${day.type.blackoutPeriodDescription}"
                   >
+                    <span
+                      th:if="${day.type.blackoutPeriod}"
+                      class="sr-only"
+                      th:text="${day.type.blackoutPeriodDescription}"
+                    ></span>
                     <div th:if="${not day.workday}" class="no-workday-marker" aria-hidden="true">
                       <svg th:replace="~{icon/slash::svg(className='no-workday-icon w-5 h-5 -translate-y-px')}"></svg>
                     </div>

@@ -1039,6 +1039,7 @@ class AbsenceOverviewViewControllerTest {
         blackoutPeriod.setTitle("Jahresabschluss");
         blackoutPeriod.setStartDate(LocalDate.of(2020, 10, 15));
         blackoutPeriod.setEndDate(LocalDate.of(2020, 10, 20));
+        blackoutPeriod.setAllVacationTypes(true);
         when(blackoutPeriodService.findBlackoutPeriodsForPersons(anyList(), eq(LocalDate.of(2020, 10, 1)), eq(LocalDate.of(2020, 10, 31))))
             .thenReturn(Map.of(new PersonId(1L), List.of(blackoutPeriod)));
 
@@ -1049,7 +1050,7 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("persons", hasItem(
                         hasProperty("days", allOf(
                             // 2020-10-15 until 2020-10-20 are blacked out, the other days of october are not
-                            hasItem(hasProperty("type", hasProperty("blackoutPeriod", is(true)))),
+                            hasItem(hasProperty("type", allOf(hasProperty("blackoutPeriod", is(true)), hasProperty("blackoutPeriodDescription", is("awesome month text"))))),
                             hasItem(hasProperty("type", hasProperty("blackoutPeriod", is(false))))
                         ))
                     ))
@@ -1089,7 +1090,7 @@ class AbsenceOverviewViewControllerTest {
                 hasProperty("months", contains(
                     hasProperty("persons", hasItem(
                         hasProperty("days", everyItem(
-                            hasProperty("type", hasProperty("blackoutPeriod", is(false)))
+                            hasProperty("type", allOf(hasProperty("blackoutPeriod", is(false)), hasProperty("blackoutPeriodDescription", nullValue())))
                         ))
                     ))
                 ))));
