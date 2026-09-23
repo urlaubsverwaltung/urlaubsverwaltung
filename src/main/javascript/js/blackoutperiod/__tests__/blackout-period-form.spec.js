@@ -50,4 +50,29 @@ describe("blackout-period-form", () => {
     const [, options] = createDatepicker.mock.calls[0];
     expect(options.getPersonId()).toBeUndefined();
   });
+
+  it("disables the checkboxes of a group while its 'all' checkbox is checked", async () => {
+    document.body.innerHTML = `
+      <input type="checkbox" id="companyWide" data-blackout-scope-all="departmentIds" checked />
+      <input type="checkbox" name="departmentIds" value="1" />
+      <input type="checkbox" name="departmentIds" value="2" checked />
+      <input type="checkbox" name="vacationTypeIds" value="3" />
+    `;
+
+    const { initScopeToggles } = await import("../blackout-period-form.js");
+    initScopeToggles(document);
+
+    const departments = [...document.querySelectorAll("[name='departmentIds']")];
+    const vacationType = document.querySelector("[name='vacationTypeIds']");
+    expect(departments.every((checkbox) => checkbox.disabled)).toBe(true);
+    expect(vacationType.disabled).toBe(false);
+
+    const toggle = document.querySelector("#companyWide");
+    toggle.checked = false;
+    toggle.dispatchEvent(new Event("change"));
+
+    expect(departments.some((checkbox) => checkbox.disabled)).toBe(false);
+    // the previous selection survives toggling
+    expect(departments[1].checked).toBe(true);
+  });
 });

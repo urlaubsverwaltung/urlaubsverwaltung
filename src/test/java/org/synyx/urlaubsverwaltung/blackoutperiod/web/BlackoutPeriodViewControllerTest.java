@@ -11,6 +11,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
@@ -25,11 +26,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,6 +47,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 
 @ExtendWith(MockitoExtension.class)
 class BlackoutPeriodViewControllerTest {
@@ -102,7 +107,7 @@ class BlackoutPeriodViewControllerTest {
     @Test
     void newBlackoutPeriodFormAddsEmptyFormToModel() throws Exception {
 
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of());
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
 
         perform(get("/web/blackoutperiod/new"))
@@ -137,7 +142,6 @@ class BlackoutPeriodViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application conflictingApplication = new Application();
@@ -184,7 +188,7 @@ class BlackoutPeriodViewControllerTest {
     @Test
     void createBlackoutPeriodWithoutTitleRedisplaysFormWithErrors() throws Exception {
 
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of());
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
 
         perform(post("/web/blackoutperiod/new")
@@ -260,7 +264,7 @@ class BlackoutPeriodViewControllerTest {
         final Department department = createDepartment("Vertrieb");
         department.setId(42L);
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(createVacationType(1L, HOLIDAY, messageSource)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(activeVacationType(1L, messageSource)));
 
         perform(get("/web/blackoutperiod/new"))
             .andExpect(model().attribute("departmentOptions", List.of(new BlackoutPeriodOptionDto(42L, "Vertrieb", false))))
@@ -275,8 +279,8 @@ class BlackoutPeriodViewControllerTest {
         department.setId(42L);
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
 
-        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, messageSource);
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
+        final VacationType<?> vacationType = activeVacationType(1L, messageSource);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
@@ -339,6 +343,54 @@ class BlackoutPeriodViewControllerTest {
             .andExpect(flash().attributeCount(0));
 
         verify(blackoutPeriodService, never()).delete(any());
+    }
+
+    @Test
+    void editBlackoutPeriodFormKeepsSelectedInactiveVacationTypeAndHidesUnselectedInactiveOnes() throws Exception {
+
+        messageSource.addMessage("blackoutperiod.data.vacationTypes.inactive", GERMAN, "{0} (inaktiv)");
+
+        final VacationType<?> active = mock(VacationType.class);
+        when(active.getId()).thenReturn(1L);
+        when(active.isActive()).thenReturn(true);
+        when(active.getLabel(GERMAN)).thenReturn("Erholungsurlaub");
+
+        final VacationType<?> inactiveSelected = mock(VacationType.class);
+        when(inactiveSelected.getId()).thenReturn(2L);
+        when(inactiveSelected.isActive()).thenReturn(false);
+        when(inactiveSelected.getLabel(GERMAN)).thenReturn("Bildungsurlaub");
+
+        final VacationType<?> inactiveUnselected = mock(VacationType.class);
+        when(inactiveUnselected.getId()).thenReturn(3L);
+        when(inactiveUnselected.isActive()).thenReturn(false);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(active, inactiveSelected, inactiveUnselected));
+        when(departmentService.getAllDepartments()).thenReturn(List.of());
+
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setId(1L);
+        blackoutPeriod.setTitle("Bildungssperre");
+        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
+        blackoutPeriod.setVacationTypes(List.of(inactiveSelected));
+        when(blackoutPeriodService.getBlackoutPeriodById(1L)).thenReturn(Optional.of(blackoutPeriod));
+
+        perform(get("/web/blackoutperiod/1/edit").locale(GERMAN))
+            .andExpect(model().attribute("vacationTypeOptions", contains(
+                new BlackoutPeriodOptionDto(1L, "Erholungsurlaub", false),
+                new BlackoutPeriodOptionDto(2L, "Bildungsurlaub (inaktiv)", true)
+            )));
+    }
+
+    private static VacationType<?> activeVacationType(Long id, StaticMessageSource messageSource) {
+        return ProvidedVacationType.builder(messageSource)
+            .id(id)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .color(ORANGE)
+            .active(true)
+            .build();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -128,9 +128,12 @@
           </h2>
 
           <div class="uv-form__group">
-            <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-              <span th:text="#{blackoutperiod.data.departments.description}"></span>
+            <label class="font-bold">
+              <input type="checkbox" th:field="*{companyWide}" data-blackout-scope-all="departmentIds" />
+              <th:block th:text="#{blackoutperiod.data.companyWide}">Unternehmensweit</th:block>
+            </label>
+            <p class="uv-form__input-error" th:if="${#fields.hasErrors('departmentIds')}">
+              <th:block th:errors="*{departmentIds}">departments error</th:block>
             </p>
 
             <p th:if="${#lists.isEmpty(departmentOptions)}" th:text="#{blackoutperiod.data.departments.none}"></p>
@@ -143,6 +146,7 @@
                     name="departmentIds"
                     th:value="${departmentOption.id}"
                     th:checked="${departmentOption.selected}"
+                    th:disabled="${blackoutPeriod.companyWide}"
                   />
                   <th:block th:text="${departmentOption.label}"></th:block>
                 </label>
@@ -161,9 +165,12 @@
           </h2>
 
           <div class="uv-form__group">
-            <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-              <span th:text="#{blackoutperiod.data.vacationTypes.description}"></span>
+            <label class="font-bold">
+              <input type="checkbox" th:field="*{allVacationTypes}" data-blackout-scope-all="vacationTypeIds" />
+              <th:block th:text="#{blackoutperiod.data.allVacationTypes}">Alle Urlaubsarten</th:block>
+            </label>
+            <p class="uv-form__input-error" th:if="${#fields.hasErrors('vacationTypeIds')}">
+              <th:block th:errors="*{vacationTypeIds}">vacation types error</th:block>
             </p>
 
             <ul class="flex flex-col gap-1">
@@ -174,6 +181,7 @@
                     name="vacationTypeIds"
                     th:value="${vacationTypeOption.id}"
                     th:checked="${vacationTypeOption.selected}"
+                    th:disabled="${blackoutPeriod.allVacationTypes}"
                   />
                   <th:block th:text="${vacationTypeOption.label}"></th:block>
                 </label>

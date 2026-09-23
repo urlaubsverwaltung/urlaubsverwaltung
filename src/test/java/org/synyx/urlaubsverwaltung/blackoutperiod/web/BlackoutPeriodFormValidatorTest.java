@@ -5,6 +5,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -82,6 +83,58 @@ class BlackoutPeriodFormValidatorTest {
         final Errors errors = validate(form);
 
         assertThat(errors.hasErrors()).isFalse();
+    }
+
+    @Test
+    void ensureAtLeastOneDepartmentIsRequiredWhenNotCompanyWide() {
+
+        final BlackoutPeriodForm form = validForm();
+        form.setCompanyWide(false);
+        form.setDepartmentIds(List.of());
+
+        final Errors errors = validate(form);
+
+        assertThat(errors.getFieldError("departmentIds").getCode()).isEqualTo("blackoutperiod.error.departments.mandatory");
+    }
+
+    @Test
+    void ensureNoDepartmentIsRequiredWhenCompanyWide() {
+
+        final BlackoutPeriodForm form = validForm();
+        form.setCompanyWide(true);
+        form.setDepartmentIds(List.of());
+
+        assertThat(validate(form).getFieldError("departmentIds")).isNull();
+    }
+
+    @Test
+    void ensureAtLeastOneVacationTypeIsRequiredWhenNotAllVacationTypes() {
+
+        final BlackoutPeriodForm form = validForm();
+        form.setAllVacationTypes(false);
+        form.setVacationTypeIds(List.of());
+
+        final Errors errors = validate(form);
+
+        assertThat(errors.getFieldError("vacationTypeIds").getCode()).isEqualTo("blackoutperiod.error.vacationTypes.mandatory");
+    }
+
+    @Test
+    void ensureNoVacationTypeIsRequiredWhenAllVacationTypes() {
+
+        final BlackoutPeriodForm form = validForm();
+        form.setAllVacationTypes(true);
+        form.setVacationTypeIds(List.of());
+
+        assertThat(validate(form).getFieldError("vacationTypeIds")).isNull();
+    }
+
+    private static BlackoutPeriodForm validForm() {
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        form.setTitle("Jahresabschluss");
+        form.setStartDate(LocalDate.of(2026, 12, 20));
+        form.setEndDate(LocalDate.of(2027, 1, 5));
+        return form;
     }
 
     private Errors validate(BlackoutPeriodForm form) {
