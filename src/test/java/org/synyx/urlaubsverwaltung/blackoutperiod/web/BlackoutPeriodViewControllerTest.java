@@ -219,6 +219,8 @@ class BlackoutPeriodViewControllerTest {
         blackoutPeriod.setTitle("Jahresabschluss");
         blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
         blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
+        blackoutPeriod.setAllVacationTypes(true);
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(blackoutPeriod));
 
         perform(get("/web/blackoutperiod"))
