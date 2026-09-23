@@ -35,6 +35,9 @@ public interface BlackoutPeriodService {
      * member of one of the blackout period's departments (or the blackout period is company-wide) and the
      * vacation type is one of the blackout period's restricted types (or the blackout period applies to all
      * vacation types).
+     * <p>
+     * The returned blackout period carries its vacation types but not its departments, see
+     * {@link #findBlackoutPeriodsForPersons(List, LocalDate, LocalDate)}.
      *
      * @param person       the person applying for leave
      * @param startDate    start date of the requested vacation
@@ -48,6 +51,9 @@ public interface BlackoutPeriodService {
      * Finds all blackout periods that apply to the given person (company-wide or via one of their departments)
      * and overlap with the given date range, independent of vacation type. Intended for visualizing blocked days
      * in calendars, not for validating a concrete application.
+     * <p>
+     * The returned blackout periods carry their vacation types but not their departments, see
+     * {@link #findBlackoutPeriodsForPersons(List, LocalDate, LocalDate)}.
      *
      * @param person    the person to find blackout periods for
      * @param startDate start of the period to check, inclusive
@@ -57,9 +63,14 @@ public interface BlackoutPeriodService {
     List<BlackoutPeriod> findBlackoutPeriodsForPerson(Person person, LocalDate startDate, LocalDate endDate);
 
     /**
-     * Like {@link #findBlackoutPeriodsForPerson(Person, LocalDate, LocalDate)} for many persons at once. Blackout
-     * periods, departments and vacation types are loaded once and the department memberships of all persons are
-     * looked up together, so the number of queries does not depend on the number of persons.
+     * Like {@link #findBlackoutPeriodsForPerson(Person, LocalDate, LocalDate)} for many persons at once. Only the
+     * blackout periods overlapping the given range are loaded, and they are matched against the department ids of
+     * the persons, which are looked up together and only if one of them is scoped to departments. So the number of
+     * queries neither depends on the number of persons nor on the number of stored blackout periods or departments.
+     * <p>
+     * The returned blackout periods carry title, dates, scope flags and vacation types, but their
+     * {@link BlackoutPeriod#getDepartments() departments} are not resolved and always empty. Use
+     * {@link #getBlackoutPeriodById(Long)} if the departments are needed.
      *
      * @param persons   the persons to find blackout periods for
      * @param startDate start of the period to check, inclusive

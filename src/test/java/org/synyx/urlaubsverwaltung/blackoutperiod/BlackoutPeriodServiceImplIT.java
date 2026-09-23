@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentEntity;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -18,6 +21,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -38,6 +42,8 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
     @Autowired
     private DepartmentService departmentService;
     @Autowired
+    private VacationTypeService vacationTypeService;
+    @Autowired
     private EntityManager entityManager;
     @Autowired
     private EntityManagerFactory entityManagerFactory;
@@ -45,30 +51,9 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
     @Test
     void findBlackoutPeriodsForPersonsDoesNotQueryPerPerson() {
 
-        final List<Person> persons = IntStream.rangeClosed(1, 5)
-            .mapToObj(i -> personService.create("user" + i, "First" + i, "Last" + i, "user" + i + "@example.org", List.of(), List.of(USER)))
-            .toList();
-
-        final Department department = new Department();
-        department.setName("Vertrieb");
-        department.setMembers(persons);
-        final Department savedDepartment = departmentService.create(department);
-
-        final BlackoutPeriod companyWide = new BlackoutPeriod();
-        companyWide.setTitle("Jahresabschluss");
-        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
-        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
-        companyWide.setCompanyWide(true);
-        companyWide.setAllVacationTypes(true);
-        sut.create(companyWide);
-
-        final BlackoutPeriod scoped = new BlackoutPeriod();
-        scoped.setTitle("Vertriebssperre");
-        scoped.setStartDate(LocalDate.of(2026, 6, 1));
-        scoped.setEndDate(LocalDate.of(2026, 6, 10));
-        scoped.setDepartments(List.of(savedDepartment));
-        scoped.setAllVacationTypes(true);
-        sut.create(scoped);
+        final List<Person> persons = createPersons("user", 5);
+        final Department department = createDepartment("Vertrieb", persons);
+        createCompanyWideAndScopedBlackoutPeriods(department);
 
         final long statementsForOnePerson = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons.subList(0, 1), FROM, TO));
         final long statementsForFivePersons = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO));
@@ -82,7 +67,115 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
             assertThat(blackoutPeriods).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss"));
     }
 
+    @Test
+    void findBlackoutPeriodsForPersonsDoesNotQueryPerStoredBlackoutPeriod() {
+
+        final List<Person> persons = createPersons("user", 5);
+        final Department department = createDepartment("Vertrieb", persons);
+        createCompanyWideAndScopedBlackoutPeriods(department);
+
+        createPastBlackoutPeriod(department, 2020);
+        final long statementsWithOnePastBlackoutPeriod = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO));
+
+        IntStream.rangeClosed(2021, 2024).forEach(year -> createPastBlackoutPeriod(department, year));
+        final long statementsWithFivePastBlackoutPeriods = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO));
+
+        // past blackout periods must neither be loaded nor cost any extra statement
+        assertThat(statementsWithFivePastBlackoutPeriods).isEqualTo(statementsWithOnePastBlackoutPeriod);
+    }
+
+    @Test
+    void findBlackoutPeriodsForPersonsDoesNotQueryPerDepartmentMember() {
+
+        final List<Person> persons = createPersons("user", 5);
+        final Department department = createDepartment("Vertrieb", persons);
+        createCompanyWideAndScopedBlackoutPeriods(department);
+
+        final long statementsBefore = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO));
+
+        createDepartment("Marketing", createPersons("marketing", 5));
+        final long statementsWithAnotherDepartment = countStatements(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO));
+
+        // departments and their members must not be loaded for matching
+        assertThat(statementsWithAnotherDepartment).isEqualTo(statementsBefore);
+        assertThat(countDepartmentLoads(() -> sut.findBlackoutPeriodsForPersons(persons, FROM, TO))).isZero();
+    }
+
+    @Test
+    void findBlockingBlackoutPeriodDoesNotQueryPerStoredBlackoutPeriod() {
+
+        final List<Person> persons = createPersons("user", 1);
+        final Person person = persons.getFirst();
+        final Department department = createDepartment("Vertrieb", persons);
+        createCompanyWideAndScopedBlackoutPeriods(department);
+
+        final VacationType<?> vacationType = vacationTypeService.getAllVacationTypes().getFirst();
+        final LocalDate startDate = LocalDate.of(2026, 6, 2);
+        final LocalDate endDate = LocalDate.of(2026, 6, 3);
+
+        createPastBlackoutPeriod(department, 2020);
+        final long statementsWithOnePastBlackoutPeriod = countStatements(() -> sut.findBlockingBlackoutPeriod(person, startDate, endDate, vacationType));
+
+        IntStream.rangeClosed(2021, 2024).forEach(year -> createPastBlackoutPeriod(department, year));
+        final long statementsWithFivePastBlackoutPeriods = countStatements(() -> sut.findBlockingBlackoutPeriod(person, startDate, endDate, vacationType));
+
+        assertThat(statementsWithFivePastBlackoutPeriods).isEqualTo(statementsWithOnePastBlackoutPeriod);
+
+        final Optional<BlackoutPeriod> blocking = sut.findBlockingBlackoutPeriod(person, startDate, endDate, vacationType);
+        assertThat(blocking).map(BlackoutPeriod::getTitle).hasValue("Vertriebssperre");
+    }
+
+    private List<Person> createPersons(String prefix, int count) {
+        return IntStream.rangeClosed(1, count)
+            .mapToObj(i -> personService.create(prefix + i, "First" + i, "Last" + i, prefix + i + "@example.org", List.of(), List.of(USER)))
+            .toList();
+    }
+
+    private Department createDepartment(String name, List<Person> members) {
+        final Department department = new Department();
+        department.setName(name);
+        department.setMembers(members);
+        return departmentService.create(department);
+    }
+
+    private void createCompanyWideAndScopedBlackoutPeriods(Department department) {
+
+        final BlackoutPeriod companyWide = new BlackoutPeriod();
+        companyWide.setTitle("Jahresabschluss");
+        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
+        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setCompanyWide(true);
+        companyWide.setAllVacationTypes(true);
+        sut.create(companyWide);
+
+        final BlackoutPeriod scoped = new BlackoutPeriod();
+        scoped.setTitle("Vertriebssperre");
+        scoped.setStartDate(LocalDate.of(2026, 6, 1));
+        scoped.setEndDate(LocalDate.of(2026, 6, 10));
+        scoped.setDepartments(List.of(department));
+        scoped.setAllVacationTypes(true);
+        sut.create(scoped);
+    }
+
+    private void createPastBlackoutPeriod(Department department, int year) {
+        final BlackoutPeriod past = new BlackoutPeriod();
+        past.setTitle("Sperre " + year);
+        past.setStartDate(LocalDate.of(year, 3, 1));
+        past.setEndDate(LocalDate.of(year, 3, 10));
+        past.setDepartments(List.of(department));
+        past.setVacationTypes(List.of(vacationTypeService.getAllVacationTypes().getFirst()));
+        sut.create(past);
+    }
+
     private long countStatements(Supplier<?> query) {
+        return measure(query).getPrepareStatementCount();
+    }
+
+    private long countDepartmentLoads(Supplier<?> query) {
+        return measure(query).getEntityStatistics(DepartmentEntity.class.getName()).getLoadCount();
+    }
+
+    private Statistics measure(Supplier<?> query) {
 
         // force queries to hit the database instead of returning managed entities from the session cache
         entityManager.flush();
@@ -94,6 +187,6 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
 
         query.get();
 
-        return statistics.getPrepareStatementCount();
+        return statistics;
     }
 }
