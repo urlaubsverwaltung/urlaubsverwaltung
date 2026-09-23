@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -22,13 +23,17 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -67,12 +72,13 @@ class BlackoutPeriodViewControllerTest {
 
     private final BlackoutPeriodFormValidator validator = new BlackoutPeriodFormValidator();
     private final StaticMessageSource messageSource = new StaticMessageSource();
+    private final Clock clock = Clock.fixed(Instant.parse("2026-06-15T00:00:00Z"), ZoneOffset.UTC);
 
     @BeforeEach
     void setUp() {
         messageSource.setUseCodeAsDefaultMessage(true);
         sut = new BlackoutPeriodViewController(blackoutPeriodService, departmentService, vacationTypeService, validator,
-            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
     @Nested
@@ -102,6 +108,73 @@ class BlackoutPeriodViewControllerTest {
         perform(get("/web/blackoutperiod"))
             .andExpect(view().name("blackoutperiod/blackout_period_list"))
             .andExpect(model().attributeExists("blackoutPeriods"));
+    }
+
+    @Test
+    void showAllBlackoutPeriodsShowsCurrentAndUpcomingOnesAscendingByDefault() throws Exception {
+
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackoutPeriod(1L, "Vergangen", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 5)),
+            blackoutPeriod(2L, "Laufend", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 15)),
+            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5))
+        ));
+
+        final MvcResult result = perform(get("/web/blackoutperiod"))
+            .andExpect(model().attribute("showPast", false))
+            .andReturn();
+
+        assertThat(blackoutPeriodsFromModel(result))
+            .extracting(BlackoutPeriodListDto::title)
+            .containsExactly("Laufend", "Kommend");
+    }
+
+    @Test
+    void showAllBlackoutPeriodsShowsPastOnesDescendingWhenRequested() throws Exception {
+
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackoutPeriod(1L, "Älter", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 5)),
+            blackoutPeriod(2L, "Jünger", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 5)),
+            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5))
+        ));
+
+        final MvcResult result = perform(get("/web/blackoutperiod").param("past", "true"))
+            .andExpect(model().attribute("showPast", true))
+            .andReturn();
+
+        assertThat(blackoutPeriodsFromModel(result))
+            .extracting(BlackoutPeriodListDto::title)
+            .containsExactly("Jünger", "Älter");
+    }
+
+    @Test
+    void showAllBlackoutPeriodsFlagsDepartmentScopedBlackoutWithoutDepartments() throws Exception {
+
+        final BlackoutPeriod orphan = blackoutPeriod(1L, "Vertriebssperre", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5));
+        orphan.setCompanyWide(false);
+        orphan.setDepartments(List.of());
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(orphan));
+
+        final MvcResult result = perform(get("/web/blackoutperiod")).andReturn();
+
+        assertThat(blackoutPeriodsFromModel(result))
+            .extracting(BlackoutPeriodListDto::withoutDepartments, BlackoutPeriodListDto::scopeLabel)
+            .containsExactly(tuple(true, "blackoutperiod.scope.noDepartmentsLeft"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<BlackoutPeriodListDto> blackoutPeriodsFromModel(MvcResult result) {
+        return (List<BlackoutPeriodListDto>) result.getModelAndView().getModel().get("blackoutPeriods");
+    }
+
+    private static BlackoutPeriod blackoutPeriod(Long id, String title, LocalDate start, LocalDate end) {
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setId(id);
+        blackoutPeriod.setTitle(title);
+        blackoutPeriod.setStartDate(start);
+        blackoutPeriod.setEndDate(end);
+        blackoutPeriod.setCompanyWide(true);
+        blackoutPeriod.setAllVacationTypes(true);
+        return blackoutPeriod;
     }
 
     @Test
@@ -230,7 +303,7 @@ class BlackoutPeriodViewControllerTest {
         perform(get("/web/blackoutperiod"))
             .andExpect(model().attribute("blackoutPeriods", List.of(new BlackoutPeriodListDto(1L, "Jahresabschluss",
                 LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5),
-                "blackoutperiod.scope.companyWide", "blackoutperiod.scope.allVacationTypes"))));
+                "blackoutperiod.scope.companyWide", "blackoutperiod.scope.allVacationTypes", false))));
     }
 
     @Test
@@ -255,7 +328,7 @@ class BlackoutPeriodViewControllerTest {
         perform(get("/web/blackoutperiod"))
             .andExpect(model().attribute("blackoutPeriods", List.of(new BlackoutPeriodListDto(1L, "Vertriebssperre",
                 LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5),
-                "Vertrieb, Marketing", "application.data.vacationType.holiday"))));
+                "Vertrieb, Marketing", "application.data.vacationType.holiday", false))));
     }
 
     @Test
