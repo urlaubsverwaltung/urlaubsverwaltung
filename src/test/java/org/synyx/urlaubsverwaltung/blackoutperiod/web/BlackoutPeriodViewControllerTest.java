@@ -211,6 +211,30 @@ class BlackoutPeriodViewControllerTest {
     }
 
     @Test
+    void createBlackoutPeriodAcceptsDatesInTheFormatOfTheDatepicker() throws Exception {
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+        when(departmentService.getAllDepartments()).thenReturn(List.of());
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+
+        final BlackoutPeriod savedBlackoutPeriod = new BlackoutPeriod();
+        savedBlackoutPeriod.setId(1L);
+        savedBlackoutPeriod.setTitle("Jahresabschluss");
+        when(blackoutPeriodService.create(any(BlackoutPeriod.class))).thenReturn(savedBlackoutPeriod);
+
+        perform(post("/web/blackoutperiod/new")
+            .param("title", "Jahresabschluss")
+            .param("startDate", "20.12.2026")
+            .param("endDate", "5.1.27"))
+            .andExpect(redirectedUrl("/web/blackoutperiod"));
+
+        final ArgumentCaptor<BlackoutPeriod> captor = ArgumentCaptor.forClass(BlackoutPeriod.class);
+        verify(blackoutPeriodService).create(captor.capture());
+        assertThat(captor.getValue().getStartDate()).isEqualTo(LocalDate.of(2026, 12, 20));
+        assertThat(captor.getValue().getEndDate()).isEqualTo(LocalDate.of(2027, 1, 5));
+    }
+
+    @Test
     void createBlackoutPeriodWithConflictsAndNoConfirmationRedisplaysFormWithoutSaving() throws Exception {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
