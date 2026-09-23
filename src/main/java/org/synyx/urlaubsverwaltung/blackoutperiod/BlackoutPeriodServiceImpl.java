@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.blackoutperiod;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -7,12 +8,14 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentDeletedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -223,5 +226,28 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         entity.setVacationTypeIds(blackoutPeriod.getVacationTypes().stream().map(VacationType::getId).collect(toSet()));
 
         return entity;
+    }
+
+    /**
+     * Removes a deleted department from every blackout period. A blackout period that is left without departments
+     * is kept - it applies to nobody and is flagged in the blackout period list, so office or boss decide what to do.
+     */
+    @EventListener
+    @Transactional
+    void removeDeletedDepartment(DepartmentDeletedEvent event) {
+
+        final Long departmentId = event.departmentId();
+
+        final List<BlackoutPeriodEntity> affected = blackoutPeriodRepository.findAll().stream()
+            .filter(entity -> entity.getDepartmentIds().contains(departmentId))
+            .toList();
+
+        for (BlackoutPeriodEntity entity : affected) {
+            final Set<Long> remainingDepartmentIds = new HashSet<>(entity.getDepartmentIds());
+            remainingDepartmentIds.remove(departmentId);
+            entity.setDepartmentIds(remainingDepartmentIds);
+        }
+
+        blackoutPeriodRepository.saveAll(affected);
     }
 }
