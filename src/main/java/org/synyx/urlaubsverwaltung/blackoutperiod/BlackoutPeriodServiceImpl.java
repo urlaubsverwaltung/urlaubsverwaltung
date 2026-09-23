@@ -194,6 +194,8 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         blackoutPeriod.setEndDate(entity.getEndDate());
         blackoutPeriod.setCreatedAt(entity.getCreatedAt());
         blackoutPeriod.setLastModification(entity.getLastModification());
+        blackoutPeriod.setCompanyWide(entity.isCompanyWide());
+        blackoutPeriod.setAllVacationTypes(entity.isAllVacationTypes());
         blackoutPeriod.setDepartments(entity.getDepartmentIds().stream()
             .map(departmentsById::get)
             .filter(Objects::nonNull)
@@ -215,6 +217,8 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         entity.setStartDate(blackoutPeriod.getStartDate());
         entity.setEndDate(blackoutPeriod.getEndDate());
         entity.setLastModification(blackoutPeriod.getLastModification());
+        entity.setCompanyWide(blackoutPeriod.isCompanyWide());
+        entity.setAllVacationTypes(blackoutPeriod.appliesToAllVacationTypes());
         entity.setDepartmentIds(blackoutPeriod.getDepartments().stream().map(Department::getId).collect(toSet()));
         entity.setVacationTypeIds(blackoutPeriod.getVacationTypes().stream().map(VacationType::getId).collect(toSet()));
 

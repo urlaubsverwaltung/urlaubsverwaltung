@@ -130,6 +130,8 @@ class BlackoutPeriodServiceImplTest {
         entity.setTitle("Jahresabschluss");
         entity.setStartDate(LocalDate.of(2026, 12, 20));
         entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setCompanyWide(true);
+        entity.setAllVacationTypes(true);
         when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
@@ -183,6 +185,7 @@ class BlackoutPeriodServiceImplTest {
         entity.setStartDate(LocalDate.of(2026, 12, 20));
         entity.setEndDate(LocalDate.of(2027, 1, 5));
         entity.setDepartmentIds(Set.of(42L));
+        entity.setAllVacationTypes(true);
         when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
@@ -235,6 +238,7 @@ class BlackoutPeriodServiceImplTest {
         companyWide.setTitle("Jahresabschluss");
         companyWide.setStartDate(LocalDate.of(2026, 12, 20));
         companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setCompanyWide(true);
 
         final BlackoutPeriodEntity scoped = new BlackoutPeriodEntity();
         scoped.setId(2L);
@@ -255,6 +259,7 @@ class BlackoutPeriodServiceImplTest {
         outOfRange.setTitle("Nicht relevant");
         outOfRange.setStartDate(LocalDate.of(2025, 1, 1));
         outOfRange.setEndDate(LocalDate.of(2025, 1, 10));
+        outOfRange.setCompanyWide(true);
 
         when(blackoutPeriodRepository.findAll()).thenReturn(List.of(companyWide, scoped, otherDepartmentOnly, outOfRange));
 
@@ -282,6 +287,8 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
         blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
+        blackoutPeriod.setAllVacationTypes(true);
 
         final List<Application> conflicts = sut.findConflictingApplications(blackoutPeriod);
 
@@ -413,6 +420,7 @@ class BlackoutPeriodServiceImplTest {
         entity.setTitle("Jahresabschluss");
         entity.setStartDate(LocalDate.of(2026, 12, 20));
         entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setCompanyWide(true);
         entity.setVacationTypeIds(Set.of(1L));
         when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
 
@@ -434,12 +442,16 @@ class BlackoutPeriodServiceImplTest {
         later.setTitle("Später");
         later.setStartDate(LocalDate.of(2026, 12, 23));
         later.setEndDate(LocalDate.of(2026, 12, 27));
+        later.setCompanyWide(true);
+        later.setAllVacationTypes(true);
 
         final BlackoutPeriodEntity earlier = new BlackoutPeriodEntity();
         earlier.setId(2L);
         earlier.setTitle("Früher");
         earlier.setStartDate(LocalDate.of(2026, 12, 20));
         earlier.setEndDate(LocalDate.of(2026, 12, 24));
+        earlier.setCompanyWide(true);
+        earlier.setAllVacationTypes(true);
 
         when(blackoutPeriodRepository.findAll()).thenReturn(List.of(later, earlier));
 
@@ -460,6 +472,7 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
         blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
 
         assertThat(sut.findConflictingApplications(blackoutPeriod)).isEmpty();
 
@@ -493,8 +506,56 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
         blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setVacationTypes(List.of(restrictedVacationType));
 
         assertThat(sut.findConflictingApplications(blackoutPeriod)).containsExactly(restrictedApplication);
+    }
+
+    @Test
+    void findBlockingBlackoutPeriod_returnsEmptyWhenDepartmentScopedBlackoutHasNoDepartmentsLeft() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+
+        final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
+        entity.setId(1L);
+        entity.setTitle("Vertriebssperre");
+        entity.setStartDate(LocalDate.of(2026, 12, 20));
+        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setCompanyWide(false);
+        entity.setAllVacationTypes(true);
+        // department 99 has been deleted, getAllDepartments() does not return it anymore
+        entity.setDepartmentIds(Set.of(99L));
+        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(entity));
+
+        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
+
+        final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
+            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+
+        assertThat(blockingBlackoutPeriod).isEmpty();
+    }
+
+    @Test
+    void create_persistsScopeFlags() {
+
+        when(blackoutPeriodRepository.save(any(BlackoutPeriodEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setTitle("Jahresabschluss");
+        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setCompanyWide(true);
+        blackoutPeriod.setAllVacationTypes(true);
+
+        final BlackoutPeriod created = sut.create(blackoutPeriod);
+
+        final ArgumentCaptor<BlackoutPeriodEntity> captor = ArgumentCaptor.forClass(BlackoutPeriodEntity.class);
+        verify(blackoutPeriodRepository).save(captor.capture());
+        assertThat(captor.getValue().isCompanyWide()).isTrue();
+        assertThat(captor.getValue().isAllVacationTypes()).isTrue();
+        assertThat(created.isCompanyWide()).isTrue();
+        assertThat(created.appliesToAllVacationTypes()).isTrue();
     }
 }

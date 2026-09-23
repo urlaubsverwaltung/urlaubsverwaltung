@@ -1,17 +1,11 @@
 package org.synyx.urlaubsverwaltung.blackoutperiod;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticMessageSource;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.department.Department;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 class BlackoutPeriodTest {
 
@@ -30,30 +24,36 @@ class BlackoutPeriodTest {
     }
 
     @Test
-    void ensureIsCompanyWideWhenNoDepartmentIsSet() {
+    void isCompanyWideReflectsTheFlagAndNotTheDepartments() {
+        final BlackoutPeriod sut = new BlackoutPeriod();
+        sut.setDepartments(List.of());
 
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        assertThat(blackoutPeriod.isCompanyWide()).isTrue();
+        assertThat(sut.isCompanyWide()).isFalse();
 
-        final Department department = createDepartment("Vertrieb");
-        department.setId(42L);
-        blackoutPeriod.setDepartments(List.of(department));
-
-        assertThat(blackoutPeriod.isCompanyWide()).isFalse();
-        assertThat(blackoutPeriod.getDepartments()).containsExactly(department);
+        sut.setCompanyWide(true);
+        assertThat(sut.isCompanyWide()).isTrue();
     }
 
     @Test
-    void ensureAppliesToAllVacationTypesWhenNoVacationTypeIsSet() {
+    void appliesToAllVacationTypesReflectsTheFlagAndNotTheVacationTypes() {
+        final BlackoutPeriod sut = new BlackoutPeriod();
+        sut.setVacationTypes(List.of());
 
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        assertThat(blackoutPeriod.appliesToAllVacationTypes()).isTrue();
+        assertThat(sut.appliesToAllVacationTypes()).isFalse();
 
-        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
-        blackoutPeriod.setVacationTypes(List.of(vacationType));
+        sut.setAllVacationTypes(true);
+        assertThat(sut.appliesToAllVacationTypes()).isTrue();
+    }
 
-        assertThat(blackoutPeriod.appliesToAllVacationTypes()).isFalse();
-        assertThat(blackoutPeriod.getVacationTypes()).containsExactly(vacationType);
+    @Test
+    void hasNoRemainingDepartmentsWhenScopedToDepartmentsButNoneIsLeft() {
+        final BlackoutPeriod sut = new BlackoutPeriod();
+        sut.setCompanyWide(false);
+        sut.setDepartments(List.of());
+        assertThat(sut.hasNoRemainingDepartments()).isTrue();
+
+        sut.setCompanyWide(true);
+        assertThat(sut.hasNoRemainingDepartments()).isFalse();
     }
 
     @Test

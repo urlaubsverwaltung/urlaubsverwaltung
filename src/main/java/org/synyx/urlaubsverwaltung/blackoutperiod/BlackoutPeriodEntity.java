@@ -20,8 +20,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.ZoneOffset.UTC;
 
 /**
- * A blackout period ("Urlaubssperre") during which vacation applications are blocked, either company-wide or
- * scoped to specific departments, and either for all vacation types or a restricted set of them.
+ * A blackout period ("Urlaubssperre") during which vacation applications are blocked, either company-wide (flag) or
+ * scoped to specific departments, and either for all vacation types (flag) or a restricted set of them.
  */
 @Entity(name = "blackout_period")
 public class BlackoutPeriodEntity extends AbstractTenantAwareEntity {
@@ -47,6 +47,12 @@ public class BlackoutPeriodEntity extends AbstractTenantAwareEntity {
 
     @Column(name = "last_modification")
     private LocalDate lastModification;
+
+    @Column(name = "company_wide", nullable = false)
+    private boolean companyWide;
+
+    @Column(name = "all_vacation_types", nullable = false)
+    private boolean allVacationTypes;
 
     @ElementCollection
     @CollectionTable(name = "blackout_period_department", joinColumns = @JoinColumn(name = "blackout_period_id"))
@@ -108,6 +114,22 @@ public class BlackoutPeriodEntity extends AbstractTenantAwareEntity {
 
     public void setLastModification(LocalDate lastModification) {
         this.lastModification = lastModification;
+    }
+
+    public boolean isCompanyWide() {
+        return companyWide;
+    }
+
+    public void setCompanyWide(boolean companyWide) {
+        this.companyWide = companyWide;
+    }
+
+    public boolean isAllVacationTypes() {
+        return allVacationTypes;
+    }
+
+    public void setAllVacationTypes(boolean allVacationTypes) {
+        this.allVacationTypes = allVacationTypes;
     }
 
     public Set<Long> getDepartmentIds() {
