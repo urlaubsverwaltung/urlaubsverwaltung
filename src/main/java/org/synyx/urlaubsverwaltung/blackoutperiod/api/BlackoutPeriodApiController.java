@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.blackoutperiod.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -38,10 +41,12 @@ public class BlackoutPeriodApiController {
 
     private final PersonService personService;
     private final BlackoutPeriodService blackoutPeriodService;
+    private final MessageSource messageSource;
 
-    public BlackoutPeriodApiController(PersonService personService, BlackoutPeriodService blackoutPeriodService) {
+    public BlackoutPeriodApiController(PersonService personService, BlackoutPeriodService blackoutPeriodService, MessageSource messageSource) {
         this.personService = personService;
         this.blackoutPeriodService = blackoutPeriodService;
+        this.messageSource = messageSource;
     }
 
     @Operation(
@@ -75,7 +80,9 @@ public class BlackoutPeriodApiController {
         @Parameter(description = "end of interval to get blackout periods from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-        LocalDate endDate) {
+        LocalDate endDate,
+        @Parameter(hidden = true)
+        Locale locale) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -89,17 +96,17 @@ public class BlackoutPeriodApiController {
         final List<BlackoutPeriod> blackoutPeriods = blackoutPeriodService.findBlackoutPeriodsForPerson(optionalPerson.get(), startDate, endDate);
 
         final List<BlackoutPeriodDayDto> days = blackoutPeriods.stream()
-            .flatMap(period -> daysOf(period, startDate, endDate))
+            .flatMap(period -> daysOf(period, startDate, endDate, BlackoutPeriodDescriptions.describe(period, messageSource, locale)))
             .toList();
 
         return new BlackoutPeriodDaysDto(days);
     }
 
-    private static Stream<BlackoutPeriodDayDto> daysOf(BlackoutPeriod period, LocalDate rangeStart, LocalDate rangeEnd) {
+    private static Stream<BlackoutPeriodDayDto> daysOf(BlackoutPeriod period, LocalDate rangeStart, LocalDate rangeEnd, String description) {
 
         final LocalDate from = period.getStartDate().isAfter(rangeStart) ? period.getStartDate() : rangeStart;
         final LocalDate to = period.getEndDate().isBefore(rangeEnd) ? period.getEndDate() : rangeEnd;
 
-        return from.datesUntil(to.plusDays(1)).map(date -> new BlackoutPeriodDayDto(date, period.getTitle()));
+        return from.datesUntil(to.plusDays(1)).map(date -> new BlackoutPeriodDayDto(date, period.getTitle(), description));
     }
 }

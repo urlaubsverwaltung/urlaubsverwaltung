@@ -12,10 +12,12 @@ public class BlackoutPeriodDayDto {
 
     private final String date;
     private final String title;
+    private final String description;
 
-    BlackoutPeriodDayDto(LocalDate date, String title) {
+    BlackoutPeriodDayDto(LocalDate date, String title, String description) {
         this.date = date.format(ofPattern(DATE_PATTERN));
         this.title = title;
+        this.description = description;
     }
 
     public String getDate() {
@@ -24,5 +26,9 @@ public class BlackoutPeriodDayDto {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

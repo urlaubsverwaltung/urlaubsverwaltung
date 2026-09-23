@@ -54,6 +54,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions.describeAll;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -270,10 +271,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday, recordInfoToColor))
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor));
 
-                final boolean isBlackedOut = blackoutPeriodsByPerson.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
-                    .anyMatch(blackoutPeriod -> !date.isBefore(blackoutPeriod.getStartDate()) && !date.isAfter(blackoutPeriod.getEndDate()));
-                if (isBlackedOut) {
-                    personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod();
+                final List<BlackoutPeriod> blackoutPeriodsOfDay = blackoutPeriodsByPerson.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
+                    .filter(blackoutPeriod -> !date.isBefore(blackoutPeriod.getStartDate()) && !date.isAfter(blackoutPeriod.getEndDate()))
+                    .toList();
+                if (!blackoutPeriodsOfDay.isEmpty()) {
+                    personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod(describeAll(blackoutPeriodsOfDay, messageSource, locale));
                 }
 
                 final AbsenceOverviewDayType personViewDayType = personViewDayTypeBuilder.build();

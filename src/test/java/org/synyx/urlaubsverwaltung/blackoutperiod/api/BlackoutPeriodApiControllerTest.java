@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -36,9 +38,12 @@ class BlackoutPeriodApiControllerTest {
     @Mock
     private BlackoutPeriodService blackoutPeriodService;
 
+    private final StaticMessageSource messageSource = new StaticMessageSource();
+
     @BeforeEach
     void setUp() {
-        sut = new BlackoutPeriodApiController(personService, blackoutPeriodService);
+        messageSource.addMessage("blackoutperiod.day.description", Locale.GERMAN, "Urlaubssperre: {0}");
+        sut = new BlackoutPeriodApiController(personService, blackoutPeriodService, messageSource);
     }
 
     @Test
@@ -52,17 +57,20 @@ class BlackoutPeriodApiControllerTest {
         blackoutPeriod.setTitle("Jahresabschluss");
         blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
         blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setAllVacationTypes(true);
 
         when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23)))
             .thenReturn(List.of(blackoutPeriod));
 
         perform(get("/api/persons/42/blackout-periods")
+            .locale(Locale.GERMAN)
             .param("from", "2026-12-22")
             .param("to", "2026-12-23"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.blackoutPeriods", hasSize(2)))
             .andExpect(jsonPath("$.blackoutPeriods[0].date", is("2026-12-22")))
             .andExpect(jsonPath("$.blackoutPeriods[0].title", is("Jahresabschluss")))
+            .andExpect(jsonPath("$.blackoutPeriods[0].description", is("Urlaubssperre: Jahresabschluss")))
             .andExpect(jsonPath("$.blackoutPeriods[1].date", is("2026-12-23")))
             .andExpect(jsonPath("$.blackoutPeriods[1].title", is("Jahresabschluss")));
     }
@@ -109,6 +117,7 @@ class BlackoutPeriodApiControllerTest {
             .thenReturn(List.of(blackoutPeriod));
 
         perform(get("/api/persons/42/blackout-periods")
+            .locale(Locale.GERMAN)
             .param("from", "2026-06-01")
             .param("to", "2026-06-10"))
             .andExpect(status().isOk())
