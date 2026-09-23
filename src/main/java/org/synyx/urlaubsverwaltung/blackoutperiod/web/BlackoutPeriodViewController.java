@@ -147,7 +147,12 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         @PathVariable("id") Long id, @ModelAttribute("blackoutPeriod") BlackoutPeriodForm form, Errors errors,
         @RequestParam(value = "confirm", required = false, defaultValue = "false") boolean confirm,
         Model model, Locale locale, RedirectAttributes redirectAttributes
-    ) {
+    ) throws UnknownBlackoutPeriodException {
+
+        if (blackoutPeriodService.getBlackoutPeriodById(id).isEmpty()) {
+            throw new UnknownBlackoutPeriodException(id);
+        }
+
         form.setId(id);
         return saveBlackoutPeriod(form, errors, confirm, false, model, locale, redirectAttributes, blackoutPeriodService::update);
     }
