@@ -3,9 +3,11 @@ package org.synyx.urlaubsverwaltung.blackoutperiod;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -53,6 +55,18 @@ public interface BlackoutPeriodService {
      * @return the applicable blackout periods, ordered by start date
      */
     List<BlackoutPeriod> findBlackoutPeriodsForPerson(Person person, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * Like {@link #findBlackoutPeriodsForPerson(Person, LocalDate, LocalDate)} for many persons at once. Blackout
+     * periods, departments and vacation types are loaded once and the department memberships of all persons are
+     * looked up together, so the number of queries does not depend on the number of persons.
+     *
+     * @param persons   the persons to find blackout periods for
+     * @param startDate start of the period to check, inclusive
+     * @param endDate   end of the period to check, inclusive
+     * @return every given person mapped to their applicable blackout periods, ordered by start date
+     */
+    Map<PersonId, List<BlackoutPeriod>> findBlackoutPeriodsForPersons(List<Person> persons, LocalDate startDate, LocalDate endDate);
 
     /**
      * Finds already existing, not yet finished applications for leave that would conflict with the given

@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
@@ -292,10 +293,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
-        final Map<Person, List<BlackoutPeriod>> blackoutPeriodsByPerson = new HashMap<>();
-        for (Person person : personList) {
-            blackoutPeriodsByPerson.put(person, blackoutPeriodService.findBlackoutPeriodsForPerson(person, dateRange.startDate(), dateRange.endDate()));
-        }
+        final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson =
+            blackoutPeriodService.findBlackoutPeriodsForPersons(personList, dateRange.startDate(), dateRange.endDate());
 
         // resolve each message at most once per request
         final Map<String, String> messages = new HashMap<>();
@@ -350,7 +349,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday))
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType));
 
-                final boolean isBlackedOut = blackoutPeriodsByPerson.getOrDefault(person, List.of()).stream()
+                final boolean isBlackedOut = blackoutPeriodsByPerson.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
                     .anyMatch(blackoutPeriod -> !date.isBefore(blackoutPeriod.getStartDate()) && !date.isAfter(blackoutPeriod.getEndDate()));
                 if (isBlackedOut) {
                     personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod();

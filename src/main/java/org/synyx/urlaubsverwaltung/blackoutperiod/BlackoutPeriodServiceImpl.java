@@ -11,10 +11,12 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentDeletedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -136,16 +138,31 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
     @Override
     @Transactional(readOnly = true)
     public List<BlackoutPeriod> findBlackoutPeriodsForPerson(Person person, LocalDate startDate, LocalDate endDate) {
+        return findBlackoutPeriodsForPersons(List.of(person), startDate, endDate)
+            .getOrDefault(person.getIdAsPersonId(), List.of());
+    }
 
-        final Set<Long> personDepartmentIds = departmentService.getAssignedDepartmentsOfMember(person).stream()
-            .map(Department::getId)
-            .collect(toSet());
+    @Override
+    @Transactional(readOnly = true)
+    public Map<PersonId, List<BlackoutPeriod>> findBlackoutPeriodsForPersons(List<Person> persons, LocalDate startDate, LocalDate endDate) {
 
-        return getAllBlackoutPeriods().stream()
+        final List<BlackoutPeriod> overlapping = getAllBlackoutPeriods().stream()
             .filter(period -> period.overlaps(startDate, endDate))
-            .filter(period -> period.isCompanyWide() || appliesToAnyOf(period, personDepartmentIds))
-            .sorted(comparing(BlackoutPeriod::getStartDate))
             .toList();
+
+        final Map<PersonId, Set<Long>> departmentIdsByPerson = overlapping.isEmpty() || persons.isEmpty()
+            ? Map.of()
+            : departmentService.getDepartmentIdsByMembers(persons);
+
+        final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson = new HashMap<>();
+        for (Person person : persons) {
+            final Set<Long> departmentIds = departmentIdsByPerson.getOrDefault(person.getIdAsPersonId(), Set.of());
+            blackoutPeriodsByPerson.put(person.getIdAsPersonId(), overlapping.stream()
+                .filter(period -> period.isCompanyWide() || appliesToAnyOf(period, departmentIds))
+                .toList());
+        }
+
+        return blackoutPeriodsByPerson;
     }
 
     @Override

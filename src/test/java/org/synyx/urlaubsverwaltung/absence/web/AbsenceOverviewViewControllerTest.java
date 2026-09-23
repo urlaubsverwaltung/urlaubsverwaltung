@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -1038,8 +1039,8 @@ class AbsenceOverviewViewControllerTest {
         blackoutPeriod.setTitle("Jahresabschluss");
         blackoutPeriod.setStartDate(LocalDate.of(2020, 10, 15));
         blackoutPeriod.setEndDate(LocalDate.of(2020, 10, 20));
-        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2020, 10, 1), LocalDate.of(2020, 10, 31)))
-            .thenReturn(List.of(blackoutPeriod));
+        when(blackoutPeriodService.findBlackoutPeriodsForPersons(anyList(), eq(LocalDate.of(2020, 10, 1)), eq(LocalDate.of(2020, 10, 31))))
+            .thenReturn(Map.of(new PersonId(1L), List.of(blackoutPeriod)));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1053,6 +1054,8 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))));
+
+        verify(blackoutPeriodService, never()).findBlackoutPeriodsForPerson(any(), any(), any());
     }
 
     @Test
