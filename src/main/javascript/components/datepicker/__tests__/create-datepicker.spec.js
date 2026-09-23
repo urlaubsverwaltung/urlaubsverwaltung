@@ -474,10 +474,12 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               title: "Jahresabschluss",
+              description: "Urlaubssperre: Jahresabschluss",
             },
             {
               date: "2020-12-25",
               title: "Jahresabschluss",
+              description: "Urlaubssperre: Jahresabschluss",
             },
           ],
         });
@@ -506,6 +508,13 @@ describe("create-datepicker", () => {
         expect(getElement("24. Dezember").classList).toContain("datepicker-day-blackout");
         expect(getElement("25. Dezember").classList).toContain("datepicker-day-blackout");
         expect(getElement("23. Dezember").classList).not.toContain("datepicker-day-blackout");
+
+        expect(getElement("24. Dezember").getAttribute("title")).toBe("Urlaubssperre: Jahresabschluss");
+        expect(getElement("24. Dezember").querySelector("[data-uv-blackout-description]").textContent).toBe(
+          "Urlaubssperre: Jahresabschluss",
+        );
+        expect(getElement("23. Dezember").hasAttribute("title")).toBe(false);
+        expect(getElement("23. Dezember").querySelector("[data-uv-blackout-description]")).toBeNull();
       });
 
       test("weekend", async () => {

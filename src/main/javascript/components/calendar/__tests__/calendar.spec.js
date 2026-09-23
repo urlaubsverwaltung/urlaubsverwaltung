@@ -642,10 +642,17 @@ describe("calendar", () => {
         {
           date: "2017-12-15",
           title: "Jahresabschluss",
+          description: "Urlaubssperre: Jahresabschluss",
         },
         {
           date: "2017-12-16",
           title: "Jahresabschluss",
+          description: "Urlaubssperre: Jahresabschluss",
+        },
+        {
+          date: "2017-12-15",
+          title: "Inventur",
+          description: "Urlaubssperre: <b>Inventur</b>",
         },
       ],
     });
@@ -667,6 +674,17 @@ describe("calendar", () => {
     expect($('[data-datepicker-date="2017-12-15"]').classList).toContain("datepicker-day-blackout");
     expect($('[data-datepicker-date="2017-12-16"]').classList).toContain("datepicker-day-blackout");
     expect($('[data-datepicker-date="2017-12-14"]').classList).not.toContain("datepicker-day-blackout");
+
+    expect(holidayService.getBlackoutPeriodDescription(parseISO("2017-12-15"))).toBe(
+      "Urlaubssperre: Jahresabschluss · Urlaubssperre: <b>Inventur</b>",
+    );
+    expect(holidayService.getBlackoutPeriodDescription(parseISO("2017-12-14"))).toBe("");
+
+    const day = $('[data-datepicker-date="2017-12-15"]');
+    expect(day.getAttribute("title")).toBe("Urlaubssperre: Jahresabschluss · Urlaubssperre: <b>Inventur</b>");
+    // the office-entered title is text, never markup
+    expect(day.querySelector("b")).toBeNull();
+    expect(day.closest("li").querySelector(".sr-only").textContent).toContain("Urlaubssperre: Jahresabschluss");
   });
 
   it("caches blackout periods of a year and does not fetch them twice", async () => {
