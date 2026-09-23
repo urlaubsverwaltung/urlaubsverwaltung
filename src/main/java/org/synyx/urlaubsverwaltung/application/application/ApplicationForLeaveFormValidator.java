@@ -42,8 +42,6 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 
@@ -94,6 +92,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final ApplicationMapper applicationMapper;
     private final BlackoutPeriodService blackoutPeriodService;
     private final PersonService personService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final Clock clock;
 
     @Autowired
@@ -108,6 +107,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         ApplicationMapper applicationMapper,
         BlackoutPeriodService blackoutPeriodService,
         PersonService personService,
+        ApplicationForLeavePermissionEvaluator permissionEvaluator,
         Clock clock
     ) {
         this.workingTimeService = workingTimeService;
@@ -120,6 +120,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         this.applicationMapper = applicationMapper;
         this.blackoutPeriodService = blackoutPeriodService;
         this.personService = personService;
+        this.permissionEvaluator = permissionEvaluator;
         this.clock = clock;
     }
 
@@ -379,13 +380,13 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
 
         /*
-         * Ensure that the period does not fall into a blackout period ("Urlaubssperre"), unless the person
-         * applying for leave is allowed to override it.
+         * Ensure that the period does not fall into a blackout period ("Urlaubssperre"). A blackout period blocks
+         * self-service only: persons who may apply for leave on behalf of the person are not blocked.
          */
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = blackoutPeriodService.findBlockingBlackoutPeriod(
             applicationForm.getPerson(), applicationForm.getStartDate(), applicationForm.getEndDate(), vacationType);
 
-        if (blockingBlackoutPeriod.isPresent() && !personService.getSignedInUser().hasAnyRole(OFFICE, BOSS)) {
+        if (blockingBlackoutPeriod.isPresent() && isBlockedByBlackoutPeriod(applicationForm.getPerson())) {
             errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{blockingBlackoutPeriod.get().getTitle()}, null);
 
             return;
@@ -406,6 +407,11 @@ class ApplicationForLeaveFormValidator implements Validator {
         if (!enoughOvertimeHoursLeft(applicationForm, settings, vacationType)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
+    }
+
+    private boolean isBlockedByBlackoutPeriod(Person person) {
+        final Person signedInUser = personService.getSignedInUser();
+        return signedInUser.equals(person) || !permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person);
     }
 
     private boolean personHasWorkingTime(ApplicationForLeaveForm applicationForLeaveForm) {
