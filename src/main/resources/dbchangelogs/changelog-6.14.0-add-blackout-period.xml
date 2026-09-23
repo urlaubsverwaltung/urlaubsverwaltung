@@ -26,6 +26,12 @@
         <constraints nullable="false"/>
       </column>
       <column name="last_modification" type="date"/>
+      <column name="company_wide" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column name="all_vacation_types" type="boolean">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
 
     <createTable tableName="blackout_period_department">

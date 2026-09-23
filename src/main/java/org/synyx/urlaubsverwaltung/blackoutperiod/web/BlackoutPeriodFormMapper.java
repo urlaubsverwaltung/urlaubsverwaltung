@@ -39,6 +39,9 @@ final class BlackoutPeriodFormMapper {
         blackoutPeriod.setDepartments(allDepartments.stream().filter(d -> selectedDepartmentIds.contains(d.getId())).toList());
         blackoutPeriod.setVacationTypes(allVacationTypes.stream().filter(vt -> selectedVacationTypeIds.contains(vt.getId())).toList());
 
+        blackoutPeriod.setCompanyWide(form.getDepartmentIds().isEmpty());
+        blackoutPeriod.setAllVacationTypes(form.getVacationTypeIds().isEmpty());
+
         return blackoutPeriod;
     }
 }

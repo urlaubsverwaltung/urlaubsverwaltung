@@ -21,6 +21,8 @@ public class BlackoutPeriod {
     private LocalDate endDate;
     private LocalDate createdAt;
     private LocalDate lastModification;
+    private boolean companyWide;
+    private boolean allVacationTypes;
     private List<Department> departments = new ArrayList<>();
     private List<VacationType<?>> vacationTypes = new ArrayList<>();
 
@@ -93,17 +95,34 @@ public class BlackoutPeriod {
     }
 
     /**
-     * @return {@code true} if this blackout period applies company-wide, i.e. is not restricted to specific departments
+     * @return {@code true} if this blackout period applies company-wide. A blackout period that is not company-wide
+     * applies to the members of its departments only - and to nobody if none of its departments exists anymore.
      */
     public boolean isCompanyWide() {
-        return departments.isEmpty();
+        return companyWide;
+    }
+
+    public void setCompanyWide(boolean companyWide) {
+        this.companyWide = companyWide;
     }
 
     /**
-     * @return {@code true} if this blackout period applies to every vacation type, i.e. is not restricted to specific ones
+     * @return {@code true} if this blackout period applies to every vacation type, including types created later
      */
     public boolean appliesToAllVacationTypes() {
-        return vacationTypes.isEmpty();
+        return allVacationTypes;
+    }
+
+    public void setAllVacationTypes(boolean allVacationTypes) {
+        this.allVacationTypes = allVacationTypes;
+    }
+
+    /**
+     * @return {@code true} if this blackout period is scoped to departments but none of them exists anymore,
+     * i.e. it applies to nobody
+     */
+    public boolean hasNoRemainingDepartments() {
+        return !companyWide && departments.isEmpty();
     }
 
     public boolean overlaps(LocalDate otherStartDate, LocalDate otherEndDate) {
