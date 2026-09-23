@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -54,7 +55,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions.describeAll;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -239,6 +239,9 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson =
             blackoutPeriodService.findBlackoutPeriodsForPersons(personList, dateRange.startDate(), dateRange.endDate());
 
+        // every blackout period is described once per request instead of once per person and day
+        final Map<BlackoutPeriod, String> blackoutPeriodDescriptions = new HashMap<>();
+
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 _ -> initializeAbsenceOverviewMonthDto(date, personList, locale));
@@ -275,7 +278,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .filter(blackoutPeriod -> !date.isBefore(blackoutPeriod.getStartDate()) && !date.isAfter(blackoutPeriod.getEndDate()))
                     .toList();
                 if (!blackoutPeriodsOfDay.isEmpty()) {
-                    personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod(describeAll(blackoutPeriodsOfDay, messageSource, locale));
+                    final List<String> descriptions = blackoutPeriodsOfDay.stream()
+                        .map(blackoutPeriod -> blackoutPeriodDescriptions.computeIfAbsent(blackoutPeriod, key -> BlackoutPeriodDescriptions.describe(key, messageSource, locale)))
+                        .toList();
+                    personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod(BlackoutPeriodDescriptions.join(descriptions));
                 }
 
                 final AbsenceOverviewDayType personViewDayType = personViewDayTypeBuilder.build();

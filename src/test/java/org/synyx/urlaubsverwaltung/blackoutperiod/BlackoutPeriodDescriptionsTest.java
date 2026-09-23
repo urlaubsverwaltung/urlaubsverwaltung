@@ -54,7 +54,11 @@ class BlackoutPeriodDescriptionsTest {
         second.setTitle("Jahresabschluss");
         second.setAllVacationTypes(true);
 
-        assertThat(BlackoutPeriodDescriptions.describeAll(List.of(first, second), messageSource, GERMAN))
+        final List<String> descriptions = List.of(
+            BlackoutPeriodDescriptions.describe(first, messageSource, GERMAN),
+            BlackoutPeriodDescriptions.describe(second, messageSource, GERMAN));
+
+        assertThat(BlackoutPeriodDescriptions.join(descriptions))
             .isEqualTo("Urlaubssperre: Inventur · Urlaubssperre: Jahresabschluss");
     }
 }

@@ -32,9 +32,13 @@ public final class BlackoutPeriodDescriptions {
             new Object[]{blackoutPeriod.getTitle(), vacationTypes}, locale);
     }
 
-    public static String describeAll(List<BlackoutPeriod> blackoutPeriods, MessageSource messageSource, Locale locale) {
-        return blackoutPeriods.stream()
-            .map(blackoutPeriod -> describe(blackoutPeriod, messageSource, locale))
-            .collect(joining(SEPARATOR));
+    /**
+     * Joins the descriptions of several blackout periods that block the same day.
+     *
+     * @param descriptions descriptions created with {@link #describe(BlackoutPeriod, MessageSource, Locale)}
+     * @return the descriptions joined into one text
+     */
+    public static String join(List<String> descriptions) {
+        return String.join(SEPARATOR, descriptions);
     }
 }

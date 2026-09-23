@@ -66,6 +66,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -796,6 +797,8 @@ class AbsenceOverviewViewControllerTest {
                 ))));
 
         verify(blackoutPeriodService, never()).findBlackoutPeriodsForPerson(any(), any(), any());
+        // described once per request, not once per blacked out day
+        verify(messageSource, times(1)).getMessage(eq("blackoutperiod.day.description"), any(), any(Locale.class));
     }
 
     @Test
