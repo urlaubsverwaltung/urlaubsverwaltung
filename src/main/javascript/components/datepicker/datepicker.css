@@ -140,6 +140,13 @@ duet-date-picker[disabled] input {
   --font-color: var(--uv-cal-weekend-color);
 }
 
+.duet-date__day.datepicker-day-blackout,
+.duet-date__day.datepicker-day-blackout:not(.is-month) {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+}
+
 .duet-date__day.datepicker-day-public-holiday-morning,
 .duet-date__day.datepicker-day-public-holiday-morning:not(.is-month) {
   --background-color-left: var(--uv-cal-public-holiday-bg);
@@ -153,13 +160,6 @@ duet-date-picker[disabled] input {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
-}
-
-.duet-date__day.datepicker-day-blackout,
-.duet-date__day.datepicker-day-blackout:not(.is-month) {
-  --background-color-left: var(--uv-cal-blackout-bg);
-  --background-color-right: var(--uv-cal-blackout-bg);
-  --font-color: var(--uv-cal-blackout-color);
 }
 
 .duet-date__day.datepicker-day-today {

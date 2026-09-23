@@ -394,6 +394,12 @@ td.datepicker-day {
   --background-color-right: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
 }
 
+.datepicker-day-blackout {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+}
+
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
