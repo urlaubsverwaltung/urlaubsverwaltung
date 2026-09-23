@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentDeletedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
@@ -22,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -226,13 +228,14 @@ class BlackoutPeriodServiceImplTest {
     void findBlackoutPeriodsForPerson_returnsOnlyPeriodsOverlappingAndApplicableToPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
 
         final Department scopedDepartment = createDepartment("Vertrieb");
         scopedDepartment.setId(42L);
         final Department otherDepartment = createDepartment("Marketing");
         otherDepartment.setId(43L);
         when(departmentService.getAllDepartments()).thenReturn(List.of(scopedDepartment, otherDepartment));
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(scopedDepartment));
+        when(departmentService.getDepartmentIdsByMembers(List.of(person))).thenReturn(Map.of(new PersonId(1L), Set.of(42L)));
 
         final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
         companyWide.setId(1L);
@@ -267,6 +270,60 @@ class BlackoutPeriodServiceImplTest {
         final List<BlackoutPeriod> result = sut.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
 
         assertThat(result).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
+    }
+
+    @Test
+    void findBlackoutPeriodsForPersons_resolvesDepartmentsOfAllPersonsAtOnce() {
+
+        final Person sales = new Person("sales", "Sales", "Sam", "sales@example.org");
+        sales.setId(1L);
+        final Person marketing = new Person("marketing", "Marketing", "Mia", "marketing@example.org");
+        marketing.setId(2L);
+
+        final Department salesDepartment = createDepartment("Vertrieb");
+        salesDepartment.setId(42L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(salesDepartment));
+        when(departmentService.getDepartmentIdsByMembers(List.of(sales, marketing)))
+            .thenReturn(Map.of(new PersonId(1L), Set.of(42L), new PersonId(2L), Set.of(43L)));
+
+        final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
+        companyWide.setId(1L);
+        companyWide.setTitle("Jahresabschluss");
+        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
+        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setCompanyWide(true);
+        companyWide.setAllVacationTypes(true);
+
+        final BlackoutPeriodEntity salesOnly = new BlackoutPeriodEntity();
+        salesOnly.setId(2L);
+        salesOnly.setTitle("Vertriebssperre");
+        salesOnly.setStartDate(LocalDate.of(2026, 6, 1));
+        salesOnly.setEndDate(LocalDate.of(2026, 6, 10));
+        salesOnly.setDepartmentIds(Set.of(42L));
+        salesOnly.setAllVacationTypes(true);
+
+        when(blackoutPeriodRepository.findAll()).thenReturn(List.of(companyWide, salesOnly));
+
+        final Map<PersonId, List<BlackoutPeriod>> result =
+            sut.findBlackoutPeriodsForPersons(List.of(sales, marketing), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+
+        assertThat(result.get(new PersonId(1L))).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
+        assertThat(result.get(new PersonId(2L))).extracting(BlackoutPeriod::getTitle).containsExactly("Jahresabschluss");
+        verify(departmentService, never()).getAssignedDepartmentsOfMember(any());
+    }
+
+    @Test
+    void findBlackoutPeriodsForPersons_returnsEmptyListsWithoutLookingUpDepartmentsWhenNothingOverlaps() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(blackoutPeriodRepository.findAll()).thenReturn(List.of());
+
+        final Map<PersonId, List<BlackoutPeriod>> result =
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+
+        assertThat(result).containsEntry(new PersonId(1L), List.of());
+        verify(departmentService, never()).getDepartmentIdsByMembers(any());
     }
 
     @Test
