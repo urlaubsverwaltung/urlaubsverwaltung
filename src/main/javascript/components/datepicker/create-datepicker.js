@@ -162,7 +162,8 @@ function hydrateDatepicker(duetDateElement, options) {
 
         const absencesForDate = findByDate(absences.value, date);
         const publicHolidaysForDate = findByDate(publicHolidays.value, date);
-        const blackoutPeriodsForDate = findByDate(blackoutPeriods.value, date);
+        // blocked days are a hint only, a failed blackout period request must not hide absences and public holidays
+        const blackoutPeriodsForDate = findByDate(blackoutPeriods.value ?? [], date);
         addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate, blackoutPeriodsForDate);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
 
