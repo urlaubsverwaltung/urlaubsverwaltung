@@ -1,15 +1,24 @@
 package org.synyx.urlaubsverwaltung.blackoutperiod.web;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
+
 public class BlackoutPeriodForm {
 
     private Long id;
     private String title;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate startDate;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate endDate;
     private boolean companyWide = true;
     private boolean allVacationTypes = true;
