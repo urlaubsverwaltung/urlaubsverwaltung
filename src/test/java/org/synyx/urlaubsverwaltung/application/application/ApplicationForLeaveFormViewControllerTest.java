@@ -136,8 +136,8 @@ class ApplicationForLeaveFormViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, new ApplicationForLeavePermissionEvaluator(departmentService), accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
-            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService),
-            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), defaultPersonSuggestionUrlStrategy,
+            personSearchUiFragmentSupplier, clock);
     }
 
     @Test

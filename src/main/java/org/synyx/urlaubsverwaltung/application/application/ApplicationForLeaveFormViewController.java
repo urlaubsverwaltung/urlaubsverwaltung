@@ -420,7 +420,6 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         }
 
         final Application editedApplication = applicationMapper.merge(application, appForm);
-
         final Application savedApplicationForLeave;
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
