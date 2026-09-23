@@ -27,8 +27,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
-import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
-import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -77,7 +75,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -129,10 +126,6 @@ class ApplicationForLeaveFormViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
     @Mock
-    private BlackoutPeriodService blackoutPeriodService;
-    @Mock
-    private MessageSource messageSource;
-    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -143,8 +136,8 @@ class ApplicationForLeaveFormViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, new ApplicationForLeavePermissionEvaluator(departmentService), accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
-            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService), blackoutPeriodService,
-            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+            dateFormatAware, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
     @Test
@@ -917,92 +910,20 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    void postNewApplicationAppendsBlackoutPeriodOverrideNoteToTheGivenComment() throws Exception {
+    void postNewApplicationPassesGivenCommentThroughUnchanged() throws Exception {
 
-        final Person person = personWithRole(OFFICE);
-        when(personService.getSignedInUser()).thenReturn(person);
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
-
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setTitle("Jahresabschluss");
-        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(), any(), any(), any())).thenReturn(Optional.of(blackoutPeriod));
-        when(messageSource.getMessage(eq("application.blackoutPeriod.overridden"), any(Object[].class), any(Locale.class)))
-            .thenReturn("Urlaubssperre übergangen");
 
         perform(post("/web/application")
             .param("vacationType.id", "1")
-            .param("comment", "Bitte trotzdem genehmigen"));
+            .param("comment", "my comment"));
 
-        verify(applicationInteractionService).apply(any(), eq(person),
-            eq(Optional.of("Bitte trotzdem genehmigen\n\nUrlaubssperre übergangen")));
-    }
-
-    @Test
-    void postNewApplicationUsesBlackoutPeriodOverrideNoteAsCommentWhenNoCommentIsGiven() throws Exception {
-
-        final Person person = personWithRole(OFFICE);
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
-
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
-
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setTitle("Jahresabschluss");
-        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(), any(), any(), any())).thenReturn(Optional.of(blackoutPeriod));
-        when(messageSource.getMessage(eq("application.blackoutPeriod.overridden"), any(Object[].class), any(Locale.class)))
-            .thenReturn("Urlaubssperre übergangen");
-
-        perform(post("/web/application")
-            .param("vacationType.id", "1"));
-
-        verify(applicationInteractionService).apply(any(), eq(person), eq(Optional.of("Urlaubssperre übergangen")));
-    }
-
-    @Test
-    void postNewApplicationUsesBlackoutPeriodOverrideNoteAsCommentWhenTheGivenCommentIsBlank() throws Exception {
-
-        final Person person = personWithRole(OFFICE);
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
-
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
-
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setTitle("Jahresabschluss");
-        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(), any(), any(), any())).thenReturn(Optional.of(blackoutPeriod));
-        when(messageSource.getMessage(eq("application.blackoutPeriod.overridden"), any(Object[].class), any(Locale.class)))
-            .thenReturn("Urlaubssperre übergangen");
-
-        perform(post("/web/application")
-            .param("vacationType.id", "1")
-            .param("comment", "   "));
-
-        verify(applicationInteractionService).apply(any(), eq(person), eq(Optional.of("Urlaubssperre übergangen")));
-    }
-
-    @Test
-    void postNewApplicationKeepsCommentUntouchedWithoutABlockingBlackoutPeriod() throws Exception {
-
-        final Person person = personWithRole(OFFICE);
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
-
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
-
-        when(blackoutPeriodService.findBlockingBlackoutPeriod(any(), any(), any(), any())).thenReturn(Optional.empty());
-
-        perform(post("/web/application")
-            .param("vacationType.id", "1")
-            .param("comment", "Bitte genehmigen"));
-
-        verify(applicationInteractionService).apply(any(), eq(person), eq(Optional.of("Bitte genehmigen")));
-        verifyNoInteractions(messageSource);
+        verify(applicationInteractionService).apply(any(Application.class), eq(signedInPerson), eq(Optional.of("my comment")));
     }
 
     @Test
