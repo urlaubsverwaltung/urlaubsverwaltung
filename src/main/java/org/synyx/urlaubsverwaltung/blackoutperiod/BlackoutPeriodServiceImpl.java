@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -183,6 +184,7 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Application> findConflictingApplications(BlackoutPeriod blackoutPeriod) {
 
         final List<Person> affectedPersons = blackoutPeriod.isCompanyWide()
@@ -244,7 +246,7 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
         blackoutPeriod.setDepartments(entity.getDepartmentIds().stream()
             .map(departmentsById::get)
             .filter(Objects::nonNull)
-            .sorted(comparing(department -> department.getName().toLowerCase()))
+            .sorted(comparing(department -> department.getName().toLowerCase(Locale.ROOT)))
             .toList());
 
         return blackoutPeriod;
