@@ -159,22 +159,32 @@
             <h2 th:text="#{calendar.share.department.title}" class="text-xl">Abteilung</h2>
           </th:block>
         </div>
-        <ul th:if="${departmentCalendars.size() > 1}" role="tablist">
-          <li th:each="departmentCal : ${departmentCalendars}">
-            <button
-              role="tab"
-              th:aria-controls="|departmentcal-${departmentCal.departmentId}|"
-              th:class="${departmentCal.active ? 'tab--active' : ''}"
+        <ul
+          th:if="${departmentCalendars.size() > 1}"
+          class="flex flex-col gap-2 @lg/main:flex-row @lg/main:gap-8"
+          is="uv-nav-tabs"
+        >
+          <li
+            th:each="departmentCal : ${departmentCalendars}"
+            class="border-l-4 dark:border-l-2 @lg/main:border-l-0 dark:@lg/main:border-l-0 @lg/main:border-b-4 dark:@lg/main:border-b-2 pl-2 @lg/main:pl-0"
+            th:classappend="${departmentCal.active ? 'border-zinc-200' : 'border-transparent'}"
+            th:data-content="|#departmentcal-${departmentCal.departmentId}|"
+            th:attrappend="data-active=${departmentCal.active}?${'data-active'}"
+          >
+            <a
+              href="#"
+              th:href="@{/web/calendars/share/persons/{personId}/departments/{departmentId} (personId=${privateCalendarShare.personId}, departmentId=${departmentCal.departmentId})}"
+              class="text-xl font-medium no-underline hover:text-black-almost dark:hover:text-zinc-200"
+              th:classappend="${departmentCal.active ? 'text-black-almost dark:text-zinc-200' : 'text-zinc-400 dark:text-zinc-500'}"
               th:text="${departmentCal.departmentName}"
-            ></button>
+            ></a>
           </li>
         </ul>
         <div
           th:each="departmentCal, loop : ${departmentCalendars}"
-          role="tabpanel"
-          th:class="tab-panel"
-          th:classappend="${departmentCal.active ? 'tab-panel--active' : ''}"
+          class="mt-4"
           th:id="|departmentcal-${departmentCal.departmentId}|"
+          th:hidden="${!departmentCal.active}"
         >
           <turbo-frame th:id="|frame-calendar-share-department-${departmentCal.departmentId}|">
             <form
