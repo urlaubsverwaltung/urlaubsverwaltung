@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackoutPeriodTest {
@@ -16,11 +19,11 @@ class BlackoutPeriodTest {
         assertThat(blackoutPeriod.getCreatedAt()).isNull();
         assertThat(blackoutPeriod.getLastModification()).isNotNull();
 
-        blackoutPeriod.setCreatedAt(LocalDate.of(2026, 1, 1));
-        blackoutPeriod.setLastModification(LocalDate.of(2026, 2, 2));
+        blackoutPeriod.setCreatedAt(LocalDate.of(2026, JANUARY, 1));
+        blackoutPeriod.setLastModification(LocalDate.of(2026, FEBRUARY, 2));
 
-        assertThat(blackoutPeriod.getCreatedAt()).isEqualTo(LocalDate.of(2026, 1, 1));
-        assertThat(blackoutPeriod.getLastModification()).isEqualTo(LocalDate.of(2026, 2, 2));
+        assertThat(blackoutPeriod.getCreatedAt()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
+        assertThat(blackoutPeriod.getLastModification()).isEqualTo(LocalDate.of(2026, FEBRUARY, 2));
     }
 
     @Test
@@ -60,13 +63,13 @@ class BlackoutPeriodTest {
     void ensureOverlapsIsInclusiveOnBothBoundaries() {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
 
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 20))).isTrue();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, 1, 5), LocalDate.of(2027, 1, 31))).isTrue();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 19))).isFalse();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, 1, 6), LocalDate.of(2027, 1, 31))).isFalse();
+        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 20))).isTrue();
+        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, JANUARY, 5), LocalDate.of(2027, JANUARY, 31))).isTrue();
+        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 19))).isFalse();
+        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, JANUARY, 6), LocalDate.of(2027, JANUARY, 31))).isFalse();
     }
 
     @Test
@@ -75,8 +78,8 @@ class BlackoutPeriodTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
 
         assertThat(blackoutPeriod).hasToString("BlackoutPeriod{id=1, title='Jahresabschluss', startDate=2026-12-20, endDate=2027-01-05}");
     }

@@ -30,6 +30,9 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -101,8 +104,8 @@ class BlackoutPeriodViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(blackoutPeriod));
 
         perform(get("/web/blackoutperiod"))
@@ -114,9 +117,9 @@ class BlackoutPeriodViewControllerTest {
     void showAllBlackoutPeriodsShowsCurrentAndUpcomingOnesAscendingByDefault() throws Exception {
 
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
-            blackoutPeriod(1L, "Vergangen", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 5)),
-            blackoutPeriod(2L, "Laufend", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 15)),
-            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5))
+            blackoutPeriod(1L, "Vergangen", LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, JANUARY, 5)),
+            blackoutPeriod(2L, "Laufend", LocalDate.of(2026, JUNE, 10), LocalDate.of(2026, JUNE, 15)),
+            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5))
         ));
 
         final MvcResult result = perform(get("/web/blackoutperiod"))
@@ -132,9 +135,9 @@ class BlackoutPeriodViewControllerTest {
     void showAllBlackoutPeriodsShowsPastOnesDescendingWhenRequested() throws Exception {
 
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
-            blackoutPeriod(1L, "Älter", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 5)),
-            blackoutPeriod(2L, "Jünger", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 5)),
-            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5))
+            blackoutPeriod(1L, "Älter", LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 5)),
+            blackoutPeriod(2L, "Jünger", LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, JANUARY, 5)),
+            blackoutPeriod(3L, "Kommend", LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5))
         ));
 
         final MvcResult result = perform(get("/web/blackoutperiod").param("past", "true"))
@@ -149,7 +152,7 @@ class BlackoutPeriodViewControllerTest {
     @Test
     void showAllBlackoutPeriodsFlagsDepartmentScopedBlackoutWithoutDepartments() throws Exception {
 
-        final BlackoutPeriod orphan = blackoutPeriod(1L, "Vertriebssperre", LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5));
+        final BlackoutPeriod orphan = blackoutPeriod(1L, "Vertriebssperre", LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5));
         orphan.setCompanyWide(false);
         orphan.setDepartments(List.of());
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(orphan));
@@ -230,8 +233,8 @@ class BlackoutPeriodViewControllerTest {
 
         final ArgumentCaptor<BlackoutPeriod> captor = ArgumentCaptor.forClass(BlackoutPeriod.class);
         verify(blackoutPeriodService).create(captor.capture());
-        assertThat(captor.getValue().getStartDate()).isEqualTo(LocalDate.of(2026, 12, 20));
-        assertThat(captor.getValue().getEndDate()).isEqualTo(LocalDate.of(2027, 1, 5));
+        assertThat(captor.getValue().getStartDate()).isEqualTo(LocalDate.of(2026, DECEMBER, 20));
+        assertThat(captor.getValue().getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 5));
     }
 
     @Test
@@ -243,8 +246,8 @@ class BlackoutPeriodViewControllerTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application conflictingApplication = new Application();
         conflictingApplication.setPerson(person);
-        conflictingApplication.setStartDate(LocalDate.of(2026, 12, 22));
-        conflictingApplication.setEndDate(LocalDate.of(2026, 12, 23));
+        conflictingApplication.setStartDate(LocalDate.of(2026, DECEMBER, 22));
+        conflictingApplication.setEndDate(LocalDate.of(2026, DECEMBER, 23));
         conflictingApplication.setVacationType(createVacationType(1L, HOLIDAY, messageSource));
 
         when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of(conflictingApplication));
@@ -318,15 +321,15 @@ class BlackoutPeriodViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setAllVacationTypes(true);
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(blackoutPeriod));
 
         perform(get("/web/blackoutperiod"))
             .andExpect(model().attribute("blackoutPeriods", List.of(new BlackoutPeriodListDto(1L, "Jahresabschluss",
-                LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5),
+                LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5),
                 "blackoutperiod.scope.companyWide", "blackoutperiod.scope.allVacationTypes", false))));
     }
 
@@ -343,15 +346,15 @@ class BlackoutPeriodViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Vertriebssperre");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setDepartments(List.of(vertrieb, marketing));
         blackoutPeriod.setVacationTypes(List.of(vacationType));
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(blackoutPeriod));
 
         perform(get("/web/blackoutperiod"))
             .andExpect(model().attribute("blackoutPeriods", List.of(new BlackoutPeriodListDto(1L, "Vertriebssperre",
-                LocalDate.of(2026, 12, 20), LocalDate.of(2027, 1, 5),
+                LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5),
                 "Vertrieb, Marketing", "application.data.vacationType.holiday", false))));
     }
 
@@ -382,8 +385,8 @@ class BlackoutPeriodViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Vertriebssperre");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setDepartments(List.of(department));
         blackoutPeriod.setVacationTypes(List.of(vacationType));
         when(blackoutPeriodService.getBlackoutPeriodById(1L)).thenReturn(Optional.of(blackoutPeriod));
@@ -486,8 +489,8 @@ class BlackoutPeriodViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Bildungssperre");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setVacationTypes(List.of(inactiveSelected));
         when(blackoutPeriodService.getBlackoutPeriodById(1L)).thenReturn(Optional.of(blackoutPeriod));

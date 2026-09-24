@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackoutPeriodEntityTest {
@@ -18,19 +21,19 @@ class BlackoutPeriodEntityTest {
 
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
-        entity.setCreatedAt(LocalDate.of(2026, 1, 1));
-        entity.setLastModification(LocalDate.of(2026, 2, 2));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
+        entity.setCreatedAt(LocalDate.of(2026, JANUARY, 1));
+        entity.setLastModification(LocalDate.of(2026, FEBRUARY, 2));
         entity.setDepartmentIds(Set.of(42L));
         entity.setVacationTypeIds(Set.of(1L));
 
         assertThat(entity.getId()).isEqualTo(1L);
         assertThat(entity.getTitle()).isEqualTo("Jahresabschluss");
-        assertThat(entity.getStartDate()).isEqualTo(LocalDate.of(2026, 12, 20));
-        assertThat(entity.getEndDate()).isEqualTo(LocalDate.of(2027, 1, 5));
-        assertThat(entity.getCreatedAt()).isEqualTo(LocalDate.of(2026, 1, 1));
-        assertThat(entity.getLastModification()).isEqualTo(LocalDate.of(2026, 2, 2));
+        assertThat(entity.getStartDate()).isEqualTo(LocalDate.of(2026, DECEMBER, 20));
+        assertThat(entity.getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 5));
+        assertThat(entity.getCreatedAt()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
+        assertThat(entity.getLastModification()).isEqualTo(LocalDate.of(2026, FEBRUARY, 2));
         assertThat(entity.getDepartmentIds()).containsExactly(42L);
         assertThat(entity.getVacationTypeIds()).containsExactly(1L);
     }
@@ -41,8 +44,8 @@ class BlackoutPeriodEntityTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
 
         assertThat(entity).hasToString("BlackoutPeriodEntity{id=1, title='Jahresabschluss', startDate=2026-12-20, endDate=2027-01-05}");
     }

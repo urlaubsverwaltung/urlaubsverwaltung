@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -777,10 +778,10 @@ class AbsenceOverviewViewControllerTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2020, 10, 15));
-        blackoutPeriod.setEndDate(LocalDate.of(2020, 10, 20));
+        blackoutPeriod.setStartDate(LocalDate.of(2020, OCTOBER, 15));
+        blackoutPeriod.setEndDate(LocalDate.of(2020, OCTOBER, 20));
         blackoutPeriod.setAllVacationTypes(true);
-        when(blackoutPeriodService.findBlackoutPeriodsForPersons(anyList(), eq(LocalDate.of(2020, 10, 1)), eq(LocalDate.of(2020, 10, 31))))
+        when(blackoutPeriodService.findBlackoutPeriodsForPersons(anyList(), eq(LocalDate.of(2020, OCTOBER, 1)), eq(LocalDate.of(2020, OCTOBER, 31))))
             .thenReturn(Map.of(new PersonId(1L), List.of(blackoutPeriod)));
 
         perform(get("/web/absences").locale(Locale.GERMANY))

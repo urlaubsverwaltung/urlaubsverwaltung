@@ -25,6 +25,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -32,8 +36,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Transactional
 class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
 
-    private static final LocalDate FROM = LocalDate.of(2026, 1, 1);
-    private static final LocalDate TO = LocalDate.of(2026, 12, 31);
+    private static final LocalDate FROM = LocalDate.of(2026, JANUARY, 1);
+    private static final LocalDate TO = LocalDate.of(2026, DECEMBER, 31);
 
     @Autowired
     private BlackoutPeriodService sut;
@@ -110,8 +114,8 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
         createCompanyWideAndScopedBlackoutPeriods(department);
 
         final VacationType<?> vacationType = vacationTypeService.getAllVacationTypes().getFirst();
-        final LocalDate startDate = LocalDate.of(2026, 6, 2);
-        final LocalDate endDate = LocalDate.of(2026, 6, 3);
+        final LocalDate startDate = LocalDate.of(2026, JUNE, 2);
+        final LocalDate endDate = LocalDate.of(2026, JUNE, 3);
 
         createPastBlackoutPeriod(department, 2020);
         final long statementsWithOnePastBlackoutPeriod = countStatements(() -> sut.findBlockingBlackoutPeriod(person, startDate, endDate, vacationType));
@@ -142,16 +146,16 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
 
         final BlackoutPeriod companyWide = new BlackoutPeriod();
         companyWide.setTitle("Jahresabschluss");
-        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
-        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        companyWide.setEndDate(LocalDate.of(2027, JANUARY, 5));
         companyWide.setCompanyWide(true);
         companyWide.setAllVacationTypes(true);
         sut.create(companyWide);
 
         final BlackoutPeriod scoped = new BlackoutPeriod();
         scoped.setTitle("Vertriebssperre");
-        scoped.setStartDate(LocalDate.of(2026, 6, 1));
-        scoped.setEndDate(LocalDate.of(2026, 6, 10));
+        scoped.setStartDate(LocalDate.of(2026, JUNE, 1));
+        scoped.setEndDate(LocalDate.of(2026, JUNE, 10));
         scoped.setDepartments(List.of(department));
         scoped.setAllVacationTypes(true);
         sut.create(scoped);
@@ -160,8 +164,8 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
     private void createPastBlackoutPeriod(Department department, int year) {
         final BlackoutPeriod past = new BlackoutPeriod();
         past.setTitle("Sperre " + year);
-        past.setStartDate(LocalDate.of(year, 3, 1));
-        past.setEndDate(LocalDate.of(year, 3, 10));
+        past.setStartDate(LocalDate.of(year, MARCH, 1));
+        past.setEndDate(LocalDate.of(year, MARCH, 10));
         past.setDepartments(List.of(department));
         past.setVacationTypes(List.of(vacationTypeService.getAllVacationTypes().getFirst()));
         sut.create(past);

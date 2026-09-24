@@ -7,6 +7,8 @@ import org.springframework.validation.Errors;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackoutPeriodFormValidatorTest {
@@ -64,8 +66,8 @@ class BlackoutPeriodFormValidatorTest {
 
         final BlackoutPeriodForm form = new BlackoutPeriodForm();
         form.setTitle("Jahresabschluss");
-        form.setStartDate(LocalDate.of(2026, 12, 24));
-        form.setEndDate(LocalDate.of(2026, 12, 20));
+        form.setStartDate(LocalDate.of(2026, DECEMBER, 24));
+        form.setEndDate(LocalDate.of(2026, DECEMBER, 20));
 
         final Errors errors = validate(form);
 
@@ -77,8 +79,8 @@ class BlackoutPeriodFormValidatorTest {
 
         final BlackoutPeriodForm form = new BlackoutPeriodForm();
         form.setTitle("Jahresabschluss");
-        form.setStartDate(LocalDate.of(2026, 12, 20));
-        form.setEndDate(LocalDate.of(2027, 1, 5));
+        form.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        form.setEndDate(LocalDate.of(2027, JANUARY, 5));
 
         final Errors errors = validate(form);
 
@@ -132,8 +134,8 @@ class BlackoutPeriodFormValidatorTest {
     private static BlackoutPeriodForm validForm() {
         final BlackoutPeriodForm form = new BlackoutPeriodForm();
         form.setTitle("Jahresabschluss");
-        form.setStartDate(LocalDate.of(2026, 12, 20));
-        form.setEndDate(LocalDate.of(2027, 1, 5));
+        form.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        form.setEndDate(LocalDate.of(2027, JANUARY, 5));
         return form;
     }
 

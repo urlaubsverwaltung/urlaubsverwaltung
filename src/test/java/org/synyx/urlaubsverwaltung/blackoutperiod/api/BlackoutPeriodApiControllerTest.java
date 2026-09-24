@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -55,11 +58,11 @@ class BlackoutPeriodApiControllerTest {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setAllVacationTypes(true);
 
-        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23)))
+        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23)))
             .thenReturn(List.of(blackoutPeriod));
 
         perform(get("/api/persons/42/blackout-periods")
@@ -81,7 +84,7 @@ class BlackoutPeriodApiControllerTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(42L);
         when(personService.getPersonByID(42L)).thenReturn(Optional.of(person));
-        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10)))
+        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 10)))
             .thenReturn(List.of());
 
         perform(get("/api/persons/42/blackout-periods")
@@ -110,10 +113,10 @@ class BlackoutPeriodApiControllerTest {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle("Betriebsversammlung");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 6, 4));
-        blackoutPeriod.setEndDate(LocalDate.of(2026, 6, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, JUNE, 4));
+        blackoutPeriod.setEndDate(LocalDate.of(2026, JUNE, 5));
 
-        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10)))
+        when(blackoutPeriodService.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 10)))
             .thenReturn(List.of(blackoutPeriod));
 
         perform(get("/api/persons/42/blackout-periods")
