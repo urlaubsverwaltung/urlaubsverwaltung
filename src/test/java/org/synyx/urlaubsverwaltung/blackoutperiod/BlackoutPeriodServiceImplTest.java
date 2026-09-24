@@ -34,7 +34,6 @@ import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -388,7 +387,7 @@ class BlackoutPeriodServiceImplTest {
         application.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(person)), eq(activeStatuses())))
+            LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5), List.of(person), activeStatuses()))
             .thenReturn(List.of(application));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
@@ -415,7 +414,7 @@ class BlackoutPeriodServiceImplTest {
         blackoutPeriod.setDepartments(List.of(scopedDepartment));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(member)), eq(activeStatuses())))
+            LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5), List.of(member), activeStatuses()))
             .thenReturn(List.of());
 
         final List<Application> conflicts = sut.findConflictingApplications(blackoutPeriod);
@@ -609,7 +608,7 @@ class BlackoutPeriodServiceImplTest {
         otherApplication.setVacationType(createVacationType(2L, SPECIALLEAVE, new StaticMessageSource()));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(person)), eq(activeStatuses())))
+            LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2027, JANUARY, 5), List.of(person), activeStatuses()))
             .thenReturn(List.of(otherApplication, restrictedApplication));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
