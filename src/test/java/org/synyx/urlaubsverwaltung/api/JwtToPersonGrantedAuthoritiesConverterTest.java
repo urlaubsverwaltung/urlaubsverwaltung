@@ -26,7 +26,6 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.E
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,7 +85,7 @@ class JwtToPersonGrantedAuthoritiesConverterTest {
 
         final Person person = new Person("username", "lastName", "firstName", "email");
         person.setId(42L);
-        person.setPermissions(List.of(INACTIVE));
+        person.setPermissions(List.of());
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(person));
 
         assertThatThrownBy(() -> sut.convert(jwt))

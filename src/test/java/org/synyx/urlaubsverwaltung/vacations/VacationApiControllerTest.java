@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class VacationApiControllerTest {
@@ -168,10 +169,13 @@ class VacationApiControllerTest {
 
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
-        final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
+        final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        colleague.setPermissions(List.of(USER));
+
+        final Application vacationAllowed = createApplication(colleague,
             of(2016, MAY, 19), of(2016, MAY, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED);
-        final Application vacationAllowedCancelRequested = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
+        final Application vacationAllowedCancelRequested = createApplication(colleague,
             of(2016, MAY, 19), of(2016, MAY, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 

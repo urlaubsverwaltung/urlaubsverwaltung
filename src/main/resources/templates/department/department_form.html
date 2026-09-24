@@ -178,7 +178,7 @@
                   <li
                     th:each="person : ${persons}"
                     class="flex flex-row border-b border-[#ddd] dark:border-zinc-600 last:border-b-0"
-                    th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
+                    th:with="isInactive=${person.inactive}, isMember=${#lists.contains(department.members, person)}"
                     th:classappend="${isMember ? ( isInactive ? 'bg-[#fff4ea] dark:bg-transparent' : 'bg-[#e8efd1] dark:bg-zinc-800') : ''}"
                   >
                     <div class="shrink-0 p-3 pl-6 text-blue-50 dark:text-sky-800">

@@ -99,7 +99,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends SingleTenan
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void linkCompanyCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -180,7 +180,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends SingleTenan
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void unlinkCompanyCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -243,7 +243,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends SingleTenan
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
     void enableCompanyCalendarFeatureIsForbidden(final String role) throws Exception {
 
         perform(

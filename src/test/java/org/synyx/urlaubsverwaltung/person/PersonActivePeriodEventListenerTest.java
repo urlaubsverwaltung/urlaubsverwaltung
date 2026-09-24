@@ -28,7 +28,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,10 +72,10 @@ class PersonActivePeriodEventListenerTest {
     class OnPersonPermissionsChangedEvent {
 
         @Test
-        void ensureClosesOpenPeriodWhenInactiveRoleIsGranted() {
+        void ensureClosesOpenPeriodWhenUserRoleIsRevoked() {
 
             final PersonPermissionsChangedEvent event = PersonPermissionsChangedEvent.of(
-                person(1L), List.of(USER), List.of(USER, INACTIVE)
+                person(1L), List.of(USER, Role.OFFICE), List.of()
             );
 
             sut.on(event);
@@ -85,10 +84,10 @@ class PersonActivePeriodEventListenerTest {
         }
 
         @Test
-        void ensureOpensNewPeriodWhenInactiveRoleIsRevoked() {
+        void ensureOpensNewPeriodWhenUserRoleIsGranted() {
 
             final PersonPermissionsChangedEvent event = PersonPermissionsChangedEvent.of(
-                person(1L), List.of(USER, INACTIVE), List.of(USER)
+                person(1L), List.of(), List.of(USER)
             );
 
             sut.on(event);
@@ -97,7 +96,7 @@ class PersonActivePeriodEventListenerTest {
         }
 
         @Test
-        void ensureDoesNothingWhenInactiveRoleIsUnaffected() {
+        void ensureDoesNothingWhenUserRoleIsUnaffected() {
 
             final PersonPermissionsChangedEvent event = PersonPermissionsChangedEvent.of(
                 person(1L), List.of(USER), List.of(USER, Role.OFFICE)

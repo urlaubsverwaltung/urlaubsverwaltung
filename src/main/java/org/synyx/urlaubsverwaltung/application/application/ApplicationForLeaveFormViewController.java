@@ -64,7 +64,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
@@ -606,7 +605,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
             : List.of();
 
         return concat(concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream()), Stream.of(signedInUser))
-            .filter(person -> !person.hasRole(INACTIVE))
+            .filter(Person::isActive)
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
             .toList();

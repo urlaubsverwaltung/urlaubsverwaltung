@@ -22,7 +22,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.Role.departmentRoles;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
@@ -147,12 +147,12 @@ public class Person extends AbstractTenantAwareEntity {
         return Stream.of(role).anyMatch(getPermissions()::contains);
     }
 
-    public boolean isInactive() {
-        return hasRole(INACTIVE);
+    public boolean isActive() {
+        return hasRole(USER);
     }
 
-    public boolean isActive() {
-        return !isInactive();
+    public boolean isInactive() {
+        return !isActive();
     }
 
     public boolean isPrivileged() {

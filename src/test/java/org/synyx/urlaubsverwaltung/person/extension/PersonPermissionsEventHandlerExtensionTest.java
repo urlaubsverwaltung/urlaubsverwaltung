@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -71,14 +70,14 @@ class PersonPermissionsEventHandlerExtensionTest {
     }
 
     @Test
-    void ensureInactiveRoleIsFilteredOut() {
+    void ensureDeactivationIsPublishedAsRevokedUserRole() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        person.setPermissions(Set.of(USER));
+        person.setPermissions(Set.of());
 
         final PersonPermissionsChangedEvent event = PersonPermissionsChangedEvent.of(
-            person, List.of(USER, INACTIVE), List.of(USER, OFFICE, INACTIVE)
+            person, List.of(USER, OFFICE), List.of()
         );
 
         when(tenantSupplier.get()).thenReturn("default");
@@ -89,8 +88,8 @@ class PersonPermissionsEventHandlerExtensionTest {
 
         final PersonPermissionsChangedEventDTO result = argumentCaptor.getValue();
 
-        assertThat(result.currentPermissions()).containsExactlyInAnyOrder("USER", "OFFICE");
-        assertThat(result.grantedPermissions()).containsExactly("OFFICE");
-        assertThat(result.revokedPermissions()).isEmpty();
+        assertThat(result.currentPermissions()).isEmpty();
+        assertThat(result.grantedPermissions()).isEmpty();
+        assertThat(result.revokedPermissions()).containsExactlyInAnyOrder("USER", "OFFICE");
     }
 }

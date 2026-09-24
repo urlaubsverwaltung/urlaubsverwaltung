@@ -22,7 +22,6 @@ import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -68,7 +67,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private Collection<Role> extractPermissions(Person person) {
-        if (person.hasRole(INACTIVE)) {
+        if (person.isInactive()) {
             throw new DisabledException("User '%s' has been deactivated".formatted(person.getId()));
         }
         return person.getPermissions();

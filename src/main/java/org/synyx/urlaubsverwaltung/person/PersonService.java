@@ -198,7 +198,7 @@ public interface PersonService {
     Person appointAsOfficeUserIfNoOfficeUserPresent(PersonId personId);
 
     /**
-     * Returns the number of all users that do not have the role INACTIVE.
+     * Returns the number of all users that have the role USER.
      * These users are called active users.
      *
      * @return number of active users

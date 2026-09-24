@@ -53,7 +53,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isWeekend;
@@ -133,7 +132,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .filter(department -> selectedDepartmentNames.contains(department.getName()))
                     .map(Department::getMembers)
                     .flatMap(List::stream)
-                    .filter(member -> !member.hasRole(INACTIVE))
+                    .filter(Person::isActive)
                     .distinct()
                     .sorted(comparing(Person::getFirstName))
                     .toList();
@@ -610,13 +609,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final List<Person> relevantPersons = new ArrayList<>();
         if (person.hasRole(DEPARTMENT_HEAD)) {
             departmentService.getMembersForDepartmentHead(person).stream()
-                .filter(member -> !member.hasRole(INACTIVE))
+                .filter(Person::isActive)
                 .collect(toCollection(() -> relevantPersons));
         }
 
         if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
             departmentService.getMembersForSecondStageAuthority(person).stream()
-                .filter(member -> !member.hasRole(INACTIVE))
+                .filter(Person::isActive)
                 .collect(toCollection(() -> relevantPersons));
         }
 

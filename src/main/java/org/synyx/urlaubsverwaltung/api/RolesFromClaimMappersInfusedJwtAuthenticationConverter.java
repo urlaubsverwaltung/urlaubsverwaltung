@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
 class RolesFromClaimMappersInfusedJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
@@ -51,7 +50,7 @@ class RolesFromClaimMappersInfusedJwtAuthenticationConverter implements Converte
         if (maybePerson.isPresent()) {
             final Person person = maybePerson.get();
 
-            if (person.hasRole(INACTIVE)) {
+            if (person.isInactive()) {
                 throw new DisabledException("User '" + person.getId() + "' cannot access api, because account has been deactivated");
             }
 

@@ -74,7 +74,7 @@ class OvertimeStatisticsPersonsTest {
         }
 
         @ParameterizedTest
-        @EnumSource(value = Role.class, names = {"USER", "INACTIVE"})
+        @EnumSource(value = Role.class, names = {"USER"})
         void ensureNobodyElseGetsAnyPerson(Role role) {
 
             assertThat(sut.relevantPersonsOfYear(person(1L, role), YEAR)).isEmpty();
@@ -137,7 +137,7 @@ class OvertimeStatisticsPersonsTest {
         }
 
         @ParameterizedTest
-        @EnumSource(value = Role.class, names = {"USER", "INACTIVE"})
+        @EnumSource(value = Role.class, names = {"USER"})
         void ensureNobodyElseGetsAnyPerson(Role role) {
 
             assertThat(sut.relevantPersonsOfWholeHistory(person(1L, role))).isEmpty();

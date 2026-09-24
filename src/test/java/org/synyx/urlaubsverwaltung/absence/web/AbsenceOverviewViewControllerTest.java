@@ -77,7 +77,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -220,7 +219,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Person inactivePerson = new Person();
         inactivePerson.setId(2L);
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
         inactivePerson.setFirstName("sandra");
         inactivePerson.setLastName("smith");
         inactivePerson.setEmail("sandra@example.org");
@@ -260,7 +259,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Person inactivePerson = new Person();
         inactivePerson.setId(2L);
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
         inactivePerson.setFirstName("sandra");
         inactivePerson.setLastName("smith");
         inactivePerson.setEmail("sandra@example.org");
@@ -532,6 +531,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -567,6 +567,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -605,6 +606,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(13L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -639,6 +641,7 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenDepartment() throws Exception {
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setFirstName("bruce");
         person.setLastName("wayne");
         person.setEmail("batman@example.org");
@@ -673,6 +676,7 @@ class AbsenceOverviewViewControllerTest {
     void ensureDistinctPersonOverviewForGivenDepartments() throws Exception {
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(5L);
         person.setFirstName("bruce");
         person.setLastName("wayne");
@@ -717,6 +721,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -748,6 +753,7 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewPersonsAreSortedByFirstName() throws Exception {
 
         final var person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -755,12 +761,14 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var personTwo = new Person();
+        personTwo.setPermissions(List.of(USER));
         personTwo.setId(2L);
         personTwo.setFirstName("aa");
         personTwo.setLastName("aa lastname");
         personTwo.setEmail("person2@example.org");
 
         final var personThree = new Person();
+        personThree.setPermissions(List.of(USER));
         personThree.setId(3L);
         personThree.setFirstName("AA");
         personThree.setLastName("AA lastname");
@@ -1239,6 +1247,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -1380,6 +1389,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -1521,6 +1531,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -1664,6 +1675,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -1805,6 +1817,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -1946,6 +1959,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -2304,6 +2318,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -2443,6 +2458,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -2580,6 +2596,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -2934,6 +2951,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -3073,6 +3091,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -3210,6 +3229,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -3554,6 +3574,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -3687,6 +3708,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -3822,6 +3844,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -4236,6 +4259,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -4384,6 +4408,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -4608,6 +4633,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -4846,6 +4872,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final var other = new Person();
+        other.setPermissions(List.of(USER));
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
@@ -5193,6 +5220,7 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName(firstName);
         person.setLastName(firstName + " lastname");
         person.setEmail(firstName + "@example.org");
+        person.setPermissions(List.of(USER));
 
         return person;
     }

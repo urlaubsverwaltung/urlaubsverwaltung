@@ -31,7 +31,6 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -231,13 +230,33 @@ class OidcPersonAuthoritiesMapperTest {
         ));
 
         final Person personForLogin = new Person();
-        personForLogin.setPermissions(List.of(USER, INACTIVE));
+        personForLogin.setPermissions(List.of(OFFICE));
 
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
         final List<OidcUserAuthority> oidcUserAuthorities = List.of(oidcUserAuthority);
         assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
+            .isInstanceOf(DisabledException.class);
+    }
+
+    @Test
+    void userIsDeactivatedEvenIfUserRoleIsGrantedByClaimMapper() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of());
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(personForLogin));
+
+        final List<GrantedAuthority> authorities = List.of(oidcUserAuthority, new SimpleGrantedAuthority(USER.name()));
+        assertThatThrownBy(() -> sut.mapAuthorities(authorities))
             .isInstanceOf(DisabledException.class);
     }
 

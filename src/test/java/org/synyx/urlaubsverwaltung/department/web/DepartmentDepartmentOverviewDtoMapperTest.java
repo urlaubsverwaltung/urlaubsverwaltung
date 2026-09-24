@@ -21,7 +21,7 @@ class DepartmentDepartmentOverviewDtoMapperTest {
         final Person activePerson = new Person();
         activePerson.setPermissions(Set.of(Role.USER));
         final Person inactivePerson = new Person();
-        inactivePerson.setPermissions(Set.of(Role.INACTIVE));
+        inactivePerson.setPermissions(Set.of());
         department.setMembers(List.of(activePerson, inactivePerson, inactivePerson));
         department.setDescription("Some department info");
         department.setName("Department");

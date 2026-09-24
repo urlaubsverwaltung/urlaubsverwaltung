@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
@@ -166,7 +165,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(personRepository.existsById(personId)).isTrue();
         assertThat(personRepository.findByUsernameIgnoreCase("user").get().getPermissions()).containsExactly(USER);
         assertThat(personBasedataService.getBasedataByPersonId(personId).get().personId().value()).isEqualTo(personId);
-        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).hasSize(1);
+        assertThat(personRepository.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).hasSize(1);
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isOne();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId)).hasSize(1);
@@ -185,7 +184,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
 
         assertThat(personRepository.existsById(personId)).isFalse();
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isZero();
-        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
+        assertThat(personRepository.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId).getFirst().person()).isNull();

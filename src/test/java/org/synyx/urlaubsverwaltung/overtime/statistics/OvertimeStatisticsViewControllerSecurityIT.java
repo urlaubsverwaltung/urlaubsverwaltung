@@ -40,7 +40,7 @@ class OvertimeStatisticsViewControllerSecurityIT extends SingleTenantTestContain
     private SettingsService settingsService;
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void ensureNoAccessForRolesWithoutPermission(final String role) throws Exception {
 
         signedInUser();

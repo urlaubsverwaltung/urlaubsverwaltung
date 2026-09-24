@@ -99,9 +99,12 @@ class PersonActivePeriodMigrationIT extends SingleTenantTestContainersBase {
     void ensureBackfillClosesPeriodForInactiveLegacyPerson() {
 
         final Person transientPerson = new Person("legacyInactive", "Mustermann", "Legacy", "legacy-inactive@example.org");
-        transientPerson.setPermissions(new ArrayList<>(List.of(Role.USER, Role.INACTIVE)));
+        transientPerson.setPermissions(new ArrayList<>(List.of(Role.USER)));
         transientPerson.setCreatedAt(Instant.now());
         final Person person = personRepository.save(transientPerson);
+        entityManager.flush();
+        // the INACTIVE role does not exist anymore, but legacy persons were deactivated with it
+        jdbcTemplate.update("INSERT INTO person_permissions (person_id, permissions) VALUES (?, 'INACTIVE')", person.getId());
 
         workingTimeWriteService.touch(List.of(1, 2, 3, 4, 5), LocalDate.of(2015, JUNE, 1), person);
 

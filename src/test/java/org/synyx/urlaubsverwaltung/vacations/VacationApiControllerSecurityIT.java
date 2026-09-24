@@ -114,7 +114,7 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void getVacationsForOtherUserIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
 
@@ -298,9 +298,8 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
             .andExpect(status().isForbidden());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"INACTIVE"})
-    void getVacationsOfDepartmentMembersAsAdminUserForOtherUserIsForbidden(final String role) throws Exception {
+    @Test
+    void getVacationsOfDepartmentMembersForOtherUserIsForbiddenAsUser() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
 
         perform(
@@ -308,7 +307,7 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(5)))
                 .param("ofDepartmentMembers", "true")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER")))
         )
             .andExpect(status().isForbidden());
     }

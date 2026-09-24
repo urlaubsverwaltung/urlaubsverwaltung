@@ -21,8 +21,19 @@ final class PersonPermissionsMapper {
         personPermissionsDto.setGravatarURL(person.getGravatarURL());
         personPermissionsDto.setEmail(person.getEmail());
         personPermissionsDto.setIsInactive(person.isInactive());
-        personPermissionsDto.setPermissions(mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
+        personPermissionsDto.setPermissions(mapPersonToPermissionsDto(person));
         return personPermissionsDto;
+    }
+
+    private static List<PersonPermissionsRoleDto> mapPersonToPermissionsDto(Person person) {
+        final List<PersonPermissionsRoleDto> permissions = mapRoleToPermissionsDto(List.copyOf(person.getPermissions()));
+        if (person.isActive()) {
+            return permissions;
+        }
+
+        final List<PersonPermissionsRoleDto> permissionsWithInactive = new ArrayList<>(permissions);
+        permissionsWithInactive.add(PersonPermissionsRoleDto.INACTIVE);
+        return permissionsWithInactive.stream().sorted().toList();
     }
 
     static List<Role> mapPermissionsDtoToRole(List<PersonPermissionsRoleDto> permissionsRoleDto) {
@@ -34,7 +45,9 @@ final class PersonPermissionsMapper {
                 case SECOND_STAGE_AUTHORITY -> mappedToRoles.add(Role.SECOND_STAGE_AUTHORITY);
                 case BOSS -> mappedToRoles.add(Role.BOSS);
                 case OFFICE -> mappedToRoles.add(Role.OFFICE);
-                case INACTIVE -> mappedToRoles.add(Role.INACTIVE);
+                case INACTIVE -> {
+                    // an inactive person is a person without the role USER - and therefore without any role
+                }
                 case SICK_NOTE_VIEW_ADD_EDIT -> {
                     mappedToRoles.add(Role.SICK_NOTE_VIEW);
                     mappedToRoles.add(Role.SICK_NOTE_ADD);
@@ -63,7 +76,6 @@ final class PersonPermissionsMapper {
                 case SECOND_STAGE_AUTHORITY -> mappedToRolesDto.add(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY);
                 case BOSS -> mappedToRolesDto.add(PersonPermissionsRoleDto.BOSS);
                 case OFFICE -> mappedToRolesDto.add(PersonPermissionsRoleDto.OFFICE);
-                case INACTIVE -> mappedToRolesDto.add(PersonPermissionsRoleDto.INACTIVE);
                 case SICK_NOTE_VIEW, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT);
                 case APPLICATION_ADD, APPLICATION_CANCEL, APPLICATION_CANCELLATION_REQUESTED, APPLICATION_EDIT ->

@@ -37,7 +37,7 @@ class SickDaysOverviewViewControllerSecurityIT extends SingleTenantTestContainer
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void periodsSickNotesWithWrongRole(final String role) throws Exception {
 
         final Person person = new Person();

@@ -82,7 +82,7 @@ class AbsenceStatisticsViewControllerSecurityIT extends SingleTenantTestContaine
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void ensureNoAccessForRolesWithoutPermission(final String role) throws Exception {
 
         perform(get("/web/absence/statistics")

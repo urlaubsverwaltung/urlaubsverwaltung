@@ -43,7 +43,6 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -284,7 +283,7 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
+    void ensureGetActivePersonsReturnsOnlyPersonsThatHaveUserRole() {
 
         final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(List.of(USER));
@@ -295,7 +294,7 @@ class PersonServiceImplTest {
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
-        when(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(user, boss, office));
+        when(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(USER)).thenReturn(List.of(user, boss, office));
 
         final List<Person> activePersons = sut.getActivePersons();
         assertThat(activePersons)
@@ -311,7 +310,7 @@ class PersonServiceImplTest {
         final Page<Person> expected = Page.empty();
 
         final PageRequest repoPageRequest = PageRequest.of(1, 100);
-        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", repoPageRequest))
+        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(USER, "name-query", repoPageRequest))
             .thenReturn(expected);
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.unsorted());
@@ -321,12 +320,12 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
+    void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveNoUserRole() {
 
         final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(List.of(INACTIVE));
+        user.setPermissions(List.of());
 
-        when(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(user));
+        when(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER)).thenReturn(List.of(user));
 
         final List<Person> activePersons = sut.getInactivePersons();
         assertThat(activePersons)
@@ -340,7 +339,7 @@ class PersonServiceImplTest {
 
         // currently a hard coded pageRequest is used in implementation
         final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");
-        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(expected);
+        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(USER, "name-query", pageRequestInternal)).thenReturn(expected);
 
         final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.by("firstName"));
 
@@ -357,7 +356,7 @@ class PersonServiceImplTest {
         final Person bossOffice = new Person("muster", "Muster", "Marlene", "muster@example.org");
         bossOffice.setPermissions(asList(USER, BOSS, OFFICE));
 
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(BOSS, INACTIVE)).thenReturn(asList(boss, bossOffice));
+        when(personRepository.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(BOSS, USER)).thenReturn(asList(boss, bossOffice));
 
         final List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
         assertThat(filteredList)
@@ -377,7 +376,7 @@ class PersonServiceImplTest {
         office.setPermissions(asList(USER, BOSS, OFFICE));
         office.setNotifications(asList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
-        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss, office));
+        when(personRepository.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss, office));
 
         final List<Person> filteredList = sut.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(filteredList)
@@ -416,7 +415,7 @@ class PersonServiceImplTest {
     @Test
     void ensureCanAppointPersonAsOfficeUser() {
 
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(emptyList());
+        when(personRepository.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE, USER)).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -434,7 +433,7 @@ class PersonServiceImplTest {
     @Test
     void ensureAppointPersonAsOfficeUserPublishesPermissionsChangedEvent() {
 
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(emptyList());
+        when(personRepository.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE, USER)).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -458,7 +457,7 @@ class PersonServiceImplTest {
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(List.of(officePerson));
+        when(personRepository.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE, USER)).thenReturn(List.of(officePerson));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
@@ -499,17 +498,17 @@ class PersonServiceImplTest {
     @Test
     void ensurePersonDisabledEventIsFiredAfterPersonUpdate() {
 
-        final Person inactivePerson = createPerson("inactive person", INACTIVE);
+        final Person inactivePerson = createPerson("inactive person");
         inactivePerson.setId(1L);
         when(personRepository.findById(1L)).thenReturn(Optional.of(inactivePerson));
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(INACTIVE)));
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
         verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
     }
 
     @Test
-    void ensurePersonDisabledEventIsNotFiredAfterPersonUpdateAndRoleNotInactive() {
+    void ensurePersonDisabledEventIsNotFiredAfterPersonUpdateAndRoleUser() {
 
         final Person inactivePerson = createPerson("inactive person", USER);
         inactivePerson.setId(1L);
@@ -557,7 +556,7 @@ class PersonServiceImplTest {
     @Test
     void numberOfActivePersons() {
 
-        when(personRepository.countByPermissionsNotContaining(INACTIVE)).thenReturn(2);
+        when(personRepository.countByPermissionsContaining(USER)).thenReturn(2);
 
         final int numberOfActivePersons = sut.numberOfActivePersons();
         assertThat(numberOfActivePersons).isEqualTo(2);

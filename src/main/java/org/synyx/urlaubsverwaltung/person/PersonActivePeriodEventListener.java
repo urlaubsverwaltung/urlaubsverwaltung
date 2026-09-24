@@ -16,7 +16,7 @@ import java.util.List;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Keeps the {@link PersonActivePeriod} history of a person in sync with person creation and role changes.
@@ -47,9 +47,9 @@ class PersonActivePeriodEventListener {
 
         final PersonId personId = new PersonId(event.personId());
 
-        if (event.grantedPermissions().contains(INACTIVE)) {
+        if (event.revokedPermissions().contains(USER)) {
             personActivePeriodService.closeOpenPeriod(personId, event.createdAt());
-        } else if (event.revokedPermissions().contains(INACTIVE)) {
+        } else if (event.grantedPermissions().contains(USER)) {
             personActivePeriodService.openPeriod(personId, event.createdAt());
         }
     }

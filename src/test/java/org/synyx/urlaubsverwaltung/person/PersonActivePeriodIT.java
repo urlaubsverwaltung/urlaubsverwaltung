@@ -12,7 +12,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
@@ -51,7 +50,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         entityManager.flush();
         entityManager.clear();
 
-        personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER, INACTIVE)));
+        personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of()));
         entityManager.flush();
         entityManager.clear();
 
@@ -76,7 +75,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         // like the demo data creation does on the PersonCreatedEvent
         final Person person = personService.create("max", "Max", "Mustermann", "mustermann@example.org");
 
-        personService.update(person.getIdAsPersonId(), PersonUpdate.ofPermissions(List.of(USER, INACTIVE)));
+        personService.update(person.getIdAsPersonId(), PersonUpdate.ofPermissions(List.of()));
 
         final List<PersonActivePeriod> activePeriods = sut.getActivePeriods(person.getIdAsPersonId());
         assertThat(activePeriods).hasSize(1);
@@ -101,7 +100,7 @@ class PersonActivePeriodIT extends SingleTenantTestContainersBase {
         entityManager.flush();
         entityManager.clear();
 
-        assertThatThrownBy(() -> personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of(USER, INACTIVE))))
+        assertThatThrownBy(() -> personService.update(new PersonId(personId), PersonUpdate.ofPermissions(List.of())))
             .isInstanceOf(PersonActivePeriodInconsistentStateException.class);
     }
 }

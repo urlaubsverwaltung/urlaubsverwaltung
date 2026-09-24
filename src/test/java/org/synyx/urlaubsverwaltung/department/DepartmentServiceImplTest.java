@@ -47,7 +47,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -478,16 +477,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -497,17 +498,17 @@ class DepartmentServiceImplTest {
         inactivePerson.setId(inactivePersonId.value());
         inactivePerson.setFirstName("Inactive");
         inactivePerson.setLastName("Person");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -542,16 +543,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -561,17 +564,17 @@ class DepartmentServiceImplTest {
         inactivePerson.setId(inactivePersonId.value());
         inactivePerson.setFirstName("Inactive");
         inactivePerson.setLastName("Person");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -606,16 +609,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -625,17 +630,17 @@ class DepartmentServiceImplTest {
         inactivePerson.setId(inactivePersonId.value());
         inactivePerson.setFirstName("Inactive");
         inactivePerson.setLastName("Person");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
@@ -683,16 +688,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -700,17 +707,17 @@ class DepartmentServiceImplTest {
         final PersonId inactivePersonId = new PersonId(4L);
         final Person inactivePerson = new Person();
         inactivePerson.setId(inactivePersonId.value());
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -745,16 +752,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -762,17 +771,17 @@ class DepartmentServiceImplTest {
         final PersonId inactivePersonId = new PersonId(4L);
         final Person inactivePerson = new Person();
         inactivePerson.setId(inactivePersonId.value());
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -811,26 +820,28 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
 
         final PersonId inactivePersonId = new PersonId(4L);
         final Person inactivePerson = new Person();
         inactivePerson.setId(inactivePersonId.value());
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
@@ -878,16 +889,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -895,17 +908,17 @@ class DepartmentServiceImplTest {
         final PersonId inactivePersonId = new PersonId(4L);
         final Person inactivePerson = new Person();
         inactivePerson.setId(inactivePersonId.value());
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -940,16 +953,18 @@ class DepartmentServiceImplTest {
         final PersonId personId = new PersonId(1L);
         final Person person = new Person();
         person.setId(personId.value());
-        person.setPermissions(List.of(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
@@ -959,17 +974,17 @@ class DepartmentServiceImplTest {
         inactivePerson.setId(inactivePersonId.value());
         inactivePerson.setFirstName("Inactive");
         inactivePerson.setLastName("Person");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
@@ -1008,26 +1023,28 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
 
         final PersonId inactivePersonId = new PersonId(4L);
         final Person inactivePerson = new Person();
         inactivePerson.setId(inactivePersonId.value());
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final PersonId otherDepartmentHeadId = new PersonId(5L);
         final Person otherDepartmentHead = new Person();
         otherDepartmentHead.setId(otherDepartmentHeadId.value());
-        otherDepartmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        otherDepartmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final PersonId otherSecondStageId = new PersonId(6L);
         final Person otherSecondStage = new Person();
         otherSecondStage.setId(otherSecondStageId.value());
-        otherSecondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        otherSecondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         // department 1
         final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
@@ -1086,18 +1103,21 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
 
         final PersonId juleId = new PersonId(4L);
         final Person jule = new Person();
+        jule.setPermissions(List.of(USER));
         jule.setId(juleId.value());
         jule.setFirstName("Jule");
         jule.setLastName("Doe");
@@ -1105,7 +1125,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1145,21 +1165,21 @@ class DepartmentServiceImplTest {
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
-        max.setPermissions(List.of(INACTIVE));
+        max.setPermissions(List.of());
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
-        jane.setPermissions(List.of(INACTIVE));
+        jane.setPermissions(List.of());
 
         final PersonId juleId = new PersonId(4L);
         final Person jule = new Person();
         jule.setId(juleId.value());
         jule.setFirstName("Jule");
         jule.setLastName("Doe");
-        jule.setPermissions(List.of(INACTIVE));
+        jule.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1202,7 +1222,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setId(1L);
@@ -1239,7 +1259,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setId(1L);
@@ -1277,7 +1297,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setId(1L);
@@ -1315,7 +1335,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setId(1L);
@@ -1346,18 +1366,21 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
 
         final PersonId juleId = new PersonId(4L);
         final Person jule = new Person();
+        jule.setPermissions(List.of(USER));
         jule.setId(juleId.value());
         jule.setFirstName("Jule");
         jule.setLastName("Doe");
@@ -1365,7 +1388,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1408,7 +1431,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1436,6 +1459,7 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
@@ -1443,7 +1467,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1472,6 +1496,7 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
@@ -1479,7 +1504,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1509,6 +1534,7 @@ class DepartmentServiceImplTest {
 
         final PersonId maxId = new PersonId(2L);
         final Person max = new Person();
+        max.setPermissions(List.of(USER));
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
@@ -1516,7 +1542,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(3L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1577,21 +1603,21 @@ class DepartmentServiceImplTest {
         max.setId(maxId.value());
         max.setFirstName("Max");
         max.setLastName("Mustermann");
-        max.setPermissions(List.of(USER, INACTIVE));
+        max.setPermissions(List.of());
 
         final PersonId janeId = new PersonId(3L);
         final Person jane = new Person();
         jane.setId(janeId.value());
         jane.setFirstName("Jane");
         jane.setLastName("Doe");
-        jane.setPermissions(List.of(USER, INACTIVE));
+        jane.setPermissions(List.of());
 
         final PersonId juleId = new PersonId(4L);
         final Person jule = new Person();
         jule.setId(juleId.value());
         jule.setFirstName("Jule");
         jule.setLastName("Doe");
-        jule.setPermissions(List.of(USER, INACTIVE));
+        jule.setPermissions(List.of());
 
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1633,7 +1659,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
@@ -1667,7 +1693,7 @@ class DepartmentServiceImplTest {
         final PersonId inactiveId = new PersonId(5L);
         final Person inactive = new Person();
         inactive.setId(inactiveId.value());
-        inactive.setPermissions(List.of(INACTIVE));
+        inactive.setPermissions(List.of());
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));

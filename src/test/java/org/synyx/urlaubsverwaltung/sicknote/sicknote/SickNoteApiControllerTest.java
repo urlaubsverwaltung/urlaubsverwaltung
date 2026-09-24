@@ -128,6 +128,7 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
         final LocalDate from = LocalDate.of(2016, MAY, 19);
         final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
@@ -158,6 +159,7 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
         final LocalDate from = LocalDate.of(2016, MAY, 19);
         final LocalDate to = LocalDate.of(2016, MAY, 20);
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);

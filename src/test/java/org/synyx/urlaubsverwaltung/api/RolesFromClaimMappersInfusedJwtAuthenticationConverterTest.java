@@ -26,7 +26,6 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,7 +91,7 @@ class RolesFromClaimMappersInfusedJwtAuthenticationConverterTest {
     void ensuresToThrowDisabledExceptionIfUserIsInactive() {
 
         final Person person = new Person("seppl", "Hans", "Seppl", "seppl@example.org");
-        person.setPermissions(List.of(INACTIVE));
+        person.setPermissions(List.of());
         when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.of(person));
 
         final Map<String, Object> claims = Map.of(

@@ -17,7 +17,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -38,6 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -57,6 +57,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     void ensureToReturnCurrentLoggedInPerson() throws Exception {
 
         final Person person = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
 
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(person));
@@ -115,6 +116,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     void ensureReturnSpecificPerson() throws Exception {
 
         final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setPermissions(List.of(USER));
         shane.setId(1L);
 
         when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
@@ -162,8 +164,10 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     void ensureReturnsAllActivePersons() throws Exception {
 
         final Person shane = new Person("shane@example.org", "shane", "shane", "shane@example.org");
+        shane.setPermissions(List.of(USER));
         shane.setId(1L);
         final Person carl = new Person("carl@example.org", "carl", "carl", "carl@example.org");
+        carl.setPermissions(List.of(USER));
         carl.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
@@ -244,7 +248,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     void ensureReturnsInactivePersons() throws Exception {
 
         final Person carl = new Person("carl@example.org", "carl", "carl", "carl@example.org");
-        carl.setPermissions(List.of(Role.INACTIVE));
+        carl.setPermissions(List.of());
         carl.setId(2L);
 
         when(personService.getInactivePersons()).thenReturn(List.of(carl));
@@ -298,6 +302,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.empty());
 
         final Person createdPerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        createdPerson.setPermissions(List.of(USER));
         createdPerson.setId(1L);
         when(personService.create("shane@example.org", "shane", "last", "shane@example.org")).thenReturn(createdPerson);
 
