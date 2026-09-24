@@ -9,6 +9,8 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
@@ -32,8 +34,8 @@ class BlackoutPeriodFormMapperTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(7L);
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setDepartments(List.of(department));
         blackoutPeriod.setVacationTypes(List.of(vacationType));
 
@@ -41,8 +43,8 @@ class BlackoutPeriodFormMapperTest {
 
         assertThat(form.getId()).isEqualTo(7L);
         assertThat(form.getTitle()).isEqualTo("Jahresabschluss");
-        assertThat(form.getStartDate()).isEqualTo(LocalDate.of(2026, 12, 20));
-        assertThat(form.getEndDate()).isEqualTo(LocalDate.of(2027, 1, 5));
+        assertThat(form.getStartDate()).isEqualTo(LocalDate.of(2026, DECEMBER, 20));
+        assertThat(form.getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 5));
         assertThat(form.getDepartmentIds()).containsExactly(42L);
         assertThat(form.getVacationTypeIds()).containsExactly(1L);
     }
@@ -74,8 +76,8 @@ class BlackoutPeriodFormMapperTest {
         final BlackoutPeriodForm form = new BlackoutPeriodForm();
         form.setId(7L);
         form.setTitle("Vertriebssperre");
-        form.setStartDate(LocalDate.of(2026, 12, 20));
-        form.setEndDate(LocalDate.of(2027, 1, 5));
+        form.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        form.setEndDate(LocalDate.of(2027, JANUARY, 5));
         form.setCompanyWide(false);
         form.setAllVacationTypes(false);
         form.setDepartmentIds(List.of(42L));
@@ -86,8 +88,8 @@ class BlackoutPeriodFormMapperTest {
 
         assertThat(blackoutPeriod.getId()).isEqualTo(7L);
         assertThat(blackoutPeriod.getTitle()).isEqualTo("Vertriebssperre");
-        assertThat(blackoutPeriod.getStartDate()).isEqualTo(LocalDate.of(2026, 12, 20));
-        assertThat(blackoutPeriod.getEndDate()).isEqualTo(LocalDate.of(2027, 1, 5));
+        assertThat(blackoutPeriod.getStartDate()).isEqualTo(LocalDate.of(2026, DECEMBER, 20));
+        assertThat(blackoutPeriod.getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 5));
         assertThat(blackoutPeriod.getDepartments()).containsExactly(selectedDepartment);
         assertThat(blackoutPeriod.getVacationTypes()).containsExactly(selectedVacationType);
     }
