@@ -18,6 +18,9 @@ describe("create-datepicker", () => {
       },
     };
     setLocale(de);
+
+    // default fallback so tests not explicitly concerned with blackout periods still resolve.
+    fetchMock.route(/blackout-periods/, { blackoutPeriods: [] });
   });
 
   afterEach(async () => {
@@ -184,7 +187,7 @@ describe("create-datepicker", () => {
 
         button.click();
 
-        expect(fetchMock.callHistory.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(3);
       });
 
       test("after month has been changed", async () => {
@@ -206,7 +209,7 @@ describe("create-datepicker", () => {
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after year has been changed", async () => {
@@ -228,7 +231,7 @@ describe("create-datepicker", () => {
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after next button has been clicked", async () => {
@@ -248,7 +251,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         previousMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after prev button has been clicked", async () => {
@@ -268,7 +271,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         nextMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
 
       test("after keyboard navigation to the next month", async () => {
@@ -292,7 +295,7 @@ describe("create-datepicker", () => {
 
         // another week ahead is the 7. january, visible month changes.
         fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(2));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
       });
     });
 
@@ -449,6 +452,113 @@ describe("create-datepicker", () => {
           },
         );
       }
+
+      test("blackout period", async () => {
+        // the default fallback route of the outer beforeEach would win over a more specific one,
+        // therefore all routes of this test are (re)defined here.
+        fetchMock.removeRoutes();
+
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-11-30&to=2021-01-03&absence-types=vacation,sick_note,no_workday`,
+          {
+            absences: [],
+          },
+        );
+
+        fetchMock.route(`my-url-prefix/persons/42/blackout-periods?from=2020-11-30&to=2021-01-03`, {
+          blackoutPeriods: [
+            {
+              date: "2020-12-24",
+              title: "Jahresabschluss",
+              description: "Urlaubssperre: Jahresabschluss",
+            },
+            {
+              date: "2020-12-25",
+              title: "Jahresabschluss",
+              description: "Urlaubssperre: Jahresabschluss",
+            },
+          ],
+        });
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => 42 });
+
+        // fetch blackout periods and update view
+        document.querySelector("button.duet-date__toggle").click();
+
+        // wait for response and css class calculation
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const getElement = (dateString) => {
+          for (let span of document.querySelectorAll(".duet-date__vhidden")) {
+            if (span.textContent === dateString) {
+              return span.parentNode;
+            }
+          }
+          throw new Error("could not find date element for dateString=" + dateString);
+        };
+
+        expect(getElement("24. Dezember").classList).toContain("datepicker-day-blackout");
+        expect(getElement("25. Dezember").classList).toContain("datepicker-day-blackout");
+        expect(getElement("23. Dezember").classList).not.toContain("datepicker-day-blackout");
+
+        expect(getElement("24. Dezember").getAttribute("title")).toBe("Urlaubssperre: Jahresabschluss");
+        expect(getElement("24. Dezember").querySelector("[data-uv-blackout-description]").textContent).toBe(
+          "Urlaubssperre: Jahresabschluss",
+        );
+        expect(getElement("23. Dezember").hasAttribute("title")).toBe(false);
+        expect(getElement("23. Dezember").querySelector("[data-uv-blackout-description]")).toBeNull();
+      });
+
+      test("public holidays and absences when blackout periods cannot be fetched", async () => {
+        // the default fallback route of the outer beforeEach would win over a more specific one,
+        // therefore all routes of this test are (re)defined here.
+        fetchMock.removeRoutes();
+
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
+          publicHolidays: [{ date: "2020-12-25", absencePeriodName: "FULL" }],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-11-30&to=2021-01-03&absence-types=vacation,sick_note,no_workday`,
+          {
+            absences: [{ date: "2020-12-22", absent: "FULL", absenceType: "VACATION", status: "ALLOWED" }],
+          },
+        );
+
+        fetchMock.route(`my-url-prefix/persons/42/blackout-periods?from=2020-11-30&to=2021-01-03`, 500);
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => 42 });
+
+        // fetch public holidays, absences and blackout periods and update view
+        document.querySelector("button.duet-date__toggle").click();
+
+        const getElement = (dateString) => {
+          for (let span of document.querySelectorAll(".duet-date__vhidden")) {
+            if (span.textContent === dateString) {
+              return span.parentNode;
+            }
+          }
+          throw new Error("could not find date element for dateString=" + dateString);
+        };
+
+        await vi.waitFor(() =>
+          expect(getElement("25. Dezember").classList).toContain("datepicker-day-public-holiday-full"),
+        );
+        expect(getElement("22. Dezember").classList).toContain("datepicker-day-absence-full");
+        expect(document.querySelector(".datepicker-day-blackout")).toBeNull();
+      });
 
       test("weekend", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {

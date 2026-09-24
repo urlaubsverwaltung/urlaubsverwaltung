@@ -3304,6 +3304,31 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void getDepartmentIdsByMembersReturnsOnlyMemberMemberships() {
+
+        final PersonId personId = new PersonId(1L);
+        final Person person = new Person();
+        person.setId(personId.value());
+
+        final PersonId personId2 = new PersonId(2L);
+        final Person person2 = new Person();
+        person2.setId(personId2.value());
+
+        final DepartmentMembership member1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership head2 = new DepartmentMembership(personId, 2L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentMembership member3 = new DepartmentMembership(personId2, 3L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(personId, personId2)))
+            .thenReturn(Map.of(personId, List.of(member1, head2), personId2, List.of(member3)));
+
+        final Map<PersonId, Set<Long>> departmentIdsByMembers = sut.getDepartmentIdsByMembers(List.of(person, person2));
+
+        assertThat(departmentIdsByMembers)
+            .containsEntry(personId, Set.of(1L))
+            .containsEntry(personId2, Set.of(3L));
+    }
+
+    @Test
     void ensureDepartmentMatchFalse() {
 
         final PersonId personId = new PersonId(1L);

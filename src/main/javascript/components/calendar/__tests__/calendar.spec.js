@@ -631,6 +631,85 @@ describe("calendar", () => {
     expect(day.getAttribute("title")).toBe("Statehood Day, Corpus Christi");
   });
 
+  it("marks days of a blackout period", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    mockEmptyYear(42, 2017);
+
+    fetchMock.route(`/persons/42/blackout-periods?from=2017-01-01&to=2017-12-31`, {
+      blackoutPeriods: [
+        {
+          date: "2017-12-15",
+          title: "Jahresabschluss",
+          description: "Urlaubssperre: Jahresabschluss",
+        },
+        {
+          date: "2017-12-16",
+          title: "Jahresabschluss",
+          description: "Urlaubssperre: Jahresabschluss",
+        },
+        {
+          date: "2017-12-15",
+          title: "Inventur",
+          description: "Urlaubssperre: <b>Inventur</b>",
+        },
+      ],
+    });
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    await holidayService.fetchAbsences(2017);
+    await holidayService.fetchPublicHolidays(2017);
+    await holidayService.fetchBlackoutPeriods(2017);
+
+    expect(holidayService.isBlackoutPeriod(parseISO("2017-12-15"))).toBe(true);
+    expect(holidayService.isBlackoutPeriod(parseISO("2017-12-16"))).toBe(true);
+    expect(holidayService.isBlackoutPeriod(parseISO("2017-12-14"))).toBe(false);
+
+    renderCalendar(holidayService);
+
+    const $ = document.querySelector.bind(document);
+    expect($('[data-datepicker-date="2017-12-15"]').classList).toContain("datepicker-day-blackout");
+    expect($('[data-datepicker-date="2017-12-16"]').classList).toContain("datepicker-day-blackout");
+    expect($('[data-datepicker-date="2017-12-14"]').classList).not.toContain("datepicker-day-blackout");
+
+    expect(holidayService.getBlackoutPeriodDescription(parseISO("2017-12-15"))).toBe(
+      "Urlaubssperre: Jahresabschluss · Urlaubssperre: <b>Inventur</b>",
+    );
+    expect(holidayService.getBlackoutPeriodDescription(parseISO("2017-12-14"))).toBe("");
+
+    const day = $('[data-datepicker-date="2017-12-15"]');
+    expect(day.getAttribute("title")).toBe("Urlaubssperre: Jahresabschluss · Urlaubssperre: <b>Inventur</b>");
+    // the office-entered title is text, never markup
+    expect(day.querySelector("b")).toBeNull();
+    expect(day.closest("li").querySelector(".sr-only").textContent).toContain("Urlaubssperre: Jahresabschluss");
+  });
+
+  it("caches blackout periods of a year and does not fetch them twice", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.route(`/persons/42/blackout-periods?from=2017-01-01&to=2017-12-31`, {
+      blackoutPeriods: [
+        {
+          date: "2017-12-15",
+          title: "Jahresabschluss",
+        },
+      ],
+    });
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    await holidayService.fetchBlackoutPeriods(2017);
+    await holidayService.fetchBlackoutPeriods(2017);
+
+    expect(fetchMock.callHistory.calls(`/persons/42/blackout-periods?from=2017-01-01&to=2017-12-31`)).toHaveLength(1);
+    expect(holidayService.isBlackoutPeriod(parseISO("2017-12-15"))).toBe(true);
+  });
+
   function mockEmptyYear(personId, year) {
     fetchMock.route(
       `/persons/${personId}/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,

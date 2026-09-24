@@ -12,6 +12,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -322,6 +323,15 @@ public interface DepartmentService {
      * @return a map of personId mapped to sorted department names
      */
     Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons);
+
+    /**
+     * Get the ids of the departments the given persons are currently members of (department head and second stage
+     * authority memberships are not taken into account), with a single lookup for all persons.
+     *
+     * @param persons to get the department ids for
+     * @return a map of personId mapped to the ids of the departments the person is a member of
+     */
+    Map<PersonId, Set<Long>> getDepartmentIdsByMembers(List<Person> persons);
 
     /**
      * Checks whether two persons are in the same department or not or one person of both is

@@ -113,6 +113,8 @@ function hydrateDatepicker(duetDateElement, options) {
       element.querySelector("[data-uv-icon]")?.remove();
       removeDatepickerCssClassesFromNode(element);
       removeAbsenceTypeStyleFromNode(element);
+      element.querySelector("[data-uv-blackout-description]")?.remove();
+      element.removeAttribute("title");
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
@@ -135,7 +137,10 @@ function hydrateDatepicker(duetDateElement, options) {
       getJSON(
         `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
       ).then(pick("absences")),
-    ]).then(([publicHolidays, absences]) => {
+      getJSON(
+        `${urlPrefix}/persons/${personId}/blackout-periods?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+      ).then(pick("blackoutPeriods")),
+    ]).then(([publicHolidays, absences, blackoutPeriods]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
@@ -157,8 +162,21 @@ function hydrateDatepicker(duetDateElement, options) {
 
         const absencesForDate = findByDate(absences.value, date);
         const publicHolidaysForDate = findByDate(publicHolidays.value, date);
-        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
+        // blocked days are a hint only, a failed blackout period request must not hide absences and public holidays
+        const blackoutPeriodsForDate = findByDate(blackoutPeriods.value ?? [], date);
+        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate, blackoutPeriodsForDate);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
+
+        if (blackoutPeriodsForDate.length > 0) {
+          const description = blackoutPeriodsForDate.map((blackoutPeriod) => blackoutPeriod.description).join(" · ");
+          dayElement.title = description;
+          const srOnly = document.createElement("span");
+          srOnly.classList.add("sr-only");
+          srOnly.dataset.uvBlackoutDescription = "";
+          srOnly.textContent = description;
+          // appended after duet's own `.duet-date__vhidden` span, which is parsed above to get the date
+          dayElement.append(srOnly);
+        }
 
         let icon;
 

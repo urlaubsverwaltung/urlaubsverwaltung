@@ -910,6 +910,23 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void postNewApplicationPassesGivenCommentThroughUnchanged() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(post("/web/application")
+            .param("vacationType.id", "1")
+            .param("comment", "my comment"));
+
+        verify(applicationInteractionService).apply(any(Application.class), eq(signedInPerson), eq(Optional.of("my comment")));
+    }
+
+    @Test
     void postNewApplicationAddsFlashAttributeAndRedirectsToNewApplication() throws Exception {
 
         final int applicationId = 11;

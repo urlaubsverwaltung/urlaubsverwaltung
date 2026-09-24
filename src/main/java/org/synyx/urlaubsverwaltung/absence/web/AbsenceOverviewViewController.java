@@ -17,9 +17,13 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
@@ -70,6 +74,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     private final AbsenceService absenceService;
     private final WorkingTimeService workingTimeService;
     private final VacationTypeService vacationTypeService;
+    private final BlackoutPeriodService blackoutPeriodService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final MessageSource messageSource;
@@ -79,6 +84,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         PersonService personService, DepartmentService departmentService,
         PublicHolidaysService publicHolidaysService, AbsenceService absenceService,
         WorkingTimeService workingTimeService, VacationTypeService vacationTypeService,
+        BlackoutPeriodService blackoutPeriodService,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         MessageSource messageSource, Clock clock
     ) {
@@ -88,6 +94,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
         this.vacationTypeService = vacationTypeService;
+        this.blackoutPeriodService = blackoutPeriodService;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.messageSource = messageSource;
@@ -229,6 +236,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
+        final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson =
+            blackoutPeriodService.findBlackoutPeriodsForPersons(personList, dateRange.startDate(), dateRange.endDate());
+
+        // every blackout period is described once per request instead of once per person and day
+        final Map<BlackoutPeriod, String> blackoutPeriodDescriptions = new HashMap<>();
+
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 _ -> initializeAbsenceOverviewMonthDto(date, personList, locale));
@@ -257,10 +270,21 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
                     .toList();
 
-                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
+                AbsenceOverviewDayType.Builder personViewDayTypeBuilder = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday, recordInfoToColor))
-                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor))
-                    .build();
+                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor));
+
+                final List<BlackoutPeriod> blackoutPeriodsOfDay = blackoutPeriodsByPerson.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
+                    .filter(blackoutPeriod -> !date.isBefore(blackoutPeriod.getStartDate()) && !date.isAfter(blackoutPeriod.getEndDate()))
+                    .toList();
+                if (!blackoutPeriodsOfDay.isEmpty()) {
+                    final List<String> descriptions = blackoutPeriodsOfDay.stream()
+                        .map(blackoutPeriod -> blackoutPeriodDescriptions.computeIfAbsent(blackoutPeriod, key -> BlackoutPeriodDescriptions.describe(key, messageSource, locale)))
+                        .toList();
+                    personViewDayTypeBuilder = personViewDayTypeBuilder.blackoutPeriod(BlackoutPeriodDescriptions.join(descriptions));
+                }
+
+                final AbsenceOverviewDayType personViewDayType = personViewDayTypeBuilder.build();
 
                 personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes)));
             }

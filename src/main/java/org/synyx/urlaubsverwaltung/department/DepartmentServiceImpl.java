@@ -513,6 +513,18 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Map<PersonId, Set<Long>> getDepartmentIdsByMembers(List<Person> persons) {
+
+        final List<PersonId> personIds = personIdsOfPersons(persons);
+
+        return departmentMembershipService.getActiveMembershipsOfPersons(personIds).entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream()
+                .filter(DepartmentMembership::isMemberMembership)
+                .map(DepartmentMembership::departmentId)
+                .collect(toSet())));
+    }
+
+    @Override
     public boolean hasDepartmentMatch(Person person, Person otherPerson) {
 
         final PersonId personId = person.getIdAsPersonId();
