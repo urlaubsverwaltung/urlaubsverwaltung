@@ -27,6 +27,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,14 +73,14 @@ class BlackoutPeriodServiceImplTest {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
 
         final BlackoutPeriodEntity savedEntity = new BlackoutPeriodEntity();
         savedEntity.setId(1L);
         savedEntity.setTitle("Jahresabschluss");
-        savedEntity.setStartDate(LocalDate.of(2026, 12, 20));
-        savedEntity.setEndDate(LocalDate.of(2027, 1, 5));
+        savedEntity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        savedEntity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         when(blackoutPeriodRepository.save(any(BlackoutPeriodEntity.class))).thenReturn(savedEntity);
 
         final BlackoutPeriod createdBlackoutPeriod = sut.create(blackoutPeriod);
@@ -84,8 +88,8 @@ class BlackoutPeriodServiceImplTest {
         final ArgumentCaptor<BlackoutPeriodEntity> captor = ArgumentCaptor.forClass(BlackoutPeriodEntity.class);
         verify(blackoutPeriodRepository).save(captor.capture());
 
-        assertThat(captor.getValue().getCreatedAt()).isEqualTo(LocalDate.of(2026, 1, 1));
-        assertThat(captor.getValue().getLastModification()).isEqualTo(LocalDate.of(2026, 1, 1));
+        assertThat(captor.getValue().getCreatedAt()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
+        assertThat(captor.getValue().getLastModification()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
         assertThat(createdBlackoutPeriod.getId()).isEqualTo(1L);
         assertThat(createdBlackoutPeriod.getTitle()).isEqualTo("Jahresabschluss");
     }
@@ -106,12 +110,12 @@ class BlackoutPeriodServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10))).thenReturn(List.of());
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 10))).thenReturn(List.of());
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 10), vacationType);
+            person, LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 10), vacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
         verifyNoInteractions(departmentService, vacationTypeService);
@@ -126,16 +130,16 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setCompanyWide(true);
         entity.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), vacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Jahresabschluss");
@@ -152,16 +156,16 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Vertriebssperre");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setDepartmentIds(Set.of(42L));
         entity.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), vacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
         verify(departmentService, never()).getAllDepartments();
@@ -177,16 +181,16 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Vertriebssperre");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setDepartmentIds(Set.of(42L));
         entity.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), vacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Vertriebssperre");
@@ -203,16 +207,16 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setCompanyWide(true);
         entity.setVacationTypeIds(Set.of(1L));
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> requestedVacationType = createVacationType(2L, SPECIALLEAVE, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), requestedVacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), requestedVacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
         verifyNoInteractions(departmentService, vacationTypeService);
@@ -228,28 +232,28 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
         companyWide.setId(1L);
         companyWide.setTitle("Jahresabschluss");
-        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
-        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        companyWide.setEndDate(LocalDate.of(2027, JANUARY, 5));
         companyWide.setCompanyWide(true);
 
         final BlackoutPeriodEntity scoped = new BlackoutPeriodEntity();
         scoped.setId(2L);
         scoped.setTitle("Vertriebssperre");
-        scoped.setStartDate(LocalDate.of(2026, 6, 1));
-        scoped.setEndDate(LocalDate.of(2026, 6, 10));
+        scoped.setStartDate(LocalDate.of(2026, JUNE, 1));
+        scoped.setEndDate(LocalDate.of(2026, JUNE, 10));
         scoped.setDepartmentIds(Set.of(42L));
 
         final BlackoutPeriodEntity otherDepartmentOnly = new BlackoutPeriodEntity();
         otherDepartmentOnly.setId(3L);
         otherDepartmentOnly.setTitle("Marketingsperre");
-        otherDepartmentOnly.setStartDate(LocalDate.of(2026, 6, 1));
-        otherDepartmentOnly.setEndDate(LocalDate.of(2026, 6, 10));
+        otherDepartmentOnly.setStartDate(LocalDate.of(2026, JUNE, 1));
+        otherDepartmentOnly.setEndDate(LocalDate.of(2026, JUNE, 10));
         otherDepartmentOnly.setDepartmentIds(Set.of(43L));
 
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of(companyWide, scoped, otherDepartmentOnly));
 
-        final List<BlackoutPeriod> result = sut.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+        final List<BlackoutPeriod> result = sut.findBlackoutPeriodsForPerson(person, LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
 
         assertThat(result).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
         verify(departmentService, never()).getAllDepartments();
@@ -269,24 +273,24 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
         companyWide.setId(1L);
         companyWide.setTitle("Jahresabschluss");
-        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
-        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        companyWide.setEndDate(LocalDate.of(2027, JANUARY, 5));
         companyWide.setCompanyWide(true);
         companyWide.setAllVacationTypes(true);
 
         final BlackoutPeriodEntity salesOnly = new BlackoutPeriodEntity();
         salesOnly.setId(2L);
         salesOnly.setTitle("Vertriebssperre");
-        salesOnly.setStartDate(LocalDate.of(2026, 6, 1));
-        salesOnly.setEndDate(LocalDate.of(2026, 6, 10));
+        salesOnly.setStartDate(LocalDate.of(2026, JUNE, 1));
+        salesOnly.setEndDate(LocalDate.of(2026, JUNE, 10));
         salesOnly.setDepartmentIds(Set.of(42L));
         salesOnly.setAllVacationTypes(true);
 
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of(companyWide, salesOnly));
 
         final Map<PersonId, List<BlackoutPeriod>> result =
-            sut.findBlackoutPeriodsForPersons(List.of(sales, marketing), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+            sut.findBlackoutPeriodsForPersons(List.of(sales, marketing), LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
 
         assertThat(result.get(new PersonId(1L))).extracting(BlackoutPeriod::getTitle).containsExactly("Vertriebssperre", "Jahresabschluss");
         assertThat(result.get(new PersonId(2L))).extracting(BlackoutPeriod::getTitle).containsExactly("Jahresabschluss");
@@ -303,14 +307,14 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity companyWide = new BlackoutPeriodEntity();
         companyWide.setId(1L);
         companyWide.setTitle("Jahresabschluss");
-        companyWide.setStartDate(LocalDate.of(2026, 12, 20));
-        companyWide.setEndDate(LocalDate.of(2027, 1, 5));
+        companyWide.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        companyWide.setEndDate(LocalDate.of(2027, JANUARY, 5));
         companyWide.setCompanyWide(true);
         companyWide.setAllVacationTypes(true);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31))).thenReturn(List.of(companyWide));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31))).thenReturn(List.of(companyWide));
 
         final Map<PersonId, List<BlackoutPeriod>> result =
-            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
 
         assertThat(result.get(new PersonId(1L))).extracting(BlackoutPeriod::getTitle).containsExactly("Jahresabschluss");
         verifyNoInteractions(departmentService, vacationTypeService);
@@ -330,24 +334,24 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity restrictedToHoliday = new BlackoutPeriodEntity();
         restrictedToHoliday.setId(1L);
         restrictedToHoliday.setTitle("Vertriebssperre");
-        restrictedToHoliday.setStartDate(LocalDate.of(2026, 6, 1));
-        restrictedToHoliday.setEndDate(LocalDate.of(2026, 6, 10));
+        restrictedToHoliday.setStartDate(LocalDate.of(2026, JUNE, 1));
+        restrictedToHoliday.setEndDate(LocalDate.of(2026, JUNE, 10));
         restrictedToHoliday.setDepartmentIds(Set.of(42L));
         restrictedToHoliday.setVacationTypeIds(Set.of(1L));
 
         final BlackoutPeriodEntity restrictedToSpecialLeave = new BlackoutPeriodEntity();
         restrictedToSpecialLeave.setId(2L);
         restrictedToSpecialLeave.setTitle("Jahresabschluss");
-        restrictedToSpecialLeave.setStartDate(LocalDate.of(2026, 12, 20));
-        restrictedToSpecialLeave.setEndDate(LocalDate.of(2027, 1, 5));
+        restrictedToSpecialLeave.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        restrictedToSpecialLeave.setEndDate(LocalDate.of(2027, JANUARY, 5));
         restrictedToSpecialLeave.setCompanyWide(true);
         restrictedToSpecialLeave.setVacationTypeIds(Set.of(2L));
 
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)))
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of(restrictedToSpecialLeave, restrictedToHoliday));
 
         final List<BlackoutPeriod> result =
-            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31)).get(new PersonId(1L));
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31)).get(new PersonId(1L));
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getVacationTypes()).containsExactly(holiday);
@@ -362,10 +366,10 @@ class BlackoutPeriodServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31))).thenReturn(List.of());
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31))).thenReturn(List.of());
 
         final Map<PersonId, List<BlackoutPeriod>> result =
-            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+            sut.findBlackoutPeriodsForPersons(List.of(person), LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
 
         assertThat(result).containsEntry(new PersonId(1L), List.of());
         verifyNoInteractions(departmentService, vacationTypeService);
@@ -379,17 +383,17 @@ class BlackoutPeriodServiceImplTest {
 
         final Application application = new Application();
         application.setPerson(person);
-        application.setStartDate(LocalDate.of(2026, 12, 22));
-        application.setEndDate(LocalDate.of(2026, 12, 23));
+        application.setStartDate(LocalDate.of(2026, DECEMBER, 22));
+        application.setEndDate(LocalDate.of(2026, DECEMBER, 23));
         application.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, 12, 20)), eq(LocalDate.of(2027, 1, 5)), eq(List.of(person)), eq(activeStatuses())))
+            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(person)), eq(activeStatuses())))
             .thenReturn(List.of(application));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setAllVacationTypes(true);
 
@@ -406,12 +410,12 @@ class BlackoutPeriodServiceImplTest {
         scopedDepartment.setMembers(List.of(member));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setDepartments(List.of(scopedDepartment));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, 12, 20)), eq(LocalDate.of(2027, 1, 5)), eq(List.of(member)), eq(activeStatuses())))
+            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(member)), eq(activeStatuses())))
             .thenReturn(List.of());
 
         final List<Application> conflicts = sut.findConflictingApplications(blackoutPeriod);
@@ -443,9 +447,9 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Vertriebssperre");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
-        entity.setCreatedAt(LocalDate.of(2025, 1, 1));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
+        entity.setCreatedAt(LocalDate.of(2025, JANUARY, 1));
         entity.setDepartmentIds(Set.of(42L));
         entity.setVacationTypeIds(Set.of(1L));
         when(blackoutPeriodRepository.findById(1L)).thenReturn(Optional.of(entity));
@@ -454,7 +458,7 @@ class BlackoutPeriodServiceImplTest {
 
         assertThat(blackoutPeriod).isPresent();
         assertThat(blackoutPeriod.get().getTitle()).isEqualTo("Vertriebssperre");
-        assertThat(blackoutPeriod.get().getCreatedAt()).isEqualTo(LocalDate.of(2025, 1, 1));
+        assertThat(blackoutPeriod.get().getCreatedAt()).isEqualTo(LocalDate.of(2025, JANUARY, 1));
         assertThat(blackoutPeriod.get().getDepartments()).containsExactly(department);
         assertThat(blackoutPeriod.get().getVacationTypes()).containsExactly(vacationType);
     }
@@ -473,20 +477,20 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setId(1L);
         blackoutPeriod.setTitle("Jahresabschluss (verlängert)");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 12));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 12));
 
         final BlackoutPeriodEntity existingEntity = new BlackoutPeriodEntity();
         existingEntity.setId(1L);
-        existingEntity.setCreatedAt(LocalDate.of(2025, 5, 5));
-        existingEntity.setLastModification(LocalDate.of(2025, 5, 5));
+        existingEntity.setCreatedAt(LocalDate.of(2025, MAY, 5));
+        existingEntity.setLastModification(LocalDate.of(2025, MAY, 5));
         when(blackoutPeriodRepository.findById(1L)).thenReturn(Optional.of(existingEntity));
 
         final BlackoutPeriodEntity savedEntity = new BlackoutPeriodEntity();
         savedEntity.setId(1L);
         savedEntity.setTitle("Jahresabschluss (verlängert)");
-        savedEntity.setStartDate(LocalDate.of(2026, 12, 20));
-        savedEntity.setEndDate(LocalDate.of(2027, 1, 12));
+        savedEntity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        savedEntity.setEndDate(LocalDate.of(2027, JANUARY, 12));
         when(blackoutPeriodRepository.save(any(BlackoutPeriodEntity.class))).thenReturn(savedEntity);
 
         final BlackoutPeriod updatedBlackoutPeriod = sut.update(blackoutPeriod);
@@ -495,10 +499,10 @@ class BlackoutPeriodServiceImplTest {
         verify(blackoutPeriodRepository).save(captor.capture());
 
         assertThat(captor.getValue().getId()).isEqualTo(1L);
-        assertThat(captor.getValue().getCreatedAt()).isEqualTo(LocalDate.of(2025, 5, 5));
-        assertThat(captor.getValue().getLastModification()).isEqualTo(LocalDate.of(2026, 1, 1));
+        assertThat(captor.getValue().getCreatedAt()).isEqualTo(LocalDate.of(2025, MAY, 5));
+        assertThat(captor.getValue().getLastModification()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
         assertThat(updatedBlackoutPeriod.getTitle()).isEqualTo("Jahresabschluss (verlängert)");
-        assertThat(updatedBlackoutPeriod.getEndDate()).isEqualTo(LocalDate.of(2027, 1, 12));
+        assertThat(updatedBlackoutPeriod.getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 12));
     }
 
     @Test
@@ -521,14 +525,14 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Jahresabschluss");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setCompanyWide(true);
         entity.setVacationTypeIds(Set.of(1L));
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), restrictedVacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), restrictedVacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Jahresabschluss");
@@ -545,25 +549,25 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity later = new BlackoutPeriodEntity();
         later.setId(1L);
         later.setTitle("Später");
-        later.setStartDate(LocalDate.of(2026, 12, 23));
-        later.setEndDate(LocalDate.of(2026, 12, 27));
+        later.setStartDate(LocalDate.of(2026, DECEMBER, 23));
+        later.setEndDate(LocalDate.of(2026, DECEMBER, 27));
         later.setCompanyWide(true);
         later.setAllVacationTypes(true);
 
         final BlackoutPeriodEntity earlier = new BlackoutPeriodEntity();
         earlier.setId(2L);
         earlier.setTitle("Früher");
-        earlier.setStartDate(LocalDate.of(2026, 12, 20));
-        earlier.setEndDate(LocalDate.of(2026, 12, 24));
+        earlier.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        earlier.setEndDate(LocalDate.of(2026, DECEMBER, 24));
         earlier.setCompanyWide(true);
         earlier.setAllVacationTypes(true);
 
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 23), LocalDate.of(2026, 12, 24))).thenReturn(List.of(later, earlier));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 23), LocalDate.of(2026, DECEMBER, 24))).thenReturn(List.of(later, earlier));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 23), LocalDate.of(2026, 12, 24), vacationType);
+            person, LocalDate.of(2026, DECEMBER, 23), LocalDate.of(2026, DECEMBER, 24), vacationType);
 
         assertThat(blockingBlackoutPeriod).isPresent();
         assertThat(blockingBlackoutPeriod.get().getTitle()).isEqualTo("Früher");
@@ -575,8 +579,8 @@ class BlackoutPeriodServiceImplTest {
         when(personService.getActivePersons()).thenReturn(List.of());
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
 
         assertThat(sut.findConflictingApplications(blackoutPeriod)).isEmpty();
@@ -594,23 +598,23 @@ class BlackoutPeriodServiceImplTest {
 
         final Application restrictedApplication = new Application();
         restrictedApplication.setPerson(person);
-        restrictedApplication.setStartDate(LocalDate.of(2026, 12, 22));
-        restrictedApplication.setEndDate(LocalDate.of(2026, 12, 23));
+        restrictedApplication.setStartDate(LocalDate.of(2026, DECEMBER, 22));
+        restrictedApplication.setEndDate(LocalDate.of(2026, DECEMBER, 23));
         restrictedApplication.setVacationType(restrictedVacationType);
 
         final Application otherApplication = new Application();
         otherApplication.setPerson(person);
-        otherApplication.setStartDate(LocalDate.of(2026, 12, 28));
-        otherApplication.setEndDate(LocalDate.of(2026, 12, 29));
+        otherApplication.setStartDate(LocalDate.of(2026, DECEMBER, 28));
+        otherApplication.setEndDate(LocalDate.of(2026, DECEMBER, 29));
         otherApplication.setVacationType(createVacationType(2L, SPECIALLEAVE, new StaticMessageSource()));
 
         when(applicationService.getApplicationsForACertainPeriodAndStatus(
-            eq(LocalDate.of(2026, 12, 20)), eq(LocalDate.of(2027, 1, 5)), eq(List.of(person)), eq(activeStatuses())))
+            eq(LocalDate.of(2026, DECEMBER, 20)), eq(LocalDate.of(2027, JANUARY, 5)), eq(List.of(person)), eq(activeStatuses())))
             .thenReturn(List.of(otherApplication, restrictedApplication));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setVacationTypes(List.of(restrictedVacationType));
 
@@ -627,18 +631,18 @@ class BlackoutPeriodServiceImplTest {
         final BlackoutPeriodEntity entity = new BlackoutPeriodEntity();
         entity.setId(1L);
         entity.setTitle("Vertriebssperre");
-        entity.setStartDate(LocalDate.of(2026, 12, 20));
-        entity.setEndDate(LocalDate.of(2027, 1, 5));
+        entity.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        entity.setEndDate(LocalDate.of(2027, JANUARY, 5));
         entity.setCompanyWide(false);
         entity.setAllVacationTypes(true);
         // all departments of the blackout period have been deleted
         entity.setDepartmentIds(Set.of());
-        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23))).thenReturn(List.of(entity));
+        when(blackoutPeriodRepository.findOverlapping(LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23))).thenReturn(List.of(entity));
 
         final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Optional<BlackoutPeriod> blockingBlackoutPeriod = sut.findBlockingBlackoutPeriod(
-            person, LocalDate.of(2026, 12, 22), LocalDate.of(2026, 12, 23), vacationType);
+            person, LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), vacationType);
 
         assertThat(blockingBlackoutPeriod).isEmpty();
     }
@@ -650,8 +654,8 @@ class BlackoutPeriodServiceImplTest {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle("Jahresabschluss");
-        blackoutPeriod.setStartDate(LocalDate.of(2026, 12, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, 1, 5));
+        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
+        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
         blackoutPeriod.setCompanyWide(true);
         blackoutPeriod.setAllVacationTypes(true);
 
