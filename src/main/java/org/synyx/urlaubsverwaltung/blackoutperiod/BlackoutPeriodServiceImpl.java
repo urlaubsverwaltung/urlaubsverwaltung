@@ -147,13 +147,17 @@ class BlackoutPeriodServiceImpl implements BlackoutPeriodService {
     @Override
     @Transactional(readOnly = true)
     public List<BlackoutPeriod> findBlackoutPeriodsForPerson(Person person, LocalDate startDate, LocalDate endDate) {
-        return findBlackoutPeriodsForPersons(List.of(person), startDate, endDate)
+        return blackoutPeriodsForPersons(List.of(person), startDate, endDate)
             .getOrDefault(person.getIdAsPersonId(), List.of());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<PersonId, List<BlackoutPeriod>> findBlackoutPeriodsForPersons(List<Person> persons, LocalDate startDate, LocalDate endDate) {
+        return blackoutPeriodsForPersons(persons, startDate, endDate);
+    }
+
+    private Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsForPersons(List<Person> persons, LocalDate startDate, LocalDate endDate) {
 
         if (persons.isEmpty()) {
             return Map.of();
