@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMailService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
@@ -32,8 +33,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -41,6 +44,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
+import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_SUBMITTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,13 +65,15 @@ class SickNoteExtensionInteractionServiceImplTest {
     @Mock
     private SettingsService settingsService;
     @Mock
+    private SickNoteMailService sickNoteMailService;
+    @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
     @BeforeEach
     void setUp() {
         sut = new SickNoteExtensionInteractionServiceImpl(sickNoteExtensionService, sickNoteService,
             sickNoteInteractionService, sickNoteCommentService,
-            new SickNotePermissionEvaluator(departmentService, settingsService), applicationEventPublisher);
+            new SickNotePermissionEvaluator(departmentService, settingsService), sickNoteMailService, applicationEventPublisher);
 
         lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
@@ -143,6 +149,73 @@ class SickNoteExtensionInteractionServiceImplTest {
         }
 
         @Test
+        void ensureSubmitSickNoteExtensionCreatesSickNoteComment() {
+
+            final LocalDate nextEndDate = LocalDate.now();
+
+            final Person submitter = new Person();
+            submitter.setId(1L);
+            submitter.setPermissions(List.of(USER));
+
+            final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(SickNoteStatus.ACTIVE).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+            final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, SUBMITTED, BigDecimal.ONE);
+            when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate)).thenReturn(extension);
+
+            sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
+
+            verify(sickNoteCommentService).create(sickNote, EXTENSION_SUBMITTED, submitter);
+        }
+
+        @Test
+        void ensureSubmitSickNoteExtensionSendsMailsToSickPersonAndManagement() {
+
+            final LocalDate nextEndDate = LocalDate.now();
+
+            final Person submitter = new Person();
+            submitter.setId(1L);
+            submitter.setPermissions(List.of(USER));
+
+            final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(SickNoteStatus.ACTIVE).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+            final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, SUBMITTED, BigDecimal.ONE);
+            when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate)).thenReturn(extension);
+
+            sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
+
+            verify(sickNoteMailService).sendSickNoteExtensionSubmittedNotificationToSickPerson(sickNote, nextEndDate);
+            verify(sickNoteMailService).sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(sickNote, nextEndDate);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+        void ensureSubmitSickNoteExtensionIsAcceptedRightAwayWhenSubmitterIsAllowedToAcceptExtensions(Role role) {
+
+            final LocalDate nextEndDate = LocalDate.now();
+
+            final Person submitter = new Person();
+            submitter.setId(1L);
+            submitter.setPermissions(List.of(USER, role, SICK_NOTE_EDIT));
+
+            final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(SickNoteStatus.ACTIVE).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+            final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, SUBMITTED, BigDecimal.ONE);
+            when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate)).thenReturn(extension);
+
+            final SickNote extendedSickNote = SickNote.builder(sickNote).endDate(nextEndDate).build();
+            when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(extendedSickNote);
+
+            sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
+
+            verify(sickNoteCommentService).create(extendedSickNote, EXTENSION_ACCEPTED, submitter, null);
+            verify(sickNoteCommentService, never()).create(any(), eq(EXTENSION_SUBMITTED), any());
+            verifyNoInteractions(sickNoteMailService);
+        }
+
+        @Test
         void ensureSubmitSickNoteExtensionDirectlyEditsTheSickNoteSinceStatusIsStillSubmitted() {
 
             final LocalDate nextEndDate = LocalDate.now();
@@ -161,6 +234,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
 
             verifyNoInteractions(sickNoteExtensionService);
+            verifyNoInteractions(sickNoteMailService);
 
             final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
             verify(sickNoteInteractionService).update(captor.capture(), eq(submitter), eq(""));

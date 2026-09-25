@@ -579,6 +579,102 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void sendSickNoteExtensionSubmittedNotificationToSickPerson() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "user@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER), List.of(USER));
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        sut.sendSickNoteExtensionSubmittedNotificationToSickPerson(sickNote, LocalDate.of(2022, APRIL, 5));
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).isEqualTo("Du hast eine Verlängerung deiner Krankmeldung eingereicht");
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Du hast eine Verlängerung deiner Krankmeldung bis zum 05.04.2022 eingereicht:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:                   01.02.2022 bis 01.04.2022, ganztägig
+                Zeitraum nach Verlängerung: 01.02.2022 bis 05.04.2022, ganztägig
+                Art der Krankmeldung:       Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
+    }
+
+    @Test
+    void sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(OFFICE));
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT))
+            .thenReturn(List.of(office));
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        sut.sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(sickNote, LocalDate.of(2022, APRIL, 5));
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
+
+        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        final Message msgOffice = inboxOffice[0];
+        assertThat(msgOffice.getSubject()).isEqualTo("Eine Verlängerung der Krankmeldung wurde von Marlene Muster eingereicht");
+        assertThat(readPlainContent(msgOffice)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Marlene Muster hat eine Verlängerung der Krankmeldung bis zum 05.04.2022 eingereicht:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:                   01.02.2022 bis 01.04.2022, ganztägig
+                Zeitraum nach Verlängerung: 01.02.2022 bis 05.04.2022, ganztägig
+                Art der Krankmeldung:       Kind-Krankmeldung
+
+            Überblick aller eingereichten Krankmeldungen findest du unter https://localhost:8080/web/sicknote/submitted#sicknote-submitted
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office.getId()));
+    }
+
+    @Test
     void sendSickNoteAcceptedNotificationToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER), List.of(USER));

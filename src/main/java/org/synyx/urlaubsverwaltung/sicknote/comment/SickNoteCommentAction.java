@@ -12,5 +12,6 @@ public enum SickNoteCommentAction {
     CONVERTED_TO_VACATION,
     CANCELLED,
     COMMENTED,
+    EXTENSION_SUBMITTED,
     EXTENSION_ACCEPTED
 }

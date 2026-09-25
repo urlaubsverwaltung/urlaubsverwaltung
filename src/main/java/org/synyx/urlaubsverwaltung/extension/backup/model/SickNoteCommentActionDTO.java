@@ -10,6 +10,7 @@ public enum SickNoteCommentActionDTO {
     CONVERTED_TO_VACATION,
     CANCELLED,
     COMMENTED,
+    EXTENSION_SUBMITTED,
     EXTENSION_ACCEPTED;
 
     public SickNoteCommentAction toSickNoteCommentAction() {
