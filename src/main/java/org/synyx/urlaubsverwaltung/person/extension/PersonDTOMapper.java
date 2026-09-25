@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.FALSE;
 
@@ -49,18 +50,18 @@ final class PersonDTOMapper {
 
     static Set<Role> toRoles(PersonDTO personDTO) {
         if (FALSE.equals(personDTO.enabled())) {
-            return Set.of(Role.INACTIVE);
+            return Set.of();
         }
-        return personDTO.permissions()
-            .stream()
-            .map(roleDTO -> Role.valueOf(roleDTO.name()))
+        return Stream.concat(
+                personDTO.permissions().stream().map(roleDTO -> Role.valueOf(roleDTO.name())),
+                Stream.of(Role.USER)
+            )
             .collect(Collectors.toSet());
     }
 
     private static Set<RoleDTO> toRoleDTOs(Person person) {
         return person.getPermissions()
             .stream()
-            .filter(role -> !Role.INACTIVE.equals(role))
             .map(role -> RoleDTO.valueOf(role.name()))
             .collect(Collectors.toSet());
     }

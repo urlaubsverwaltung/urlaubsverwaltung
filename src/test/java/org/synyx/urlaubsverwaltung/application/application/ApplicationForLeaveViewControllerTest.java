@@ -1689,6 +1689,7 @@ class ApplicationForLeaveViewControllerTest {
         stubWorkDaysCountByYear();
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setFirstName("Hans");
         person.setLastName("Dampf");
         final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
@@ -1711,7 +1712,7 @@ class ApplicationForLeaveViewControllerTest {
         );
 
         final Person departmentHead = new Person();
-        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD, SICK_NOTE_EDIT));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_EDIT));
 
         when(personService.getSignedInUser()).thenReturn(departmentHead);
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
@@ -1744,6 +1745,7 @@ class ApplicationForLeaveViewControllerTest {
         stubWorkDaysCountByYear();
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setFirstName("Hans");
         person.setLastName("Dampf");
         final LocalDate startDate = LocalDate.of(2024, JANUARY, 4);
@@ -1766,7 +1768,7 @@ class ApplicationForLeaveViewControllerTest {
         );
 
         final Person secondStageAuthority = new Person();
-        secondStageAuthority.setPermissions(List.of(SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT));
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT));
 
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(person));

@@ -83,7 +83,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
@@ -432,7 +431,9 @@ class SickNoteViewControllerTest {
         final Person departmentHead = personWithRole(DEPARTMENT_HEAD, SICK_NOTE_ADD);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
-        final List<Person> departmentPersons = List.of(new Person());
+        final Person departmentMember = new Person();
+        departmentMember.setPermissions(List.of(USER));
+        final List<Person> departmentPersons = List.of(departmentMember);
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = List.of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -454,7 +455,9 @@ class SickNoteViewControllerTest {
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
-        final List<Person> departmentPersons = List.of(new Person());
+        final Person departmentMember = new Person();
+        departmentMember.setPermissions(List.of(USER));
+        final List<Person> departmentPersons = List.of(departmentMember);
         when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = List.of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -479,12 +482,14 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(2L);
         person.setFirstName("firstname");
         person.setLastName("lastname");
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
         final Person person2 = new Person();
+        person2.setPermissions(List.of(USER));
         person2.setId(3L);
         person2.setFirstName("firstname two");
         person2.setLastName("lastname two");
@@ -513,6 +518,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(2L);
         person.setFirstName("firstname");
         person.setLastName("lastname");
@@ -542,12 +548,14 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(2L);
         person.setFirstName("B");
         person.setLastName("B");
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
         final Person person2 = new Person();
+        person2.setPermissions(List.of(USER));
         person2.setId(3L);
         person2.setFirstName("A");
         person2.setLastName("A");
@@ -1391,13 +1399,15 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setPermissions(List.of(USER));
         john.setId(1L);
 
         final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setPermissions(List.of(USER));
         jane.setId(2L);
 
         final Person inactivePerson = new Person("inactive", "", "", "");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
         inactivePerson.setId(3L);
 
         when(departmentService.getManagedMembersOfDepartmentHead(signedInUser)).thenReturn(List.of(jane, john, inactivePerson));
@@ -1422,13 +1432,15 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setPermissions(List.of(USER));
         john.setId(1L);
 
         final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setPermissions(List.of(USER));
         jane.setId(2L);
 
         final Person inactivePerson = new Person("inactive", "", "", "");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
         inactivePerson.setId(3L);
 
         when(departmentService.getManagedMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(jane, john, inactivePerson));
@@ -1453,16 +1465,19 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setPermissions(List.of(USER));
         john.setId(1L);
 
         final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setPermissions(List.of(USER));
         jane.setId(2L);
 
         final Person distinctPerson = new Person("distinct", "", "", "");
+        distinctPerson.setPermissions(List.of(USER));
         distinctPerson.setId(3L);
 
         final Person inactivePerson = new Person("inactive", "", "", "");
-        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setPermissions(List.of());
         inactivePerson.setId(4L);
 
         when(departmentService.getManagedMembersOfDepartmentHead(signedInUser)).thenReturn(List.of(jane, inactivePerson, distinctPerson));

@@ -472,6 +472,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormUserWithRoleDepartmentHeadCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("Person One");
         person.setLastName("Lastname One");
@@ -492,6 +493,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
+        managedPerson.setPermissions(List.of(USER));
         managedPerson.setId(2L);
         managedPerson.setFirstName("Person Two");
         managedPerson.setLastName("Lastname Two");
@@ -507,6 +509,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormUserWithRoleSecondStageAuthorityCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setFirstName("Person One");
         person.setLastName("Lastname One");
@@ -528,6 +531,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
+        managedPerson.setPermissions(List.of(USER));
         managedPerson.setId(2L);
         managedPerson.setFirstName("Person Two");
         managedPerson.setLastName("Lastname Two");

@@ -33,7 +33,7 @@ class DepartmentApiControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
     void getDepartmentsWithBasicAuthIsNotOk(final String role) throws Exception {
         perform(
             get("/api/departments")

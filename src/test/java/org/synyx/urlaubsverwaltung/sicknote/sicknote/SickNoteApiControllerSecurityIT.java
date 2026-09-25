@@ -56,7 +56,7 @@ class SickNoteApiControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "BOSS", "INACTIVE"})
+    @ValueSource(strings = {"USER", "BOSS"})
     void getSicknotesIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         perform(
@@ -186,7 +186,7 @@ class SickNoteApiControllerSecurityIT extends SingleTenantTestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void personsSickNotesIsForbidden(final String role) throws Exception {
         LocalDateTime now = LocalDateTime.now();
         perform(

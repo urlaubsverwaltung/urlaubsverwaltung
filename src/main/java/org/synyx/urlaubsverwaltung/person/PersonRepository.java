@@ -23,7 +23,7 @@ interface PersonRepository extends JpaRepository<Person, Long> {
 
     Optional<Person> findByEmailIgnoreCase(String email);
 
-    int countByPermissionsNotContaining(Role permission);
+    int countByPermissionsContaining(Role permission);
 
     int countByPermissionsContainingAndIdNotIn(Role permission, List<Long> id);
 
@@ -37,9 +37,9 @@ interface PersonRepository extends JpaRepository<Person, Long> {
     @Query("select p from Person p where :permission member of p.permissions and cast(strpos(lower(concat(p.firstName,' ',p.lastName)), lower(:query)) AS INTEGER) > 0")
     Page<Person> findByPermissionsContainingAndNiceNameContainingIgnoreCase(@Param("permission") Role permission, @Param("query") String nameQuery, Pageable pageable);
 
-    List<Person> findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permissionContaining, Role permissionNotContaining);
+    List<Person> findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission, Role otherPermission);
 
-    List<Person> findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(Role permissionNotContaining, MailNotification mailNotification);
+    List<Person> findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(Role permission, MailNotification mailNotification);
 
     List<Person> findAllByOrderByIdAsc();
 

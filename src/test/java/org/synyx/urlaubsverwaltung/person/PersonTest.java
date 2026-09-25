@@ -16,7 +16,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -144,18 +143,29 @@ class PersonTest {
     }
 
     @Test
-    void ensureIsInactiveReturnsTrueWhenPersonHasRoleInactive() {
+    void ensureIsInactiveReturnsTrueWhenPersonDoesNotHaveRoleUser() {
         final Person person = new Person();
-        person.setPermissions(List.of(INACTIVE));
+        person.setPermissions(List.of(OFFICE));
 
         assertThat(person.isInactive()).isTrue();
+        assertThat(person.isActive()).isFalse();
     }
 
     @Test
-    void ensureIsInactiveReturnsFalseWhenPersonDoesNotHaveRoleInactive() {
+    void ensureIsInactiveReturnsTrueWhenPersonHasNoRoles() {
         final Person person = new Person();
         person.setPermissions(List.of());
 
+        assertThat(person.isInactive()).isTrue();
+        assertThat(person.isActive()).isFalse();
+    }
+
+    @Test
+    void ensureIsActiveReturnsTrueWhenPersonHasRoleUser() {
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        assertThat(person.isActive()).isTrue();
         assertThat(person.isInactive()).isFalse();
     }
 

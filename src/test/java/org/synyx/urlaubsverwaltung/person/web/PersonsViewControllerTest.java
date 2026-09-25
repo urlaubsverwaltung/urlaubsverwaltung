@@ -76,7 +76,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -323,7 +322,7 @@ class PersonsViewControllerTest {
 
         final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
         person.setId(2L);
-        person.setPermissions(List.of(INACTIVE));
+        person.setPermissions(List.of());
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
@@ -350,11 +349,11 @@ class PersonsViewControllerTest {
 
         final Person bruce = new Person("batman", "Wayne", "Bruce", "batman@example.org");
         bruce.setId(2L);
-        bruce.setPermissions(List.of(INACTIVE));
+        bruce.setPermissions(List.of());
 
         final Person clark = new Person("superman", "Kent", "Clark", "superman@example.org");
         clark.setId(3L);
-        clark.setPermissions(List.of(INACTIVE));
+        clark.setPermissions(List.of());
 
         final PageImpl<Person> page = new PageImpl<>(List.of(bruce, clark));
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);

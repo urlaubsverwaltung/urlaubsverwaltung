@@ -25,7 +25,6 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -48,20 +47,20 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
     private EntityManagerFactory entityManagerFactory;
 
     @Test
-    void countPersonByPermissionsIsNot() {
+    void countPersonByPermissionsContaining() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, INACTIVE));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
         personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
         personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
 
-        final int countOfActivePersons = sut.countByPermissionsNotContaining(INACTIVE);
+        final int countOfActivePersons = sut.countByPermissionsContaining(USER);
         assertThat(countOfActivePersons).isEqualTo(2);
     }
 
     @Test
     void ensureToFindPersonsWithRoleWithoutTheId() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, INACTIVE));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
         personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
         personService.create("simone", "Peter", "Muster", "simone@example.org", List.of(), List.of(USER, OFFICE));
         final Person savedBettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER, OFFICE));
@@ -74,34 +73,34 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
     @Test
     void findByPersonByPermissionsNotContaining() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, INACTIVE));
-        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
-        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
+        final Person marlene = personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
+        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(OFFICE));
+        personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
 
-        final List<Person> notInactivePersons = sut.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
-        assertThat(notInactivePersons).containsExactly(bettina, peter);
+        final List<Person> inactivePersons = sut.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER);
+        assertThat(inactivePersons).containsExactly(marlene, peter);
     }
 
     @Test
     void ensureFindByPersonByPermissionsNotContainingOrderingIsCorrect() {
 
-        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
-        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
-        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
+        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(), List.of());
+        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of());
+        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of());
 
-        final List<Person> notInactivePersons = sut.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
-        assertThat(notInactivePersons).containsExactly(bettina, peter, xenia);
+        final List<Person> inactivePersons = sut.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER);
+        assertThat(inactivePersons).containsExactly(bettina, peter, xenia);
     }
 
     @Test
     void findByPersonByPermissionsContaining() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, INACTIVE));
-        personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of());
+        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
         final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
 
-        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE);
-        assertThat(personsWithOfficeRole).containsExactly(peter);
+        final List<Person> activePersons = sut.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(USER);
+        assertThat(activePersons).containsExactly(bettina, peter);
     }
 
     @Test
@@ -116,36 +115,36 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureFindByPersonByPermissionsContainingAndNotContaining() {
+    void ensureFindByPersonByPermissionsContainingAndContaining() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, OFFICE, INACTIVE));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(OFFICE));
         personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
         final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
 
-        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE);
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE, USER);
         assertThat(personsWithOfficeRole).containsExactly(peter);
     }
 
     @Test
-    void ensureFindByPersonByPermissionsContainingAndNotContainingOrderingIsCorrect() {
+    void ensureFindByPersonByPermissionsContainingAndContainingOrderingIsCorrect() {
 
-        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
-        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
-        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
+        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER, OFFICE));
+        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
+        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER, OFFICE));
 
-        final List<Person> personsWithUserRole = sut.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER, INACTIVE);
-        assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE, USER);
+        assertThat(personsWithOfficeRole).containsExactly(bettina, peter, xenia);
     }
 
     @Test
-    void ensureFindByPersonByPermissionsNotContainingAndContainingNotification() {
+    void ensureFindByPersonByPermissionsContainingAndContainingNotification() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE, INACTIVE));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(OFFICE));
         personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
         final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE));
 
-        final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
-        assertThat(personsWithOfficeRole).containsExactly(peter);
+        final List<Person> personsWithNotification = sut.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        assertThat(personsWithNotification).containsExactly(peter);
     }
 
     @Test
@@ -155,47 +154,47 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
         final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER));
         final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER));
 
-        final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
-        assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
+        final List<Person> personsWithNotification = sut.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        assertThat(personsWithNotification).containsExactly(bettina, peter, xenia);
     }
 
     @Test
     void ensureFindByPermissionsNotContainingAndByNiceNameContainingIgnoreCase() {
 
-        personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
-        personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
-        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
-        final Person rosamund = personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
+        personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of());
+        personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(USER));
+        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of());
+        final Person rosamund = personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(OFFICE));
 
         final PageRequest pageRequest = PageRequest.of(0, 10);
-        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
+        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(USER, "mu", pageRequest);
         assertThat(actual.getContent()).containsExactly(peter, rosamund);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"Peter mu", "Peter Muster"})
     void ensureFindByPermissionsNotContainingAndByNiceNameContainingIgnoreCaseWithFirstAndLastName(final String query) {
-        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
-        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
+        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of());
+        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(USER, query, PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(peter);
     }
 
     @Test
     void ensureFindByPermissionsContainingAndNiceNameContainingIgnoreCase() {
-        personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
-        personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
-        personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
-        final Person mustafa = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
+        personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of());
+        personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of());
+        personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of());
+        final Person mustafa = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(USER));
 
-        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "mu", PageRequest.of(0, 10));
+        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(USER, "mu", PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(mustafa);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"Peter mu", "Peter Muster"})
     void ensureFindByPermissionsContainingAndNiceNameContainingIgnoreCaseWithFirstAndLastName(final String query) {
-        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(INACTIVE));
-        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
+        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
+        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(USER, query, PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(peter);
     }
 
@@ -204,7 +203,7 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
 
         final Person person1 = personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
         final Person person2 = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
-        final Person person3 = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
+        final Person person3 = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of());
         personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
 
         final List<Person> actual = sut.findAllByIdIsInOrderByFirstNameAscLastNameAsc(List.of(person1.getId(), person2.getId(), person3.getId()));

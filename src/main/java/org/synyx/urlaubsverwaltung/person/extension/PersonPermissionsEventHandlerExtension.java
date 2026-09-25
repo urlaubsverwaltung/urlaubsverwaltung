@@ -40,7 +40,6 @@ class PersonPermissionsEventHandlerExtension {
 
     private static List<String> toRoleStrings(Collection<Role> roles) {
         return roles.stream()
-            .filter(role -> !Role.INACTIVE.equals(role))
             .map(Role::name)
             .toList();
     }

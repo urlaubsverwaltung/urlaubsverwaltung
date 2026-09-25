@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -111,7 +110,7 @@ class SickNoteRelevantPersonsServiceTest {
 
         final Person inactiveMember = new Person();
         inactiveMember.setId(3L);
-        inactiveMember.setPermissions(List.of(INACTIVE));
+        inactiveMember.setPermissions(List.of());
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, Year.of(2026))).thenReturn(List.of(activeMember, inactiveMember));
 
@@ -139,7 +138,7 @@ class SickNoteRelevantPersonsServiceTest {
 
         final Person inactiveMember = new Person();
         inactiveMember.setId(3L);
-        inactiveMember.setPermissions(List.of(INACTIVE));
+        inactiveMember.setPermissions(List.of());
 
         when(departmentService.getManagedMembersOfPerson(secondStageAuthority, Year.of(2026))).thenReturn(List.of(activeMember, inactiveMember));
 
@@ -167,7 +166,7 @@ class SickNoteRelevantPersonsServiceTest {
 
         final Person inactiveMember = new Person();
         inactiveMember.setId(3L);
-        inactiveMember.setPermissions(List.of(INACTIVE));
+        inactiveMember.setPermissions(List.of());
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, Year.of(2025))).thenReturn(List.of(activeMember, inactiveMember));
 

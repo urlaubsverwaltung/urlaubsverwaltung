@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    An inactive person is a person without the role USER. Persons deactivated with the former INACTIVE role
+    lose all of their roles, including INACTIVE itself.
+  -->
+  <changeSet author="schneider" id="remove-inactive-role">
+
+    <preConditions>
+      <tableExists tableName="person_permissions"/>
+    </preConditions>
+
+    <sql>
+      DELETE FROM person_permissions
+      WHERE person_id IN (SELECT person_id FROM person_permissions WHERE permissions = 'INACTIVE');
+    </sql>
+  </changeSet>
+</databaseChangeLog>

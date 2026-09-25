@@ -58,7 +58,7 @@ class PublicHolidayApiControllerSecurityIT extends SingleTenantTestContainersBas
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
     void ensureGetHolidaysForOtherUserIsOk(final String role) throws Exception {
         perform(
             get("/api/public-holidays")
@@ -78,7 +78,7 @@ class PublicHolidayApiControllerSecurityIT extends SingleTenantTestContainersBas
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "INACTIVE"})
+    @ValueSource(strings = {"USER"})
     void ensuresPersonsPublicHolidaysForOtherUserIsForbidden(final String role) throws Exception {
         perform(
             get("/api/persons/1/public-holidays")

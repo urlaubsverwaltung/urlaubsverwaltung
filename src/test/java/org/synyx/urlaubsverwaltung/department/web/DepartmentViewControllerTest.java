@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
@@ -623,7 +622,7 @@ class DepartmentViewControllerTest {
 
         final Person inactivePerson = new Person("username-2", "Inaktiv", "Brigitte", "brigitte.inaktiv@example.org");
         inactivePerson.setId(2L);
-        inactivePerson.setPermissions(List.of(Role.INACTIVE));
+        inactivePerson.setPermissions(List.of());
 
         final Person otherPerson = new Person("username-3", "Roth", "Anne", "anne.roth@example.org");
         otherPerson.setId(3L);

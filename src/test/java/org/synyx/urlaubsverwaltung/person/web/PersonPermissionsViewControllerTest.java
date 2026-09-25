@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -103,6 +104,32 @@ class PersonPermissionsViewControllerTest {
 
         perform(get("/web/person/1/permissions"))
             .andExpect(model().attribute("person", hasProperty("id", is(1L))));
+    }
+
+    @Test
+    void showPersonPermissionsMarksPersonWithoutUserRoleAsInactive() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("person", hasProperty("permissions", contains(PersonPermissionsRoleDto.INACTIVE))))
+            .andExpect(model().attribute("person", hasProperty("isInactive", is(true))));
+    }
+
+    @Test
+    void showPersonPermissionsDoesNotMarkPersonWithUserRoleAsInactive() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("person", hasProperty("permissions", contains(PersonPermissionsRoleDto.USER, PersonPermissionsRoleDto.OFFICE))))
+            .andExpect(model().attribute("person", hasProperty("isInactive", is(false))));
     }
 
     @Test
@@ -237,6 +264,52 @@ class PersonPermissionsViewControllerTest {
 
         verify(personMailService, never()).sendPersonGainedMorePermissionsNotification(any(), any());
         verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
+    }
+
+    @Test
+    void ensureDeactivatingPersonRemovesAllPermissions() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+
+        final Person updatedPerson = new Person("username", "Meier", "Nina", "nina@example.org");
+        updatedPerson.setId(1L);
+        updatedPerson.setPermissions(List.of());
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(any(), any())).thenReturn(updatedPerson);
+
+        perform(post("/web/person/1/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "INACTIVE")
+        );
+
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
+        verify(personMailService, never()).sendPersonGainedMorePermissionsNotification(any(), any());
+    }
+
+    @Test
+    void ensureNotToSendNotificationOnReactivation() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of());
+
+        final Person updatedPerson = new Person("username", "Meier", "Nina", "nina@example.org");
+        updatedPerson.setId(1L);
+        updatedPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(any(), any())).thenReturn(updatedPerson);
+
+        perform(post("/web/person/1/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "USER")
+        );
+
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER)));
+        verify(personMailService, never()).sendPersonGainedMorePermissionsNotification(any(), any());
     }
 
     @Test

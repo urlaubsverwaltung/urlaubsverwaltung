@@ -164,13 +164,12 @@ class AbsenceApiControllerSecurityIT extends SingleTenantTestContainersBase {
             .andExpect(status().isOk());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"INACTIVE"})
-    void getAbsencesForOtherUserIsForbidden(final String role) throws Exception {
+    @Test
+    void getAbsencesForOtherUserIsForbiddenAsUser() throws Exception {
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31")
-            .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
         )
             .andExpect(status().isForbidden());
     }

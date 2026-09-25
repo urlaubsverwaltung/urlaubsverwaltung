@@ -39,7 +39,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -190,12 +189,12 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getActivePersons() {
-        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(USER);
     }
 
     @Override
     public List<Person> getInactivePersons() {
-        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER);
     }
 
     @Override
@@ -215,22 +214,22 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Page<Person> getActivePersons(PersonPageable personPageable, String query) {
-        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, personPageable.toPageable());
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(USER, query, personPageable.toPageable());
     }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
+        return personRepository.findByPermissionsContainingAndPermissionsContainingOrderByFirstNameAscLastNameAsc(role, USER);
     }
 
     @Override
     public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
-        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
+        return personRepository.findByPermissionsContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(USER, notification);
     }
 
     @Override
     public Page<Person> getInactivePersons(PersonPageable pageable, String query) {
-        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, pageable.toPageable());
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(USER, query, pageable.toPageable());
     }
 
     @Override
@@ -279,7 +278,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public int numberOfActivePersons() {
-        return personRepository.countByPermissionsNotContaining(INACTIVE);
+        return personRepository.countByPermissionsContaining(USER);
     }
 
     @Override

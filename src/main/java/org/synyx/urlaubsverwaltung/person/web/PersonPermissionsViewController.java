@@ -26,10 +26,8 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static java.util.function.Predicate.not;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapPermissionsDtoToRole;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
@@ -118,11 +116,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     private static List<Role> calculateAddedPermissions(Collection<Role> oldRoles, Person updatedPerson) {
         return updatedPerson.getPermissions().stream()
             .filter(not(oldRoles::contains))
-            .filter(role(INACTIVE).and(role(USER)))
+            .filter(addedRole -> addedRole != USER)
             .toList();
-    }
-
-    private static Predicate<Role> role(final Role role) {
-        return addedRole -> addedRole != role;
     }
 }

@@ -28,7 +28,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
@@ -144,7 +143,7 @@ public class SickNoteApiController {
             : List.of();
 
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-            .filter(person -> !person.hasRole(INACTIVE))
+            .filter(Person::isActive)
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
             .toList();

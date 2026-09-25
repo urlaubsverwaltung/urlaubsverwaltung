@@ -23,8 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class PersonDeleteViewControllerTest {
@@ -113,9 +113,11 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmed() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        signedInUser.setPermissions(List.of(USER));
         signedInUser.setId(2L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
@@ -130,10 +132,12 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmedAjax() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        signedInUser.setPermissions(List.of(USER));
         signedInUser.setId(2L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
@@ -156,7 +160,7 @@ class PersonDeleteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        person.setPermissions(List.of(INACTIVE));
+        person.setPermissions(List.of());
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
