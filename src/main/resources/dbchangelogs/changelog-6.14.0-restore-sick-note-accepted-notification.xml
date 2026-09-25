@@ -1,0 +1,26 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    Saving the notification settings dropped NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER although the
+    checkbox "Einreichung und Änderung für mich" stands for it, see
+    https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/6712. Persons with
+    NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER have that checkbox checked, so they get the notification back.
+  -->
+  <changeSet author="schneider" id="restore-sick-note-accepted-notification">
+    <sql>
+      INSERT INTO person_notifications (person_id, notifications)
+      SELECT DISTINCT own_sick_note.person_id, 'NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER'
+      FROM person_notifications own_sick_note
+      WHERE own_sick_note.notifications = 'NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER'
+        AND NOT EXISTS (
+          SELECT 1
+          FROM person_notifications accepted
+          WHERE accepted.person_id = own_sick_note.person_id
+            AND accepted.notifications = 'NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER'
+        );
+    </sql>
+  </changeSet>
+</databaseChangeLog>
