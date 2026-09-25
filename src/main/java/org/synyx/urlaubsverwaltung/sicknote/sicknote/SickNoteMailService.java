@@ -282,6 +282,51 @@ public class SickNoteMailService {
     }
 
     @Async
+    public void sendSickNoteExtensionAcceptedNotificationToSickPerson(SickNote extendedSickNote, LocalDate previousEndDate, Person maintainer) {
+
+        if (extendedSickNote.getPerson().equals(maintainer)) {
+            LOG.info("Skip mail about accepted sick note extension since the sick person accepted it.");
+            return;
+        }
+
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(extendedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
+            .withSubject("subject.sicknote.extension.accepted_by_management.to_applicant")
+            .withTemplate("sick_note_extension_accepted_by_management_to_applicant", _ -> Map.of("sickNote", extendedSickNote, "previousEndDate", previousEndDate, "maintainer", maintainer))
+            .withReplyToFrom(maintainer)
+            .build();
+        mailService.send(mailToApplicant);
+    }
+
+    @Async
+    public void sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(SickNote extendedSickNote, LocalDate previousEndDate, Person maintainer) {
+        final List<Person> recipients =
+            mailRecipientService.getRecipientsOfInterest(extendedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)
+                .stream().filter(recipient -> !recipient.equals(maintainer))
+                .toList();
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.sicknote.extension.accepted_by_management.to_management", extendedSickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_extension_accepted_by_management_to_management", _ -> Map.of("sickNote", extendedSickNote, "previousEndDate", previousEndDate, "maintainer", maintainer))
+            .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
+    }
+
+    @Async
+    public void sendSickNoteExtensionAcceptedToColleagues(SickNote extendedSickNote) {
+
+        // no calendar file: its uid depends on the end date, it would add a second appointment instead of moving the first one
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(extendedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.sicknote.extension.accepted.to_colleagues", extendedSickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_extension_accepted_to_colleagues", _ -> Map.of("sickNote", extendedSickNote))
+            .build();
+        mailService.send(mailToRelevantColleagues);
+    }
+
+    @Async
     void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(SickNote createdSickNote, String comment) {
 
         final List<Person> recipientsWithoutApplier =

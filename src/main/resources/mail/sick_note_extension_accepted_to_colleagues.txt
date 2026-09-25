@@ -1,0 +1,10 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{sick_note.extension.accepted.to_colleagues(${sickNote.person.niceName},${#temporals.format(sickNote.endDate, 'dd.MM.yyyy')})})]
+
+    [(#{absence.information.period})] [# th:replace="~{_date_range(from=${sickNote.startDate},to=${sickNote.endDate},dayLength=${sickNote.dayLength})}" /]
+
+[(#{sick_note.created.to_colleagues.overview})]: [(${baseLinkURL})]web/absences
+
+
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]
