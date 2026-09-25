@@ -258,6 +258,30 @@ public class SickNoteMailService {
     }
 
     @Async
+    public void sendSickNoteExtensionSubmittedNotificationToSickPerson(SickNote sickNote, LocalDate newEndDate) {
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER)
+            .withSubject("subject.sicknote.extension.submitted_by_user.to_applicant")
+            .withTemplate("sick_note_extension_submitted_by_user_to_applicant", _ -> Map.of("sickNote", sickNote, "newEndDate", newEndDate))
+            .build();
+        mailService.send(mailToApplicant);
+    }
+
+    @Async
+    public void sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(SickNote sickNote, LocalDate newEndDate) {
+
+        final List<Person> recipients =
+            mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.sicknote.extension.submitted_by_user.to_management", sickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_extension_submitted_by_user_to_management", _ -> Map.of("sickNote", sickNote, "newEndDate", newEndDate))
+            .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
+    }
+
+    @Async
     void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(SickNote createdSickNote, String comment) {
 
         final List<Person> recipientsWithoutApplier =

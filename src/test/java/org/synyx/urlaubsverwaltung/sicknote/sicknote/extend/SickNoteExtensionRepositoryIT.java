@@ -39,7 +39,10 @@ class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
-        person.setPermissions(List.of(USER, OFFICE));
+        person.setPermissions(List.of(USER));
+
+        final Person office = personService.create("alfred", "Alfred", "Pennyworth", "alfred@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).startDate(now.minusDays(10)).endDate(now.minusDays(10)).status(SickNoteStatus.ACTIVE).build());
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
@@ -47,7 +50,7 @@ class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
         final Long sickNoteId = sickNote.getId();
 
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1));
-        sickNoteExtensionInteractionService.acceptSubmittedExtension(person, sickNoteId, "");
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(office, sickNoteId, "");
 
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2));
 

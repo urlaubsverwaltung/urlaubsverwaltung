@@ -44,6 +44,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -147,7 +148,7 @@ class SickNoteExtendViewControllerTest {
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
-    void ensureExtensionIsImmediatelyAcceptedWhenUserIsAllowedToAcceptSickNotes(Role role) throws Exception {
+    void ensureExtensionIsOnlySubmittedWhenUserIsAllowedToAcceptSickNotes(Role role) throws Exception {
 
         final Person person = new Person();
         person.setId(1L);
@@ -174,8 +175,9 @@ class SickNoteExtendViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/sicknote/1"));
 
+        // accepting it right away is up to the interaction service
         verify(sickNoteExtensionInteractionService).submitSickNoteExtension(person, 1L, endDate);
-        verify(sickNoteExtensionInteractionService).acceptSubmittedExtension(person, 1L, null);
+        verify(sickNoteExtensionInteractionService, never()).acceptSubmittedExtension(any(), any(), any());
     }
 
     @ParameterizedTest

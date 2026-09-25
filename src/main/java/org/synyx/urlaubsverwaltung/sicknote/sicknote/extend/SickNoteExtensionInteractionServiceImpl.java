@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMailService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
+import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_SUBMITTED;
 
 @Service
 class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionInteractionService {
@@ -28,6 +30,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService commentService;
     private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
+    private final SickNoteMailService sickNoteMailService;
     private final ApplicationEventPublisher eventPublisher;
 
     SickNoteExtensionInteractionServiceImpl(SickNoteExtensionService sickNoteExtensionService,
@@ -35,12 +38,14 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
                                             SickNoteInteractionService sickNoteInteractionService,
                                             SickNoteCommentService commentService,
                                             SickNotePermissionEvaluator sickNotePermissionEvaluator,
+                                            SickNoteMailService sickNoteMailService,
                                             ApplicationEventPublisher eventPublisher) {
         this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.commentService = commentService;
         this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
+        this.sickNoteMailService = sickNoteMailService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -61,6 +66,15 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
         } else if (sickNote.isActive()) {
             // while an active sickNote has to be extended with a request
             sickNoteExtensionService.createSickNoteExtension(sickNote, newEndDate);
+
+            if (sickNotePermissionEvaluator.of(submitter, sickNote).isAllowedToAcceptExtension()) {
+                // nobody has to be asked to accept what the submitter is allowed to accept anyway
+                acceptSubmittedExtension(submitter, sickNoteId, null);
+            } else {
+                commentService.create(sickNote, EXTENSION_SUBMITTED, submitter);
+                sickNoteMailService.sendSickNoteExtensionSubmittedNotificationToSickPerson(sickNote, newEndDate);
+                sickNoteMailService.sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(sickNote, newEndDate);
+            }
         } else {
             throw new IllegalStateException("Cannot submit sickNoteExtension for sickNote id=%s with status=%s".formatted(sickNoteId, sickNote.getStatus()));
         }

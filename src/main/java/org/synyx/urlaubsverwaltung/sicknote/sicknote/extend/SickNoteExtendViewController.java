@@ -176,10 +176,6 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
 
             sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
 
-            if (sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAcceptExtension()) {
-                sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNote.getId(), null);
-            }
-
             redirectAttributes.addFlashAttribute("showExtensionCreatedFeedback", true);
             return "redirect:/web/sicknote/" + sickNote.getId();
         } else {
