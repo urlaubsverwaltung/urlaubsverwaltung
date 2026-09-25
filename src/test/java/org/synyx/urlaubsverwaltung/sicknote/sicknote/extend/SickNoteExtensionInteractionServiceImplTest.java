@@ -199,7 +199,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             submitter.setId(1L);
             submitter.setPermissions(List.of(USER, role, SICK_NOTE_EDIT));
 
-            final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(SickNoteStatus.ACTIVE).build();
+            final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(SickNoteStatus.ACTIVE).endDate(nextEndDate.minusDays(1)).build();
             when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
             final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, SUBMITTED, BigDecimal.ONE);
@@ -212,7 +212,9 @@ class SickNoteExtensionInteractionServiceImplTest {
 
             verify(sickNoteCommentService).create(extendedSickNote, EXTENSION_ACCEPTED, submitter, null);
             verify(sickNoteCommentService, never()).create(any(), eq(EXTENSION_SUBMITTED), any());
-            verifyNoInteractions(sickNoteMailService);
+            verify(sickNoteMailService, never()).sendSickNoteExtensionSubmittedNotificationToSickPerson(any(), any());
+            verify(sickNoteMailService, never()).sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(any(), any());
+            verify(sickNoteMailService).sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(extendedSickNote, sickNote.getEndDate(), submitter);
         }
 
         @Test
@@ -265,6 +267,7 @@ class SickNoteExtensionInteractionServiceImplTest {
                 .hasMessage("person id=1 is not authorized to accept submitted sickNoteExtension");
 
             verifyNoInteractions(sickNoteCommentService);
+            verifyNoInteractions(sickNoteMailService);
             verifyNoInteractions(applicationEventPublisher);
         }
 
@@ -298,6 +301,27 @@ class SickNoteExtensionInteractionServiceImplTest {
             sut.acceptSubmittedExtension(maintainer, 1L, "awesome comment");
 
             verify(sickNoteCommentService).create(sickNote, EXTENSION_ACCEPTED, maintainer, "awesome comment");
+        }
+
+        @Test
+        void ensureAcceptSubmittedExtensionSendsMailsWithThePreviousEndDate() {
+
+            final Person maintainer = new Person();
+            maintainer.setId(1L);
+            maintainer.setPermissions(List.of(USER, OFFICE));
+
+            final LocalDate previousEndDate = LocalDate.of(2024, 9, 25);
+            final SickNote sickNote = SickNote.builder().id(1L).person(new Person()).endDate(previousEndDate).build();
+            when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+            final SickNote extendedSickNote = SickNote.builder(sickNote).endDate(previousEndDate.plusDays(2)).build();
+            when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(extendedSickNote);
+
+            sut.acceptSubmittedExtension(maintainer, 1L, "");
+
+            verify(sickNoteMailService).sendSickNoteExtensionAcceptedNotificationToSickPerson(extendedSickNote, previousEndDate, maintainer);
+            verify(sickNoteMailService).sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(extendedSickNote, previousEndDate, maintainer);
+            verify(sickNoteMailService).sendSickNoteExtensionAcceptedToColleagues(extendedSickNote);
         }
 
         @Test

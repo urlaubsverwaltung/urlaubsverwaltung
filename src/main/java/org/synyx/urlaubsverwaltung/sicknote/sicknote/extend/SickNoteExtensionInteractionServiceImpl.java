@@ -83,14 +83,20 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     @Override
     public SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId, String comment) {
 
-        if (!sickNotePermissionEvaluator.of(maintainer, getSickNote(sickNoteId)).isAllowedToAcceptExtension()) {
+        final SickNote sickNote = getSickNote(sickNoteId);
+        if (!sickNotePermissionEvaluator.of(maintainer, sickNote).isAllowedToAcceptExtension()) {
             throw new AccessDeniedException("person id=%s is not authorized to accept submitted sickNoteExtension".formatted(maintainer.getId()));
         }
 
+        final LocalDate previousEndDate = sickNote.getEndDate();
         final SickNote updatedSickNote = sickNoteExtensionService.acceptSubmittedExtension(sickNoteId);
 
         LOG.info("add extension accepted comment to sick note history.");
         commentService.create(updatedSickNote, EXTENSION_ACCEPTED, maintainer, comment);
+
+        sickNoteMailService.sendSickNoteExtensionAcceptedNotificationToSickPerson(updatedSickNote, previousEndDate, maintainer);
+        sickNoteMailService.sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(updatedSickNote, previousEndDate, maintainer);
+        sickNoteMailService.sendSickNoteExtensionAcceptedToColleagues(updatedSickNote);
 
         LOG.info("publish sickNoteUpdatedEvent for accepted sick note extension.");
         eventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));

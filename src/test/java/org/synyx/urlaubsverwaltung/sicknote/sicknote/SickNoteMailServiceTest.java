@@ -590,6 +590,132 @@ class SickNoteMailServiceTest {
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "newEndDate", newEndDate));
     }
 
+    @Test
+    void ensureSendSickNoteExtensionAcceptedNotificationToSickPerson() {
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(1L);
+        person.setPermissions(Set.of(USER));
+        person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER));
+
+        final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        management.setId(2L);
+        management.setPermissions(List.of(USER, OFFICE));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 22))
+            .build();
+
+        final LocalDate previousEndDate = LocalDate.of(2022, APRIL, 20);
+
+        sut.sendSickNoteExtensionAcceptedNotificationToSickPerson(sickNote, previousEndDate, management);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.extension.accepted_by_management.to_applicant");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_extension_accepted_by_management_to_applicant");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "previousEndDate", previousEndDate, "maintainer", management));
+    }
+
+    @Test
+    void ensureSendSickNoteExtensionAcceptedNotificationToSickPersonIsNotSentWhenTheSickPersonAcceptedIt() {
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(1L);
+        person.setPermissions(Set.of(USER, OFFICE));
+        person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 22))
+            .build();
+
+        sut.sendSickNoteExtensionAcceptedNotificationToSickPerson(sickNote, LocalDate.of(2022, APRIL, 20), person);
+
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void ensureSendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement() {
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(1L);
+        person.setPermissions(Set.of(USER));
+
+        final Person management1 = new Person("office1", "Muster", "Marlene", "muster@example.org");
+        management1.setId(2L);
+        management1.setPermissions(List.of(USER, OFFICE));
+        management1.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person management2 = new Person("office2", "Meyer", "Manfred", "meyer@example.org");
+        management2.setId(3L);
+        management2.setPermissions(List.of(USER, OFFICE));
+        management2.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 22))
+            .build();
+
+        final LocalDate previousEndDate = LocalDate.of(2022, APRIL, 20);
+
+        sut.sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, previousEndDate, management1);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        // the maintainer knows already
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management2));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.extension.accepted_by_management.to_management");
+        assertThat(mail.getSubjectMessageArguments()).containsExactly("theo person");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_extension_accepted_by_management_to_management");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "previousEndDate", previousEndDate, "maintainer", management1));
+    }
+
+    @Test
+    void ensureSendSickNoteExtensionAcceptedToColleagues() {
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(1L);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 22))
+            .build();
+
+        final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        colleague.setId(2L);
+        colleague.setPermissions(Set.of(USER));
+        colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED));
+        when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED)).thenReturn(List.of(colleague));
+
+        sut.sendSickNoteExtensionAcceptedToColleagues(sickNote);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(colleague));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.extension.accepted.to_colleagues");
+        assertThat(mail.getSubjectMessageArguments()).containsExactly("theo person");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_extension_accepted_to_colleagues");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+        // the calendar file of the created sick note has another uid, a new one would add a second appointment
+        assertThat(mail.getMailAttachments()).isEmpty();
+    }
+
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();
         ApplicationSettings applicationSettings = new ApplicationSettings();
