@@ -25,7 +25,7 @@ public class SickNoteSettings implements Serializable {
     /**
      * Allows users to submit sicknotes for themselves
      */
-    private boolean userIsAllowedToSubmitSickNotes = false;
+    private boolean userIsAllowedToSubmitSickNotes = true;
 
     public Integer getMaximumSickPayDays() {
         return maximumSickPayDays;

@@ -12,5 +12,6 @@ class SickNoteSettingsTest {
         final SickNoteSettings settings = new SickNoteSettings();
         assertThat(settings.getMaximumSickPayDays()).isEqualTo(42);
         assertThat(settings.getDaysBeforeEndOfSickPayNotification()).isEqualTo(7);
+        assertThat(settings.getUserIsAllowedToSubmitSickNotes()).isTrue();
     }
 }
