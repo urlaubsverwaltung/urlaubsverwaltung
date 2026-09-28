@@ -16,6 +16,8 @@ interface DepartmentMembershipRepository extends JpaRepository<DepartmentMembers
 
     List<DepartmentMembershipEntity> findAllByPersonIdIsInAndValidToIsNull(Collection<Long> personIds);
 
+    List<DepartmentMembershipEntity> findAllByMembershipKindAndValidToIsNull(DepartmentMembershipKind membershipKind);
+
     @Query("SELECT d from department_membership d " +
         "WHERE " +
         "  (     d.validTo IS NULL   AND YEAR(d.validFrom) <= :year) OR" +
