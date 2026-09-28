@@ -40,7 +40,7 @@
           id="persons-filter"
           class="flex flex-wrap items-baseline gap-x-1 gap-y-2"
           th:fragment="persons-overview-heading-body"
-          th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
+          th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : (withoutDepartment ? #messages.msg('persons.without-department') : #messages.msg('persons.active'))) : #messages.msg('persons.inactive')}"
         >
           <div class="inline-block">
             <button
@@ -66,6 +66,13 @@
                     <span th:text="#{persons.active}"></span>
                   </a>
                 </li>
+                <li th:if="${showWithoutDepartmentFilter}">
+                  <a
+                    th:href="@{/web/person (active=true, withoutDepartment=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
+                  >
+                    <span th:text="#{persons.without-department}"></span>
+                  </a>
+                </li>
                 <th:block th:if="${not #lists.isEmpty(departments)}">
                   <li th:each="department : ${departments}">
                     <a
@@ -86,7 +93,7 @@
             </nav>
           </div>
           <th:block
-            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personsPagination.page.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
+            th:with="hrefPrefix=${'/web/person?active=' + active + (department == null ? '&size=' + personsPagination.page.size : '&department=' + department.id) + (withoutDepartment ? '&withoutDepartment=true' : '') + '&sort=' + sortQuery + '&query=' + query + '&year='}"
           >
             <div
               th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})}"
@@ -107,6 +114,7 @@
             <input type="hidden" name="active" th:value="${active}" />
             <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
             <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+            <input th:if="${withoutDepartment}" type="hidden" name="withoutDepartment" value="true" />
             <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
             <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
           </div>
@@ -151,6 +159,7 @@
               <input type="hidden" name="active" th:value="${active}" />
               <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
               <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+              <input th:if="${withoutDepartment}" type="hidden" name="withoutDepartment" value="true" />
               <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
               <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
             </div>
@@ -369,6 +378,7 @@
                   <input type="hidden" name="active" th:value="${active}" />
                   <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
                   <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+                  <input th:if="${withoutDepartment}" type="hidden" name="withoutDepartment" value="true" />
                   <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
                   <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
                 </div>
