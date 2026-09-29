@@ -32,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -200,6 +201,22 @@ public class SickNoteMailService {
             .withReplyToFrom(canceller)
             .build();
         mailService.send(mailToRelevantColleagues);
+    }
+
+    @Async
+    void sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(SickNote cancelledSickNote, String comment, Person canceller) {
+
+        final List<Person> recipientsWithoutCanceller =
+            mailRecipientService.getRecipientsOfInterest(cancelledSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
+                .filter(recipient -> !recipient.equals(canceller)).toList();
+
+        final Mail mailToManagement = Mail.builder()
+            .withRecipient(recipientsWithoutCanceller)
+            .withSubject("subject.sicknote.cancelled_by_management.to_management", canceller.getNiceName())
+            .withTemplate("sick_note_cancelled_by_management_to_management", _ -> Map.of("sickNote", cancelledSickNote, "comment", comment, "canceller", canceller))
+            .withReplyToFrom(canceller)
+            .build();
+        mailService.send(mailToManagement);
     }
 
     /**

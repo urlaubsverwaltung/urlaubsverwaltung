@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.FEBRUARY;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -385,6 +387,112 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
+    }
+
+    @Test
+    void sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
+
+        final Person canceller = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(canceller)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
+            .aubStartDate(LocalDate.of(2022, FEBRUARY, 2))
+            .aubEndDate(LocalDate.of(2022, MARCH, 31))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        final Person management = personService.create("management", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        when(mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "Versehentlich angelegt", canceller);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
+
+        final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(management.getEmail());
+        final Message msgManagement = inboxManagement[0];
+        assertThat(msgManagement.getSubject()).isEqualTo("Eine Krankmeldung wurde von Lieschen Müller storniert");
+        assertThat(msgManagement.getReplyTo()[0]).isEqualTo(new InternetAddress(canceller.getEmail()));
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat die Krankmeldung von Marlene Muster storniert:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Zeitraum der AU:      02.02.2022 bis 31.03.2022
+                Art der Krankmeldung: Kind-Krankmeldung
+
+            Kommentar(e) zur Krankmeldung:
+
+                Versehentlich angelegt
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
+    }
+
+    @Test
+    void sendSickNoteCancelledNotificationToOfficeAndResponsibleManagementWithoutComment() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
+
+        final Person canceller = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(canceller)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, APRIL, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        final Person management = personService.create("management", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        when(mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "", canceller);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
+
+        final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat die Krankmeldung von Marlene Muster storniert:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Art der Krankmeldung: Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
     }
 
     @Test

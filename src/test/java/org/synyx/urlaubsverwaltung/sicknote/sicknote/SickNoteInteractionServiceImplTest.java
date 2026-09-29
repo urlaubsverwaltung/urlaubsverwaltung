@@ -268,6 +268,7 @@ class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteMailService).sendCancelledToSickPerson(sickNote, canceller);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
+        verify(sickNoteMailService).sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "comment", canceller);
     }
 
     @Nested
