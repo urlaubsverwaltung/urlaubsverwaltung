@@ -153,9 +153,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
-                personPage = active
-                    ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
-                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
+                personPage = getManagedMembersOfDepartment(signedInUser, departmentId, active, personPageRequest, query);
             }
         }
 
@@ -164,9 +162,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         if (personPage == null) {
-            personPage = active
-                ? getRelevantActivePersons(signedInUser, personPageRequest, query)
-                : getRelevantInactivePersons(signedInUser, personPageRequest, query);
+            personPage = getRelevantPersons(signedInUser, active, personPageRequest, query);
         }
 
         final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now, departmentPresent, department);
@@ -221,6 +217,18 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         return accountSort;
+    }
+
+    private Page<Person> getManagedMembersOfDepartment(Person signedInUser, Long departmentId, boolean active, PersonPageRequest personPageRequest, String query) {
+        return active
+            ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
+            : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
+    }
+
+    private Page<Person> getRelevantPersons(Person signedInUser, boolean active, PersonPageRequest personPageRequest, String query) {
+        return active
+            ? getRelevantActivePersons(signedInUser, personPageRequest, query)
+            : getRelevantInactivePersons(signedInUser, personPageRequest, query);
     }
 
     private Page<Person> getRelevantActivePersons(Person signedInUser, PersonPageRequest personPageRequest, String query) {
