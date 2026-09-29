@@ -31,9 +31,21 @@
             <a
               th:href="|${hrefPrefix}${selectableYear}|"
               th:attr="aria-current=${selectableYear == selectedYear ? 'page' : ''}"
+              th:classappend="${selectableYear == selectedYear ? 'font-semibold' : ''}"
+              class="gap-2"
             >
+              <span class="inline-flex w-4 h-4 shrink-0">
+                <th:block th:if="${selectableYear == selectedYear}">
+                  <svg th:replace="~{icon/check::svg(className='w-4 h-4')}"></svg>
+                </th:block>
+              </span>
               <span th:text="#{overview.year.selection.item.link(${selectableYear})}" class="sr-only"></span>
               <span th:text="${selectableYear}" aria-hidden="true"></span>
+              <span
+                th:if="${selectableYear == currentYear}"
+                th:text="#{year-selector.current-year}"
+                class="px-2 text-xs font-medium leading-snug whitespace-nowrap rounded-full border border-zinc-300 text-zinc-600 dark:border-zinc-500 dark:text-zinc-300"
+              ></span>
             </a>
           </li>
         </ul>
