@@ -5,3 +5,5 @@
 [(${account.person.niceName})]: [(${account.remainingVacationDays})]
 [/]
 [(#{account.remaining_vacation_days.last_year})] [(${totalRemainingVacationDays})]
+
+[(#{account.remaining_vacation_days.attachment})]
