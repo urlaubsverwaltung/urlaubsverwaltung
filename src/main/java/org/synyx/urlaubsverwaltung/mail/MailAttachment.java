@@ -9,7 +9,7 @@ public final class MailAttachment {
     private final String name;
     private final ByteArrayResource content;
 
-    MailAttachment(String name, ByteArrayResource content) {
+    public MailAttachment(String name, ByteArrayResource content) {
         this.content = content;
         this.name = name;
     }

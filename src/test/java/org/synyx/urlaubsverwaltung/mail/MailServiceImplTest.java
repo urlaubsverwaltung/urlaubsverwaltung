@@ -20,8 +20,11 @@ import org.thymeleaf.context.Context;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
@@ -164,6 +167,36 @@ class MailServiceImplTest {
 
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+    }
+
+    @Test
+    void sendMailWithLocaleAwareAttachmentPerRecipientLocale() {
+
+        setupMockServletRequest();
+
+        final Person hans = new Person();
+        hans.setId(1L);
+        hans.setEmail("hans@example.org");
+
+        final Person john = new Person();
+        john.setId(2L);
+        john.setEmail("john@example.org");
+
+        when(userSettingsService.getEffectiveLocale(List.of(hans, john))).thenReturn(Map.of(hans, GERMAN, john, ENGLISH));
+
+        final ByteArrayResource csv = new ByteArrayResource(new byte[]{});
+
+        final Mail mail = Mail.builder()
+            .withRecipient(List.of(hans, john))
+            .withSubject("subject.account.updatedRemainingDays")
+            .withTemplate("account_cron_updated_accounts_turn_of_the_year", _ -> new HashMap<>())
+            .withAttachment(locale -> new MailAttachment("file_" + locale.getLanguage() + ".csv", csv))
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("file_de.csv", csv)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "john@example.org", "subject", "emailBody", List.of(new MailAttachment("file_en.csv", csv)));
     }
 
     @Test
