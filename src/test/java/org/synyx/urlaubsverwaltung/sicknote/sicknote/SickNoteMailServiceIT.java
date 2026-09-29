@@ -343,6 +343,61 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void sendSickNoteEditedNotificationToOfficeAndResponsibleManagementForOneDay() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
+
+        final Person maintainer = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(maintainer)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, FEBRUARY, 1))
+            .aubStartDate(LocalDate.of(2022, FEBRUARY, 1))
+            .aubEndDate(LocalDate.of(2022, FEBRUARY, 1))
+            .dayLength(DayLength.MORNING)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        final Person management = personService.create("management", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        when(mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, "Comment", maintainer);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
+
+        final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat eine Krankmeldung von Marlene Muster bearbeitet:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022, vormittags
+                Zeitraum der AU:      01.02.2022
+                Art der Krankmeldung: Kind-Krankmeldung
+
+            Kommentar(e) zur Krankmeldung:
+
+                Comment
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
+    }
+
+    @Test
     void sendSickNoteCancelledByManagementToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
@@ -490,6 +545,61 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
                 Art der Krankmeldung: Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
+    }
+
+    @Test
+    void sendSickNoteCancelledNotificationToOfficeAndResponsibleManagementForOneDay() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
+
+        final Person maintainer = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(maintainer)
+            .startDate(LocalDate.of(2022, FEBRUARY, 1))
+            .endDate(LocalDate.of(2022, FEBRUARY, 1))
+            .aubStartDate(LocalDate.of(2022, FEBRUARY, 1))
+            .aubEndDate(LocalDate.of(2022, FEBRUARY, 1))
+            .dayLength(DayLength.MORNING)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        final Person management = personService.create("management", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        when(mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "Comment", maintainer);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
+
+        final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat die Krankmeldung von Marlene Muster storniert:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022, vormittags
+                Zeitraum der AU:      01.02.2022
+                Art der Krankmeldung: Kind-Krankmeldung
+
+            Kommentar(e) zur Krankmeldung:
+
+                Comment
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
