@@ -376,6 +376,36 @@
           }
         }
       }
+
+      /* "without department" is no department of its own but the remainder of the department list above it.
+       * the dashed separator starts at the labels instead of the edge of the menu, so it reads as part of that
+       * list rather than as a section break like the solid separators. */
+      li.popover-menu-person-group__remainder-separator {
+        height: 0;
+        margin-block: --spacing(1);
+        margin-inline: --spacing(9) --spacing(4);
+        background-color: transparent;
+        border-top: 1px dashed var(--color-neutral-300);
+        @variant dark {
+          border-color: var(--color-zinc-600);
+        }
+      }
+
+      li.popover-menu-person-group__remainder a {
+        font-style: italic;
+        color: var(--color-gray-500);
+        @variant dark {
+          color: var(--color-zinc-400);
+        }
+
+        &:hover,
+        &:focus {
+          color: #333333;
+          @variant dark {
+            color: var(--color-zinc-200);
+          }
+        }
+      }
     }
   }
 }

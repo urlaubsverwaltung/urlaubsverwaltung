@@ -66,13 +66,6 @@
                     <span th:text="#{persons.active}"></span>
                   </a>
                 </li>
-                <li th:if="${showWithoutDepartmentFilter}">
-                  <a
-                    th:href="@{/web/person (active=true, withoutDepartment=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
-                  >
-                    <span th:text="#{persons.without-department}"></span>
-                  </a>
-                </li>
                 <th:block th:if="${not #lists.isEmpty(departments)}">
                   <li th:each="department : ${departments}">
                     <a
@@ -81,6 +74,16 @@
                       <span th:text="${department.name}"></span>
                     </a>
                   </li>
+                  <th:block th:if="${showWithoutDepartmentFilter}">
+                    <li role="separator" class="popover-menu-person-group__remainder-separator"></li>
+                    <li class="popover-menu-person-group__remainder">
+                      <a
+                        th:href="@{/web/person (active=true, withoutDepartment=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
+                      >
+                        <span th:text="#{persons.without-department}"></span>
+                      </a>
+                    </li>
+                  </th:block>
                   <li role="separator"></li>
                 </th:block>
                 <li>
