@@ -863,6 +863,70 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNoteForOneDay() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1L);
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
+
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
+        office.setPermissions(List.of(OFFICE));
+
+        final Application application = createApplication(person);
+        application.setApplier(office);
+        application.setStartDate(LocalDate.of(2023, FEBRUARY, 2));
+        application.setEndDate(LocalDate.of(2023, FEBRUARY, 2));
+
+        final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
+        relevantPerson.setId(2L);
+        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
+
+        sut.sendSickNoteConvertedToVacationNotification(application);
+
+        greenMail.waitForIncomingEmail(2);
+
+        await()
+            .atMost(Duration.ofSeconds(3))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
+
+        // send mail to applicant
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msgApplicant = inboxApplicant[0];
+        assertThat(msgApplicant.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgApplicant.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgApplicant.getReplyTo()[0]);
+        assertThat(readPlainContent(msgApplicant)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Marlene Muster hat deine Krankmeldung vom 02.02.2023 zu Urlaub umgewandelt.
+
+                https://localhost:8080/web/application/1234
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
+
+        // Was email sent to management
+        final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        final Message msgManagement = inboxManagement[0];
+        assertThat(msgManagement.getSubject()).contains("Die Krankmeldung von Lieschen Müller wurde in eine Abwesenheit umgewandelt");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgManagement.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Person Relevant,
+
+            Marlene Muster hat die Krankmeldung von Lieschen Müller vom 02.02.2023 zu Urlaub umgewandelt.
+
+                https://localhost:8080/web/application/1234
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.""");
+    }
+
+    @Test
     void ensureNotificationAboutConfirmationAllowedDirectlySent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
@@ -1319,7 +1383,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Hallo Mar Teria,
 
             der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
-            Der neue Zeitraum ist vom 18.12.2020 bis zum 18.12.2020 ganztägig.
+            Der neue Zeitraum ist vom 18.12.2020 ganztägig.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -1339,7 +1403,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Application application = createApplication(person);
         application.setStatus(ALLOWED);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
-        application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
+        application.setEndDate(LocalDate.of(2020, DECEMBER, 20));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
@@ -1366,7 +1430,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Hallo Mar Teria,
 
             der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
-            Der neue Zeitraum ist vom 18.12.2020 bis zum 18.12.2020 ganztägig.
+            Der neue Zeitraum ist vom 18.12.2020 bis zum 20.12.2020 ganztägig.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
