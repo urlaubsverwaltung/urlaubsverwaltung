@@ -18,6 +18,7 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysReminderServiceTest {
@@ -424,6 +426,47 @@ class VacationDaysReminderServiceTest {
         ));
     }
 
+    @Test
+    void ensureOfficeGetsTheAlreadyNotifiedAccountsWhenTheRunStopsPartWay() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
+
+        final Person first = new Person("first", "First", "Fiona", "fiona@example.org");
+        first.setId(1L);
+        final Person second = new Person("second", "Second", "Sam", "sam@example.org");
+        second.setId(2L);
+        final List<Person> persons = List.of(first, second);
+        when(personService.getActivePersons()).thenReturn(persons);
+
+        final Account firstAccount = expiringAccount(1L, first);
+        final Account secondAccount = expiringAccount(2L, second);
+        final List<Account> accounts = List.of(firstAccount, secondAccount);
+        when(accountService.getHolidaysAccount(2022, persons)).thenReturn(accounts);
+        when(accountService.getHolidaysAccount(2023, persons)).thenReturn(List.of());
+
+        final VacationDaysLeft nineExpire = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN).withRemainingVacation(TEN).notExpiring(ONE)
+            .forUsedVacationDaysBeforeExpiry(ZERO).forUsedVacationDaysAfterExpiry(ZERO)
+            .build();
+        // keeps the order of the run: the first account is notified, then saving the second one fails
+        final Map<Account, HolidayAccountVacationDays> vacationDaysLeft = new LinkedHashMap<>();
+        vacationDaysLeft.put(firstAccount, new HolidayAccountVacationDays(firstAccount, nineExpire, nineExpire));
+        vacationDaysLeft.put(secondAccount, new HolidayAccountVacationDays(secondAccount, nineExpire, nineExpire));
+        when(vacationDaysService.getVacationDaysLeft(accounts, Year.of(2022), List.of())).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getTotalLeftVacationDays(firstAccount)).thenReturn(BigDecimal.valueOf(11L));
+        when(vacationDaysService.getTotalLeftVacationDays(secondAccount)).thenReturn(BigDecimal.valueOf(11L));
+        when(accountService.save(firstAccount)).thenReturn(firstAccount);
+        when(accountService.save(secondAccount)).thenThrow(new IllegalStateException("database gone"));
+
+        assertThatThrownBy(sut::notifyForExpiredRemainingVacationDays).isInstanceOf(IllegalStateException.class);
+
+        // the first account is marked as notified, so office must get it now or never
+        verify(expiredRemainingVacationDaysManagementMailService).sendExpiredRemainingVacationDaysNotification(List.of(
+            new ExpiredRemainingVacationDays(firstAccount, BigDecimal.valueOf(9L), ONE, BigDecimal.valueOf(11L))
+        ));
+    }
+
     private static Account expiringAccount(long id, Person person) {
         final Account account = new Account();
         account.setId(id);
@@ -432,5 +475,5 @@ class VacationDaysReminderServiceTest {
         account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         return account;
     }
-  
+
 }
