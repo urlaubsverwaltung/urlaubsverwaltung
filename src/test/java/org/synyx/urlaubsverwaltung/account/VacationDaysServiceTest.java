@@ -833,6 +833,61 @@ class VacationDaysServiceTest {
     }
 
     @Test
+    void ensureGetVacationDaysLeftWithNextYearAccountsUsesTheNextYearAccountOfTheSamePerson() {
+
+        final Person person = anyPerson();
+        final Person otherPerson = anyPerson(2L);
+        final Person personWithoutAccountThisYear = anyPerson(3L);
+
+        final Account account = anyAccount(person, Year.of(2022));
+        final Account otherAccount = anyAccount(otherPerson, Year.of(2022));
+
+        // next year both use more days than their 2 new days, so remaining vacation days of this year are used
+        final Account nextYearAccount = anyAccount(person, Year.of(2023));
+        nextYearAccount.setActualVacationDays(BigDecimal.valueOf(2));
+        nextYearAccount.setRemainingVacationDays(BigDecimal.valueOf(10));
+        final Account otherNextYearAccount = anyAccount(otherPerson, Year.of(2023));
+        otherNextYearAccount.setActualVacationDays(BigDecimal.valueOf(2));
+        otherNextYearAccount.setRemainingVacationDays(BigDecimal.valueOf(10));
+        // not relevant: the person has no account this year, the account is not of next year
+        final Account nextYearAccountOfPersonWithoutAccountThisYear = anyAccount(personWithoutAccountThisYear, Year.of(2023));
+        nextYearAccountOfPersonWithoutAccountThisYear.setRemainingVacationDays(BigDecimal.valueOf(10));
+        final Account accountInTwoYears = anyAccount(person, Year.of(2024));
+        accountInTwoYears.setRemainingVacationDays(BigDecimal.valueOf(10));
+
+        final Application applicationNextYear = anyApplication(person);
+        applicationNextYear.setStartDate(LocalDate.of(2023, JANUARY, 3));
+        applicationNextYear.setEndDate(LocalDate.of(2023, JANUARY, 6));
+        applicationNextYear.setStatus(ALLOWED);
+        final Application otherApplicationNextYear = anyApplication(otherPerson);
+        otherApplicationNextYear.setStartDate(LocalDate.of(2023, JANUARY, 9));
+        otherApplicationNextYear.setEndDate(LocalDate.of(2023, JANUARY, 13));
+        otherApplicationNextYear.setStatus(ALLOWED);
+
+        final WorkingTimeCalendar calendar2022 = workingTimeCalendarMondayToSunday(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
+        final WorkingTimeCalendar calendar2023 = workingTimeCalendarMondayToSunday(LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, DECEMBER, 31));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person, otherPerson), Year.of(2022)))
+            .thenReturn(Map.of(person, calendar2022, otherPerson, calendar2022));
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person, otherPerson), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
+            .thenReturn(List.of());
+        // next year's accounts are passed in reverse order
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(otherPerson, person), Year.of(2023)))
+            .thenReturn(Map.of(person, calendar2023, otherPerson, calendar2023));
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(otherPerson, person), LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, DECEMBER, 31)))
+            .thenReturn(List.of(applicationNextYear, otherApplicationNextYear));
+
+        final Map<Account, HolidayAccountVacationDays> vacationDaysLeft = sut.getVacationDaysLeft(
+            List.of(account, otherAccount), Year.of(2022),
+            List.of(accountInTwoYears, nextYearAccountOfPersonWithoutAccountThisYear, otherNextYearAccount, nextYearAccount)
+        );
+
+        // 4 days used next year, 2 of them from the new days, 2 from the remaining vacation days of this year
+        assertThat(vacationDaysLeft.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(BigDecimal.valueOf(2));
+        // 5 days used next year, 2 of them from the new days, 3 from the remaining vacation days of this year
+        assertThat(vacationDaysLeft.get(otherAccount).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(BigDecimal.valueOf(3));
+    }
+
+    @Test
     void ensureGetUsedRemainingVacationDaysOfManyAccountsIsZeroWithoutRemainingVacationDays() {
 
         final Account accountWithoutRemainingVacationDays = anyAccount(anyPerson(), Year.of(2022));
