@@ -90,11 +90,11 @@ public interface SickNoteService {
     List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
 
     /**
-     * Set end of sick pay notification send for given sicknote.
+     * Set end of sick pay notification send to today for all given sick notes at once.
      *
-     * @param sickNote to set sick pay notification send date
+     * @param sickNotes to set sick pay notification send date
      */
-    void setEndOfSickPayNotificationSend(SickNote sickNote);
+    void setEndOfSickPayNotificationSend(List<SickNote> sickNotes);
 
     /**
      * Deletes all {@link SickNote} in the database person.

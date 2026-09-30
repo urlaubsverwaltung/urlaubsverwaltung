@@ -109,7 +109,7 @@ public class SickNoteMailService {
                 .withTemplate("sicknote_end_of_sick_pay_office", _ -> model)
                 .build();
             mailService.send(toOffice);
-            sickNoteService.setEndOfSickPayNotificationSend(sickNote);
+            sickNoteService.setEndOfSickPayNotificationSend(List.of(sickNote));
         }
     }
 

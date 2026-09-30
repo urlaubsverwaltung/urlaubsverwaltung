@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -58,6 +59,11 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
 
     @Modifying
     List<SickNoteEntity> deleteByPerson(Person person);
+
+    @Transactional
+    @Modifying
+    @Query("update SickNoteEntity s set s.endOfSickPayNotificationSend = :endOfSickPayNotificationSend where s.id in :ids")
+    void updateEndOfSickPayNotificationSend(@Param("ids") List<Long> ids, @Param("endOfSickPayNotificationSend") LocalDate endOfSickPayNotificationSend);
 
     List<SickNoteEntity> findByApplier(Person applier);
 

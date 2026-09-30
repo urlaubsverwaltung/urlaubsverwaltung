@@ -36,6 +36,30 @@ public interface ApplicationService {
     Application save(Application application);
 
     /**
+     * Sets the date the management was reminded about the given waiting applications, for all of them at once.
+     *
+     * @param applications the management was reminded about
+     * @param remindDate   the date of the reminder
+     */
+    void setRemindDate(List<Application> applications, LocalDate remindDate);
+
+    /**
+     * Sets the date the applicants were reminded about their given upcoming applications, for all of them at once.
+     *
+     * @param applications                     the applicants were reminded about
+     * @param upcomingApplicationsReminderSend the date of the reminder
+     */
+    void setUpcomingApplicationsReminderSend(List<Application> applications, LocalDate upcomingApplicationsReminderSend);
+
+    /**
+     * Sets the date the holiday replacements were reminded about the given upcoming applications, for all of them at once.
+     *
+     * @param applications                               the holiday replacements were reminded about
+     * @param upcomingHolidayReplacementNotificationSend the date of the reminder
+     */
+    void setUpcomingHolidayReplacementNotificationSend(List<Application> applications, LocalDate upcomingHolidayReplacementNotificationSend);
+
+    /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
      * @param startDate {@link LocalDate}

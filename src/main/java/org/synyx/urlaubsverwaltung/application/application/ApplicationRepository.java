@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -87,6 +88,21 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
 
     @Modifying
     List<ApplicationEntity> deleteByPerson(Person person);
+
+    @Transactional
+    @Modifying
+    @Query("update application a set a.remindDate = :remindDate where a.id in :ids")
+    void updateRemindDate(@Param("ids") List<Long> ids, @Param("remindDate") LocalDate remindDate);
+
+    @Transactional
+    @Modifying
+    @Query("update application a set a.upcomingApplicationsReminderSend = :upcomingApplicationsReminderSend where a.id in :ids")
+    void updateUpcomingApplicationsReminderSend(@Param("ids") List<Long> ids, @Param("upcomingApplicationsReminderSend") LocalDate upcomingApplicationsReminderSend);
+
+    @Transactional
+    @Modifying
+    @Query("update application a set a.upcomingHolidayReplacementNotificationSend = :upcomingHolidayReplacementNotificationSend where a.id in :ids")
+    void updateUpcomingHolidayReplacementNotificationSend(@Param("ids") List<Long> ids, @Param("upcomingHolidayReplacementNotificationSend") LocalDate upcomingHolidayReplacementNotificationSend);
 
     List<ApplicationEntity> findAllByHolidayReplacements_Person(Person person);
 }

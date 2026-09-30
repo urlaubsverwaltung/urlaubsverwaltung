@@ -852,6 +852,56 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
         return statistics.getPrepareStatementCount();
     }
 
+    @Test
+    void ensureUpdateRemindDateUpdatesTheGivenApplicationsOnly() {
+        final List<ApplicationEntity> applications = threeApplications();
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+
+        sut.updateRemindDate(List.of(applications.get(0).getId(), applications.get(1).getId()), date);
+        entityManager.clear();
+
+        assertThat(sut.findById(applications.get(0).getId()).orElseThrow().getRemindDate()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(1).getId()).orElseThrow().getRemindDate()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(2).getId()).orElseThrow().getRemindDate()).isNull();
+    }
+
+    @Test
+    void ensureUpdateUpcomingApplicationsReminderSendUpdatesTheGivenApplicationsOnly() {
+        final List<ApplicationEntity> applications = threeApplications();
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+
+        sut.updateUpcomingApplicationsReminderSend(List.of(applications.get(0).getId(), applications.get(1).getId()), date);
+        entityManager.clear();
+
+        assertThat(sut.findById(applications.get(0).getId()).orElseThrow().getUpcomingApplicationsReminderSend()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(1).getId()).orElseThrow().getUpcomingApplicationsReminderSend()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(2).getId()).orElseThrow().getUpcomingApplicationsReminderSend()).isNull();
+    }
+
+    @Test
+    void ensureUpdateUpcomingHolidayReplacementNotificationSendUpdatesTheGivenApplicationsOnly() {
+        final List<ApplicationEntity> applications = threeApplications();
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+
+        sut.updateUpcomingHolidayReplacementNotificationSend(List.of(applications.get(0).getId(), applications.get(1).getId()), date);
+        entityManager.clear();
+
+        assertThat(sut.findById(applications.get(0).getId()).orElseThrow().getUpcomingHolidayReplacementNotificationSend()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(1).getId()).orElseThrow().getUpcomingHolidayReplacementNotificationSend()).isEqualTo(date);
+        assertThat(sut.findById(applications.get(2).getId()).orElseThrow().getUpcomingHolidayReplacementNotificationSend()).isNull();
+    }
+
+    private List<ApplicationEntity> threeApplications() {
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
+        final LocalDate startDate = LocalDate.of(2022, 3, 10);
+        return List.of(
+            sut.save(applicationEntity(person, vacationType, startDate, startDate, FULL)),
+            sut.save(applicationEntity(person, vacationType, startDate.plusDays(1), startDate.plusDays(1), FULL)),
+            sut.save(applicationEntity(person, vacationType, startDate.plusDays(2), startDate.plusDays(2), FULL))
+        );
+    }
+
     private VacationTypeEntity getVacationType(VacationCategory category) {
         final List<VacationTypeEntity> vacationTypeEntities = vacationTypeService.getAllVacationTypes().stream()
             .map(VacationTypeServiceImpl::convert)
