@@ -4,7 +4,6 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
@@ -22,7 +21,8 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -91,10 +91,8 @@ class ApplicationReminderMailServiceTest {
 
         verify(applicationMailService).sendRemindForWaitingApplicationsReminderNotification(asList(longWaitingApplicationA, longWaitingApplicationB, longWaitingApplicationAlreadyRemindedEarlier));
 
-        assertThat(longWaitingApplicationA.getRemindDate()).isAfter(longWaitingApplicationA.getApplicationDate());
-        assertThat(longWaitingApplicationB.getRemindDate()).isAfter(longWaitingApplicationB.getApplicationDate());
-        assertThat(longWaitingApplicationAlreadyRemindedEarlier.getRemindDate()).isAfter(oldRemindDateEarlier);
-        assertThat(longWaitingApplicationAlreadyRemindedToday.getRemindDate()).isEqualTo(today);
+        verify(applicationService).setRemindDate(asList(longWaitingApplicationA, longWaitingApplicationB, longWaitingApplicationAlreadyRemindedEarlier), today);
+        verify(applicationService, never()).save(any());
     }
 
     @Test
@@ -115,9 +113,8 @@ class ApplicationReminderMailServiceTest {
         sut.sendUpcomingApplicationsReminderNotification();
         verify(applicationMailService).sendRemindForUpcomingApplicationsReminderNotification(List.of(tomorrowApplication));
 
-        final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
-        verify(applicationService).save(applicationArgumentCaptor.capture());
-        assertThat(applicationArgumentCaptor.getAllValues().getFirst().getUpcomingApplicationsReminderSend()).isEqualTo(now);
+        verify(applicationService).setUpcomingApplicationsReminderSend(List.of(tomorrowApplication), now);
+        verify(applicationService, never()).save(any());
     }
 
     @Test
@@ -146,9 +143,8 @@ class ApplicationReminderMailServiceTest {
         sut.sendUpcomingHolidayReplacementReminderNotification();
         verify(applicationMailService).sendRemindForUpcomingHolidayReplacement(List.of(tomorrowApplication));
 
-        final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
-        verify(applicationService).save(applicationArgumentCaptor.capture());
-        assertThat(applicationArgumentCaptor.getAllValues().getFirst().getUpcomingHolidayReplacementNotificationSend()).isEqualTo(now);
+        verify(applicationService).setUpcomingHolidayReplacementNotificationSend(List.of(tomorrowApplication), now);
+        verify(applicationService, never()).save(any());
     }
 
     @Test
