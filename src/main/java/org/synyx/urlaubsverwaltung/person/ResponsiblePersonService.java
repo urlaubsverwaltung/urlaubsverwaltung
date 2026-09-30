@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ResponsiblePersonService {
 
@@ -27,10 +28,26 @@ public interface ResponsiblePersonService {
     List<Person> getResponsibleDepartmentHeads(Person personOfInterest);
 
     /**
+     * Same as {@link #getResponsibleDepartmentHeads(Person)} for many persons at once.
+     *
+     * @param personsOfInterest pivot persons
+     * @return for every given person all department heads of the person, an empty list if there is none
+     */
+    Map<Person, List<Person>> getResponsibleDepartmentHeads(List<Person> personsOfInterest);
+
+    /**
      * Find all persons with role {@linkplain Role#SECOND_STAGE_AUTHORITY} that are responsible for the given person.
      *
      * @param personOfInterest pivot person
      * @return all second stage authorities of the given person
      */
     List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest);
+
+    /**
+     * Same as {@link #getResponsibleSecondStageAuthorities(Person)} for many persons at once.
+     *
+     * @param personsOfInterest pivot persons
+     * @return for every given person all second stage authorities of the person, an empty list if there is none
+     */
+    Map<Person, List<Person>> getResponsibleSecondStageAuthorities(List<Person> personsOfInterest);
 }
