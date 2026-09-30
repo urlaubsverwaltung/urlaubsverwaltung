@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -35,6 +36,7 @@ import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -62,6 +64,7 @@ class VacationCertificateServiceTest {
     private static final LocalDate FIRST_DAY = YEAR.atDay(1);
     private static final LocalDate LAST_DAY = FIRST_DAY.with(lastDayOfYear());
     private static final LocalDate EMPLOYMENT_TO = LocalDate.of(2026, JUNE, 30);
+    private static final DateRange WHOLE_YEAR = new DateRange(FIRST_DAY, LAST_DAY);
 
     private VacationCertificateService sut;
 
@@ -87,7 +90,7 @@ class VacationCertificateServiceTest {
             account.setAnnualVacationDays(BigDecimal.valueOf(30));
             account.setActualVacationDays(BigDecimal.valueOf(15));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(account, EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(account, WHOLE_YEAR);
 
             assertThat(certificate.year()).isEqualTo(YEAR);
             assertThat(certificate.entitlement()).isEqualByComparingTo("15");
@@ -106,7 +109,7 @@ class VacationCertificateServiceTest {
             applications(person, List.of(march, january), List.of());
             calendar(person, workingTimeCalendarMondayToFriday(FIRST_DAY, LAST_DAY));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), WHOLE_YEAR);
 
             assertThat(certificate.grantedPeriods())
                 .usingRecursiveComparison()
@@ -126,7 +129,7 @@ class VacationCertificateServiceTest {
             final Application waiting = application(person, LocalDate.of(2026, MARCH, 2), LocalDate.of(2026, MARCH, 3), FULL);
             applications(person, List.of(), List.of(waiting));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), WHOLE_YEAR);
 
             assertThat(certificate.grantedPeriods()).isEmpty();
             assertThat(certificate.grantedTotal()).isEqualByComparingTo("0");
@@ -141,7 +144,7 @@ class VacationCertificateServiceTest {
             applications(person, List.of(application(person, wednesday, wednesday, MORNING)), List.of());
             calendar(person, workingTimeCalendarMondayToFriday(FIRST_DAY, LAST_DAY));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), WHOLE_YEAR);
 
             assertThat(certificate.grantedPeriods()).singleElement().satisfies(period -> {
                 assertThat(period.dayLength()).isEqualTo(MORNING);
@@ -161,7 +164,7 @@ class VacationCertificateServiceTest {
             applications(person, List.of(application(person, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 9), FULL)), List.of());
             calendar(person, calendar);
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), WHOLE_YEAR);
 
             assertThat(certificate.grantedTotal()).isEqualByComparingTo("4");
         }
@@ -174,7 +177,7 @@ class VacationCertificateServiceTest {
             applications(person, List.of(application), List.of());
             calendar(person, workingTimeCalendarMondayToFriday(FIRST_DAY, LAST_DAY));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), WHOLE_YEAR);
 
             assertThat(certificate.grantedPeriods()).singleElement().satisfies(period -> {
                 assertThat(period.from()).isEqualTo(LocalDate.of(2026, JANUARY, 1));
@@ -192,7 +195,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("0", "0", true);
             grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 9));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("0");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("0");
         }
 
         @Test
@@ -200,7 +203,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("5", "0", true);
             grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 7));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("3");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("3");
         }
 
         @Test
@@ -208,7 +211,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("5", "0", true);
             grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 14));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("5");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("5");
         }
 
         @Test
@@ -216,7 +219,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("5", "2", true);
             grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("2");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("2");
         }
 
         @Test
@@ -224,7 +227,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("5", "0", true);
             grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("0");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("0");
         }
 
         @Test
@@ -232,7 +235,7 @@ class VacationCertificateServiceTest {
             final Account account = accountWithRemaining("5", "0", false);
             grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("5");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("5");
         }
 
         @Test
@@ -241,7 +244,7 @@ class VacationCertificateServiceTest {
             // 30.3. + 31.3. before expiry, 1.4. - 3.4. after expiry
             grant(account, LocalDate.of(2026, MARCH, 30), LocalDate.of(2026, APRIL, 3));
 
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("2");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("2");
         }
 
         @Test
@@ -255,7 +258,7 @@ class VacationCertificateServiceTest {
             calendar(person, workingTimeCalendarMondayToSunday(FIRST_DAY, LAST_DAY));
 
             // 2 days before expiry from remaining, 1 day after expiry from the not expiring remaining
-            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("3");
+            assertThat(sut.getVacationCertificate(account, WHOLE_YEAR).grantedFromRemaining()).isEqualByComparingTo("3");
         }
 
         private Account accountWithRemaining(String remaining, String notExpiring, boolean expire) {
@@ -283,7 +286,7 @@ class VacationCertificateServiceTest {
             workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
             when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.of(workingTime));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), new DateRange(FIRST_DAY, EMPLOYMENT_TO));
 
             assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("5"));
         }
@@ -296,7 +299,7 @@ class VacationCertificateServiceTest {
             workingTime.setDayLengthForWeekDay(FRIDAY, MORNING);
             when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.of(workingTime));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), new DateRange(FIRST_DAY, EMPLOYMENT_TO));
 
             assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("4.5"));
         }
@@ -306,7 +309,7 @@ class VacationCertificateServiceTest {
             final Person person = anyPerson();
             when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.empty());
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), new DateRange(FIRST_DAY, EMPLOYMENT_TO));
 
             assertThat(certificate.workingDaysPerWeek()).isEmpty();
         }
@@ -318,16 +321,86 @@ class VacationCertificateServiceTest {
             workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY), FULL);
             when(workingTimeService.getWorkingTime(person, LAST_DAY)).thenReturn(Optional.of(workingTime));
 
-            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), LocalDate.of(2027, MARCH, 31));
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), new DateRange(FIRST_DAY, LocalDate.of(2027, MARCH, 31)));
 
             assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("3"));
         }
     }
 
+    @Nested
+    class EmploymentPeriod {
+
+        @Test
+        void ensurePeriodsAreClippedToTheEndOfTheEmployment() {
+            final Person person = anyPerson();
+            final DateRange employment = new DateRange(FIRST_DAY, EMPLOYMENT_TO);
+            // Monday 29.6. to Friday 3.7., the employment ends on Tuesday 30.6.
+            applications(person, employment, List.of(application(person, LocalDate.of(2026, JUNE, 29), LocalDate.of(2026, JULY, 3), FULL)), List.of());
+            calendar(person, workingTimeCalendarMondayToFriday(FIRST_DAY, LAST_DAY));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), employment);
+
+            assertThat(certificate.grantedPeriods()).singleElement().satisfies(period -> {
+                assertThat(period.from()).isEqualTo(LocalDate.of(2026, JUNE, 29));
+                assertThat(period.to()).isEqualTo(LocalDate.of(2026, JUNE, 30));
+                assertThat(period.days()).isEqualByComparingTo("2");
+            });
+            assertThat(certificate.grantedTotal()).isEqualByComparingTo("2");
+        }
+
+        @Test
+        void ensurePeriodsAreClippedToTheStartOfTheEmployment() {
+            final Person person = anyPerson();
+            final DateRange employment = new DateRange(LocalDate.of(2026, MARCH, 2), LAST_DAY);
+            // Monday 23.2. to Friday 6.3., the employment starts on Monday 2.3.
+            applications(person, employment, List.of(application(person, LocalDate.of(2026, FEBRUARY, 23), LocalDate.of(2026, MARCH, 6), FULL)), List.of());
+            calendar(person, workingTimeCalendarMondayToFriday(FIRST_DAY, LAST_DAY));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), employment);
+
+            assertThat(certificate.grantedPeriods()).singleElement().satisfies(period -> {
+                assertThat(period.from()).isEqualTo(LocalDate.of(2026, MARCH, 2));
+                assertThat(period.to()).isEqualTo(LocalDate.of(2026, MARCH, 6));
+                assertThat(period.days()).isEqualByComparingTo("5");
+            });
+        }
+
+        @Test
+        void ensureOnlyDaysWithinTheEmploymentAreTakenFromRemaining() {
+            final Person person = anyPerson();
+            final Account account = anyAccount(person);
+            account.setRemainingVacationDays(new BigDecimal("5"));
+            account.setDoRemainingVacationDaysExpireLocally(true);
+            final DateRange employment = new DateRange(FIRST_DAY, LocalDate.of(2026, JANUARY, 7));
+            applications(person, employment, List.of(application(person, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 9), FULL)), List.of());
+            calendar(person, workingTimeCalendarMondayToSunday(FIRST_DAY, LAST_DAY));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(account, employment);
+
+            assertThat(certificate.grantedTotal()).isEqualByComparingTo("3");
+            assertThat(certificate.grantedFromRemaining()).isEqualByComparingTo("3");
+        }
+
+        @Test
+        void ensureOpenApplicationsOutsideTheEmploymentAreIgnored() {
+            final Person person = anyPerson();
+            final DateRange employment = new DateRange(FIRST_DAY, EMPLOYMENT_TO);
+            applications(person, employment, List.of(), List.of());
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), employment);
+
+            assertThat(certificate.hasOpenApplications()).isFalse();
+        }
+    }
+
     private void applications(Person person, List<Application> granted, List<Application> open) {
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(FIRST_DAY, LAST_DAY, person, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED), HOLIDAY))
+        applications(person, WHOLE_YEAR, granted, open);
+    }
+
+    private void applications(Person person, DateRange range, List<Application> granted, List<Application> open) {
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(range.startDate(), range.endDate(), person, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED), HOLIDAY))
             .thenReturn(granted);
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(FIRST_DAY, LAST_DAY, person, List.of(WAITING, TEMPORARY_ALLOWED), HOLIDAY))
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(range.startDate(), range.endDate(), person, List.of(WAITING, TEMPORARY_ALLOWED), HOLIDAY))
             .thenReturn(open);
     }
 

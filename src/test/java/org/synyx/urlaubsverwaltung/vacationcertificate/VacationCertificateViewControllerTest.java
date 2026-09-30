@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -107,7 +108,7 @@ class VacationCertificateViewControllerTest {
         when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
         when(accountService.getHolidaysAccountsByPerson(person)).thenReturn(List.of(account, firstAccount));
         final VacationCertificate certificate = anyCertificate();
-        when(vacationCertificateService.getVacationCertificate(account, LocalDate.of(2026, JUNE, 30))).thenReturn(certificate);
+        when(vacationCertificateService.getVacationCertificate(account, new DateRange(LocalDate.of(2019, APRIL, 1), LocalDate.of(2026, JUNE, 30)))).thenReturn(certificate);
 
         perform(get(URL))
             .andExpect(status().isOk())
@@ -131,7 +132,7 @@ class VacationCertificateViewControllerTest {
         final Person person = person();
         final Account account = account(person, LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
         when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
-        when(vacationCertificateService.getVacationCertificate(account, LocalDate.of(2026, MAY, 31))).thenReturn(anyCertificate());
+        when(vacationCertificateService.getVacationCertificate(account, new DateRange(LocalDate.of(2020, 2, 1), LocalDate.of(2026, MAY, 31)))).thenReturn(anyCertificate());
 
         perform(get(URL)
             .param("year", "2026")
@@ -156,7 +157,7 @@ class VacationCertificateViewControllerTest {
         final Account account = account(person, LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
         when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
         when(accountService.getHolidaysAccountsByPerson(person)).thenReturn(List.of(account));
-        when(vacationCertificateService.getVacationCertificate(account, LocalDate.of(2026, DECEMBER, 31))).thenReturn(anyCertificate());
+        when(vacationCertificateService.getVacationCertificate(account, new DateRange(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31)))).thenReturn(anyCertificate());
 
         perform(get(URL).param("compensatedDays", "2,5"))
             .andExpect(model().attribute("certificateForm", hasProperty("compensatedDays", comparesEqualTo(new BigDecimal("2.5")))))
@@ -169,7 +170,7 @@ class VacationCertificateViewControllerTest {
         final Account account = account(person, LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, DECEMBER, 31));
         when(accountService.getHolidaysAccount(2025, person)).thenReturn(Optional.of(account));
         when(accountService.getHolidaysAccountsByPerson(person)).thenReturn(List.of(account));
-        when(vacationCertificateService.getVacationCertificate(account, LocalDate.of(2025, DECEMBER, 31))).thenReturn(anyCertificate());
+        when(vacationCertificateService.getVacationCertificate(account, new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, DECEMBER, 31)))).thenReturn(anyCertificate());
 
         perform(get(URL).param("year", "2025"))
             .andExpect(model().attribute("selectedYear", 2025))

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -115,7 +116,8 @@ public class VacationCertificateViewController implements HasLaunchpad, HasPerso
 
         validator.validate(form, errors);
         if (!errors.hasErrors()) {
-            model.addAttribute("certificate", vacationCertificateService.getVacationCertificate(account, form.getEmploymentTo()));
+            final DateRange employment = new DateRange(form.getEmploymentFrom(), form.getEmploymentTo());
+            model.addAttribute("certificate", vacationCertificateService.getVacationCertificate(account, employment));
         }
 
         return VIEW;

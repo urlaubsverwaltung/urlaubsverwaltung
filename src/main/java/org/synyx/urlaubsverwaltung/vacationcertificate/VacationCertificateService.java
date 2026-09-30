@@ -55,39 +55,40 @@ class VacationCertificateService {
     }
 
     /**
-     * @param account      holiday account of the person and year of the certificate
-     * @param employmentTo last day of the employment
+     * @param account    holiday account of the person and year of the certificate
+     * @param employment period of the employment, must overlap the year of the account
      * @return the vacation certificate of the account's person and year
      */
-    VacationCertificate getVacationCertificate(Account account, LocalDate employmentTo) {
+    VacationCertificate getVacationCertificate(Account account, DateRange employment) {
 
         final Person person = account.getPerson();
         final Year year = Year.of(account.getYear());
-        final DateRange yearRange = DateRange.ofYear(year);
+        // the certificate is about the employment within the year only, vacation outside of it must not be certified
+        final DateRange certifiedRange = DateRange.ofYear(year).overlap(employment)
+            .orElseThrow(() -> new IllegalArgumentException("employment %s does not overlap the year %s".formatted(employment, year)));
 
-        final List<Application> grantedApplications = holidayApplications(person, yearRange, GRANTED_STATUSES).stream()
+        final List<Application> grantedApplications = holidayApplications(person, certifiedRange, GRANTED_STATUSES).stream()
             .sorted(comparing(Application::getStartDate))
             .toList();
-        final boolean hasOpenApplications = !holidayApplications(person, yearRange, OPEN_STATUSES).isEmpty();
+        final boolean hasOpenApplications = !holidayApplications(person, certifiedRange, OPEN_STATUSES).isEmpty();
 
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year).get(person);
 
         final List<GrantedVacationPeriod> grantedPeriods = grantedApplications.stream()
-            .map(application -> grantedPeriod(application, yearRange, workingTimeCalendar))
+            .map(application -> grantedPeriod(application, certifiedRange, workingTimeCalendar))
             .toList();
         final BigDecimal grantedTotal = grantedPeriods.stream()
             .map(GrantedVacationPeriod::days)
             .reduce(ZERO, BigDecimal::add);
 
-        final Optional<BigDecimal> workingDaysPerWeek = workingDaysPerWeek(person, employmentTo, yearRange);
-        final BigDecimal grantedFromRemaining = grantedFromRemaining(account, grantedApplications, yearRange, workingTimeCalendar);
+        final Optional<BigDecimal> workingDaysPerWeek = workingDaysPerWeek(person, certifiedRange.endDate());
+        final BigDecimal grantedFromRemaining = grantedFromRemaining(account, grantedApplications, certifiedRange, workingTimeCalendar);
 
         return new VacationCertificate(year, account.getActualVacationDays(), workingDaysPerWeek, grantedPeriods,
             grantedTotal, grantedFromRemaining, hasOpenApplications);
     }
 
-    private Optional<BigDecimal> workingDaysPerWeek(Person person, LocalDate employmentTo, DateRange yearRange) {
-        final LocalDate date = employmentTo.isAfter(yearRange.endDate()) ? yearRange.endDate() : employmentTo;
+    private Optional<BigDecimal> workingDaysPerWeek(Person person, LocalDate date) {
         return workingTimeService.getWorkingTime(person, date)
             .map(workingTime -> Arrays.stream(DayOfWeek.values())
                 .map(workingTime::getDayLengthForWeekDay)
@@ -95,15 +96,15 @@ class VacationCertificateService {
                 .reduce(ZERO, BigDecimal::add));
     }
 
-    private List<Application> holidayApplications(Person person, DateRange yearRange, List<ApplicationStatus> statuses) {
+    private List<Application> holidayApplications(Person person, DateRange range, List<ApplicationStatus> statuses) {
         return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(
-            yearRange.startDate(), yearRange.endDate(), person, statuses, HOLIDAY);
+            range.startDate(), range.endDate(), person, statuses, HOLIDAY);
     }
 
-    private static GrantedVacationPeriod grantedPeriod(Application application, DateRange yearRange, WorkingTimeCalendar workingTimeCalendar) {
-        final LocalDate from = application.getStartDate().isBefore(yearRange.startDate()) ? yearRange.startDate() : application.getStartDate();
-        final LocalDate to = application.getEndDate().isAfter(yearRange.endDate()) ? yearRange.endDate() : application.getEndDate();
-        final BigDecimal days = workingTimeCalendar.workingTimeInDateRage(application, yearRange);
+    private static GrantedVacationPeriod grantedPeriod(Application application, DateRange range, WorkingTimeCalendar workingTimeCalendar) {
+        final LocalDate from = application.getStartDate().isBefore(range.startDate()) ? range.startDate() : application.getStartDate();
+        final LocalDate to = application.getEndDate().isAfter(range.endDate()) ? range.endDate() : application.getEndDate();
+        final BigDecimal days = workingTimeCalendar.workingTimeInDateRage(application, range);
         return new GrantedVacationPeriod(from, to, application.getDayLength(), days);
     }
 
@@ -114,7 +115,7 @@ class VacationCertificateService {
      * applications and does not depend on today, so the certificate is consistent with the periods it lists.
      */
     private static BigDecimal grantedFromRemaining(Account account, List<Application> grantedApplications,
-                                                   DateRange yearRange, WorkingTimeCalendar workingTimeCalendar) {
+                                                   DateRange range, WorkingTimeCalendar workingTimeCalendar) {
 
         final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
         if (grantedApplications.isEmpty() || remainingVacationDays.signum() <= 0) {
@@ -122,12 +123,12 @@ class VacationCertificateService {
         }
 
         final LocalDate expiryDate = account.getExpiryDate();
-        final Optional<DateRange> beforeExpiry = expiryDate.isAfter(yearRange.startDate())
-            ? Optional.of(new DateRange(yearRange.startDate(), min(List.of(expiryDate.minusDays(1), yearRange.endDate()))))
+        final Optional<DateRange> beforeExpiry = expiryDate.isAfter(range.startDate())
+            ? Optional.of(new DateRange(range.startDate(), min(List.of(expiryDate.minusDays(1), range.endDate()))))
             : Optional.empty();
-        final Optional<DateRange> afterExpiry = expiryDate.isAfter(yearRange.endDate())
+        final Optional<DateRange> afterExpiry = expiryDate.isAfter(range.endDate())
             ? Optional.empty()
-            : Optional.of(new DateRange(max(List.of(expiryDate, yearRange.startDate())), yearRange.endDate()));
+            : Optional.of(new DateRange(max(List.of(expiryDate, range.startDate())), range.endDate()));
 
         final BigDecimal remainingVacationDaysNotExpiring = account.doRemainingVacationDaysExpire()
             ? account.getRemainingVacationDaysNotExpiring()
