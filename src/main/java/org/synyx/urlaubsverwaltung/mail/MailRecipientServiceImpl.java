@@ -12,15 +12,17 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -56,6 +58,16 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     @Override
     public List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
+        return getRecipientsOfInterest(List.of(personOfInterest), mailNotification).get(personOfInterest);
+    }
+
+    @Override
+    public Map<Person, List<Person>> getRecipientsOfInterest(List<Person> personsOfInterest, MailNotification mailNotification) {
+
+        final List<Person> distinctPersonsOfInterest = personsOfInterest.stream().distinct().toList();
+        if (distinctPersonsOfInterest.isEmpty()) {
+            return Map.of();
+        }
 
         final List<Person> officeAndBosses = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
@@ -64,21 +76,30 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
             officeAndBosses.addAll(getBossWith(mailNotification));
         }
-        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
+        final Map<Person, List<Person>> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(distinctPersonsOfInterest, officeAndBosses);
 
-        final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
-            recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotification));
-        }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
-            recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotification));
+        final Map<Person, List<Person>> departmentHeads = mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))
+            ? getResponsibleDepartmentHeads(distinctPersonsOfInterest, mailNotification)
+            : Map.of();
+        final Map<Person, List<Person>> secondStageAuthorities = mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))
+            ? getResponsibleSecondStageAuthorities(distinctPersonsOfInterest, mailNotification)
+            : Map.of();
+
+        final Map<Person, List<Person>> recipientsByPersonOfInterest = new HashMap<>();
+        for (Person personOfInterest : distinctPersonsOfInterest) {
+            final List<Person> recipients = Stream.of(
+                    interestedOfficeAndBosses.getOrDefault(personOfInterest, List.of()),
+                    departmentHeads.getOrDefault(personOfInterest, List.of()),
+                    secondStageAuthorities.getOrDefault(personOfInterest, List.of()))
+                .flatMap(List::stream)
+                .filter(recipient -> recipient.getNotifications().contains(mailNotification))
+                .filter(not(isEqual(personOfInterest)))
+                .distinct()
+                .toList();
+            recipientsByPersonOfInterest.put(personOfInterest, recipients);
         }
 
-        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
-            .filter(recipient -> recipient.getNotifications().contains(mailNotification))
-            .filter(not(isEqual(personOfInterest)))
-            .distinct()
-            .toList();
+        return recipientsByPersonOfInterest;
     }
 
     @Override
@@ -102,27 +123,31 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
-    private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
+    private Map<Person, List<Person>> getOfficeBossWithDepartmentMatch(List<Person> personsOfInterest, List<Person> officeAndBosses) {
 
         final List<Person> distinctOfficesAndBosses = officeAndBosses.stream().distinct().toList();
 
         if (noDepartmentsAvailable()) {
-            return distinctOfficesAndBosses;
+            return personsOfInterest.stream().collect(toMap(identity(), _ -> distinctOfficesAndBosses));
         }
 
-        final Map<PersonId, Person> byPersonId = distinctOfficesAndBosses.stream().collect(toMap(Person::getIdAsPersonId, identity(), (person, _) -> person));
         final List<PersonId> officeBossIds = distinctOfficesAndBosses.stream().map(Person::getId).map(PersonId::new).toList();
-        final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
-
-        final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
+        final Set<PersonId> restrictedToDepartmentsIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
             .filter(UserNotificationSettings::restrictToDepartments)
             .map(UserNotificationSettings::personId)
-            .filter(not(departmentMatch))
-            .toList();
+            .collect(toSet());
 
-        return distinctOfficesAndBosses.stream()
-            .filter(not(person -> notInterestedIds.contains(person.getIdAsPersonId())))
+        final List<Person> restrictedToDepartments = distinctOfficesAndBosses.stream()
+            .filter(person -> restrictedToDepartmentsIds.contains(person.getIdAsPersonId()))
             .toList();
+        final Map<Person, List<Person>> restrictedWithDepartmentMatch = restrictedToDepartments.isEmpty()
+            ? Map.of()
+            : departmentService.getPersonsWithDepartmentMatch(restrictedToDepartments, personsOfInterest);
+
+        return personsOfInterest.stream().collect(toMap(identity(), personOfInterest -> distinctOfficesAndBosses.stream()
+            .filter(person -> !restrictedToDepartmentsIds.contains(person.getIdAsPersonId())
+                || restrictedWithDepartmentMatch.getOrDefault(personOfInterest, List.of()).contains(person))
+            .toList()));
     }
 
     private List<Person> getOfficeWith(MailNotification concerningMailNotification) {
@@ -139,18 +164,21 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
-    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification concerningMailNotification) {
-        return responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest).stream()
-            .filter(departmentHead -> departmentHead.getNotifications().contains(concerningMailNotification))
-            .filter(departmentHead -> concerningMailNotification.isValidWith(departmentHead.getPermissions()))
-            .toList();
+    private Map<Person, List<Person>> getResponsibleSecondStageAuthorities(List<Person> personsOfInterest, MailNotification concerningMailNotification) {
+        return withNotification(responsiblePersonService.getResponsibleSecondStageAuthorities(personsOfInterest), concerningMailNotification);
     }
 
-    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest, MailNotification concerningMailNotification) {
-        return responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest).stream()
-            .filter(departmentHead -> departmentHead.getNotifications().contains(concerningMailNotification))
-            .filter(departmentHead -> concerningMailNotification.isValidWith(departmentHead.getPermissions()))
-            .toList();
+    private Map<Person, List<Person>> getResponsibleDepartmentHeads(List<Person> personsOfInterest, MailNotification concerningMailNotification) {
+        return withNotification(responsiblePersonService.getResponsibleDepartmentHeads(personsOfInterest), concerningMailNotification);
+    }
+
+    private static Map<Person, List<Person>> withNotification(Map<Person, List<Person>> managersByPerson, MailNotification concerningMailNotification) {
+        final Map<Person, List<Person>> managersWithNotification = new HashMap<>();
+        managersByPerson.forEach((person, managers) -> managersWithNotification.put(person, managers.stream()
+            .filter(manager -> manager.getNotifications().contains(concerningMailNotification))
+            .filter(manager -> concerningMailNotification.isValidWith(manager.getPermissions()))
+            .toList()));
+        return managersWithNotification;
     }
 
     private boolean noDepartmentsAvailable() {
