@@ -47,6 +47,8 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     private AccountService accountService;
     @MockitoBean
     private VacationDaysService vacationDaysService;
+    @MockitoBean
+    private ExpiredRemainingVacationDaysManagementMailService expiredRemainingVacationDaysManagementMailService;
 
     @Autowired
     private MailService mailService;
@@ -55,7 +57,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     void ensureReminderForLeftVacationDaysWithNextYearHolidayAccountAvailable() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setId(42L);
@@ -100,7 +102,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     void ensureReminderForLeftVacationDaysWithoutHolidayAccountForNextYearAvailableSoTakeTheExpireDayFromThisYearAccountWithNextYear() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setId(42L);
@@ -141,7 +143,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     void ensureReminderForRemainingVacationDays() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setId(42L);
@@ -195,7 +197,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     void ensureReminderForExpiredRemainingVacationDays() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);

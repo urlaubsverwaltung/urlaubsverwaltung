@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,17 +33,20 @@ public class VacationDaysReminderService {
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final MailService mailService;
+    private final ExpiredRemainingVacationDaysManagementMailService expiredRemainingVacationDaysManagementMailService;
     private final Clock clock;
 
     @Autowired
     VacationDaysReminderService(
         PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
-        MailService mailService, Clock clock
+        MailService mailService, ExpiredRemainingVacationDaysManagementMailService expiredRemainingVacationDaysManagementMailService,
+        Clock clock
     ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.mailService = mailService;
+        this.expiredRemainingVacationDaysManagementMailService = expiredRemainingVacationDaysManagementMailService;
         this.clock = clock;
     }
 
@@ -113,6 +117,7 @@ public class VacationDaysReminderService {
      * Notify about expired remaining vacation days
      */
     public void notifyForExpiredRemainingVacationDays() {
+        final List<ExpiredRemainingVacationDays> expiredInThisRun = new ArrayList<>();
         final Year currentYear = Year.now(clock);
         final LocalDate currentDate = LocalDate.now(clock);
 
@@ -140,6 +145,7 @@ public class VacationDaysReminderService {
                             final BigDecimal totalLeftVacationDays = vacationDaysService.getTotalLeftVacationDays(account);
 
                             sendNotificationForExpiredRemainingVacationDays(account.getPerson(), expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), account.getExpiryDate());
+                            expiredInThisRun.add(new ExpiredRemainingVacationDays(account, expiredRemainingVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), totalLeftVacationDays));
                             LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", account.getPerson().getId(), expiredRemainingVacationDays, currentYear);
 
                             account.setExpiryNotificationSentDate(currentDate);
@@ -147,6 +153,10 @@ public class VacationDaysReminderService {
                         }
                     }
                 });
+        }
+
+        if (!expiredInThisRun.isEmpty()) {
+            expiredRemainingVacationDaysManagementMailService.sendExpiredRemainingVacationDaysNotification(expiredInThisRun);
         }
     }
 
