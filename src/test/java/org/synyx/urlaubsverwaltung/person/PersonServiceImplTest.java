@@ -616,13 +616,60 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureCreatedPersonGetsTheExpiredRemainingVacationDaysNotificationByDefault() {
+    void ensureCreatedPersonDoesNotGetTheExpiredRemainingVacationDaysNotification() {
 
         when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
         final Person createdPerson = sut.create("muster", "Marlene", "Muster", "muster@example.org");
 
-        // only takes effect once the person has the role OFFICE
-        assertThat(createdPerson.getNotifications()).contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        // the notification is for office only, it is enabled when the person becomes office
+        assertThat(createdPerson.getNotifications()).doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+    }
+
+    @Test
+    void ensureExpiredRemainingVacationDaysNotificationIsEnabledWhenPersonBecomesOffice() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
+
+        assertThat(updatedPerson.getNotifications())
+            .containsExactlyInAnyOrder(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+    }
+
+    @Test
+    void ensureExpiredRemainingVacationDaysNotificationIsNotEnabledAgainForOffice() {
+
+        // office switched the notification off
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setId(1L);
+        office.setPermissions(List.of(USER, OFFICE));
+        office.setNotifications(List.of());
+        when(personRepository.findById(1L)).thenReturn(Optional.of(office));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE, BOSS)));
+
+        assertThat(updatedPerson.getNotifications()).isEmpty();
+    }
+
+    @Test
+    void ensureExpiredRemainingVacationDaysNotificationIsEnabledWhenAppointedAsOffice() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of());
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person office = sut.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
+
+        assertThat(office.getNotifications()).contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 }

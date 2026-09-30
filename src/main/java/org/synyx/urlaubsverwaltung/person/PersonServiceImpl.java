@@ -88,9 +88,7 @@ class PersonServiceImpl implements PersonService {
             NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED,
-            NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED,
-            // only takes effect once the person has the role OFFICE
-            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL
+            NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED
         );
 
         final List<Role> defaultPermissions = List.of(
@@ -145,6 +143,7 @@ class PersonServiceImpl implements PersonService {
         });
         personUpdate.permissions().ifPresent(person::setPermissions);
         personUpdate.notifications().ifPresent(person::setNotifications);
+        enableOfficeNotificationsWhenBecomingOffice(person, previousPermissions);
 
         final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
@@ -287,6 +286,20 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
+    }
+
+    /**
+     * The notification about expired remaining vacation days is on by default for office. It is office only, so it
+     * is enabled when a person becomes office - storing it for every new person would be an invalid notification for
+     * all others. Office persons can switch it off afterwards.
+     */
+    private static void enableOfficeNotificationsWhenBecomingOffice(Person person, Collection<Role> previousPermissions) {
+        final boolean becomesOffice = !previousPermissions.contains(OFFICE) && person.getPermissions().contains(OFFICE);
+        if (becomesOffice && !person.getNotifications().contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)) {
+            final List<MailNotification> notifications = new ArrayList<>(person.getNotifications());
+            notifications.add(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+            person.setNotifications(notifications);
+        }
     }
 
     private Person findPerson(PersonId personId) {
