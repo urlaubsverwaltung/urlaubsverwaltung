@@ -45,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.Workin
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class VacationCertificateServiceTest {
@@ -172,6 +173,95 @@ class VacationCertificateServiceTest {
                 assertThat(period.to()).isEqualTo(LocalDate.of(2026, JANUARY, 2));
                 assertThat(period.days()).isEqualByComparingTo("2");
             });
+        }
+    }
+
+    @Nested
+    class GrantedFromRemaining {
+
+        @Test
+        void ensureNothingIsTakenFromRemainingWithoutRemainingVacation() {
+            final Account account = accountWithRemaining("0", "0", true);
+            grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 9));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("0");
+        }
+
+        @Test
+        void ensureDaysBeforeExpiryAreTakenFromRemaining() {
+            final Account account = accountWithRemaining("5", "0", true);
+            grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 7));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("3");
+        }
+
+        @Test
+        void ensureAtMostTheRemainingVacationIsTakenFromRemaining() {
+            final Account account = accountWithRemaining("5", "0", true);
+            grant(account, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 14));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("5");
+        }
+
+        @Test
+        void ensureDaysAfterExpiryAreTakenFromNotExpiringRemainingOnly() {
+            final Account account = accountWithRemaining("5", "2", true);
+            grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("2");
+        }
+
+        @Test
+        void ensureDaysAfterExpiryAreNotTakenFromExpiredRemaining() {
+            final Account account = accountWithRemaining("5", "0", true);
+            grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("0");
+        }
+
+        @Test
+        void ensureDaysAfterExpiryAreTakenFromRemainingThatDoesNotExpire() {
+            final Account account = accountWithRemaining("5", "0", false);
+            grant(account, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 10));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("5");
+        }
+
+        @Test
+        void ensurePeriodAcrossTheExpiryDateIsSplit() {
+            final Account account = accountWithRemaining("5", "0", true);
+            // 30.3. + 31.3. before expiry, 1.4. - 3.4. after expiry
+            grant(account, LocalDate.of(2026, MARCH, 30), LocalDate.of(2026, APRIL, 3));
+
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("2");
+        }
+
+        @Test
+        void ensureSeveralPeriodsBeforeAndAfterExpiryAreCombined() {
+            final Account account = accountWithRemaining("5", "1", true);
+            final Person person = account.getPerson();
+            applications(person, List.of(
+                application(person, LocalDate.of(2026, JANUARY, 5), LocalDate.of(2026, JANUARY, 6), FULL),
+                application(person, LocalDate.of(2026, APRIL, 6), LocalDate.of(2026, APRIL, 8), FULL)
+            ), List.of());
+            calendar(person, workingTimeCalendarMondayToSunday(FIRST_DAY, LAST_DAY));
+
+            // 2 days before expiry from remaining, 1 day after expiry from the not expiring remaining
+            assertThat(sut.getVacationCertificate(account, EMPLOYMENT_TO).grantedFromRemaining()).isEqualByComparingTo("3");
+        }
+
+        private Account accountWithRemaining(String remaining, String notExpiring, boolean expire) {
+            final Account account = anyAccount(anyPerson());
+            account.setRemainingVacationDays(new BigDecimal(remaining));
+            account.setRemainingVacationDaysNotExpiring(new BigDecimal(notExpiring));
+            account.setDoRemainingVacationDaysExpireLocally(expire);
+            return account;
+        }
+
+        private void grant(Account account, LocalDate from, LocalDate to) {
+            final Person person = account.getPerson();
+            applications(person, List.of(application(person, from, to, FULL)), List.of());
+            calendar(person, workingTimeCalendarMondayToSunday(FIRST_DAY, LAST_DAY));
         }
     }
 

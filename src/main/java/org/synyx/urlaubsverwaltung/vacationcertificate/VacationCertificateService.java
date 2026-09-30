@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.vacationcertificate;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -73,8 +76,10 @@ class VacationCertificateService {
             .map(GrantedVacationPeriod::days)
             .reduce(ZERO, BigDecimal::add);
 
+        final BigDecimal grantedFromRemaining = grantedFromRemaining(account, grantedApplications, yearRange, workingTimeCalendar);
+
         return new VacationCertificate(year, account.getActualVacationDays(), Optional.empty(), grantedPeriods,
-            grantedTotal, ZERO, hasOpenApplications);
+            grantedTotal, grantedFromRemaining, hasOpenApplications);
     }
 
     private List<Application> holidayApplications(Person person, DateRange yearRange, List<ApplicationStatus> statuses) {
@@ -87,5 +92,52 @@ class VacationCertificateService {
         final LocalDate to = application.getEndDate().isAfter(yearRange.endDate()) ? yearRange.endDate() : application.getEndDate();
         final BigDecimal days = workingTimeCalendar.workingTimeInDateRage(application, yearRange);
         return new GrantedVacationPeriod(from, to, application.getDayLength(), days);
+    }
+
+    /**
+     * Uses the remaining vacation the same way the holiday account does: days before the expiry date use the remaining
+     * vacation, days after the expiry date only the part of it that does not expire, everything else the entitlement of
+     * the year. Unlike {@link org.synyx.urlaubsverwaltung.account.VacationDaysService} it only considers the granted
+     * applications and does not depend on today, so the certificate is consistent with the periods it lists.
+     */
+    private static BigDecimal grantedFromRemaining(Account account, List<Application> grantedApplications,
+                                                   DateRange yearRange, WorkingTimeCalendar workingTimeCalendar) {
+
+        final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+        if (grantedApplications.isEmpty() || remainingVacationDays.signum() <= 0) {
+            return ZERO;
+        }
+
+        final LocalDate expiryDate = account.getExpiryDate();
+        final Optional<DateRange> beforeExpiry = expiryDate.isAfter(yearRange.startDate())
+            ? Optional.of(new DateRange(yearRange.startDate(), min(List.of(expiryDate.minusDays(1), yearRange.endDate()))))
+            : Optional.empty();
+        final Optional<DateRange> afterExpiry = expiryDate.isAfter(yearRange.endDate())
+            ? Optional.empty()
+            : Optional.of(new DateRange(max(List.of(expiryDate, yearRange.startDate())), yearRange.endDate()));
+
+        final BigDecimal remainingVacationDaysNotExpiring = account.doRemainingVacationDaysExpire()
+            ? account.getRemainingVacationDaysNotExpiring()
+            : remainingVacationDays;
+
+        final VacationDaysLeft left = VacationDaysLeft.builder()
+            .withAnnualVacation(account.getActualVacationDays())
+            .withRemainingVacation(remainingVacationDays)
+            .notExpiring(remainingVacationDaysNotExpiring)
+            .forUsedVacationDaysBeforeExpiry(workingTime(grantedApplications, beforeExpiry, workingTimeCalendar))
+            .forUsedVacationDaysAfterExpiry(workingTime(grantedApplications, afterExpiry, workingTimeCalendar))
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+
+        return remainingVacationDays.subtract(left.getRemainingVacationDays());
+    }
+
+    private static BigDecimal workingTime(List<Application> applications, Optional<DateRange> dateRange,
+                                          WorkingTimeCalendar workingTimeCalendar) {
+        return dateRange
+            .map(range -> applications.stream()
+                .map(application -> workingTimeCalendar.workingTimeInDateRage(application, range))
+                .reduce(ZERO, BigDecimal::add))
+            .orElse(ZERO);
     }
 }
