@@ -7,14 +7,17 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,10 +79,20 @@ class VacationCertificateService {
             .map(GrantedVacationPeriod::days)
             .reduce(ZERO, BigDecimal::add);
 
+        final Optional<BigDecimal> workingDaysPerWeek = workingDaysPerWeek(person, employmentTo, yearRange);
         final BigDecimal grantedFromRemaining = grantedFromRemaining(account, grantedApplications, yearRange, workingTimeCalendar);
 
-        return new VacationCertificate(year, account.getActualVacationDays(), Optional.empty(), grantedPeriods,
+        return new VacationCertificate(year, account.getActualVacationDays(), workingDaysPerWeek, grantedPeriods,
             grantedTotal, grantedFromRemaining, hasOpenApplications);
+    }
+
+    private Optional<BigDecimal> workingDaysPerWeek(Person person, LocalDate employmentTo, DateRange yearRange) {
+        final LocalDate date = employmentTo.isAfter(yearRange.endDate()) ? yearRange.endDate() : employmentTo;
+        return workingTimeService.getWorkingTime(person, date)
+            .map(workingTime -> Arrays.stream(DayOfWeek.values())
+                .map(workingTime::getDayLengthForWeekDay)
+                .map(DayLength::getDuration)
+                .reduce(ZERO, BigDecimal::add));
     }
 
     private List<Application> holidayApplications(Person person, DateRange yearRange, List<ApplicationStatus> statuses) {

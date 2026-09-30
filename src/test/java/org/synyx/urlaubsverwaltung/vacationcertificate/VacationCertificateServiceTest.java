@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -22,8 +23,14 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
@@ -41,6 +48,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
@@ -262,6 +270,57 @@ class VacationCertificateServiceTest {
             final Person person = account.getPerson();
             applications(person, List.of(application(person, from, to, FULL)), List.of());
             calendar(person, workingTimeCalendarMondayToSunday(FIRST_DAY, LAST_DAY));
+        }
+    }
+
+    @Nested
+    class WorkingDaysPerWeek {
+
+        @Test
+        void ensureFullWorkingDaysAreCounted() {
+            final Person person = anyPerson();
+            final WorkingTime workingTime = new WorkingTime(person, FIRST_DAY, GERMANY_BADEN_WUERTTEMBERG, false);
+            workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+            when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.of(workingTime));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+
+            assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("5"));
+        }
+
+        @Test
+        void ensureHalfWorkingDaysCountHalf() {
+            final Person person = anyPerson();
+            final WorkingTime workingTime = new WorkingTime(person, FIRST_DAY, GERMANY_BADEN_WUERTTEMBERG, false);
+            workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY), FULL);
+            workingTime.setDayLengthForWeekDay(FRIDAY, MORNING);
+            when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.of(workingTime));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+
+            assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("4.5"));
+        }
+
+        @Test
+        void ensureEmptyWithoutWorkingTime() {
+            final Person person = anyPerson();
+            when(workingTimeService.getWorkingTime(person, EMPLOYMENT_TO)).thenReturn(Optional.empty());
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), EMPLOYMENT_TO);
+
+            assertThat(certificate.workingDaysPerWeek()).isEmpty();
+        }
+
+        @Test
+        void ensureWorkingTimeAtTheEndOfTheYearWhenEmploymentContinues() {
+            final Person person = anyPerson();
+            final WorkingTime workingTime = new WorkingTime(person, FIRST_DAY, GERMANY_BADEN_WUERTTEMBERG, false);
+            workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY), FULL);
+            when(workingTimeService.getWorkingTime(person, LAST_DAY)).thenReturn(Optional.of(workingTime));
+
+            final VacationCertificate certificate = sut.getVacationCertificate(anyAccount(person), LocalDate.of(2027, MARCH, 31));
+
+            assertThat(certificate.workingDaysPerWeek()).hasValueSatisfying(days -> assertThat(days).isEqualByComparingTo("3"));
         }
     }
 
