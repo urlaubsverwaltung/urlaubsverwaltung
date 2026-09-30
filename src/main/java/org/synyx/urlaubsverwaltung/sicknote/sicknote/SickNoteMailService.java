@@ -80,6 +80,7 @@ public class SickNoteMailService {
         LOG.info("Found {} sick notes reaching end of sick pay", sickNotes.size());
 
         final Integer maximumSickPayDays = settingsService.getSettings().getSickNoteSettings().getMaximumSickPayDays();
+        final List<Person> offices = personService.getActivePersonsByRole(OFFICE);
 
         for (SickNote sickNote : sickNotes) {
 
@@ -104,13 +105,14 @@ public class SickNoteMailService {
             mailService.send(toSickNotePerson);
 
             final Mail toOffice = Mail.builder()
-                .withRecipient(personService.getActivePersonsByRole(OFFICE))
+                .withRecipient(offices)
                 .withSubject("subject.sicknote.endOfSickPay.office", sickNote.getPerson().getNiceName())
                 .withTemplate("sicknote_end_of_sick_pay_office", _ -> model)
                 .build();
             mailService.send(toOffice);
-            sickNoteService.setEndOfSickPayNotificationSend(List.of(sickNote));
         }
+
+        sickNoteService.setEndOfSickPayNotificationSend(sickNotes);
     }
 
     /**

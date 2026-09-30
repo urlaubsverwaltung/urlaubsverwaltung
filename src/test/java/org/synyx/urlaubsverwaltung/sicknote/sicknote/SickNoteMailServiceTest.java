@@ -143,8 +143,9 @@ class SickNoteMailServiceTest {
         assertThat(mails.get(3).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");
         assertThat(mails.get(3).getTemplateModel(GERMAN)).isEqualTo(modelB);
 
-        verify(sickNoteService).setEndOfSickPayNotificationSend(List.of(sickNoteA));
-        verify(sickNoteService).setEndOfSickPayNotificationSend(List.of(sickNoteB));
+        // the office and the notified sick notes are handled once for all sick notes
+        verify(personService, times(1)).getActivePersonsByRole(OFFICE);
+        verify(sickNoteService).setEndOfSickPayNotificationSend(List.of(sickNoteA, sickNoteB));
     }
 
     @Test
