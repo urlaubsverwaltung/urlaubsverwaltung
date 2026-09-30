@@ -27,7 +27,7 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <excluded.groups>a11y</excluded.groups>
     <java.version>25</java.version>
-    <uv-extension-api.version>3.3.3</uv-extension-api.version>
+    <uv-extension-api.version>3.3.4</uv-extension-api.version>
     <tomcat.version>11.0.25</tomcat.version>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
