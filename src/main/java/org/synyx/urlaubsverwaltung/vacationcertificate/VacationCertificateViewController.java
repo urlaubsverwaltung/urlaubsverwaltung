@@ -19,6 +19,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
 import java.math.BigDecimal;
@@ -36,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class VacationCertificateViewController implements HasLaunchpad {
+public class VacationCertificateViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String VIEW = "vacationcertificate/vacation_certificate";
 
@@ -45,6 +48,7 @@ public class VacationCertificateViewController implements HasLaunchpad {
     private final AccountService accountService;
     private final VacationCertificateService vacationCertificateService;
     private final VacationCertificateFormValidator validator;
+    private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
 
     VacationCertificateViewController(
@@ -53,6 +57,7 @@ public class VacationCertificateViewController implements HasLaunchpad {
         AccountService accountService,
         VacationCertificateService vacationCertificateService,
         VacationCertificateFormValidator validator,
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         Clock clock
     ) {
         this.personService = personService;
@@ -60,7 +65,18 @@ public class VacationCertificateViewController implements HasLaunchpad {
         this.accountService = accountService;
         this.vacationCertificateService = vacationCertificateService;
         this.validator = validator;
+        this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+    }
+
+    @Override
+    public PersonSuggestionUrlStrategy personSuggestionUrlStrategy() {
+        return (suggestion, request) -> "/web/person/%s/vacation-certificate".formatted(suggestion.getId());
+    }
+
+    @Override
+    public PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier() {
+        return personSearchUiFragmentSupplier;
     }
 
     @InitBinder

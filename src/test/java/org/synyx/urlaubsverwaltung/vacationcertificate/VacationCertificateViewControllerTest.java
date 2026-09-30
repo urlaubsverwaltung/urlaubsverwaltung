@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
@@ -15,6 +16,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
+import org.synyx.urlaubsverwaltung.search.SearchContext;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -31,6 +34,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MAY;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.comparesEqualTo;
@@ -63,13 +67,29 @@ class VacationCertificateViewControllerTest {
     private AccountService accountService;
     @Mock
     private VacationCertificateService vacationCertificateService;
+    @Mock
+    private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private final Clock clock = Clock.fixed(Instant.parse("2026-06-15T10:00:00Z"), ZoneId.of("UTC"));
 
     @BeforeEach
     void setUp() {
         sut = new VacationCertificateViewController(personService, personBasedataService, accountService,
-            vacationCertificateService, new VacationCertificateFormValidator(), clock);
+            vacationCertificateService, new VacationCertificateFormValidator(), personSearchUiFragmentSupplier, clock);
+    }
+
+    @Test
+    void ensurePersonSearchSuggestionLeadsToTheVacationCertificateOfThePerson() {
+        final Person person = new Person();
+        person.setId(42L);
+
+        assertThat(sut.personSuggestionUrlStrategy().buildSuggestionMainLink(person, SearchContext.of(new MockHttpServletRequest(), null)))
+            .isEqualTo("/web/person/42/vacation-certificate");
+    }
+
+    @Test
+    void ensurePersonSearchUiFragmentSupplier() {
+        assertThat(sut.personSearchUiFragmentSupplier()).isSameAs(personSearchUiFragmentSupplier);
     }
 
     @Test
