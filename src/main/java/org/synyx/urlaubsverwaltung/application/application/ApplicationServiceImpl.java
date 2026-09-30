@@ -68,6 +68,31 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public void setRemindDate(List<Application> applications, LocalDate remindDate) {
+        if (!applications.isEmpty()) {
+            applicationRepository.updateRemindDate(idsOf(applications), remindDate);
+        }
+    }
+
+    @Override
+    public void setUpcomingApplicationsReminderSend(List<Application> applications, LocalDate upcomingApplicationsReminderSend) {
+        if (!applications.isEmpty()) {
+            applicationRepository.updateUpcomingApplicationsReminderSend(idsOf(applications), upcomingApplicationsReminderSend);
+        }
+    }
+
+    @Override
+    public void setUpcomingHolidayReplacementNotificationSend(List<Application> applications, LocalDate upcomingHolidayReplacementNotificationSend) {
+        if (!applications.isEmpty()) {
+            applicationRepository.updateUpcomingHolidayReplacementNotificationSend(idsOf(applications), upcomingHolidayReplacementNotificationSend);
+        }
+    }
+
+    private static List<Long> idsOf(List<Application> applications) {
+        return applications.stream().map(Application::getId).toList();
+    }
+
+    @Override
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
         return toApplication(applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person));
     }

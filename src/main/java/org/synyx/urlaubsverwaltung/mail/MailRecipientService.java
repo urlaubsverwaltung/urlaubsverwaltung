@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MailRecipientService {
 
@@ -36,6 +37,16 @@ public interface MailRecipientService {
      * @return list of recipients of interest
      */
     List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification);
+
+    /**
+     * Same as {@link #getRecipientsOfInterest(Person, MailNotification)} for many persons at once: the offices, bosses,
+     * department heads, second stage authorities and their department memberships are loaded once for all persons.
+     *
+     * @param personsOfInterest persons to get recipients from
+     * @param mailNotification  given notification that one of must be active
+     * @return for every given person the recipients of interest, an empty list if there is none
+     */
+    Map<Person, List<Person>> getRecipientsOfInterest(List<Person> personsOfInterest, MailNotification mailNotification);
 
     /**
      * Returns a list of colleagues for a given person based on

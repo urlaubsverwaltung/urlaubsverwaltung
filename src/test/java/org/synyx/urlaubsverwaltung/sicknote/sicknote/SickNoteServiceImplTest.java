@@ -32,6 +32,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -562,15 +563,18 @@ class SickNoteServiceImplTest {
     @Test
     void setEndOfSickPayNotificationSend() {
 
-        final SickNote sickNote = SickNote.builder().build();
+        final SickNote sickNote = SickNote.builder().id(1L).build();
+        final SickNote otherSickNote = SickNote.builder().id(2L).build();
 
-        sut.setEndOfSickPayNotificationSend(sickNote);
+        sut.setEndOfSickPayNotificationSend(List.of(sickNote, otherSickNote));
 
-        final ArgumentCaptor<SickNoteEntity> captor = ArgumentCaptor.forClass(SickNoteEntity.class);
-        verify(sickNoteRepository).save(captor.capture());
+        verify(sickNoteRepository).updateEndOfSickPayNotificationSend(List.of(1L, 2L), LocalDate.now(fixedClock));
+    }
 
-        final SickNoteEntity entityToSave = captor.getValue();
-        assertThat(entityToSave.getEndOfSickPayNotificationSend()).isEqualTo(LocalDate.now(fixedClock));
+    @Test
+    void setEndOfSickPayNotificationSendDoesNothingWithoutSickNotes() {
+        sut.setEndOfSickPayNotificationSend(List.of());
+        verifyNoInteractions(sickNoteRepository);
     }
 
     @Test

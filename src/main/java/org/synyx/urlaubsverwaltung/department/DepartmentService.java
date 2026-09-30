@@ -165,6 +165,17 @@ public interface DepartmentService {
     List<Person> getDepartmentHeadsAllowedToManagePerson(List<Person> departmentHeads, Person person);
 
     /**
+     * Same as {@link #getDepartmentHeadsAllowedToManagePerson(List, Person)} for many persons: the memberships of all
+     * given department heads and persons are loaded with a single query.
+     *
+     * @param departmentHeads to be checked (typically the active persons with role {@code DEPARTMENT_HEAD})
+     * @param persons         to be checked if managed by the department heads
+     * @return for every given person the department heads that are allowed to manage the person, preserving the
+     * input order, an empty list if there is none
+     */
+    Map<Person, List<Person>> getDepartmentHeadsAllowedToManagePersons(List<Person> departmentHeads, List<Person> persons);
+
+    /**
      * Check the role of the given person and return a {@link List} of all managed {@link Person}s.
      * Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
@@ -281,6 +292,17 @@ public interface DepartmentService {
     List<Person> getSecondStageAuthoritiesAllowedToManagePerson(List<Person> secondStageAuthorities, Person person);
 
     /**
+     * Same as {@link #getSecondStageAuthoritiesAllowedToManagePerson(List, Person)} for many persons: the memberships
+     * of all given second stage authorities and persons are loaded with a single query.
+     *
+     * @param secondStageAuthorities to be checked (typically the active persons with role {@code SECOND_STAGE_AUTHORITY})
+     * @param persons                to be checked if managed by the second stage authorities
+     * @return for every given person the second stage authorities that are allowed to manage the person, preserving
+     * the input order, an empty list if there is none
+     */
+    Map<Person, List<Person>> getSecondStageAuthoritiesAllowedToManagePersons(List<Person> secondStageAuthorities, List<Person> persons);
+
+    /**
      * Get all distinct managed members of the second stage authority.
      * Managed members are all persons for which the second stage authority are responsible for and can
      * perform actions for this person.
@@ -333,4 +355,15 @@ public interface DepartmentService {
      * @return {@code true} when the persons have a department match, {@code false} otherwise
      */
     boolean hasDepartmentMatch(Person person, Person otherPerson);
+
+    /**
+     * Batch variant of {@link #hasDepartmentMatch(Person, Person)}: the memberships of all given candidates and persons
+     * are loaded with a single query.
+     *
+     * @param candidates to be checked for a department match with the persons
+     * @param persons    to find the candidates with a department match for
+     * @return for every given person the candidates having a department match with the person, preserving the input
+     * order, an empty list if there is none
+     */
+    Map<Person, List<Person>> getPersonsWithDepartmentMatch(List<Person> candidates, List<Person> persons);
 }

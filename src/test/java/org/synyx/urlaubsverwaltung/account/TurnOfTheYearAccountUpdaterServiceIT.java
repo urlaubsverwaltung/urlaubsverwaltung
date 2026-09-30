@@ -71,11 +71,10 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
 
         final Account newAccount1 = createHolidaysAccount(person, 2022);
         newAccount1.setRemainingVacationDays(TEN);
-        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(account1)).thenReturn(newAccount1);
 
         final Account newAccount2 = createHolidaysAccount(person2, 2022);
         newAccount2.setRemainingVacationDays(TWO);
-        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(account2)).thenReturn(newAccount2);
+        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccounts(List.of(account1, account2))).thenReturn(List.of(newAccount1, newAccount2));
 
         final Person office = new Person("office", "Office", "Senorita", "office@example.org");
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));

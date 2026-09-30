@@ -143,7 +143,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             (fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).
             Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.""");
 
-        verify(sickNoteService).setEndOfSickPayNotificationSend(sickNote);
+        verify(sickNoteService).setEndOfSickPayNotificationSend(List.of(sickNote));
     }
 
     @Test

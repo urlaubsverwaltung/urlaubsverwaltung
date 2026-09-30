@@ -34,6 +34,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.time.Month.APRIL;
@@ -3444,9 +3445,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         departmentHeadB.setId(3L);
         departmentHeadB.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
-        when(mailRecipientService.getRecipientsOfInterest(personA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
-        when(mailRecipientService.getRecipientsOfInterest(personB, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadB));
-        when(mailRecipientService.getRecipientsOfInterest(personC, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
+        // the recipients of all persons are resolved at once, personA with two applications only once
+        when(mailRecipientService.getRecipientsOfInterest(List.of(personA, personB, personC), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER))
+            .thenReturn(Map.of(personA, asList(boss, departmentHeadA), personB, asList(boss, departmentHeadB), personC, asList(boss, departmentHeadA)));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationAA, applicationA, applicationB, applicationC));
 

@@ -74,6 +74,14 @@ class AccountServiceImpl implements AccountService {
         return mapToAccount(savedAccountEntity, remainingVacationDaysExpireGlobally(), expiryDateGlobally);
     }
 
+    @Override
+    public void setExpiryNotificationSentDate(List<Account> accounts, LocalDate expiryNotificationSentDate) {
+        if (accounts.isEmpty()) {
+            return;
+        }
+        accountRepository.updateExpiryNotificationSentDate(accounts.stream().map(Account::getId).toList(), expiryNotificationSentDate);
+    }
+
     private Account mapToAccount(AccountEntity accountEntity, boolean doRemainingVacationDaysExpireGlobally, LocalDate expiryDateGlobally) {
         final Account account = new Account(
             accountEntity.getPerson(),

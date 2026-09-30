@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.never;
@@ -3465,6 +3467,102 @@ class DepartmentServiceImplTest {
 
         final boolean actual = sut.hasDepartmentMatch(person, other);
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    void ensureGetDepartmentHeadsAllowedToManagePersonsResolvesAllPersonsWithASingleQuery() {
+
+        final Person head1 = personWithId(1L, DEPARTMENT_HEAD);
+        final Person head2 = personWithId(2L, DEPARTMENT_HEAD);
+        final Person memberOfDepartment1 = personWithId(3L);
+        final Person memberOfDepartment2 = personWithId(4L);
+        final Person personWithoutDepartment = personWithId(5L);
+
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(new PersonId(1L), new PersonId(2L), new PersonId(3L), new PersonId(4L), new PersonId(5L))))
+            .thenReturn(Map.of(
+                new PersonId(1L), List.of(membership(1L, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD)),
+                new PersonId(2L), List.of(membership(2L, 2L, DepartmentMembershipKind.DEPARTMENT_HEAD)),
+                new PersonId(3L), List.of(membership(3L, 1L, DepartmentMembershipKind.MEMBER)),
+                new PersonId(4L), List.of(membership(4L, 2L, DepartmentMembershipKind.MEMBER))
+            ));
+
+        final Map<Person, List<Person>> allowed = sut.getDepartmentHeadsAllowedToManagePersons(List.of(head1, head2), List.of(memberOfDepartment1, memberOfDepartment2, personWithoutDepartment));
+
+        assertThat(allowed)
+            .containsEntry(memberOfDepartment1, List.of(head1))
+            .containsEntry(memberOfDepartment2, List.of(head2))
+            .containsEntry(personWithoutDepartment, List.of())
+            .hasSize(3);
+        verify(departmentMembershipService).getActiveMembershipsOfPersons(anyList());
+    }
+
+    @Test
+    void ensureGetSecondStageAuthoritiesAllowedToManagePersonsIgnoresOtherMembershipKinds() {
+
+        final Person secondStageAuthority = personWithId(1L, SECOND_STAGE_AUTHORITY);
+        final Person memberOfDepartment1 = personWithId(3L);
+        final Person headOfDepartment1 = personWithId(4L, DEPARTMENT_HEAD);
+
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(new PersonId(1L), new PersonId(3L), new PersonId(4L))))
+            .thenReturn(Map.of(
+                new PersonId(1L), List.of(membership(1L, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY)),
+                new PersonId(3L), List.of(membership(3L, 1L, DepartmentMembershipKind.MEMBER)),
+                new PersonId(4L), List.of(membership(4L, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD))
+            ));
+
+        final Map<Person, List<Person>> allowed = sut.getSecondStageAuthoritiesAllowedToManagePersons(List.of(secondStageAuthority), List.of(memberOfDepartment1, headOfDepartment1));
+
+        assertThat(allowed)
+            .containsEntry(memberOfDepartment1, List.of(secondStageAuthority))
+            .containsEntry(headOfDepartment1, List.of());
+    }
+
+    @Test
+    void ensureGetPersonsWithDepartmentMatchMatchesAnyMembershipKind() {
+
+        final Person officeOfDepartment1 = personWithId(1L, OFFICE);
+        final Person officeWithoutDepartment = personWithId(2L, OFFICE);
+        final Person headOfDepartment1 = personWithId(3L, DEPARTMENT_HEAD);
+        final Person memberOfDepartment2 = personWithId(4L);
+
+        when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(new PersonId(1L), new PersonId(2L), new PersonId(3L), new PersonId(4L))))
+            .thenReturn(Map.of(
+                new PersonId(1L), List.of(membership(1L, 1L, DepartmentMembershipKind.MEMBER)),
+                new PersonId(3L), List.of(membership(3L, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD)),
+                new PersonId(4L), List.of(membership(4L, 2L, DepartmentMembershipKind.MEMBER))
+            ));
+
+        final Map<Person, List<Person>> matches = sut.getPersonsWithDepartmentMatch(List.of(officeOfDepartment1, officeWithoutDepartment), List.of(headOfDepartment1, memberOfDepartment2));
+
+        assertThat(matches)
+            .containsEntry(headOfDepartment1, List.of(officeOfDepartment1))
+            .containsEntry(memberOfDepartment2, List.of())
+            .hasSize(2);
+    }
+
+    @Test
+    void ensureBatchedManagerResolutionReturnsNothingForNoPersonsWithoutQuery() {
+
+        final Person head = personWithId(1L, DEPARTMENT_HEAD);
+
+        assertThat(sut.getDepartmentHeadsAllowedToManagePersons(List.of(head), List.of())).isEmpty();
+        assertThat(sut.getSecondStageAuthoritiesAllowedToManagePersons(List.of(head), List.of())).isEmpty();
+        assertThat(sut.getPersonsWithDepartmentMatch(List.of(head), List.of())).isEmpty();
+
+        verifyNoInteractions(departmentMembershipService);
+    }
+
+    private static Person personWithId(Long id, Role... additionalRoles) {
+        final Person person = new Person();
+        person.setId(id);
+        final List<Role> roles = new ArrayList<>(List.of(USER));
+        roles.addAll(List.of(additionalRoles));
+        person.setPermissions(roles);
+        return person;
+    }
+
+    private DepartmentMembership membership(Long personId, Long departmentId, DepartmentMembershipKind kind) {
+        return new DepartmentMembership(new PersonId(personId), departmentId, kind, Instant.now(clock));
     }
 
     private static PersonPageable defaultPersonPageable() {

@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -70,6 +71,42 @@ class ApplicationServiceImplTest {
     class GetApplicationById {
 
         @Test
+    void ensureSetRemindDateUpdatesTheGivenApplications() {
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+        sut.setRemindDate(List.of(applicationWithId(1L), applicationWithId(2L)), date);
+        verify(applicationRepository).updateRemindDate(List.of(1L, 2L), date);
+    }
+
+    @Test
+    void ensureSetUpcomingApplicationsReminderSendUpdatesTheGivenApplications() {
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+        sut.setUpcomingApplicationsReminderSend(List.of(applicationWithId(1L), applicationWithId(2L)), date);
+        verify(applicationRepository).updateUpcomingApplicationsReminderSend(List.of(1L, 2L), date);
+    }
+
+    @Test
+    void ensureSetUpcomingHolidayReplacementNotificationSendUpdatesTheGivenApplications() {
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+        sut.setUpcomingHolidayReplacementNotificationSend(List.of(applicationWithId(1L), applicationWithId(2L)), date);
+        verify(applicationRepository).updateUpcomingHolidayReplacementNotificationSend(List.of(1L, 2L), date);
+    }
+
+    @Test
+    void ensureSettingReminderDatesDoesNothingWithoutApplications() {
+        final LocalDate date = LocalDate.of(2022, 3, 7);
+        sut.setRemindDate(List.of(), date);
+        sut.setUpcomingApplicationsReminderSend(List.of(), date);
+        sut.setUpcomingHolidayReplacementNotificationSend(List.of(), date);
+        verifyNoInteractions(applicationRepository);
+    }
+
+    private static Application applicationWithId(Long id) {
+        final Application application = new Application();
+        application.setId(id);
+        return application;
+    }
+
+    @Test
         void ensureGetApplicationByIdCallsCorrectDaoMethod() {
             sut.getApplicationById(1234L);
             verify(applicationRepository).findById(1234L);

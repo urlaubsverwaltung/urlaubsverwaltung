@@ -66,7 +66,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, TEN));
 
         final Account accountNextYear = new Account();
         accountNextYear.setPerson(person);
@@ -111,7 +111,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, TEN));
 
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of());
 
@@ -222,7 +222,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
             .build();
         when(vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, TEN));
 
         sut.notifyForExpiredRemainingVacationDays();
 

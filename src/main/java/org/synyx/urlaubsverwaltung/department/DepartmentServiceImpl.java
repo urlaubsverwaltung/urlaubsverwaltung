@@ -392,49 +392,77 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getDepartmentHeadsAllowedToManagePerson(List<Person> departmentHeads, Person person) {
-        return managersAllowedToManagePerson(departmentHeads, DepartmentMembershipKind.DEPARTMENT_HEAD, person);
+        return getDepartmentHeadsAllowedToManagePersons(departmentHeads, List.of(person)).get(person);
     }
 
     @Override
     public List<Person> getSecondStageAuthoritiesAllowedToManagePerson(List<Person> secondStageAuthorities, Person person) {
-        return managersAllowedToManagePerson(secondStageAuthorities, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, person);
+        return getSecondStageAuthoritiesAllowedToManagePersons(secondStageAuthorities, List.of(person)).get(person);
+    }
+
+    @Override
+    public Map<Person, List<Person>> getDepartmentHeadsAllowedToManagePersons(List<Person> departmentHeads, List<Person> persons) {
+        return managersAllowedToManagePersons(departmentHeads, DepartmentMembershipKind.DEPARTMENT_HEAD, persons);
+    }
+
+    @Override
+    public Map<Person, List<Person>> getSecondStageAuthoritiesAllowedToManagePersons(List<Person> secondStageAuthorities, List<Person> persons) {
+        return managersAllowedToManagePersons(secondStageAuthorities, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, persons);
     }
 
     /**
-     * Returns the given managers that manage a department the given person is a {@link DepartmentMembershipKind#MEMBER}
+     * Returns per person the given managers that manage a department the person is a {@link DepartmentMembershipKind#MEMBER}
      * of, i.e. that have a membership of {@code managerKind} in one of the person's member departments.
      * <p>
      * This is the batch equivalent of {@link #isDepartmentHeadAllowedToManagePerson(Person, Person)} /
      * {@link #isSecondStageAuthorityAllowedToManagePerson(Person, Person)} which both boil down to an overlap between
      * the manager's {@code managerKind} departments and the person's member departments. The memberships of all
-     * managers and the person are loaded with a single query.
+     * managers and persons are loaded with a single query.
      */
-    private List<Person> managersAllowedToManagePerson(List<Person> managers, DepartmentMembershipKind managerKind, Person person) {
+    private Map<Person, List<Person>> managersAllowedToManagePersons(List<Person> managers, DepartmentMembershipKind managerKind, List<Person> persons) {
+        return personsWithSharedDepartment(
+            managers, membership -> membership.membershipKind().equals(managerKind),
+            persons, membership -> membership.membershipKind().equals(DepartmentMembershipKind.MEMBER)
+        );
+    }
 
-        if (managers.isEmpty()) {
-            return List.of();
+    /**
+     * Returns per person the candidates that share a department with the person, considering only the memberships
+     * matching the given filters. The memberships of all candidates and persons are loaded with a single query.
+     */
+    private Map<Person, List<Person>> personsWithSharedDepartment(
+        List<Person> candidates, Predicate<DepartmentMembership> candidateMembershipFilter,
+        List<Person> persons, Predicate<DepartmentMembership> personMembershipFilter
+    ) {
+
+        final Map<Person, List<Person>> candidatesByPerson = new HashMap<>();
+        persons.forEach(person -> candidatesByPerson.put(person, List.of()));
+
+        if (candidates.isEmpty() || persons.isEmpty()) {
+            return candidatesByPerson;
         }
 
-        final PersonId personId = person.getIdAsPersonId();
-        final List<PersonId> personIds = Stream.concat(managers.stream().map(Person::getIdAsPersonId), Stream.of(personId)).toList();
-
+        final List<PersonId> personIds = Stream.concat(candidates.stream(), persons.stream()).map(Person::getIdAsPersonId).distinct().toList();
         final Map<PersonId, List<DepartmentMembership>> memberships = departmentMembershipService.getActiveMembershipsOfPersons(personIds);
 
-        final Set<Long> personMemberDepartmentIds = memberships.getOrDefault(personId, List.of()).stream()
-            .filter(membership -> membership.membershipKind().equals(DepartmentMembershipKind.MEMBER))
-            .map(DepartmentMembership::departmentId)
-            .collect(toSet());
+        final Map<PersonId, Set<Long>> candidateDepartmentIds = new HashMap<>();
+        candidates.forEach(candidate -> candidateDepartmentIds.put(candidate.getIdAsPersonId(), departmentIdsOf(memberships, candidate, candidateMembershipFilter)));
 
-        if (personMemberDepartmentIds.isEmpty()) {
-            return List.of();
+        for (Person person : persons) {
+            final Set<Long> personDepartmentIds = departmentIdsOf(memberships, person, personMembershipFilter);
+            candidatesByPerson.put(person, personDepartmentIds.isEmpty() ? List.of() : candidates.stream()
+                .filter(candidate -> candidateDepartmentIds.get(candidate.getIdAsPersonId()).stream().anyMatch(personDepartmentIds::contains))
+                .toList());
         }
 
-        return managers.stream()
-            .filter(manager -> memberships.getOrDefault(manager.getIdAsPersonId(), List.of()).stream()
-                .filter(membership -> membership.membershipKind().equals(managerKind))
-                .map(DepartmentMembership::departmentId)
-                .anyMatch(personMemberDepartmentIds::contains))
-            .toList();
+        return candidatesByPerson;
+    }
+
+    private static Set<Long> departmentIdsOf(Map<PersonId, List<DepartmentMembership>> memberships, Person person, Predicate<DepartmentMembership> membershipFilter) {
+        return memberships.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
+            .filter(membershipFilter)
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
     }
 
     @Override
@@ -514,17 +542,12 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean hasDepartmentMatch(Person person, Person otherPerson) {
+        return getPersonsWithDepartmentMatch(List.of(person), List.of(otherPerson)).get(otherPerson).contains(person);
+    }
 
-        final PersonId personId = person.getIdAsPersonId();
-        final PersonId otherPersonId = otherPerson.getIdAsPersonId();
-
-        final Map<PersonId, List<DepartmentMembership>> membershipsByPersonId =
-            departmentMembershipService.getActiveMembershipsOfPersons(List.of(personId, otherPersonId));
-
-        final List<Long> personDepartmentIds = membershipsByPersonId.get(personId).stream().map(DepartmentMembership::departmentId).toList();
-        final List<Long> otherPersonDepartmentIds = membershipsByPersonId.get(otherPersonId).stream().map(DepartmentMembership::departmentId).toList();
-
-        return personDepartmentIds.stream().anyMatch(otherPersonDepartmentIds::contains);
+    @Override
+    public Map<Person, List<Person>> getPersonsWithDepartmentMatch(List<Person> candidates, List<Person> persons) {
+        return personsWithSharedDepartment(candidates, _ -> true, persons, _ -> true);
     }
 
     private List<DepartmentMembership> getManagedMemberMembershipsOfPerson(PersonId personId) {

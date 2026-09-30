@@ -343,6 +343,24 @@ class SickNoteRepositoryIT extends SingleTenantTestContainersBase {
         assertThat(actual).hasValue(running);
     }
 
+    @Test
+    void ensureUpdateEndOfSickPayNotificationSendUpdatesTheGivenSickNotesOnly() {
+        final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2022, FEBRUARY, 1);
+        final LocalDate endDate = LocalDate.of(2022, MARCH, 30);
+        final SickNoteEntity sickNote = sickNoteRepository.save(createSickNote(person, startDate, endDate, ACTIVE));
+        final SickNoteEntity otherSickNote = sickNoteRepository.save(createSickNote(person, startDate, endDate, ACTIVE));
+        final SickNoteEntity sickNoteNotToUpdate = sickNoteRepository.save(createSickNote(person, startDate, endDate, ACTIVE));
+
+        final LocalDate date = LocalDate.of(2022, MARCH, 7);
+        sickNoteRepository.updateEndOfSickPayNotificationSend(List.of(sickNote.getId(), otherSickNote.getId()), date);
+        entityManager.clear();
+
+        assertThat(sickNoteRepository.findById(sickNote.getId()).orElseThrow().getEndOfSickPayNotificationSend()).isEqualTo(date);
+        assertThat(sickNoteRepository.findById(otherSickNote.getId()).orElseThrow().getEndOfSickPayNotificationSend()).isEqualTo(date);
+        assertThat(sickNoteRepository.findById(sickNoteNotToUpdate.getId()).orElseThrow().getEndOfSickPayNotificationSend()).isNull();
+    }
+
     private SickNoteEntity createSickNote(Person person, LocalDate startDate, LocalDate endDate, SickNoteStatus active) {
         final SickNoteEntity sickNoteEntity = new SickNoteEntity();
         sickNoteEntity.setPerson(person);

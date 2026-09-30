@@ -27,6 +27,10 @@ import static java.time.Month.MARCH;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -58,7 +62,7 @@ class VacationDaysReminderServiceTest {
         account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of());
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(ZERO);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, ZERO));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -77,7 +81,7 @@ class VacationDaysReminderServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, TEN));
 
         final Account accountNextYear = new Account();
         accountNextYear.setPerson(person);
@@ -121,7 +125,7 @@ class VacationDaysReminderServiceTest {
         account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of());
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account))).thenReturn(Map.of(account, TEN));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -343,7 +347,7 @@ class VacationDaysReminderServiceTest {
             .build();
         when(vacationDaysService.getVacationDaysLeft(List.of(account2022), Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
-        when(vacationDaysService.getTotalLeftVacationDays(account2022)).thenReturn(BigDecimal.valueOf(11L));
+        when(vacationDaysService.getTotalLeftVacationDays(List.of(account2022))).thenReturn(Map.of(account2022, BigDecimal.valueOf(11L)));
 
         sut.notifyForExpiredRemainingVacationDays();
 
@@ -361,6 +365,60 @@ class VacationDaysReminderServiceTest {
             entry("remainingVacationDaysNotExpiring", ONE),
             entry("expiryDate", LocalDate.of(2022, APRIL, 1))
         );
+
+        verify(accountService).setExpiryNotificationSentDate(List.of(account2022), LocalDate.of(2022, APRIL, 1));
+    }
+
+    @Test
+    void ensureNotificationForExpiredRemainingVacationDaysMarksAllNotifiedAccountsAtOnce() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = person();
+        final Person otherPerson = person();
+        otherPerson.setId(43L);
+        final Person personAlreadyNotified = person();
+        personAlreadyNotified.setId(44L);
+        when(personService.getActivePersons()).thenReturn(List.of(person, otherPerson, personAlreadyNotified));
+
+        final Account account = expiringAccount(person);
+        final Account otherAccount = expiringAccount(otherPerson);
+        final Account accountAlreadyNotified = expiringAccount(personAlreadyNotified);
+        accountAlreadyNotified.setExpiryNotificationSentDate(LocalDate.of(2022, APRIL, 1));
+        final List<Account> accounts = List.of(account, otherAccount, accountAlreadyNotified);
+        when(accountService.getHolidaysAccount(2022, List.of(person, otherPerson, personAlreadyNotified))).thenReturn(accounts);
+        when(accountService.getHolidaysAccount(2023, List.of(person, otherPerson, personAlreadyNotified))).thenReturn(List.of());
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(TEN)
+            .notExpiring(ONE)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(accounts, Year.of(2022), List.of())).thenReturn(Map.of(
+            account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft),
+            otherAccount, new HolidayAccountVacationDays(otherAccount, vacationDaysLeft, vacationDaysLeft),
+            accountAlreadyNotified, new HolidayAccountVacationDays(accountAlreadyNotified, vacationDaysLeft, vacationDaysLeft)
+        ));
+        when(vacationDaysService.getTotalLeftVacationDays(anyList())).thenReturn(Map.of(account, TEN, otherAccount, ONE));
+
+        sut.notifyForExpiredRemainingVacationDays();
+
+        verify(mailService, times(2)).send(any(Mail.class));
+        verify(vacationDaysService).getTotalLeftVacationDays(anyList());
+        final ArgumentCaptor<List<Account>> notifiedAccounts = ArgumentCaptor.captor();
+        verify(accountService).setExpiryNotificationSentDate(notifiedAccounts.capture(), eq(LocalDate.of(2022, APRIL, 1)));
+        assertThat(notifiedAccounts.getValue()).containsExactlyInAnyOrder(account, otherAccount);
+    }
+
+    private static Account expiringAccount(Person person) {
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setDoRemainingVacationDaysExpireLocally(true);
+        account.setExpiryDateLocally(LocalDate.of(2022, APRIL, 1));
+        return account;
     }
 
     private Person person() {

@@ -147,13 +147,10 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public void setEndOfSickPayNotificationSend(SickNote sickNote) {
-
-        final SickNote sickNoteWithNewNotificationSendDate = SickNote.builder(sickNote)
-                .endOfSickPayNotificationSend(LocalDate.now(clock))
-                .build();
-
-        sickNoteRepository.save(toSickNoteEntity(sickNoteWithNewNotificationSendDate));
+    public void setEndOfSickPayNotificationSend(List<SickNote> sickNotes) {
+        if (!sickNotes.isEmpty()) {
+            sickNoteRepository.updateEndOfSickPayNotificationSend(sickNotes.stream().map(SickNote::getId).toList(), LocalDate.now(clock));
+        }
     }
 
     @Override

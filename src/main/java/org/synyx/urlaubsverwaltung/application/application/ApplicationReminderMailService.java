@@ -50,11 +50,7 @@ public class ApplicationReminderMailService {
                 LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
 
                 applicationMailService.sendRemindForWaitingApplicationsReminderNotification(longWaitingApplications);
-
-                for (Application longWaitingApplication : longWaitingApplications) {
-                    longWaitingApplication.setRemindDate(LocalDate.now(clock));
-                    applicationService.save(longWaitingApplication);
-                }
+                applicationService.setRemindDate(longWaitingApplications, LocalDate.now(clock));
 
                 LOG.info("Sending Notification for waiting applications finished.");
             } else {
@@ -73,13 +69,8 @@ public class ApplicationReminderMailService {
             final List<Application> upcomingApplications = applicationService.getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(today, to, allowedStatuses);
 
             applicationMailService.sendRemindForUpcomingApplicationsReminderNotification(upcomingApplications);
-            upcomingApplications.forEach(this::markUpcomingApplicationsReminderSent);
+            applicationService.setUpcomingApplicationsReminderSend(upcomingApplications, today);
         }
-    }
-
-    private void markUpcomingApplicationsReminderSent(final Application application) {
-        application.setUpcomingApplicationsReminderSend(LocalDate.now(clock));
-        applicationService.save(application);
     }
 
     public void sendUpcomingHolidayReplacementReminderNotification() {
@@ -92,13 +83,8 @@ public class ApplicationReminderMailService {
             final List<Application> upcomingApplicationsForHolidayReplacement = applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(today, to, allowedStatuses);
 
             applicationMailService.sendRemindForUpcomingHolidayReplacement(upcomingApplicationsForHolidayReplacement);
-            upcomingApplicationsForHolidayReplacement.forEach(this::markUpcomingHolidayReplacementReminderSent);
+            applicationService.setUpcomingHolidayReplacementNotificationSend(upcomingApplicationsForHolidayReplacement, today);
         }
-    }
-
-    private void markUpcomingHolidayReplacementReminderSent(final Application application) {
-        application.setUpcomingHolidayReplacementNotificationSend(LocalDate.now(clock));
-        applicationService.save(application);
     }
 
     private Predicate<Application> isLongWaitingApplications() {

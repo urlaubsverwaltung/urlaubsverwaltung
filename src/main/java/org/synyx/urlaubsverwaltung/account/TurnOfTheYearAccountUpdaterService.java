@@ -65,17 +65,21 @@ public class TurnOfTheYearAccountUpdaterService {
             .collect(toMap(Account::getPerson, identity(), (first, second) -> first));
 
         // get all their accounts and calculate the remaining vacation days for the new year
-        final List<Account> updatedAccounts = new ArrayList<>();
+        final List<Account> accountsLastYear = new ArrayList<>();
         for (Person person : activePersons) {
             final Optional<Account> accountLastYear = Optional.ofNullable(lastYearAccountByPerson.get(person));
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
                 LOG.info("Updating account of person with id {}", person.getId());
-                final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear.get());
-                LOG.info("Setting remaining vacation days of person with id {} to {} for {}", person.getId(), holidaysAccount.getRemainingVacationDays(), year);
-                updatedAccounts.add(holidaysAccount);
+                accountsLastYear.add(accountLastYear.get());
             } else {
                 LOG.info("No holiday account updated for person with id {}. Reason: No account for last year or annual vacation days not defined.", person.getId());
             }
+        }
+
+        // create or update the accounts of all persons at once instead of one by one
+        final List<Account> updatedAccounts = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccounts(accountsLastYear);
+        for (int i = 0; i < updatedAccounts.size(); i++) {
+            LOG.info("Setting remaining vacation days of person with id {} to {} for {}", accountsLastYear.get(i).getPerson().getId(), updatedAccounts.get(i).getRemainingVacationDays(), year);
         }
 
         LOG.info("Updated holidays accounts for year {}: {} / {} ({} persons have no account)",

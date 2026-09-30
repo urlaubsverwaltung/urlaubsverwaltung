@@ -14,9 +14,11 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -28,6 +30,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
@@ -64,11 +67,26 @@ public class VacationDaysService {
      * @return total number of left vacation days
      */
     BigDecimal getTotalLeftVacationDays(Account account) {
+        return getTotalLeftVacationDays(List.of(account)).get(account);
+    }
+
+    /**
+     * Batch variant of {@link #getTotalLeftVacationDays(Account)}: calculates the accounts of a year together.
+     *
+     * @param accounts to calculate the total left vacation days of, each for the year of the account
+     * @return the total left vacation days of every given account
+     */
+    Map<Account, BigDecimal> getTotalLeftVacationDays(List<Account> accounts) {
         final LocalDate today = LocalDate.now(clock);
-        return getVacationDaysLeft(List.of(account), Year.of(account.getYear()))
-            .get(account)
-            .vacationDaysYear()
-            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
+
+        final Map<Account, BigDecimal> totalLeftVacationDays = new HashMap<>();
+        accounts.stream()
+            .collect(groupingBy(Account::getYear))
+            .forEach((year, accountsOfYear) -> getVacationDaysLeft(accountsOfYear, Year.of(year))
+                .forEach((account, holidayAccountVacationDays) -> totalLeftVacationDays.put(account, holidayAccountVacationDays.vacationDaysYear()
+                    .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate()))));
+
+        return totalLeftVacationDays;
     }
 
     /**
@@ -161,17 +179,25 @@ public class VacationDaysService {
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
+
+        // the used remaining vacation days of next year of all persons at once instead of one calculation per person
+        final Set<Person> personsOfYear = holidayAccountsForYear.stream().map(Account::getPerson).collect(toSet());
+        final List<Account> relevantHolidayAccountsNextYear = holidayAccountsNextYear.stream()
+            .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
+            .filter(holidayAccountNextYear -> personsOfYear.contains(holidayAccountNextYear.getPerson()))
+            .toList();
+        final Map<Account, BigDecimal> usedRemainingVacationDaysNextYear = getUsedRemainingVacationDays(relevantHolidayAccountsNextYear);
+
         return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
 
                 final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
                 final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
-                final BigDecimal vacationDaysUsedNextYear = holidayAccountsNextYear.stream()
+                final BigDecimal vacationDaysUsedNextYear = relevantHolidayAccountsNextYear.stream()
                     .filter(holidayAccountNextYear -> holidayAccountNextYear.getPerson().equals(account.getPerson()))
-                    .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
                     .findFirst()
-                    .map(this::getUsedRemainingVacationDays)
+                    .map(usedRemainingVacationDaysNextYear::get)
                     .orElse(ZERO);
 
                 final BigDecimal vacationDays = account.getActualVacationDays();
@@ -217,27 +243,40 @@ public class VacationDaysService {
      * @return the used remaining vacation days
      */
     BigDecimal getUsedRemainingVacationDays(Account account) {
+        return getUsedRemainingVacationDays(List.of(account)).get(account);
+    }
 
-        if (account.getRemainingVacationDays().signum() > 0) {
+    /**
+     * Batch variant of {@link #getUsedRemainingVacationDays(Account)}: calculates the accounts of a year together.
+     *
+     * @param accounts to calculate used remaining vacation days of, each for the year of the account
+     * @return the used remaining vacation days of every given account
+     */
+    Map<Account, BigDecimal> getUsedRemainingVacationDays(List<Account> accounts) {
 
-            final Year year = Year.of(account.getYear());
-            final VacationDaysLeft left = getVacationDaysLeft(List.of(account), year)
-                .get(account)
-                .vacationDaysYear();
+        final Map<Account, BigDecimal> usedRemainingVacationDays = new HashMap<>();
+        accounts.forEach(account -> usedRemainingVacationDays.put(account, ZERO));
 
-            final BigDecimal usedVacationDays = account.getActualVacationDays()
-                .add(account.getRemainingVacationDays())
-                .subtract(left.getVacationDays())
-                .subtract(left.getRemainingVacationDays());
+        accounts.stream()
+            .filter(account -> account.getRemainingVacationDays().signum() > 0)
+            .collect(groupingBy(Account::getYear))
+            .forEach((year, accountsOfYear) -> getVacationDaysLeft(accountsOfYear, Year.of(year))
+                .forEach((account, holidayAccountVacationDays) -> {
+                    final VacationDaysLeft left = holidayAccountVacationDays.vacationDaysYear();
 
-            final BigDecimal notUsedVacationDays = usedVacationDays.subtract(account.getActualVacationDays());
+                    final BigDecimal usedVacationDays = account.getActualVacationDays()
+                        .add(account.getRemainingVacationDays())
+                        .subtract(left.getVacationDays())
+                        .subtract(left.getRemainingVacationDays());
 
-            if (notUsedVacationDays.signum() > 0) {
-                return notUsedVacationDays;
-            }
-        }
+                    final BigDecimal notUsedVacationDays = usedVacationDays.subtract(account.getActualVacationDays());
 
-        return ZERO;
+                    if (notUsedVacationDays.signum() > 0) {
+                        usedRemainingVacationDays.put(account, notUsedVacationDays);
+                    }
+                }));
+
+        return usedRemainingVacationDays;
     }
 
     private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(
