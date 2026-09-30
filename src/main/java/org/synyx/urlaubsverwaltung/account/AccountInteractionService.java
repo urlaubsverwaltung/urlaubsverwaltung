@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Provides interactions with {@link Account}s like creating or editing.
@@ -71,6 +72,15 @@ public interface AccountInteractionService {
      * @return the created/updated holidays account
      */
     Account autoCreateOrUpdateNextYearsHolidaysAccount(Account referenceAccount);
+
+    /**
+     * Same as {@link #autoCreateOrUpdateNextYearsHolidaysAccount(Account)} for many reference accounts: the next year's
+     * accounts are loaded and the left vacation days are calculated for all reference accounts at once.
+     *
+     * @param referenceAccounts to get the information about annual vacation days, left vacation days etc.
+     * @return the created/updated holidays accounts, in the order of the given reference accounts
+     */
+    List<Account> autoCreateOrUpdateNextYearsHolidaysAccounts(List<Account> referenceAccounts);
 
     /**
      * Updates the remaining vacation days of all {@link Account}s that follow the {@link Account} of the given year. Updating is stopped when there is no next year's

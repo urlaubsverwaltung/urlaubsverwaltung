@@ -21,6 +21,7 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,8 +73,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         final Account newAccount = mock(Account.class);
         when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
-        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
-            .thenReturn(newAccount);
+        when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccounts(List.of(account1, account2, account3)))
+            .thenReturn(List.of(newAccount, newAccount, newAccount));
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
@@ -85,11 +86,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         // all last year's accounts are loaded with a single query instead of one query per person
         verify(accountService).getHolidaysAccount(LAST_YEAR, asList(user1, user2, user3));
 
-        verify(accountInteractionService, times(3))
-            .autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
-        verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
-        verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
-        verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
+        // all next year's accounts are created or updated at once
+        verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccounts(List.of(account1, account2, account3));
+        verify(accountInteractionService, never()).autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class));
 
         verify(vacationDaysReminderService).remindForRemainingVacationDays();
 
