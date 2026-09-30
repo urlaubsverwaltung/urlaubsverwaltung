@@ -1,0 +1,290 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title
+      th:replace="~{fragments/page-title::page-title(#{vacationcertificate.header.title(${person.niceName})})}"
+    ></title>
+    <th:block th:fragment="styles">
+      <style>
+        @page {
+          margin: 2cm;
+        }
+      </style>
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.personId = /*[[${person.id}]]*/ "personId";
+        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        /*]]>*/
+      </script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('vacation_certificate.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="vacation_certificate.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main">
+      <div class="content-container content--max-w">
+        <form
+          id="vacation-certificate-form"
+          method="get"
+          th:action="@{/web/person/__${person.id}__/vacation-certificate}"
+          th:object="${certificateForm}"
+          class="uv-form uv-form-grid print:hidden"
+        >
+          <input type="hidden" th:field="*{year}" />
+
+          <p
+            class="uv-form__global-feedback alert alert-danger"
+            th:if="${#fields.hasErrors('*')}"
+            th:text="#{error.info.message}"
+          ></p>
+
+          <div role="group" aria-describedby="vacation-certificate-form-title">
+            <div class="uv-form-legend">
+              <h1 id="vacation-certificate-form-title" th:text="#{vacationcertificate.form.title(${person.niceName})}">
+                Urlaubsbescheinigung für
+              </h1>
+              <div
+                th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/vacation-certificate?year=|, selectedYear=${selectedYear})}"
+              ></div>
+            </div>
+
+            <div class="uv-form__group">
+              <p
+                th:if="${noAccount}"
+                class="alert alert-info"
+                data-test-id="vacation-certificate-no-account"
+                th:text="#{vacationcertificate.noAccount(${selectedYear})}"
+              ></p>
+
+              <th:block th:unless="${noAccount}">
+                <p
+                  th:if="${certificate != null and certificate.hasOpenApplications}"
+                  class="alert alert-warning"
+                  data-test-id="vacation-certificate-open-applications"
+                  th:text="#{vacationcertificate.form.openApplications(${selectedYear})}"
+                ></p>
+
+                <p class="uv-form__group-info uv-help-block">
+                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                  <span th:text="#{vacationcertificate.form.description}"></span>
+                </p>
+
+                <div class="uv-form__input-row">
+                  <label
+                    for="employmentFrom"
+                    class="is-required"
+                    th:text="|#{vacationcertificate.form.employmentFrom}:|"
+                  >
+                    Beschäftigt seit
+                  </label>
+                  <input
+                    id="employmentFrom"
+                    th:field="*{employmentFrom}"
+                    th:data-iso-value="${certificateForm.employmentFromIsoValue}"
+                    th:placeholder="#{pattern.date}"
+                    th:errorclass="error"
+                  />
+                  <p class="uv-form__input-error" th:if="${#fields.hasErrors('employmentFrom')}">
+                    <th:block th:errors="*{employmentFrom}"> employmentFrom Error </th:block>
+                  </p>
+                </div>
+
+                <div class="uv-form__input-row">
+                  <label for="employmentTo" class="is-required" th:text="|#{vacationcertificate.form.employmentTo}:|">
+                    Beschäftigt bis
+                  </label>
+                  <input
+                    id="employmentTo"
+                    th:field="*{employmentTo}"
+                    th:data-iso-value="${certificateForm.employmentToIsoValue}"
+                    th:placeholder="#{pattern.date}"
+                    th:errorclass="error"
+                  />
+                  <p class="uv-form__input-error" th:if="${#fields.hasErrors('employmentTo')}">
+                    <th:block th:errors="*{employmentTo}"> employmentTo Error </th:block>
+                  </p>
+                </div>
+
+                <div class="uv-form__input-row">
+                  <label
+                    for="compensatedDays"
+                    class="is-required"
+                    th:text="|#{vacationcertificate.form.compensatedDays}:|"
+                  >
+                    Abgegoltene Urlaubstage
+                  </label>
+                  <input
+                    id="compensatedDays"
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    th:field="*{compensatedDays}"
+                    th:value="${certificateForm.compensatedDays}"
+                    th:errorclass="error"
+                  />
+                  <p class="uv-form__input-error" th:if="${#fields.hasErrors('compensatedDays')}">
+                    <th:block th:errors="*{compensatedDays}"> compensatedDays Error </th:block>
+                  </p>
+                </div>
+
+                <div class="uv-form__input-row">
+                  <label for="employer" th:text="|#{vacationcertificate.form.employer}:|">Arbeitgeber</label>
+                  <textarea id="employer" rows="4" th:field="*{employer}"></textarea>
+                </div>
+              </th:block>
+            </div>
+          </div>
+
+          <uv-sticky
+            th:unless="${noAccount}"
+            data-sticky="bottom"
+            class="bottom-bar mt-16"
+            style="grid-column: label/end"
+          >
+            <div class="bottom-bar-inner flex justify-between items-center">
+              <button
+                type="submit"
+                class="button-main-green w-56"
+                data-test-id="vacation-certificate-submit"
+                th:text="#{vacationcertificate.form.submit}"
+              >
+                Aktualisieren
+              </button>
+              <button
+                type="button"
+                class="button"
+                data-print-button
+                th:disabled="${certificate == null}"
+                th:text="#{vacationcertificate.form.print}"
+              >
+                Drucken
+              </button>
+            </div>
+          </uv-sticky>
+        </form>
+
+        <article
+          th:if="${certificate != null}"
+          th:with="daysPerWeek=${certificate.workingDaysPerWeek.orElse(null)}"
+          data-test-id="vacation-certificate"
+          class="mt-12 mx-auto max-w-3xl rounded-lg border border-gray-200 p-8 dark:border-zinc-700 print:m-0 print:max-w-none print:border-0 print:p-0"
+        >
+          <p
+            class="min-h-24 whitespace-pre-line"
+            data-test-id="vacation-certificate-employer"
+            th:text="${certificateForm.employer}"
+          ></p>
+          <p class="mt-8 text-right">
+            <span th:text="|#{vacationcertificate.document.placeAndDate}:|">Ort, Datum:</span>
+            ____________________
+          </p>
+
+          <h2 class="mt-12 text-2xl font-bold" th:text="#{vacationcertificate.document.title}">
+            Urlaubsbescheinigung gemäß § 6 Abs. 2 BUrlG
+          </h2>
+
+          <dl class="mt-8 grid grid-cols-[max-content_1fr] gap-x-8 gap-y-2">
+            <dt class="font-medium" th:text="#{vacationcertificate.document.employee}">Arbeitnehmer:in</dt>
+            <dd data-test-id="vacation-certificate-employee" th:text="${person.niceName}"></dd>
+
+            <th:block th:if="${personnelNumber != null}">
+              <dt class="font-medium" th:text="#{vacationcertificate.document.personnelNumber}">Personalnummer</dt>
+              <dd th:text="${personnelNumber}"></dd>
+            </th:block>
+
+            <dt class="font-medium" th:text="#{vacationcertificate.document.employment}">Arbeitsverhältnis</dt>
+            <dd
+              data-test-id="vacation-certificate-employment"
+              th:text="#{vacationcertificate.document.employment.period(${#temporals.format(certificateForm.employmentFrom, #messages.msg('pattern.date'))}, ${#temporals.format(certificateForm.employmentTo, #messages.msg('pattern.date'))})}"
+            ></dd>
+
+            <dt class="font-medium" th:text="#{vacationcertificate.document.year}">Kalenderjahr</dt>
+            <dd th:text="${certificate.year}"></dd>
+
+            <dt class="font-medium" th:text="#{vacationcertificate.document.entitlement}">Urlaubsanspruch</dt>
+            <dd
+              data-test-id="vacation-certificate-entitlement"
+              th:text="${daysPerWeek != null} ? #{vacationcertificate.document.entitlement.daysPerWeek(${certificate.entitlement}, ${daysPerWeek})} : #{vacationcertificate.document.entitlement.days(${certificate.entitlement})}"
+            ></dd>
+          </dl>
+
+          <h3 class="mt-10 text-lg font-bold" th:text="#{vacationcertificate.document.granted}">
+            Gewährter und genommener Urlaub
+          </h3>
+          <p
+            th:if="${#lists.isEmpty(certificate.grantedPeriods)}"
+            class="mt-4"
+            th:text="#{vacationcertificate.document.granted.none}"
+          ></p>
+          <table
+            th:unless="${#lists.isEmpty(certificate.grantedPeriods)}"
+            class="mt-4 w-full"
+            data-test-id="vacation-certificate-granted-periods"
+          >
+            <thead>
+              <tr class="border-b border-gray-300 dark:border-zinc-600">
+                <th scope="col" class="py-1 text-left" th:text="#{vacationcertificate.document.granted.from}">Von</th>
+                <th scope="col" class="py-1 text-left" th:text="#{vacationcertificate.document.granted.to}">Bis</th>
+                <th scope="col" class="py-1 text-right" th:text="#{vacationcertificate.document.granted.days}">
+                  Arbeitstage
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="period : ${certificate.grantedPeriods}">
+                <td class="py-1">
+                  <th:block th:replace="~{fragments/date::date(${period.from})}"></th:block>
+                  <th:block th:if="${period.dayLength.halfDay}" th:text="| (#{${period.dayLength}})|"></th:block>
+                </td>
+                <td class="py-1"><th:block th:replace="~{fragments/date::date(${period.to})}"></th:block></td>
+                <td class="py-1 text-right">
+                  <th:block th:replace="~{fragments/number::number(${period.days})}"></th:block>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p
+            class="mt-4 font-bold"
+            data-test-id="vacation-certificate-granted-total"
+            th:text="${certificate.grantedFromRemaining.signum() > 0} ? #{vacationcertificate.document.granted.total.fromRemaining(${certificate.grantedTotal}, ${certificate.grantedFromRemaining})} : #{vacationcertificate.document.granted.total(${certificate.grantedTotal})}"
+          ></p>
+
+          <p
+            class="mt-6"
+            data-test-id="vacation-certificate-compensation"
+            th:text="${certificateForm.compensatedDays.signum() > 0} ? #{vacationcertificate.document.compensated(${certificateForm.compensatedDays})} : #{vacationcertificate.document.compensated.none}"
+          ></p>
+
+          <div class="mt-24 grid grid-cols-2 gap-16 break-inside-avoid">
+            <p
+              class="border-t border-black pt-2 text-sm dark:border-zinc-400"
+              th:text="#{vacationcertificate.document.signature.employer}"
+            ></p>
+            <p
+              class="border-t border-black pt-2 text-sm dark:border-zinc-400"
+              th:text="#{vacationcertificate.document.signature.employee}"
+            ></p>
+          </div>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>
