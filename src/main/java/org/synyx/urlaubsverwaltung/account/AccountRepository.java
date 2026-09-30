@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +25,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     @Modifying
     void deleteByPerson(Person person);
+
+    @Transactional
+    @Modifying
+    @Query("update account a set a.expiryNotificationSentDate = :expiryNotificationSentDate where a.id in :ids")
+    void updateExpiryNotificationSentDate(@Param("ids") List<Long> ids, @Param("expiryNotificationSentDate") LocalDate expiryNotificationSentDate);
 
     List<AccountEntity> findAllByPersonId(Long personId);
 }

@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -361,5 +362,25 @@ class AccountServiceImplTest {
         final ArgumentCaptor<AccountEntity> captor = ArgumentCaptor.forClass(AccountEntity.class);
         verify(accountRepository).save(captor.capture());
         assertThat(captor.getValue()).satisfies(entity -> assertThat(entity.getExpiryDate()).isNull());
+    }
+
+    @Test
+    void ensureSetExpiryNotificationSentDateUpdatesTheGivenAccounts() {
+
+        final Account account = new Account();
+        account.setId(1L);
+        final Account otherAccount = new Account();
+        otherAccount.setId(2L);
+
+        final LocalDate expiryNotificationSentDate = LocalDate.of(2022, 4, 2);
+        sut.setExpiryNotificationSentDate(List.of(account, otherAccount), expiryNotificationSentDate);
+
+        verify(accountRepository).updateExpiryNotificationSentDate(List.of(1L, 2L), expiryNotificationSentDate);
+    }
+
+    @Test
+    void ensureSetExpiryNotificationSentDateDoesNothingWithoutAccounts() {
+        sut.setExpiryNotificationSentDate(List.of(), LocalDate.of(2022, 4, 2));
+        verifyNoInteractions(accountRepository);
     }
 }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,9 @@ class AccountRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     void ensureUniqueConstraintOfPersonAndValidFrom() {
@@ -77,5 +81,28 @@ class AccountRepositoryIT extends SingleTenantTestContainersBase {
 
         assertThat(sut.findAccountByYearAndPersons(2014, List.of(savedPerson, savedOtherPerson)))
             .containsExactly(savedAccountToFind, savedOtherAccountToFind);
+    }
+
+    @Test
+    void ensureUpdateExpiryNotificationSentDateUpdatesTheGivenAccountsOnly() {
+
+        final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
+        final Person otherPerson = personService.create("otherPerson", "person", "other", "other@example.org");
+        final Person personNotToUpdate = personService.create("personNotToUpdate", "person", "notToUpdate", "notToUpdate@example.org");
+
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
+        final AccountEntity account = sut.save(new AccountEntity(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
+        final AccountEntity otherAccount = sut.save(new AccountEntity(otherPerson, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
+        final AccountEntity accountNotToUpdate = sut.save(new AccountEntity(personNotToUpdate, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
+
+        final LocalDate expiryNotificationSentDate = LocalDate.of(2014, APRIL, 2);
+        sut.updateExpiryNotificationSentDate(List.of(account.getId(), otherAccount.getId()), expiryNotificationSentDate);
+        entityManager.clear();
+
+        assertThat(sut.findById(account.getId()).orElseThrow().getExpiryNotificationSentDate()).isEqualTo(expiryNotificationSentDate);
+        assertThat(sut.findById(otherAccount.getId()).orElseThrow().getExpiryNotificationSentDate()).isEqualTo(expiryNotificationSentDate);
+        assertThat(sut.findById(accountNotToUpdate.getId()).orElseThrow().getExpiryNotificationSentDate()).isNull();
     }
 }

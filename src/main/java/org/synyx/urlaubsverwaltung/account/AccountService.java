@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,14 @@ public interface AccountService {
      * @return saved {@link Account}
      */
     Account save(Account account);
+
+    /**
+     * Sets the date the notification about expired remaining vacation days was sent for all given accounts at once.
+     *
+     * @param accounts                   to set the date for
+     * @param expiryNotificationSentDate the date the notification was sent
+     */
+    void setExpiryNotificationSentDate(List<Account> accounts, LocalDate expiryNotificationSentDate);
 
     /**
      * Deletes all {@link Account}s in the database of person id.
