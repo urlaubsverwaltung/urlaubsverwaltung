@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 @Service
 class PersonServiceImpl implements PersonService {
@@ -87,7 +88,9 @@ class PersonServiceImpl implements PersonService {
             NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED,
-            NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED
+            NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED,
+            // only takes effect once the person has the role OFFICE
+            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL
         );
 
         final List<Role> defaultPermissions = List.of(

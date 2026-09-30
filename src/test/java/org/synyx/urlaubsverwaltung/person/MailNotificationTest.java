@@ -40,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 class MailNotificationTest {
 
@@ -397,5 +398,22 @@ class MailNotificationTest {
     @Test
     void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsNotValidWithoutUser() {
         assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(OFFICE))).isFalse();
+    }
+
+    @Test
+    void ensureNOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL_IsValidWithOffice() {
+        assertThat(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.isValidWith(List.of(USER, OFFICE))).isTrue();
+        assertThat(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.isDepartmentRelated()).isFalse();
+    }
+
+    @Test
+    void ensureNOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL_IsNotValidWithoutUser() {
+        assertThat(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.isValidWith(List.of(OFFICE))).isFalse();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "APPLICATION_ADD", "APPLICATION_CANCEL", "APPLICATION_CANCELLATION_REQUESTED", "SICK_NOTE_VIEW", "SICK_NOTE_ADD", "SICK_NOTE_EDIT", "SICK_NOTE_CANCEL", "SICK_NOTE_COMMENT"})
+    void ensureNOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL_IsNotValidWithRole(Role role) {
+        assertThat(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.isValidWith(List.of(USER, role))).isFalse();
     }
 }

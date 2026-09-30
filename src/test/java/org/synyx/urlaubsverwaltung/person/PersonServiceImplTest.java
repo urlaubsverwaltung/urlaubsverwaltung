@@ -46,6 +46,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
@@ -612,5 +613,16 @@ class PersonServiceImplTest {
 
         final int numberOfOfficeExceptId = sut.numberOfPersonsWithOfficeRoleExcludingPerson(1);
         assertThat(numberOfOfficeExceptId).isEqualTo(2);
+    }
+
+    @Test
+    void ensureCreatedPersonGetsTheExpiredRemainingVacationDaysNotificationByDefault() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("muster", "Marlene", "Muster", "muster@example.org");
+
+        // only takes effect once the person has the role OFFICE
+        assertThat(createdPerson.getNotifications()).contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 }
