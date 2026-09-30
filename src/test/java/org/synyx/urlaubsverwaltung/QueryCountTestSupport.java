@@ -23,6 +23,8 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -109,6 +111,10 @@ public abstract class QueryCountTestSupport extends SingleTenantTestContainersBa
     private PersonService personService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private SettingsService settingsService;
+
+    private Settings settingsBefore;
 
     @BeforeEach
     void countMails() {
@@ -117,12 +123,15 @@ public abstract class QueryCountTestSupport extends SingleTenantTestContainersBa
         doAnswer(_ -> MAILS.incrementAndGet()).when(javaMailSender).send(any(SimpleMailMessage.class));
         when(javaMailSender.createMimeMessage()).thenAnswer(_ -> new MimeMessage((Session) null));
         truncatePersonData();
+        settingsBefore = settingsService.getSettings();
     }
 
     @AfterEach
     void cleanUp() {
         awaitAsyncWork();
         truncatePersonData();
+        // the database is shared with the other integration tests
+        settingsService.save(settingsBefore);
     }
 
     protected Measurement measure(Runnable job) {
