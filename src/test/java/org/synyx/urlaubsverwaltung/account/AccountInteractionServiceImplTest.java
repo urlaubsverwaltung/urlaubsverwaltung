@@ -243,7 +243,7 @@ class AccountInteractionServiceImplTest {
         sut.updateRemainingVacationDays(2012, person);
         assertThat(nextYearAccount.getRemainingVacationDays()).isEqualTo(remainingVacationDays);
 
-        verify(vacationDaysService, never()).getTotalLeftVacationDays(any());
+        verify(vacationDaysService, never()).getTotalLeftVacationDays(any(Account.class));
         verify(accountService, never()).save(any());
     }
 
