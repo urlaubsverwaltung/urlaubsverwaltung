@@ -26,6 +26,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 @SpringBootTest
@@ -224,6 +225,97 @@ class SickNoteRepositoryIT extends SingleTenantTestContainersBase {
 
         final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureToFindSickNotesWithoutAubReachingTheNotificationWorkDay() {
+
+        // monday 07.03.2022 until friday 11.03.2022, third day is wednesday 09.03.2022
+        final LocalDate startDate = LocalDate.of(2022, MARCH, 7);
+        final LocalDate endDate = LocalDate.of(2022, MARCH, 11);
+
+        final SickNoteEntity active = sickNoteRepository.save(createSickNote(null, startDate, endDate, ACTIVE));
+        final SickNoteEntity submitted = sickNoteRepository.save(createSickNote(null, startDate, endDate, SUBMITTED));
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 9));
+        assertThat(sickNotes).containsExactlyInAnyOrder(active, submitted);
+    }
+
+    @Test
+    void ensureToFindSickNotesWithoutAubThatEndedBeforeToday() {
+
+        // entered afterwards: monday 07.03.2022 until friday 11.03.2022, asked on monday 14.03.2022
+        final SickNoteEntity sickNote = sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE));
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 14));
+        assertThat(sickNotes).containsExactly(sickNote);
+    }
+
+    @Test
+    void ensureNotToFindSickNotesWithoutAubBeforeTheNotificationWorkDay() {
+
+        sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE));
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 8));
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureNotToFindSickNotesWithoutAubShorterThanTheNotificationWorkDay() {
+
+        // two calendar days can never reach the third work day
+        sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 8), ACTIVE));
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 14));
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureNotToFindSickNotesWithAubForTheMissingAubNotification() {
+
+        final SickNoteEntity sickNote = createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE);
+        sickNote.setAubStartDate(LocalDate.of(2022, MARCH, 7));
+        sickNote.setAubEndDate(LocalDate.of(2022, MARCH, 11));
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 9));
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureNotToFindSickNotesAlreadyNotifiedAboutTheMissingAub() {
+
+        final SickNoteEntity sickNote = createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE);
+        sickNote.setMissingAubNotificationSend(LocalDate.of(2022, MARCH, 9));
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 10));
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureNotToFindInactiveSickNotesForTheMissingAubNotification() {
+
+        sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), CANCELLED));
+        sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), CONVERTED_TO_VACATION));
+
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2022, MARCH, 9));
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureToMarkSickNotesAsNotifiedAboutTheMissingAub() {
+
+        final SickNoteEntity notified = sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE));
+        final SickNoteEntity other = sickNoteRepository.save(createSickNote(null, LocalDate.of(2022, MARCH, 7), LocalDate.of(2022, MARCH, 11), ACTIVE));
+
+        sickNoteRepository.updateMissingAubNotificationSend(List.of(notified.getId()), LocalDate.of(2022, MARCH, 9));
+        entityManager.clear();
+
+        assertThat(sickNoteRepository.findById(notified.getId())).hasValueSatisfying(sickNote ->
+            assertThat(sickNote.getMissingAubNotificationSend()).isEqualTo(LocalDate.of(2022, MARCH, 9)));
+        assertThat(sickNoteRepository.findById(other.getId())).hasValueSatisfying(sickNote ->
+            assertThat(sickNote.getMissingAubNotificationSend()).isNull());
     }
 
     @Test

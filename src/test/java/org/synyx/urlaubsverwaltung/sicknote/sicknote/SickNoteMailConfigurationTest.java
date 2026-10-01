@@ -32,6 +32,7 @@ class SickNoteMailConfigurationTest {
     void sendsEMailWithGivenCronJobInterval() {
 
         when(scheduleLocking.withLock(eq("EndOfSickPayNotification"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+        when(scheduleLocking.withLock(eq("MissingAubNotification"), any(Runnable.class))).thenAnswer(returnsSecondArg());
 
         final SickNoteProperties properties = new SickNoteProperties();
         final SickNoteMailService sickNoteMailService = mock(SickNoteMailService.class);
@@ -41,7 +42,7 @@ class SickNoteMailConfigurationTest {
         sut.configureTasks(taskRegistrar);
 
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
-        assertThat(cronTaskList).hasSize(1);
+        assertThat(cronTaskList).hasSize(2);
 
         final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 6 * * *");
@@ -50,5 +51,33 @@ class SickNoteMailConfigurationTest {
 
         cronTask.getRunnable().run();
         verify(sickNoteMailService).sendEndOfSickPayNotification();
+    }
+
+    @Test
+    void sendsMissingAubNotificationWithGivenCronJobInterval() {
+
+        when(scheduleLocking.withLock(eq("EndOfSickPayNotification"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+        when(scheduleLocking.withLock(eq("MissingAubNotification"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+
+        final SickNoteProperties properties = new SickNoteProperties();
+        properties.getMissingAubNotification().setCron("0 30 7 * * *");
+        final SickNoteMailService sickNoteMailService = mock(SickNoteMailService.class);
+        final SickNoteMailConfiguration sut = new SickNoteMailConfiguration(properties, sickNoteMailService, scheduleLocking, taskScheduler);
+
+        final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
+        sut.configureTasks(taskRegistrar);
+
+        final CronTask cronTask = taskRegistrar.getCronTaskList().get(1);
+        assertThat(cronTask.getExpression()).isEqualTo("0 30 7 * * *");
+
+        verifyNoInteractions(sickNoteMailService);
+
+        cronTask.getRunnable().run();
+        verify(sickNoteMailService).sendMissingAubNotification();
+    }
+
+    @Test
+    void ensureMissingAubNotificationIsSentEveryDayAtSixByDefault() {
+        assertThat(new SickNoteProperties().getMissingAubNotification().getCron()).isEqualTo("0 0 6 * * *");
     }
 }

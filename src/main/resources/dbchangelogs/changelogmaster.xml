@@ -31,5 +31,6 @@
   <include relativeToChangelogFile="true" file="changelog-6.14.0-remove-inactive-role.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.14.0-restore-sick-note-accepted-notification.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.15.0-remaining-vacation-days-management-notifications.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.15.0-missing-aub-notification.xml"/>
 
 </databaseChangeLog>

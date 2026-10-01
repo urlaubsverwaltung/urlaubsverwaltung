@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -110,6 +111,7 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteEditedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCancelledByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteMissingAubForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteSubmittedByUserForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteAcceptedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT);
 
@@ -165,6 +167,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteAcceptedByManagementForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteEditedByManagementForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteCancelledByManagementForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT, personNotificationsDto::setSickNoteMissingAubForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 

@@ -12,6 +12,7 @@ import static java.lang.Integer.MAX_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class SettingsAbsencesValidatorTest {
 
@@ -205,5 +206,57 @@ class SettingsAbsencesValidatorTest {
         sut.validate(dto, mockError);
 
         verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+    }
+
+    @Test
+    void ensureMissingAubNotificationWorkDayCanNotBeNull() {
+
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMissingAubNotificationWorkDay(null);
+
+        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
+        dto.setSickNoteSettings(sickNoteSettings);
+        dto.setApplicationSettings(new ApplicationSettings());
+
+        final Errors mockError = mock(Errors.class);
+
+        sut.validate(dto, mockError);
+
+        verify(mockError).rejectValue("sickNoteSettings.missingAubNotificationWorkDay", "error.entry.mandatory");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 0})
+    void ensureMissingAubNotificationWorkDayMustBeAtLeastOne(int invalidValue) {
+
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMissingAubNotificationWorkDay(invalidValue);
+
+        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
+        dto.setSickNoteSettings(sickNoteSettings);
+        dto.setApplicationSettings(new ApplicationSettings());
+
+        final Errors mockError = mock(Errors.class);
+
+        sut.validate(dto, mockError);
+
+        verify(mockError).rejectValue("sickNoteSettings.missingAubNotificationWorkDay", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureMissingAubNotificationWorkDayOfOneIsValid() {
+
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMissingAubNotificationWorkDay(1);
+
+        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
+        dto.setSickNoteSettings(sickNoteSettings);
+        dto.setApplicationSettings(new ApplicationSettings());
+
+        final Errors mockError = mock(Errors.class);
+
+        sut.validate(dto, mockError);
+
+        verifyNoInteractions(mockError);
     }
 }

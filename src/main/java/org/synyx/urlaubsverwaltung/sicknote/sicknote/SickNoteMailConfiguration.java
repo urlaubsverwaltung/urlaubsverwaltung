@@ -32,5 +32,9 @@ class SickNoteMailConfiguration implements SchedulingConfigurer {
             scheduleLocking.withLock("EndOfSickPayNotification", sickNoteMailService::sendEndOfSickPayNotification),
             sickNoteProperties.getEndOfPayNotification().getCron()
         );
+        taskRegistrar.addCronTask(
+            scheduleLocking.withLock("MissingAubNotification", sickNoteMailService::sendMissingAubNotification),
+            sickNoteProperties.getMissingAubNotification().getCron()
+        );
     }
 }

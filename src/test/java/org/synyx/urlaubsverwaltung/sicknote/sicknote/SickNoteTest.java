@@ -23,9 +23,88 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.halfWorkdayMorning;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 class SickNoteTest {
+
+    @Test
+    void ensureWorkDayCountUntilCountsTheWorkDaysFromTheStartUpToTheGivenDate() {
+
+        // monday 13.06.2022 until friday 17.06.2022
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2022, JUNE, 13))
+            .endDate(LocalDate.of(2022, JUNE, 17))
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)))
+            .build();
+
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 12))).isZero();
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 13))).isOne();
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 15))).isEqualTo(3);
+    }
+
+    @Test
+    void ensureWorkDayCountUntilSkipsDaysThePersonDoesNotWork() {
+
+        // friday 17.06.2022 until wednesday 22.06.2022, weekend in between
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2022, JUNE, 17))
+            .endDate(LocalDate.of(2022, JUNE, 22))
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)))
+            .build();
+
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 20))).isEqualTo(2);
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 21))).isEqualTo(3);
+    }
+
+    @Test
+    void ensureWorkDayCountUntilEndsWithTheSickNote() {
+
+        // monday 13.06.2022 until tuesday 14.06.2022
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2022, JUNE, 13))
+            .endDate(LocalDate.of(2022, JUNE, 14))
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)))
+            .build();
+
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 17))).isEqualTo(2);
+    }
+
+    @Test
+    void ensureWorkDayCountUntilCountsHalfDaysAsWholeDays() {
+
+        // half sick day on a full work day, a sick day on a half work day and a public holiday
+        final LocalDate publicHoliday = LocalDate.of(2022, JUNE, 16);
+        final LocalDate halfWorkDay = LocalDate.of(2022, JUNE, 15);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30), date -> {
+            if (date.equals(publicHoliday)) {
+                return new WorkingDayInformation(DayLength.ZERO, PUBLIC_HOLIDAY, PUBLIC_HOLIDAY);
+            }
+            return date.equals(halfWorkDay) ? halfWorkdayMorning() : fullWorkday();
+        });
+
+        final SickNote halfSickDay = SickNote.builder()
+            .dayLength(MORNING)
+            .startDate(LocalDate.of(2022, JUNE, 14))
+            .endDate(LocalDate.of(2022, JUNE, 14))
+            .workingTimeCalendar(workingTimeCalendar)
+            .build();
+        assertThat(halfSickDay.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 14))).isOne();
+
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2022, JUNE, 14))
+            .endDate(LocalDate.of(2022, JUNE, 17))
+            .workingTimeCalendar(workingTimeCalendar)
+            .build();
+        assertThat(sickNote.getWorkDayCountUntil(LocalDate.of(2022, JUNE, 17))).isEqualTo(3);
+    }
 
     @Test
     void ensureGetCalendarDays() {

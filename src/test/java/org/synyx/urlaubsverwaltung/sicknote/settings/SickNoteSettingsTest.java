@@ -13,5 +13,6 @@ class SickNoteSettingsTest {
         assertThat(settings.getMaximumSickPayDays()).isEqualTo(42);
         assertThat(settings.getDaysBeforeEndOfSickPayNotification()).isEqualTo(7);
         assertThat(settings.getUserIsAllowedToSubmitSickNotes()).isTrue();
+        assertThat(settings.getMissingAubNotificationWorkDay()).isEqualTo(3);
     }
 }

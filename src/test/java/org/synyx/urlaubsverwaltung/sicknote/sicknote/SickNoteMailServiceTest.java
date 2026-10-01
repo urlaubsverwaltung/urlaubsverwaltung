@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT;
 import static java.time.Month.APRIL;
 import static java.time.Month.MARCH;
 import static java.util.Arrays.asList;
@@ -188,6 +190,63 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+    }
+
+    @Test
+    void ensureSendMissingAubNotificationSendsOneMailPerSickNoteToItsResponsiblePersons() {
+
+        // today is friday 01.04.2022, both sick notes reach their third work day
+        final Person personA = new Person("a", "Muster", "Marlene", "a@example.org");
+        personA.setId(1L);
+        final Person personB = new Person("b", "Müller", "Lieschen", "b@example.org");
+        personB.setId(2L);
+
+        final SickNote sickNoteA = missingAubSickNote(1L, personA, LocalDate.of(2022, 3, 30));
+        final SickNote sickNoteB = missingAubSickNote(2L, personB, LocalDate.of(2022, 3, 30));
+        when(sickNoteService.getSickNotesReachingMissingAubNotificationWorkDay()).thenReturn(List.of(sickNoteA, sickNoteB));
+
+        final Person office = new Person("office", "Office", "Olga", "office@example.org");
+        final Person departmentHeadOfB = new Person("head", "Head", "Hans", "head@example.org");
+        when(mailRecipientService.getRecipientsOfInterest(personA, NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterest(personB, NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT)).thenReturn(List.of(office, departmentHeadOfB));
+
+        sut.sendMissingAubNotification();
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(office));
+        assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.sicknote.missing_aub.to_management");
+        assertThat(mails.getFirst().getSubjectMessageArguments()).containsExactly("Marlene Muster");
+        assertThat(mails.getFirst().getTemplateName()).isEqualTo("sick_note_missing_aub_to_management");
+        assertThat(mails.getFirst().getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNoteA, "workDaysWithoutAub", 3L));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(office, departmentHeadOfB));
+        assertThat(mails.get(1).getSubjectMessageArguments()).containsExactly("Lieschen Müller");
+        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNoteB, "workDaysWithoutAub", 3L));
+
+        verify(sickNoteService).setMissingAubNotificationSend(List.of(sickNoteA, sickNoteB));
+    }
+
+    @Test
+    void ensureSendMissingAubNotificationSendsNoMailWithoutSickNotes() {
+
+        when(sickNoteService.getSickNotesReachingMissingAubNotificationWorkDay()).thenReturn(List.of());
+
+        sut.sendMissingAubNotification();
+
+        verifyNoInteractions(mailService);
+    }
+
+    private static SickNote missingAubSickNote(Long id, Person person, LocalDate startDate) {
+        return SickNote.builder()
+            .id(id)
+            .person(person)
+            .startDate(startDate)
+            .endDate(startDate.plusDays(6))
+            .dayLength(DayLength.FULL)
+            .status(SickNoteStatus.ACTIVE)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(startDate, startDate.plusDays(6)))
+            .build();
     }
 
     @Test
