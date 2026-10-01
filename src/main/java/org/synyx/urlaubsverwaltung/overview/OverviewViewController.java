@@ -226,6 +226,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate endDate = startDate.with(lastDayOfYear());
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
+        final LocalDate today = LocalDate.now(clock);
         final List<ApplicationDto> applicationsForLeave;
         final ApplicationDaysUsedSummaryDto usedDaysOverview;
 
@@ -233,7 +234,6 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             applicationsForLeave = List.of();
             usedDaysOverview = new ApplicationDaysUsedSummaryDto(List.of(), year, workDaysCountService);
         } else {
-            final LocalDate today = LocalDate.now(clock);
             final List<ApplicationForLeave> allForLeave = toApplicationsForLeave(applications);
 
             // show the applications closest to today: the last one, the currently running one and the next ones
@@ -273,8 +273,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final TodayMarker todayMarker = TodayMarker.of(applicationsForLeave,
             ApplicationDto::startDate, ApplicationDto::endDate,
-            application -> ApplicationStatus.activeStatuses().contains(application.status()),
-            LocalDate.now(clock), year);
+            application -> ApplicationStatus.activeStatuses().contains(application.status()), today, year);
 
         model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(
             applicationsForLeave,
