@@ -383,14 +383,19 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final OvertimePermissions permissions = overtimePermissionEvaluator.of(signedInUser, person);
 
+        final List<OvertimeRecordDto> overtimeRecordDtos = mapToShownOvertimesDto(permissions, shownOvertimes);
+        final TodayMarker todayMarker = TodayMarker.of(overtimeRecordDtos,
+            OvertimeRecordDto::startDate, OvertimeRecordDto::endDate, _ -> true, today, year);
+
         final OvertimeOverviewDto overtimeOverviewDto = new OvertimeOverviewDto(
             settingsService.getSettings().getOvertimeSettings().isOvertimeActive(),
             permissions.isAllowedToAdd(),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person),
-            mapToShownOvertimesDto(permissions, shownOvertimes),
+            overtimeRecordDtos,
             shownOvertimes.size(),
-            overtimes.size()
+            overtimes.size(),
+            todayMarker
         );
 
         model.addAttribute("overtimeOverviewInformation", overtimeOverviewDto);
