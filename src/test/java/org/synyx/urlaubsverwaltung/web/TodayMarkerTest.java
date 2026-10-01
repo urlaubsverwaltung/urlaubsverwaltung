@@ -3,10 +3,12 @@ package org.synyx.urlaubsverwaltung.web;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 class TodayMarkerTest {
 
@@ -98,6 +100,21 @@ class TodayMarkerTest {
     @Test
     void noMarkerForAnEmptyList() {
         assertThat(markerFor(List.of(), 2026)).isEqualTo(TodayMarker.none());
+    }
+
+    @Test
+    void runningIndexesAreCopiedOnCreation() {
+        final Set<Integer> runningIndexes = new HashSet<>(Set.of(0));
+
+        final TodayMarker marker = new TodayMarker(TODAY, 0, runningIndexes);
+        runningIndexes.add(1);
+
+        assertThat(marker.isRunning(1)).isFalse();
+    }
+
+    @Test
+    void runningIndexesAreRequired() {
+        assertThatNullPointerException().isThrownBy(() -> new TodayMarker(TODAY, 0, null));
     }
 
     @Test
