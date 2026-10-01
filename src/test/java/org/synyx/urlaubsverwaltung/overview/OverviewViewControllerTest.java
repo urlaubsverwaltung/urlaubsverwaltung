@@ -5,13 +5,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +59,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
@@ -1351,13 +1355,47 @@ class OverviewViewControllerTest {
                 .containsExactly(endingToday.getStartDate(), nearestPast.getStartDate());
         }
 
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheCurrentApplication() throws Exception {
+
+            final Application nearestPast = application(TODAY.minusMonths(1), TODAY.minusMonths(1).plusDays(2));
+            final Application current = application(TODAY.minusDays(3), TODAY.plusDays(3));
+            final Application firstUpcoming = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(nearestPast, current, firstUpcoming));
+
+            assertThat(applicationOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 1, Set.of(1)));
+        }
+
+        @Test
+        void ensureTodayMarkerUsesTheSameDayAsTheSelectionOfTheShownApplications() throws Exception {
+
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                new OneDayPerReadClock(TODAY.atStartOfDay(UTC).toInstant()));
+
+            // one single day application per day, so the shown applications depend on the day the selection used
+            final List<Application> applications = TODAY.minusDays(10).datesUntil(TODAY.plusDays(30))
+                .map(day -> application(day, day))
+                .toList();
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(applications);
+
+            // three upcoming, the current and the nearest past application: the divider belongs in front of the current one
+            assertThat(applicationOverview.todayMarker().dividerIndex()).isEqualTo(3);
+            assertThat(applicationOverview.todayMarker().runningIndexes()).containsExactly(3);
+        }
+
         private ApplicationOverviewDto overviewFor(List<Application> applications) throws Exception {
             when(settingsService.getSettings()).thenReturn(new Settings());
             when(personService.getSignedInUser()).thenReturn(person);
             when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
             when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
             when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(applications);
-            stubWorkDaysCountForApplications(ONE);
+            stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
             final ModelAndView mav = perform(get("/web/person/1/overview")
                 .param("year", String.valueOf(TODAY.getYear()))
@@ -1409,9 +1447,124 @@ class OverviewViewControllerTest {
             final Application application = new Application();
             application.setVacationType(mock(VacationType.class));
             application.setPerson(person);
+            application.setStatus(ALLOWED);
             application.setStartDate(startDate);
             application.setEndDate(endDate);
             return application;
+        }
+    }
+
+    @Nested
+    class SickNotesTodayMarkerOnOverview {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
+        }
+
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheRunningSickNote() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+            stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
+
+            final SickNoteType sickNoteType = new SickNoteType();
+            sickNoteType.setCategory(SICK_NOTE);
+
+            final SickNote past = SickNote.builder()
+                .startDate(TODAY.minusMonths(1))
+                .endDate(TODAY.minusMonths(1).plusDays(1))
+                .status(SickNoteStatus.ACTIVE)
+                .sickNoteType(sickNoteType)
+                .person(person)
+                .build();
+            final SickNote running = SickNote.builder()
+                .startDate(TODAY.minusDays(1))
+                .endDate(TODAY.plusDays(1))
+                .status(SickNoteStatus.ACTIVE)
+                .sickNoteType(sickNoteType)
+                .person(person)
+                .build();
+            when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(List.of(past, running));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(TODAY.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final SickNotesOverviewDTO sickNotesOverview = (SickNotesOverviewDTO) mav.getModel().get("sickNotesOverview");
+            assertThat(sickNotesOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 0, Set.of(0)));
+        }
+    }
+
+    @Nested
+    class OvertimeTodayMarkerOnOverview {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
+        }
+
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheRunningOvertime() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+            final Overtime upcoming = overtime(1L, person, TODAY.plusDays(7), TODAY.plusDays(7));
+            final Overtime running = overtime(2L, person, TODAY.minusDays(1), TODAY.plusDays(1));
+            final Overtime past = overtime(3L, person, TODAY.minusMonths(1), TODAY.minusMonths(1));
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, TODAY.getYear())).thenReturn(List.of(past, running, upcoming));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(TODAY.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+            assertThat(overtimeOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 1, Set.of(1)));
+        }
+
+        @Test
+        void ensureNoTodayMarkerForOvertimesOfAnotherYear() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+            final LocalDate lastYear = TODAY.minusYears(1);
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, lastYear.getYear()))
+                .thenReturn(List.of(overtime(1L, person, lastYear, lastYear)));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(lastYear.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+            assertThat(overtimeOverview.todayMarker()).isEqualTo(TodayMarker.none());
+        }
+
+        private static Overtime overtime(long id, Person person, LocalDate startDate, LocalDate endDate) {
+            return new Overtime(new OvertimeId(id), new PersonId(person.getId()), new DateRange(startDate, endDate),
+                Duration.ofHours(1), EXTERNAL, java.time.Instant.now());
         }
     }
 
@@ -1506,5 +1659,34 @@ class OverviewViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    /**
+     * Moves on by one day every time it is read, like a request running over midnight between two reads.
+     */
+    private static final class OneDayPerReadClock extends Clock {
+
+        private Instant instant;
+
+        private OneDayPerReadClock(Instant start) {
+            this.instant = start;
+        }
+
+        @Override
+        public ZoneId getZone() {
+            return UTC;
+        }
+
+        @Override
+        public Clock withZone(ZoneId zone) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Instant instant() {
+            final Instant current = instant;
+            instant = instant.plus(Duration.ofDays(1));
+            return current;
+        }
     }
 }

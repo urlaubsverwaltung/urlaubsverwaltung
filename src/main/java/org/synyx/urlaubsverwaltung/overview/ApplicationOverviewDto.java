@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.overview;
 
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
+
 import java.util.List;
 
 record ApplicationOverviewDto(
@@ -9,6 +11,7 @@ record ApplicationOverviewDto(
     boolean canAddApplicationForLeaveForMyself,
     boolean canAddApplicationForLeaveForAnotherUser,
     int numberOfShownApplications,
-    int numberOfTotalApplications
+    int numberOfTotalApplications,
+    TodayMarker todayMarker
 ) {
 }

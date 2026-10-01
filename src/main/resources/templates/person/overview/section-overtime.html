@@ -44,59 +44,82 @@
       <div class="mb-4 @5xl/main:mb-12">
         <table class="list-table selectable-table text-sm">
           <tbody>
-            <tr
-              th:each="record,loopStatus : ${overtimeOverviewInformation.shownOvertimes}"
-              th:with="recordDetailsUrl=${'/web/overtime/__${record.id}__'}"
-              th:onclick="|navigate('__${recordDetailsUrl}__');|"
-            >
-              <td class="w-12 text-center">
-                <th:block th:if="${record.negative}">
-                  <span th:replace="~{icon/arrow-down::svg(className='w-5 h-5')}"></span>
-                </th:block>
-                <th:block th:if="${record.positive}">
-                  <span th:replace="~{icon/arrow-up::svg(className='w-5 h-5')}"></span>
-                </th:block>
-              </td>
-              <td class="w-30 text-center">
-                <span th:text="${{record.duration}}"></span>
-              </td>
-              <td class="py-4">
-                <span class="flex items-center gap-2">
-                  <a th:text="#{overtime.link.overtime}" class="text-lg mb-1" th:href="@{__${recordDetailsUrl}__}"></a>
-                  <span
-                    th:if="${record.isExternal}"
-                    class="text-gray-400 dark:text-zinc-500"
-                    th:data-title="#{overtime.details.isExternal}"
-                  >
-                    <span th:replace="~{icon/cloud-check::svg(className='w-4 h-4')}"></span>
-                  </span>
-                </span>
-                <div>
-                  <th:block th:text="#{absence.period.for}" />
-                  <th:block
-                    th:replace="~{fragments/date-range::date-range-all(from=${record.startDate}, to=${record.endDate})}"
-                  ></th:block>
-                </div>
-              </td>
-              <td class="hidden @3xl/main:table-cell">
-                <div class="opacity-100! flex items-center justify-end">
-                  <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
+            <th:block th:each="record,loopStatus : ${overtimeOverviewInformation.shownOvertimes}">
+              <th:block th:if="${overtimeOverviewInformation.todayMarker.isDividerBefore(loopStatus.index)}">
+                <tr
+                  th:replace="~{fragments/today-marker::row(marker=${overtimeOverviewInformation.todayMarker}, colspan=4)}"
+                ></tr>
+              </th:block>
+              <tr
+                th:with="recordDetailsUrl=${'/web/overtime/__${record.id}__'}"
+                th:onclick="|navigate('__${recordDetailsUrl}__');|"
+              >
+                <td class="w-12 text-center">
+                  <th:block th:if="${record.negative}">
+                    <span th:replace="~{icon/arrow-down::svg(className='w-5 h-5')}"></span>
+                  </th:block>
+                  <th:block th:if="${record.positive}">
+                    <span th:replace="~{icon/arrow-up::svg(className='w-5 h-5')}"></span>
+                  </th:block>
+                </td>
+                <td class="w-30 text-center">
+                  <span th:text="${{record.duration}}"></span>
+                </td>
+                <td class="py-4">
+                  <span class="flex items-center gap-2">
                     <a
-                      th:if="${record.isAllowedToEdit}"
-                      class="button flex-1 justify-center"
-                      th:href="@{/web/overtime/{record}/edit (record=${record.id})}"
+                      th:text="#{overtime.link.overtime}"
+                      class="text-lg mb-1"
+                      th:href="@{__${recordDetailsUrl}__}"
+                    ></a>
+                    <span
+                      th:if="${overtimeOverviewInformation.todayMarker.isRunning(loopStatus.index)}"
+                      class="text-xs font-semibold text-zinc-600 dark:text-zinc-300"
+                      th:text="#{overview.today.running}"
+                      >läuft gerade</span
                     >
-                      <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
-                      <span
-                        th:text="#{action.edit}"
-                        class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
-                        >Edit</span
-                      >
-                    </a>
+                    <span
+                      th:if="${record.isExternal}"
+                      class="text-gray-400 dark:text-zinc-500"
+                      th:data-title="#{overtime.details.isExternal}"
+                    >
+                      <span th:replace="~{icon/cloud-check::svg(className='w-4 h-4')}"></span>
+                    </span>
                   </span>
-                </div>
-              </td>
-            </tr>
+                  <div>
+                    <th:block th:text="#{absence.period.for}" />
+                    <th:block
+                      th:replace="~{fragments/date-range::date-range-all(from=${record.startDate}, to=${record.endDate})}"
+                    ></th:block>
+                  </div>
+                </td>
+                <td class="hidden @3xl/main:table-cell">
+                  <div class="opacity-100! flex items-center justify-end">
+                    <span data-grid-ref="action-buttons" class="flex flex-row gap-1">
+                      <a
+                        th:if="${record.isAllowedToEdit}"
+                        class="button flex-1 justify-center"
+                        th:href="@{/web/overtime/{record}/edit (record=${record.id})}"
+                      >
+                        <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 shrink-0')}"></svg>
+                        <span
+                          th:text="#{action.edit}"
+                          class="ml-2 @lg/main:ml-0 @lg/main:sr-only @2xl/main:not-sr-only @2xl/main:ml-2 @3xl/main:sr-only @3xl/main:ml-0 @5xl/main:not-sr-only @5xl/main:ml-2"
+                          >Edit</span
+                        >
+                      </a>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </th:block>
+            <th:block
+              th:if="${overtimeOverviewInformation.todayMarker.isDividerBefore(#lists.size(overtimeOverviewInformation.shownOvertimes))}"
+            >
+              <tr
+                th:replace="~{fragments/today-marker::row(marker=${overtimeOverviewInformation.todayMarker}, colspan=4)}"
+              ></tr>
+            </th:block>
           </tbody>
         </table>
 
