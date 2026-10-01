@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -37,13 +38,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
 import static java.math.BigDecimal.ONE;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
+import static java.time.Month.MAY;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.me.ApplicationsViewController.MY_APPLICATIONS_ANONYMOUS_PATH;
 import static org.synyx.urlaubsverwaltung.application.me.ApplicationsViewController.MY_APPLICATIONS_PATH;
@@ -218,6 +223,7 @@ class ApplicationsViewControllerTest {
         final Application application = new Application();
         application.setId(99L);
         application.setPerson(person);
+        application.setStatus(ALLOWED);
         application.setStartDate(LocalDate.of(2022, JANUARY, 10));
         application.setEndDate(LocalDate.of(2022, JANUARY, 12));
 
@@ -230,7 +236,7 @@ class ApplicationsViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(
             any(LocalDate.class), any(LocalDate.class), eq(person)
         )).thenReturn(List.of(application));
-        stubWorkDaysCountForApplications();
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
 
         perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "21")).locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -841,6 +847,79 @@ class ApplicationsViewControllerTest {
     }
 
     // ---- HELPER METHODS ----
+
+    @Test
+    void ensureTodayMarkerIsInFrontOfTheRunningApplication() throws Exception {
+        final Person person = personAllowedToSeeOwnApplications(30L);
+
+        final Application past = application(1L, person, ALLOWED, LocalDate.of(2022, MAY, 2), LocalDate.of(2022, MAY, 3));
+        final Application running = application(2L, person, ALLOWED, LocalDate.of(2022, JUNE, 13), LocalDate.of(2022, JUNE, 17));
+        final Application upcoming = application(3L, person, ALLOWED, LocalDate.of(2022, JULY, 4), LocalDate.of(2022, JULY, 8));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
+            .thenReturn(List.of(past, running, upcoming));
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "30")).locale(Locale.GERMANY))
+            .andExpect(model().attribute("applicationsTodayMarker",
+                equalTo(new TodayMarker(LocalDate.of(2022, JUNE, 15), 1, Set.of(1)))));
+    }
+
+    @Test
+    void ensureCancelledApplicationSpanningTodayIsNotRunning() throws Exception {
+        final Person person = personAllowedToSeeOwnApplications(31L);
+
+        final Application cancelled = application(1L, person, CANCELLED, LocalDate.of(2022, JUNE, 13), LocalDate.of(2022, JUNE, 17));
+        final Application past = application(2L, person, ALLOWED, LocalDate.of(2022, MAY, 2), LocalDate.of(2022, MAY, 3));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
+            .thenReturn(List.of(cancelled, past));
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "31")).locale(Locale.GERMANY))
+            .andExpect(model().attribute("applicationsTodayMarker",
+                equalTo(new TodayMarker(LocalDate.of(2022, JUNE, 15), 0, Set.of()))));
+    }
+
+    @Test
+    void ensureNoTodayMarkerForAnotherYear() throws Exception {
+        final Person person = personAllowedToSeeOwnApplications(32L);
+
+        final Application lastYear = application(1L, person, ALLOWED, LocalDate.of(2021, JUNE, 14), LocalDate.of(2021, JUNE, 16));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
+            .thenReturn(List.of(lastYear));
+        stubWorkDaysCountForApplicationsWithUsedDaysSummary();
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "32")).param("year", "2021").locale(Locale.GERMANY))
+            .andExpect(model().attribute("applicationsTodayMarker", equalTo(TodayMarker.none())));
+    }
+
+    private Person personAllowedToSeeOwnApplications(long id) {
+        final Person person = new Person();
+        person.setId(id);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(id)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of());
+        return person;
+    }
+
+    private Application application(Long id, Person person, ApplicationStatus status, LocalDate startDate, LocalDate endDate) {
+        final Application application = new Application();
+        application.setId(id);
+        application.setPerson(person);
+        application.setStatus(status);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+
+        final VacationType<?> vacationType = mock(VacationType.class);
+        when(vacationType.getLabel(any(Locale.class))).thenReturn("label");
+        when(vacationType.getCategory()).thenReturn(HOLIDAY);
+        when(vacationType.getColor()).thenReturn(ORANGE);
+        application.setVacationType(vacationType);
+
+        return application;
+    }
 
     private Application createApplication(Long id, Person person, ApplicationStatus status, boolean requiresApprovalToCancel) {
         final Application application = new Application();
