@@ -73,6 +73,12 @@ tr.inactive td > * {
 .list-table tr.today-marker td {
   padding-top: --spacing(1);
   padding-bottom: --spacing(1);
+  border-top: none;
+  border-bottom: none;
+}
+
+.list-table tr.today-marker + tr td {
+  border-top: none;
 }
 
 .selectable-table tr.today-marker:hover td {
