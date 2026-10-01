@@ -286,6 +286,15 @@
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
+                <a
+                  th:if="${canEditAccounts}"
+                  th:href="@{/web/person/__${person.id}__/vacation-certificate?year=__${selectedYear}__}"
+                  class="icon-link"
+                  data-test-id="vacation-certificate-link"
+                >
+                  <svg th:replace="~{icon/file-text::svg(className='w-5 h-5')}"></svg>&nbsp;
+                  <span th:text="#{vacationcertificate.link}"></span>
+                </a>
               </th:block>
             </div>
             <div
