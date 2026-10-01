@@ -73,6 +73,33 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void ensureFormerBossWithNotificationGetsNoMailNewPersonIsCreated() {
+
+        // the role BOSS was removed, the notification is still stored
+        final Person formerBoss = personService.create(
+            "formerBoss",
+            "Bruno", "Boss",
+            "former.boss@example.org",
+            List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL),
+            List.of(USER)
+        );
+
+        final Person office = personService.create(
+            "office",
+            "Marlene", "Muster",
+            "office@example.org",
+            List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL),
+            List.of(USER, OFFICE)
+        );
+
+        // both are recipients of the same mail - once office got it, the former boss would have got it as well
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
+        assertThat(greenMail.getReceivedMessagesForDomain(formerBoss.getEmail())).isEmpty();
+    }
+
+    @Test
     void ensureSendsPersonGainedPermissionsNotification() throws MessagingException, IOException {
 
         final Person person = personService.create(

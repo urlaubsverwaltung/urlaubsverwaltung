@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailAttachment;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -43,6 +44,7 @@ public class TurnOfTheYearAccountUpdaterService {
     private final AccountInteractionService accountInteractionService;
     private final VacationDaysReminderService vacationDaysReminderService;
     private final MailService mailService;
+    private final MailRecipientService mailRecipientService;
     private final PersonBasedataService personBasedataService;
     private final DepartmentService departmentService;
     private final RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService;
@@ -53,7 +55,8 @@ public class TurnOfTheYearAccountUpdaterService {
         PersonService personService, AccountService accountService,
         AccountInteractionService accountInteractionService,
         VacationDaysReminderService vacationDaysReminderService,
-        MailService mailService, PersonBasedataService personBasedataService, DepartmentService departmentService,
+        MailService mailService, MailRecipientService mailRecipientService,
+        PersonBasedataService personBasedataService, DepartmentService departmentService,
         RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService, Clock clock
     ) {
         this.personService = personService;
@@ -61,6 +64,7 @@ public class TurnOfTheYearAccountUpdaterService {
         this.accountInteractionService = accountInteractionService;
         this.vacationDaysReminderService = vacationDaysReminderService;
         this.mailService = mailService;
+        this.mailRecipientService = mailRecipientService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
         this.remainingVacationDaysCsvExportService = remainingVacationDaysCsvExportService;
@@ -109,10 +113,7 @@ public class TurnOfTheYearAccountUpdaterService {
      */
     private void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
-        // a former office person may still have the notification stored
-        final List<Person> recipients = personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL).stream()
-            .filter(person -> NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL.isValidWith(person.getPermissions()))
-            .toList();
+        final List<Person> recipients = mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL);
         if (recipients.isEmpty()) {
             return;
         }

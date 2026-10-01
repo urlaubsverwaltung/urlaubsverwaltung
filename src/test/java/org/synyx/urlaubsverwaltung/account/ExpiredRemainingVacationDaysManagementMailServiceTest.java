@@ -11,10 +11,10 @@ import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailAttachment;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -48,7 +48,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceTest {
     private ExpiredRemainingVacationDaysManagementMailService sut;
 
     @Mock
-    private PersonService personService;
+    private MailRecipientService mailRecipientService;
     @Mock
     private PersonBasedataService personBasedataService;
     @Mock
@@ -61,7 +61,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceTest {
     @BeforeEach
     void setUp() {
         final Clock clock = Clock.fixed(Instant.parse("2027-04-01T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new ExpiredRemainingVacationDaysManagementMailService(personService, personBasedataService, departmentService, csvExportService, mailService, clock);
+        sut = new ExpiredRemainingVacationDaysManagementMailService(mailRecipientService, personBasedataService, departmentService, csvExportService, mailService, clock);
     }
 
     @Test
@@ -73,10 +73,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceTest {
         final ExpiredRemainingVacationDays frankaExpired = new ExpiredRemainingVacationDays(account(franka), new BigDecimal("3"), ONE, new BigDecimal("12"));
 
         final Person office = office(3L);
-        // still has the notification stored, but is no office anymore
-        final Person formerOffice = person(4L, "Former", "Office");
-        formerOffice.setPermissions(List.of(USER));
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).thenReturn(List.of(office, formerOffice));
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).thenReturn(List.of(office));
 
         final PersonBasedata frankaBasedata = new PersonBasedata(new PersonId(1L), "42", "");
         when(personBasedataService.getBasedataByPersonId(List.of(1L, 2L))).thenReturn(Map.of(new PersonId(1L), frankaBasedata));
@@ -109,7 +106,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceTest {
     @Test
     void ensureNoMailWithoutOfficeHavingTheNotification() {
 
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).thenReturn(List.of());
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).thenReturn(List.of());
 
         final Person franka = person(1L, "Franka", "Potente");
         sut.sendExpiredRemainingVacationDaysNotification(List.of(new ExpiredRemainingVacationDays(account(franka), ONE, ZERO, ONE)));

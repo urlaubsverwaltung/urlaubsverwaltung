@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailAttachment;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -57,6 +58,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
     @Mock
     private MailService mailService;
     @Mock
+    private MailRecipientService mailRecipientService;
+    @Mock
     private VacationDaysReminderService vacationDaysReminderService;
     @Mock
     private PersonBasedataService personBasedataService;
@@ -67,7 +70,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, vacationDaysReminderService, mailService, personBasedataService, departmentService, remainingVacationDaysCsvExportService, clock);
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, vacationDaysReminderService, mailService, mailRecipientService, personBasedataService, departmentService, remainingVacationDaysCsvExportService, clock);
     }
 
     @Test
@@ -98,7 +101,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
             .thenReturn(newAccount);
 
         final Person office = anOffice();
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(office));
 
         sut.updateAccountsForNextPeriod();
 
@@ -146,7 +149,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         when(remainingVacationDaysCsvExportService.generateCSV(currentYear, GERMAN, List.of(RemainingVacationDaysCsvRow.of(thisYear, basedata, List.of("Entwicklung")))))
             .thenReturn(new CSVFile("Resturlaub_%d_de.csv".formatted(CURRENT_YEAR), csv));
 
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
 
         sut.updateAccountsForNextPeriod();
 
@@ -165,7 +168,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         when(personService.getActivePersons()).thenReturn(List.of());
         when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
 
         // no rows are passed to the export: the csv consists of the header only
         final FilterPeriod currentYear = new FilterPeriod(Year.of(CURRENT_YEAR).atDay(1), Year.of(CURRENT_YEAR).atMonth(12).atEndOfMonth());
@@ -184,27 +187,12 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         when(personService.getActivePersons()).thenReturn(List.of());
         when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of());
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of());
 
         sut.updateAccountsForNextPeriod();
 
         verifyNoInteractions(mailService);
         verify(vacationDaysReminderService).remindForRemainingVacationDays();
-    }
-
-    @Test
-    void ensureNoMailToFormerOfficeStillHavingTheNotification() {
-
-        final Person formerOffice = new Person("office", "Office", "Olga", "office@example.org");
-        formerOffice.setPermissions(List.of(USER));
-
-        when(personService.getActivePersons()).thenReturn(List.of());
-        when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(formerOffice));
-
-        sut.updateAccountsForNextPeriod();
-
-        verifyNoInteractions(mailService);
     }
 
     private static Person anOffice() {

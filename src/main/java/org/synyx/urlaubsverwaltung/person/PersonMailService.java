@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.person;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
@@ -16,11 +17,11 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 public class PersonMailService {
 
     private final MailService mailService;
-    private final PersonService personService;
+    private final MailRecipientService mailRecipientService;
 
-    PersonMailService(MailService mailService, PersonService personService) {
+    PersonMailService(MailService mailService, MailRecipientService mailRecipientService) {
         this.mailService = mailService;
-        this.personService = personService;
+        this.mailRecipientService = mailRecipientService;
     }
 
     @EventListener
@@ -31,7 +32,7 @@ public class PersonMailService {
         model.put("personNiceName", event.getPersonNiceName());
 
         final Mail toOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL))
+            .withRecipient(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL))
             .withSubject("subject.person.created")
             .withTemplate("person_created_office", _ -> model)
             .build();

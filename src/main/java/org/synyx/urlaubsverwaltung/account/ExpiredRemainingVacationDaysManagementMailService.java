@@ -5,10 +5,10 @@ import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailAttachment;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -27,7 +27,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 @Service
 class ExpiredRemainingVacationDaysManagementMailService {
 
-    private final PersonService personService;
+    private final MailRecipientService mailRecipientService;
     private final PersonBasedataService personBasedataService;
     private final DepartmentService departmentService;
     private final ExpiredRemainingVacationDaysCsvExportService csvExportService;
@@ -35,10 +35,10 @@ class ExpiredRemainingVacationDaysManagementMailService {
     private final Clock clock;
 
     ExpiredRemainingVacationDaysManagementMailService(
-        PersonService personService, PersonBasedataService personBasedataService, DepartmentService departmentService,
+        MailRecipientService mailRecipientService, PersonBasedataService personBasedataService, DepartmentService departmentService,
         ExpiredRemainingVacationDaysCsvExportService csvExportService, MailService mailService, Clock clock
     ) {
-        this.personService = personService;
+        this.mailRecipientService = mailRecipientService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
         this.csvExportService = csvExportService;
@@ -48,10 +48,7 @@ class ExpiredRemainingVacationDaysManagementMailService {
 
     void sendExpiredRemainingVacationDaysNotification(List<ExpiredRemainingVacationDays> expiredRemainingVacationDays) {
 
-        // a former office person may still have the notification stored
-        final List<Person> recipients = personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL).stream()
-            .filter(person -> NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.isValidWith(person.getPermissions()))
-            .toList();
+        final List<Person> recipients = mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
         if (recipients.isEmpty()) {
             return;
         }

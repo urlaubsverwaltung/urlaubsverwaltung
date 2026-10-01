@@ -497,4 +497,37 @@ class MailRecipientServiceImplTest {
         final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         assertThat(colleagues).containsExactly(colleague);
     }
+
+    @Test
+    void ensureRecipientsWithNotificationAreThePersonsWhoseRolesAllowIt() {
+
+        final Person boss = new Person("boss", "Boss", "Bruno", "boss@example.org");
+        boss.setPermissions(List.of(USER, BOSS));
+        boss.setNotifications(List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
+
+        final Person office = new Person("office", "Office", "Olga", "office@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
+
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)).thenReturn(List.of(boss, office));
+
+        final List<Person> recipients = sut.getRecipientsWith(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
+        assertThat(recipients).containsExactly(boss, office);
+
+        // the mail is not about a single person, departments do not matter
+        verifyNoInteractions(departmentService, userNotificationSettingsService, responsiblePersonService);
+    }
+
+    @Test
+    void ensureRecipientsWithNotificationExcludeFormerBossStillHavingTheNotification() {
+
+        final Person formerBoss = new Person("boss", "Boss", "Bruno", "boss@example.org");
+        formerBoss.setPermissions(List.of(USER));
+        formerBoss.setNotifications(List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
+
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)).thenReturn(List.of(formerBoss));
+
+        final List<Person> recipients = sut.getRecipientsWith(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
+        assertThat(recipients).isEmpty();
+    }
 }

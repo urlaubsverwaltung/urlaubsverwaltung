@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
@@ -29,11 +30,11 @@ class PersonMailServiceTest {
     @Mock
     private MailService mailService;
     @Mock
-    private PersonService personService;
+    private MailRecipientService mailRecipientService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonMailService(mailService, personService);
+        sut = new PersonMailService(mailService, mailRecipientService);
     }
 
     @Test
@@ -41,7 +42,7 @@ class PersonMailServiceTest {
 
         final Person personWithNotification = new Person("peter", "Mahler", "Peter", "mahler@example.org");
         personWithNotification.setNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)).thenReturn(List.of(personWithNotification));
+        when(mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)).thenReturn(List.of(personWithNotification));
 
         final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         createdPerson.setId(1L);
