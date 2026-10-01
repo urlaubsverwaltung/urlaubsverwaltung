@@ -244,6 +244,9 @@
       width: anchor-size(width);
       position-area: bottom;
       top: --spacing(1);
+      /* the gap `.popover-menu` keeps to the edge of the screen widens the margin box, which is
+       * what gets centered - the popover would sit half of it left of its button. */
+      margin-inline-end: 0;
     }
   }
 
