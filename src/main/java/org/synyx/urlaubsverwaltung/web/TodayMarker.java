@@ -22,6 +22,10 @@ public record TodayMarker(LocalDate today, int dividerIndex, Set<Integer> runnin
 
     private static final TodayMarker NONE = new TodayMarker(null, -1, Set.of());
 
+    public TodayMarker {
+        runningIndexes = Set.copyOf(runningIndexes);
+    }
+
     public static TodayMarker none() {
         return NONE;
     }
