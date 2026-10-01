@@ -22,6 +22,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_TIROL
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_VORARLBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_WIEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BELGIUM;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BULGARIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.FINLAND;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.FINLAND_ALAND;
@@ -53,6 +54,9 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.MALTA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NETHERLANDS;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.POLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.PORTUGAL;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.PORTUGAL_AZORES;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.PORTUGAL_MADEIRA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.ROMANIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_ANDALUCIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_ARAGON;
@@ -230,6 +234,12 @@ class FederalStateTest {
 
             Arguments.of(ROMANIA, "ro", null),
 
+            Arguments.of(PORTUGAL, "pt", null),
+            Arguments.of(PORTUGAL_AZORES, "20", null),
+            Arguments.of(PORTUGAL_MADEIRA, "30", null),
+
+            Arguments.of(BULGARIA, "bg", null),
+
             Arguments.of(USA_MARYLAND, "md", null),
             Arguments.of(USA_VIRGINIA, "va", null),
             Arguments.of(USA_WASHINGTON_DC, "dc", null)
@@ -354,6 +364,12 @@ class FederalStateTest {
 
             Arguments.of(ROMANIA, "ro"),
 
+            Arguments.of(PORTUGAL, "pt"),
+            Arguments.of(PORTUGAL_AZORES, "pt"),
+            Arguments.of(PORTUGAL_MADEIRA, "pt"),
+
+            Arguments.of(BULGARIA, "bg"),
+
             Arguments.of(USA_MARYLAND, "us"),
             Arguments.of(USA_VIRGINIA, "us"),
             Arguments.of(USA_WASHINGTON_DC, "us")
@@ -384,9 +400,11 @@ class FederalStateTest {
         final List<FederalState> plFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "pl".equals(federalState.getCountry())).toList();
         final List<FederalState> fiFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "fi".equals(federalState.getCountry())).toList();
         final List<FederalState> roFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ro".equals(federalState.getCountry())).toList();
+        final List<FederalState> ptFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "pt".equals(federalState.getCountry())).toList();
+        final List<FederalState> bgFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "bg".equals(federalState.getCountry())).toList();
         final List<FederalState> usFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "us".equals(federalState.getCountry())).toList();
 
-        assertThat(federalStatesTypesByCountry).hasSize(16)
+        assertThat(federalStatesTypesByCountry).hasSize(18)
             .contains(entry("de", deFederalStates))
             .contains(entry("at", atFederalStates))
             .contains(entry("ch", chFederalStates))
@@ -402,6 +420,8 @@ class FederalStateTest {
             .contains(entry("pl", plFederalStates))
             .contains(entry("fi", fiFederalStates))
             .contains(entry("ro", roFederalStates))
+            .contains(entry("pt", ptFederalStates))
+            .contains(entry("bg", bgFederalStates))
             .contains(entry("us", usFederalStates));
     }
 }
