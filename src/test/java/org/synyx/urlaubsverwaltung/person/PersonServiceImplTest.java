@@ -623,7 +623,7 @@ class PersonServiceImplTest {
         final Person createdPerson = sut.create("muster", "Marlene", "Muster", "muster@example.org");
 
         // the notification is for office only, it is enabled when the person becomes office
-        assertThat(createdPerson.getNotifications()).doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        assertThat(createdPerson.getNotifications()).isNotEmpty().doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 
     @Test

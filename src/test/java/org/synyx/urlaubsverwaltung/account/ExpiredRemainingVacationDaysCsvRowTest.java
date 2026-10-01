@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExpiredRemainingVacationDaysCsvRowTest {
@@ -22,7 +23,7 @@ class ExpiredRemainingVacationDaysCsvRowTest {
 
         assertThat(ExpiredRemainingVacationDaysCsvRow.of(expired, basedata, List.of("Entwicklung")))
             .isEqualTo(new ExpiredRemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of("Entwicklung"),
-                LocalDate.of(2027, 4, 1), new BigDecimal("3"), ONE, new BigDecimal("12")));
+                LocalDate.of(2027, APRIL, 1), new BigDecimal("3"), ONE, new BigDecimal("12")));
     }
 
     @Test
@@ -46,7 +47,7 @@ class ExpiredRemainingVacationDaysCsvRowTest {
         final Person person = new Person("franka", "Potente", "Franka", "franka@example.org");
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2027, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2027, APRIL, 1));
         return new ExpiredRemainingVacationDays(account, new BigDecimal("3"), ONE, new BigDecimal("12"));
     }
 }

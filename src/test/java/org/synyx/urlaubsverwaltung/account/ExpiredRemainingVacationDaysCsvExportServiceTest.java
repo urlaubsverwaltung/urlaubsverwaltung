@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
+import static java.time.Month.APRIL;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ExpiredRemainingVacationDaysCsvExportServiceTest {
 
-    private static final LocalDate APRIL_FIRST = LocalDate.of(2027, 4, 1);
+    private static final LocalDate APRIL_FIRST = LocalDate.of(2027, APRIL, 1);
     private static final FilterPeriod RUN_DAY = new FilterPeriod(APRIL_FIRST, APRIL_FIRST);
 
     private ExpiredRemainingVacationDaysCsvExportService sut;

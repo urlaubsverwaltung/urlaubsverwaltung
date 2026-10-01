@@ -32,6 +32,7 @@ import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
@@ -112,7 +113,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceIT extends SingleTenantTe
     private static Account account(Person person) {
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2027, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2027, APRIL, 1));
         return account;
     }
 }

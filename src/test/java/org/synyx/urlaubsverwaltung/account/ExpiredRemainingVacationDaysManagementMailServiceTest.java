@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -42,7 +43,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class ExpiredRemainingVacationDaysManagementMailServiceTest {
 
-    private static final LocalDate TODAY = LocalDate.of(2027, 4, 1);
+    private static final LocalDate TODAY = LocalDate.of(2027, APRIL, 1);
 
     private ExpiredRemainingVacationDaysManagementMailService sut;
 
@@ -131,7 +132,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceTest {
     private static Account account(Person person) {
         final Account account = new Account();
         account.setPerson(person);
-        account.setExpiryDateLocally(LocalDate.of(2027, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2027, APRIL, 1));
         return account;
     }
 }
