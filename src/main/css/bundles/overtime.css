@@ -318,4 +318,9 @@
       }
     }
   }
+
+  > li.today-marker {
+    padding: --spacing(1);
+    grid-template-rows: auto;
+  }
 }
