@@ -1507,6 +1507,68 @@ class OverviewViewControllerTest {
     }
 
     @Nested
+    class OvertimeTodayMarkerOnOverview {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
+        }
+
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheRunningOvertime() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+            final Overtime upcoming = overtime(1L, person, TODAY.plusDays(7), TODAY.plusDays(7));
+            final Overtime running = overtime(2L, person, TODAY.minusDays(1), TODAY.plusDays(1));
+            final Overtime past = overtime(3L, person, TODAY.minusMonths(1), TODAY.minusMonths(1));
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, TODAY.getYear())).thenReturn(List.of(past, running, upcoming));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(TODAY.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+            assertThat(overtimeOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 1, Set.of(1)));
+        }
+
+        @Test
+        void ensureNoTodayMarkerForOvertimesOfAnotherYear() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+            final LocalDate lastYear = TODAY.minusYears(1);
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, lastYear.getYear()))
+                .thenReturn(List.of(overtime(1L, person, lastYear, lastYear)));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(lastYear.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final OvertimeOverviewDto overtimeOverview = (OvertimeOverviewDto) mav.getModel().get("overtimeOverviewInformation");
+            assertThat(overtimeOverview.todayMarker()).isEqualTo(TodayMarker.none());
+        }
+
+        private static Overtime overtime(long id, Person person, LocalDate startDate, LocalDate endDate) {
+            return new Overtime(new OvertimeId(id), new PersonId(person.getId()), new DateRange(startDate, endDate),
+                Duration.ofHours(1), EXTERNAL, java.time.Instant.now());
+        }
+    }
+
+    @Nested
     class EntriesClosestToToday {
 
         private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
