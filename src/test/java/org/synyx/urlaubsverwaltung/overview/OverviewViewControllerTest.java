@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -1365,6 +1367,28 @@ class OverviewViewControllerTest {
             assertThat(applicationOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 1, Set.of(1)));
         }
 
+        @Test
+        void ensureTodayMarkerUsesTheSameDayAsTheSelectionOfTheShownApplications() throws Exception {
+
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                new OneDayPerReadClock(TODAY.atStartOfDay(UTC).toInstant()));
+
+            // one single day application per day, so the shown applications depend on the day the selection used
+            final List<Application> applications = TODAY.minusDays(10).datesUntil(TODAY.plusDays(30))
+                .map(day -> application(day, day))
+                .toList();
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(applications);
+
+            // three upcoming, the current and the nearest past application: the divider belongs in front of the current one
+            assertThat(applicationOverview.todayMarker().dividerIndex()).isEqualTo(3);
+            assertThat(applicationOverview.todayMarker().runningIndexes()).containsExactly(3);
+        }
+
         private ApplicationOverviewDto overviewFor(List<Application> applications) throws Exception {
             when(settingsService.getSettings()).thenReturn(new Settings());
             when(personService.getSignedInUser()).thenReturn(person);
@@ -1573,5 +1597,34 @@ class OverviewViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    /**
+     * Moves on by one day every time it is read, like a request running over midnight between two reads.
+     */
+    private static final class OneDayPerReadClock extends Clock {
+
+        private Instant instant;
+
+        private OneDayPerReadClock(Instant start) {
+            this.instant = start;
+        }
+
+        @Override
+        public ZoneId getZone() {
+            return UTC;
+        }
+
+        @Override
+        public Clock withZone(ZoneId zone) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Instant instant() {
+            final Instant current = instant;
+            instant = instant.plus(Duration.ofDays(1));
+            return current;
+        }
     }
 }
