@@ -3,10 +3,17 @@ package org.synyx.urlaubsverwaltung.account;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailAttachment;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -36,6 +43,9 @@ public class TurnOfTheYearAccountUpdaterService {
     private final AccountInteractionService accountInteractionService;
     private final VacationDaysReminderService vacationDaysReminderService;
     private final MailService mailService;
+    private final PersonBasedataService personBasedataService;
+    private final DepartmentService departmentService;
+    private final RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService;
     private final Clock clock;
 
     @Autowired
@@ -43,13 +53,17 @@ public class TurnOfTheYearAccountUpdaterService {
         PersonService personService, AccountService accountService,
         AccountInteractionService accountInteractionService,
         VacationDaysReminderService vacationDaysReminderService,
-        MailService mailService, Clock clock
+        MailService mailService, PersonBasedataService personBasedataService, DepartmentService departmentService,
+        RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService, Clock clock
     ) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.vacationDaysReminderService = vacationDaysReminderService;
         this.mailService = mailService;
+        this.personBasedataService = personBasedataService;
+        this.departmentService = departmentService;
+        this.remainingVacationDaysCsvExportService = remainingVacationDaysCsvExportService;
         this.clock = clock;
     }
 
@@ -103,12 +117,34 @@ public class TurnOfTheYearAccountUpdaterService {
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
         final String templateName = "account_cron_updated_accounts_turn_of_the_year";
 
+        final List<RemainingVacationDaysCsvRow> csvRows = toCsvRows(updatedAccounts);
+        final Year year = Year.now(clock);
+        final FilterPeriod newYear = new FilterPeriod(year.atDay(1), year.atMonth(12).atEndOfMonth());
+
         // send email to office for printing statistic
         final Mail mailToOffice = Mail.builder()
             .withRecipient(personService.getActivePersonsByRole(OFFICE))
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, _ -> model)
+            .withAttachment(locale -> {
+                final CSVFile csvFile = remainingVacationDaysCsvExportService.generateCSV(newYear, locale, csvRows);
+                return new MailAttachment(csvFile.fileName(), csvFile.resource());
+            })
             .build();
         mailService.send(mailToOffice);
+    }
+
+    private List<RemainingVacationDaysCsvRow> toCsvRows(List<Account> accounts) {
+
+        final List<Person> persons = accounts.stream().map(Account::getPerson).toList();
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(persons.stream().map(Person::getId).toList());
+        final Map<PersonId, List<String>> departmentNamesByPersonId = departmentService.getDepartmentNamesByMembers(persons);
+
+        return accounts.stream()
+            .map(account -> {
+                final PersonId personId = account.getPerson().getIdAsPersonId();
+                return RemainingVacationDaysCsvRow.of(account, basedataByPersonId.get(personId), departmentNamesByPersonId.get(personId));
+            })
+            .toList();
     }
 }

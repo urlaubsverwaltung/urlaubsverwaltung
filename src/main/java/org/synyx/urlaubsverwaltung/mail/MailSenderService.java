@@ -94,7 +94,7 @@ class MailSenderService {
             helper.setText(text);
 
             for (MailAttachment mailAttachment : mailAttachments) {
-                helper.addAttachment(mailAttachment.getName(), mailAttachment.getContent());
+                helper.addAttachment(mailAttachment.name(), mailAttachment.content());
             }
 
             mailSender.send(mimeMessage);

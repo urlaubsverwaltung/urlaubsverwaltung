@@ -84,7 +84,7 @@ class MailServiceImpl implements MailService {
         final String body = emailTemplateEngine.process(mail.getTemplateName(), context);
 
         if (email != null) {
-            mail.getMailAttachments().ifPresentOrElse(
+            mail.getMailAttachments(effectiveLocale).ifPresentOrElse(
                 mailAttachments -> mailSenderService.sendEmail(from, replyTo, email, subject, body, mailAttachments),
                 () -> mailSenderService.sendEmail(from, replyTo, email, subject, body)
             );

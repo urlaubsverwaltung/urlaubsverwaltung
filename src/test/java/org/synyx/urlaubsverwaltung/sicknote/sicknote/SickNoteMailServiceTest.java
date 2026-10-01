@@ -226,8 +226,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.createdOrAccepted.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_or_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
-        assertThat(mail.getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mail.getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -787,7 +787,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_extension_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
         // the calendar file of the created sick note has another uid, a new one would add a second appointment
-        assertThat(mail.getMailAttachments()).isEmpty();
+        assertThat(mail.getMailAttachments(GERMAN)).isEmpty();
     }
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {

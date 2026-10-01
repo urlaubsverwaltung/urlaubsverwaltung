@@ -163,20 +163,20 @@ class ApplicationMailServiceTest {
         assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
         assertThat(mails.getFirst().getTemplateName()).isEqualTo("application_allowed_to_applicant");
         assertThat(mails.getFirst().getTemplateModel(locale)).isEqualTo(model);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_management");
         assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(model);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
         assertThat(mails.get(2).getTemplateModel(locale)).isEqualTo(modelColleagues);
-        assertThat(mails.get(2).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(2).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(2).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(2).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -510,8 +510,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("application_allowed_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
-        assertThat(mail.getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mail.getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -678,8 +678,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.cancellation");
         assertThat(mail.getTemplateName()).isEqualTo("application_cancelled_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
-        assertThat(mail.getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mail.getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -784,14 +784,14 @@ class ApplicationMailServiceTest {
         assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.user");
         assertThat(mails.getFirst().getTemplateName()).isEqualTo("application_allowed_directly_to_applicant");
         assertThat(mails.getFirst().getTemplateModel(locale)).isEqualTo(model);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
         assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -1086,15 +1086,15 @@ class ApplicationMailServiceTest {
         assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.user");
         assertThat(mails.getFirst().getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_applicant_to_applicant");
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.getFirst().getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
         assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -1211,20 +1211,20 @@ class ApplicationMailServiceTest {
         assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
         assertThat(mails.getFirst().getTemplateName()).isEqualTo("application_cancelled_by_management_to_applicant");
         assertThat(mails.getFirst().getTemplateModel(GERMAN)).isEqualTo(model);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.getFirst().getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.getFirst().getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person, canceller));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancelled_by_management_to_management");
         assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(model);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(1).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
         assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
         assertThat(mails.get(2).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application));
-        assertThat(mails.get(2).getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mails.get(2).getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(2).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mails.get(2).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test

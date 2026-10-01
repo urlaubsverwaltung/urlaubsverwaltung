@@ -22,7 +22,7 @@ public class Mail {
     private final String subjectMessageKey;
     private final Object[] subjectMessageArguments;
 
-    private final List<MailAttachment> mailAttachments;
+    private final List<MailAttachmentSupplier> mailAttachmentSuppliers;
 
     Mail(
         Person replyTo,
@@ -31,7 +31,7 @@ public class Mail {
         MailTemplateModelSupplier templateModelSupplier,
         String subjectMessageKey,
         Object[] subjectMessageArguments,
-        List<MailAttachment> mailAttachments
+        List<MailAttachmentSupplier> mailAttachmentSuppliers
     ) {
         this.replyTo = replyTo;
         this.mailAddressRecipients = mailAddressRecipients;
@@ -39,7 +39,7 @@ public class Mail {
         this.templateModelSupplier = templateModelSupplier;
         this.subjectMessageKey = subjectMessageKey;
         this.subjectMessageArguments = subjectMessageArguments;
-        this.mailAttachments = mailAttachments;
+        this.mailAttachmentSuppliers = mailAttachmentSuppliers;
     }
 
     public Optional<Person> getReplyTo() {
@@ -66,8 +66,9 @@ public class Mail {
         return subjectMessageArguments;
     }
 
-    public Optional<List<MailAttachment>> getMailAttachments() {
-        return Optional.ofNullable(mailAttachments);
+    public Optional<List<MailAttachment>> getMailAttachments(Locale locale) {
+        return Optional.ofNullable(mailAttachmentSuppliers)
+            .map(suppliers -> suppliers.stream().map(supplier -> supplier.getMailAttachment(locale)).toList());
     }
 
     public static Mail.Builder builder() {
@@ -89,7 +90,7 @@ public class Mail {
         private String subjectMessageKey;
         private Object[] subjectMessageArguments;
 
-        private List<MailAttachment> mailAttachments;
+        private List<MailAttachmentSupplier> mailAttachmentSuppliers;
 
         public Mail.Builder withReplyToFrom(final Person replyTo) {
             this.replyTo = replyTo;
@@ -130,11 +131,16 @@ public class Mail {
         }
 
         public Mail.Builder withAttachment(String name, ByteArrayResource attachment) {
-            if (mailAttachments == null) {
-                mailAttachments = new ArrayList<>();
+            final MailAttachment mailAttachment = new MailAttachment(name, attachment);
+            return withAttachment(_ -> mailAttachment);
+        }
+
+        public Mail.Builder withAttachment(MailAttachmentSupplier mailAttachmentSupplier) {
+            if (mailAttachmentSuppliers == null) {
+                mailAttachmentSuppliers = new ArrayList<>();
             }
 
-            this.mailAttachments.add(new MailAttachment(name, attachment));
+            this.mailAttachmentSuppliers.add(mailAttachmentSupplier);
             return this;
         }
 
@@ -146,7 +152,7 @@ public class Mail {
                 templateModelSupplier,
                 subjectMessageKey,
                 subjectMessageArguments,
-                mailAttachments
+                mailAttachmentSuppliers
             );
         }
     }
