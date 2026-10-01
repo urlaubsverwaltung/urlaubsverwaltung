@@ -24,6 +24,9 @@
 
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{person/back-to-account::back-to-account(personId=${personNotificationsDto.personId}, personNiceName=${personNiceName}, year=null)}"
+      ></div>
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <th:block
           th:if="${success}"
