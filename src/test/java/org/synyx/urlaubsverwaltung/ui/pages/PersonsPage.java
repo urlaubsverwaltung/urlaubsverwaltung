@@ -52,7 +52,7 @@ public class PersonsPage {
      */
     public Locator getPersonGroupLocator(String personGroupName) {
         return page.locator("#person-group-selection-popover")
-            .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(personGroupName));
+            .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(personGroupName).setExact(true));
     }
 
     public void openPersonGroupDropdown() {
@@ -195,6 +195,24 @@ public class PersonsPage {
 
     public void showsPersonGroup(String personGroupName) {
         assertThat(getPersonGroupButtonLocator()).hasText(personGroupName);
+    }
+
+    public void showsNoPerson(String personNiceName) {
+        assertThat(personRowsWithText(personNiceName)).hasCount(0);
+    }
+
+    /**
+     * Types the query into the search field, which submits itself.
+     *
+     * @param query name to search for
+     */
+    public void searchPerson(String query) {
+        page.locator("#search").fill(query);
+    }
+
+    private Locator personRowsWithText(String text) {
+        return page.locator("[data-test-id=persons]").locator("tbody").locator("tr")
+            .filter(new Locator.FilterOptions().setHasText(text));
     }
 
     public PaginationPage getPersonsPagination() {

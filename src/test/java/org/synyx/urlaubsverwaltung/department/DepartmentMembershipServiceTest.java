@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -80,6 +81,46 @@ class DepartmentMembershipServiceTest {
                 new DepartmentMembership(new PersonId(2L), 3L, DepartmentMembershipKind.MEMBER, validFrom1, Optional.of(validTo1)),
                 new DepartmentMembership(new PersonId(4L), 5L, DepartmentMembershipKind.DEPARTMENT_HEAD, validFrom2)
             );
+        }
+    }
+
+    @Nested
+    class GetPersonIdsWithActiveMemberMembership {
+
+        @Test
+        void ensureReturnsDistinctPersonIdsOfCurrentMemberMemberships() {
+
+            final DepartmentMembershipEntity personOneInDepartmentTen = new DepartmentMembershipEntity();
+            personOneInDepartmentTen.setPersonId(1L);
+            personOneInDepartmentTen.setDepartmentId(10L);
+            personOneInDepartmentTen.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            personOneInDepartmentTen.setValidFrom(Instant.now(fixedClock));
+
+            final DepartmentMembershipEntity personOneInDepartmentEleven = new DepartmentMembershipEntity();
+            personOneInDepartmentEleven.setPersonId(1L);
+            personOneInDepartmentEleven.setDepartmentId(11L);
+            personOneInDepartmentEleven.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            personOneInDepartmentEleven.setValidFrom(Instant.now(fixedClock));
+
+            final DepartmentMembershipEntity personTwoInDepartmentTen = new DepartmentMembershipEntity();
+            personTwoInDepartmentTen.setPersonId(2L);
+            personTwoInDepartmentTen.setDepartmentId(10L);
+            personTwoInDepartmentTen.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            personTwoInDepartmentTen.setValidFrom(Instant.now(fixedClock));
+
+            when(repository.findAllByMembershipKindAndValidToIsNull(DepartmentMembershipKind.MEMBER))
+                .thenReturn(List.of(personOneInDepartmentTen, personOneInDepartmentEleven, personTwoInDepartmentTen));
+
+            final Set<PersonId> actual = sut.getPersonIdsWithActiveMemberMembership();
+            assertThat(actual).containsExactlyInAnyOrder(new PersonId(1L), new PersonId(2L));
+        }
+
+        @Test
+        void ensureReturnsEmptySetWhenNobodyIsMember() {
+
+            when(repository.findAllByMembershipKindAndValidToIsNull(DepartmentMembershipKind.MEMBER)).thenReturn(List.of());
+
+            assertThat(sut.getPersonIdsWithActiveMemberMembership()).isEmpty();
         }
     }
 

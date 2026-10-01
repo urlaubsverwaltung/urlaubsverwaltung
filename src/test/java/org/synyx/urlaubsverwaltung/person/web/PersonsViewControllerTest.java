@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
@@ -66,7 +67,12 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -587,6 +593,150 @@ class PersonsViewControllerTest {
 
         perform(get("/web/person"))
             .andExpect(view().name("person/persons"));
+    }
+
+    @Nested
+    class WithoutDepartment {
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"}, mode = INCLUDE)
+        void ensureWithoutDepartmentListsPersonsWithoutDepartment(Role role) throws Exception {
+
+            final Person signedInUser = personWithRole(USER, role);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+            final Person john = new Person();
+            john.setId(2L);
+            john.setFirstName("John");
+
+            when(departmentService.getActivePersonsWithoutDepartment(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of(john)));
+
+            perform(get("/web/person").param("withoutDepartment", "true"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("withoutDepartment", true))
+                .andExpect(model().attribute("personsPagination",
+                    hasProperty("page", hasProperty("content", contains(hasProperty("firstName", is("John")))))));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"}, mode = INCLUDE)
+        void ensureWithoutDepartmentIsIgnoredFor(Role role) throws Exception {
+
+            final Person signedInUser = personWithRole(USER, role);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            mockDefaultPageRequest(signedInUser);
+
+            perform(get("/web/person").param("withoutDepartment", "true"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("withoutDepartment", false));
+
+            verify(departmentService, never()).getActivePersonsWithoutDepartment(any(), any());
+        }
+
+        @Test
+        void ensureWithoutDepartmentIsIgnoredForInactivePersons() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, BOSS);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            when(personService.getInactivePersons(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of()));
+
+            perform(get("/web/person").param("active", "false").param("withoutDepartment", "true"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("withoutDepartment", false));
+
+            verify(departmentService, never()).getActivePersonsWithoutDepartment(any(), any());
+        }
+
+        @Test
+        void ensureWithoutDepartmentWinsOverDepartment() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, OFFICE);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            when(departmentService.getActivePersonsWithoutDepartment(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of()));
+
+            perform(get("/web/person").param("department", "1").param("withoutDepartment", "true"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("withoutDepartment", true))
+                .andExpect(model().attributeDoesNotExist("department", "isDepartmentPresent"));
+
+            verify(departmentService, never()).getDepartmentById(anyLong());
+        }
+
+        @Test
+        void ensureWithoutDepartmentIsPartOfPaginationLinks() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, BOSS);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            when(departmentService.getActivePersonsWithoutDepartment(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of()));
+
+            final PaginationDto<Person> expectedPagination = new PaginationDto<>(
+                new PageImpl<>(List.of()),
+                "?active=true&query=&withoutDepartment=true&year=2020&sort=person.firstName,ASC&size=20",
+                pageableProperties
+            );
+
+            perform(get("/web/person").param("withoutDepartment", "true").param("year", "2020"))
+                .andExpect(model().attribute("personsPagination", is(expectedPagination)));
+        }
+
+        @Test
+        void ensureWithoutDepartmentWithAccountSort() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, BOSS);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+            final PageRequest pageRequest = PageRequest.of(0, 20).withSort(Sort.by(Sort.Order.desc("account.entitlementYear")));
+            when(departmentService.getActivePersonsWithoutDepartment(PersonPageRequest.ofApiPageable(pageRequest), ""))
+                .thenReturn(new PageImpl<>(List.of()));
+
+            perform(get("/web/person").param("withoutDepartment", "true").param("sort", "account.entitlementYear,DESC"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("withoutDepartment", true));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"}, mode = INCLUDE)
+        void ensureShowWithoutDepartmentFilterWhenDepartmentsExist(Role role) throws Exception {
+
+            final Person signedInUser = personWithRole(USER, role);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of()));
+
+            final Department department = new Department();
+            department.setName("Buchhaltung");
+            when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+            perform(get("/web/person"))
+                .andExpect(model().attribute("showWithoutDepartmentFilter", true))
+                .andExpect(model().attribute("withoutDepartment", false));
+        }
+
+        @Test
+        void ensureHideWithoutDepartmentFilterWhenNoDepartmentExists() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, BOSS);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of()));
+            when(departmentService.getAllDepartments()).thenReturn(List.of());
+
+            perform(get("/web/person"))
+                .andExpect(model().attribute("showWithoutDepartmentFilter", false));
+        }
+
+        @Test
+        void ensureHideWithoutDepartmentFilterForDepartmentHead() throws Exception {
+
+            final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+            mockDefaultPageRequest(signedInUser);
+
+            final Department department = new Department();
+            department.setName("Buchhaltung");
+            when(departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser)).thenReturn(List.of(department));
+
+            perform(get("/web/person"))
+                .andExpect(model().attribute("showWithoutDepartmentFilter", false));
+        }
     }
 
     @Test

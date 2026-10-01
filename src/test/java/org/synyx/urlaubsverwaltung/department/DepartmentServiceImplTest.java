@@ -75,6 +75,125 @@ class DepartmentServiceImplTest {
     }
 
     @Nested
+    class GetActivePersonsWithoutDepartment {
+
+        private Person activePerson(long id, String firstName, String lastName) {
+            final Person person = new Person();
+            person.setId(id);
+            person.setFirstName(firstName);
+            person.setLastName(lastName);
+            person.setPermissions(List.of(USER));
+            return person;
+        }
+
+        @Test
+        void ensureReturnsActivePersonsWithoutMemberMembership() {
+
+            final Person jane = activePerson(3L, "Jane", "Doe");
+            final Person max = activePerson(2L, "Max", "Mustermann");
+            final Person otto = activePerson(4L, "Otto", "Ohneabteilung");
+
+            when(personService.getActivePersons()).thenReturn(List.of(jane, max, otto));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of(new PersonId(3L)));
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(0, 20, Sort.by("firstName")), "");
+            assertThat(actual.getContent()).containsExactly(max, otto);
+            assertThat(actual.getTotalElements()).isEqualTo(2);
+        }
+
+        @Test
+        void ensureFiltersByQueryIgnoringCase() {
+
+            final Person max = activePerson(2L, "Max", "Mustermann");
+            final Person otto = activePerson(4L, "Otto", "Ohneabteilung");
+
+            when(personService.getActivePersons()).thenReturn(List.of(max, otto));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of());
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(0, 20, Sort.by("firstName")), "oTTo");
+            assertThat(actual.getContent()).containsExactly(otto);
+            assertThat(actual.getTotalElements()).isEqualTo(1);
+        }
+
+        @Test
+        void ensureSortsByGivenSort() {
+
+            final Person anna = activePerson(2L, "Anna", "Zander");
+            final Person bert = activePerson(3L, "Bert", "Adler");
+            final Person carl = activePerson(4L, "Carl", "Meier");
+
+            when(personService.getActivePersons()).thenReturn(List.of(anna, bert, carl));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of());
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(0, 20, Sort.by(Sort.Order.desc("lastName"))), "");
+            assertThat(actual.getContent()).containsExactly(anna, carl, bert);
+        }
+
+        @Test
+        void ensureReturnsSecondPage() {
+
+            final Person anna = activePerson(2L, "Anna", "Zander");
+            final Person bert = activePerson(3L, "Bert", "Adler");
+            final Person carl = activePerson(4L, "Carl", "Meier");
+            final Person member = activePerson(5L, "Dora", "Member");
+
+            when(personService.getActivePersons()).thenReturn(List.of(anna, bert, carl, member));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of(new PersonId(5L)));
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(1, 2, Sort.by("firstName")), "");
+            assertThat(actual.getContent()).containsExactly(carl);
+            assertThat(actual.getTotalElements()).isEqualTo(3);
+            assertThat(actual.getTotalPages()).isEqualTo(2);
+            assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        }
+
+        @Test
+        void ensureReturnsEmptyContentForPageBeyondTheLastPage() {
+
+            final Person anna = activePerson(2L, "Anna", "Zander");
+            final Person bert = activePerson(3L, "Bert", "Adler");
+            final Person carl = activePerson(4L, "Carl", "Meier");
+
+            when(personService.getActivePersons()).thenReturn(List.of(anna, bert, carl));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of());
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(5, 2, Sort.by("firstName")), "");
+            assertThat(actual.getContent()).isEmpty();
+            assertThat(actual.getTotalElements()).isEqualTo(3);
+        }
+
+        @Test
+        void ensureReturnsAllPersonsWithoutDepartmentForUnpagedRequest() {
+
+            // the persons overview requests unpaged when sorting by an account column and sorts on its own
+            final Person anna = activePerson(2L, "Anna", "Zander");
+            final Person bert = activePerson(3L, "Bert", "Adler");
+            final Person carl = activePerson(4L, "Carl", "Meier");
+
+            when(personService.getActivePersons()).thenReturn(List.of(anna, bert, carl));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of());
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.unpaged(), "");
+            assertThat(actual.getContent()).containsExactly(anna, bert, carl);
+            assertThat(actual.getTotalElements()).isEqualTo(3);
+            assertThat(actual.getTotalPages()).isEqualTo(1);
+        }
+
+        @Test
+        void ensureReturnsEmptyPageWhenEveryActivePersonHasADepartment() {
+
+            final Person max = activePerson(2L, "Max", "Mustermann");
+
+            when(personService.getActivePersons()).thenReturn(List.of(max));
+            when(departmentMembershipService.getPersonIdsWithActiveMemberMembership()).thenReturn(Set.of(new PersonId(2L)));
+
+            final Page<Person> actual = sut.getActivePersonsWithoutDepartment(PersonPageRequest.of(0, 20, Sort.by("firstName")), "");
+            assertThat(actual.getContent()).isEmpty();
+            assertThat(actual.getTotalElements()).isZero();
+        }
+    }
+
+    @Nested
     class GetManagedMembersOfPersonYear {
 
         @Test

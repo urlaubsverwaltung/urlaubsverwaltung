@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
@@ -191,6 +192,42 @@ class DepartmentMembershipRepositoryIT extends SingleTenantTestContainersBase {
 
             // ensure all memberships, 1 memberships from initial department creation
             assertThat(sut.findAll()).hasSize(1);
+        }
+    }
+
+    @Nested
+    class FindAllByMembershipKindAndValidToIsNull {
+
+        @Test
+        void ensureReturnsOnlyCurrentMembershipsOfGivenKind() {
+
+            final Person member = personService.create("member", "Max", "Member", "member@example.org", List.of(), List.of(USER));
+            final Person formerMember = personService.create("former", "Fritz", "Former", "former@example.org", List.of(), List.of(USER));
+            final Person secondStageAuthority = personService.create("ssa", "Sarah", "Second", "ssa@example.org", List.of(), List.of(USER, SECOND_STAGE_AUTHORITY));
+
+            // creates a current MEMBER membership for member
+            final Department department = createDepartment(List.of(member));
+
+            final DepartmentMembershipEntity endedMembership = new DepartmentMembershipEntity();
+            endedMembership.setDepartmentId(department.getId());
+            endedMembership.setPersonId(formerMember.getId());
+            endedMembership.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            endedMembership.setValidFrom(ZonedDateTime.now(clock).minusYears(2).toInstant());
+            endedMembership.setValidTo(ZonedDateTime.now(clock).minusYears(1).toInstant());
+
+            final DepartmentMembershipEntity secondStageAuthorityMembership = new DepartmentMembershipEntity();
+            secondStageAuthorityMembership.setDepartmentId(department.getId());
+            secondStageAuthorityMembership.setPersonId(secondStageAuthority.getId());
+            secondStageAuthorityMembership.setMembershipKind(DepartmentMembershipKind.SECOND_STAGE_AUTHORITY);
+            secondStageAuthorityMembership.setValidFrom(ZonedDateTime.now(clock).minusYears(1).toInstant());
+            secondStageAuthorityMembership.setValidTo(null);
+
+            sut.saveAll(List.of(endedMembership, secondStageAuthorityMembership));
+
+            final List<DepartmentMembershipEntity> actual = sut.findAllByMembershipKindAndValidToIsNull(DepartmentMembershipKind.MEMBER);
+            assertThat(actual)
+                .extracting(DepartmentMembershipEntity::getPersonId)
+                .containsExactly(member.getId());
         }
     }
 

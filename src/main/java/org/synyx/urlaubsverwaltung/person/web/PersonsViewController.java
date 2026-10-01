@@ -117,6 +117,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
     public String showPerson(
         @RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
         @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
+        @RequestParam(value = "withoutDepartment", required = false, defaultValue = "false") boolean withoutDepartment,
         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
         @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         @SortDefault(sort = DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
@@ -129,6 +130,9 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         final Person signedInUser = personService.getSignedInUser();
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
 
+        final boolean isBossOrOffice = signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE);
+        final boolean filterWithoutDepartment = withoutDepartment && active && isBossOrOffice;
+
         // #5850 will introduce typed account page request
         // sorting is only possible for ONE attribute, EITHER person.firstName OR account.XXX for instance
         // therefore checking whether person should be sorted or not is sufficient here
@@ -138,7 +142,7 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
         Page<Person> personPage = null;
 
-        final boolean departmentPresent = requestedDepartmentId.isPresent();
+        final boolean departmentPresent = requestedDepartmentId.isPresent() && !filterWithoutDepartment;
         Department department = null;
         if (departmentPresent) {
             final Long departmentId = requestedDepartmentId.get();
@@ -149,16 +153,16 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
-                personPage = active
-                    ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
-                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
+                personPage = getManagedMembersOfDepartment(signedInUser, departmentId, active, personPageRequest, query);
             }
         }
 
+        if (filterWithoutDepartment) {
+            personPage = departmentService.getActivePersonsWithoutDepartment(personPageRequest, query);
+        }
+
         if (personPage == null) {
-            personPage = active
-                ? getRelevantActivePersons(signedInUser, personPageRequest, query)
-                : getRelevantInactivePersons(signedInUser, personPageRequest, query);
+            personPage = getRelevantPersons(signedInUser, active, personPageRequest, query);
         }
 
         final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now, departmentPresent, department);
@@ -170,7 +174,11 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         final List<QueryParam> paginationLinkParameters = new ArrayList<>();
         paginationLinkParameters.add(new QueryParam("active", String.valueOf(active)));
         paginationLinkParameters.add(new QueryParam(SEARCH_PARAM, query));
-        requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.add(new QueryParam("department", String.valueOf(departmentId))));
+        if (filterWithoutDepartment) {
+            paginationLinkParameters.add(new QueryParam("withoutDepartment", "true"));
+        } else {
+            requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.add(new QueryParam("department", String.valueOf(departmentId))));
+        }
         requestedYear.ifPresent(year -> paginationLinkParameters.add(new QueryParam("year", String.valueOf(year))));
 
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
@@ -183,7 +191,10 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
 
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
-        model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
+        final List<Department> departments = getRelevantDepartmentsSortedByName(signedInUser);
+        model.addAttribute("departments", departments);
+        model.addAttribute("withoutDepartment", filterWithoutDepartment);
+        model.addAttribute("showWithoutDepartmentFilter", isBossOrOffice && !departments.isEmpty());
         model.addAttribute("sortQuery", sortQuery);
 
         model.addAttribute("currentYear", currentYear);
@@ -206,6 +217,18 @@ public class PersonsViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         return accountSort;
+    }
+
+    private Page<Person> getManagedMembersOfDepartment(Person signedInUser, Long departmentId, boolean active, PersonPageRequest personPageRequest, String query) {
+        return active
+            ? departmentService.getManagedActiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
+            : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
+    }
+
+    private Page<Person> getRelevantPersons(Person signedInUser, boolean active, PersonPageRequest personPageRequest, String query) {
+        return active
+            ? getRelevantActivePersons(signedInUser, personPageRequest, query)
+            : getRelevantInactivePersons(signedInUser, personPageRequest, query);
     }
 
     private Page<Person> getRelevantActivePersons(Person signedInUser, PersonPageRequest personPageRequest, String query) {

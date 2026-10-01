@@ -36,6 +36,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -275,6 +276,49 @@ class PersonsUIIT {
         personsPage.showsPersonOverviewWithoutHorizontalScrollbar();
     }
 
+    @Test
+    void ensureOfficeListsPersonsWithoutDepartment(Page page) {
+
+        // an own office person, other tests of this class change the page size of theirs
+        final Person olga = createPerson("Olga", "Buero", List.of(USER, OFFICE));
+        // the test profile shows one person per page. sorted by first name descending, these two come first,
+        // without pushing other persons of this class from the first row of the default sorting.
+        final Person zora = createPerson("Zora", "Mitglied", List.of(USER));
+        createPerson("Zeno", "Ohneabteilung", List.of(USER));
+        createDepartment("Buchhaltung", List.of(zora));
+
+        login(page, olga);
+
+        final NavigationPage navigationPage = new NavigationPage(page);
+        navigationPage.clickPersons();
+
+        final PersonsPage personsPage = new PersonsPage(page);
+        page.navigate(page.url() + "?sort=person.firstName,desc");
+        personsPage.showsPersonRow(0, "Zora Mitglied");
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup("Ohne Abteilung");
+        personsPage.showsPersonGroup("Ohne Abteilung");
+
+        personsPage.showsPersonRow(0, "Zeno Ohneabteilung");
+        personsPage.showsNoPerson("Zora Mitglied");
+
+        // searching keeps the filter
+        personsPage.searchPerson("z");
+        assertThat(page).hasURL(Pattern.compile(".*query=z.*"));
+        assertThat(page).hasURL(Pattern.compile(".*withoutDepartment=true.*"));
+        personsPage.showsPersonRow(0, "Zeno Ohneabteilung");
+        personsPage.showsNoPerson("Zora Mitglied");
+        personsPage.showsPersonGroup("Ohne Abteilung");
+
+        // leaving the filter shows persons with department again
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+        personsPage.openPersonGroupDropdown();
+        personsPage.selectPersonGroup("Aktive Mitarbeitende");
+        personsPage.showsPersonRow(0, "Zora Mitglied");
+    }
+
     /**
      * Shows the person overview with a department selected whose name is long enough to wrap, in a
      * viewport narrow enough for the year button to be pushed into the next line.
@@ -307,6 +351,10 @@ class PersonsUIIT {
     }
 
     private Department createDepartment(String name) {
+        return createDepartment(name, List.of());
+    }
+
+    private Department createDepartment(String name, List<Person> members) {
 
         final Optional<Department> existingDepartment = departmentService.getAllDepartments().stream()
             .filter(department -> department.getName().equals(name))
@@ -317,6 +365,7 @@ class PersonsUIIT {
 
         final Department department = new Department();
         department.setName(name);
+        department.setMembers(members);
         return departmentService.create(department);
     }
 

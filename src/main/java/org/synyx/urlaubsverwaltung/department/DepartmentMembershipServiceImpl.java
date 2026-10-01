@@ -100,6 +100,19 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
     }
 
     /**
+     * Returns the ids of all persons having a currently valid membership of kind {@link DepartmentMembershipKind#MEMBER}
+     * in at least one department.
+     *
+     * @return ids of persons being member of a department right now
+     */
+    Set<PersonId> getPersonIdsWithActiveMemberMembership() {
+        return repository.findAllByMembershipKindAndValidToIsNull(MEMBER).stream()
+            .map(DepartmentMembershipEntity::getPersonId)
+            .map(PersonId::new)
+            .collect(toSet());
+    }
+
+    /**
      * Creates the initial memberships for a department based on the provided members, department heads, and second stage authorities.
      * This method is typically used when a new department is created or when the initial membership history
      * needs to be established for an existing department.

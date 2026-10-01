@@ -246,6 +246,16 @@ public interface DepartmentService {
     Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
 
     /**
+     * Returns all active persons that are currently not member of any department.
+     * A second stage authority who is not member of a department is part of the result, too.
+     *
+     * @param personPageable to define the page and the sorting
+     * @param query          to filter the persons by their name, ignoring case
+     * @return page of active persons without department
+     */
+    Page<Person> getActivePersonsWithoutDepartment(PersonPageable personPageable, String query);
+
+    /**
      * Get all distinct managed members of the department head.
      * Managed members are all persons for which the department head are responsible for and can
      * perform actions for this person.

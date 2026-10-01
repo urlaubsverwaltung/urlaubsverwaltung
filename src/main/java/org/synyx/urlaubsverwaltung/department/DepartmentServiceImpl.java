@@ -156,6 +156,20 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Page<Person> getActivePersonsWithoutDepartment(PersonPageable personPageable, String query) {
+
+        final Set<PersonId> memberPersonIds = departmentMembershipService.getPersonIdsWithActiveMemberMembership();
+
+        final List<Person> personsWithoutDepartment = personService.getActivePersons().stream()
+            .filter(person -> !memberPersonIds.contains(person.getIdAsPersonId()))
+            .filter(nameContains(query))
+            .sorted(new SortComparator<>(Person.class, personPageable.getSort()))
+            .toList();
+
+        return toPage(personsWithoutDepartment, personPageable);
+    }
+
+    @Override
     public boolean departmentExists(Long departmentId) {
         return departmentRepository.existsById(departmentId);
     }
