@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissions;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -38,6 +39,8 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissions;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -268,6 +271,11 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final boolean allowedToApplyForPerson = applicationForLeavePermissionEvaluator.isAllowedToApplyForPerson(signedInUser, person);
         final boolean personIsSignedInUser = person.equals(signedInUser);
 
+        final TodayMarker todayMarker = TodayMarker.of(applicationsForLeave,
+            ApplicationDto::startDate, ApplicationDto::endDate,
+            application -> ApplicationStatus.activeStatuses().contains(application.status()),
+            LocalDate.now(clock), year);
+
         model.addAttribute("applicationOverviewInformation", new ApplicationOverviewDto(
             applicationsForLeave,
             usedDaysOverview,
@@ -275,7 +283,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
             personIsSignedInUser,
             !personIsSignedInUser && allowedToApplyForPerson,
             applicationsForLeave.size(),
-            applications.size()
+            applications.size(),
+            todayMarker
         ));
     }
 
@@ -331,13 +340,19 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, person);
 
+        final List<SickNoteDto> sickNoteDtos = mapToSickNoteDtos(shownSickNotes, permissions);
+        final TodayMarker todayMarker = TodayMarker.of(sickNoteDtos,
+            SickNoteDto::startDate, SickNoteDto::endDate,
+            sickNote -> SickNoteStatus.activeStatuses().contains(sickNote.status()), today, year);
+
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            mapToSickNoteDtos(shownSickNotes, permissions),
+            sickNoteDtos,
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
             permissions.isAllowedToAdd() || permissions.isAllowedToSubmit(),
             permissions.isAllowedToView(),
             shownSickNotes.size(),
-            sickNotes.size()
+            sickNotes.size(),
+            todayMarker
         ));
     }
 
