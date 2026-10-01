@@ -125,7 +125,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             if (visibleDepartments.isEmpty()) {
                 overviewPersons = List.of(signedInUser);
             } else {
-                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments);
+                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments, signedInUser);
                 model.addAttribute("selectedDepartments", selectedDepartmentNames);
 
                 overviewPersons = visibleDepartments.stream()
@@ -199,9 +199,16 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         return vacationTypeColorDtos;
     }
 
-    private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
+    private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments, Person signedInUser) {
         final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).toList();
-        return preparedSelectedDepartments.isEmpty() ? List.of(departments.getFirst().getName()) : preparedSelectedDepartments;
+        if (!preparedSelectedDepartments.isEmpty()) {
+            return preparedSelectedDepartments;
+        }
+
+        final List<String> departmentNamesOfSignedInUser = departmentService.getAssignedDepartmentsOfMember(signedInUser).stream()
+            .map(Department::getName)
+            .toList();
+        return departmentNamesOfSignedInUser.isEmpty() ? List.of(departments.getFirst().getName()) : departmentNamesOfSignedInUser;
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,

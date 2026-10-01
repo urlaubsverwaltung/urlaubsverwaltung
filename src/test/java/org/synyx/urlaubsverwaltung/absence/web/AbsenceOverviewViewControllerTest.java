@@ -314,6 +314,7 @@ class AbsenceOverviewViewControllerTest {
         final var superheroes = department("superheroes");
         final var villains = department("villains");
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
         perform(get("/web/absences")
@@ -321,6 +322,53 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " "})
+    void ensureDefaultSelectedDepartmentsAreTheDepartmentsOfTheSignedInUser(String departmentName) throws Exception {
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setFirstName("office");
+        person.setLastName("user");
+        person.setEmail("office@example.org");
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var carl = person("carl");
+        carl.setId(2L);
+        final var accounting = department("accounting");
+        accounting.setMembers(List.of(carl));
+
+        final var alice = person("alice");
+        alice.setId(3L);
+        final var marketing = department("marketing");
+        marketing.setMembers(List.of(person, alice));
+
+        final var bob = person("bob");
+        bob.setId(4L);
+        final var sales = department("sales");
+        sales.setMembers(List.of(person, bob));
+
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(accounting, marketing, sales));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(marketing, sales));
+        when(departmentService.getNumberOfDepartments()).thenReturn(3L);
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("department", departmentName))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("visibleDepartments", contains(accounting, marketing, sales)))
+            .andExpect(model().attribute("selectedDepartments", contains("marketing", "sales")))
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", hasItem(
+                    hasProperty("persons", contains(
+                        hasProperty("firstName", is("alice")),
+                        hasProperty("firstName", is("bob")),
+                        hasProperty("firstName", is("office"))
+                    ))
+                ))));
     }
 
     @Test
