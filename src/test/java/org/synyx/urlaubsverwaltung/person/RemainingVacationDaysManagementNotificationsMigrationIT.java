@@ -23,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
- * Verifies the SQL of {@code changelog-6.14.0-remaining-vacation-days-management-notifications.xml}. The
+ * Verifies the SQL of {@code changelog-6.15.0-remaining-vacation-days-management-notifications.xml}. The
  * changeset already ran on the empty database when this test starts, so the SQL is read from the changelog and
  * executed again against the persons created here.
  */
@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Transactional
 class RemainingVacationDaysManagementNotificationsMigrationIT extends SingleTenantTestContainersBase {
 
-    private static final String CHANGELOG = "dbchangelogs/changelog-6.14.0-remaining-vacation-days-management-notifications.xml";
+    private static final String CHANGELOG = "dbchangelogs/changelog-6.15.0-remaining-vacation-days-management-notifications.xml";
     private static final String CHANGESET_ID = "remaining-vacation-days-management-notifications";
 
     @Autowired
