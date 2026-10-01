@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.function.Predicate.not;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
@@ -33,8 +32,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
@@ -49,11 +46,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class PersonServiceImpl implements PersonService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-
-    private static final List<MailNotification> REMAINING_VACATION_DAYS_MANAGEMENT_NOTIFICATIONS = List.of(
-        NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL,
-        NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL
-    );
 
     private final PersonRepository personRepository;
     private final AccountInteractionService accountInteractionService;
@@ -150,7 +142,6 @@ class PersonServiceImpl implements PersonService {
         });
         personUpdate.permissions().ifPresent(person::setPermissions);
         personUpdate.notifications().ifPresent(person::setNotifications);
-        enableOfficeNotificationsWhenBecomingOffice(person, previousPermissions);
 
         final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
@@ -293,22 +284,6 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
-    }
-
-    /**
-     * The notifications about remaining vacation days are on by default for office. They are office only, so they
-     * are enabled when a person becomes office - storing them for every new person would be invalid notifications for
-     * all others. Office persons can switch them off afterwards.
-     */
-    private static void enableOfficeNotificationsWhenBecomingOffice(Person person, Collection<Role> previousPermissions) {
-        final boolean becomesOffice = !previousPermissions.contains(OFFICE) && person.getPermissions().contains(OFFICE);
-        if (becomesOffice) {
-            final List<MailNotification> notifications = new ArrayList<>(person.getNotifications());
-            REMAINING_VACATION_DAYS_MANAGEMENT_NOTIFICATIONS.stream()
-                .filter(not(notifications::contains))
-                .forEach(notifications::add);
-            person.setNotifications(notifications);
-        }
     }
 
     private Person findPerson(PersonId personId) {
