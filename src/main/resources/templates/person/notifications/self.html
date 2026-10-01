@@ -121,6 +121,19 @@
               ></li>
             </ul>
           </section>
+          <section th:if="${personNotificationsDto.remainingVacationDaysManagementAll.visible}">
+            <h2
+              class="notification-section-title frosted-glass sticky top-0"
+              th:text="#{person.notifications.section.account.title}"
+            >
+              Urlaubsanspruch
+            </h2>
+            <ul class="list-selectable">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.remainingVacationDaysManagementAll.visible},active=${personNotificationsDto.remainingVacationDaysManagementAll.active},name='remainingVacationDaysManagementAll.active',label='person.notifications.section.account.remaining-vacation-days.label',info='person.notifications.section.account.remaining-vacation-days.info')}"
+              ></li>
+            </ul>
+          </section>
         </div>
       </div>
 

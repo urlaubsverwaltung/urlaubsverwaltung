@@ -41,6 +41,11 @@
       <input type="hidden" th:field="*{overtimeApplied.active}" />
       <input type="hidden" th:field="*{overtimeAppliedByManagement.active}" />
       <input type="hidden" th:field="*{personNewManagementAll.active}" />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.remainingVacationDaysManagementAll.visible}"
+        th:field="*{remainingVacationDaysManagementAll.active}"
+      />
       <input type="hidden" th:field="*{ownSickNoteSubmittedCreatedEditedCancelled.active}" />
 
       <div class="list-selectable">

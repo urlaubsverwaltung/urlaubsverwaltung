@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailAttachment;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -28,7 +29,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 
 /**
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
@@ -43,6 +44,7 @@ public class TurnOfTheYearAccountUpdaterService {
     private final AccountInteractionService accountInteractionService;
     private final VacationDaysReminderService vacationDaysReminderService;
     private final MailService mailService;
+    private final MailRecipientService mailRecipientService;
     private final PersonBasedataService personBasedataService;
     private final DepartmentService departmentService;
     private final RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService;
@@ -53,7 +55,8 @@ public class TurnOfTheYearAccountUpdaterService {
         PersonService personService, AccountService accountService,
         AccountInteractionService accountInteractionService,
         VacationDaysReminderService vacationDaysReminderService,
-        MailService mailService, PersonBasedataService personBasedataService, DepartmentService departmentService,
+        MailService mailService, MailRecipientService mailRecipientService,
+        PersonBasedataService personBasedataService, DepartmentService departmentService,
         RemainingVacationDaysCsvExportService remainingVacationDaysCsvExportService, Clock clock
     ) {
         this.personService = personService;
@@ -61,6 +64,7 @@ public class TurnOfTheYearAccountUpdaterService {
         this.accountInteractionService = accountInteractionService;
         this.vacationDaysReminderService = vacationDaysReminderService;
         this.mailService = mailService;
+        this.mailRecipientService = mailRecipientService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
         this.remainingVacationDaysCsvExportService = remainingVacationDaysCsvExportService;
@@ -109,6 +113,11 @@ public class TurnOfTheYearAccountUpdaterService {
      */
     private void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
+        final List<Person> recipients = mailRecipientService.getRecipientsWith(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL);
+        if (recipients.isEmpty()) {
+            return;
+        }
+
         final Map<String, Object> model = Map.of(
             "accounts", updatedAccounts,
             "totalRemainingVacationDays", updatedAccounts.stream().map(Account::getRemainingVacationDays).reduce(BigDecimal::add).orElse(BigDecimal.ZERO),
@@ -123,7 +132,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         // send email to office for printing statistic
         final Mail mailToOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsByRole(OFFICE))
+            .withRecipient(recipients)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, _ -> model)
             .withAttachment(locale -> {

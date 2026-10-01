@@ -42,6 +42,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -612,5 +614,33 @@ class PersonServiceImplTest {
 
         final int numberOfOfficeExceptId = sut.numberOfPersonsWithOfficeRoleExcludingPerson(1);
         assertThat(numberOfOfficeExceptId).isEqualTo(2);
+    }
+
+    @Test
+    void ensureCreatedPersonDoesNotGetTheRemainingVacationDaysNotifications() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("muster", "Marlene", "Muster", "muster@example.org");
+
+        // the notifications are for office only and have to be activated manually
+        assertThat(createdPerson.getNotifications()).isNotEmpty()
+            .doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+    }
+
+    @Test
+    void ensureRemainingVacationDaysNotificationsAreNotEnabledWhenPersonBecomesOffice() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
+
+        // office has to activate the notifications manually
+        assertThat(updatedPerson.getNotifications()).containsExactly(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
     }
 }

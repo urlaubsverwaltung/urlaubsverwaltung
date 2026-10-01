@@ -52,4 +52,19 @@ public interface MailRecipientService {
      * @return list of colleagues
      */
     List<Person> getColleagues(Person personOfInterest, MailNotification mailNotification);
+
+    /**
+     * Returns a list of recipients of a mail that is not about a single person, e.g. to all of management, based on
+     * <ul>
+     *     <li>is active</li>
+     *     <li>the given mail notification is active</li>
+     *     <li>the roles of the person allow the given mail notification</li>
+     * </ul>
+     * A person keeps its mail notifications when a role is removed, so an active mail notification alone does not
+     * make a recipient.
+     *
+     * @param mailNotification given notification that must be active and allowed
+     * @return list of recipients, regardless of departments
+     */
+    List<Person> getRecipientsWith(MailNotification mailNotification);
 }

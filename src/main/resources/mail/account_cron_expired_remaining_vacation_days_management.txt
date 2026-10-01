@@ -1,0 +1,7 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{account.expired_remaining_vacation_days.management.intro})]
+[# th:each="expired : ${expiredRemainingVacationDays}"]
+[(${expired.account.person.niceName})]: [(#{account.expired_remaining_vacation_days.management.line(${expired.expiredRemainingVacationDays}, ${#temporals.format(expired.account.expiryDate, "dd.MM.yyyy")}, ${expired.totalLeftVacationDays})})]
+[/]
+[(#{account.remaining_vacation_days.attachment})]

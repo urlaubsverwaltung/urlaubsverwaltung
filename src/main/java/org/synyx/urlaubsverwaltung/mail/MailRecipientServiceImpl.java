@@ -103,6 +103,13 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
+    @Override
+    public List<Person> getRecipientsWith(MailNotification mailNotification) {
+        return personService.getActivePersonsWithNotificationType(mailNotification).stream()
+            .filter(person -> mailNotification.isValidWith(person.getPermissions()))
+            .toList();
+    }
+
     private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
 
         final List<Person> distinctOfficesAndBosses = officeAndBosses.stream().distinct().toList();
