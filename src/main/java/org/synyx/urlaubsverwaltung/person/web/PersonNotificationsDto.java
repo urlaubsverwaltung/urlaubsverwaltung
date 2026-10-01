@@ -27,7 +27,7 @@ public class PersonNotificationsDto {
     private PersonNotificationDto holidayReplacement;
     private PersonNotificationDto holidayReplacementUpcoming;
     private PersonNotificationDto personNewManagementAll;
-    private PersonNotificationDto remainingVacationDaysExpiredManagementAll;
+    private PersonNotificationDto remainingVacationDaysManagementAll;
     private PersonNotificationDto overtimeAppliedForManagement;
     private PersonNotificationDto overtimeAppliedByManagement;
     private PersonNotificationDto overtimeApplied;
@@ -171,12 +171,12 @@ public class PersonNotificationsDto {
         this.personNewManagementAll = personNewManagementAll;
     }
 
-    public PersonNotificationDto getRemainingVacationDaysExpiredManagementAll() {
-        return remainingVacationDaysExpiredManagementAll;
+    public PersonNotificationDto getRemainingVacationDaysManagementAll() {
+        return remainingVacationDaysManagementAll;
     }
 
-    public void setRemainingVacationDaysExpiredManagementAll(PersonNotificationDto remainingVacationDaysExpiredManagementAll) {
-        this.remainingVacationDaysExpiredManagementAll = remainingVacationDaysExpiredManagementAll;
+    public void setRemainingVacationDaysManagementAll(PersonNotificationDto remainingVacationDaysManagementAll) {
+        this.remainingVacationDaysManagementAll = remainingVacationDaysManagementAll;
     }
 
     public PersonNotificationDto getOvertimeAppliedForManagement() {

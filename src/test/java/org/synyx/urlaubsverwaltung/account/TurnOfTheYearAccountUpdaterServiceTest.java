@@ -32,9 +32,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class TurnOfTheYearAccountUpdaterServiceTest {
@@ -94,8 +97,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);
 
-        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
+        final Person office = anOffice();
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(office));
 
         sut.updateAccountsForNextPeriod();
 
@@ -143,7 +146,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         when(remainingVacationDaysCsvExportService.generateCSV(currentYear, GERMAN, List.of(RemainingVacationDaysCsvRow.of(thisYear, basedata, List.of("Entwicklung")))))
             .thenReturn(new CSVFile("Resturlaub_%d_de.csv".formatted(CURRENT_YEAR), csv));
 
-        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(new Person("office", "Office", "Olga", "office@example.org")));
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
 
         sut.updateAccountsForNextPeriod();
 
@@ -162,7 +165,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         when(personService.getActivePersons()).thenReturn(List.of());
         when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
-        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(new Person("office", "Office", "Olga", "office@example.org")));
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(anOffice()));
 
         // no rows are passed to the export: the csv consists of the header only
         final FilterPeriod currentYear = new FilterPeriod(Year.of(CURRENT_YEAR).atDay(1), Year.of(CURRENT_YEAR).atMonth(12).atEndOfMonth());
@@ -174,5 +177,39 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         assertThat(argument.getValue().getMailAttachments(GERMAN)).hasValue(List.of(new MailAttachment("Resturlaub.csv", csv)));
+    }
+
+    @Test
+    void ensureNoMailWithoutOfficeHavingTheNotification() {
+
+        when(personService.getActivePersons()).thenReturn(List.of());
+        when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of());
+
+        sut.updateAccountsForNextPeriod();
+
+        verifyNoInteractions(mailService);
+        verify(vacationDaysReminderService).remindForRemainingVacationDays();
+    }
+
+    @Test
+    void ensureNoMailToFormerOfficeStillHavingTheNotification() {
+
+        final Person formerOffice = new Person("office", "Office", "Olga", "office@example.org");
+        formerOffice.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons()).thenReturn(List.of());
+        when(accountService.getHolidaysAccount(LAST_YEAR, List.of())).thenReturn(List.of());
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(formerOffice));
+
+        sut.updateAccountsForNextPeriod();
+
+        verifyNoInteractions(mailService);
+    }
+
+    private static Person anOffice() {
+        final Person office = new Person("office", "Office", "Olga", "office@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        return office;
     }
 }

@@ -42,11 +42,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
@@ -616,18 +617,19 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureCreatedPersonDoesNotGetTheExpiredRemainingVacationDaysNotification() {
+    void ensureCreatedPersonDoesNotGetTheRemainingVacationDaysNotifications() {
 
         when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
         final Person createdPerson = sut.create("muster", "Marlene", "Muster", "muster@example.org");
 
-        // the notification is for office only, it is enabled when the person becomes office
-        assertThat(createdPerson.getNotifications()).isNotEmpty().doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        // the notifications are for office only, they are enabled when the person becomes office
+        assertThat(createdPerson.getNotifications()).isNotEmpty()
+            .doesNotContain(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 
     @Test
-    void ensureExpiredRemainingVacationDaysNotificationIsEnabledWhenPersonBecomesOffice() {
+    void ensureRemainingVacationDaysNotificationsAreEnabledWhenPersonBecomesOffice() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
@@ -638,14 +640,35 @@ class PersonServiceImplTest {
 
         final Person updatedPerson = sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
 
-        assertThat(updatedPerson.getNotifications())
-            .containsExactlyInAnyOrder(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        assertThat(updatedPerson.getNotifications()).containsExactlyInAnyOrder(
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED,
+            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL,
+            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL
+        );
     }
 
     @Test
-    void ensureExpiredRemainingVacationDaysNotificationIsNotEnabledAgainForOffice() {
+    void ensureRemainingVacationDaysNotificationsAreNotDuplicatedWhenPersonBecomesOffice() {
 
-        // office switched the notification off
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
+
+        assertThat(updatedPerson.getNotifications()).containsExactlyInAnyOrder(
+            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL,
+            NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL
+        );
+    }
+
+    @Test
+    void ensureRemainingVacationDaysNotificationsAreNotEnabledAgainForOffice() {
+
+        // office switched the notifications off
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setId(1L);
         office.setPermissions(List.of(USER, OFFICE));
@@ -659,7 +682,7 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureExpiredRemainingVacationDaysNotificationIsEnabledWhenAppointedAsOffice() {
+    void ensureRemainingVacationDaysNotificationsAreEnabledWhenAppointedAsOffice() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
@@ -670,6 +693,7 @@ class PersonServiceImplTest {
 
         final Person office = sut.appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
 
-        assertThat(office.getNotifications()).contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        assertThat(office.getNotifications())
+            .contains(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 }

@@ -28,7 +28,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 
 /**
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
@@ -109,6 +109,14 @@ public class TurnOfTheYearAccountUpdaterService {
      */
     private void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
+        // a former office person may still have the notification stored
+        final List<Person> recipients = personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL).stream()
+            .filter(person -> NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL.isValidWith(person.getPermissions()))
+            .toList();
+        if (recipients.isEmpty()) {
+            return;
+        }
+
         final Map<String, Object> model = Map.of(
             "accounts", updatedAccounts,
             "totalRemainingVacationDays", updatedAccounts.stream().map(Account::getRemainingVacationDays).reduce(BigDecimal::add).orElse(BigDecimal.ZERO),
@@ -123,7 +131,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         // send email to office for printing statistic
         final Mail mailToOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsByRole(OFFICE))
+            .withRecipient(recipients)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, _ -> model)
             .withAttachment(locale -> {

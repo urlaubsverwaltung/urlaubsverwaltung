@@ -37,6 +37,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
@@ -49,7 +51,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 final class PersonNotificationsMapper {
 
@@ -61,7 +62,7 @@ final class PersonNotificationsMapper {
 
         final List<MailNotification> mailNotifications = new ArrayList<>();
         addIfActive(mailNotifications, personNotificationsDto.getPersonNewManagementAll(), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
-        addIfActive(mailNotifications, personNotificationsDto.getRemainingVacationDaysExpiredManagementAll(), NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        addIfActive(mailNotifications, personNotificationsDto.getRemainingVacationDaysManagementAll(), List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
 
         addIfActive(mailNotifications, personNotificationsDto.getApplicationAppliedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         addIfActive(mailNotifications, personNotificationsDto.getApplicationAdaptedForManagement(), List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
@@ -124,7 +125,8 @@ final class PersonNotificationsMapper {
 
         // personal notifications
         setterByNotification.put(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, personNotificationsDto::setPersonNewManagementAll);
-        setterByNotification.put(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL, personNotificationsDto::setRemainingVacationDaysExpiredManagementAll);
+        setterByNotification.put(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, personNotificationsDto::setRemainingVacationDaysManagementAll);
+        setterByNotification.put(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL, personNotificationsDto::setRemainingVacationDaysManagementAll);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_APPLIED, personNotificationsDto::setApplicationAppliedAndChanges);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, personNotificationsDto::setApplicationAppliedAndChanges);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_REVOKED, personNotificationsDto::setApplicationAppliedAndChanges);
@@ -188,7 +190,7 @@ final class PersonNotificationsMapper {
 
         final List<PersonNotificationDto> dtoPersonalNotifications = List.of(
             personNotificationsDto.getPersonNewManagementAll(),
-            personNotificationsDto.getRemainingVacationDaysExpiredManagementAll(),
+            personNotificationsDto.getRemainingVacationDaysManagementAll(),
             personNotificationsDto.getApplicationAppliedAndChanges(),
             personNotificationsDto.getApplicationUpcoming(),
             personNotificationsDto.getHolidayReplacement(),

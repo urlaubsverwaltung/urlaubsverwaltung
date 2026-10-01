@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -40,7 +41,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @SpringBootTest
 class PersonNotificationsDepartmentsViewIT extends SingleTenantTestContainersBase {
 
-    private static final String HIDDEN_FIELD = "name=\"remainingVacationDaysExpiredManagementAll.active\"";
+    private static final String HIDDEN_FIELD = "name=\"remainingVacationDaysManagementAll.active\"";
 
     @Autowired
     private WebApplicationContext context;
@@ -54,7 +55,7 @@ class PersonNotificationsDepartmentsViewIT extends SingleTenantTestContainersBas
     void ensureDepartmentsTabDoesNotPostTheOfficeNotificationStoredForANonOfficePerson() throws Exception {
 
         // e.g. a former office person
-        signedIn(List.of(USER), List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
+        signedIn(List.of(USER), List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
 
         perform(get("/web/person/1/notifications/departments")
             .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER"))))
@@ -65,7 +66,7 @@ class PersonNotificationsDepartmentsViewIT extends SingleTenantTestContainersBas
     @Test
     void ensureDepartmentsTabKeepsTheOfficeNotificationOfOffice() throws Exception {
 
-        signedIn(List.of(USER, OFFICE), List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
+        signedIn(List.of(USER, OFFICE), List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
 
         perform(get("/web/person/1/notifications/departments")
             .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE"))))

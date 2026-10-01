@@ -39,7 +39,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost", "spring.main.allow-bean-definition-overriding=true"})
 @Transactional
@@ -96,7 +98,8 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
         when(departmentService.getDepartmentNamesByMembers(List.of(person, person2))).thenReturn(Map.of(new PersonId(1L), List.of("Entwicklung", "Marketing")));
 
         final Person office = new Person("office", "Office", "Senorita", "office@example.org");
-        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).thenReturn(List.of(office));
 
         sut.updateAccountsForNextPeriod();
 

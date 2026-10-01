@@ -16,22 +16,23 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
- * Verifies the SQL of {@code changelog-6.14.0-remaining-vacation-days-expired-management-notification.xml}. The
+ * Verifies the SQL of {@code changelog-6.14.0-remaining-vacation-days-management-notifications.xml}. The
  * changeset already ran on the empty database when this test starts, so the SQL is read from the changelog and
  * executed again against the persons created here.
  */
 @SpringBootTest
 @Transactional
-class RemainingVacationDaysExpiredManagementNotificationMigrationIT extends SingleTenantTestContainersBase {
+class RemainingVacationDaysManagementNotificationsMigrationIT extends SingleTenantTestContainersBase {
 
-    private static final String CHANGELOG = "dbchangelogs/changelog-6.14.0-remaining-vacation-days-expired-management-notification.xml";
-    private static final String CHANGESET_ID = "remaining-vacation-days-expired-management-notification";
+    private static final String CHANGELOG = "dbchangelogs/changelog-6.14.0-remaining-vacation-days-management-notifications.xml";
+    private static final String CHANGESET_ID = "remaining-vacation-days-management-notifications";
 
     @Autowired
     private PersonService personService;
@@ -43,34 +44,37 @@ class RemainingVacationDaysExpiredManagementNotificationMigrationIT extends Sing
     private EntityManager entityManager;
 
     @Test
-    void ensureMigrationEnablesTheNotificationForOffice() throws Exception {
+    void ensureMigrationEnablesTheNotificationsForOffice() throws Exception {
 
         final Person office = personService.create("office", "Office", "Olga", "office@example.org", List.of(), List.of(USER, OFFICE));
 
         migrate();
 
-        assertThat(countOfNotification(office)).isOne();
+        assertThat(countOfNotification(office, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).isOne();
+        assertThat(countOfNotification(office, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).isOne();
     }
 
     @Test
-    void ensureMigrationDoesNotDuplicateTheNotification() throws Exception {
+    void ensureMigrationDoesNotDuplicateTheNotifications() throws Exception {
 
         final Person office = personService.create("office", "Office", "Olga", "office@example.org",
             List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL), List.of(USER, OFFICE));
 
         migrate();
 
-        assertThat(countOfNotification(office)).isOne();
+        assertThat(countOfNotification(office, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).isOne();
+        assertThat(countOfNotification(office, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).isOne();
     }
 
     @Test
-    void ensureMigrationDoesNotEnableTheNotificationWithoutOffice() throws Exception {
+    void ensureMigrationDoesNotEnableTheNotificationsWithoutOffice() throws Exception {
 
         final Person boss = personService.create("boss", "Boss", "Bruno", "boss@example.org", List.of(), List.of(USER, BOSS));
 
         migrate();
 
-        assertThat(countOfNotification(boss)).isZero();
+        assertThat(countOfNotification(boss, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL)).isZero();
+        assertThat(countOfNotification(boss, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL)).isZero();
     }
 
     private void migrate() throws Exception {
@@ -79,10 +83,10 @@ class RemainingVacationDaysExpiredManagementNotificationMigrationIT extends Sing
         entityManager.clear();
     }
 
-    private int countOfNotification(Person person) {
+    private int countOfNotification(Person person, MailNotification notification) {
         final Integer count = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM person_notifications WHERE person_id = ? AND notifications = ?",
-            Integer.class, person.getId(), NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL.name());
+            Integer.class, person.getId(), notification.name());
         return count == null ? 0 : count;
     }
 

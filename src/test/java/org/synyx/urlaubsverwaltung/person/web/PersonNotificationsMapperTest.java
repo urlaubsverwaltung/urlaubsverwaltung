@@ -15,6 +15,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL;
 
 class PersonNotificationsMapperTest {
@@ -49,21 +50,21 @@ class PersonNotificationsMapperTest {
     }
 
     @Test
-    void ensureExpiredRemainingVacationDaysNotificationIsVisibleAndActiveForOffice() {
+    void ensureRemainingVacationDaysNotificationsAreVisibleAndActiveForOffice() {
 
         final Person office = new Person();
         office.setId(1L);
         office.setPermissions(List.of(Role.USER, Role.OFFICE));
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL));
 
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(office, false);
 
-        assertThat(personNotificationsDto.getRemainingVacationDaysExpiredManagementAll().isVisible()).isTrue();
-        assertThat(personNotificationsDto.getRemainingVacationDaysExpiredManagementAll().isActive()).isTrue();
+        assertThat(personNotificationsDto.getRemainingVacationDaysManagementAll().isVisible()).isTrue();
+        assertThat(personNotificationsDto.getRemainingVacationDaysManagementAll().isActive()).isTrue();
     }
 
     @Test
-    void ensureExpiredRemainingVacationDaysNotificationIsNotVisibleWithoutOffice() {
+    void ensureRemainingVacationDaysNotificationsAreNotVisibleWithoutOffice() {
 
         final Person user = new Person();
         user.setId(2L);
@@ -72,15 +73,15 @@ class PersonNotificationsMapperTest {
 
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(user, false);
 
-        assertThat(personNotificationsDto.getRemainingVacationDaysExpiredManagementAll().isVisible()).isFalse();
+        assertThat(personNotificationsDto.getRemainingVacationDaysManagementAll().isVisible()).isFalse();
     }
 
     @Test
-    void ensureActiveExpiredRemainingVacationDaysNotificationIsSaved() {
+    void ensureActiveRemainingVacationDaysNotificationsAreSaved() {
 
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
-        personNotificationsDto.setRemainingVacationDaysExpiredManagementAll(new PersonNotificationDto(true, true));
+        personNotificationsDto.setRemainingVacationDaysManagementAll(new PersonNotificationDto(true, true));
 
-        assertThat(mapToMailNotifications(personNotificationsDto)).containsExactly(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+        assertThat(mapToMailNotifications(personNotificationsDto)).containsExactly(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
     }
 }
