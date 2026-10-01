@@ -127,6 +127,12 @@ public enum FederalState {
 
     ROMANIA("ro", "ro"),
 
+    PORTUGAL("pt", "pt"),
+    PORTUGAL_AZORES("pt", "20"),
+    PORTUGAL_MADEIRA("pt", "30"),
+
+    BULGARIA("bg", "bg"),
+
     USA_MARYLAND("us", "md"),
     USA_VIRGINIA("us", "va"),
     USA_WASHINGTON_DC("us", "dc");

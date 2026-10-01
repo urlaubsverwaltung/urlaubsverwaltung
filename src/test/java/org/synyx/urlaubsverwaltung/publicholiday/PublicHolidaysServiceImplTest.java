@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,12 +24,16 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
+import static java.time.Month.APRIL;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BULGARIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN_MUENCHEN;
@@ -47,7 +52,9 @@ class PublicHolidaysServiceImplTest {
     void setUp() {
         sut = new PublicHolidaysServiceImpl(settingsService, Map.of(
             "de", getHolidayManager(HolidayCalendar.GERMANY),
-            "hr", getHolidayManager(HolidayCalendar.CROATIA)
+            "hr", getHolidayManager(HolidayCalendar.CROATIA),
+            "pt", getHolidayManager(HolidayCalendar.PORTUGAL),
+            "bg", getHolidayManager(HolidayCalendar.BULGARIA)
         ));
     }
 
@@ -199,6 +206,41 @@ class PublicHolidaysServiceImplTest {
             .extracting(PublicHoliday::description)
             .doesNotHaveDuplicates()
             .doesNotContainNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PORTUGAL, false", "PORTUGAL_AZORES, false", "PORTUGAL_MADEIRA, true"})
+    void ensureMadeiraDayIsAPublicHolidayInMadeiraOnly(FederalState federalState, boolean isPublicHoliday) {
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2026, JULY, 1), federalState);
+        assertThat(maybePublicHoliday.isPresent()).isEqualTo(isPublicHoliday);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PORTUGAL, false", "PORTUGAL_AZORES, true", "PORTUGAL_MADEIRA, false"})
+    void ensureAzoresDayIsAPublicHolidayInAzoresOnly(FederalState federalState, boolean isPublicHoliday) {
+        // Dia da Região Autónoma dos Açores is on whit monday
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2026, MAY, 25), federalState);
+        assertThat(maybePublicHoliday.isPresent()).isEqualTo(isPublicHoliday);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PORTUGAL", "PORTUGAL_AZORES", "PORTUGAL_MADEIRA"})
+    void ensureNationalPublicHolidaysOfPortugalApplyToAllRegions(FederalState federalState) {
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2026, APRIL, 25), federalState);
+        assertThat(maybePublicHoliday).isPresent();
+    }
+
+    @Test
+    void ensureCarnivalIsNoPublicHolidayInPortugal() {
+        // carnival tuesday is only an observance in portugal
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2026, FEBRUARY, 17), FederalState.PORTUGAL);
+        assertThat(maybePublicHoliday).isEmpty();
+    }
+
+    @Test
+    void ensureEasterMondayInBulgariaFollowsTheJulianCalendar() {
+        assertThat(sut.getPublicHoliday(of(2026, APRIL, 13), BULGARIA)).isPresent();
+        assertThat(sut.getPublicHoliday(of(2026, APRIL, 6), BULGARIA)).isEmpty();
     }
 
     @Test

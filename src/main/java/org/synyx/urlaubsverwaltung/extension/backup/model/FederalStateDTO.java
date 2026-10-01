@@ -115,6 +115,12 @@ public enum FederalStateDTO {
 
     ROMANIA,
 
+    PORTUGAL,
+    PORTUGAL_AZORES,
+    PORTUGAL_MADEIRA,
+
+    BULGARIA,
+
     USA_MARYLAND,
     USA_VIRGINIA,
     USA_WASHINGTON_DC;
