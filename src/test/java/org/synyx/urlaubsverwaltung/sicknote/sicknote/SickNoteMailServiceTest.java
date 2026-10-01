@@ -42,6 +42,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -328,6 +329,79 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancelled_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+    }
+
+    @Test
+    void ensureToSendCancelledSickNoteMailToRecipientsOfInterest() {
+
+        final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        management.setId(1L);
+        management.setPermissions(List.of(USER, OFFICE));
+        management.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person canceller = new Person("canceller", "Canceller", "Carl", "canceller@example.org");
+        canceller.setId(3L);
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(2L);
+        person.setPermissions(Set.of(USER));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .applier(management)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
+            .build();
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "comment", canceller);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management));
+        assertThat(mail.getReplyTo()).hasValue(canceller);
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled_by_management.to_management");
+        assertThat(mail.getSubjectMessageArguments()).containsExactly("Carl Canceller");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancelled_by_management_to_management");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "comment", "comment", "canceller", canceller));
+    }
+
+    @Test
+    void ensureCancelledSickNoteMailIsNotSentToTheCanceller() {
+
+        final Person canceller = new Person("canceller", "Canceller", "Carl", "canceller@example.org");
+        canceller.setId(1L);
+        canceller.setPermissions(List.of(USER, OFFICE));
+        canceller.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person otherOffice = new Person("office", "Office", "Olga", "office@example.org");
+        otherOffice.setId(3L);
+        otherOffice.setPermissions(List.of(USER, OFFICE));
+        otherOffice.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(2L);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .applier(canceller)
+            .startDate(LocalDate.of(2022, MARCH, 10))
+            .endDate(LocalDate.of(2022, APRIL, 20))
+            .build();
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(canceller, otherOffice));
+
+        sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "", canceller);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        assertThat(argument.getValue().getMailAddressRecipients()).hasValue(List.of(otherOffice));
     }
 
     @Test

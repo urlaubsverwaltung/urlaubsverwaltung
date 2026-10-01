@@ -696,6 +696,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCancelledByManagementForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCancelledByManagementForManagement", hasProperty("active", is(false)))))
             ;
     }
 

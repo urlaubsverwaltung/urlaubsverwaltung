@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -107,6 +108,15 @@ class PersonServiceImplTest {
 
         final Person createdPerson = sut.create("  rick ", "", "", "r", List.of(), List.of());
         assertThat(createdPerson.getUsername()).isEqualTo("rick");
+    }
+
+    @Test
+    void ensureDefaultNotificationsDoNotContainSickNoteCancelledToManagement() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de");
+        assertThat(createdPerson.getNotifications()).doesNotContain(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT);
     }
 
     @Test

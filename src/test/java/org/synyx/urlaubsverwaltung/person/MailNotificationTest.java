@@ -33,10 +33,12 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 class MailNotificationTest {
@@ -367,5 +369,33 @@ class MailNotificationTest {
     @EnumSource(value = Role.class, names = {"OFFICE"}, mode = EXCLUDE)
     void ensureNOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT_IsNotValidWithoutOffice(Role role) {
         assertThat(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT.isValidWith(List.of(role))).isFalse();
+    }
+
+    @Test
+    void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsValidWithOffice() {
+        assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(USER, OFFICE))).isTrue();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
+    void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsValidWithSickNoteCancelAnd(Role role) {
+        assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(USER, SICK_NOTE_CANCEL, role))).isTrue();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
+    void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsNotValidWithoutSickNoteCancel(Role role) {
+        assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(USER, role))).isFalse();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"}, mode = EXCLUDE)
+    void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsNotValidWithSickNoteCancelAnd(Role role) {
+        assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(USER, SICK_NOTE_CANCEL, role))).isFalse();
+    }
+
+    @Test
+    void ensureNOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT_IsNotValidWithoutUser() {
+        assertThat(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT.isValidWith(List.of(OFFICE))).isFalse();
     }
 }

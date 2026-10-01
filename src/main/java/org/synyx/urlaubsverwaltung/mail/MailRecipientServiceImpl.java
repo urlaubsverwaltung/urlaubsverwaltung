@@ -27,6 +27,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -61,16 +62,16 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
             officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
+        if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL))) {
             officeAndBosses.addAll(getBossWith(mailNotification));
         }
         final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
+        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
+        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotification));
         }
 

@@ -151,6 +151,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote, canceller);
         sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
+        sickNoteMailService.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(cancelledSickNote, comment, canceller);
 
         applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(cancelledSickNote));
         return cancelledSickNote;
