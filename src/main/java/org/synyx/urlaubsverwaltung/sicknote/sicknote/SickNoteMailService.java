@@ -39,6 +39,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -112,6 +113,33 @@ public class SickNoteMailService {
             mailService.send(toOffice);
             sickNoteService.setEndOfSickPayNotificationSend(sickNote);
         }
+    }
+
+    /**
+     * Sends mail to office and the responsible management once a sick note reached the configured work day without
+     * AU-Bescheinigung (Arbeitsunfähigkeitsbescheinigung).
+     */
+    public void sendMissingAubNotification() {
+
+        final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingMissingAubNotificationWorkDay();
+
+        LOG.info("Found {} sick notes without AU-Bescheinigung reaching the notification work day", sickNotes.size());
+
+        final LocalDate today = LocalDate.now(clock);
+
+        for (SickNote sickNote : sickNotes) {
+            final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT);
+            final Map<String, Object> model = Map.of("sickNote", sickNote, "workDaysWithoutAub", sickNote.getWorkDayCountUntil(today));
+
+            final Mail mailToManagement = Mail.builder()
+                .withRecipient(recipients)
+                .withSubject("subject.sicknote.missing_aub.to_management", sickNote.getPerson().getNiceName())
+                .withTemplate("sick_note_missing_aub_to_management", _ -> model)
+                .build();
+            mailService.send(mailToManagement);
+        }
+
+        sickNoteService.setMissingAubNotificationSend(sickNotes);
     }
 
     /**

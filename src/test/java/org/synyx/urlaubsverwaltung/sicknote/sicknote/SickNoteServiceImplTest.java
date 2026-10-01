@@ -32,6 +32,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -84,6 +85,7 @@ class SickNoteServiceImplTest {
             .aubEndDate(endDate)
             .lastEdited(LocalDate.of(2022, DECEMBER, 5))
             .endOfSickPayNotificationSend(endDate)
+            .missingAubNotificationSend(startDate)
             .status(ACTIVE)
             .build();
 
@@ -107,6 +109,7 @@ class SickNoteServiceImplTest {
             assertThat(entityToSave.getAubEndDate()).isEqualTo(endDate);
             assertThat(entityToSave.getLastEdited()).isEqualTo(LocalDate.now(fixedClock));
             assertThat(entityToSave.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
+            assertThat(entityToSave.getMissingAubNotificationSend()).isEqualTo(startDate);
             assertThat(entityToSave.getStatus()).isEqualTo(ACTIVE);
         });
     }
@@ -466,6 +469,79 @@ class SickNoteServiceImplTest {
 
         final List<SickNote> actual = sut.getSickNotesReachingEndOfSickPay();
         assertThat(actual).hasSize(1).first().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureSickNotesReachingTheMissingAubNotificationWorkDayCountTheWorkDaysOfThePerson() {
+
+        // today is monday 28.06.2021
+        final Person person = new Person();
+        person.setId(1L);
+
+        // wednesday 23.06.2021 until wednesday 30.06.2021: wednesday, thursday, friday -> third work day reached last friday
+        final SickNoteEntity reached = sickNoteEntity(1L, person, LocalDate.of(2021, JUNE, 23), LocalDate.of(2021, JUNE, 30));
+        // friday 25.06.2021 until wednesday 30.06.2021: friday, monday -> second work day today
+        final SickNoteEntity notReached = sickNoteEntity(2L, person, LocalDate.of(2021, JUNE, 25), LocalDate.of(2021, JUNE, 30));
+
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMissingAubNotificationWorkDay(3);
+        final Settings settings = new Settings();
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2021, JUNE, 28))).thenReturn(List.of(reached, notReached));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2021, JUNE, 23), LocalDate.of(2021, JUNE, 30));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange))
+            .thenReturn(Map.of(person, workingTimeCalendarMondayToFriday(dateRange.startDate(), dateRange.endDate())));
+
+        final SickNoteServiceImpl sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, new SickNoteMapper(workingTimeCalendarService), fixedClock);
+
+        final List<SickNote> actual = sut.getSickNotesReachingMissingAubNotificationWorkDay();
+        assertThat(actual).extracting(SickNote::getId).containsExactly(1L);
+    }
+
+    @Test
+    void ensureSickNotesReachingTheMissingAubNotificationWorkDayIsEmptyWithoutCandidates() {
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(sickNoteRepository.findSickNotesWithoutAubToNotify(3, LocalDate.of(2021, JUNE, 28))).thenReturn(List.of());
+
+        final SickNoteServiceImpl sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, new SickNoteMapper(workingTimeCalendarService), fixedClock);
+
+        assertThat(sut.getSickNotesReachingMissingAubNotificationWorkDay()).isEmpty();
+        verifyNoInteractions(workingTimeCalendarService);
+    }
+
+    @Test
+    void ensureSetMissingAubNotificationSendMarksAllGivenSickNotesWithToday() {
+
+        final SickNote first = SickNote.builder().id(1L).build();
+        final SickNote second = SickNote.builder().id(2L).build();
+
+        sut.setMissingAubNotificationSend(List.of(first, second));
+
+        verify(sickNoteRepository).updateMissingAubNotificationSend(List.of(1L, 2L), LocalDate.of(2021, JUNE, 28));
+    }
+
+    @Test
+    void ensureSetMissingAubNotificationSendDoesNothingWithoutSickNotes() {
+
+        sut.setMissingAubNotificationSend(List.of());
+
+        verifyNoInteractions(sickNoteRepository);
+    }
+
+    private static SickNoteEntity sickNoteEntity(Long id, Person person, LocalDate startDate, LocalDate endDate) {
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(id);
+        entity.setPerson(person);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
+        entity.setDayLength(DayLength.FULL);
+        entity.setStatus(ACTIVE);
+        return entity;
     }
 
     @Test

@@ -13,8 +13,9 @@ class SickNoteSettingsDTOTest {
         sickNoteSettings.setMaximumSickPayDays(20);
         sickNoteSettings.setDaysBeforeEndOfSickPayNotification(10);
         sickNoteSettings.setUserIsAllowedToSubmitSickNotes(false);
+        sickNoteSettings.setMissingAubNotificationWorkDay(5);
 
-        final SickNoteSettingsDTO expected = new SickNoteSettingsDTO(20, 10, false);
+        final SickNoteSettingsDTO expected = new SickNoteSettingsDTO(20, 10, false, 5);
 
         final SickNoteSettingsDTO dto = SickNoteSettingsDTO.of(sickNoteSettings);
 
@@ -23,13 +24,23 @@ class SickNoteSettingsDTOTest {
 
     @Test
     void happyPathDTOToSickNoteSettings() {
-        final SickNoteSettingsDTO dto = new SickNoteSettingsDTO(15, 7, true);
+        final SickNoteSettingsDTO dto = new SickNoteSettingsDTO(15, 7, true, 4);
 
         final SickNoteSettings sickNoteSettings = dto.toSickNoteSettings();
 
         assertThat(sickNoteSettings.getMaximumSickPayDays()).isEqualTo(15);
         assertThat(sickNoteSettings.getDaysBeforeEndOfSickPayNotification()).isEqualTo(7);
         assertThat(sickNoteSettings.getUserIsAllowedToSubmitSickNotes()).isTrue();
+        assertThat(sickNoteSettings.getMissingAubNotificationWorkDay()).isEqualTo(4);
+    }
+
+    @Test
+    void ensureBackupWithoutMissingAubNotificationWorkDayKeepsTheDefault() {
+        final SickNoteSettingsDTO dto = new SickNoteSettingsDTO(15, 7, true, null);
+
+        final SickNoteSettings sickNoteSettings = dto.toSickNoteSettings();
+
+        assertThat(sickNoteSettings.getMissingAubNotificationWorkDay()).isEqualTo(3);
     }
 
 }

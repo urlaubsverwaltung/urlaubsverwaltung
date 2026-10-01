@@ -31,6 +31,7 @@ import java.util.Objects;
 import static java.time.Month.APRIL;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.MARCH;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
@@ -45,12 +46,14 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -744,6 +747,72 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
+    }
+
+    @Test
+    void sendMissingAubNotification() throws MessagingException, IOException {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT), List.of(USER, OFFICE));
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT))
+            .thenReturn(List.of(office));
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("application.data.sicknotetype.sicknote");
+
+        // third work day today
+        final LocalDate today = LocalDate.now();
+        final LocalDate startDate = today.minusDays(2);
+        final LocalDate endDate = today.plusDays(2);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteType)
+            .status(SickNoteStatus.ACTIVE)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(startDate, endDate))
+            .build();
+
+        final List<SickNote> sickNotes = List.of(sickNote);
+        when(sickNoteService.getSickNotesReachingMissingAubNotificationWorkDay()).thenReturn(sickNotes);
+
+        sut.sendMissingAubNotification();
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
+
+        assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).isEmpty();
+
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        final Message msg = inbox[0];
+        assertThat(msg.getSubject()).isEqualTo("Fehlende AU-Bescheinigung für die Krankmeldung von Marlene Muster");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            die Krankmeldung von Marlene Muster besteht seit 3 Arbeitstagen ohne AU-Bescheinigung:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Mitarbeiter:          Marlene Muster
+                Zeitraum:             %s bis %s, ganztägig
+                Art der Krankmeldung: Krankmeldung
+
+            Bitte trage die AU-Bescheinigung ein, sobald sie vorliegt.
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(
+            startDate.format(ofPattern("dd.MM.yyyy")), endDate.format(ofPattern("dd.MM.yyyy")), office.getId()));
+
+        verify(sickNoteService).setMissingAubNotificationSend(sickNotes);
     }
 
     @Test

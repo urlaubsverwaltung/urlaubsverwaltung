@@ -31,11 +31,13 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -440,6 +442,61 @@ class MailRecipientServiceImplTest {
         final List<Person> recipients = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT_TO_MANAGEMENT);
         assertThat(recipients)
             .containsExactlyInAnyOrder(office, bossWithSickNoteCancel, departmentHeadWithSickNoteCancel, secondStageWithSickNoteCancel);
+    }
+
+    @Test
+    void getRecipientsOfInterestForMissingAubContainsManagementWithSickNoteAddPermission() {
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
+        normalUser.setId(1L);
+        normalUser.setPermissions(List.of(USER));
+
+        final Person office = new Person("office", "office", "office", "office@example.org");
+        office.setId(2L);
+        office.setPermissions(List.of(USER, OFFICE));
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
+
+        final Person bossWithSickNoteAdd = new Person("boss", "boss", "boss", "boss@example.org");
+        bossWithSickNoteAdd.setId(3L);
+        bossWithSickNoteAdd.setPermissions(List.of(USER, BOSS, SICK_NOTE_ADD));
+        bossWithSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+
+        final Person bossWithoutSickNoteAdd = new Person("boss2", "boss2", "boss2", "boss2@example.org");
+        bossWithoutSickNoteAdd.setId(4L);
+        bossWithoutSickNoteAdd.setPermissions(List.of(USER, BOSS));
+        bossWithoutSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossWithSickNoteAdd, bossWithoutSickNoteAdd));
+
+        final Person departmentHeadWithSickNoteAdd = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHeadWithSickNoteAdd.setId(5L);
+        departmentHeadWithSickNoteAdd.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
+        departmentHeadWithSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+
+        final Person departmentHeadWithoutSickNoteAdd = new Person("departmentHead2", "departmentHead2", "departmentHead2", "departmentHead2@example.org");
+        departmentHeadWithoutSickNoteAdd.setId(6L);
+        departmentHeadWithoutSickNoteAdd.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHeadWithoutSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+        when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser))
+            .thenReturn(List.of(departmentHeadWithSickNoteAdd, departmentHeadWithoutSickNoteAdd));
+
+        final Person secondStageWithSickNoteAdd = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
+        secondStageWithSickNoteAdd.setId(7L);
+        secondStageWithSickNoteAdd.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
+        secondStageWithSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+
+        final Person secondStageWithoutSickNoteAdd = new Person("secondStage2", "secondStage2", "secondStage2", "secondStage2@example.org");
+        secondStageWithoutSickNoteAdd.setId(8L);
+        secondStageWithoutSickNoteAdd.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        secondStageWithoutSickNoteAdd.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT));
+        when(responsiblePersonService.getResponsibleSecondStageAuthorities(normalUser))
+            .thenReturn(List.of(secondStageWithSickNoteAdd, secondStageWithoutSickNoteAdd));
+
+        final List<Person> recipients = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_SICK_NOTE_MISSING_AUB_TO_MANAGEMENT);
+        assertThat(recipients)
+            .containsExactlyInAnyOrder(office, bossWithSickNoteAdd, departmentHeadWithSickNoteAdd, secondStageWithSickNoteAdd);
     }
 
     @Test

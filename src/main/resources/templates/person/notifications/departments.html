@@ -172,7 +172,8 @@
                 personNotificationsDto.sickNoteSubmittedByUserForManagement.visible ||
                 personNotificationsDto.sickNoteAcceptedByManagementForManagement.visible ||
                 personNotificationsDto.sickNoteEditedByManagementForManagement.visible ||
-                personNotificationsDto.sickNoteCancelledByManagementForManagement.visible
+                personNotificationsDto.sickNoteCancelledByManagementForManagement.visible ||
+                personNotificationsDto.sickNoteMissingAubForManagement.visible
               }"
           >
             <h2
@@ -196,6 +197,9 @@
               ></li>
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCancelledByManagementForManagement.visible},active=${personNotificationsDto.sickNoteCancelledByManagementForManagement.active},name='sickNoteCancelledByManagementForManagement.active',label='person.notifications.section.sicknote.cancelled.management.label',info='person.notifications.section.sicknote.cancelled.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteMissingAubForManagement.visible},active=${personNotificationsDto.sickNoteMissingAubForManagement.active},name='sickNoteMissingAubForManagement.active',label='person.notifications.section.sicknote.missing-aub.management.label',info='person.notifications.section.sicknote.missing-aub.management.info')}"
               ></li>
             </ul>
           </section>

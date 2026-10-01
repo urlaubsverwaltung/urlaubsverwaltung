@@ -11,7 +11,8 @@ public record SickNoteDTO(Long id, String externalIdOfPerson, String externalIdO
                           LocalDate startDate,
                           LocalDate endDate,
                           DayLengthDTO dayLength, LocalDate aubStartDate, LocalDate aubEndDate, LocalDate lastEdited,
-                          LocalDate endOfSickPayNotificationSend, SickNoteStatusDTO sickNoteStatus,
+                          LocalDate endOfSickPayNotificationSend, LocalDate missingAubNotificationSend,
+                          SickNoteStatusDTO sickNoteStatus,
                           List<SickNoteCommentDTO> sickNoteComments,
                           List<SickNoteExtensionHistoryDTO> sickNoteExtensionHistoryItems) {
 
@@ -27,6 +28,7 @@ public record SickNoteDTO(Long id, String externalIdOfPerson, String externalIdO
         entity.setAubEndDate(this.aubEndDate);
         entity.setLastEdited(this.lastEdited);
         entity.setEndOfSickPayNotificationSend(this.endOfSickPayNotificationSend);
+        entity.setMissingAubNotificationSend(this.missingAubNotificationSend);
         entity.setStatus(this.sickNoteStatus.toSickNoteStatus());
         return entity;
     }

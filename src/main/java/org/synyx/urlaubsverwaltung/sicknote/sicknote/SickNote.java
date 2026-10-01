@@ -27,14 +27,15 @@ public final class SickNote {
     private final LocalDate aubEndDate;
     private final LocalDate lastEdited;
     private final LocalDate endOfSickPayNotificationSend;
+    private final LocalDate missingAubNotificationSend;
     private final SickNoteStatus status;
     private final WorkingTimeCalendar workingTimeCalendar;
 
     private SickNote(
         Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
         LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
-        LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
-        WorkingTimeCalendar workingTimeCalendar
+        LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, LocalDate missingAubNotificationSend,
+        SickNoteStatus status, WorkingTimeCalendar workingTimeCalendar
     ) {
         this.id = id;
         this.person = person;
@@ -47,6 +48,7 @@ public final class SickNote {
         this.aubEndDate = aubEndDate;
         this.lastEdited = lastEdited;
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
+        this.missingAubNotificationSend = missingAubNotificationSend;
         this.status = status;
         this.workingTimeCalendar = workingTimeCalendar;
     }
@@ -104,12 +106,30 @@ public final class SickNote {
         return endOfSickPayNotificationSend;
     }
 
+    public LocalDate getMissingAubNotificationSend() {
+        return missingAubNotificationSend;
+    }
+
     public SickNoteStatus getStatus() {
         return status;
     }
 
     public BigDecimal getWorkDays() {
         return workingTime(workingTimeCalendar, new DateRange(getStartDate(), getEndDate()), getDayLength());
+    }
+
+    /**
+     * Counts the days the person works on from the start of this sick note up to the given date, but not beyond the end
+     * of this sick note. A day the person works on only half counts as a whole day, as well as a half sick day.
+     *
+     * @param date inclusive, usually today
+     * @return number of work days of this sick note up to the given date
+     */
+    public long getWorkDayCountUntil(LocalDate date) {
+        final LocalDate until = getEndDate().isBefore(date) ? getEndDate() : date;
+        return getStartDate().datesUntil(until.plusDays(1))
+            .filter(day -> workingTimeCalendar.workingTimeDayLength(day).filter(dayLength -> dayLength != DayLength.ZERO).isPresent())
+            .count();
     }
 
     public long getCalendarDays() {
@@ -255,6 +275,7 @@ public final class SickNote {
             .aubEndDate(sickNote.getAubEndDate())
             .lastEdited(sickNote.getLastEdited())
             .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
+            .missingAubNotificationSend(sickNote.getMissingAubNotificationSend())
             .status(sickNote.getStatus())
             .workingTimeCalendar(sickNote.workingTimeCalendar);
     }
@@ -271,6 +292,7 @@ public final class SickNote {
         private LocalDate aubEndDate;
         private LocalDate lastEdited;
         private LocalDate endOfSickPayNotificationSend;
+        private LocalDate missingAubNotificationSend;
         private SickNoteStatus status;
         private WorkingTimeCalendar workingTimeCalendar;
 
@@ -329,6 +351,11 @@ public final class SickNote {
             return this;
         }
 
+        public Builder missingAubNotificationSend(LocalDate missingAubNotificationSend) {
+            this.missingAubNotificationSend = missingAubNotificationSend;
+            return this;
+        }
+
         public Builder status(SickNoteStatus status) {
             this.status = status;
             return this;
@@ -341,7 +368,7 @@ public final class SickNote {
 
         public SickNote build() {
             return new SickNote(id, person, applier, sickNoteType, startDate, endDate, dayLength, aubStartDate,
-                aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workingTimeCalendar);
+                aubEndDate, lastEdited, endOfSickPayNotificationSend, missingAubNotificationSend, status, workingTimeCalendar);
         }
     }
 }

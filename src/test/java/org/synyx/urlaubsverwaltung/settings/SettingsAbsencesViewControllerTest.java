@@ -100,6 +100,7 @@ class SettingsAbsencesViewControllerTest {
                 .param("applicationSettings.remindForUpcomingHolidayReplacement", "true")
                 .param("sickNoteSettings.maximumSickPayDays", "7")
                 .param("sickNoteSettings.daysBeforeEndOfSickPayNotification", "8")
+                .param("sickNoteSettings.missingAubNotificationWorkDay", "4")
         )
             .andExpect(status().isFound())
             .andExpect(flash().attribute("success", true))
@@ -124,6 +125,7 @@ class SettingsAbsencesViewControllerTest {
         assertThat(actualSettings.getSickNoteSettings()).satisfies(sickNoteSettings -> {
             assertThat(sickNoteSettings.getMaximumSickPayDays()).isEqualTo(7);
             assertThat(sickNoteSettings.getDaysBeforeEndOfSickPayNotification()).isEqualTo(8);
+            assertThat(sickNoteSettings.getMissingAubNotificationWorkDay()).isEqualTo(4);
         });
     }
 

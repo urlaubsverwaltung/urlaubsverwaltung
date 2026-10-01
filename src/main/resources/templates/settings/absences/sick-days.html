@@ -64,6 +64,43 @@
       </div>
 
       <div class="uv-form__group">
+        <div class="uv-form__group-info">
+          <p class="uv-help-block">
+            <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+            <th:block th:text="#{settings.sickDays.missingAubNotificationWorkDay.description}" />
+          </p>
+        </div>
+
+        <!-- Work day of the notification about a missing AU-Bescheinigung -->
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.sickDays.missingAubNotificationWorkDay}:|"
+            class="is-required"
+            for="sickNoteSettings.missingAubNotificationWorkDay"
+          >
+            Ab welchem Arbeitstag einer Krankmeldung ohne AU-Bescheinigung sollen die Verantwortlichen benachrichtigt
+            werden
+          </label>
+          <input
+            id="sickNoteSettings.missingAubNotificationWorkDay"
+            th:field="*{sickNoteSettings.missingAubNotificationWorkDay}"
+            th:errorclass="error"
+            type="number"
+            min="1"
+            step="1"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('sickNoteSettings.missingAubNotificationWorkDay')}"
+          >
+            <th:block th:errors="*{sickNoteSettings.missingAubNotificationWorkDay}">
+              sickNoteSettings.missingAubNotificationWorkDay Error
+            </th:block>
+          </p>
+        </div>
+      </div>
+
+      <div class="uv-form__group">
         <!-- Allow users to submit their own sick notes -->
         <div class="uv-form__input-row">
           <p

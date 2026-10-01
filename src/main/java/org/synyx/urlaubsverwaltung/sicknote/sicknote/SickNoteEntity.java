@@ -76,6 +76,8 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
 
     private LocalDate endOfSickPayNotificationSend;
 
+    private LocalDate missingAubNotificationSend;
+
     @Enumerated(STRING)
     private SickNoteStatus status;
 
@@ -167,6 +169,14 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
     }
 
+    public LocalDate getMissingAubNotificationSend() {
+        return missingAubNotificationSend;
+    }
+
+    public void setMissingAubNotificationSend(LocalDate missingAubNotificationSend) {
+        this.missingAubNotificationSend = missingAubNotificationSend;
+    }
+
     public SickNoteStatus getStatus() {
         return status;
     }
@@ -189,6 +199,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
             ", aubEndDate=" + aubEndDate +
             ", lastEdited=" + lastEdited +
             ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
+            ", missingAubNotificationSend=" + missingAubNotificationSend +
             ", status=" + status +
             '}';
     }

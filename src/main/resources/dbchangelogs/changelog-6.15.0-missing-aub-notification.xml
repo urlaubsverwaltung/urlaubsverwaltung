@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+  <!--
+    Office and the responsible management are notified once when a sick note reaches a configurable work day without a
+    certificate of incapacity (AU-Bescheinigung), see https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/3059
+  -->
+  <changeSet author="schneider" id="add-missing-aub-notification-work-day-to-settings">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="missing_aub_notification_work_day"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="settings">
+      <column name="missing_aub_notification_work_day" type="integer" defaultValueNumeric="3"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-aub-notification-send-to-sick-note">
+    <preConditions>
+      <tableExists tableName="sick_note"/>
+      <not>
+        <columnExists tableName="sick_note" columnName="missing_aub_notification_send"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="sick_note">
+      <column name="missing_aub_notification_send" type="date"/>
+    </addColumn>
+  </changeSet>
+
+  <!--
+    Sick notes that ended before the update are marked as notified, so the first run of the job does not send
+    notifications about every sick note without AU-Bescheinigung of the past. Ongoing sick notes are still notified.
+  -->
+  <changeSet author="schneider" id="mark-ended-sick-notes-without-aub-as-notified">
+    <sql>
+      UPDATE sick_note
+      SET missing_aub_notification_send = CURRENT_DATE
+      WHERE end_date &lt; CURRENT_DATE
+        AND (aub_start_date IS NULL OR aub_end_date IS NULL)
+        AND missing_aub_notification_send IS NULL;
+    </sql>
+  </changeSet>
+</databaseChangeLog>

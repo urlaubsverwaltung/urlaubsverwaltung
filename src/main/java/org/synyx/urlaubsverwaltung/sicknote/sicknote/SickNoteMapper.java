@@ -39,6 +39,7 @@ public class SickNoteMapper {
             .aubEndDate(entity.getAubEndDate())
             .lastEdited(entity.getLastEdited())
             .endOfSickPayNotificationSend(entity.getEndOfSickPayNotificationSend())
+            .missingAubNotificationSend(entity.getMissingAubNotificationSend())
             .status(entity.getStatus())
             .build();
     }

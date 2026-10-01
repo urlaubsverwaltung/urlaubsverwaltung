@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
@@ -157,6 +159,38 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
+    public List<SickNote> getSickNotesReachingMissingAubNotificationWorkDay() {
+
+        final LocalDate today = LocalDate.now(clock);
+        final int workDay = settingsService.getSettings().getSickNoteSettings().getMissingAubNotificationWorkDay();
+
+        final List<SickNoteEntity> candidates = sickNoteRepository.findSickNotesWithoutAubToNotify(workDay, today);
+        if (candidates.isEmpty()) {
+            return List.of();
+        }
+
+        // the whole sick notes, so their work days can be shown
+        final LocalDate from = candidates.stream().map(SickNoteEntity::getStartDate).min(naturalOrder()).orElseThrow();
+        final LocalDate lastEndDate = candidates.stream().map(SickNoteEntity::getEndDate).max(naturalOrder()).orElseThrow();
+        final LocalDate to = lastEndDate.isAfter(today) ? lastEndDate : today;
+
+        return sickNoteMapper.toSickNoteWithWorkDays(candidates, new DateRange(from, to)).stream()
+            .filter(sickNote -> sickNote.getWorkDayCountUntil(today) >= workDay)
+            .toList();
+    }
+
+    @Override
+    @Transactional
+    public void setMissingAubNotificationSend(List<SickNote> sickNotes) {
+        if (sickNotes.isEmpty()) {
+            return;
+        }
+
+        final List<Long> ids = sickNotes.stream().map(SickNote::getId).toList();
+        sickNoteRepository.updateMissingAubNotificationSend(ids, LocalDate.now(clock));
+    }
+
+    @Override
     public List<SickNote> deleteAllByPerson(Person person) {
         return sickNoteRepository.deleteByPerson(person)
             .stream()
@@ -186,6 +220,7 @@ class SickNoteServiceImpl implements SickNoteService {
         entity.setAubEndDate(sickNote.getAubEndDate());
         entity.setLastEdited(sickNote.getLastEdited());
         entity.setEndOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend());
+        entity.setMissingAubNotificationSend(sickNote.getMissingAubNotificationSend());
         entity.setStatus(sickNote.getStatus());
         return entity;
     }

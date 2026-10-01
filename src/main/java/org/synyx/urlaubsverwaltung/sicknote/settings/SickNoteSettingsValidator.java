@@ -35,5 +35,12 @@ public final class SickNoteSettingsValidator {
             errors.rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }
+
+        final Integer missingAubNotificationWorkDay = sickNoteSettings.getMissingAubNotificationWorkDay();
+        if (missingAubNotificationWorkDay == null) {
+            errors.rejectValue("sickNoteSettings.missingAubNotificationWorkDay", ERROR_MANDATORY_FIELD);
+        } else if (missingAubNotificationWorkDay < 1) {
+            errors.rejectValue("sickNoteSettings.missingAubNotificationWorkDay", ERROR_INVALID_ENTRY);
+        }
     }
 }
