@@ -12,6 +12,7 @@ import java.util.List;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.TWO;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 
@@ -26,7 +27,7 @@ class RemainingVacationDaysCsvRowTest {
 
         final RemainingVacationDaysCsvRow row = RemainingVacationDaysCsvRow.of(account, new PersonBasedata(new PersonId(1L), "42", "info"), List.of("Entwicklung", "Marketing"));
 
-        assertThat(row).isEqualTo(new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of("Entwicklung", "Marketing"), TEN, TWO, LocalDate.of(2027, 4, 1)));
+        assertThat(row).isEqualTo(new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of("Entwicklung", "Marketing"), TEN, TWO, LocalDate.of(2027, APRIL, 1)));
     }
 
     @Test

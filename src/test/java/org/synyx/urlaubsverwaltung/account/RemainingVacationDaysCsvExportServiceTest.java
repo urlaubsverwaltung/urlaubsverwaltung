@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RemainingVacationDaysCsvExportServiceTest {
 
-    private static final FilterPeriod YEAR_2027 = new FilterPeriod(LocalDate.of(2027, 1, 1), LocalDate.of(2027, 12, 31));
+    private static final FilterPeriod YEAR_2027 = new FilterPeriod(LocalDate.of(2027, JANUARY, 1), LocalDate.of(2027, DECEMBER, 31));
 
     private RemainingVacationDaysCsvExportService sut;
 
@@ -44,7 +47,7 @@ class RemainingVacationDaysCsvExportServiceTest {
     void writesHeaderAndRowWithAllValues() {
         addHeaderMessages(GERMAN);
 
-        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of("Entwicklung", "Marketing"), new BigDecimal("2.5"), new BigDecimal("0.5"), LocalDate.of(2027, 4, 1));
+        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of("Entwicklung", "Marketing"), new BigDecimal("2.5"), new BigDecimal("0.5"), LocalDate.of(2027, APRIL, 1));
 
         sut.write(YEAR_2027, GERMAN, List.of(row), csvWriter);
 
@@ -60,7 +63,7 @@ class RemainingVacationDaysCsvExportServiceTest {
     void writesNumbersAndDateInTheGivenLocale() {
         addHeaderMessages(ENGLISH);
 
-        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of(), new BigDecimal("2.5"), new BigDecimal("0.5"), LocalDate.of(2027, 4, 1));
+        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("42", "Franka", "Potente", List.of(), new BigDecimal("2.5"), new BigDecimal("0.5"), LocalDate.of(2027, APRIL, 1));
 
         sut.write(YEAR_2027, ENGLISH, List.of(row), csvWriter);
 
@@ -71,7 +74,7 @@ class RemainingVacationDaysCsvExportServiceTest {
     void writesEmptyCellsForMissingPersonnelNumberAndDepartments() {
         addHeaderMessages(GERMAN);
 
-        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("", "Franka", "Potente", List.of(), TEN, BigDecimal.ZERO, LocalDate.of(2027, 4, 1));
+        final RemainingVacationDaysCsvRow row = new RemainingVacationDaysCsvRow("", "Franka", "Potente", List.of(), TEN, BigDecimal.ZERO, LocalDate.of(2027, APRIL, 1));
 
         sut.write(YEAR_2027, GERMAN, List.of(row), csvWriter);
 

@@ -226,8 +226,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.createdOrAccepted.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_or_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
-        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().getContent()).isEqualTo(attachment);
-        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().getName()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
