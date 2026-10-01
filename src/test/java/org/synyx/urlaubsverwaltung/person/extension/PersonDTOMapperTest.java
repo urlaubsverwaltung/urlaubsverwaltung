@@ -9,11 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 
-import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
@@ -24,20 +20,6 @@ class PersonDTOMapperTest {
 
     @Nested
     class ToDTO {
-
-        @ParameterizedTest
-        @EnumSource(MailNotification.class)
-        void everyNotificationIsMappedOrLeftOutWhenTheExtensionApiDoesNotKnowIt(MailNotification notification) {
-
-            final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-            person.setId(1L);
-            person.setPermissions(Set.of(USER));
-            person.setNotifications(Set.of(notification));
-
-            final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
-
-            assertThat(dto.notifications()).extracting(Enum::name).isSubsetOf(notification.name());
-        }
         @Test
         void enabledPersonDTO() {
 
@@ -100,7 +82,7 @@ class PersonDTOMapperTest {
         @Test
         void enabledPersonKeepsPermissions() {
 
-            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(true, Set.of(RoleDTO.USER, RoleDTO.OFFICE)), List.of());
+            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(true, Set.of(RoleDTO.USER, RoleDTO.OFFICE)));
 
             assertThat(personUpdate.permissions()).hasValueSatisfying(roles -> assertThat(roles).containsExactlyInAnyOrder(USER, OFFICE));
         }
@@ -108,7 +90,7 @@ class PersonDTOMapperTest {
         @Test
         void enabledPersonWithoutUserRoleGetsUserRole() {
 
-            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(true, Set.of(RoleDTO.OFFICE)), List.of());
+            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(true, Set.of(RoleDTO.OFFICE)));
 
             assertThat(personUpdate.permissions()).hasValueSatisfying(roles -> assertThat(roles).containsExactlyInAnyOrder(USER, OFFICE));
         }
@@ -116,7 +98,7 @@ class PersonDTOMapperTest {
         @Test
         void disabledPersonLosesAllPermissions() {
 
-            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(false, Set.of(RoleDTO.USER, RoleDTO.OFFICE)), List.of());
+            final PersonUpdate personUpdate = PersonDTOMapper.toPersonUpdate(personDTO(false, Set.of(RoleDTO.USER, RoleDTO.OFFICE)));
 
             assertThat(personUpdate.permissions()).hasValueSatisfying(roles -> assertThat(roles).isEmpty());
         }

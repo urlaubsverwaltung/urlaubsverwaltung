@@ -25,14 +25,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceExtensionImplTest {
@@ -113,28 +111,6 @@ class PersonServiceExtensionImplTest {
             .ofPersonalData("muster", "Marlene", "Muster", "muster@example.org")
             .withPermissions(Set.of(Role.USER))
             .withNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)));
-    }
-
-    @Test
-    void updateKeepsTheNotificationsTheExtensionApiDoesNotKnow() {
-
-        final Optional<MailNotification> unknownToTheExtensionApi = Arrays.stream(MailNotification.values())
-            .filter(notification -> Arrays.stream(MailNotificationDTO.values()).noneMatch(dto -> dto.name().equals(notification.name())))
-            .findFirst();
-        assumeTrue(unknownToTheExtensionApi.isPresent(), "every notification is known to the extension api");
-
-        final Person existingPerson = anyPerson();
-        existingPerson.setNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED, unknownToTheExtensionApi.get()));
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(existingPerson));
-        when(personService.update(any(), any())).thenReturn(existingPerson);
-
-        final PersonDTO updatedPersonDTO = sut.update(anyPersonDTO(1L));
-
-        verify(personService).update(new PersonId(1L), PersonUpdate
-            .ofPersonalData("muster", "Marlene", "Muster", "muster@example.org")
-            .withPermissions(Set.of(Role.USER))
-            .withNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED, unknownToTheExtensionApi.get())));
-        assertThat(updatedPersonDTO.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
     }
 
     @Test
