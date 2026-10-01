@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +57,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator;
 
@@ -1351,13 +1353,25 @@ class OverviewViewControllerTest {
                 .containsExactly(endingToday.getStartDate(), nearestPast.getStartDate());
         }
 
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheCurrentApplication() throws Exception {
+
+            final Application nearestPast = application(TODAY.minusMonths(1), TODAY.minusMonths(1).plusDays(2));
+            final Application current = application(TODAY.minusDays(3), TODAY.plusDays(3));
+            final Application firstUpcoming = application(TODAY.plusMonths(1), TODAY.plusMonths(1).plusDays(2));
+
+            final ApplicationOverviewDto applicationOverview = overviewFor(List.of(nearestPast, current, firstUpcoming));
+
+            assertThat(applicationOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 1, Set.of(1)));
+        }
+
         private ApplicationOverviewDto overviewFor(List<Application> applications) throws Exception {
             when(settingsService.getSettings()).thenReturn(new Settings());
             when(personService.getSignedInUser()).thenReturn(person);
             when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
             when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
             when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person))).thenReturn(applications);
-            stubWorkDaysCountForApplications(ONE);
+            stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
             final ModelAndView mav = perform(get("/web/person/1/overview")
                 .param("year", String.valueOf(TODAY.getYear()))
@@ -1409,9 +1423,62 @@ class OverviewViewControllerTest {
             final Application application = new Application();
             application.setVacationType(mock(VacationType.class));
             application.setPerson(person);
+            application.setStatus(ALLOWED);
             application.setStartDate(startDate);
             application.setEndDate(endDate);
             return application;
+        }
+    }
+
+    @Nested
+    class SickNotesTodayMarkerOnOverview {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OverviewViewController(personService, accountService, vacationDaysService,
+                workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
+                departmentService, new SickNotePermissionEvaluator(departmentService, settingsService), new ApplicationForLeavePermissionEvaluator(departmentService),
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                vacationTypeViewModelService, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(UTC).toInstant(), UTC));
+        }
+
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheRunningSickNote() throws Exception {
+            final Person person = new Person();
+            person.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(person);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+            stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
+
+            final SickNoteType sickNoteType = new SickNoteType();
+            sickNoteType.setCategory(SICK_NOTE);
+
+            final SickNote past = SickNote.builder()
+                .startDate(TODAY.minusMonths(1))
+                .endDate(TODAY.minusMonths(1).plusDays(1))
+                .status(SickNoteStatus.ACTIVE)
+                .sickNoteType(sickNoteType)
+                .person(person)
+                .build();
+            final SickNote running = SickNote.builder()
+                .startDate(TODAY.minusDays(1))
+                .endDate(TODAY.plusDays(1))
+                .status(SickNoteStatus.ACTIVE)
+                .sickNoteType(sickNoteType)
+                .person(person)
+                .build();
+            when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(List.of(past, running));
+
+            final ModelAndView mav = perform(get("/web/person/1/overview").param("year", String.valueOf(TODAY.getYear())))
+                .andReturn().getModelAndView();
+            assertThat(mav).isNotNull();
+
+            final SickNotesOverviewDTO sickNotesOverview = (SickNotesOverviewDTO) mav.getModel().get("sickNotesOverview");
+            assertThat(sickNotesOverview.todayMarker()).isEqualTo(new TodayMarker(TODAY, 0, Set.of(0)));
         }
     }
 
