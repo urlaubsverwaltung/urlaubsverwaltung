@@ -63,7 +63,7 @@
 
     /* enforce html structure with label + and type search*/
     label + input[type="search"] {
-      font-size: 0.875rem;
+      font-size: var(--uv-form-control-text-size);
       padding: --spacing(2) --spacing(3) --spacing(2) --spacing(10);
       border: none;
       outline: none;
