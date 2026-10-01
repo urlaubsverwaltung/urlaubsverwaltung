@@ -39,10 +39,6 @@
     --info-banner-height: 0px;
   }
 
-  html {
-    height: -webkit-fill-available;
-  }
-
   body {
     font-family:
       system-ui,
@@ -63,8 +59,6 @@
     color: #444444;
     @apply dark:bg-zinc-900;
     @apply dark:text-zinc-200;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
     display: grid;
     grid-template-rows: auto auto auto 1fr;
     grid-template-columns: auto 1fr auto auto;
@@ -74,7 +68,10 @@
       "search search search search"
       "content content content content";
     overflow: hidden;
-    height: 100vh;
+    /* body never scrolls, #main is the scroll container. 100vh would be the large viewport on mobile
+       which reaches behind the browser toolbar (e.g. iOS Safari) and hides the bottom of #main
+       including the sticky bottom-bar. the dynamic viewport only covers the actually visible area. */
+    height: 100dvh;
   }
 
   .launchpad-app-cell {

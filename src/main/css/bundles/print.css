@@ -90,7 +90,7 @@
     display: none !important;
   }
 
-  /* the app shell fixes body to one viewport (height: 100vh; overflow:
+  /* the app shell fixes body to one viewport (height: 100dvh; overflow:
      hidden) and lets #main be the only scroll container - Chrome tolerates
      that during print and paginates #main's content across pages anyway,
      but Firefox clips everything past the first page to that fixed height.
