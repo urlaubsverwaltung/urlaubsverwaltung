@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -38,6 +39,7 @@ import java.util.function.Function;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 
 @Controller
 @RequestMapping("/")
@@ -129,7 +131,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
-        prepareApplications(person, signedInUser, yearToShow, model, locale);
+        prepareApplications(person, signedInUser, yearToShow, now, model, locale);
 
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
@@ -138,7 +140,7 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         return "me/applications";
     }
 
-    private void prepareApplications(Person person, Person signedInUser, int year, Model model, Locale locale) {
+    private void prepareApplications(Person person, Person signedInUser, int year, LocalDate today, Model model, Locale locale) {
 
         // get the person's applications for the given year
         final LocalDate startDate = Year.of(year).atDay(1);
@@ -162,6 +164,9 @@ public class ApplicationsViewController implements HasLaunchpad, HasPersonSearch
         }
 
         model.addAttribute("applications", applicationsForLeave);
+        model.addAttribute("applicationsTodayMarker", TodayMarker.of(applicationsForLeave,
+            ApplicationDto::getStartDate, ApplicationDto::getEndDate,
+            application -> activeStatuses().contains(application.getStatus()), today, year));
         model.addAttribute("usedDaysOverview", usedDaysOverview);
     }
 
