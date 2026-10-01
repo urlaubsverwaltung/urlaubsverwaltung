@@ -1153,6 +1153,60 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsAllMembersWhenUnpaged() {
+
+        final PersonId personId = new PersonId(1L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final PersonId maxId = new PersonId(2L);
+        final Person max = new Person();
+        max.setPermissions(List.of(USER));
+        max.setId(maxId.value());
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+
+        final PersonId janeId = new PersonId(3L);
+        final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
+        jane.setId(janeId.value());
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+
+        final PersonId juleId = new PersonId(4L);
+        final Person jule = new Person();
+        jule.setPermissions(List.of(USER));
+        jule.setId(juleId.value());
+        jule.setFirstName("Jule");
+        jule.setLastName("Doe");
+
+        final PersonId inactiveId = new PersonId(5L);
+        final Person inactive = new Person();
+        inactive.setId(inactiveId.value());
+        inactive.setPermissions(List.of());
+
+        final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership juleMembership = new DepartmentMembership(juleId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+
+        when(departmentMembershipService.getActiveMemberships(personId)).thenReturn(List.of(personMembership));
+
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(personMembership), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
+
+        when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId, inactiveId))).thenReturn(List.of(max, jule, inactive, jane));
+
+        final Page<Person> actual = sut.getManagedActiveMembersOfPerson(person, PersonPageRequest.unpaged(), "");
+
+        assertThat(actual.getContent()).containsExactlyInAnyOrder(max, jane, jule);
+        assertThat(actual.getTotalElements()).isEqualTo(3);
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+    }
+
+    @Test
     void ensureGetManagedInactiveMembersOfPersonReturnsPageSecond() {
 
         final PersonId personId = new PersonId(1L);
@@ -1411,6 +1465,110 @@ class DepartmentServiceImplTest {
         assertThat(actual.getTotalPages()).isEqualTo(2);
         assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
         assertThat(actual.getContent()).containsExactly(max);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureGetManagedActiveMembersOfPersonAndDepartmentReturnsAllMembersWhenUnpaged(Role role) {
+
+        final PersonId personId = new PersonId(1L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        person.setPermissions(List.of(USER, role));
+
+        final PersonId maxId = new PersonId(2L);
+        final Person max = new Person();
+        max.setPermissions(List.of(USER));
+        max.setId(maxId.value());
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+
+        final PersonId janeId = new PersonId(3L);
+        final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
+        jane.setId(janeId.value());
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+
+        final PersonId juleId = new PersonId(4L);
+        final Person jule = new Person();
+        jule.setPermissions(List.of(USER));
+        jule.setId(juleId.value());
+        jule.setFirstName("Jule");
+        jule.setLastName("Doe");
+
+        final PersonId inactiveId = new PersonId(5L);
+        final Person inactive = new Person();
+        inactive.setId(inactiveId.value());
+        inactive.setPermissions(List.of());
+
+        final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership juleMembership = new DepartmentMembership(juleId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(), List.of());
+
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
+
+        when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId, inactiveId))).thenReturn(List.of(max, jule, inactive, jane));
+
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, PersonPageRequest.unpaged(), "");
+
+        assertThat(actual.getContent()).containsExactlyInAnyOrder(max, jane, jule);
+        assertThat(actual.getTotalElements()).isEqualTo(3);
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureGetManagedActiveMembersOfPersonAndDepartmentCountsOnlyMatchingMembers(Role role) {
+
+        final PersonId personId = new PersonId(1L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        person.setPermissions(List.of(USER, role));
+
+        final PersonId maxId = new PersonId(2L);
+        final Person max = new Person();
+        max.setPermissions(List.of(USER));
+        max.setId(maxId.value());
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+
+        final PersonId janeId = new PersonId(3L);
+        final Person jane = new Person();
+        jane.setPermissions(List.of(USER));
+        jane.setId(janeId.value());
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+
+        final PersonId juleId = new PersonId(4L);
+        final Person jule = new Person();
+        jule.setPermissions(List.of(USER));
+        jule.setId(juleId.value());
+        jule.setFirstName("Jule");
+        jule.setLastName("Doe");
+
+        final PersonId inactiveId = new PersonId(5L);
+        final Person inactive = new Person();
+        inactive.setId(inactiveId.value());
+        inactive.setPermissions(List.of());
+
+        final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership juleMembership = new DepartmentMembership(juleId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(), List.of());
+
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
+
+        when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId, inactiveId))).thenReturn(List.of(max, jule, inactive, jane));
+
+        final Page<Person> actual = sut.getManagedActiveMembersOfPersonAndDepartment(person, 1L, PersonPageRequest.of(0, 3, Sort.by("lastName").and(Sort.by("firstName"))), "");
+
+        assertThat(actual.getContent()).containsExactly(jane, jule, max);
+        assertThat(actual.getTotalElements()).isEqualTo(3);
+        assertThat(actual.getTotalPages()).isEqualTo(1);
     }
 
     @ParameterizedTest

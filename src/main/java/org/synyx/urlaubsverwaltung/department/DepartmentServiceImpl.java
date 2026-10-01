@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -663,12 +664,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .toList();
 
-        final List<Person> content = managedMembers.stream()
-            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-            .limit(pageable.getPageSize())
-            .toList();
-
-        return new PageImpl<>(content, pageable.toPageable(), managedMembers.size());
+        return toPage(managedMembers, pageable);
     }
 
     private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, Predicate<Person> filter) {
@@ -685,14 +681,27 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final List<Person> members = personService.getAllPersonsByIds(memberPersonIds);
 
-        final List<Person> content = members.stream()
+        final List<Person> filteredMembers = members.stream()
             .filter(filter)
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
-            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .toList();
+
+        return toPage(filteredMembers, pageable);
+    }
+
+    private static Page<Person> toPage(List<Person> sortedPersons, PersonPageable personPageable) {
+
+        final Pageable pageable = personPageable.toPageable();
+        if (pageable.isUnpaged()) {
+            return new PageImpl<>(sortedPersons, pageable, sortedPersons.size());
+        }
+
+        final List<Person> content = sortedPersons.stream()
+            .skip(pageable.getOffset())
             .limit(pageable.getPageSize())
             .toList();
 
-        return new PageImpl<>(content, pageable.toPageable(), members.size());
+        return new PageImpl<>(content, pageable, sortedPersons.size());
     }
 
     private static boolean doesPersonManageDepartment(Person person, DepartmentStaff staff) {
