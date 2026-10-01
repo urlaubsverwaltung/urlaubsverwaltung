@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <div th:fragment="back-to-account(personId, personNiceName, year)" class="mb-2">
+      <a
+        th:href="${year == null} ? @{/web/person/{personId}(personId=${personId})} : @{/web/person/{personId}(personId=${personId}, year=${year})}"
+        class="icon-link text-sm"
+      >
+        <svg th:replace="~{icon/chevron-left::svg(className='w-4 h-4')}"></svg>
+        <span
+          th:text="${personId == userId} ? #{nav.account.title} : #{person.account.header.title(${personNiceName})}"
+        ></span>
+      </a>
+    </div>
+  </body>
+</html>

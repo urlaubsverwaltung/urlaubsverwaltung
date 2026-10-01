@@ -20,6 +20,9 @@
   </head>
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{person/back-to-account::back-to-account(personId=${personBasedata.personId}, personNiceName=${personBasedata.niceName}, year=null)}"
+      ></div>
       <div th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{})}">
         <th:block th:ref="person-basedata-heading-body">
           <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
