@@ -51,6 +51,10 @@
   --uv-input-border-radius: 6px;
   /* form-control e.g. input and button */
   --uv-form-control-text-size: 0.875rem;
+  /* ios safari zooms into a focused form control with a text size below 16px */
+  @media (pointer: coarse) {
+    --uv-form-control-text-size: 1rem;
+  }
   --uv-placeholder-color: #999;
 
   --uv-chart-line-color: var(--color-black);
