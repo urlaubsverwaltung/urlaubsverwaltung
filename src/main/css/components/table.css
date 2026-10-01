@@ -70,6 +70,16 @@ tr.inactive td > * {
   margin: 10px 0 0 0;
 }
 
+.list-table tr.today-marker td {
+  padding-top: --spacing(1);
+  padding-bottom: --spacing(1);
+}
+
+.selectable-table tr.today-marker:hover td {
+  cursor: default;
+  background-color: transparent;
+}
+
 /**************************************************************************
   STRIPED TABLE
 **************************************************************************/
