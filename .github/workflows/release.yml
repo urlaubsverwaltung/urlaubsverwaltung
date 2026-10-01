@@ -26,6 +26,11 @@ jobs:
         id: vars
         run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
 
+      - name: Create SBOMs
+        run: |
+          cp target/classes/META-INF/sbom/application.cdx.json target/urlaubsverwaltung-${{ steps.vars.outputs.version }}.cdx.json
+          PATH="$PWD/node:$PATH" npx --yes @cyclonedx/cyclonedx-npm@6.0.1 --omit dev --output-file target/urlaubsverwaltung-${{ steps.vars.outputs.version }}-frontend.cdx.json
+
       - name: Create Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         env:
@@ -35,6 +40,7 @@ jobs:
           body_path: .chglog/${{ steps.vars.outputs.version }}.md
           files: |
             ./target/urlaubsverwaltung-*.jar
+            ./target/urlaubsverwaltung-*.cdx.json
 
   container-upload-github:
     needs:
