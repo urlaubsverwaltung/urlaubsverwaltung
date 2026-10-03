@@ -19,7 +19,7 @@ public class OvertimeProperties {
      */
     @URL
     @NotEmpty
-    private String zeiterfassungLockSettingsUrl = "https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden";
+    private String zeiterfassungLockSettingsUrl = "https://focus-shift.de/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden";
 
     public boolean isSyncActive() {
         return syncActive;

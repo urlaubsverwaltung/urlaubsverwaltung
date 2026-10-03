@@ -25,18 +25,18 @@ public class DemoDataPersonCreationForLocalDevelopment {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    static final String EMAIL_USER = "user@urlaubsverwaltung.cloud";
-    static final String EMAIL_DEPARTMENT_HEAD = "departmentHead@urlaubsverwaltung.cloud";
-    static final String EMAIL_SECOND_STAGE_AUTHORITY = "secondStageAuthority@urlaubsverwaltung.cloud";
-    static final String EMAIL_BOSS = "boss@urlaubsverwaltung.cloud";
-    static final String EMAIL_OFFICE = "office@urlaubsverwaltung.cloud";
-    static final String EMAIL_DAMPF = "dampf@urlaubsverwaltung.cloud";
-    static final String EMAIL_SCHMIDT = "schmidt@urlaubsverwaltung.cloud";
-    static final String EMAIL_HAENDEL = "haendel@urlaubsverwaltung.cloud";
-    static final String EMAIL_HDIETER = "hdieter@urlaubsverwaltung.cloud";
-    static final String EMAIL_SCHNEIDER = "schneider@urlaubsverwaltung.cloud";
-    static final String EMAIL_BAIER = "baier@urlaubsverwaltung.cloud";
-    static final String EMAIL_ADMIN = "admin@urlaubsverwaltung.cloud";
+    static final String EMAIL_USER = "user@focus-shift.de";
+    static final String EMAIL_DEPARTMENT_HEAD = "departmentHead@focus-shift.de";
+    static final String EMAIL_SECOND_STAGE_AUTHORITY = "secondStageAuthority@focus-shift.de";
+    static final String EMAIL_BOSS = "boss@focus-shift.de";
+    static final String EMAIL_OFFICE = "office@focus-shift.de";
+    static final String EMAIL_DAMPF = "dampf@focus-shift.de";
+    static final String EMAIL_SCHMIDT = "schmidt@focus-shift.de";
+    static final String EMAIL_HAENDEL = "haendel@focus-shift.de";
+    static final String EMAIL_HDIETER = "hdieter@focus-shift.de";
+    static final String EMAIL_SCHNEIDER = "schneider@focus-shift.de";
+    static final String EMAIL_BAIER = "baier@focus-shift.de";
+    static final String EMAIL_ADMIN = "admin@focus-shift.de";
 
     private final PersonDataProvider personDataProvider;
     private final DemoDataProperties demoDataProperties;
@@ -70,8 +70,8 @@ public class DemoDataPersonCreationForLocalDevelopment {
         personDataProvider.createTestPerson("bhaendel", "Brigitte", "Händel", EMAIL_HAENDEL);
         personDataProvider.createTestPerson("nschmidt", "Niko", "Schmidt", EMAIL_SCHMIDT);
         personDataProvider.createTestPerson("heinz", "Holger", "Dieter", EMAIL_HDIETER);
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active-" + i + "@urlaubsverwaltung.cloud"));
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive-" + i + "@urlaubsverwaltung.cloud"));
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active-" + i + "@focus-shift.de"));
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive-" + i + "@focus-shift.de"));
         LOG.info("Created demo persons for local development");
     }
 }

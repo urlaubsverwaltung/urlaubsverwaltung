@@ -28,13 +28,13 @@ class OvertimePropertiesTest {
     @Test
     void helpUrlDefault() {
         final OvertimeProperties overtimeProperties = new OvertimeProperties();
-        assertThat(overtimeProperties.getZeiterfassungLockSettingsUrl()).isEqualTo("https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden");
+        assertThat(overtimeProperties.getZeiterfassungLockSettingsUrl()).isEqualTo("https://focus-shift.de/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden");
     }
 
     @Test
     void helpUrlIsGiven() {
         final OvertimeProperties overtimeProperties = new OvertimeProperties();
-        overtimeProperties.setZeiterfassungLockSettingsUrl("https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden");
+        overtimeProperties.setZeiterfassungLockSettingsUrl("https://focus-shift.de/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden");
         final Set<ConstraintViolation<OvertimeProperties>> violations = validator.validate(overtimeProperties);
 
         assertThat(violations).isEmpty();

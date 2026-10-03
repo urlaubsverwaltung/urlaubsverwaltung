@@ -33,7 +33,7 @@ ACCESS_TOKEN=$(curl -s http://localhost:8090/realms/urlaubsverwaltung/protocol/o
     --data-urlencode 'client_secret=urlaubsverwaltung-secret' \
     --data-urlencode 'scope=openid email' \
     --data-urlencode 'grant_type=password' \
-    --data-urlencode 'username=office@urlaubsverwaltung.cloud' \
+    --data-urlencode 'username=office@focus-shift.de' \
     --data-urlencode 'password=secret' \
     | jq -r '.access_token')
 

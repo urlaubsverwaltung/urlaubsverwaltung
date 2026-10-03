@@ -85,7 +85,7 @@ class SettingsOvertimeViewControllerTest {
                 hasProperty("overtimeSettings", sameInstance(overtimeSettings))
             )))
             .andExpect(model().attribute("overtimeSyncActive", false))
-            .andExpect(model().attribute("overtimeSyncZeiterfassungSettingsUrl", "https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden"));
+            .andExpect(model().attribute("overtimeSyncZeiterfassungSettingsUrl", "https://focus-shift.de/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden"));
     }
 
     @Test

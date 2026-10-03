@@ -9,7 +9,7 @@
     "emailVerified" : true,
     "firstName" : "Anne",
     "lastName" : "Roth",
-    "email" : "admin@urlaubsverwaltung.cloud",
+    "email" : "admin@focus-shift.de",
     "credentials" : [ {
       "id" : "a1d26e8c-889b-475c-a8a6-bf2962038939",
       "type" : "password",
@@ -34,7 +34,7 @@
     "emailVerified" : true,
     "firstName" : "Theresa",
     "lastName" : "Scherer",
-    "email" : "boss@urlaubsverwaltung.cloud",
+    "email" : "boss@focus-shift.de",
     "credentials" : [ {
       "id" : "a1d26e8c-889b-475c-a8a6-bf2952037937",
       "type" : "password",
@@ -59,7 +59,7 @@
     "emailVerified" : true,
     "firstName" : "Thorsten",
     "lastName" : "Krüger",
-    "email" : "departmenthead@urlaubsverwaltung.cloud",
+    "email" : "departmenthead@focus-shift.de",
     "credentials" : [ {
       "id" : "a1d26e8c-889b-475c-a8a6-bf1952039939",
       "type" : "password",
@@ -84,7 +84,7 @@
     "emailVerified" : true,
     "firstName" : "Marlene",
     "lastName" : "Muster",
-    "email" : "office@urlaubsverwaltung.cloud",
+    "email" : "office@focus-shift.de",
     "credentials" : [ {
       "id" : "32b65824-bb1e-4d56-9176-5c539037c5ea",
       "type" : "password",
@@ -109,7 +109,7 @@
     "emailVerified" : true,
     "firstName" : "Juliane",
     "lastName" : "Huber",
-    "email" : "secondstageauthority@urlaubsverwaltung.cloud",
+    "email" : "secondstageauthority@focus-shift.de",
     "credentials" : [ {
       "id" : "a1a26e8c-889b-475c-a8a6-bf2952038939",
       "type" : "password",
@@ -134,7 +134,7 @@
     "emailVerified" : true,
     "firstName" : "Klaus",
     "lastName" : "Müller",
-    "email" : "user@urlaubsverwaltung.cloud",
+    "email" : "user@focus-shift.de",
     "credentials" : [ {
       "id" : "87dbff48-3026-44ae-9eeb-84a899d570dd",
       "type" : "password",

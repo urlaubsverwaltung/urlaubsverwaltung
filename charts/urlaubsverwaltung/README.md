@@ -1,6 +1,6 @@
 # Urlaubsverwaltung
 
-[Urlaubsverwaltung](https://urlaubsverwaltung.cloud/) is an open source web application to manage absences like
+[Urlaubsverwaltung](https://focus-shift.de/) is an open source web application to manage absences like
 leave and sick days of employees.
 
 ## TL;DR;
@@ -12,7 +12,7 @@ $ helm install urlaubsverwaltung urlaubsverwaltung/urlaubsverwaltung
 
 ## Introduction
 
-This chart bootstraps a [Urlaubsverwaltung](https://urlaubsverwaltung.cloud/) deployment on
+This chart bootstraps a [Urlaubsverwaltung](https://focus-shift.de/) deployment on
 a [Kubernetes](https://kubernetes.io) cluster
 using the [Helm](https://helm.sh) package manager. It provisions a fully featured Urlaubsverwaltung installation.
 For more information on Urlaubsverwaltung and its capabilities, see
