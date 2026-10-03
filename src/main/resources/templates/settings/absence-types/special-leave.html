@@ -12,10 +12,7 @@
             <p th:text="#{settings.specialleave.help}"></p>
             <p>
               <th:block th:text="#{settings.specialleave.description.1}" />
-              <a
-                class="flex items-center"
-                href="mailto:info@urlaubsverwaltung.cloud?subject=Missing%20special%20leaves"
-              >
+              <a class="flex items-center" href="mailto:support@focus-shift.de?subject=Missing%20special%20leaves">
                 <svg th:replace="~{icon/mail::svg(className='w-4 h-4 mr-1')}"></svg>
                 <th:block th:text="#{settings.specialleave.description.2}" />
               </a>
