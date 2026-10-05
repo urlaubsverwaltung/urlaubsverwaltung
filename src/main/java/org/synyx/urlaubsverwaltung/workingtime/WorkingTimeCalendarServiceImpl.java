@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -124,6 +125,10 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         final LocalDate start = dateRange.startDate();
         final LocalDate end = dateRange.endDate();
 
+        // the public holidays of a federal state are the same for every person. fetch them once per federal state for
+        // the whole date range, instead of once per person and day.
+        final Map<FederalState, Map<LocalDate, PublicHoliday>> publicHolidaysByFederalState = new HashMap<>();
+
         return persons.stream().map(person -> {
 
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
@@ -144,8 +149,11 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                     workingTimeDateRange = new DateRange(workingTime.getValidFrom(), nextEnd);
                 }
 
+                final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByFederalState.computeIfAbsent(
+                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(start, end, federalState, publicHolidaysSettingsSupplier));
+
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysSettingsSupplier));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysByDate));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -159,9 +167,14 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
-        final FederalState federalState = workingTime.getFederalState();
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
+        // two public holidays can fall on the same date. their day length only depends on the date, so keep the first
+        // one - just like PublicHolidaysService#getPublicHoliday does.
+        return publicHolidaysService.getPublicHolidays(start, end, federalState, publicHolidaysSettingsSupplier).stream()
+            .collect(toMap(PublicHoliday::date, identity(), (first, _) -> first));
+    }
 
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, Map<LocalDate, PublicHoliday> publicHolidaysByDate) {
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
 
         DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? MORNING : ZERO;
@@ -171,7 +184,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
 
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, publicHolidaysSettingsSupplier);
+            final Optional<PublicHoliday> maybePublicHoliday = Optional.ofNullable(publicHolidaysByDate.get(date));
 
             if (maybePublicHoliday.isPresent()) {
 
