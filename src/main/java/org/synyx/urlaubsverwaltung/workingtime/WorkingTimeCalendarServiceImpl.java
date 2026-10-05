@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Comparator.naturalOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -129,6 +130,16 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         // the whole date range, instead of once per person and day.
         final Map<FederalState, Map<LocalDate, PublicHoliday>> publicHolidaysByFederalState = new HashMap<>();
 
+        // no calendar entry exists before the earliest working time. fetching public holidays before it is wasted work,
+        // and for a start far in the past it would mean computing every single year in between.
+        final LocalDate publicHolidaysStart = workingTimesByPerson.values().stream()
+            .flatMap(List::stream)
+            .map(WorkingTime::getValidFrom)
+            .filter(validFrom -> !validFrom.isAfter(end))
+            .min(naturalOrder())
+            .filter(validFrom -> validFrom.isAfter(start))
+            .orElse(start);
+
         return persons.stream().map(person -> {
 
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
@@ -150,7 +161,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByFederalState.computeIfAbsent(
-                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(start, end, federalState, publicHolidaysSettingsSupplier));
+                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(publicHolidaysStart, end, federalState, publicHolidaysSettingsSupplier));
 
                 for (LocalDate date : workingTimeDateRange) {
                     dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysByDate));

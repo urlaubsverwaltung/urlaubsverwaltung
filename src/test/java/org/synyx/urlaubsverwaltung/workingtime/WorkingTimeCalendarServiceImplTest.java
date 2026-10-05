@@ -497,6 +497,44 @@ class WorkingTimeCalendarServiceImplTest {
         assertThat(actual.get(person).workingTime(LocalDate.of(2024, DECEMBER, 24))).hasValue(BigDecimal.valueOf(0.5));
     }
 
+    @Test
+    void ensureGetWorkingTimesByPersonsFetchesThePublicHolidaysFromTheEarliestWorkingTimeOn() {
+        final Person person = new Person();
+        person.setId(1L);
+        final Person person2 = new Person();
+        person2.setId(2L);
+
+        final List<Person> persons = List.of(person, person2);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person2, LocalDate.of(2022, JUNE, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG),
+            createWorkingTimeEntity(person, LocalDate.of(2022, MARCH, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG)
+        ));
+
+        // a date range starting long before any working time, e.g. a date given by a user
+        sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2000, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)));
+
+        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, MARCH, 1)), eq(LocalDate.of(2022, DECEMBER, 31)), eq(GERMANY_BADEN_WUERTTEMBERG), any());
+        verifyNoMoreInteractions(publicHolidaysService);
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsFetchesThePublicHolidaysFromTheStartOfTheDateRangeForEarlierWorkingTimes() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final List<Person> persons = List.of(person);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person, LocalDate.of(2020, MARCH, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG)
+        ));
+
+        sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)));
+
+        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, JUNE, 1)), eq(LocalDate.of(2022, JUNE, 30)), eq(GERMANY_BADEN_WUERTTEMBERG), any());
+        verifyNoMoreInteractions(publicHolidaysService);
+    }
+
     // Helper method to create WorkingTimeEntity instances with consistent configuration
     private static WorkingTimeEntity createWorkingTimeEntity(Person person, LocalDate validFrom,
                                                              DayLength monday, DayLength tuesday, DayLength wednesday, DayLength thursday,
