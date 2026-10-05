@@ -44,6 +44,29 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
         @Param("today") LocalDate today
     );
 
+    /**
+     * Candidates for the notification about a missing AU-Bescheinigung: active or submitted sick notes without
+     * AU-Bescheinigung, not notified yet, that could have reached the given work day until today. A sick note has at
+     * most as many work days as calendar days, whether the work day is actually reached depends on the working time
+     * of the person.
+     */
+    @Query(value = """
+        SELECT *
+        FROM sick_note
+        WHERE status IN ('ACTIVE', 'SUBMITTED')
+        AND (aub_start_date IS NULL OR aub_end_date IS NULL)
+        AND missing_aub_notification_send IS NULL
+        AND (end_date - start_date) + 1 >= :workDay
+        AND start_date + (:workDay - 1) <= :today
+        """
+        , nativeQuery = true
+    )
+    List<SickNoteEntity> findSickNotesWithoutAubToNotify(@Param("workDay") int workDay, @Param("today") LocalDate today);
+
+    @Modifying
+    @Query("UPDATE SickNoteEntity s SET s.missingAubNotificationSend = :date WHERE s.id IN :ids")
+    void updateMissingAubNotificationSend(@Param("ids") List<Long> ids, @Param("date") LocalDate date);
+
     List<SickNoteEntity> findByStatusInAndPersonIn(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
 
     List<SickNoteEntity> findByStatusInAndEndDateGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, LocalDate since);

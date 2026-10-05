@@ -97,6 +97,22 @@ public interface SickNoteService {
     void setEndOfSickPayNotificationSend(SickNote sickNote);
 
     /**
+     * Returns all active and submitted sick notes without AU-Bescheinigung that reached the work day of the
+     * notification about the missing AU-Bescheinigung (see {@link org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings#getMissingAubNotificationWorkDay()})
+     * until today and have not been notified yet.
+     *
+     * @return sick notes to notify about the missing AU-Bescheinigung, with the working time of their person
+     */
+    List<SickNote> getSickNotesReachingMissingAubNotificationWorkDay();
+
+    /**
+     * Marks the given sick notes as notified about the missing AU-Bescheinigung today.
+     *
+     * @param sickNotes that have been notified
+     */
+    void setMissingAubNotificationSend(List<SickNote> sickNotes);
+
+    /**
      * Deletes all {@link SickNote} in the database person.
      *
      * @param person the person whose sick notes should be deleted

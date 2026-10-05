@@ -67,6 +67,7 @@ class SickNoteMapperTest {
             entity.setAubEndDate(aubEndDate);
             entity.setLastEdited(lastEdited);
             entity.setEndOfSickPayNotificationSend(endOfSickPauNotificationSend);
+            entity.setMissingAubNotificationSend(LocalDate.of(2025, JANUARY, 2));
             entity.setStatus(SickNoteStatus.ACTIVE);
 
             final SickNote actual = sut.toSickNote(entity);
@@ -81,6 +82,7 @@ class SickNoteMapperTest {
             assertThat(actual.getAubEndDate()).isEqualTo(aubEndDate);
             assertThat(actual.getLastEdited()).isEqualTo(lastEdited);
             assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endOfSickPauNotificationSend);
+            assertThat(actual.getMissingAubNotificationSend()).isEqualTo(LocalDate.of(2025, JANUARY, 2));
             assertThat(actual.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
         }
     }

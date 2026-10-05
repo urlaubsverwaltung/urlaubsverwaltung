@@ -142,6 +142,8 @@ uv:
   sick-note:
     end-of-pay-notification:
       cron: 0 0 6 * * *
+    missing-aub-notification:
+      cron: 0 0 6 * * *
 
 ```
 

@@ -18,7 +18,7 @@ class SickNoteDTOTest {
         Person person = new Person();
         Person applier = new Person();
         LocalDate now = LocalDate.now();
-        SickNoteDTO dto = new SickNoteDTO(1L, "externalIdOfPerson", "externalIdOfApplier", 1L, now, now.plusDays(5), DayLengthDTO.FULL, now, now.plusDays(5), now, now.plusDays(10), SickNoteStatusDTO.ACTIVE, List.of(), List.of());
+        SickNoteDTO dto = new SickNoteDTO(1L, "externalIdOfPerson", "externalIdOfApplier", 1L, now, now.plusDays(5), DayLengthDTO.FULL, now, now.plusDays(5), now, now.plusDays(10), now.plusDays(2), SickNoteStatusDTO.ACTIVE, List.of(), List.of());
 
         final SickNoteEntity entity = dto.toSickNoteEntity(sickNoteType, person, applier);
 
@@ -32,6 +32,7 @@ class SickNoteDTOTest {
         assertThat(entity.getAubEndDate()).isEqualTo(dto.aubEndDate());
         assertThat(entity.getLastEdited()).isEqualTo(dto.lastEdited());
         assertThat(entity.getEndOfSickPayNotificationSend()).isEqualTo(dto.endOfSickPayNotificationSend());
+        assertThat(entity.getMissingAubNotificationSend()).isEqualTo(now.plusDays(2));
         assertThat(entity.getStatus()).isEqualTo(dto.sickNoteStatus().toSickNoteStatus());
     }
 

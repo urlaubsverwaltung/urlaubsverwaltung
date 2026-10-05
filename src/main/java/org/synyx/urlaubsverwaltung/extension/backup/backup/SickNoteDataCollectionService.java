@@ -76,6 +76,7 @@ class SickNoteDataCollectionService {
                             sickNote.getAubEndDate(),
                             sickNote.getLastEdited(),
                             sickNote.getEndOfSickPayNotificationSend(),
+                            sickNote.getMissingAubNotificationSend(),
                             SickNoteStatusDTO.valueOf(sickNote.getStatus().name()),
                             sickNoteCommentDTOs, sickNoteExtensionHistoryDTOs
                         );
