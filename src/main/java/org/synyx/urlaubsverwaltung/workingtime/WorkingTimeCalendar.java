@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -138,6 +139,26 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
         if (from.isAfter(to)) {
             return ZERO;
         }
+
+        // walking the requested days is cheaper than visiting every entry of the calendar - unless the range is wider
+        // than the calendar itself, e.g. several years against a calendar of one year.
+        if (DAYS.between(from, to) + 1 > workingDays.size()) {
+            return workingTimeOfEntriesWithin(from, to);
+        }
+
+        BigDecimal sum = ZERO;
+
+        for (LocalDate localDate : new DateRange(from, to)) {
+            final WorkingDayInformation workingDayInformation = workingDays.get(localDate);
+            if (workingDayInformation != null) {
+                sum = sum.add(workingDayInformation.dayLength().getDuration());
+            }
+        }
+
+        return sum;
+    }
+
+    private BigDecimal workingTimeOfEntriesWithin(LocalDate from, LocalDate to) {
 
         BigDecimal sum = ZERO;
 

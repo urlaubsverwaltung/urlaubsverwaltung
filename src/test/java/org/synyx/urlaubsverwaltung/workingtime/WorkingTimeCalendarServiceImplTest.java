@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.AUGUST;
@@ -30,10 +29,12 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
+import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -264,7 +265,7 @@ class WorkingTimeCalendarServiceImplTest {
 
         sut.getWorkingTimesByPersons(persons, Year.of(2022));
 
-        verify(publicHolidaysService, times(365)).getPublicHoliday(any(LocalDate.class), any(FederalState.class), any(Supplier.class));
+        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, JANUARY, 1)), eq(LocalDate.of(2022, DECEMBER, 31)), eq(GERMANY_BERLIN), any());
     }
 
     @Test
@@ -285,16 +286,10 @@ class WorkingTimeCalendarServiceImplTest {
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
-        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class), any(Supplier.class))).thenAnswer(invocation -> {
-            final LocalDate date = invocation.getArgument(0);
-            final FederalState federalState = invocation.getArgument(1);
-            if (date.equals(LocalDate.of(2022, AUGUST, 5)) && federalState == GERMANY_BADEN_WUERTTEMBERG) {
-                return Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 5), FULL, ""));
-            } else if (date.equals(LocalDate.of(2022, AUGUST, 10)) && federalState == GERMANY_BERLIN) {
-                return Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 10), FULL, ""));
-            }
-            return Optional.empty();
-        });
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), eq(GERMANY_BADEN_WUERTTEMBERG), any()))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 5), FULL, "")));
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), eq(GERMANY_BERLIN), any()))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 10), FULL, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
@@ -399,13 +394,8 @@ class WorkingTimeCalendarServiceImplTest {
             FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG);
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity));
 
-        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class), any(Supplier.class))).thenAnswer(invocation -> {
-            final LocalDate date = invocation.getArgument(0);
-            if (date.equals(LocalDate.of(2024, DECEMBER, 24))) {
-                return Optional.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), ZERO, ""));
-            }
-            return Optional.empty();
-        });
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), any(FederalState.class), any()))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), ZERO, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2024, DECEMBER, 24), LocalDate.of(2024, DECEMBER, 24)));
         assertThat(actual)
@@ -413,6 +403,136 @@ class WorkingTimeCalendarServiceImplTest {
             .containsKeys(person);
 
         assertThat(actual.get(person).workingTime(LocalDate.of(2024, DECEMBER, 24))).hasValue(BigDecimal.ONE);
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsFetchesThePublicHolidaysOncePerFederalState() {
+        final Person person = new Person();
+        person.setId(1L);
+        final Person person2 = new Person();
+        person2.setId(2L);
+        final Person person3 = new Person();
+        person3.setId(3L);
+
+        final List<Person> persons = List.of(person, person2, person3);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person, LocalDate.of(2022, JANUARY, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG),
+            createWorkingTimeEntity(person2, LocalDate.of(2022, JANUARY, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG),
+            createWorkingTimeEntity(person3, LocalDate.of(2022, JANUARY, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BERLIN)
+        ));
+
+        final LocalDate start = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate end = LocalDate.of(2022, DECEMBER, 31);
+
+        when(publicHolidaysService.getPublicHolidays(eq(start), eq(end), eq(GERMANY_BADEN_WUERTTEMBERG), any()))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
+        when(publicHolidaysService.getPublicHolidays(eq(start), eq(end), eq(GERMANY_BERLIN), any()))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, MARCH, 8), FULL, "")));
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
+
+        assertThat(actual.get(person).workingTime(LocalDate.of(2022, JANUARY, 6))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.get(person2).workingTime(LocalDate.of(2022, JANUARY, 6))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.get(person3).workingTime(LocalDate.of(2022, JANUARY, 6))).hasValue(BigDecimal.ONE);
+        assertThat(actual.get(person3).workingTime(LocalDate.of(2022, MARCH, 8))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.get(person).workingTime(LocalDate.of(2022, MARCH, 8))).hasValue(BigDecimal.ONE);
+
+        // once per federal state, no matter how many persons share it - and never day by day
+        verify(publicHolidaysService).getPublicHolidays(eq(start), eq(end), eq(GERMANY_BADEN_WUERTTEMBERG), any());
+        verify(publicHolidaysService).getPublicHolidays(eq(start), eq(end), eq(GERMANY_BERLIN), any());
+        verifyNoMoreInteractions(publicHolidaysService);
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsUsesThePublicHolidaysOfTheFederalStateOfEachWorkingTime() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final WorkingTimeEntity workingTimeGenf = createWorkingTimeEntity(person, LocalDate.of(2022, JANUARY, 1),
+            FULL, FULL, FULL, FULL, FULL, FULL, FULL, SWITZERLAND_GENF);
+        final WorkingTimeEntity workingTimeBadenWuerttemberg = createWorkingTimeEntity(person, LocalDate.of(2022, APRIL, 1),
+            MORNING, MORNING, MORNING, MORNING, MORNING, MORNING, MORNING, GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            .thenReturn(List.of(workingTimeBadenWuerttemberg, workingTimeGenf));
+
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), eq(SWITZERLAND_GENF), any()))
+            .thenReturn(List.of(
+                new PublicHoliday(LocalDate.of(2022, JANUARY, 3), FULL, ""),
+                new PublicHoliday(LocalDate.of(2022, AUGUST, 1), FULL, "")));
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), eq(GERMANY_BADEN_WUERTTEMBERG), any()))
+            .thenReturn(List.of(
+                new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, ""),
+                new PublicHoliday(LocalDate.of(2022, OCTOBER, 3), FULL, "")));
+
+        final WorkingTimeCalendar actual = sut.getWorkingTimesByPersons(List.of(person), Year.of(2022)).get(person);
+
+        // Genf segment: Genf holiday applies, Baden-Württemberg holiday does not
+        assertThat(actual.workingTime(LocalDate.of(2022, JANUARY, 3))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.workingTime(LocalDate.of(2022, JANUARY, 6))).hasValue(BigDecimal.ONE);
+        // Baden-Württemberg segment (morning only): Baden-Württemberg holiday applies, Genf holiday does not
+        assertThat(actual.workingTime(LocalDate.of(2022, OCTOBER, 3))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.workingTime(LocalDate.of(2022, AUGUST, 1))).hasValue(BigDecimal.valueOf(0.5));
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsHandlesTwoPublicHolidaysOnTheSameDate() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final List<Person> persons = List.of(person);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person, LocalDate.of(2024, JANUARY, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG)));
+
+        // a fixed and a movable public holiday can fall on the same date - both carry the day length of that date
+        when(publicHolidaysService.getPublicHolidays(any(LocalDate.class), any(LocalDate.class), eq(GERMANY_BADEN_WUERTTEMBERG), any()))
+            .thenReturn(List.of(
+                new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), MORNING, "first"),
+                new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), MORNING, "second")));
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2024));
+
+        assertThat(actual.get(person).workingTime(LocalDate.of(2024, DECEMBER, 24))).hasValue(BigDecimal.valueOf(0.5));
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsFetchesThePublicHolidaysFromTheEarliestWorkingTimeOn() {
+        final Person person = new Person();
+        person.setId(1L);
+        final Person person2 = new Person();
+        person2.setId(2L);
+
+        final List<Person> persons = List.of(person, person2);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person2, LocalDate.of(2022, JUNE, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG),
+            createWorkingTimeEntity(person, LocalDate.of(2022, MARCH, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG)
+        ));
+
+        // a date range starting long before any working time, e.g. a date given by a user
+        sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2000, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)));
+
+        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, MARCH, 1)), eq(LocalDate.of(2022, DECEMBER, 31)), eq(GERMANY_BADEN_WUERTTEMBERG), any());
+        verifyNoMoreInteractions(publicHolidaysService);
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsFetchesThePublicHolidaysFromTheStartOfTheDateRangeForEarlierWorkingTimes() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final List<Person> persons = List.of(person);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(
+            createWorkingTimeEntity(person, LocalDate.of(2020, MARCH, 1), FULL, FULL, FULL, FULL, FULL, FULL, FULL, GERMANY_BADEN_WUERTTEMBERG)
+        ));
+
+        sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)));
+
+        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, JUNE, 1)), eq(LocalDate.of(2022, JUNE, 30)), eq(GERMANY_BADEN_WUERTTEMBERG), any());
+        verifyNoMoreInteractions(publicHolidaysService);
     }
 
     // Helper method to create WorkingTimeEntity instances with consistent configuration

@@ -49,4 +49,16 @@ public interface PublicHolidaysService {
      * @return a list of public holiday if there are any for the given date range, otherwise empty list
      */
     List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState);
+
+    /**
+     * Same as {@link #getPublicHolidays(LocalDate, LocalDate, FederalState)}, but with a {@link Supplier} for the
+     * {@link PublicHolidaysSettings}, so that callers building many calendars at once read the settings only once.
+     *
+     * @param from                           to get public holiday from
+     * @param to                             to get public holiday to
+     * @param federalState                   the federal state to consider holiday settings for
+     * @param publicHolidaysSettingsSupplier supplier that provides the public holiday settings (use a cached supplier for performance)
+     * @return a list of public holiday if there are any for the given date range, otherwise empty list
+     */
+    List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier);
 }

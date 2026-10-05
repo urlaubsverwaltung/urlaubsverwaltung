@@ -14,9 +14,11 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInf
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.SATURDAY;
@@ -25,6 +27,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
@@ -174,6 +177,65 @@ class WorkingTimeCalendarTest {
 
             assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(31));
             assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(21));
+        }
+
+        @Test
+        void ensureWorkingTimeForDateRangeOnlyLooksUpTheDaysOfTheRange() {
+            final WorkingTimeCalendar yearCalendar = workingTimeCalendarMondayToSunday(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
+
+            final Map<LocalDate, WorkingDayInformation> workingDays = new HashMap<LocalDate, WorkingDayInformation>(yearCalendar.workingDays()) {
+                @Override
+                public Set<Map.Entry<LocalDate, WorkingDayInformation>> entrySet() {
+                    throw new AssertionError("a range shorter than the calendar must not visit every entry of the calendar");
+                }
+            };
+
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingDays);
+
+            assertThat(sut.workingTime(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31))).isEqualTo(BigDecimal.valueOf(31));
+        }
+
+        @Test
+        void ensureWorkingTimeForDateRangePartlyOutsideOfTheCalendar() {
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+            assertThat(sut.workingTime(LocalDate.of(2022, JULY, 25), LocalDate.of(2022, AUGUST, 5))).isEqualTo(BigDecimal.valueOf(5));
+            assertThat(sut.workingTime(LocalDate.of(2022, AUGUST, 28), LocalDate.of(2022, SEPTEMBER, 3))).isEqualTo(BigDecimal.valueOf(4));
+        }
+
+        @Test
+        void ensureWorkingTimeForDateRangeOutsideOfTheCalendarIsZero() {
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+            assertThat(sut.workingTime(LocalDate.of(2022, SEPTEMBER, 1), LocalDate.of(2022, SEPTEMBER, 10))).isEqualTo(BigDecimal.ZERO);
+        }
+
+        @Test
+        void ensureWorkingTimeForDateRangeSkipsDaysMissingInTheCalendar() {
+            final Map<LocalDate, WorkingDayInformation> workingDays =
+                new HashMap<>(workingTimeCalendarMondayToSunday(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31)).workingDays());
+            workingDays.remove(LocalDate.of(2022, AUGUST, 10));
+
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingDays);
+
+            // shorter than the calendar
+            assertThat(sut.workingTime(LocalDate.of(2022, AUGUST, 5), LocalDate.of(2022, AUGUST, 15))).isEqualTo(BigDecimal.valueOf(10));
+            // longer than the calendar: 31 days against 30 entries
+            assertThat(sut.workingTime(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31))).isEqualTo(BigDecimal.valueOf(30));
+        }
+
+        @Test
+        void ensureWorkingTimeForASingleDayRange() {
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+            assertThat(sut.workingTime(LocalDate.of(2022, AUGUST, 10), LocalDate.of(2022, AUGUST, 10))).isEqualTo(BigDecimal.ONE);
+        }
+
+        @Test
+        void ensureWorkingTimeForDateRangeWiderThanTheCalendar() {
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+            assertThat(sut.workingTime(LocalDate.of(2020, JANUARY, 1), LocalDate.of(2025, DECEMBER, 31))).isEqualTo(BigDecimal.valueOf(31));
         }
 
         @Test
