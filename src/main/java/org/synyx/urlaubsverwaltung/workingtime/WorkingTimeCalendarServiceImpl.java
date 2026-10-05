@@ -17,6 +17,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
         // the public holidays of a federal state are the same for every person. fetch them once per federal state for
         // the whole date range, instead of once per person and day.
-        final Map<FederalState, Map<LocalDate, PublicHoliday>> publicHolidaysByFederalState = new HashMap<>();
+        final Map<FederalState, Map<LocalDate, PublicHoliday>> publicHolidaysByFederalState = new EnumMap<>(FederalState.class);
 
         // no calendar entry exists before the earliest working time. fetching public holidays before it is wasted work,
         // and for a start far in the past it would mean computing every single year in between.
