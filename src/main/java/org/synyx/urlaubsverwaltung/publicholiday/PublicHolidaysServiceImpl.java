@@ -56,6 +56,7 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         return getPublicHolidays(from, to, federalState, holidaysSettingsSupplier);
     }
 
+    @Override
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
         final Locale locale = LocaleContextHolder.getLocale();
 

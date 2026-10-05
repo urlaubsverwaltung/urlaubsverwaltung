@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -21,6 +23,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
@@ -31,6 +34,8 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
 import static java.time.Month.MAY;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BULGARIA;
@@ -254,6 +259,40 @@ class PublicHolidaysServiceImplTest {
             new PublicHoliday(LocalDate.of(2020, DECEMBER, 31), null, null),
             new PublicHoliday(LocalDate.of(2021, DECEMBER, 31), null, null),
             new PublicHoliday(LocalDate.of(2023, DECEMBER, 31), null, null));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = FederalState.class, names = {"GERMANY_BADEN_WUERTTEMBERG", "GERMANY_BAYERN_MUENCHEN", "GERMANY_BERLIN", "AUSTRIA_WIEN", "SWITZERLAND_ZUERICH", "CROATIA"})
+    void ensureGetPublicHolidaysOfARangeEqualsGetPublicHolidayForEveryDateOfTheRange(FederalState federalState) {
+
+        final PublicHolidaysService sut = new PublicHolidaysServiceImpl(settingsService, Map.of(
+            "de", getHolidayManager(HolidayCalendar.GERMANY),
+            "at", getHolidayManager(HolidayCalendar.AUSTRIA),
+            "ch", getHolidayManager(HolidayCalendar.SWITZERLAND),
+            "hr", getHolidayManager(HolidayCalendar.CROATIA)
+        ));
+
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setWorkingDurationForChristmasEve(DayLength.MORNING);
+        publicHolidaysSettings.setWorkingDurationForNewYearsEve(DayLength.NOON);
+        final Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier = () -> publicHolidaysSettings;
+
+        for (int year = 2024; year <= 2026; year++) {
+            final LocalDate start = of(year, JANUARY, 1);
+            final LocalDate end = of(year, DECEMBER, 31);
+
+            final Map<LocalDate, PublicHoliday> publicHolidaysByDate = sut.getPublicHolidays(start, end, federalState, publicHolidaysSettingsSupplier).stream()
+                .collect(toMap(PublicHoliday::date, identity(), (first, _) -> first));
+
+            for (LocalDate date : new DateRange(start, end)) {
+                final Optional<PublicHoliday> expected = sut.getPublicHoliday(date, federalState, publicHolidaysSettingsSupplier);
+                final Optional<PublicHoliday> actual = Optional.ofNullable(publicHolidaysByDate.get(date));
+
+                // PublicHoliday#equals only compares the date, so compare the day length explicitly
+                assertThat(actual.map(PublicHoliday::date)).as("date %s", date).isEqualTo(expected.map(PublicHoliday::date));
+                assertThat(actual.map(PublicHoliday::dayLength)).as("day length %s", date).isEqualTo(expected.map(PublicHoliday::dayLength));
+            }
+        }
     }
 
     private HolidayManager getHolidayManager(HolidayCalendar holidayCalendar) {
