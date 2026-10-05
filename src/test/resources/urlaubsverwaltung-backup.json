@@ -7,7 +7,7 @@
       "externalId": "user",
       "firstName": "Klaus",
       "lastName": "Müller",
-      "email": "user@urlaubsverwaltung.cloud",
+      "email": "user@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -96,7 +96,7 @@
       "externalId": "departmentHead",
       "firstName": "Thorsten",
       "lastName": "Krüger",
-      "email": "departmentHead@urlaubsverwaltung.cloud",
+      "email": "departmentHead@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -199,7 +199,7 @@
       "externalId": "secondStageAuthority",
       "firstName": "Juliane",
       "lastName": "Huber",
-      "email": "secondStageAuthority@urlaubsverwaltung.cloud",
+      "email": "secondStageAuthority@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -302,7 +302,7 @@
       "externalId": "boss",
       "firstName": "Theresa",
       "lastName": "Scherer",
-      "email": "boss@urlaubsverwaltung.cloud",
+      "email": "boss@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -392,7 +392,7 @@
       "externalId": "office",
       "firstName": "Marlene",
       "lastName": "Muster",
-      "email": "office@urlaubsverwaltung.cloud",
+      "email": "office@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -482,7 +482,7 @@
       "externalId": "admin",
       "firstName": "Anne",
       "lastName": "Roth",
-      "email": "admin@urlaubsverwaltung.cloud",
+      "email": "admin@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -552,7 +552,7 @@
       "externalId": "hdampf",
       "firstName": "Hans",
       "lastName": "Dampf",
-      "email": "dampf@urlaubsverwaltung.cloud",
+      "email": "dampf@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -641,7 +641,7 @@
       "externalId": "fbaier",
       "firstName": "Franziska",
       "lastName": "Baier",
-      "email": "baier@urlaubsverwaltung.cloud",
+      "email": "baier@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -730,7 +730,7 @@
       "externalId": "eschneider",
       "firstName": "Elena",
       "lastName": "Schneider",
-      "email": "schneider@urlaubsverwaltung.cloud",
+      "email": "schneider@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -819,7 +819,7 @@
       "externalId": "bhaendel",
       "firstName": "Brigitte",
       "lastName": "Händel",
-      "email": "haendel@urlaubsverwaltung.cloud",
+      "email": "haendel@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -908,7 +908,7 @@
       "externalId": "nschmidt",
       "firstName": "Niko",
       "lastName": "Schmidt",
-      "email": "schmidt@urlaubsverwaltung.cloud",
+      "email": "schmidt@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -997,7 +997,7 @@
       "externalId": "heinz",
       "firstName": "Holger",
       "lastName": "Dieter",
-      "email": "hdieter@urlaubsverwaltung.cloud",
+      "email": "hdieter@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -1086,7 +1086,7 @@
       "externalId": "horst-active-0",
       "firstName": "Horst",
       "lastName": "Aktiv",
-      "email": "hdieter-active@urlaubsverwaltung.cloud",
+      "email": "hdieter-active@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [
@@ -1175,7 +1175,7 @@
       "externalId": "horst-inactive-0",
       "firstName": "Horst",
       "lastName": "Inaktiv",
-      "email": "hdieter-inactive@urlaubsverwaltung.cloud",
+      "email": "hdieter-inactive@focus-shift.de",
       "active": true,
       "createdAt": "2020-01-01T00:00:00Z",
       "permissions": [

@@ -27,7 +27,7 @@ public class MenuProperties {
 
         @URL
         @NotEmpty
-        private String url = "https://urlaubsverwaltung.cloud/hilfe/?utm_source=urlaubsverwaltung-open-source#dokumentation-urlaubsverwaltung";
+        private String url = "https://focus-shift.de/hilfe/?utm_source=urlaubsverwaltung-open-source#urlaubsverwaltung";
 
         public String getUrl() {
             return url;

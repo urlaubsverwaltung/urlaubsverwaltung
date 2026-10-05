@@ -384,7 +384,7 @@ see https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases
 * Verbesserte Beschreibung der Office-Rolle
 * Update test-emailaddresses to reduce chance to send spam [#253](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/253)
 * Betreff in E-Mail bei neu beantragtem Urlaub sollte Namen enthalten [#249](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/249)
-* Erweiterung der REST-API um die Schnittstelle [`/availabilities`](http://urlaubsverwaltung-demo.synyx.de/api/index.html#!/availabilities) [#208](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/208) <!-- markdown-link-check-disable-line -->
+* Erweiterung der REST-API um die Schnittstelle `/availabilities` [#208](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/208)
 
 ### [urlaubsverwaltung-2.21.1](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.1)
 * Added additional exchange connection configuration (without domain) [#241](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/241) 

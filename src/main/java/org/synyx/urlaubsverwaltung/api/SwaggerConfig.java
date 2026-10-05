@@ -40,8 +40,8 @@ public class SwaggerConfig {
                     .contact(
                         new Contact()
                             .name(brandingProperties.name())
-                            .url("https://urlaubsverwaltung.cloud")
-                            .email("info@urlaubsverwaltung.cloud")
+                            .url("https://focus-shift.de")
+                            .email("support@focus-shift.de")
                     )
                     .license(
                         new License()

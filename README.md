@@ -49,7 +49,7 @@ Für den Austausch mit anderen Personen steht jedoch der **Discussions-Bereich**
 Dort können Erfahrungen geteilt und Fragen diskutiert werden.
 
 Falls ein **bezahlter Support** für die On-Premise-Installation oder den Betrieb gewünscht wird,
-kann man sich unter [urlaubsverwaltung.cloud/preis](https://urlaubsverwaltung.cloud/preis/) über die verfügbaren Support-Optionen informieren.
+kann man sich unter [focus-shift.de/software](https://focus-shift.de/software/#preis) über die verfügbaren Support-Optionen informieren.
 
 ### Voraussetzungen
 
@@ -319,14 +319,14 @@ Auf diese Weise wird die Anwendung mit einem PostgreSQL-Datenbankmanagementsyste
 
 Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
-| Benutzername                                 | Passwort | Rolle                            |
-|----------------------------------------------|----------|----------------------------------|
-| user@urlaubsverwaltung.cloud                 | secret   | User                             |
-| departmentHead@urlaubsverwaltung.cloud       | secret   | User & Abteilungsleiter          |
-| secondStageAuthority@urlaubsverwaltung.cloud | secret   | User & Freigabe-Verantwortlicher |
-| boss@urlaubsverwaltung.cloud                 | secret   | User & Chef                      |
-| office@urlaubsverwaltung.cloud               | secret   | User & Office                    |
-| admin@urlaubsverwaltung.cloud                | secret   | User & Admin                     |
+| Benutzername                        | Passwort | Rolle                            |
+|-------------------------------------|----------|----------------------------------|
+| user@focus-shift.de                 | secret   | User                             |
+| departmentHead@focus-shift.de       | secret   | User & Abteilungsleiter          |
+| secondStageAuthority@focus-shift.de | secret   | User & Freigabe-Verantwortlicher |
+| boss@focus-shift.de                 | secret   | User & Chef                      |
+| office@focus-shift.de               | secret   | User & Office                    |
+| admin@focus-shift.de                | secret   | User & Admin                     |
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 
@@ -522,9 +522,9 @@ Go to the GitHub action with the name [release trigger][github-action-release-tr
 * Run the workflow
 
 
-[Landingpage]: https://urlaubsverwaltung.cloud "Landingpage"
-[Demo-System]: https://urlaubsverwaltung.cloud/demo "Demo-System"
-[Hilfe]: https://urlaubsverwaltung.cloud/hilfe/ "Hilfe"
+[Landingpage]: https://focus-shift.de "Landingpage"
+[Demo-System]: https://focus-shift.de/demo "Demo-System"
+[Hilfe]: https://focus-shift.de/hilfe/ "Hilfe"
 [Migration-Guide-v5]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide "Migration Guide v5"
 [github-action-release-trigger]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/release-trigger.yml "Release Trigger"
 [PostgreSQL]: https://www.postgresql.org/ "PostgreSQL"
