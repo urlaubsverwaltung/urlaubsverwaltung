@@ -73,6 +73,17 @@
   --sick-note-color-light: color-mix(in srgb, var(--color-red-500) 50%, white);
   --sick-note-child-color: var(--color-red-700);
   --sick-note-child-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
+  --absence-color-SICK_NOTE: var(--sick-note-color);
+  /* text on a bar of the matching --absence-color-*; chosen for a contrast of at least 4.5:1 */
+  --absence-label-color-GRAY: var(--color-white);
+  --absence-label-color-ORANGE: var(--color-neutral-950);
+  --absence-label-color-YELLOW: var(--color-neutral-950);
+  --absence-label-color-EMERALD: var(--color-neutral-950);
+  --absence-label-color-CYAN: var(--color-neutral-950);
+  --absence-label-color-BLUE: var(--color-neutral-950);
+  --absence-label-color-VIOLET: var(--color-neutral-950);
+  --absence-label-color-PINK: var(--color-neutral-950);
+  --absence-label-color-SICK_NOTE: var(--color-neutral-950);
   --overtime-accrued-color: var(--color-emerald-500);
   --overtime-accrued-color-light: color-mix(in srgb, var(--color-emerald-500) 50%, white);
   --overtime-reduction-color: var(--color-emerald-300);
@@ -111,6 +122,8 @@
     --sick-note-color-light: color-mix(in srgb, var(--color-red-700) 50%, white);
     --sick-note-child-color: var(--color-red-900);
     --sick-note-child-color-light: color-mix(in srgb, var(--color-red-900) 50%, white);
+    --absence-label-color-GRAY: var(--color-neutral-950);
+    --absence-label-color-SICK_NOTE: var(--color-white);
 
     --overtime-accrued-color: var(--color-green-600);
     --overtime-accrued-color-light: color-mix(in srgb, var(--color-green-600) 50%, white);

@@ -87,15 +87,11 @@
 }
 
 .cal-day {
-  --absence-bar-color-morning: var(--uv-cal-default-bg);
-  --absence-bar-color-noon: var(--uv-cal-default-bg);
-  --absence-bar-color: var(--uv-cal-default-bg);
   --background-color-left: var(--uv-cal-default-bg);
   --background-color-right: var(--uv-cal-default-bg);
   --font-color: var(--uv-cal-default-color);
   /* h-full only works when parent td has an explicit height */
   height: 100%;
-  overflow: hidden;
   position: relative;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   color: var(--font-color);
@@ -124,106 +120,12 @@
   height: 100%;
 }
 
-.cal-day:is(.absence-full, .sick-note-full)::after {
-  content: "";
-  position: absolute;
-  bottom: 0.4rem;
-  left: 0.375rem;
-  right: 0.375rem;
-  height: 0.375rem;
-  border-radius: 99999px;
-}
-
-.cal-day.absence-full--solid::after {
-  background-color: var(--absence-bar-color);
-}
-
-.cal-day.absence-full--outline::after {
-  border: solid 1px var(--absence-bar-color);
-}
-
-.cal-day.absence-full--outline-solid-half::after {
-  border: solid 1px var(--absence-bar-color);
-  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
-}
-
-.cal-day.absence-full--outline-solid-second-half::after {
-  border: solid 1px var(--absence-bar-color);
-  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
-}
-
-.cal-day:is(.absence-morning, .sick-note-morning)::before {
-  content: "";
-  position: absolute;
-  bottom: 0.4rem;
-  left: 0.375rem;
-  right: 50%;
-  height: 0.375rem;
-  border-radius: 99999px;
-}
-
-.cal-day.absence-morning--solid::before {
-  background-color: var(--absence-bar-color-morning);
-}
-
-.cal-day.absence-morning--outline::before {
-  border: solid 1px var(--absence-bar-color-morning);
-}
-
-.cal-day.absence-morning--outline-solid-half::before {
-  border: solid 1px var(--absence-bar-color-morning);
-  background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, transparent 50%);
-}
-
-.cal-day.absence-morning--outline-solid-second-half::before {
-  border: solid 1px var(--absence-bar-color-morning);
-  background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, var(--absence-bar-color-morning) 50%);
-}
-
-.cal-day:is(.absence-noon, .sick-note-noon)::after {
-  content: "";
-  position: absolute;
-  bottom: 0.4rem;
-  left: 50%;
-  right: 0.375rem;
-  height: 0.375rem;
-  border-radius: 99999px;
-}
-
-.cal-day.absence-noon--solid::after {
-  background-color: var(--absence-bar-color-noon);
-}
-
-.cal-day.absence-noon--outline::after {
-  border: solid 1px var(--absence-bar-color-noon);
-}
-
-.cal-day.absence-noon--outline-solid-half::after {
-  border: solid 1px var(--absence-bar-color-noon);
-  background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, transparent 50%);
-}
-
-.cal-day.absence-noon--outline-solid-second-half::after {
-  border: solid 1px var(--absence-bar-color-noon);
-  background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, var(--absence-bar-color-noon) 50%);
-}
-
 svg.no-workday-icon {
   @apply stroke-neutral-200;
   @apply dark:stroke-neutral-700;
 }
 .public-holiday-full.no-workday svg.no-workday-icon {
   @apply opacity-75;
-}
-
-.sick-note-morning {
-  --absence-bar-color-morning: var(--sick-note-color);
-}
-.sick-note-noon {
-  --absence-bar-color-noon: var(--sick-note-color);
-}
-.sick-note-full {
-  --absence-bar-color: var(--sick-note-color);
 }
 
 .public-holiday-morning {
@@ -375,7 +277,128 @@ svg.no-workday-icon {
      abbreviation letter mostly over blank space above it. Fill the whole
      legend swatch with that color instead, so the letter always sits above
      a solid color block instead of next to/behind a sliver of it. */
-  .vacationOverview-legend-colorbox .cal-day.absence-full--solid {
-    background: var(--absence-bar-color) !important;
+  .vacationOverview-legend-colorbox .absence-bar {
+    inset: 0;
+    border-radius: 0;
+  }
+}
+
+.vacationOverview-table {
+  /* every day column has the same width, so a label can span several of them by calculation */
+  --absence-overview-day-width: 2.5rem;
+  --absence-bar-inset: 0.25rem;
+}
+
+.vacationOverview-table th.vacationOverview-cal-head,
+.vacationOverview-tbody td {
+  width: var(--absence-overview-day-width);
+  min-width: var(--absence-overview-day-width);
+  max-width: var(--absence-overview-day-width);
+}
+
+.absence-bar {
+  position: absolute;
+  top: 22%;
+  bottom: 22%;
+  /* reach over the shared cell border, so consecutive pieces form one bar */
+  left: -1px;
+  right: -1px;
+  background-color: var(--absence-bar-color);
+}
+
+.absence-bar--morning {
+  right: 50%;
+}
+
+.absence-bar--noon {
+  left: 50%;
+}
+
+.absence-bar--start {
+  left: var(--absence-bar-inset);
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+
+.absence-bar--noon.absence-bar--start {
+  left: calc(50% + var(--absence-bar-inset) / 2);
+}
+
+.absence-bar--end {
+  right: var(--absence-bar-inset);
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+.absence-bar--morning.absence-bar--end {
+  right: calc(50% + var(--absence-bar-inset) / 2);
+}
+
+.absence-bar--solid.absence-bar--status-waiting,
+.absence-bar--solid.absence-bar--status-temporary_allowed {
+  border: 1px solid var(--absence-bar-color);
+  border-inline-width: 0;
+}
+
+.absence-bar--solid.absence-bar--status-waiting.absence-bar--start,
+.absence-bar--solid.absence-bar--status-temporary_allowed.absence-bar--start {
+  border-left-width: 1px;
+}
+
+.absence-bar--solid.absence-bar--status-waiting.absence-bar--end,
+.absence-bar--solid.absence-bar--status-temporary_allowed.absence-bar--end {
+  border-right-width: 1px;
+}
+
+.absence-bar--solid.absence-bar--status-waiting {
+  background-color: transparent;
+}
+
+.absence-bar--solid.absence-bar--status-temporary_allowed {
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+}
+
+.absence-bar--bridge {
+  background: color-mix(in srgb, var(--absence-bar-color) 35%, transparent);
+}
+
+.absence-bar-label {
+  position: absolute;
+  /* above the following pieces of the same bar, below the sticky name column (z-10) */
+  z-index: 2;
+  top: 50%;
+  left: 0.25rem;
+  transform: translateY(-50%);
+  /* a day column measures its width plus the 1px border it shares with its neighbour */
+  width: calc(var(--label-halves) * (var(--absence-overview-day-width) + 1px) / 2 - 2 * var(--absence-bar-inset));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  color: var(--absence-bar-label-color);
+  pointer-events: none;
+}
+
+.absence-bar--status-waiting .absence-bar-label,
+.absence-bar--status-temporary_allowed .absence-bar-label {
+  color: var(--uv-cal-default-color);
+}
+
+.no-workday-marker {
+  /* above the bridge of a bar */
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media print {
+  /* the print abbreviations say what the label says */
+  .absence-bar-label {
+    display: none;
   }
 }
