@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -88,8 +89,12 @@ final class AbsenceBars {
     }
 
     /**
+     * A gap reaching beyond the timeline before the same absence resumes - longer than the margin of the timeline
+     * around {@code visible} - is treated as the end of the bar.
+     *
      * @param timeline range the bars are computed on, must contain {@code visible}
-     * @param days     half day contents by date, missing dates are empty
+     * @param days     half day contents by date, missing dates are empty; neither a {@link Day} nor its {@link HalfDay}s
+     *                 may be {@code null}, use {@link Day#EMPTY} and {@link HalfDay#EMPTY} instead
      * @param visible  range pieces are returned for; every month in it gets the label of a bar again
      * @return pieces by date, only for visible dates with at least one piece
      */
@@ -210,7 +215,8 @@ final class AbsenceBars {
             final SlotPiece noon = assigned[noonSlot];
 
             final List<Piece> pieces = new ArrayList<>(2);
-            if (morning != null && noon != null && morning.bar() == noon.bar() && morning.kind() == noon.kind()) {
+            if (morning != null && noon != null && morning.bar() == noon.bar() && morning.kind() == noon.kind()
+                && Objects.equals(morning.gap(), noon.gap()) && morning.coveredByAbsence() == noon.coveredByAbsence()) {
                 final int halves = Math.max(labelHalves[morningSlot], labelHalves[noonSlot]);
                 pieces.add(new Piece(Half.FULL, morning.kind(), morning.first(), noon.last(), morning.absence(), morning.gap(), morning.coveredByAbsence(), halves));
             } else {

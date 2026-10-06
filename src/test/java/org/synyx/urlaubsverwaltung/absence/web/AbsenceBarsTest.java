@@ -306,6 +306,43 @@ class AbsenceBarsTest {
     }
 
     @Test
+    void christmasEveOnASundayInsideAVacationKeepsBothGaps() {
+        // December 2023: Fri 22nd, Sat 23rd, Sun 24th, holidays Mon 25th and Tue 26th
+        final DateRange december2023 = new DateRange(LocalDate.of(2023, 12, 1), LocalDate.of(2023, 12, 31));
+        final AbsenceBars.Gap christmasEve = new AbsenceBars.Gap("Heiligabend");
+        final AbsenceBars.Gap christmas = new AbsenceBars.Gap("Weihnachten");
+
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
+            LocalDate.of(2023, 12, 22), full(VACATION_7),
+            LocalDate.of(2023, 12, 23), gap(NO_WORKDAY),
+            LocalDate.of(2023, 12, 24), new AbsenceBars.Day(new AbsenceBars.HalfDay(null, NO_WORKDAY), new AbsenceBars.HalfDay(null, christmasEve)),
+            LocalDate.of(2023, 12, 25), gap(christmas),
+            LocalDate.of(2023, 12, 26), gap(christmas),
+            LocalDate.of(2023, 12, 27), full(VACATION_7)
+        ), december2023);
+
+        assertThat(pieces.get(LocalDate.of(2023, 12, 24))).containsExactly(
+            bridge(MORNING, false, false, VACATION_7, NO_WORKDAY, false),
+            bridge(NOON, false, false, VACATION_7, christmasEve, false)
+        );
+    }
+
+    @Test
+    void bridgeHalfCoveredByTheAbsenceIsNotMergedWithAnUncoveredOne() {
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
+            jan(10), full(SICK_7),
+            jan(11), new AbsenceBars.Day(new AbsenceBars.HalfDay(SICK_7, NO_WORKDAY), new AbsenceBars.HalfDay(null, NO_WORKDAY)),
+            jan(12), gap(NO_WORKDAY),
+            jan(13), full(SICK_7)
+        ), JANUARY_2025);
+
+        assertThat(pieces.get(jan(11))).containsExactly(
+            bridge(MORNING, false, false, SICK_7, NO_WORKDAY, true),
+            bridge(NOON, false, false, SICK_7, NO_WORKDAY, false)
+        );
+    }
+
+    @Test
     void absencesOnlyInTheMarginProduceNoPieces() {
         final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
             dec(20), full(VACATION_7)
