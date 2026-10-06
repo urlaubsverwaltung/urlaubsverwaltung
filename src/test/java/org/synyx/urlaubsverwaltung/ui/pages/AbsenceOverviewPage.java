@@ -52,6 +52,29 @@ public class AbsenceOverviewPage {
             .click();
     }
 
+    /**
+     * @return computed colour of the caret - the caret is a mask on the button's {@code ::after}, painted by its background
+     */
+    public String getDepartmentPickerCaretColor() {
+        return (String) getDepartmentPickerButtonLocator().evaluate("button => getComputedStyle(button, '::after').backgroundColor");
+    }
+
+    /**
+     * @param customProperty a colour custom property of the theme, e.g. {@code --color-zinc-50}
+     * @return the property computed as a colour on this page
+     */
+    public String colorOf(String customProperty) {
+        return (String) page.evaluate("""
+            property => {
+              const probe = document.createElement("div");
+              probe.style.backgroundColor = `var(${property})`;
+              document.body.append(probe);
+              const color = getComputedStyle(probe).backgroundColor;
+              probe.remove();
+              return color;
+            }""", customProperty);
+    }
+
     public void selectYear(String year) {
         page.locator("#yearSelect").selectOption(year);
     }
