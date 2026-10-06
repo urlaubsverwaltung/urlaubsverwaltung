@@ -92,11 +92,24 @@ export class DepartmentPicker extends HTMLElement {
 
     const handleSearchInput = () => filter(search.value);
 
+    const handlePageShow = (event) => {
+      // a page restored from the back/forward cache keeps the ticks of the selection it was left with, while the
+      // button still shows the rendered one - go back to the rendered selection
+      if (event.persisted) {
+        for (const checkbox of checkboxes) {
+          checkbox.checked = checkbox.defaultChecked;
+        }
+        snapshot = checkboxes.map((checkbox) => checkbox.checked);
+        confirmed = false;
+      }
+    };
+
     this.addEventListener("change", handleChange);
     popover.addEventListener("toggle", handleToggle);
     confirm.addEventListener("click", handleConfirm);
     search?.addEventListener("input", handleSearchInput);
     search?.addEventListener("keydown", preventSubmitOnEnter);
+    globalThis.addEventListener("pageshow", handlePageShow);
 
     this.#cleanup = () => {
       this.removeEventListener("change", handleChange);
@@ -104,6 +117,7 @@ export class DepartmentPicker extends HTMLElement {
       confirm.removeEventListener("click", handleConfirm);
       search?.removeEventListener("input", handleSearchInput);
       search?.removeEventListener("keydown", preventSubmitOnEnter);
+      globalThis.removeEventListener("pageshow", handlePageShow);
     };
   }
 
