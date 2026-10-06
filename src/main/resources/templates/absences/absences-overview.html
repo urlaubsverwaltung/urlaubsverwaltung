@@ -209,58 +209,69 @@
                   </a>
                 </th>
                 <td
-                  th:each="absence, dayStat : ${person.days}"
+                  th:each="day, dayStat : ${person.days}"
                   th:classappend="${month.days[dayStat.index].today} ? 'today' : ''"
+                  th:data-title="${day.publicHolidayName}"
                 >
                   <div
                     class="cal-day"
-                    th:classappend="|${absence.type != null && absence.type.absenceFull ? 'absence-full absence-full--solid' : ''}${absence.type != null && absence.type.absenceMorning ? ' absence-morning absence-morning--solid' : ''}${absence.type != null && absence.type.absenceNoon ? ' absence-noon absence-noon--solid' : ''}${absence.type != null && absence.type.waitingAbsenceFull ? ' absence-full absence-full--outline' : ''}${absence.type != null && absence.type.waitingAbsenceMorning ? ' absence-morning absence-morning--outline' : ''}${absence.type != null && absence.type.waitingAbsenceNoon ? ' absence-noon absence-noon--outline' : ''}${absence.type != null && absence.type.temporaryAllowedAbsenceFull ? ' absence-full absence-full--outline-solid-half' : ''}${absence.type != null && absence.type.temporaryAllowedAbsenceMorning ? ' absence-morning absence-morning--outline-solid-half' : ''}${absence.type != null && absence.type.temporaryAllowedAbsenceNoon ? ' absence-noon absence-noon--outline-solid-half' : ''}${absence.type != null && absence.type.allowedCancellationRequestedAbsenceFull ? ' absence-full absence-full--outline-solid-second-half' : ''}${absence.type != null && absence.type.allowedCancellationRequestedAbsenceMorning ? ' absence-morning absence-morning--outline-solid-second-half' : ''}${absence.type != null && absence.type.allowedCancellationRequestedAbsenceNoon ? ' absence-noon absence-noon--outline-solid-second-half' : ''}${absence.type != null && absence.type.activeSickNoteFull ? ' sick-note-full absence-full--solid' : ''}${absence.type != null && absence.type.activeSickNoteMorning ? ' sick-note-morning absence-morning--solid' : ''}${absence.type != null && absence.type.activeSickNoteNoon ? ' sick-note-noon absence-noon--solid' : ''}${absence.type != null && absence.type.waitingSickNoteFull ? ' sick-note-full absence-full--outline' : ''}${absence.type != null && absence.type.waitingSickNoteMorning ? ' sick-note-morning absence-morning--outline' : ''}${absence.type != null && absence.type.waitingSickNoteNoon ? ' sick-note-noon absence-noon--outline' : ''}${absence.type != null && absence.type.publicHolidayFull ? ' public-holiday-full' : ''}${absence.type != null && absence.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${absence.type != null && absence.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${absence.workday ? '' : ' no-workday'}|"
-                    th:styleappend="|${absence.type.color.morning != null ? '--absence-bar-color-morning:var(--absence-color-'+absence.type.color.morning+');' : ''}${absence.type.color.noon != null ? '--absence-bar-color-noon:var(--absence-color-'+absence.type.color.noon+');' : ''}${absence.type.color.full != null ? '--absence-bar-color:var(--absence-color-'+absence.type.color.full+');' : ''}|"
+                    th:classappend="|${day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${day.workday ? '' : ' no-workday'}|"
                   >
-                    <div
-                      th:if="${not absence.workday}"
-                      class=""
-                      style="height: 100%; display: flex; align-items: center; justify-content: center"
-                    >
+                    <div th:if="${not day.workday}" class="no-workday-marker" aria-hidden="true">
                       <svg th:replace="~{icon/slash::svg(className='no-workday-icon w-5 h-5 -translate-y-px')}"></svg>
                     </div>
+                    <span
+                      th:if="${day.publicHolidayName != null and #lists.isEmpty(day.bars)}"
+                      class="sr-only"
+                      th:text="${day.publicHolidayName}"
+                    ></span>
+                    <span
+                      th:each="bar : ${day.bars}"
+                      class="absence-bar"
+                      th:classappend="|absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|"
+                      th:style="|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})|"
+                      th:data-title="${bar.title}"
+                    >
+                      <span class="sr-only" th:text="${bar.title}"></span>
+                      <span
+                        th:if="${bar.label != null}"
+                        class="absence-bar-label"
+                        aria-hidden="true"
+                        th:style="|--label-halves:${bar.labelHalves}|"
+                        th:text="${bar.label}"
+                      ></span>
+                    </span>
                     <span class="hidden print:inline print:font-mono">
-                      <th:block
-                        th:if="${absence.type.absenceMorning}"
-                        th:text="#{absences.overview.absence.morning.abbr}"
-                      >
+                      <th:block th:if="${day.type.absenceMorning}" th:text="#{absences.overview.absence.morning.abbr}">
                       </th:block>
                       <th:block
-                        th:if="${absence.type.absenceNoon}"
+                        th:if="${day.type.absenceNoon}"
                         th:text="#{absences.overview.absence.noon.abbr}"
                       ></th:block>
+                      <th:block th:if="${day.type.absenceFull}" th:text="#{absences.overview.absence.abbr}"></th:block>
                       <th:block
-                        th:if="${absence.type.absenceFull}"
-                        th:text="#{absences.overview.absence.abbr}"
-                      ></th:block>
-                      <th:block
-                        th:if="${absence.type.waitingAbsenceMorning}"
+                        th:if="${day.type.waitingAbsenceMorning}"
                         th:text="#{absences.overview.absence.morning.waiting.abbr}"
                       >
                       </th:block>
                       <th:block
-                        th:if="${absence.type.waitingAbsenceNoon}"
+                        th:if="${day.type.waitingAbsenceNoon}"
                         th:text="#{absences.overview.absence.noon.waiting.abbr}"
                       ></th:block>
                       <th:block
-                        th:if="${absence.type.waitingAbsenceFull}"
+                        th:if="${day.type.waitingAbsenceFull}"
                         th:text="#{absences.overview.absence.waiting.abbr}"
                       ></th:block>
                       <th:block
-                        th:if="${absence.type.activeSickNoteMorning}"
+                        th:if="${day.type.activeSickNoteMorning}"
                         th:text="#{absences.overview.sick.morning.abbr}"
                       ></th:block>
                       <th:block
-                        th:if="${absence.type.activeSickNoteNoon}"
+                        th:if="${day.type.activeSickNoteNoon}"
                         th:text="#{absences.overview.sick.noon.abbr}"
                       ></th:block>
                       <th:block
-                        th:if="${absence.type.activeSickNoteFull}"
+                        th:if="${day.type.activeSickNoteFull}"
                         th:text="#{absences.overview.sick.abbr}"
                       ></th:block>
                     </span>
@@ -294,17 +305,24 @@
               </tr>
               <tr th:each="vacationTypeColor : ${vacationTypeColors}">
                 <td class="vacationOverview-legend-colorbox">
-                  <div
-                    class="cal-day absence-full absence-full--solid"
-                    th:styleappend="|--absence-bar-color:var(--absence-color-${vacationTypeColor.color});|"
-                  ></div>
+                  <div class="cal-day">
+                    <span
+                      class="absence-bar absence-bar--full absence-bar--solid absence-bar--status-allowed absence-bar--start absence-bar--end"
+                      th:styleappend="|--absence-bar-color:var(--absence-color-${vacationTypeColor.color});|"
+                    ></span>
+                  </div>
                   <span class="hidden print:inline" th:text="#{absences.overview.absence.abbr}"></span>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="${vacationTypeColor.label}"></td>
               </tr>
               <tr th:if="${sickNoteLegendVisible}">
                 <td class="vacationOverview-legend-colorbox">
-                  <div class="cal-day sick-note-full absence-full--solid"></div>
+                  <div class="cal-day">
+                    <span
+                      class="absence-bar absence-bar--full absence-bar--solid absence-bar--status-allowed absence-bar--start absence-bar--end"
+                      style="--absence-bar-color: var(--absence-color-SICK_NOTE)"
+                    ></span>
+                  </div>
                   <span class="hidden print:inline" th:text="#{absences.overview.sick.abbr}"></span>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
