@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -22,12 +23,18 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.containsString;
@@ -35,6 +42,7 @@ import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
@@ -43,7 +51,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 /**
  * Renders the real {@code absences/absences-overview} template (unlike {@link AbsenceOverviewViewControllerTest},
@@ -68,6 +78,12 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
     private VacationTypeService vacationTypeService;
     @MockitoBean
     private SettingsService settingsService;
+    @MockitoBean
+    private WorkingTimeService workingTimeService;
+    @MockitoBean
+    private WorkingTimeWriteService workingTimeWriteService;
+    @MockitoBean
+    private PublicHolidaysService publicHolidaysService;
 
     private Person office;
 
@@ -129,6 +145,30 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("absence-bar absence-bar--morning absence-bar--solid absence-bar--status-allowed absence-bar--start absence-bar--end")))
             .andExpect(content().string(not(containsString("class=\"absence-bar-label\""))));
+    }
+
+    @Test
+    void announcesAHalfDayPublicHolidayNextToAMorningAbsence() throws Exception {
+
+        // Tue 24th December 2024: vacation in the morning, Heiligabend at noon
+        final DateRange december = new DateRange(LocalDate.of(2024, 12, 1), LocalDate.of(2024, 12, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(december)))
+            .thenReturn(Map.of(office, Map.of(december, new WorkingTime(office, december.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(publicHolidaysService.getPublicHolidays(december.startDate(), december.endDate(), GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, 12, 24), NOON, "Heiligabend")));
+
+        final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, 12, 24), office,
+            new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
+            new AbsencePeriod.RecordNoonPublicHoliday(office))));
+        when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(christmasEve));
+
+        mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
+                .locale(Locale.GERMAN)
+                .with(csrf())
+                .with(oidcSubject(office, List.of(USER, OFFICE))))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("absence-bar absence-bar--morning absence-bar--solid")))
+            .andExpect(content().string(matchesPattern("(?s).*class=\"sr-only\"\\s*>Heiligabend</span>.*")));
     }
 
     private static OidcLoginRequestPostProcessor oidcSubject(Person person, List<Role> roles) {
