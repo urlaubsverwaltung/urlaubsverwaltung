@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.AbsenceOverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ThemeColors;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -193,7 +194,7 @@ class AbsenceOverviewUIIT {
         assertThat(page.locator("html")).hasClass(Pattern.compile("\\btheme-dark\\b"));
         assertThat(overview.getDepartmentPickerButtonLocator()).isVisible();
         // the light caret colour (zinc-700) is invisible on the dark button
-        assertEquals(overview.colorOf("--color-zinc-50"), overview.getDepartmentPickerCaretColor());
+        assertEquals(ThemeColors.colorOf(page, "--color-zinc-50"), overview.getDepartmentPickerCaretColor());
     }
 
     private void login(Page page, Person person) {

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.BoundingBox;
+import com.microsoft.playwright.options.ColorScheme;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ThemeColors;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -34,6 +36,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -60,6 +63,9 @@ class NavigationUIIT {
     // narrower than the `desktop` breakpoint (1280px) so the mobile hamburger menu / drawer is used
     private static final int MOBILE_VIEWPORT_WIDTH = 390;
     private static final int MOBILE_VIEWPORT_HEIGHT = 844;
+    // wide enough for the `desktop` breakpoint (1280px), where the navigation gets its resize handle
+    private static final int DESKTOP_VIEWPORT_WIDTH = 1440;
+    private static final int DESKTOP_VIEWPORT_HEIGHT = 900;
 
     @LocalServerPort
     private int port;
@@ -114,6 +120,25 @@ class NavigationUIIT {
         Assertions.assertThat(box).isNotNull();
         Assertions.assertThat(box.width).isGreaterThan(MOBILE_VIEWPORT_WIDTH * 0.9);
         Assertions.assertThat(box.height).isGreaterThan(MOBILE_VIEWPORT_HEIGHT * 0.5);
+    }
+
+    @Test
+    void ensureResizeHandleUsesTheDarkLineColorInDarkMode(Page page) {
+
+        final Person person = createPerson("dNav", "Dagmar", List.of(USER));
+
+        page.setViewportSize(DESKTOP_VIEWPORT_WIDTH, DESKTOP_VIEWPORT_HEIGHT);
+        page.emulateMedia(new Page.EmulateMediaOptions().setColorScheme(ColorScheme.DARK));
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+
+        assertThat(page.locator("html")).hasClass(Pattern.compile("\\btheme-dark\\b"));
+        assertThat(navigationPage.resizeHandle()).isAttached();
+        // the light line colour (blue-300) glares on the dark navigation
+        Assertions.assertThat(navigationPage.resizeHandleLineColor()).isEqualTo(ThemeColors.colorOf(page, "--color-sky-600"));
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
