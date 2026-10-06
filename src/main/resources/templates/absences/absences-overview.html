@@ -234,7 +234,7 @@
                     >
                       <span class="sr-only" th:text="${bar.title}"></span>
                       <span
-                        th:if="${bar.label != null and bar.labelHalves > 1}"
+                        th:if="${bar.label != null}"
                         class="absence-bar-label"
                         aria-hidden="true"
                         th:style="|--label-halves:${bar.labelHalves}|"
