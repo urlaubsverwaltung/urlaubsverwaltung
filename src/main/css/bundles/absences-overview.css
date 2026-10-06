@@ -300,13 +300,24 @@ svg.no-workday-icon {
 }
 
 .absence-bar {
+  /* the colour a piece is filled or outlined with - a bridge shows it translucent */
+  --absence-bar-fill: var(--absence-bar-color);
   position: absolute;
   top: 22%;
   bottom: 22%;
   /* reach over the shared cell border, so consecutive pieces form one bar */
   left: -1px;
   right: -1px;
-  background-color: var(--absence-bar-color);
+  background-color: var(--absence-bar-fill);
+}
+
+.absence-bar--bridge {
+  --absence-bar-fill: color-mix(in srgb, var(--absence-bar-color) 35%, transparent);
+}
+
+.absence-bar--bridge:not(.absence-bar--noon, .absence-bar--start) {
+  /* translucent pieces must not overlap - the overlap shows as a darker seam on the cell border */
+  left: 0;
 }
 
 .absence-bar--morning {
@@ -337,32 +348,30 @@ svg.no-workday-icon {
   right: calc(50% + var(--absence-bar-inset) / 2);
 }
 
-.absence-bar--solid.absence-bar--status-waiting,
-.absence-bar--solid.absence-bar--status-temporary_allowed {
-  border: 1px solid var(--absence-bar-color);
+/* the bridges of a waiting or temporarily allowed bar keep its outline style,
+   so they never look more confirmed than the absence itself */
+.absence-bar--status-waiting,
+.absence-bar--status-temporary_allowed {
+  border: 1px solid var(--absence-bar-fill);
   border-inline-width: 0;
 }
 
-.absence-bar--solid.absence-bar--status-waiting.absence-bar--start,
-.absence-bar--solid.absence-bar--status-temporary_allowed.absence-bar--start {
+.absence-bar--status-waiting.absence-bar--start,
+.absence-bar--status-temporary_allowed.absence-bar--start {
   border-left-width: 1px;
 }
 
-.absence-bar--solid.absence-bar--status-waiting.absence-bar--end,
-.absence-bar--solid.absence-bar--status-temporary_allowed.absence-bar--end {
+.absence-bar--status-waiting.absence-bar--end,
+.absence-bar--status-temporary_allowed.absence-bar--end {
   border-right-width: 1px;
 }
 
-.absence-bar--solid.absence-bar--status-waiting {
+.absence-bar--status-waiting {
   background-color: transparent;
 }
 
-.absence-bar--solid.absence-bar--status-temporary_allowed {
-  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
-}
-
-.absence-bar--bridge {
-  background: color-mix(in srgb, var(--absence-bar-color) 35%, transparent);
+.absence-bar--status-temporary_allowed {
+  background: linear-gradient(135deg, var(--absence-bar-fill) 50%, transparent 50%);
 }
 
 .absence-bar-label {
@@ -372,8 +381,9 @@ svg.no-workday-icon {
   top: 50%;
   left: var(--absence-bar-inset);
   transform: translateY(-50%);
-  /* a day column measures its width plus the 1px border it shares with its neighbour */
-  max-width: calc(var(--label-halves) * (var(--absence-overview-day-width) + 1px) / 2 - 3 * var(--absence-bar-inset));
+  /* a day column's width includes its collapsed border; the label keeps one inset to the bar on either side, and the
+     bar one inset to the cell edge at its start and end */
+  max-width: calc(var(--label-halves) * var(--absence-overview-day-width) / 2 - 4 * var(--absence-bar-inset));
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -393,9 +403,10 @@ svg.no-workday-icon {
 }
 
 .no-workday-marker {
-  /* above the bridge of a bar */
+  /* above the bridge of a bar, but hovering it must still reach the bridge's tooltip */
   position: relative;
   z-index: 1;
+  pointer-events: none;
   height: 100%;
   display: flex;
   align-items: center;
@@ -406,5 +417,11 @@ svg.no-workday-icon {
   /* the print abbreviations say what the label says */
   .absence-bar-label {
     display: none;
+  }
+
+  /* out of the flow, so the abbreviation of an absence on a non-workday stays inside its cell instead of below it */
+  .no-workday-marker {
+    position: absolute;
+    inset: 0;
   }
 }

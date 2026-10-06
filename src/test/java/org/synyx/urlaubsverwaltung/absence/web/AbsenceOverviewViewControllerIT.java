@@ -32,6 +32,7 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -111,6 +112,23 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
             .andExpect(content().string(containsString("data-title=\"Kein Arbeitstag\"")))
             .andExpect(content().string(containsString("style=\"--label-halves:4\"")))
             .andExpect(content().string(containsString(">Erholungsurlaub</span>")));
+    }
+
+    @Test
+    void omitsTheLabelOfAHalfDayBar() throws Exception {
+
+        // Wed 15th January 2025, morning only
+        final AbsencePeriod morning = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 15), office,
+            new AbsencePeriod.RecordMorningVacation(office, 8L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false))));
+        when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(morning));
+
+        mockMvc.perform(get("/web/absences").param("year", "2025").param("month", "1")
+                .locale(Locale.GERMAN)
+                .with(csrf())
+                .with(oidcSubject(office, List.of(USER, OFFICE))))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("absence-bar absence-bar--morning absence-bar--solid absence-bar--status-allowed absence-bar--start absence-bar--end")))
+            .andExpect(content().string(not(containsString("class=\"absence-bar-label\""))));
     }
 
     private static OidcLoginRequestPostProcessor oidcSubject(Person person, List<Role> roles) {
