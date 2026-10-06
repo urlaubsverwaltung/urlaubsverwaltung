@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -44,6 +45,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
@@ -112,9 +114,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
-        @RequestParam(name = "department", required = false, defaultValue = "") List<String> rawSelectedDepartments, Model model, Locale locale) {
+        @RequestParam(name = "department", required = false, defaultValue = "") List<String> rawSelectedDepartments,
+        @RequestParam(name = "allPersons", required = false, defaultValue = "false") boolean allPersonsSelected,
+        Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
+        final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
 
         final List<Person> overviewPersons;
         if (departmentService.getNumberOfDepartments() > 0) {
@@ -125,17 +130,24 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             if (visibleDepartments.isEmpty()) {
                 overviewPersons = List.of(signedInUser);
             } else {
-                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments, signedInUser);
-                model.addAttribute("selectedDepartments", selectedDepartmentNames);
+                final List<Person> allPersons = activeDistinctSortedByFirstName(Stream.concat(
+                    visibleDepartments.stream().map(Department::getMembers).flatMap(List::stream),
+                    membersOfSignedInUser.stream()
+                ));
 
-                overviewPersons = visibleDepartments.stream()
-                    .filter(department -> selectedDepartmentNames.contains(department.getName()))
-                    .map(Department::getMembers)
-                    .flatMap(List::stream)
-                    .filter(Person::isActive)
-                    .distinct()
-                    .sorted(comparing(Person::getFirstName))
-                    .toList();
+                final List<String> selectedDepartmentNames = allPersonsSelected
+                    ? List.of()
+                    : getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments, signedInUser);
+                model.addAttribute("selectedDepartments", selectedDepartmentNames);
+                model.addAttribute("departmentPicker",
+                    toDepartmentPicker(visibleDepartments, selectedDepartmentNames, allPersonsSelected, allPersons.size()));
+
+                overviewPersons = allPersonsSelected
+                    ? allPersons
+                    : activeDistinctSortedByFirstName(visibleDepartments.stream()
+                        .filter(department -> selectedDepartmentNames.contains(department.getName()))
+                        .map(Department::getMembers)
+                        .flatMap(List::stream));
             }
         } else {
             overviewPersons = personService.getActivePersons();
@@ -150,7 +162,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
-        final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
         final boolean isSignedInUserAllowedToSeeAbsencesOfOthers = !membersOfSignedInUser.isEmpty();
         model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsencesOfOthers || overviewPersons.contains(signedInUser));
 
@@ -200,7 +211,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments, Person signedInUser) {
-        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).toList();
+        final List<String> visibleDepartmentNames = departments.stream().map(Department::getName).toList();
+        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream()
+            .filter(StringUtils::hasText)
+            .filter(visibleDepartmentNames::contains)
+            .toList();
         if (!preparedSelectedDepartments.isEmpty()) {
             return preparedSelectedDepartments;
         }
@@ -209,6 +224,26 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .map(Department::getName)
             .toList();
         return departmentNamesOfSignedInUser.isEmpty() ? List.of(departments.getFirst().getName()) : departmentNamesOfSignedInUser;
+    }
+
+    private static List<Person> activeDistinctSortedByFirstName(Stream<Person> persons) {
+        return persons
+            .filter(Person::isActive)
+            .distinct()
+            .sorted(comparing(Person::getFirstName))
+            .toList();
+    }
+
+    private static DepartmentPickerDto toDepartmentPicker(List<Department> visibleDepartments, List<String> selectedDepartmentNames,
+                                                          boolean allPersonsSelected, int allPersonsCount) {
+        final List<DepartmentPickerDto.Option> options = visibleDepartments.stream()
+            .map(department -> new DepartmentPickerDto.Option(
+                department.getName(),
+                (int) department.getMembers().stream().filter(Person::isActive).count(),
+                selectedDepartmentNames.contains(department.getName())
+            ))
+            .toList();
+        return new DepartmentPickerDto(options, allPersonsSelected, allPersonsCount);
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,
