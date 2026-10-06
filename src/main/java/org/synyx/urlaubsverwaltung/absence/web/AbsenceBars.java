@@ -44,8 +44,10 @@ final class AbsenceBars {
      * @param key        identity of the absence - half days with the same key belong to the same absence
      * @param color      name of the colour, used as suffix of the css variables {@code --absence-color-*}
      * @param statusText text of the status, {@code null} when the status needs no mention
+     * @param detailUrl  path of the page showing the absence, {@code null} when the viewer may not open it
      */
-    record Absence(String key, Status status, String color, String label, String statusText, boolean anonymized) {
+    record Absence(String key, Status status, String color, String label, String statusText, boolean anonymized,
+                   String detailUrl) {
     }
 
     record Gap(String title) {

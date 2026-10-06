@@ -35,8 +35,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
@@ -128,6 +130,20 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
             .andExpect(content().string(containsString("data-title=\"Kein Arbeitstag\"")))
             .andExpect(content().string(containsString("style=\"--label-halves:4\"")))
             .andExpect(content().string(containsString(">Erholungsurlaub</span>")));
+    }
+
+    @Test
+    void linksEveryPieceOfABarButMakesOnlyTheFirstOneATabStop() throws Exception {
+        final String page = mockMvc.perform(get("/web/absences").param("year", "2025").param("month", "1")
+                .locale(Locale.GERMAN)
+                .with(csrf())
+                .with(oidcSubject(office, List.of(USER, OFFICE))))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+
+        // Thu 9th to Mon 13th January: two solid days, the weekend bridge and Monday - one bar, one keyboard stop
+        assertThat(Pattern.compile("<a\\s[^>]*href=\"/web/application/7\"").matcher(page).results().count()).isEqualTo(5);
+        assertThat(Pattern.compile("<a\\s[^>]*href=\"/web/application/7\"\\s+tabindex=\"-1\"").matcher(page).results().count()).isEqualTo(4);
     }
 
     @Test

@@ -309,6 +309,15 @@ svg.no-workday-icon {
   left: -1px;
   right: -1px;
   background-color: var(--absence-bar-fill);
+  text-decoration: none;
+}
+
+/* a piece links to the absence only when the viewer may open it */
+a.absence-bar[href]:focus-visible {
+  /* above the neighbouring pieces and the label, below the sticky avatar column (z-10) */
+  z-index: 3;
+  outline: 2px solid var(--uv-focus-ring-color);
+  outline-offset: 2px;
 }
 
 .absence-bar--bridge {

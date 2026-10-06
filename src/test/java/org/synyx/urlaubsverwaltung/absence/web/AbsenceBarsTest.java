@@ -357,7 +357,7 @@ class AbsenceBarsTest {
     }
 
     private static AbsenceBars.Absence absence(String key) {
-        return new AbsenceBars.Absence(key, AbsenceBars.Status.ALLOWED, "ORANGE", "Erholungsurlaub", null, false);
+        return new AbsenceBars.Absence(key, AbsenceBars.Status.ALLOWED, "ORANGE", "Erholungsurlaub", null, false, null);
     }
 
     private static AbsenceBars.Day full(AbsenceBars.Absence absence) {
