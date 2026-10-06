@@ -13,6 +13,7 @@ public class NavigationPage {
     private static final String MOBILE_MENU_TOGGLE_SELECTOR = "button[popovertarget=navigation]";
     private static final String MOBILE_MENU_SELECTOR = "#navigation";
     private static final String OVERVIEW_LINK_SELECTOR = "#basic-overview-link";
+    private static final String RESIZE_HANDLE_SELECTOR = ".nav-resize-handle";
 
     private final Page page;
     private final AvatarMenu avatarMenu;
@@ -69,6 +70,20 @@ public class NavigationPage {
      */
     public Locator overviewLink() {
         return page.locator(OVERVIEW_LINK_SELECTOR);
+    }
+
+    /**
+     * The drag handle on the right edge of the desktop navigation, added by navigation.js.
+     */
+    public Locator resizeHandle() {
+        return page.locator(RESIZE_HANDLE_SELECTOR);
+    }
+
+    /**
+     * @return computed colour of the resize handle's line - its {@code ::before}, faded in on hover or while resizing
+     */
+    public String resizeHandleLineColor() {
+        return ThemeColors.backgroundColorOf(resizeHandle(), "::before");
     }
 
     public static final class QuickAdd {

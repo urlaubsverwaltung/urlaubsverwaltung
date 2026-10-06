@@ -390,8 +390,13 @@ html.nav-resizing {
         background-color: var(--color-blue-300);
         opacity: 0;
         transition: opacity 150ms;
+      }
 
-        @variant dark {
+      /* the dark variant has to wrap the pseudo-element. nested inside `&::before` it compiles to
+       * `::before:where(.theme-dark, …)`, a pseudo-class after a pseudo-element, which the browser drops.
+       * it comes after the light colour, both rules have the same specificity. */
+      @variant dark {
+        &::before {
           background-color: var(--color-sky-600);
         }
       }
