@@ -56,7 +56,7 @@ class AbsenceBarsTest {
             jan(7), new AbsenceBars.Day(new AbsenceBars.HalfDay(VACATION_7, null), AbsenceBars.HalfDay.EMPTY)
         ), JANUARY_2025);
 
-        assertThat(pieces.get(jan(7))).containsExactly(solid(MORNING, true, true, VACATION_7, 1));
+        assertThat(pieces.get(jan(7))).containsExactly(solid(MORNING, true, true, VACATION_7, 0));
     }
 
     @Test
@@ -65,7 +65,7 @@ class AbsenceBarsTest {
             jan(7), new AbsenceBars.Day(AbsenceBars.HalfDay.EMPTY, new AbsenceBars.HalfDay(VACATION_7, null))
         ), JANUARY_2025);
 
-        assertThat(pieces.get(jan(7))).containsExactly(solid(NOON, true, true, VACATION_7, 1));
+        assertThat(pieces.get(jan(7))).containsExactly(solid(NOON, true, true, VACATION_7, 0));
     }
 
     @Test
@@ -135,8 +135,8 @@ class AbsenceBarsTest {
         ), JANUARY_2025);
 
         assertThat(pieces.get(jan(7))).containsExactly(
-            solid(MORNING, true, true, VACATION_7, 1),
-            solid(NOON, true, true, VACATION_8, 1)
+            solid(MORNING, true, true, VACATION_7, 0),
+            solid(NOON, true, true, VACATION_8, 0)
         );
     }
 
@@ -268,7 +268,7 @@ class AbsenceBarsTest {
     }
 
     @Test
-    void labelOfASingleHalfDaySpansOneHalf() {
+    void labelSkipsAStretchOfASingleHalfDay() {
         final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
             jan(10), new AbsenceBars.Day(AbsenceBars.HalfDay.EMPTY, new AbsenceBars.HalfDay(VACATION_7, null)),
             jan(11), gap(NO_WORKDAY),
@@ -276,8 +276,33 @@ class AbsenceBarsTest {
             jan(13), full(VACATION_7)
         ), JANUARY_2025);
 
-        assertThat(pieces.get(jan(10))).containsExactly(solid(NOON, true, false, VACATION_7, 1));
-        assertThat(pieces.get(jan(13))).containsExactly(solid(FULL, false, true, VACATION_7, 0));
+        assertThat(pieces.get(jan(10))).containsExactly(solid(NOON, true, false, VACATION_7, 0));
+        assertThat(pieces.get(jan(13))).containsExactly(solid(FULL, false, true, VACATION_7, 2));
+    }
+
+    @Test
+    void vacationStartingOnAHalfHolidayIsLabelledOnItsFirstWholeDay() {
+        final AbsenceBars.Gap christmasEve = new AbsenceBars.Gap("Heiligabend");
+        final AbsenceBars.Gap christmas = new AbsenceBars.Gap("Weihnachten");
+
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
+            dec(24), new AbsenceBars.Day(new AbsenceBars.HalfDay(VACATION_7, null), new AbsenceBars.HalfDay(null, christmasEve)),
+            dec(25), gap(christmas),
+            dec(26), gap(christmas),
+            dec(27), full(VACATION_7),
+            dec(28), gap(NO_WORKDAY),
+            dec(29), gap(NO_WORKDAY),
+            dec(30), full(VACATION_7),
+            dec(31), full(VACATION_7)
+        ), DECEMBER_2024);
+
+        assertThat(pieces.get(dec(24))).containsExactly(
+            solid(MORNING, true, false, VACATION_7, 0),
+            bridge(NOON, false, false, VACATION_7, christmasEve, false)
+        );
+        assertThat(pieces.get(dec(27))).containsExactly(solid(FULL, false, false, VACATION_7, 2));
+        assertThat(pieces.get(dec(30))).containsExactly(solid(FULL, false, false, VACATION_7, 0));
+        assertThat(pieces.get(dec(31))).containsExactly(solid(FULL, false, true, VACATION_7, 0));
     }
 
     @Test

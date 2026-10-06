@@ -66,7 +66,8 @@ final class AbsenceBars {
      * @param gap              the gap of a bridge, {@code null} for a solid piece
      * @param coveredByAbsence whether the half day itself carries the absence - false for a bridge over a gap the
      *                         absence does not cover, e.g. the weekend inside a vacation
-     * @param labelHalves      number of half days the label spans, 0 when this piece carries no label
+     * @param labelHalves      number of half days the label spans, 0 when this piece carries no label; a bar is labelled
+     *                         once per month, on the first solid stretch of at least a whole day (two half days)
      */
     record Piece(Half half, Kind kind, boolean roundedStart, boolean roundedEnd, Absence absence, Gap gap,
                  boolean coveredByAbsence, int labelHalves) {
@@ -78,6 +79,9 @@ final class AbsenceBars {
 
     private record BarMonth(int bar, YearMonth month) {
     }
+
+    // a single half day only fits a clipped glyph, so the label waits for a stretch of at least a whole day
+    private static final int MIN_LABEL_HALVES = 2;
 
     private AbsenceBars() {
         // static helper
@@ -150,31 +154,44 @@ final class AbsenceBars {
 
         for (int s = 0; s < assigned.length; s++) {
             final SlotPiece slotPiece = assigned[s];
-            final LocalDate date = dates.get(s / 2);
-            if (slotPiece == null || slotPiece.kind() != Kind.SOLID || !isVisible(date, visible)) {
+            if (slotPiece == null || slotPiece.kind() != Kind.SOLID || !isVisible(dates.get(s / 2), visible)
+                || (s > 0 && sameStretchInMonth(assigned, dates, visible, s - 1, s))) {
                 continue;
             }
 
-            final YearMonth month = YearMonth.from(date);
-            if (!labelled.add(new BarMonth(slotPiece.bar(), month))) {
+            final BarMonth barMonth = new BarMonth(slotPiece.bar(), YearMonth.from(dates.get(s / 2)));
+            if (labelled.contains(barMonth)) {
                 continue;
             }
 
             int end = s;
-            while (end < assigned.length
-                && continuesSolidStretch(assigned[end], slotPiece.bar())
-                && month.equals(YearMonth.from(dates.get(end / 2)))
-                && isVisible(dates.get(end / 2), visible)) {
+            while (end < assigned.length && sameStretchInMonth(assigned, dates, visible, s, end)) {
                 end++;
             }
-            labelHalves[s] = end - s;
+
+            if (end - s >= MIN_LABEL_HALVES) {
+                labelled.add(barMonth);
+                labelHalves[s] = end - s;
+            }
         }
 
         return labelHalves;
     }
 
-    private static boolean continuesSolidStretch(SlotPiece slotPiece, int bar) {
-        return slotPiece != null && slotPiece.bar() == bar && slotPiece.kind() == Kind.SOLID;
+    /**
+     * @return whether both slots are solid pieces of the same bar on visible dates of the same month, i.e. whether a
+     * label spanning one of them may span the other
+     */
+    private static boolean sameStretchInMonth(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int one, int other) {
+        final SlotPiece first = assigned[one];
+        final SlotPiece second = assigned[other];
+        final LocalDate firstDate = dates.get(one / 2);
+        final LocalDate secondDate = dates.get(other / 2);
+        return first != null && second != null
+            && first.bar() == second.bar()
+            && first.kind() == Kind.SOLID && second.kind() == Kind.SOLID
+            && YearMonth.from(firstDate).equals(YearMonth.from(secondDate))
+            && isVisible(firstDate, visible) && isVisible(secondDate, visible);
     }
 
     private static Map<LocalDate, List<Piece>> pieces(SlotPiece[] assigned, int[] labelHalves, List<LocalDate> dates, DateRange visible) {
