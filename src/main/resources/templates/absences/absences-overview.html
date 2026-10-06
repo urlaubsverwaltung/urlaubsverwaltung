@@ -221,7 +221,7 @@
                       <svg th:replace="~{icon/slash::svg(className='no-workday-icon w-5 h-5 -translate-y-px')}"></svg>
                     </div>
                     <span
-                      th:if="${day.publicHolidayName != null and #lists.isEmpty(day.bars)}"
+                      th:if="${day.publicHolidayName != null and #lists.isEmpty(day.bars.?[kind.name() == 'BRIDGE'])}"
                       class="sr-only"
                       th:text="${day.publicHolidayName}"
                     ></span>
