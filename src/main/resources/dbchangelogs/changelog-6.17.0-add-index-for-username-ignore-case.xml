@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    PersonRepository#findByUsernameIgnoreCase is rendered as upper(username) = upper(?), which the unique
+    (username, tenant_id) index cannot serve. It runs several times on every request to look up the signed-in
+    person, so without this index every lookup scans the whole person table.
+  -->
+  <changeSet author="schneider" id="add-index-for-username-ignore-case">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <indexExists tableName="person" indexName="person_username_upper"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="person" indexName="person_username_upper">
+      <column name="upper(username)" computed="true"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>

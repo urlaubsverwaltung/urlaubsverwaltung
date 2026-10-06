@@ -235,6 +235,20 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
         assertThat(statementsForThreePersons).isEqualTo(statementsForOnePerson);
     }
 
+    @Test
+    void ensureFindByUsernameIgnoreCaseCanUseAnIndex() {
+
+        final Person person = personService.create("Marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
+        assertThat(sut.findByUsernameIgnoreCase("marlene")).contains(person);
+
+        // a handful of rows is always cheaper to scan - forbid the scan so the planner has to use an index if one fits
+        entityManager.createNativeQuery("set local enable_seqscan = off").executeUpdate();
+
+        // the predicate hibernate renders for findByUsernameIgnoreCase
+        final List<?> plan = entityManager.createNativeQuery("explain select * from person p1_0 where upper(p1_0.username)=upper('marlene')").getResultList();
+        assertThat(plan).noneSatisfy(line -> assertThat(line.toString()).contains("Seq Scan"));
+    }
+
     private long fetchAndTouchPermissionsAndNotifications(List<Long> personIds) {
 
         // force the next query to actually hit the database instead of returning managed entities from the session cache
