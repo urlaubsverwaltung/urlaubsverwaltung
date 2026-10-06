@@ -112,6 +112,8 @@ class AbsenceOverviewUIIT {
 
         // without a selection the own department is shown
         assertThat(overview.getDepartmentPickerButtonLocator()).containsText("Vertrieb");
+        // the label names the button, the selection has to reach screen readers as its description
+        assertThat(overview.getDepartmentPickerButtonLocator()).hasAccessibleDescription("Vertrieb");
         overview.showsPersons("Bob", "Olga");
 
         overview.openDepartmentPicker();
@@ -136,6 +138,7 @@ class AbsenceOverviewUIIT {
 
         assertThat(page).hasURL(Pattern.compile("allPersons=true"));
         assertThat(overview.getDepartmentPickerButtonLocator()).containsText("Alle Personen");
+        assertThat(overview.getDepartmentPickerButtonLocator()).hasAccessibleDescription("Alle Personen");
         overview.showsPersons(everyActivePerson);
 
         // changing the year keeps "Alle Personen"
