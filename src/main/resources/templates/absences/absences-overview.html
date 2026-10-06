@@ -225,12 +225,14 @@
                       class="sr-only"
                       th:text="${day.publicHolidayName}"
                     ></span>
-                    <span
+                    <a
                       th:each="bar : ${day.bars}"
                       class="absence-bar"
                       th:classappend="|absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|"
                       th:style="|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})|"
                       th:data-title="${bar.title}"
+                      th:href="${bar.href != null} ? @{${bar.href}} : null"
+                      th:tabindex="${bar.href != null and not bar.tabStop} ? '-1' : null"
                     >
                       <span class="sr-only" th:text="${bar.title}"></span>
                       <span
@@ -240,7 +242,7 @@
                         th:style="|--label-halves:${bar.labelHalves}|"
                         th:text="${bar.label}"
                       ></span>
-                    </span>
+                    </a>
                     <span class="hidden print:inline print:font-mono">
                       <th:block th:if="${day.type.absenceMorning}" th:text="#{absences.overview.absence.morning.abbr}">
                       </th:block>

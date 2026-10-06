@@ -30,6 +30,8 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -105,14 +107,16 @@ class AbsenceOverviewViewControllerTest {
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    @Mock
+    private SettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, clock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
     }
 
     @Test
@@ -552,7 +556,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -649,7 +654,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -763,8 +769,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -5074,8 +5080,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setId(1L);
@@ -5133,8 +5139,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -5544,6 +5550,180 @@ class AbsenceOverviewViewControllerTest {
 
         assertThat(days.getFirst().getPublicHolidayName()).isEqualTo("Neujahr");
         assertThat(days.get(1).getPublicHolidayName()).isNull();
+    }
+
+    @Test
+    void ensureOwnAbsencesLinkToTheirDetailPages() throws Exception {
+
+        final Person person = viewer(Role.USER);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(person, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+    }
+
+    @Test
+    void ensureOfficeGetsLinksToApplicationsAndSickNotesOfOthers() throws Exception {
+
+        final Person office = viewer(Role.USER, Role.OFFICE);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(office, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+    }
+
+    @Test
+    void ensureBossWithoutSickNoteViewGetsNoLinkToSickNotesOfOthers() throws Exception {
+
+        final Person boss = viewer(Role.USER, Role.BOSS);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(boss, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isNull();
+    }
+
+    @Test
+    void ensureBossWithSickNoteViewGetsLinksToSickNotesOfOthers() throws Exception {
+
+        final Person boss = viewer(Role.USER, Role.BOSS, Role.SICK_NOTE_VIEW);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(boss, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(sickNote(other, 3L, 13)));
+
+        assertThat(januaryDays(1).get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+    }
+
+    @Test
+    void ensureDepartmentHeadGetsLinksToAbsencesOfMembers() throws Exception {
+
+        final Person departmentHead = viewer(Role.USER, Role.DEPARTMENT_HEAD);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(departmentHead, other));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(departmentHead, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+    }
+
+    @Test
+    void ensureColleagueGetsNoLinkToAVacationTypeVisibleToEveryone() throws Exception {
+
+        final Person colleague = viewer(Role.USER);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(colleague, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+
+        final AbsencePeriod visibleToEveryone = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 9), other,
+            new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true),
+            new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true))));
+        when(absenceService.getOpenAbsences(List.of(colleague, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(visibleToEveryone));
+
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getLabel()).isEqualTo("Erholungsurlaub");
+            assertThat(bar.getHref()).isNull();
+        });
+    }
+
+    @Test
+    void ensureAnonymizedBarHasNoLink() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9)));
+
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isNull();
+    }
+
+    @Test
+    void ensureOnlyTheFirstPieceOfABarInAMonthIsATabStop() throws Exception {
+
+        final Person office = viewer(Role.USER, Role.OFFICE);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(office, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        // Thu 30th January to Tue 4th February 2025, weekend 1st/2nd February
+        final AbsencePeriod vacation = new AbsencePeriod(Stream.of(LocalDate.of(2025, 1, 30), LocalDate.of(2025, 1, 31), LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 4))
+            .map(date -> new AbsencePeriod.Record(date, other,
+                new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
+                new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false)))
+            .toList());
+        final AbsencePeriod weekend = new AbsencePeriod(Stream.of(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 2, 2))
+            .map(date -> new AbsencePeriod.Record(date, other, new AbsencePeriod.RecordMorningNoWorkday(other), new AbsencePeriod.RecordNoonNoWorkday(other)))
+            .toList());
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, 12, 18), LocalDate.of(2026, 1, 14)))
+            .thenReturn(List.of(vacation, weekend));
+
+        final AbsenceOverviewDto overview = (AbsenceOverviewDto) perform(get("/web/absences")
+                .param("year", "2025").param("month", "").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andReturn().getModelAndView().getModel().get("absenceOverview");
+        final List<AbsenceOverviewPersonDayDto> january = overview.getMonths().get(0).getPersons().get(1).getDays();
+        final List<AbsenceOverviewPersonDayDto> february = overview.getMonths().get(1).getPersons().get(1).getDays();
+
+        assertThat(january.get(29).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.isTabStop()).isTrue();
+        });
+        assertThat(january.get(30).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.isTabStop()).isFalse();
+        });
+        assertThat(february.get(0).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.isTabStop()).isTrue();
+        });
+        assertThat(february.get(3).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);
+    }
+
+    private Person viewer(Role... roles) {
+        final Person viewer = new Person();
+        viewer.setId(1L);
+        viewer.setPermissions(List.of(roles));
+        viewer.setFirstName("Bruce");
+        when(personService.getSignedInUser()).thenReturn(viewer);
+        return viewer;
+    }
+
+    private static Person otherPerson() {
+        final Person other = new Person();
+        other.setId(2L);
+        other.setPermissions(List.of(USER));
+        other.setFirstName("Dorie");
+        return other;
     }
 
     private Person privilegedPerson() {
