@@ -283,17 +283,20 @@ svg.no-workday-icon {
   }
 }
 
-.vacationOverview-table {
+.vacationOverview-table,
+.vacationOverview-legend-table {
   /* every day column has the same width, so a label can span several of them by calculation */
   --absence-overview-day-width: 2.5rem;
   --absence-bar-inset: 0.25rem;
 }
 
-.vacationOverview-table th.vacationOverview-cal-head,
-.vacationOverview-tbody td {
-  width: var(--absence-overview-day-width);
-  min-width: var(--absence-overview-day-width);
-  max-width: var(--absence-overview-day-width);
+@media screen {
+  .vacationOverview-table th.vacationOverview-cal-head,
+  .vacationOverview-tbody td {
+    width: var(--absence-overview-day-width);
+    min-width: var(--absence-overview-day-width);
+    max-width: var(--absence-overview-day-width);
+  }
 }
 
 .absence-bar {
@@ -367,10 +370,10 @@ svg.no-workday-icon {
   /* above the following pieces of the same bar, below the sticky name column (z-10) */
   z-index: 2;
   top: 50%;
-  left: 0.25rem;
+  left: var(--absence-bar-inset);
   transform: translateY(-50%);
   /* a day column measures its width plus the 1px border it shares with its neighbour */
-  width: calc(var(--label-halves) * (var(--absence-overview-day-width) + 1px) / 2 - 2 * var(--absence-bar-inset));
+  max-width: calc(var(--label-halves) * (var(--absence-overview-day-width) + 1px) / 2 - 3 * var(--absence-bar-inset));
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -383,7 +386,10 @@ svg.no-workday-icon {
 
 .absence-bar--status-waiting .absence-bar-label,
 .absence-bar--status-temporary_allowed .absence-bar-label {
+  background-color: var(--uv-cal-default-bg);
   color: var(--uv-cal-default-color);
+  padding-inline: 0.25rem;
+  border-radius: 0.25rem;
 }
 
 .no-workday-marker {

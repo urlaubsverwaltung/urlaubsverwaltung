@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -102,9 +103,9 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
                 .with(csrf())
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("absence-bar absence-bar--full absence-bar--solid absence-bar--status-allowed absence-bar--start")))
-            .andExpect(content().string(containsString("absence-bar absence-bar--full absence-bar--bridge absence-bar--status-allowed")))
-            .andExpect(content().string(containsString("absence-bar--end")))
+            .andExpect(content().string(matchesPattern("(?s).*absence-bar absence-bar--full absence-bar--solid absence-bar--status-allowed absence-bar--start\"\\s+style=\"--absence-bar-color:var\\(--absence-color-ORANGE\\).*")))
+            .andExpect(content().string(matchesPattern("(?s).*absence-bar absence-bar--full absence-bar--bridge absence-bar--status-allowed\"\\s+style=\"--absence-bar-color:var\\(--absence-color-ORANGE\\).*")))
+            .andExpect(content().string(matchesPattern("(?s).*absence-bar--solid absence-bar--status-allowed absence-bar--end\"\\s+style=\"--absence-bar-color:var\\(--absence-color-ORANGE\\).*")))
             .andExpect(content().string(containsString("--absence-bar-color:var(--absence-color-ORANGE)")))
             .andExpect(content().string(containsString("data-title=\"Erholungsurlaub\"")))
             .andExpect(content().string(containsString("data-title=\"Kein Arbeitstag\"")))
