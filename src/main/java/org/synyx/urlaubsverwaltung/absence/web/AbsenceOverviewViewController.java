@@ -37,6 +37,7 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -220,12 +221,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final LocalDate today = LocalDate.now(clock);
         final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.startDate(), dateRange.endDate());
 
-        final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
-
-        final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
+        // index the records once - a lookup per person and date must not scan all records of the person
+        final Map<Person, Map<LocalDate, List<AbsencePeriod.Record>>> absenceRecordsByPersonAndDate = openAbsences.stream()
             .map(AbsencePeriod::absenceRecords)
             .flatMap(List::stream)
-            .collect(groupingBy(AbsencePeriod.Record::getPerson));
+            .collect(groupingBy(AbsencePeriod.Record::getPerson, groupingBy(AbsencePeriod.Record::getDate)));
 
         // load the working times of all persons with a single query instead of one query per person
         final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(personList, dateRange);
@@ -235,6 +235,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
+        final Map<Integer, AbsenceOverviewMonthDto> monthsByNr = new LinkedHashMap<>();
+
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 _ -> initializeAbsenceOverviewMonthDto(date, personList, locale));
@@ -242,33 +244,23 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, today, locale);
             monthView.getDays().add(tableHeadDay);
 
-            final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
-                .collect(
-                    toMap(person -> monthView.getPersons().stream()
-                        .filter(view -> view.getId().equals(person.getId()))
-                        .findFirst()
-                        .orElse(null), Function.identity())
-                );
+            // the person views of a month are created in the order of personList
+            final List<AbsenceOverviewMonthPersonDto> personViews = monthView.getPersons();
+            for (int index = 0; index < personList.size(); index++) {
 
-            // create an absence day dto for every person of the department
-            for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
-
-                final Person person = personByView.get(personView);
-
+                final Person person = personList.get(index);
                 final Map<DateRange, WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(person, Map.of());
 
-                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
-                    .stream()
-                    .flatMap(List::stream)
-                    .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
-                    .toList();
+                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = absenceRecordsByPersonAndDate
+                    .getOrDefault(person, Map.of())
+                    .getOrDefault(date, List.of());
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday, recordInfoToColor))
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor))
                     .build();
 
-                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes)));
+                personViews.get(index).getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes)));
             }
         }
 
