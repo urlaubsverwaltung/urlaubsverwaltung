@@ -57,6 +57,9 @@ class AbsenceOverviewPerformanceIT extends SingleTenantTestContainersBase {
     private static final int PERSONS = 100;
     // measured before the absence bars - the bars must not add round trips
     private static final long MAX_STATEMENTS_PER_REQUEST = 125;
+    // the first run warms up caches and the JIT - every run renders the whole year, so keep them few
+    private static final int WARM_UP_RUNS = 1;
+    private static final int MEASURED_RUNS = 3;
 
     @Autowired
     private MockMvc mockMvc;
@@ -90,7 +93,7 @@ class AbsenceOverviewPerformanceIT extends SingleTenantTestContainersBase {
 
         final List<Long> statementCounts = new ArrayList<>();
         final List<Long> millis = new ArrayList<>();
-        for (int run = 0; run < 10; run++) {
+        for (int run = 0; run < WARM_UP_RUNS + MEASURED_RUNS; run++) {
             entityManager.clear();
             statistics.clear();
             final long start = System.nanoTime();
@@ -102,8 +105,7 @@ class AbsenceOverviewPerformanceIT extends SingleTenantTestContainersBase {
             statementCounts.add(statistics.getPrepareStatementCount());
         }
 
-        // the first three runs warm up caches and the JIT
-        final List<Long> measured = millis.subList(3, millis.size()).stream().sorted().toList();
+        final List<Long> measured = millis.subList(WARM_UP_RUNS, millis.size()).stream().sorted().toList();
         LOG.info("absence overview, {} persons, whole year: {} statements, median {} ms",
             PERSONS + 1, statementCounts.getLast(), measured.get(measured.size() / 2));
 
