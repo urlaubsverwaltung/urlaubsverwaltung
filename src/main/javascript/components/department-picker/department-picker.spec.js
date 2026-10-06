@@ -73,6 +73,25 @@ describe("department-picker", function () {
     expect(department("Marketing").checked).toBe(true);
   });
 
+  it("resets to the rendered selection when the page is restored from the back/forward cache", function () {
+    const { popover, all, department, confirm } = render({ selected: ["Admins"] });
+
+    toggle(popover, "open");
+    department("Marketing").click();
+    confirm.click();
+    globalThis.dispatchEvent(Object.assign(new Event("pageshow"), { persisted: true }));
+
+    expect(department("Admins").checked).toBe(true);
+    expect(department("Marketing").checked).toBe(false);
+    expect(all.checked).toBe(false);
+
+    // the restored selection is staged again - closing without confirming keeps the rendered one
+    department("Vertrieb").click();
+    toggle(popover, "closed");
+
+    expect(department("Vertrieb").checked).toBe(false);
+  });
+
   it("clears the departments when all persons is ticked", function () {
     const { popover, all, department } = render({ selected: ["Admins", "Marketing"] });
 
