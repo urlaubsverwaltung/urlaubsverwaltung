@@ -286,7 +286,7 @@ svg.no-workday-icon {
 .vacationOverview-table,
 .vacationOverview-legend-table {
   /* every day column has the same width, so a label can span several of them by calculation */
-  --absence-overview-day-width: 2.5rem;
+  --absence-overview-day-width: 2.125rem;
   --absence-bar-inset: 0.25rem;
 }
 
@@ -376,7 +376,7 @@ svg.no-workday-icon {
 
 .absence-bar-label {
   position: absolute;
-  /* above the following pieces of the same bar, below the sticky name column (z-10) */
+  /* above the following pieces of the same bar, below the sticky avatar column (z-10) */
   z-index: 2;
   top: 50%;
   left: var(--absence-bar-inset);
