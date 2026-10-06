@@ -240,13 +240,16 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
-        // resolve each message once per request, and only when a bar needs it
+        // resolve each message at most once per request
         final Map<String, String> messages = new HashMap<>();
         final Function<String, String> message = code -> messages.computeIfAbsent(code, c -> messageSource.getMessage(c, new Object[]{}, locale));
 
         final Map<String, AbsenceBars.Absence> barAbsencesByKey = new HashMap<>();
-        final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> barAbsencesByKey.computeIfAbsent(barAbsenceKey(recordInfo),
-            key -> barAbsence(key, recordInfo, shouldAnonymizeAbsenceType.apply(recordInfo), recordInfoToColor, vacationTypeById, locale, message));
+        final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> {
+            final boolean anonymize = shouldAnonymizeAbsenceType.apply(recordInfo);
+            return barAbsencesByKey.computeIfAbsent(barAbsenceKey(recordInfo, anonymize),
+                key -> barAbsence(key, recordInfo, anonymize, recordInfoToColor, vacationTypeById, locale, message));
+        };
 
         final Map<Person, Map<LocalDate, List<AbsenceBars.Piece>>> barPiecesByPerson = new HashMap<>();
         for (Person person : personList) {
@@ -581,7 +584,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         return recordInfos.stream().filter(recordInfo -> recordInfo.getAbsenceType() == absenceType).findFirst();
     }
 
-    private static String barAbsenceKey(AbsencePeriod.RecordInfo recordInfo) {
+    private static String barAbsenceKey(AbsencePeriod.RecordInfo recordInfo, boolean anonymize) {
+        // anonymized absences of a person are one bar - their boundaries would reveal what is hidden, e.g. a sick day
+        if (anonymize) {
+            return "ANONYMIZED-" + recordInfo.getPerson().getId();
+        }
         return recordInfo.getAbsenceType().name() + "-" + recordInfo.getId().orElseThrow();
     }
 
@@ -633,7 +640,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         final String title = switch (piece.kind()) {
             case SOLID -> barAbsenceTitle(absence, piece.half(), message);
-            case BRIDGE -> piece.coveredByAbsence()
+            // anonymized, a sick note's own weekend must look like the weekend inside a vacation
+            case BRIDGE -> piece.coveredByAbsence() && !absence.anonymized()
                 ? barAbsenceTitle(absence, piece.half(), message) + ", " + piece.gap().title()
                 : piece.gap().title();
         };

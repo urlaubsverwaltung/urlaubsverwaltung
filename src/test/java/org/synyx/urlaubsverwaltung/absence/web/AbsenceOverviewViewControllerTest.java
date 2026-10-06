@@ -5318,7 +5318,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
         when(messageSource.getMessage("MORNING", new Object[]{}, Locale.GERMANY)).thenReturn("vormittags");
         when(messageSource.getMessage("WAITING", new Object[]{}, Locale.GERMANY)).thenReturn("wartend");
-        // the month name is resolved after the bar texts of the person - the stubs above are not used yet then
+        // the month name is resolved before the bar titles - the stubs above are not all used yet then
         when(messageSource.getMessage("month.january", new Object[]{}, Locale.GERMANY)).thenReturn("Januar");
 
         final AbsencePeriod.Record morning = new AbsencePeriod.Record(LocalDate.of(2025, 1, 9), person,
@@ -5407,6 +5407,125 @@ class AbsenceOverviewViewControllerTest {
             assertThat(bar.getLabel()).isEqualTo("Abwesend");
             assertThat(bar.getTitle()).isEqualTo("Abwesend");
         });
+    }
+
+    @Test
+    void ensureAdjacentAnonymizedAbsencesOfAPersonAreOneBar() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9), sickNote(other, 3L, 10)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isFalse();
+            assertThat(bar.getLabel()).isEqualTo("Abwesend");
+        });
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isTrue();
+        });
+        assertThat(days.stream().flatMap(day -> day.getBars().stream()).filter(bar -> bar.getLabel() != null)).hasSize(1);
+    }
+
+    @Test
+    void ensureAnonymizedSickNoteDuringAnAnonymizedVacationDoesNotSplitTheBar() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9, 10), sickNote(other, 3L, 9)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isTrue();
+        });
+    }
+
+    @Test
+    void ensureAnonymizedBridgeNamesOnlyTheGap() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        // a sick note covers its own weekend - anonymized, that must look like the weekend inside a vacation
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+            .thenReturn(List.of(sickNote(other, 3L, 10, 11, 12, 13), noWorkdays(other, 11, 12)));
+
+        assertThat(januaryDays(1).get(10).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Kein Arbeitstag");
+        });
+    }
+
+    @Test
+    void ensureBridgeOverAPublicHolidayNamesTheHoliday() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+
+        final DateRange january = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
+            .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(publicHolidaysService.getPublicHolidays(january.startDate(), january.endDate(), GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, 1, 8), FULL, "Tag der Bars")));
+
+        final AbsencePeriod publicHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 8), person,
+            new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person))));
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 7, 9), publicHoliday));
+
+        assertThat(januaryDays(0).get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Tag der Bars");
+        });
+    }
+
+    private Person signedInUserAndOtherInOneDepartment() {
+        final var signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setId(2L);
+        other.setPermissions(List.of(USER));
+        other.setFirstName("Dorie");
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        return other;
     }
 
     @Test
