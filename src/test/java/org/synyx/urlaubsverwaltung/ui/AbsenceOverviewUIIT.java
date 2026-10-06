@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.ui;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.ColorScheme;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +53,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -174,6 +176,24 @@ class AbsenceOverviewUIIT {
         overview.openDepartmentPicker();
         assertThat(overview.getDepartmentPickerPopoverLocator()
             .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName("Einkauf"))).not().isChecked();
+    }
+
+    @Test
+    void ensureDepartmentPickerShowsItsCaretInDarkMode(Page page) {
+
+        final Person dora = createPerson("Dora", "Dunkel", List.of(USER, OFFICE));
+        createDepartment("Nachtschicht", List.of(dora));
+
+        page.emulateMedia(new Page.EmulateMediaOptions().setColorScheme(ColorScheme.DARK));
+        login(page, dora);
+
+        final AbsenceOverviewPage overview = new AbsenceOverviewPage(page);
+        overview.navigate(port);
+
+        assertThat(page.locator("html")).hasClass(Pattern.compile("\\btheme-dark\\b"));
+        assertThat(overview.getDepartmentPickerButtonLocator()).isVisible();
+        // the light caret colour (zinc-700) is invisible on the dark button
+        assertEquals(overview.colorOf("--color-zinc-50"), overview.getDepartmentPickerCaretColor());
     }
 
     private void login(Page page, Person person) {
