@@ -7,6 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceBars.Half.FULL;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceBars.Half.MORNING;
@@ -23,11 +26,11 @@ class AbsenceBarsTest {
     private static final AbsenceBars.Gap HOLIDAY = new AbsenceBars.Gap("Feiertag");
 
     // January 2025: Wed 1st, weekends 4th/5th and 11th/12th, Mon 6th and Mon 13th
-    private static final DateRange JANUARY_2025 = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31));
-    private static final DateRange FEBRUARY_2025 = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 2, 28));
-    private static final DateRange DECEMBER_2024 = new DateRange(LocalDate.of(2024, 12, 1), LocalDate.of(2024, 12, 31));
-    private static final DateRange YEAR_2024 = new DateRange(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
-    private static final DateRange YEAR_2025 = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
+    private static final DateRange JANUARY_2025 = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
+    private static final DateRange FEBRUARY_2025 = new DateRange(LocalDate.of(2025, FEBRUARY, 1), LocalDate.of(2025, FEBRUARY, 28));
+    private static final DateRange DECEMBER_2024 = new DateRange(LocalDate.of(2024, DECEMBER, 1), LocalDate.of(2024, DECEMBER, 31));
+    private static final DateRange YEAR_2024 = new DateRange(LocalDate.of(2024, JANUARY, 1), LocalDate.of(2024, DECEMBER, 31));
+    private static final DateRange YEAR_2025 = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, DECEMBER, 31));
 
     @Test
     void singleDay() {
@@ -308,20 +311,20 @@ class AbsenceBarsTest {
     @Test
     void christmasEveOnASundayInsideAVacationKeepsBothGaps() {
         // December 2023: Fri 22nd, Sat 23rd, Sun 24th, holidays Mon 25th and Tue 26th
-        final DateRange december2023 = new DateRange(LocalDate.of(2023, 12, 1), LocalDate.of(2023, 12, 31));
+        final DateRange december2023 = new DateRange(LocalDate.of(2023, DECEMBER, 1), LocalDate.of(2023, DECEMBER, 31));
         final AbsenceBars.Gap christmasEve = new AbsenceBars.Gap("Heiligabend");
         final AbsenceBars.Gap christmas = new AbsenceBars.Gap("Weihnachten");
 
         final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
-            LocalDate.of(2023, 12, 22), full(VACATION_7),
-            LocalDate.of(2023, 12, 23), gap(NO_WORKDAY),
-            LocalDate.of(2023, 12, 24), new AbsenceBars.Day(new AbsenceBars.HalfDay(null, NO_WORKDAY), new AbsenceBars.HalfDay(null, christmasEve)),
-            LocalDate.of(2023, 12, 25), gap(christmas),
-            LocalDate.of(2023, 12, 26), gap(christmas),
-            LocalDate.of(2023, 12, 27), full(VACATION_7)
+            LocalDate.of(2023, DECEMBER, 22), full(VACATION_7),
+            LocalDate.of(2023, DECEMBER, 23), gap(NO_WORKDAY),
+            LocalDate.of(2023, DECEMBER, 24), new AbsenceBars.Day(new AbsenceBars.HalfDay(null, NO_WORKDAY), new AbsenceBars.HalfDay(null, christmasEve)),
+            LocalDate.of(2023, DECEMBER, 25), gap(christmas),
+            LocalDate.of(2023, DECEMBER, 26), gap(christmas),
+            LocalDate.of(2023, DECEMBER, 27), full(VACATION_7)
         ), december2023);
 
-        assertThat(pieces.get(LocalDate.of(2023, 12, 24))).containsExactly(
+        assertThat(pieces.get(LocalDate.of(2023, DECEMBER, 24))).containsExactly(
             bridge(MORNING, false, false, VACATION_7, NO_WORKDAY, false),
             bridge(NOON, false, false, VACATION_7, christmasEve, false)
         );
@@ -381,14 +384,14 @@ class AbsenceBarsTest {
     }
 
     private static LocalDate jan(int day) {
-        return LocalDate.of(2025, 1, day);
+        return LocalDate.of(2025, JANUARY, day);
     }
 
     private static LocalDate feb(int day) {
-        return LocalDate.of(2025, 2, day);
+        return LocalDate.of(2025, FEBRUARY, day);
     }
 
     private static LocalDate dec(int day) {
-        return LocalDate.of(2024, 12, day);
+        return LocalDate.of(2024, DECEMBER, day);
     }
 }
