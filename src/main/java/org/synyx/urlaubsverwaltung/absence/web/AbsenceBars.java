@@ -165,29 +165,36 @@ final class AbsenceBars {
         final Set<BarMonth> labelled = new HashSet<>();
 
         for (int s = 0; s < assigned.length; s++) {
-            final SlotPiece slotPiece = assigned[s];
-            if (slotPiece == null || slotPiece.kind() != Kind.SOLID || !isVisible(dates.get(s / 2), visible)
-                || (s > 0 && sameStretchInMonth(assigned, dates, visible, s - 1, s))) {
-                continue;
-            }
-
-            final BarMonth barMonth = new BarMonth(slotPiece.bar(), YearMonth.from(dates.get(s / 2)));
-            if (labelled.contains(barMonth)) {
-                continue;
-            }
-
-            int end = s;
-            while (end < assigned.length && sameStretchInMonth(assigned, dates, visible, s, end)) {
-                end++;
-            }
-
-            if (end - s >= MIN_LABEL_HALVES) {
-                labelled.add(barMonth);
-                labelHalves[s] = end - s;
+            if (startsStretchInMonth(assigned, dates, visible, s)) {
+                final BarMonth barMonth = new BarMonth(assigned[s].bar(), YearMonth.from(dates.get(s / 2)));
+                final int halves = stretchHalves(assigned, dates, visible, s);
+                if (halves >= MIN_LABEL_HALVES && labelled.add(barMonth)) {
+                    labelHalves[s] = halves;
+                }
             }
         }
 
         return labelHalves;
+    }
+
+    /**
+     * @return whether the slot is a solid piece on a visible date that does not continue the stretch of the slot before
+     */
+    private static boolean startsStretchInMonth(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int slot) {
+        final SlotPiece slotPiece = assigned[slot];
+        return slotPiece != null && slotPiece.kind() == Kind.SOLID && isVisible(dates.get(slot / 2), visible)
+            && (slot == 0 || !sameStretchInMonth(assigned, dates, visible, slot - 1, slot));
+    }
+
+    /**
+     * @return number of half days of the stretch starting at {@code start}
+     */
+    private static int stretchHalves(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int start) {
+        int end = start;
+        while (end < assigned.length && sameStretchInMonth(assigned, dates, visible, start, end)) {
+            end++;
+        }
+        return end - start;
     }
 
     /**
