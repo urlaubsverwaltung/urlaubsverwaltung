@@ -149,6 +149,35 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void doesNotLinkAnAbsenceTheSignedInUserMayNotOpen() throws Exception {
+
+        final Person colleague = new Person("colleague", "Kollege", "Karl", "colleague@example.org");
+        colleague.setId(2L);
+        colleague.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(colleague);
+        when(personService.getActivePersons()).thenReturn(List.of(office, colleague));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        // Wed 15th January 2025, a vacation type not visible to everyone - the colleague sees an anonymized absence
+        final AbsencePeriod vacation = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 15), office,
+            new AbsencePeriod.RecordMorningVacation(office, 8L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
+            new AbsencePeriod.RecordNoonVacation(office, 8L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false))));
+        when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(vacation));
+
+        final String page = mockMvc.perform(get("/web/absences").param("year", "2025").param("month", "1")
+                .locale(Locale.GERMAN)
+                .with(csrf())
+                .with(oidcSubject(colleague, List.of(USER))))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+
+        assertThat(page).contains(">Abwesend</span>");
+        // the legend's colour boxes are absence bars as well, but without a title
+        assertThat(Pattern.compile("<a\\s[^>]*class=\"absence-bar[ \"]").matcher(page).results().count()).isZero();
+        assertThat(Pattern.compile("<span\\s[^>]*class=\"absence-bar[ \"][^>]*data-title=\"Abwesend\"").matcher(page).results().count()).isEqualTo(1);
+    }
+
+    @Test
     void omitsTheLabelOfAHalfDayBar() throws Exception {
 
         // Wed 15th January 2025, morning only
