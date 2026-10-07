@@ -265,7 +265,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> {
             final boolean anonymize = shouldAnonymizeAbsenceType.apply(recordInfo);
             return barAbsencesByKey.computeIfAbsent(barAbsenceKey(recordInfo, anonymize),
-                key -> barAbsence(key, recordInfo, anonymize, recordInfoToColor, vacationTypeById, detailUrl, locale, message));
+                key -> barAbsence(key, recordInfo, anonymize, vacationTypeById, detailUrl, locale, message));
         };
 
         final Map<Person, Map<LocalDate, List<AbsenceBars.Piece>>> barPiecesByPerson = new HashMap<>();
@@ -615,7 +615,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private static AbsenceBars.Absence barAbsence(String key, AbsencePeriod.RecordInfo recordInfo, boolean anonymize,
-                                                  Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor,
                                                   Function<Long, VacationType<?>> vacationTypeById,
                                                   Function<AbsencePeriod.RecordInfo, String> detailUrl, Locale locale,
                                                   UnaryOperator<String> message) {
@@ -631,8 +630,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         }
 
         final AbsenceBars.Status status = barStatus(recordInfo);
-        final String label = recordInfo.getTypeId().map(vacationTypeById).orElseThrow().getLabel(locale);
-        return new AbsenceBars.Absence(key, status, recordInfoToColor.apply(recordInfo).name(), label, barStatusText(status, message), false, detailUrl.apply(recordInfo));
+        final VacationType<?> vacationType = recordInfo.getTypeId().map(vacationTypeById).orElseThrow();
+        return new AbsenceBars.Absence(key, status, vacationType.getColor().name(), vacationType.getLabel(locale), barStatusText(status, message), false, detailUrl.apply(recordInfo));
     }
 
     /**
