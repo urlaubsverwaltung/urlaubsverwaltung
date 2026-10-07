@@ -47,6 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -258,7 +259,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         // resolve each message at most once per request
         final Map<String, String> messages = new HashMap<>();
-        final Function<String, String> message = code -> messages.computeIfAbsent(code, c -> messageSource.getMessage(c, new Object[]{}, locale));
+        final UnaryOperator<String> message = code -> messages.computeIfAbsent(code, c -> messageSource.getMessage(c, new Object[]{}, locale));
 
         final Map<String, AbsenceBars.Absence> barAbsencesByKey = new HashMap<>();
         final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> {
@@ -617,7 +618,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                                                   Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor,
                                                   Function<Long, VacationType<?>> vacationTypeById,
                                                   Function<AbsencePeriod.RecordInfo, String> detailUrl, Locale locale,
-                                                  Function<String, String> message) {
+                                                  UnaryOperator<String> message) {
         if (anonymize) {
             return new AbsenceBars.Absence(key, AbsenceBars.Status.ALLOWED, ANONYMIZED_ABSENCE_COLOR.name(), message.apply("absences.overview.absence"), null, true, null);
         }
@@ -671,7 +672,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         return AbsenceBars.Status.ALLOWED;
     }
 
-    private static String barStatusText(AbsenceBars.Status status, Function<String, String> message) {
+    private static String barStatusText(AbsenceBars.Status status, UnaryOperator<String> message) {
         return switch (status) {
             case ALLOWED -> null;
             case WAITING -> message.apply("WAITING");
@@ -680,7 +681,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         };
     }
 
-    private static AbsenceOverviewBarPieceDto toBarPieceDto(AbsenceBars.Piece piece, boolean tabStop, Function<String, String> message) {
+    private static AbsenceOverviewBarPieceDto toBarPieceDto(AbsenceBars.Piece piece, boolean tabStop, UnaryOperator<String> message) {
 
         final AbsenceBars.Absence absence = piece.absence();
 
@@ -698,7 +699,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             absence.status(), absence.color(), label, piece.labelHalves(), title, absence.detailUrl(), tabStop);
     }
 
-    private static String barAbsenceTitle(AbsenceBars.Absence absence, AbsenceBars.Half half, Function<String, String> message) {
+    private static String barAbsenceTitle(AbsenceBars.Absence absence, AbsenceBars.Half half, UnaryOperator<String> message) {
         if (absence.anonymized()) {
             return absence.label();
         }
