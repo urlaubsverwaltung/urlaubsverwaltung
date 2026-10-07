@@ -128,19 +128,7 @@ final class AbsenceBars {
                 continue;
             }
 
-            int last = start;
-            for (int cursor = start + 1; cursor < slots.length; cursor++) {
-                final HalfDay slot = slots[cursor];
-                if (slot.absence() != null) {
-                    if (!slot.absence().key().equals(absence.key())) {
-                        break;
-                    }
-                    last = cursor;
-                } else if (slot.gap() == null) {
-                    break;
-                }
-            }
-
+            final int last = lastSlotOf(absence, slots, start);
             for (int s = start; s <= last; s++) {
                 final HalfDay slot = slots[s];
                 final Kind kind = slot.gap() == null ? Kind.SOLID : Kind.BRIDGE;
@@ -152,6 +140,23 @@ final class AbsenceBars {
         }
 
         return assigned;
+    }
+
+    /**
+     * @return the last slot carrying {@code absence} that is reachable from {@code start} across gaps only
+     */
+    private static int lastSlotOf(Absence absence, HalfDay[] slots, int start) {
+        int last = start;
+        for (int cursor = start + 1; cursor < slots.length && continuesBar(absence, slots[cursor]); cursor++) {
+            if (slots[cursor].absence() != null) {
+                last = cursor;
+            }
+        }
+        return last;
+    }
+
+    private static boolean continuesBar(Absence absence, HalfDay slot) {
+        return slot.absence() == null ? slot.gap() != null : slot.absence().key().equals(absence.key());
     }
 
     private static int[] labelHalves(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible) {
