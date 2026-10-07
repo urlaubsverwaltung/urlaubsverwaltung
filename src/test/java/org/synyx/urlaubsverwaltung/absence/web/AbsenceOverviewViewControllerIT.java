@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -104,12 +106,12 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
 
         // Thu 9th, Fri 10th, weekend, Mon 13th January 2025
         final AbsencePeriod vacation = new AbsencePeriod(IntStream.of(9, 10, 13)
-            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, 1, day), office,
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), office,
                 new AbsencePeriod.RecordMorningVacation(office, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
                 new AbsencePeriod.RecordNoonVacation(office, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false)))
             .toList());
         final AbsencePeriod weekend = new AbsencePeriod(IntStream.of(11, 12)
-            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, 1, day), office,
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), office,
                 new AbsencePeriod.RecordMorningNoWorkday(office), new AbsencePeriod.RecordNoonNoWorkday(office)))
             .toList());
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(vacation, weekend));
@@ -150,7 +152,7 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
     void omitsTheLabelOfAHalfDayBar() throws Exception {
 
         // Wed 15th January 2025, morning only
-        final AbsencePeriod morning = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 15), office,
+        final AbsencePeriod morning = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 15), office,
             new AbsencePeriod.RecordMorningVacation(office, 8L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false))));
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(morning));
 
@@ -167,13 +169,13 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
     void announcesAHalfDayPublicHolidayNextToAMorningAbsence() throws Exception {
 
         // Tue 24th December 2024: vacation in the morning, Heiligabend at noon
-        final DateRange december = new DateRange(LocalDate.of(2024, 12, 1), LocalDate.of(2024, 12, 31));
+        final DateRange december = new DateRange(LocalDate.of(2024, DECEMBER, 1), LocalDate.of(2024, DECEMBER, 31));
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(december)))
             .thenReturn(Map.of(office, Map.of(december, new WorkingTime(office, december.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
         when(publicHolidaysService.getPublicHolidays(december.startDate(), december.endDate(), GERMANY_BADEN_WUERTTEMBERG))
-            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, 12, 24), NOON, "Heiligabend")));
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), NOON, "Heiligabend")));
 
-        final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, 12, 24), office,
+        final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 24), office,
             new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
             new AbsencePeriod.RecordNoonPublicHoliday(office))));
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(christmasEve));

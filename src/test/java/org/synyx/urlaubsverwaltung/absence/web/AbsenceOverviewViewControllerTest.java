@@ -48,6 +48,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -5288,7 +5289,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
         when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
 
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9, 10, 13), noWorkdays(person, 11, 12)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
@@ -5327,9 +5328,9 @@ class AbsenceOverviewViewControllerTest {
         // the month name is resolved before the bar titles - the stubs above are not all used yet then
         when(messageSource.getMessage("month.january", new Object[]{}, Locale.GERMANY)).thenReturn("Januar");
 
-        final AbsencePeriod.Record morning = new AbsencePeriod.Record(LocalDate.of(2025, 1, 9), person,
+        final AbsencePeriod.Record morning = new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 9), person,
             new AbsencePeriod.RecordMorningVacation(person, 7L, AbsencePeriod.AbsenceStatus.WAITING, "HOLIDAY", 42L, false));
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(new AbsencePeriod(List.of(morning))));
 
         assertThat(januaryDays(0).get(8).getBars()).singleElement().satisfies(bar -> {
@@ -5347,7 +5348,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
         when(messageSource.getMessage("absences.overview.sick", new Object[]{}, Locale.GERMANY)).thenReturn("Krankmeldung");
 
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9, 10), sickNote(person, 3L, 9)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
@@ -5373,7 +5374,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage("absences.overview.sick", new Object[]{}, Locale.GERMANY)).thenReturn("Krankmeldung");
         when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
 
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(sickNote(person, 3L, 11, 12), noWorkdays(person, 11, 12)));
 
         assertThat(januaryDays(0).get(10).getBars()).singleElement().satisfies(bar -> {
@@ -5404,7 +5405,7 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
         when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
 
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.WAITING, 9)));
 
         assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
@@ -5423,7 +5424,7 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
         when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
 
-        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9), sickNote(other, 3L, 10)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
@@ -5452,7 +5453,7 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
         when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
 
-        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9, 10), sickNote(other, 3L, 9)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
@@ -5481,7 +5482,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
 
         // a sick note covers its own weekend - anonymized, that must look like the weekend inside a vacation
-        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
             .thenReturn(List.of(sickNote(other, 3L, 10, 11, 12, 13), noWorkdays(other, 11, 12)));
 
         assertThat(januaryDays(1).get(10).getBars()).singleElement().satisfies(bar -> {
@@ -5497,15 +5498,15 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
 
-        final DateRange january = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31));
+        final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
             .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
         when(publicHolidaysService.getPublicHolidays(january.startDate(), january.endDate(), GERMANY_BADEN_WUERTTEMBERG))
-            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, 1, 8), FULL, "Tag der Bars")));
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, JANUARY, 8), FULL, "Tag der Bars")));
 
-        final AbsencePeriod publicHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 8), person,
+        final AbsencePeriod publicHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 8), person,
             new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person))));
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 7, 9), publicHoliday));
 
         assertThat(januaryDays(0).get(7).getBars()).singleElement().satisfies(bar -> {
@@ -5540,11 +5541,11 @@ class AbsenceOverviewViewControllerTest {
         final Person person = privilegedPerson();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        final DateRange january = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31));
+        final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
             .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
         when(publicHolidaysService.getPublicHolidays(january.startDate(), january.endDate(), GERMANY_BADEN_WUERTTEMBERG))
-            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, 1, 1), FULL, "Neujahr")));
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, JANUARY, 1), FULL, "Neujahr")));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
 
@@ -5559,7 +5560,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
-        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(person, 3L, 13)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
@@ -5576,7 +5577,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(office, other));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
-        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
@@ -5593,7 +5594,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(boss, other));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
-        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
@@ -5610,7 +5611,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(boss, other));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
 
-        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(sickNote(other, 3L, 13)));
 
         assertThat(januaryDays(1).get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
@@ -5625,7 +5626,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(other));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
-        when(absenceService.getOpenAbsences(List.of(departmentHead, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(departmentHead, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
@@ -5643,10 +5644,10 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
 
-        final AbsencePeriod visibleToEveryone = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, 1, 9), other,
+        final AbsencePeriod visibleToEveryone = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 9), other,
             new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true),
             new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true))));
-        when(absenceService.getOpenAbsences(List.of(colleague, other), LocalDate.of(2024, 12, 18), LocalDate.of(2025, 2, 14)))
+        when(absenceService.getOpenAbsences(List.of(colleague, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(visibleToEveryone));
 
         assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
@@ -5661,7 +5662,7 @@ class AbsenceOverviewViewControllerTest {
         final Person other = signedInUserAndOtherInOneDepartment();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
-        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, 12, 18)), eq(LocalDate.of(2025, 2, 14))))
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9)));
 
         assertThat(januaryDays(1).get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isNull();
@@ -5676,15 +5677,15 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
 
         // Thu 30th January to Tue 4th February 2025, weekend 1st/2nd February
-        final AbsencePeriod vacation = new AbsencePeriod(Stream.of(LocalDate.of(2025, 1, 30), LocalDate.of(2025, 1, 31), LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 4))
+        final AbsencePeriod vacation = new AbsencePeriod(Stream.of(LocalDate.of(2025, JANUARY, 30), LocalDate.of(2025, JANUARY, 31), LocalDate.of(2025, FEBRUARY, 3), LocalDate.of(2025, FEBRUARY, 4))
             .map(date -> new AbsencePeriod.Record(date, other,
                 new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
                 new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false)))
             .toList());
-        final AbsencePeriod weekend = new AbsencePeriod(Stream.of(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 2, 2))
+        final AbsencePeriod weekend = new AbsencePeriod(Stream.of(LocalDate.of(2025, FEBRUARY, 1), LocalDate.of(2025, FEBRUARY, 2))
             .map(date -> new AbsencePeriod.Record(date, other, new AbsencePeriod.RecordMorningNoWorkday(other), new AbsencePeriod.RecordNoonNoWorkday(other)))
             .toList());
-        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, 12, 18), LocalDate.of(2026, 1, 14)))
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2026, JANUARY, 14)))
             .thenReturn(List.of(vacation, weekend));
 
         final AbsenceOverviewDto overview = (AbsenceOverviewDto) perform(get("/web/absences")
@@ -5744,7 +5745,7 @@ class AbsenceOverviewViewControllerTest {
 
     private static AbsencePeriod vacation(Person person, Long id, AbsencePeriod.AbsenceStatus status, int... januaryDays) {
         return new AbsencePeriod(IntStream.of(januaryDays)
-            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, 1, day), person,
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
                 new AbsencePeriod.RecordMorningVacation(person, id, status, "HOLIDAY", 42L, false),
                 new AbsencePeriod.RecordNoonVacation(person, id, status, "HOLIDAY", 42L, false)))
             .toList());
@@ -5752,7 +5753,7 @@ class AbsenceOverviewViewControllerTest {
 
     private static AbsencePeriod sickNote(Person person, Long id, int... januaryDays) {
         return new AbsencePeriod(IntStream.of(januaryDays)
-            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, 1, day), person,
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
                 new AbsencePeriod.RecordMorningSick(person, id, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L),
                 new AbsencePeriod.RecordNoonSick(person, id, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L)))
             .toList());
@@ -5760,7 +5761,7 @@ class AbsenceOverviewViewControllerTest {
 
     private static AbsencePeriod noWorkdays(Person person, int... januaryDays) {
         return new AbsencePeriod(IntStream.of(januaryDays)
-            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, 1, day), person,
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
                 new AbsencePeriod.RecordMorningNoWorkday(person), new AbsencePeriod.RecordNoonNoWorkday(person)))
             .toList());
     }
