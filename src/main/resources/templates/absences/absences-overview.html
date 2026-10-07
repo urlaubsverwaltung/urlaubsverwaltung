@@ -225,24 +225,43 @@
                       class="sr-only"
                       th:text="${day.publicHolidayName}"
                     ></span>
-                    <a
+                    <th:block
                       th:each="bar : ${day.bars}"
-                      class="absence-bar"
-                      th:classappend="|absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|"
-                      th:style="|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})|"
-                      th:data-title="${bar.title}"
-                      th:href="${bar.href != null} ? @{${bar.href}} : null"
-                      th:tabindex="${bar.href != null and not bar.tabStop} ? '-1' : null"
+                      th:with="barClass=|absence-bar absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|, barStyle=|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})|"
                     >
-                      <span class="sr-only" th:text="${bar.title}"></span>
+                      <a
+                        th:if="${bar.href != null}"
+                        th:class="${barClass}"
+                        th:style="${barStyle}"
+                        th:data-title="${bar.title}"
+                        th:href="@{${bar.href}}"
+                        th:tabindex="${bar.tabStop} ? null : '-1'"
+                      >
+                        <span class="sr-only" th:text="${bar.title}"></span>
+                        <span
+                          th:if="${bar.label != null}"
+                          class="absence-bar-label"
+                          aria-hidden="true"
+                          th:style="|--label-halves:${bar.labelHalves}|"
+                          th:text="${bar.label}"
+                        ></span>
+                      </a>
                       <span
-                        th:if="${bar.label != null}"
-                        class="absence-bar-label"
-                        aria-hidden="true"
-                        th:style="|--label-halves:${bar.labelHalves}|"
-                        th:text="${bar.label}"
-                      ></span>
-                    </a>
+                        th:unless="${bar.href != null}"
+                        th:class="${barClass}"
+                        th:style="${barStyle}"
+                        th:data-title="${bar.title}"
+                      >
+                        <span class="sr-only" th:text="${bar.title}"></span>
+                        <span
+                          th:if="${bar.label != null}"
+                          class="absence-bar-label"
+                          aria-hidden="true"
+                          th:style="|--label-halves:${bar.labelHalves}|"
+                          th:text="${bar.label}"
+                        ></span>
+                      </span>
+                    </th:block>
                     <span class="hidden print:inline print:font-mono">
                       <th:block th:if="${day.type.absenceMorning}" th:text="#{absences.overview.absence.morning.abbr}">
                       </th:block>
