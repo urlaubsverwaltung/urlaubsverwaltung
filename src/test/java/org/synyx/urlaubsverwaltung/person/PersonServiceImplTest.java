@@ -4,6 +4,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
@@ -280,6 +284,17 @@ class PersonServiceImplTest {
         sut.getPersonByMailAddress(mailAddress);
 
         verify(personRepository).findByEmailIgnoreCase(mailAddress);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    void ensureGetPersonByMailAddressReturnsEmptyWithoutMailAddress(String mailAddress) {
+
+        final Optional<Person> actual = sut.getPersonByMailAddress(mailAddress);
+
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(personRepository);
     }
 
     @Test

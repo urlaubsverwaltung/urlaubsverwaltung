@@ -184,6 +184,9 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getPersonByMailAddress(String mailAddress) {
+        if (mailAddress == null || mailAddress.isBlank()) {
+            return Optional.empty();
+        }
         return personRepository.findByEmailIgnoreCase(mailAddress);
     }
 
