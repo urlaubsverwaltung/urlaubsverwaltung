@@ -310,6 +310,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
             throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(applier.getId(), person.getId()));
         }
 
+        appForm.setId(null);
         applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
