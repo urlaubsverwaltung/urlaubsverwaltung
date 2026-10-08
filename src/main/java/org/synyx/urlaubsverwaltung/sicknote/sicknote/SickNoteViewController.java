@@ -301,7 +301,6 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         final SickNote sickNote = SickNote.builder()
-            .id(sickNoteFormDto.getId())
             .person(sickNotePerson)
             .applier(signedInUser)
             .sickNoteType(sickNoteFormDto.getSickNoteType())

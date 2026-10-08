@@ -1545,6 +1545,48 @@ class SickNoteViewControllerTest {
     }
 
     @Test
+    void ensurePostNewSickNoteSubmitsSickNoteWithoutTheGivenId() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.submit(any(SickNote.class), eq(signedInPerson), eq(null)))
+            .thenReturn(SickNote.builder().id(42L).build());
+
+        perform(post("/web/sicknote")
+            .param("id", "1337")
+            .param("person.id", "1"));
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteInteractionService).submit(captor.capture(), eq(signedInPerson), eq(null));
+        assertThat(captor.getValue().getId()).isNull();
+    }
+
+    @Test
+    void ensurePostNewSickNoteCreatesSickNoteWithoutTheGivenId() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER, SICK_NOTE_ADD, BOSS));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
+            .thenReturn(SickNote.builder().id(42L).build());
+
+        perform(post("/web/sicknote")
+            .param("id", "1337")
+            .param("person.id", "1"));
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteInteractionService).create(captor.capture(), eq(signedInPerson), eq(null));
+        assertThat(captor.getValue().getId()).isNull();
+    }
+
+    @Test
     void ensurePostNewSickNoteCreatesSickNoteForOffice() throws Exception {
 
         final Person signedInPerson = new Person();
