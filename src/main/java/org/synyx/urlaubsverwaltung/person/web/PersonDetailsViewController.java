@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -46,13 +47,15 @@ public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearc
     private final SettingsService settingsService;
     private final PersonBasedataService personBasedataService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final PersonProperties personProperties;
     private final Clock clock;
 
     @Autowired
     public PersonDetailsViewController(PersonService personService, AccountService accountService,
                                        DepartmentService departmentService, WorkingTimeService workingTimeService,
                                        SettingsService settingsService, PersonBasedataService personBasedataService,
-                                       PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier, Clock clock) {
+                                       PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+                                       PersonProperties personProperties, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.departmentService = departmentService;
@@ -60,6 +63,7 @@ public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearc
         this.settingsService = settingsService;
         this.personBasedataService = personBasedataService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.personProperties = personProperties;
         this.clock = clock;
     }
 
@@ -125,7 +129,7 @@ public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearc
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));
-        model.addAttribute("canDeletePerson", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canDeletePerson", signedInUser.hasRole(OFFICE) && personProperties.isUiDeletionEnabled());
 
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(selectedYear, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));

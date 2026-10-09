@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -78,11 +79,14 @@ class PersonDetailsViewControllerTest {
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
+    private PersonProperties personProperties;
+
     @BeforeEach
     void setUp() {
         clock = Clock.systemUTC();
+        personProperties = new PersonProperties();
         sut = new PersonDetailsViewController(personService, accountService, departmentService, workingTimeService,
-            settingsService, personBasedataService, personSearchUiFragmentSupplier, clock);
+            settingsService, personBasedataService, personSearchUiFragmentSupplier, personProperties, clock);
     }
 
     @Nested
@@ -258,6 +262,60 @@ class PersonDetailsViewControllerTest {
         perform(get("/web/person/1"))
             .andExpect(view().name("person/person_detail"))
             .andExpect(model().attribute(canEdit, true));
+    }
+
+    @Test
+    void showPersonInformationOfficeCanDeletePersonWhenUiDeletionIsEnabled() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        userIsAllowedToSubmitSickNotes(false);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("canDeletePerson", true));
+    }
+
+    @Test
+    void showPersonInformationOfficeCannotDeletePersonWhenUiDeletionIsDisabled() throws Exception {
+        personProperties.setUiDeletionEnabled(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        userIsAllowedToSubmitSickNotes(false);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("canDeletePerson", false));
+    }
+
+    @Test
+    void showPersonInformationNonOfficeCannotDeletePersonWhenUiDeletionIsEnabled() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(2L);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        userIsAllowedToSubmitSickNotes(false);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("canDeletePerson", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
