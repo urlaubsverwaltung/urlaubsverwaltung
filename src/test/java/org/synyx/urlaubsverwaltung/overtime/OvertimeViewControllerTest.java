@@ -32,6 +32,7 @@ import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -39,6 +40,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
@@ -525,6 +527,55 @@ class OvertimeViewControllerTest {
                 .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
                 .andExpect(model().attribute("overtimeTotalLastYear", is(ofHours(10))))
                 .andExpect(model().attribute("records", hasItem(listRecordDto)));
+    }
+
+    @Nested
+    class RecordsTodayMarker {
+
+        private static final LocalDate TODAY = LocalDate.parse("2026-08-04");
+
+        private Person person;
+
+        @BeforeEach
+        void setUpWithFixedClock() {
+            sut = new OvertimeViewController(overtimeService, personService, validator, departmentService,
+                applicationService, workingTimeCalendarService, vacationTypeViewModelService, settingsService,
+                new OvertimePermissionEvaluator(departmentService, settingsService),
+                defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
+                Clock.fixed(TODAY.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC));
+
+            person = new Person();
+            person.setId(5L);
+            when(personService.getPersonByID(5L)).thenReturn(Optional.of(person));
+            when(personService.getSignedInUser()).thenReturn(person);
+        }
+
+        @Test
+        void ensureTodayMarkerIsInFrontOfTheRunningOvertime() throws Exception {
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, TODAY.getYear())).thenReturn(List.of(
+                overtime(1L, TODAY.minusMonths(1), TODAY.minusMonths(1)),
+                overtime(2L, TODAY.minusDays(1), TODAY.plusDays(1)),
+                overtime(3L, TODAY.plusDays(7), TODAY.plusDays(7))
+            ));
+
+            perform(get("/web/overtime").param("person", "5"))
+                .andExpect(model().attribute("recordsTodayMarker", equalTo(new TodayMarker(TODAY, 1, Set.of(1)))));
+        }
+
+        @Test
+        void ensureNoTodayMarkerForAnotherYear() throws Exception {
+            final LocalDate lastYear = TODAY.minusYears(1);
+            when(overtimeService.getOvertimeRecordsForPersonAndYear(person, lastYear.getYear()))
+                .thenReturn(List.of(overtime(1L, lastYear, lastYear)));
+
+            perform(get("/web/overtime").param("person", "5").param("year", String.valueOf(lastYear.getYear())))
+                .andExpect(model().attribute("recordsTodayMarker", equalTo(TodayMarker.none())));
+        }
+
+        private Overtime overtime(long id, LocalDate startDate, LocalDate endDate) {
+            return new Overtime(new OvertimeId(id), person.getIdAsPersonId(), new DateRange(startDate, endDate),
+                ofHours(1), OvertimeType.UV_INTERNAL, Instant.now(clock));
+        }
     }
 
     @Test
