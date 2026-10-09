@@ -1,0 +1,260 @@
+package org.synyx.urlaubsverwaltung.absence.web;
+
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * Computes the bars of one person in the absence overview.
+ * <p>
+ * A bar is one absence (application or sick note). It spans from the first to the last half day carrying the
+ * absence. Non-workdays and public holidays in between belong to the bar as a bridge, anything else ends it.
+ * Bars are computed on a timeline wider than the visible range, so a bar continuing beyond the visible range is not
+ * drawn as ending there.
+ */
+final class AbsenceBars {
+
+    enum Half {
+        MORNING,
+        NOON,
+        FULL
+    }
+
+    enum Kind {
+        SOLID,
+        BRIDGE
+    }
+
+    enum Status {
+        ALLOWED,
+        WAITING,
+        TEMPORARY_ALLOWED,
+        CANCELLATION_REQUESTED
+    }
+
+    /**
+     * @param key        identity of the absence - half days with the same key belong to the same absence
+     * @param color      name of the colour, used as suffix of the css variables {@code --absence-color-*}
+     * @param statusText text of the status, {@code null} when the status needs no mention
+     * @param detailUrl  path of the page showing the absence, {@code null} when the viewer may not open it
+     */
+    record Absence(String key, Status status, String color, String label, String statusText, boolean anonymized,
+                   String detailUrl) {
+    }
+
+    record Gap(String title) {
+    }
+
+    /**
+     * @param absence the absence on this half day, may be {@code null}
+     * @param gap     the non-workday or public holiday on this half day, may be {@code null}
+     */
+    record HalfDay(Absence absence, Gap gap) {
+        static final HalfDay EMPTY = new HalfDay(null, null);
+    }
+
+    record Day(HalfDay morning, HalfDay noon) {
+        static final Day EMPTY = new Day(HalfDay.EMPTY, HalfDay.EMPTY);
+    }
+
+    /**
+     * @param gap              the gap of a bridge, {@code null} for a solid piece
+     * @param coveredByAbsence whether the half day itself carries the absence - false for a bridge over a gap the
+     *                         absence does not cover, e.g. the weekend inside a vacation
+     * @param labelHalves      number of half days the label spans, 0 when this piece carries no label; a bar is labelled
+     *                         once per month, on the first solid stretch of at least a whole day (two half days)
+     */
+    record Piece(Half half, Kind kind, boolean roundedStart, boolean roundedEnd, Absence absence, Gap gap,
+                 boolean coveredByAbsence, int labelHalves) {
+    }
+
+    private record SlotPiece(int bar, Absence absence, Kind kind, Gap gap, boolean coveredByAbsence,
+                             boolean first, boolean last) {
+    }
+
+    private record BarMonth(int bar, YearMonth month) {
+    }
+
+    // a single half day only fits a clipped glyph, so the label waits for a stretch of at least a whole day
+    private static final int MIN_LABEL_HALVES = 2;
+
+    private AbsenceBars() {
+        // static helper
+    }
+
+    /**
+     * A gap reaching beyond the timeline before the same absence resumes - longer than the margin of the timeline
+     * around {@code visible} - is treated as the end of the bar.
+     *
+     * @param timeline range the bars are computed on, must contain {@code visible}
+     * @param days     half day contents by date, missing dates are empty; neither a {@link Day} nor its {@link HalfDay}s
+     *                 may be {@code null}, use {@link Day#EMPTY} and {@link HalfDay#EMPTY} instead
+     * @param visible  range pieces are returned for; every month in it gets the label of a bar again
+     * @return pieces by date, only for visible dates with at least one piece
+     */
+    static Map<LocalDate, List<Piece>> compute(DateRange timeline, Map<LocalDate, Day> days, DateRange visible) {
+
+        final List<LocalDate> dates = timeline.stream().toList();
+        final HalfDay[] slots = new HalfDay[dates.size() * 2];
+        for (int d = 0; d < dates.size(); d++) {
+            final Day day = days.getOrDefault(dates.get(d), Day.EMPTY);
+            slots[2 * d] = day.morning();
+            slots[2 * d + 1] = day.noon();
+        }
+
+        final SlotPiece[] assigned = assignBars(slots);
+        final int[] labelHalves = labelHalves(assigned, dates, visible);
+        return pieces(assigned, labelHalves, dates, visible);
+    }
+
+    private static SlotPiece[] assignBars(HalfDay[] slots) {
+
+        final SlotPiece[] assigned = new SlotPiece[slots.length];
+
+        int bar = 0;
+        int start = 0;
+        while (start < slots.length) {
+            final Absence absence = slots[start].absence();
+            if (absence == null) {
+                start++;
+                continue;
+            }
+
+            final int last = lastSlotOf(absence, slots, start);
+            for (int s = start; s <= last; s++) {
+                final HalfDay slot = slots[s];
+                final Kind kind = slot.gap() == null ? Kind.SOLID : Kind.BRIDGE;
+                assigned[s] = new SlotPiece(bar, absence, kind, slot.gap(), slot.absence() != null, s == start, s == last);
+            }
+
+            bar++;
+            start = last + 1;
+        }
+
+        return assigned;
+    }
+
+    /**
+     * @return the last slot carrying {@code absence} that is reachable from {@code start} across gaps only
+     */
+    private static int lastSlotOf(Absence absence, HalfDay[] slots, int start) {
+        int last = start;
+        for (int cursor = start + 1; cursor < slots.length && continuesBar(absence, slots[cursor]); cursor++) {
+            if (slots[cursor].absence() != null) {
+                last = cursor;
+            }
+        }
+        return last;
+    }
+
+    private static boolean continuesBar(Absence absence, HalfDay slot) {
+        return slot.absence() == null ? slot.gap() != null : slot.absence().key().equals(absence.key());
+    }
+
+    private static int[] labelHalves(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible) {
+
+        final int[] labelHalves = new int[assigned.length];
+        final Set<BarMonth> labelled = new HashSet<>();
+
+        for (int s = 0; s < assigned.length; s++) {
+            if (startsStretchInMonth(assigned, dates, visible, s)) {
+                final BarMonth barMonth = new BarMonth(assigned[s].bar(), YearMonth.from(dates.get(s / 2)));
+                final int halves = stretchHalves(assigned, dates, visible, s);
+                if (halves >= MIN_LABEL_HALVES && labelled.add(barMonth)) {
+                    labelHalves[s] = halves;
+                }
+            }
+        }
+
+        return labelHalves;
+    }
+
+    /**
+     * @return whether the slot is a solid piece on a visible date that does not continue the stretch of the slot before
+     */
+    private static boolean startsStretchInMonth(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int slot) {
+        final SlotPiece slotPiece = assigned[slot];
+        return slotPiece != null && slotPiece.kind() == Kind.SOLID && isVisible(dates.get(slot / 2), visible)
+            && (slot == 0 || !sameStretchInMonth(assigned, dates, visible, slot - 1, slot));
+    }
+
+    /**
+     * @return number of half days of the stretch starting at {@code start}
+     */
+    private static int stretchHalves(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int start) {
+        int end = start;
+        while (end < assigned.length && sameStretchInMonth(assigned, dates, visible, start, end)) {
+            end++;
+        }
+        return end - start;
+    }
+
+    /**
+     * @return whether both slots are solid pieces of the same bar on visible dates of the same month, i.e. whether a
+     * label spanning one of them may span the other
+     */
+    private static boolean sameStretchInMonth(SlotPiece[] assigned, List<LocalDate> dates, DateRange visible, int one, int other) {
+        final SlotPiece first = assigned[one];
+        final SlotPiece second = assigned[other];
+        final LocalDate firstDate = dates.get(one / 2);
+        final LocalDate secondDate = dates.get(other / 2);
+        return first != null && second != null
+            && first.bar() == second.bar()
+            && first.kind() == Kind.SOLID && second.kind() == Kind.SOLID
+            && YearMonth.from(firstDate).equals(YearMonth.from(secondDate))
+            && isVisible(firstDate, visible) && isVisible(secondDate, visible);
+    }
+
+    private static Map<LocalDate, List<Piece>> pieces(SlotPiece[] assigned, int[] labelHalves, List<LocalDate> dates, DateRange visible) {
+
+        final Map<LocalDate, List<Piece>> piecesByDate = new HashMap<>();
+
+        for (int d = 0; d < dates.size(); d++) {
+            final LocalDate date = dates.get(d);
+            if (!isVisible(date, visible)) {
+                continue;
+            }
+
+            final int morningSlot = 2 * d;
+            final int noonSlot = 2 * d + 1;
+            final SlotPiece morning = assigned[morningSlot];
+            final SlotPiece noon = assigned[noonSlot];
+
+            final List<Piece> pieces = new ArrayList<>(2);
+            if (morning != null && noon != null && morning.bar() == noon.bar() && morning.kind() == noon.kind()
+                && Objects.equals(morning.gap(), noon.gap()) && morning.coveredByAbsence() == noon.coveredByAbsence()) {
+                final int halves = Math.max(labelHalves[morningSlot], labelHalves[noonSlot]);
+                pieces.add(new Piece(Half.FULL, morning.kind(), morning.first(), noon.last(), morning.absence(), morning.gap(), morning.coveredByAbsence(), halves));
+            } else {
+                if (morning != null) {
+                    pieces.add(piece(Half.MORNING, morning, labelHalves[morningSlot]));
+                }
+                if (noon != null) {
+                    pieces.add(piece(Half.NOON, noon, labelHalves[noonSlot]));
+                }
+            }
+
+            if (!pieces.isEmpty()) {
+                piecesByDate.put(date, List.copyOf(pieces));
+            }
+        }
+
+        return piecesByDate;
+    }
+
+    private static Piece piece(Half half, SlotPiece slotPiece, int labelHalves) {
+        return new Piece(half, slotPiece.kind(), slotPiece.first(), slotPiece.last(), slotPiece.absence(), slotPiece.gap(), slotPiece.coveredByAbsence(), labelHalves);
+    }
+
+    private static boolean isVisible(LocalDate date, DateRange visible) {
+        return !date.isBefore(visible.startDate()) && !date.isAfter(visible.endDate());
+    }
+}
