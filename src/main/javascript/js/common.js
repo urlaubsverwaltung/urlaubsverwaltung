@@ -6,7 +6,6 @@ import "../components/info-banner";
 import "../components/navigation";
 import "../components/person-search";
 import "../components/sticky";
-import "../components/tablist";
 import "../components/textarea";
 import "../components/tooltip";
 import "./date-fns-localized";
