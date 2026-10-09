@@ -54,7 +54,7 @@
     "cssnano": "9.1.2",
     "esbuild": "0.28.2",
     "eslint": "10.11.0",
-    "eslint-plugin-unicorn": "64.0.0",
+    "eslint-plugin-unicorn": "76.0.0",
     "fast-glob": "3.3.3",
     "fetch-mock": "12.6.0",
     "globals": "17.13.0",
