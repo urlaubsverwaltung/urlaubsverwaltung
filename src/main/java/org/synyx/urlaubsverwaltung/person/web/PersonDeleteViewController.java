@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
+@ConditionalOnProperty(value = "uv.person.ui-deletion-enabled", havingValue = "true", matchIfMissing = true)
 @Controller
 @RequestMapping("/web")
 public class PersonDeleteViewController implements HasLaunchpad {
