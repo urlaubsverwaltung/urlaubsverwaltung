@@ -94,6 +94,36 @@ describe("send-get-department-vacations-request", () => {
     );
   });
 
+  it("renders person name as text", async () => {
+    fetchMock.route(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
+      vacations: [
+        {
+          status: "WAITING",
+          from: "2020-08-19",
+          to: "2020-08-19",
+          person: {
+            niceName: "<img src=x onerror=alert(1)>",
+          },
+        },
+      ],
+    });
+
+    const div = document.createElement("div");
+    div.setAttribute("id", "element");
+    document.body.append(div);
+
+    const urlPrefix = "urlprefix";
+    const startDate = new Date(2020, 7, 16);
+    const endDate = new Date(2020, 7, 31);
+    const personId = "1337";
+    const elementSelector = "#element";
+
+    await sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, elementSelector);
+
+    expect(div.querySelector("img")).toBeNull();
+    expect(div.querySelector("li").textContent).toBe("<img src=x onerror=alert(1)>:");
+  });
+
   it("renders empty response", async () => {
     fetchMock.route(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
       vacations: [],

@@ -36,39 +36,46 @@ export default async function sendGetDepartmentVacationsRequest(
 
   if (vacations.length > 0) {
     let lastPersonName = -1;
-    let isNewPerson = false;
 
-    const html = vacations.map((vacation) => {
-      isNewPerson = lastPersonName !== vacation.person.niceName;
+    const list = document.createElement("ul");
+    list.className = "m-0 p-0";
+
+    for (const vacation of vacations) {
+      const isNewPerson = lastPersonName !== vacation.person.niceName;
       lastPersonName = vacation.person.niceName;
 
-      return createHtmlForVacation(vacation, isNewPerson);
-    });
+      list.append(...createListItemsForVacation(vacation, isNewPerson));
+    }
 
-    element.innerHTML += `<ul class="m-0 p-0">${html.join("")}</ul>`;
+    element.append(list);
   }
 }
 
-function createHtmlForVacation(vacation, isNewPerson) {
+function createListItemsForVacation(vacation, isNewPerson) {
   const startDate = format(parseISO(vacation.from), "dd.MM.yyyy");
   const endDate = format(parseISO(vacation.to), "dd.MM.yyyy");
   const person = vacation.person.niceName;
 
-  let html = "";
+  const items = [];
   if (isNewPerson) {
-    html += `<li class="flex items-center pt-2">${person}:</li>`;
+    const personItem = document.createElement("li");
+    personItem.className = "flex items-center pt-2";
+    personItem.textContent = `${person}:`;
+    items.push(personItem);
   }
 
-  html += `<li class="flex items-center pl-5 relative">`;
+  const vacationItem = document.createElement("li");
+  vacationItem.className = "flex items-center pl-5 relative";
   if (vacation.status === "ALLOWED") {
-    html += `<span class="text-emerald-500 absolute -ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
+    vacationItem.innerHTML = `<span class="text-emerald-500 absolute -ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
   }
 
   let dateInformation = `${startDate} - ${endDate}`;
   if (startDate === endDate) {
     dateInformation = `${startDate}`;
   }
-  html += `${dateInformation}`;
+  vacationItem.append(dateInformation);
+  items.push(vacationItem);
 
-  return html + "</li>";
+  return items;
 }
