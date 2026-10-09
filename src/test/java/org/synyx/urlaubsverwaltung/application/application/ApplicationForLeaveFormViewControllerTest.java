@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
@@ -911,6 +912,52 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("vacationType.id", "1"));
 
         verify(applicationInteractionService).directAllow(any(), eq(person), any());
+    }
+
+    @Test
+    void postNewApplicationFormIgnoresGivenIdWhenApplyingApplication() throws Exception {
+
+        final Person person = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(true).build();
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(post("/web/application")
+            .param("id", "1337")
+            .param("vacationType.id", "1"));
+
+        final ArgumentCaptor<ApplicationForLeaveForm> formCaptor = ArgumentCaptor.forClass(ApplicationForLeaveForm.class);
+        verify(applicationForLeaveFormValidator).validate(formCaptor.capture(), any());
+        assertThat(formCaptor.getValue().getId()).isNull();
+
+        final ArgumentCaptor<Application> applicationCaptor = ArgumentCaptor.forClass(Application.class);
+        verify(applicationInteractionService).apply(applicationCaptor.capture(), eq(person), any());
+        assertThat(applicationCaptor.getValue().getId()).isNull();
+    }
+
+    @Test
+    void postNewApplicationFormIgnoresGivenIdWhenDirectAllowingApplication() throws Exception {
+
+        final Person person = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(applicationInteractionService.directAllow(any(), any(), any())).thenReturn(someApplication());
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).requiresApprovalToApply(false).build();
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(post("/web/application")
+            .param("id", "1337")
+            .param("vacationType.id", "1"));
+
+        final ArgumentCaptor<ApplicationForLeaveForm> formCaptor = ArgumentCaptor.forClass(ApplicationForLeaveForm.class);
+        verify(applicationForLeaveFormValidator).validate(formCaptor.capture(), any());
+        assertThat(formCaptor.getValue().getId()).isNull();
+
+        final ArgumentCaptor<Application> applicationCaptor = ArgumentCaptor.forClass(Application.class);
+        verify(applicationInteractionService).directAllow(applicationCaptor.capture(), eq(person), any());
+        assertThat(applicationCaptor.getValue().getId()).isNull();
     }
 
     @Test
