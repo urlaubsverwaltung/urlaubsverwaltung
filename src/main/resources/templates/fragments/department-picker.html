@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>department-picker</title>
+  </head>
+  <body>
+    <!--/* must be placed inside the form it filters - the checkboxes are its `department` and `allPersons` fields */-->
+    <uv-department-picker
+      th:fragment="department-picker(id, picker)"
+      th:with="withButtonLabel=${withButtonLabel ?: false}, selectedNames=${picker.selectedNames()}, selectedCount=${#lists.size(selectedNames)}"
+      class="department-picker"
+    >
+      <button
+        type="button"
+        th:id="${id}"
+        th:popovertarget="|${id}-popover|"
+        th:aria-describedby="|${id}-summary|"
+        class="popover-button-select department-picker__button"
+      >
+        <th:block th:if="${withButtonLabel}" th:text="#{department-picker.button}">Abteilungen</th:block>
+        <!--/* a host label names the button and hides its content from the accessible name - the summary is its description */-->
+        <span th:id="|${id}-summary|" class="department-picker__summary">
+          <th:block th:if="${picker.allPersonsSelected}" th:text="#{department-picker.all-persons}"></th:block>
+          <th:block
+            th:unless="${picker.allPersonsSelected}"
+            th:text="${selectedCount <= 2 ? #strings.listJoin(selectedNames, ', ') : selectedNames[0] + ' +' + (selectedCount - 1)}"
+          ></th:block>
+        </span>
+        <span
+          th:if="${!picker.allPersonsSelected and selectedCount >= 3}"
+          class="department-picker__badge"
+          th:text="${selectedCount}"
+        ></span>
+      </button>
+      <div th:id="|${id}-popover|" popover class="popover-menu department-picker__menu">
+        <div th:if="${#lists.size(picker.options) > 8}" class="department-picker__search">
+          <label th:for="|${id}-search|" class="sr-only" th:text="#{department-picker.search}">Abteilung suchen</label>
+          <input
+            th:id="|${id}-search|"
+            type="search"
+            th:placeholder="#{department-picker.search}"
+            autocomplete="off"
+            data-department-picker-search
+          />
+        </div>
+        <label class="department-picker__option department-picker__option--all">
+          <input
+            type="checkbox"
+            class="uv-checkbox"
+            name="allPersons"
+            value="true"
+            autocomplete="off"
+            th:checked="${picker.allPersonsSelected}"
+            data-department-picker-all
+          />
+          <span>
+            <th:block th:text="#{department-picker.all-persons}">Alle Personen</th:block>
+            <small th:text="#{department-picker.all-persons.hint}"></small>
+          </span>
+          <span class="department-picker__count" th:text="${picker.allPersonsCount}"></span>
+        </label>
+        <ul class="department-picker__list" role="group" th:aria-label="#{department-picker.departments}">
+          <li th:each="option : ${picker.options}">
+            <label class="department-picker__option">
+              <input
+                type="checkbox"
+                class="uv-checkbox"
+                name="department"
+                autocomplete="off"
+                th:value="${option.name}"
+                th:checked="${option.selected}"
+                data-department-picker-department
+              />
+              <span th:text="${option.name}"></span>
+              <span class="department-picker__count" th:text="${option.activeMemberCount}"></span>
+            </label>
+          </li>
+          <li
+            class="department-picker__no-hit"
+            hidden
+            data-department-picker-no-hit
+            th:text="#{department-picker.search.no-hit}"
+          ></li>
+        </ul>
+        <div class="department-picker__footer">
+          <button
+            type="submit"
+            class="button-main py-1.5 px-3 w-full"
+            th:text="#{action.confirm}"
+            data-department-picker-confirm
+          ></button>
+        </div>
+      </div>
+    </uv-department-picker>
+  </body>
+</html>

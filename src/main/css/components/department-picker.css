@@ -1,0 +1,118 @@
+uv-department-picker {
+  display: block;
+}
+
+.department-picker__button {
+  width: 100%;
+}
+
+.department-picker__summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.department-picker__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: --spacing(5);
+  height: --spacing(5);
+  padding-inline: --spacing(1.5);
+  border-radius: 9999px;
+  background-color: var(--color-sky-700);
+  color: var(--color-sky-50);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.department-picker__menu {
+  /* `.popover-button-select ~ [popover]` makes the menu as wide as its button - a narrow button would squeeze the
+   * department names. */
+  min-width: min(18rem, calc(100vw - --spacing(4)));
+  padding: 0;
+}
+
+.department-picker__search {
+  padding: --spacing(3) --spacing(3) --spacing(2);
+
+  input {
+    width: 100%;
+  }
+}
+
+.department-picker__option {
+  display: flex;
+  align-items: center;
+  gap: --spacing(2.5);
+  padding: --spacing(1.5) --spacing(3);
+  font-size: var(--text-sm);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-neutral-100);
+    @variant dark {
+      background-color: var(--color-zinc-700);
+    }
+  }
+
+  > input {
+    flex-shrink: 0;
+  }
+
+  @media (pointer: coarse) {
+    padding-block: --spacing(2.5);
+  }
+}
+
+.department-picker__option--all {
+  border-bottom: 1px solid var(--color-zinc-300);
+  @variant dark {
+    border-color: var(--color-zinc-600);
+  }
+
+  small {
+    display: block;
+    color: var(--color-zinc-500);
+    font-size: var(--text-xs);
+    @variant dark {
+      color: var(--color-zinc-400);
+    }
+  }
+}
+
+.department-picker__count {
+  margin-inline-start: auto;
+  padding-inline-start: --spacing(2);
+  color: var(--color-zinc-500);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  @variant dark {
+    color: var(--color-zinc-400);
+  }
+}
+
+/* `.popover-menu ul` resets margin and padding with a higher specificity */
+.department-picker__menu .department-picker__list {
+  max-height: 18rem;
+  overflow-y: auto;
+  padding-block: --spacing(1);
+}
+
+.department-picker__no-hit {
+  padding: --spacing(2) --spacing(3);
+  color: var(--color-zinc-500);
+  font-size: var(--text-sm);
+  @variant dark {
+    color: var(--color-zinc-400);
+  }
+}
+
+.department-picker__footer {
+  padding: --spacing(3);
+  border-top: 1px solid var(--color-zinc-300);
+  @variant dark {
+    border-color: var(--color-zinc-600);
+  }
+}

@@ -10,6 +10,7 @@
 @import "../components/checkbox.css" layer(components);
 @import "../components/checkbox-switch.css" layer(components);
 @import "../components/color-picker.css" layer(components);
+@import "../components/department-picker.css" layer(components);
 @import "../components/dropdown-caret.css" layer(components);
 @import "../components/dropdown-menu.css" layer(components);
 @import "../components/loading.css" layer(components);
@@ -20,7 +21,6 @@
 @import "../components/launchpad.css" layer(components);
 @import "../components/list.css" layer(components);
 @import "../components/navigation.css" layer(components);
-@import "../components/multi-select.css" layer(base);
 @import "../components/modal.css" layer(components);
 @import "../components/select.css" layer(components);
 @import "../components/table.css" layer(components);
