@@ -252,6 +252,20 @@ uv.info-banner.text.de=Wartungsarbeiten ab Freitag 14:00. Es kann zu Beeinträch
 | uv.info-banner.enabled          | Boolean | (default) `false`, `true` zum aktivieren des Banners |
 | uv.info-banner.text.de          | String  | Text des Info-Banners für das Deutsche Locale.       |
 
+#### Benutzer löschen
+
+Standardmäßig kann das Office Benutzer über die Oberfläche löschen. Werden Benutzer von einem externen System verwaltet
+und über ein Event (z. B. via RabbitMQ und Extension) gelöscht, kann das Löschen über die Oberfläche deaktiviert werden.
+Der Bereich zum Löschen wird dann auf der Detailseite der Person nicht mehr angezeigt.
+
+```properties
+uv.person.ui-deletion-enabled=false
+```
+
+| Property                      | Type    | Description                                                                 |
+|-------------------------------|---------|-----------------------------------------------------------------------------|
+| uv.person.ui-deletion-enabled | Boolean | (default) `true`, `false` zum Deaktivieren des Löschens über die Oberfläche |
+
 #### Launchpad
 
 Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 
