@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -104,6 +103,11 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
+        return showNotifications(isDepartmentSection, person, model);
+    }
+
+    private String showNotifications(boolean isDepartmentSection, Person person, Model model) {
+
         final Person signedInUser = personService.getSignedInUser();
         final long numberOfDepartments = departmentService.getNumberOfDepartments();
         final List<Department> personDepartments = numberOfDepartments == 0 ? List.of() : departmentService.getDepartmentsPersonHasAccessTo(person);
@@ -167,21 +171,8 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
         if (errors.hasErrors()) {
             LOG.error("Could not save e-mail-notifications of user {}", person.getId());
 
-            final PersonNotificationsDto mergedPersonNotificationsDto = new PersonNotificationsDto();
-            final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-            BeanUtils.copyProperties(mapToPersonNotificationsDto(person, userIsAllowedToSubmitSickNotes), mergedPersonNotificationsDto);
-            model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
             model.addAttribute("error", true);
-
-            if (isDepartmentSection) {
-                model.addAttribute("formFragment", "person/notifications/departments::form");
-                model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_DEPARTMENTS);
-            } else {
-                model.addAttribute("formFragment", "person/notifications/self::form");
-                model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_SELF);
-            }
-
-            return "person/person_notifications";
+            return showNotifications(isDepartmentSection, person, model);
         }
 
         personService.update(person.getIdAsPersonId(),
