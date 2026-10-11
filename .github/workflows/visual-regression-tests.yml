@@ -26,28 +26,9 @@ jobs:
           java-version-file: ".tool-versions"
           cache: 'maven'
 
-      # the maven build runs 'npm ci' as well, so node_modules (including @playwright/test) is ready once the
-      # application is up. nothing else must write node_modules in the meantime.
-      - name: Start application with empty database
-        run: |
-          npm run test:visual:app > app.log 2>&1 &
-          for i in $(seq 1 600); do
-            curl --silent --fail http://localhost:8081/actuator/health/readiness && exit 0
-            sleep 1
-          done
-          echo "application did not become ready" && exit 1
-
-      - name: Start browser server in pinned container
-        run: |
-          npm run test:visual:browser > browser.log 2>&1 &
-          for i in $(seq 1 300); do
-            grep --quiet "Listening on" browser.log && exit 0
-            sleep 1
-          done
-          echo "browser server did not start" && exit 1
-
+      # starts the application with an empty database, the browser server in the pinned container and runs the tests
       - name: Run visual regression tests
-        run: npm run test:visual
+        run: ./mvnw verify -Pvisual-test
         env:
           CI: true
 
@@ -59,6 +40,4 @@ jobs:
           path: |
             target/visual-tests/report
             target/visual-tests/results
-            app.log
-            browser.log
           retention-days: 14
