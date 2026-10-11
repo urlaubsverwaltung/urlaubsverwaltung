@@ -144,15 +144,20 @@ for (const role of roles) {
         }
       }
 
-      const expectedScreenshots = new Set(
+      const patternsByScreenshot = Map.groupBy(
         Object.entries(loadManifest(role))
           .filter(([, entry]) => entry.status === "covered")
-          .map(([pattern]) => screenshotName(role, pattern)),
+          .map(([pattern]) => pattern),
+        (pattern) => screenshotName(role, pattern).join("/"),
       );
-      const orphanedScreenshots = existingScreenshots(role).filter(({ name }) => !expectedScreenshots.has(name));
+      const collisions = [...patternsByScreenshot.values()].filter((patterns) => patterns.length > 1);
+
+      const orphanedScreenshots = existingScreenshots(role).filter(
+        ({ name }) => !patternsByScreenshot.has(name.join("/")),
+      );
       if (mode === "changed" || mode === "all") {
         for (const { project, name } of orphanedScreenshots) {
-          rmSync(`${screenshotDirectory}/${project}/${name}`);
+          rmSync(`${screenshotDirectory}/${project}/${name.join("/")}`);
         }
       }
 
@@ -162,7 +167,9 @@ for (const role of roles) {
         ...(updatesAccepted ? [] : removedPatterns.map((pattern) => `removed page: ${pattern}`)),
         ...(updatesAccepted
           ? []
-          : orphanedScreenshots.map(({ project, name }) => `orphaned screenshot: ${project}/${name}`)),
+          : orphanedScreenshots.map(({ project, name }) => `orphaned screenshot: ${project}/${name.join("/")}`)),
+        // never accepted, two pages would share one screenshot
+        ...collisions.map((patterns) => `pages with the same screenshot name: ${patterns.join(", ")}`),
       ];
 
       expect(

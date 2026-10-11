@@ -1,0 +1,5 @@
+#!/bin/sh
+# Uploads Git LFS objects (visual regression test baselines). core.hooksPath points to this directory, so git lfs
+# cannot install its own hook. Skipped without git-lfs, contributors without it never commit LFS objects.
+command -v git-lfs >/dev/null 2>&1 || exit 0
+git lfs pre-push "$@"

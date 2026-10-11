@@ -1,2 +1,5 @@
 # Set all text files to unix line endings by default
 * text=auto eol=lf
+
+# Baselines of the visual regression tests, see docs/visual-regression-tests.md
+src/test/visual/__screenshots__/**/*.png filter=lfs diff=lfs merge=lfs -text
