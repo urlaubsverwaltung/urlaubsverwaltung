@@ -7,7 +7,8 @@ there and the open points for future improvements.
 ## Scope
 
 * Tests verify **read-only pages** only. Forms may be opened and filled in for a screenshot, but are never submitted.
-* Tests run locally and in CI, in parallel.
+* Tests run locally and in CI, in parallel, and are always triggered manually.
+* Browser: Chromium for now. Firefox and WebKit may become a requirement, so no browser specific solutions.
 * Variants: desktop and mobile, light theme first. The dark theme is used and **must be covered** as well, it follows
   once the setup runs reliably.
 
@@ -18,6 +19,8 @@ there and the open points for future improvements.
 ```
 
 The `visualtest` profile (`application-visualtest.yaml`) is meant to be used together with `demodata`.
+`spring-boot-docker-compose` detects the existing `docker-compose.yml` and starts Postgres, Mailpit and Keycloak
+(including the realm import with the demo users) before the application. No separate compose file is needed.
 
 ## Decisions
 
@@ -49,8 +52,16 @@ All demo data (applications for leave, sick notes, overtime, accounts, working t
 ### 3. Fresh database per run
 
 Demo data is only created for persons without existing data. A reused database would keep data of previous runs.
-Therefore every run starts with an empty database (e.g. `docker compose down -v` or Testcontainers). Since tests are
-read-only, all tests can share one database and run in parallel and in any order. No reset between tests is needed.
+Therefore every run starts with an empty database. Since tests are read-only, all tests can share one database and run
+in parallel and in any order. No reset between tests is needed.
+
+* Spring's docker compose support runs `docker compose stop` on shutdown by default, which keeps the Postgres container
+  and its (anonymous) volume. The `visualtest` profile configures `down` including volume removal on shutdown
+  (property names like `spring.docker.compose.stop.command` / `.arguments` to be verified).
+* A killed application (cancelled CI run, hard kill) skips the shutdown hook, so the start script runs
+  `docker compose down -v` beforehand as well.
+* It is the same compose project as for local development: a visual test run wipes the local development database,
+  and both cannot run at the same time (ports 5434, 8090). This is accepted.
 
 ### 4. Frozen browser time
 
@@ -64,25 +75,27 @@ calendar would show other months than the server data.
 * The browser timezone and locale are fixed as well (`timezoneId: "Europe/Berlin"`, `locale: "de-DE"`), so the CI
   runner settings do not change date formats.
 
-### 5. No scheduled jobs during test runs
+### 5. Scheduled jobs need no handling
 
-Cron jobs run on real time and could mutate data while screenshots are taken (e.g. reminder notifications daily at
-06:00 and 07:00). The `visualtest` profile has to disable them:
+Cron jobs run on real time, so they could fire during a test run. They were checked and need no handling:
 
-* `uv.sick-note.end-of-pay-notification.cron`
-* `uv.application.reminder-notification.cron`
-* `uv.application.upcoming-notification.cron`
-* `uv.application.upcoming-holiday-replacement-notification.cron`
-* `uv.account.update.cron` (turn of the year)
-* `uv.account.vacation-days-reminder.vacation-days-left-cron`
-* `uv.account.vacation-days-reminder.expired-remaining-vacation-days-cron`
+| Job                                    | Schedule        | Writes                                              |
+|----------------------------------------|-----------------|-----------------------------------------------------|
+| EndOfSickPayNotification               | daily 06:00     | `endOfSickPayNotificationSend` on the sick note     |
+| WaitingApplicationsReminderNotification| daily 07:00     | `remindDate` on the application                     |
+| UpcomingApplicationsReminderNotification| daily 07:00    | `upcomingApplicationsReminderSend`                  |
+| UpcomingHolidayReplacementReminder     | daily 07:00     | `upcomingHolidayReplacementNotificationSend`        |
+| NotifyForExpiredRemainingVacationDays  | daily 06:00     | `expiryNotificationSentDate` on the account         |
+| RemindForCurrentlyLeftVacationDays     | 1st of october  | nothing                                             |
+| UpdateAccountsForNextPeriod            | 1st of january  | holiday accounts of the next year                   |
 
-Spring's usual way to disable a cron task, `"-"`, is **rejected** here: the properties are validated with
-`@CronExpression`, which delegates to `CronExpression.isValidExpression` and fails for `"-"`. Options, to be decided:
+* The mail jobs only write 'already sent' markers. None of them is rendered in templates or view controllers, so
+  screenshots are not affected. Without a mail server the jobs log errors, which is irrelevant as well.
+* Only the turn of the year job has visible effects, and it fires on january 1st at 05:00 only.
+* Tests are triggered manually only (see 14.), so the risk is negligible.
 
-* use a valid expression that never fires, e.g. `0 0 0 30 2 *` (30th of february) - to be verified that Spring parses it
-  and simply never schedules it
-* or allow `"-"` in `CronExpressionConstraintValidator`
+Re-check this if a job starts writing fields that are rendered. Disabling jobs would not be trivial: Spring's `"-"`
+is rejected by the `@CronExpression` validation of the cron properties.
 
 ### 6. Wait for readiness
 
@@ -92,15 +105,40 @@ the probes may have to be enabled with `management.endpoint.health.probes.enable
 
 ### 7. Rendering environment
 
-* Baselines are generated **only in a pinned container** (e.g. the official Playwright Docker image), locally as well
-  as in CI. Body text uses a system font stack, so macOS and Linux render differently. Never commit baselines created
-  natively on a developer machine.
+Font rendering differs between operating systems (antialiasing, hinting, font fallback, scrollbars), and even between
+Linux distributions with different fonts installed. Pixel exact comparison only works if every screenshot is rendered
+on the same platform - while the UI is developed on macOS, and CI and most colleagues use Linux.
+
+* **The browser always runs in a pinned Linux container** (official Playwright Docker image, pinned version) via
+  `npx playwright run-server`. The test runner runs natively and connects via `connectOptions.wsEndpoint`.
+* **`exposeNetwork: '<loopback>'`** tunnels the remote browser's `localhost` requests to the machine of the test runner.
+  So `localhost:8080` (application) and the OIDC redirect to `localhost:8090` (Keycloak) work, without host networking
+  and without browser specific flags. It is a Playwright feature and works for Firefox and WebKit as well.
+* The application keeps running natively via `mvn spring-boot:run`, so UI changes only need an application restart.
+* The configuration always uses `connectOptions` and **never falls back to a local browser**, so nobody can create
+  baselines on macOS by accident.
+* `{platform}` is removed from `snapshotPathTemplate`: one baseline set for everyone instead of one per OS.
+* CI uses the same remote browser setup.
+* **To be verified first:** the Keycloak login round trip through `exposeNetwork`.
+* **Plan B**, if `exposeNetwork` does not work: run everything in containers (application from the built jar,
+  Postgres, Keycloak, browser, test runner) with a separate compose file, all containers sharing one network namespace
+  (`network_mode: "service:…"`), so `localhost` is the same for everyone. Hermetic, but needs a jar and image build for
+  every UI change and is a second way of starting the application.
+* Rejected: Docker host networking (needs opt-in on macOS Docker Desktop), Chromium `--host-resolver-rules` (browser
+  specific), baselines generated by CI only (slow feedback for UI development).
 * Playwright `toHaveScreenshot` disables CSS animations and transitions and hides the caret by default, and waits for
   web fonts to be loaded.
 * Gravatar is disabled by default (`AvatarSettings`), so avatars are rendered as SVG initials without external
   requests.
 
-### 8. Page discovery and manifest
+### 8. Fixed application version
+
+The footer renders the application version (`_footer.html`, `info.app.version`), which changes with every release
+and would break every screenshot. The `visualtest` profile sets the hard coded version `info.app.version: 1.33.7`.
+This covers every place the version is rendered (footer, API docs) without masking. The backup extension sees the fake
+version as well, which is irrelevant in a test profile.
+
+### 9. Page discovery and manifest
 
 The pages to verify are not maintained by hand. A crawler discovers them, and a committed manifest acts as golden
 master - just like snapshot tests.
@@ -130,7 +168,7 @@ master - just like snapshot tests.
 * Not discoverable by the crawler: dialogs, tabs, popovers, tooltips, validation errors and GET filter forms. These
   states need a few hand-written tests.
 
-### 9. Update mode and blocking behaviour
+### 10. Update mode and blocking behaviour
 
 There is no separate update switch. The discovery test reads Playwright's `test.info().config.updateSnapshots`, so
 `-u` updates screenshots and the manifest at once.
@@ -151,7 +189,7 @@ There is no separate update switch. The discovery test reads Playwright's `test.
   manifest before discovery runs. To be verified whether `globalSetup` runs before test collection, otherwise an npm
   script runs `-u` twice.
 
-### 10. Parallel execution
+### 11. Parallel execution
 
 Read-only tests on a shared database can run in any order and in parallel (`fullyParallel: true`). Playwright
 distributes single tests to free workers, no manual bucketing.
@@ -177,7 +215,7 @@ distributes single tests to free workers, no manual bucketing.
 * Sharding across CI machines (`--shard`) is postponed. Every shard needs its own application and database including
   demo data creation, which only pays off for long runs.
 
-### 11. Variants
+### 12. Variants
 
 * Start with **desktop and mobile, light theme**, as variants per role project.
 * **Dark theme must be covered** at the end, as a third variant once the setup is stable.
@@ -186,17 +224,59 @@ distributes single tests to free workers, no manual bucketing.
   settings in the database - assuming the demo persons use `system`, to be verified. Set `colorScheme` explicitly in
   any case.
 
+### 13. Baselines in Git LFS
+
+Baseline PNGs are stored in Git LFS. A rough estimate (not measured): 150-250 role × page combinations, two variants
+now, three with dark theme, 100-400 KB per full page screenshot - up to several hundred MB per full set, and every
+global UI change rewrites nearly all of them. In plain git, the repository would grow permanently.
+
+* Track the snapshot directory via `.gitattributes` before the first baseline is committed. Moving baselines to LFS
+  later requires rewriting history.
+* Regular CI builds check out without `lfs: true` and get pointer files only, no LFS bandwidth is used.
+* Contributors without `git-lfs` get pointer files as well, which is harmless since the tests are not part of the
+  regular build.
+
+### 14. Manual execution only
+
+Visual regression tests never run automatically.
+
+* CI: a separate workflow with `workflow_dispatch` only. Not part of `build.yml`, not triggered by pull requests or
+  pushes.
+* Local: only by an explicit command. Not part of the Maven build and not part of `npm test` (vitest must not pick up
+  the Playwright specs).
+* Discovery is blocking for the manual run, not for pull requests.
+
+### 15. Location in the repository
+
+* `@playwright/test` is a devDependency of the existing `package.json`, the tests live in `src/test/visual/`, started
+  via an npm script like `test:visual`. One Node project for a better developer experience.
+* The normal build stays unaffected apart from installing the package: `npm run lint` and vitest only cover
+  `src/main/javascript`. To be verified: `npm ci` does not download browsers (they live in the container anyway).
+* The version is pinned exactly, like all other dependencies. Client and container image must use the same Playwright
+  version, so the start script derives the image tag from the version in `package.json`. A dependency update moves both.
+
+### 16. Screenshot settings
+
+* **Full page** (`fullPage: true`). Regressions below the fold count as well, the size is handled by Git LFS.
+* **Playwright defaults for comparison**, no additional global tolerance. Pinned container, frozen time and fixed data
+  exist to make exact comparison work. Tolerance only per page if it turns out flaky, never globally.
+* **Waiting:** Playwright's built-in stability check (two identical consecutive screenshots) plus `networkidle` by
+  default. Page specific waits (e.g. calendar days rendered) only where needed.
+
 ## Status
 
 | Topic                                       | Status          |
 |---------------------------------------------|-----------------|
 | Fixed application clock (`visualtest`)      | implemented     |
 | Deterministic personnel numbers             | implemented     |
-| Disable cron jobs in `visualtest` profile   | open (see 5.)   |
+| Fixed version `1.33.7` in `visualtest`      | open            |
+| Git LFS for baselines (`.gitattributes`)    | open            |
+| Manual CI workflow (`workflow_dispatch`)    | open            |
 | Enable readiness probe if needed            | open            |
 | Playwright setup (clock, timezone, locale)  | open            |
-| Pinned container for baselines and CI       | open            |
-| Fresh database per CI run                   | open            |
+| Remote browser in pinned container          | open            |
+| Verify Keycloak login via `exposeNetwork`   | open            |
+| Fresh database (compose `down -v`)          | open            |
 | Page discovery and manifest                 | open            |
 | Projects per role and variant, setup login  | open            |
 | Desktop and mobile, light theme             | open            |
