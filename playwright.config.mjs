@@ -18,6 +18,12 @@ const variants = [
     name: "mobile",
     use: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
   },
+  // the theme only changes colors, not the layout, so desktop is enough. the demo users keep the default theme
+  // 'system', which follows prefers-color-scheme.
+  {
+    name: "desktop-dark",
+    use: { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, colorScheme: "dark" },
+  },
 ];
 
 export default defineConfig({

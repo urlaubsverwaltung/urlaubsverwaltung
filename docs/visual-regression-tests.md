@@ -9,8 +9,7 @@ there and the open points for future improvements.
 * Tests verify **read-only pages** only. Forms may be opened and filled in for a screenshot, but are never submitted.
 * Tests run locally and in CI, in parallel, and are always triggered manually.
 * Browser: Chromium for now. Firefox and WebKit may become a requirement, so no browser specific solutions.
-* Variants: desktop and mobile, light theme first. The dark theme is used and **must be covered** as well, it follows
-  once the setup runs reliably.
+* Variants: desktop and mobile in the light theme, desktop in the dark theme.
 
 ## Running the tests
 
@@ -35,7 +34,7 @@ The profile `visual-test` does everything in one go:
 | `verify`                | fails the build if the playwright run failed (`target/visual-tests/results/.last-run.json`) |
 
 Failures must not stop the build in `integration-test`, otherwise Maven would skip `spring-boot:stop` and the
-application and containers would keep running. A full run takes about 3 minutes, including build and startup.
+application and containers would keep running. A full run takes about 4 minutes, including build and startup.
 
 ### Iterating locally
 
@@ -67,7 +66,7 @@ The `visualtest` profile (`application-visualtest.yaml`) is meant to be used tog
 
 | Path                                   | Content                                                          |
 |----------------------------------------|------------------------------------------------------------------|
-| `playwright.config.mjs`                | remote browser, projects `setup`, `discovery`, `desktop`, `mobile` |
+| `playwright.config.mjs`                | remote browser, projects `setup`, `discovery`, `desktop`, `mobile`, `desktop-dark` |
 | `pom.xml`, profile `visual-test`       | maven entry point                                                |
 | `src/test/visual/browser-server.mjs`   | browser server in the container, image tag from `package.json`, started by playwright `webServer` |
 | `src/test/visual/screenshots.teardown.mjs` | orphaned screenshots and name collisions, after all screenshot tests |
@@ -279,6 +278,7 @@ distributes single tests to free workers, no manual bucketing.
   discovery   → depends on setup, crawls per role
   desktop     → depends on setup, one describe block per role with its storageState,
   mobile        tests generated from pages/<role>.json
+  desktop-dark
   screenshots → teardown of setup, runs after all of the above: orphaned screenshots, name collisions
   ```
   Implemented with one project per variant and roles as describe blocks instead of one project per role and variant:
@@ -291,18 +291,19 @@ distributes single tests to free workers, no manual bucketing.
 * Verified: the session holds only the security context and the CSRF token, no UI state. All tests of a role share
   one login.
 * Verified: no lazy creation on GET (see 9.).
-* 4 workers, limited by the single application instance and the browser container. A full run takes about 2 minutes.
+* 4 workers, limited by the single application instance and the browser container. The tests take about 2.5 minutes.
 * Sharding across CI machines (`--shard`) is postponed. Every shard needs its own application and database including
   demo data creation, which only pays off for long runs.
 
 ### 12. Variants
 
-* Start with **desktop and mobile, light theme**, as one project per variant (see 11.).
-* **Dark theme must be covered** at the end, as a third variant once the setup is stable.
+* **desktop and mobile in the light theme, desktop in the dark theme**, as one project per variant (see 11.).
+* The dark theme only changes colors, not the layout, so a mobile dark variant would add screenshots without
+  covering more.
 * The theme is a user setting (`system`, `light`, `dark`). With `system`, `prefers-color-scheme` decides
   (`_layout.html`). Verified: the default is `system` (`UserSettings.DEFAULT`), so the variants can use Playwright's
   `colorScheme: 'light' | 'dark'` without changing user settings in the database. `colorScheme: 'light'` is set
-  explicitly.
+  explicitly, `desktop-dark` overrides it with `'dark'`.
 
 ### 13. Baselines in Git LFS
 
@@ -317,7 +318,7 @@ global UI change rewrites nearly all of them. In plain git, the repository would
   regular build.
 * `core.hooksPath` points to the tracked `.githooks`, so git lfs cannot install its `pre-push` hook. `.githooks/pre-push`
   calls `git lfs pre-push` and is skipped without git-lfs. Without it, a push would upload pointers but no PNGs.
-* The initial 322 baselines are about 27 MB.
+* The initial 322 baselines are about 28 MB, the 161 dark baselines another 18 MB.
 
 ### 14. Manual execution only
 
@@ -363,9 +364,9 @@ Visual regression tests never run automatically.
 | Playwright setup (clock, timezone, locale)  | implemented                    |
 | Page discovery and manifest                 | implemented                    |
 | Screenshot tests, desktop and mobile light  | implemented, 322 baselines     |
+| Screenshot tests, desktop dark              | implemented, 161 baselines     |
 | Git LFS for baselines, pre-push hook        | implemented                    |
 | Manual CI workflow (`workflow_dispatch`)    | implemented, not yet run on CI |
-| Dark theme                                  | open, required                 |
 | Hand-written tests for UI states            | open                           |
 
 ## Future improvements
