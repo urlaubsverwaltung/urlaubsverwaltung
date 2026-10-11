@@ -7,7 +7,9 @@ there and the open points for future improvements.
 ## Scope
 
 * Tests verify **read-only pages** only. Forms may be opened and filled in for a screenshot, but are never submitted.
-* Tests run locally and in CI.
+* Tests run locally and in CI, in parallel.
+* Variants: desktop and mobile, light theme first. The dark theme is used and **must be covered** as well, it follows
+  once the setup runs reliably.
 
 ## Starting the application
 
@@ -98,6 +100,92 @@ the probes may have to be enabled with `management.endpoint.health.probes.enable
 * Gravatar is disabled by default (`AvatarSettings`), so avatars are rendered as SVG initials without external
   requests.
 
+### 8. Page discovery and manifest
+
+The pages to verify are not maintained by hand. A crawler discovers them, and a committed manifest acts as golden
+master - just like snapshot tests.
+
+* **Manifest**, one file per role (e.g. `pages/office.json`), maps a URL pattern to an example URL and a status:
+  ```json
+  {
+    "/web/application/{id}": { "url": "/web/application/42", "status": "covered" },
+    "/web/sicknote/{id}/edit": { "status": "ignored", "reason": "..." }
+  }
+  ```
+  One file per role, so parallel discovery tests never write the same file.
+* **Screenshot tests** are generated from the manifest when the test files are loaded: one test per role × page ×
+  variant. Playwright cannot add tests during a run, so crawling and screenshotting in the same test would end up as
+  one giant test that stops at the first diff.
+* **Discovery test** crawls the application per role and compares the result with the manifest.
+* Crawling rules:
+  * crawl per role (user, departmentHead, secondStageAuthority, boss, office, admin) - each role sees other pages
+  * only `<a href>` links; breadth-first with a sorted queue and a depth limit, so the crawl is deterministic
+  * ids in paths are collapsed into patterns (`/web/person/5/overview` → `/web/person/{id}/overview`), the example URL
+    is chosen deterministically (first one in sorted order)
+  * query parameters are dropped (`/web/person/5/overview?year=2025` → `/web/person/{id}/overview`). They filter
+    data (year, month, department, sorting, pagination), which is irrelevant for visual regression tests. Example
+    URLs in the manifest have no query parameters either
+  * excluded: logout, external links, downloads (ICS, CSV), `/api`, actuator, and GET links that mutate data (to be
+    checked whether there are any)
+* Not discoverable by the crawler: dialogs, tabs, popovers, tooltips, validation errors and GET filter forms. These
+  states need a few hand-written tests.
+
+### 9. Update mode and blocking behaviour
+
+There is no separate update switch. The discovery test reads Playwright's `test.info().config.updateSnapshots`, so
+`-u` updates screenshots and the manifest at once.
+
+| Mode             | Screenshots           | Manifest                                         |
+|------------------|-----------------------|--------------------------------------------------|
+| `none`           | compare only          | new or removed pages → fail                      |
+| `missing`        | write new baselines   | add new pages (and fail), report removed pages   |
+| `-u` / `changed` | update changed ones   | add new pages, remove stale ones                 |
+| `all`            | rewrite all           | rebuild the manifest from scratch                |
+
+* Discovery is **blocking** in both directions, like missing snapshots in Playwright: new pages fail, removed pages
+  fail. The fix is always `-u` and commit.
+* Playwright does not detect orphaned baseline PNGs. Discovery reports PNGs no manifest entry refers to as well.
+* CI must use `updateSnapshots: process.env.CI ? 'none' : 'missing'`. Playwright's default `missing` would silently
+  accept new baselines in CI.
+* Pages added by discovery get their baselines only in the next run, since screenshot tests are collected from the
+  manifest before discovery runs. To be verified whether `globalSetup` runs before test collection, otherwise an npm
+  script runs `-u` twice.
+
+### 10. Parallel execution
+
+Read-only tests on a shared database can run in any order and in parallel (`fullyParallel: true`). Playwright
+distributes single tests to free workers, no manual bucketing.
+
+* **Projects:**
+  ```
+  setup               → logs in every role once via Keycloak, writes .auth/<role>.json
+  <role>-<variant>    → depends on setup, uses storageState .auth/<role>.json,
+                        generates tests from pages/<role>.json
+  discovery           → depends on setup, crawls per role
+  ```
+  Projects share the worker pool. They give a clean per role config, selective runs (`--project=office-desktop`) and
+  separated screenshot paths. Discovery is no dependency of the screenshot projects, both run in parallel.
+* Logging in once per role is faster, does not flood Keycloak and moves possible writes on login (person sync) out of
+  the parallel phase.
+* To be checked: whether the server session holds UI state (selected year, filters). Then parallel tests of one role
+  would influence each other and need a login per worker.
+* To be checked: lazy creation on GET (e.g. a holiday account for another year). Two workers could create the same
+  data concurrently → duplicates or constraint violations. Trigger it once in the setup project or fix it in the
+  application.
+* The number of workers is limited by the single application instance and Postgres (default Hikari pool: 10
+  connections). Start with 4-6 workers.
+* Sharding across CI machines (`--shard`) is postponed. Every shard needs its own application and database including
+  demo data creation, which only pays off for long runs.
+
+### 11. Variants
+
+* Start with **desktop and mobile, light theme**, as variants per role project.
+* **Dark theme must be covered** at the end, as a third variant once the setup is stable.
+* The theme is a user setting (`system`, `light`, `dark`). With `system`, `prefers-color-scheme` decides
+  (`_layout.html`). So the variants can use Playwright's `colorScheme: 'light' | 'dark'` without changing user
+  settings in the database - assuming the demo persons use `system`, to be verified. Set `colorScheme` explicitly in
+  any case.
+
 ## Status
 
 | Topic                                       | Status          |
@@ -109,6 +197,10 @@ the probes may have to be enabled with `management.endpoint.health.probes.enable
 | Playwright setup (clock, timezone, locale)  | open            |
 | Pinned container for baselines and CI       | open            |
 | Fresh database per CI run                   | open            |
+| Page discovery and manifest                 | open            |
+| Projects per role and variant, setup login  | open            |
+| Desktop and mobile, light theme             | open            |
+| Dark theme                                  | open, required  |
 
 ## Future improvements
 
@@ -118,6 +210,8 @@ the probes may have to be enabled with `management.endpoint.health.probes.enable
 * **Server provided 'today' for the frontend.** Instead of mocking the browser clock, the server could pass its 'today'
   to the frontend (e.g. `globalThis.uv.today`), and the JavaScript would use it instead of `new Date()`. This would
   also avoid client/server timezone mismatches in production, but touches several components.
+* **Query parameter allowlist.** Should a query parameter ever change the layout instead of filtering data, the
+  crawler config could get an allowlist per pattern with a fixed value, resulting in an additional manifest entry.
 * **Self-hosted body font.** Would make local and CI rendering more similar. Optional, the pinned container is enough.
 * **Remaining `now()` calls without clock.** `BackupDataCollectionService` uses `LocalDate.now()` and domain events use
   `Instant.now()`. Not visible in the UI today, but they ignore the fixed clock.
