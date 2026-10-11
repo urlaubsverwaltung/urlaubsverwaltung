@@ -70,6 +70,7 @@ The `visualtest` profile (`application-visualtest.yaml`) is meant to be used tog
 | `playwright.config.mjs`                | remote browser, projects `setup`, `discovery`, `desktop`, `mobile` |
 | `pom.xml`, profile `visual-test`       | maven entry point                                                |
 | `src/test/visual/browser-server.mjs`   | browser server in the container, image tag from `package.json`, started by playwright `webServer` |
+| `src/test/visual/screenshots.teardown.mjs` | orphaned screenshots and name collisions, after all screenshot tests |
 | `src/test/visual/verify-last-run.mjs`  | fails the maven `verify` phase if the playwright run failed      |
 | `src/test/visual/auth.setup.mjs`       | logs in every demo role once, sessions in `target/visual-tests/auth` |
 | `src/test/visual/discovery.spec.mjs`   | crawler, compares with the manifests                             |
@@ -160,7 +161,8 @@ Demo data is created on `LivenessState.CORRECT`, while Tomcat is already accepti
 the readiness probe `/actuator/health/readiness` (management port 8081) reports `UP`. Outside Kubernetes the probes are
 disabled by default, the `visualtest` profile enables them with `management.endpoint.health.probes.enabled: true`.
 The Maven profile does not need the probe: `spring-boot:start` waits until the application is ready, which is after the
-demo data has been created.
+demo data has been created. When running `npm run test:visual` against a manually started application, nothing checks readiness:
+wait for the probe yourself, otherwise the logins may run against an application still creating demo data.
 
 ### 7. Rendering environment
 
@@ -222,8 +224,11 @@ master - just like snapshot tests.
 * Crawling rules:
   * crawl per role (user, departmentHead, secondStageAuthority, boss, office, admin) - each role sees other pages
   * only `<a href>` links; breadth-first with a sorted queue and a depth limit, so the crawl is deterministic
-  * ids in paths are collapsed into patterns (`/web/person/5/overview` → `/web/person/{id}/overview`), the example URL
-    is chosen deterministically (first one in sorted order)
+  * ids in paths are collapsed into patterns (`/web/person/5/overview` → `/web/person/{id}/overview`). The example URL
+    is the first URL of the pattern the crawl loads successfully - deterministic, since the links of every page are
+    sorted and the crawl is breadth-first. Not the smallest URL of the pattern overall.
+  * a pattern counts as discovered only once one of its URLs loaded. If a URL fails (error, non-OK status, not HTML),
+    other URLs of the same pattern are still tried, so a single failing URL does not drop the page from the manifest
   * query parameters are dropped (`/web/person/5/overview?year=2025` → `/web/person/{id}/overview`). They filter
     data (year, month, department, sorting, pagination), which is irrelevant for visual regression tests. Example
     URLs in the manifest have no query parameters either
@@ -242,19 +247,21 @@ master - just like snapshot tests.
 There is no separate update switch. The discovery test reads Playwright's `test.info().config.updateSnapshots`, so
 `-u` updates screenshots and the manifest at once.
 
-| Mode             | Screenshots           | Manifest                                         |
-|------------------|-----------------------|--------------------------------------------------|
-| `none`           | compare only          | new or removed pages → fail                      |
-| `missing`        | write new baselines   | add new pages (and fail), report removed pages   |
-| `-u` / `changed` | update changed ones   | add new pages, remove stale ones                 |
-| `all`            | rewrite all           | rebuild the manifest from scratch                |
+| Mode             | Screenshots         | Manifest (discovery)                      | Orphaned screenshots (teardown) |
+|------------------|---------------------|-------------------------------------------|---------------------------------|
+| `none`           | compare only        | new or removed pages → fail               | fail                            |
+| `missing`        | write new baselines | add new pages; new or removed pages → fail | fail                           |
+| `-u` / `changed` | update changed ones | add new pages, remove stale ones          | delete                          |
+| `all`            | rewrite all         | rebuild, keeps `ignored` decisions        | delete                          |
 
 * Discovery is **blocking** in both directions, like missing snapshots in Playwright: new pages fail, removed pages
   fail. The fix is always `-u` and commit.
-* Playwright does not detect orphaned baseline PNGs. Discovery reports PNGs no manifest entry refers to as well, and
-  deletes them with `-u`.
+* Playwright does not detect orphaned baseline PNGs. The teardown project `screenshots` (`screenshots.teardown.mjs`)
+  reports PNGs no manifest entry refers to, and deletes them with `-u`. It runs as teardown of `setup`, i.e. after
+  discovery and all screenshot tests: a screenshot test of a page discovery has just removed could otherwise write
+  its baseline again after it was deleted.
 * Playwright replaces everything but letters, digits and `-` in screenshot file names (`/web/person/{id}/overview` →
-  `web-person-id-overview.png`). Two patterns mapping to the same name fail discovery, even with `-u`.
+  `web-person-id-overview.png`). Two patterns mapping to the same name fail the teardown, even with `-u`.
 * CI must use `updateSnapshots: process.env.CI ? 'none' : 'missing'`. Playwright's default `missing` would silently
   accept new baselines in CI.
 * Pages added by discovery get their baselines only in the next run, since screenshot tests are collected from the
@@ -272,6 +279,7 @@ distributes single tests to free workers, no manual bucketing.
   discovery   → depends on setup, crawls per role
   desktop     → depends on setup, one describe block per role with its storageState,
   mobile        tests generated from pages/<role>.json
+  screenshots → teardown of setup, runs after all of the above: orphaned screenshots, name collisions
   ```
   Implemented with one project per variant and roles as describe blocks instead of one project per role and variant:
   Playwright cannot read the project at collection time, so per role projects would need one spec file per role.
@@ -289,7 +297,7 @@ distributes single tests to free workers, no manual bucketing.
 
 ### 12. Variants
 
-* Start with **desktop and mobile, light theme**, as variants per role project.
+* Start with **desktop and mobile, light theme**, as one project per variant (see 11.).
 * **Dark theme must be covered** at the end, as a third variant once the setup is stable.
 * The theme is a user setting (`system`, `light`, `dark`). With `system`, `prefers-color-scheme` decides
   (`_layout.html`). Verified: the default is `system` (`UserSettings.DEFAULT`), so the variants can use Playwright's

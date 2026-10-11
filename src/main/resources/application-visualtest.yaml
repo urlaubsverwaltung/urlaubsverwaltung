@@ -1,4 +1,5 @@
-# Use together with the 'demodata' profile: -Dspring.profiles.active=demodata,visualtest
+# Use together with the 'demodata' profile, e.g. ./mvnw spring-boot:run -Dspring-boot.run.profiles=demodata,visualtest
+# or run the visual regression tests with the maven profile: ./mvnw verify -Pvisual-test
 # Stable environment for visual regression tests, see docs/visual-regression-tests.md
 uv:
   development:
