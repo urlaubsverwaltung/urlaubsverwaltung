@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -122,8 +121,6 @@ public class DemoDataCreationService {
     private final DepartmentDataProvider departmentDataProvider;
     private final Clock clock;
 
-    private final SecureRandom random = new SecureRandom();
-
     DemoDataCreationService(
         PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
         SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
@@ -212,13 +209,19 @@ public class DemoDataCreationService {
                 personDataProvider.updateTestPerson(11, email, List.of(USER), PERSON_NOTIFICATIONS);
                 break;
             default:
-                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(personnelNumberOf(email), email, List.of(USER), PERSON_NOTIFICATIONS);
                 break;
         }
     }
 
-    private int randomPersonnelNumber() {
-        return random.nextInt(1000 - 11 + 1) + 11;
+    /**
+     * Derived from the email instead of drawn at random, so the additional demo persons get the same personnel number
+     * on every start. Otherwise screenshots of visual regression tests would differ.
+     *
+     * @return a personnel number between 11 and 1000, both inclusive
+     */
+    static int personnelNumberOf(String email) {
+        return Math.floorMod(email.hashCode(), 1000 - 11 + 1) + 11;
     }
 
     private void createDemoApplicationsAndSickNotes(String personEmail) {
