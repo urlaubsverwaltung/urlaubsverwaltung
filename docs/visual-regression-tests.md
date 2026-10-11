@@ -12,15 +12,45 @@ there and the open points for future improvements.
 * Variants: desktop and mobile, light theme first. The dark theme is used and **must be covered** as well, it follows
   once the setup runs reliably.
 
-## Starting the application
+## Running the tests
+
+Requirements: Docker and Git LFS (`git lfs install` once, then `git lfs pull` to get the baselines).
 
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=demodata,visualtest"
+# 1. application with an empty database (docker compose down -v, then spring-boot:run with demodata,visualtest)
+npm run test:visual:app
+
+# 2. browser server in the pinned linux container
+npm run test:visual:browser
+
+# 3. once the application is ready (http://localhost:8081/actuator/health/readiness)
+npm run test:visual            # compare
+npm run test:visual -- -u      # accept new and changed pages and screenshots
 ```
+
+* Run a single variant or role: `npm run test:visual -- --project=desktop --grep office`
+* Report with expected, actual and diff images: `npx playwright show-report target/visual-tests/report`
+* New pages need two runs with `-u`: the first adds them to the manifest, the second creates their screenshots (see
+  10.).
+* Stopping the application removes the compose containers and volumes. A visual test run wipes the local development
+  database.
 
 The `visualtest` profile (`application-visualtest.yaml`) is meant to be used together with `demodata`.
 `spring-boot-docker-compose` detects the existing `docker-compose.yml` and starts Postgres, Mailpit and Keycloak
 (including the realm import with the demo users) before the application. No separate compose file is needed.
+
+### Files
+
+| Path                                   | Content                                                          |
+|----------------------------------------|------------------------------------------------------------------|
+| `playwright.config.mjs`                | remote browser, projects `setup`, `discovery`, `desktop`, `mobile` |
+| `src/test/visual/browser-server.mjs`   | starts the browser server, image tag from `package.json`         |
+| `src/test/visual/auth.setup.mjs`       | logs in every demo role once, sessions in `target/visual-tests/auth` |
+| `src/test/visual/discovery.spec.mjs`   | crawler, compares with the manifests                             |
+| `src/test/visual/pages.spec.mjs`       | screenshot tests generated from the manifests                    |
+| `src/test/visual/pages/<role>.json`    | manifests, golden master of the pages                            |
+| `src/test/visual/__screenshots__/`     | baselines (Git LFS), `<project>/<role>/<page>.png`               |
+| `.github/workflows/visual-regression-tests.yml` | manual CI workflow                                      |
 
 ## Decisions
 
@@ -56,10 +86,11 @@ Therefore every run starts with an empty database. Since tests are read-only, al
 in parallel and in any order. No reset between tests is needed.
 
 * Spring's docker compose support runs `docker compose stop` on shutdown by default, which keeps the Postgres container
-  and its (anonymous) volume. The `visualtest` profile configures `down` including volume removal on shutdown
-  (property names like `spring.docker.compose.stop.command` / `.arguments` to be verified).
-* A killed application (cancelled CI run, hard kill) skips the shutdown hook, so the start script runs
+  and its (anonymous) volume. The `visualtest` profile configures `spring.docker.compose.stop.command: down` with
+  `stop.arguments: -v`. Verified: containers and volumes are removed on shutdown.
+* A killed application (cancelled CI run, hard kill) skips the shutdown hook, so `npm run test:visual:app` runs
   `docker compose down -v` beforehand as well.
+* Verified: after a restart with an empty database, all screenshots match without any update.
 * It is the same compose project as for local development: a visual test run wipes the local development database,
   and both cannot run at the same time (ports 5434, 8090). This is accepted.
 
@@ -70,8 +101,8 @@ The frontend uses the browser time as well, e.g. the person overview calendar is
 calendar would show other months than the server data.
 
 * Playwright freezes the browser time with `page.clock.setFixedTime(...)`.
-* Server and browser must use the **same instant**. Use one environment variable as the single source, feeding both
-  `UV_DEVELOPMENT_CLOCK_FIXEDINSTANT` and the Playwright configuration.
+* Server and browser must use the **same instant**. The single source is `application-visualtest.yaml`: the Playwright
+  fixture reads `fixed-instant` from it (`environment.mjs`), so there is no environment variable to keep in sync.
 * The browser timezone and locale are fixed as well (`timezoneId: "Europe/Berlin"`, `locale: "de-DE"`), so the CI
   runner settings do not change date formats.
 
@@ -100,8 +131,8 @@ is rejected by the `@CronExpression` validation of the cron properties.
 ### 6. Wait for readiness
 
 Demo data is created on `LivenessState.CORRECT`, while Tomcat is already accepting requests. Tests must not start before
-the readiness probe `/actuator/health/readiness` (management port 8081) reports `ACCEPTING_TRAFFIC`. Outside Kubernetes
-the probes may have to be enabled with `management.endpoint.health.probes.enabled: true`.
+the readiness probe `/actuator/health/readiness` (management port 8081) reports `UP`. Outside Kubernetes the probes are
+disabled by default, the `visualtest` profile enables them with `management.endpoint.health.probes.enabled: true`.
 
 ### 7. Rendering environment
 
@@ -119,8 +150,9 @@ on the same platform - while the UI is developed on macOS, and CI and most colle
   baselines on macOS by accident.
 * `{platform}` is removed from `snapshotPathTemplate`: one baseline set for everyone instead of one per OS.
 * CI uses the same remote browser setup.
-* **To be verified first:** the Keycloak login round trip through `exposeNetwork`.
-* **Plan B**, if `exposeNetwork` does not work: run everything in containers (application from the built jar,
+* Verified: the Keycloak login round trip works through `exposeNetwork` (redirect to `localhost:8090` and back), the
+  user agent reports `X11; Linux x86_64`.
+* **Plan B** (not needed, kept for reference), if `exposeNetwork` stops working: run everything in containers (application from the built jar,
   Postgres, Keycloak, browser, test runner) with a separate compose file, all containers sharing one network namespace
   (`network_mode: "service:…"`), so `localhost` is the same for everyone. Hermetic, but needs a jar and image build for
   every UI change and is a second way of starting the application.
@@ -128,6 +160,10 @@ on the same platform - while the UI is developed on macOS, and CI and most colle
   specific), baselines generated by CI only (slow feedback for UI development).
 * Playwright `toHaveScreenshot` disables CSS animations and transitions and hides the caret by default, and waits for
   web fonts to be loaded.
+* The first baselines revealed a bug: the calendar toggled the style of its buttons on every media query `change` event
+  instead of following the media query state. Chromium fires such an event while capturing a full page screenshot,
+  so the calendar width changed on every screenshot. Fixed in the application (`calendar.js`), no screenshot specific
+  CSS needed.
 * Gravatar is disabled by default (`AvatarSettings`), so avatars are rendered as SVG initials without external
   requests.
 
@@ -163,8 +199,13 @@ master - just like snapshot tests.
   * query parameters are dropped (`/web/person/5/overview?year=2025` → `/web/person/{id}/overview`). They filter
     data (year, month, department, sorting, pagination), which is irrelevant for visual regression tests. Example
     URLs in the manifest have no query parameters either
-  * excluded: logout, external links, downloads (ICS, CSV), `/api`, actuator, and GET links that mutate data (to be
-    checked whether there are any)
+  * excluded: external links, downloads (`*/download`, `*/export`, ICS feeds `persons/{id}/calendar`), `/api`,
+    actuator, google handshake. Logout is a POST anyway.
+  * redirects are recorded with their target (`/web/overview` → `/web/person/{id}/overview`)
+* Verified: a full crawl writes nothing but `spring_session` rows (compared `pg_stat_user_tables` before and after), so
+  no GET link mutates data and nothing is created lazily.
+* Initial manifests: user 21, departmentHead 24, secondStageAuthority 27, boss 27, office 46, admin 16 pages - 161 per
+  variant, 322 screenshots.
 * Not discoverable by the crawler: dialogs, tabs, popovers, tooltips, validation errors and GET filter forms. These
   states need a few hand-written tests.
 
@@ -182,12 +223,15 @@ There is no separate update switch. The discovery test reads Playwright's `test.
 
 * Discovery is **blocking** in both directions, like missing snapshots in Playwright: new pages fail, removed pages
   fail. The fix is always `-u` and commit.
-* Playwright does not detect orphaned baseline PNGs. Discovery reports PNGs no manifest entry refers to as well.
+* Playwright does not detect orphaned baseline PNGs. Discovery reports PNGs no manifest entry refers to as well, and
+  deletes them with `-u`.
+* Playwright replaces everything but letters, digits and `-` in screenshot file names (`/web/person/{id}/overview` →
+  `web-person-id-overview.png`). Two patterns mapping to the same name fail discovery, even with `-u`.
 * CI must use `updateSnapshots: process.env.CI ? 'none' : 'missing'`. Playwright's default `missing` would silently
   accept new baselines in CI.
 * Pages added by discovery get their baselines only in the next run, since screenshot tests are collected from the
-  manifest before discovery runs. To be verified whether `globalSetup` runs before test collection, otherwise an npm
-  script runs `-u` twice.
+  manifest before discovery runs. So adding pages needs `-u` twice. Moving discovery into `globalSetup` might avoid
+  this, not verified.
 
 ### 11. Parallel execution
 
@@ -196,22 +240,22 @@ distributes single tests to free workers, no manual bucketing.
 
 * **Projects:**
   ```
-  setup               → logs in every role once via Keycloak, writes .auth/<role>.json
-  <role>-<variant>    → depends on setup, uses storageState .auth/<role>.json,
-                        generates tests from pages/<role>.json
-  discovery           → depends on setup, crawls per role
+  setup       → logs in every role once via Keycloak, writes target/visual-tests/auth/<role>.json
+  discovery   → depends on setup, crawls per role
+  desktop     → depends on setup, one describe block per role with its storageState,
+  mobile        tests generated from pages/<role>.json
   ```
-  Projects share the worker pool. They give a clean per role config, selective runs (`--project=office-desktop`) and
-  separated screenshot paths. Discovery is no dependency of the screenshot projects, both run in parallel.
+  Implemented with one project per variant and roles as describe blocks instead of one project per role and variant:
+  Playwright cannot read the project at collection time, so per role projects would need one spec file per role.
+  Selective runs: `--project=desktop --grep office`. Discovery is no dependency of the screenshot projects.
+* The logins of the setup project run **serially**: parallel first logins against a freshly started Keycloak fail with
+  "login attempt timed out". The tests themselves stay parallel.
 * Logging in once per role is faster, does not flood Keycloak and moves possible writes on login (person sync) out of
   the parallel phase.
-* To be checked: whether the server session holds UI state (selected year, filters). Then parallel tests of one role
-  would influence each other and need a login per worker.
-* To be checked: lazy creation on GET (e.g. a holiday account for another year). Two workers could create the same
-  data concurrently → duplicates or constraint violations. Trigger it once in the setup project or fix it in the
-  application.
-* The number of workers is limited by the single application instance and Postgres (default Hikari pool: 10
-  connections). Start with 4-6 workers.
+* Verified: the session holds only the security context and the CSRF token, no UI state. All tests of a role share
+  one login.
+* Verified: no lazy creation on GET (see 9.).
+* 4 workers, limited by the single application instance and the browser container. A full run takes about 2 minutes.
 * Sharding across CI machines (`--shard`) is postponed. Every shard needs its own application and database including
   demo data creation, which only pays off for long runs.
 
@@ -220,9 +264,9 @@ distributes single tests to free workers, no manual bucketing.
 * Start with **desktop and mobile, light theme**, as variants per role project.
 * **Dark theme must be covered** at the end, as a third variant once the setup is stable.
 * The theme is a user setting (`system`, `light`, `dark`). With `system`, `prefers-color-scheme` decides
-  (`_layout.html`). So the variants can use Playwright's `colorScheme: 'light' | 'dark'` without changing user
-  settings in the database - assuming the demo persons use `system`, to be verified. Set `colorScheme` explicitly in
-  any case.
+  (`_layout.html`). Verified: the default is `system` (`UserSettings.DEFAULT`), so the variants can use Playwright's
+  `colorScheme: 'light' | 'dark'` without changing user settings in the database. `colorScheme: 'light'` is set
+  explicitly.
 
 ### 13. Baselines in Git LFS
 
@@ -235,13 +279,18 @@ global UI change rewrites nearly all of them. In plain git, the repository would
 * Regular CI builds check out without `lfs: true` and get pointer files only, no LFS bandwidth is used.
 * Contributors without `git-lfs` get pointer files as well, which is harmless since the tests are not part of the
   regular build.
+* `core.hooksPath` points to the tracked `.githooks`, so git lfs cannot install its `pre-push` hook. `.githooks/pre-push`
+  calls `git lfs pre-push` and is skipped without git-lfs. Without it, a push would upload pointers but no PNGs.
+* The initial 322 baselines are about 27 MB.
 
 ### 14. Manual execution only
 
 Visual regression tests never run automatically.
 
-* CI: a separate workflow with `workflow_dispatch` only. Not part of `build.yml`, not triggered by pull requests or
-  pushes.
+* CI: `.github/workflows/visual-regression-tests.yml` with `workflow_dispatch` only. Not part of `build.yml`, not
+  triggered by pull requests or pushes. It checks out with LFS, starts application and browser server, runs with
+  `CI=true` (`updateSnapshots: 'none'`) and uploads report, results and logs as artifact. Baselines are created locally
+  with `-u`, the pixels are the same since the browser runs in the same container.
 * Local: only by an explicit command. Not part of the Maven build and not part of `npm test` (vitest must not pick up
   the Playwright specs).
 * Discovery is blocking for the manual run, not for pull requests.
@@ -251,9 +300,10 @@ Visual regression tests never run automatically.
 * `@playwright/test` is a devDependency of the existing `package.json`, the tests live in `src/test/visual/`, started
   via an npm script like `test:visual`. One Node project for a better developer experience.
 * The normal build stays unaffected apart from installing the package: `npm run lint` and vitest only cover
-  `src/main/javascript`. To be verified: `npm ci` does not download browsers (they live in the container anyway).
-* The version is pinned exactly, like all other dependencies. Client and container image must use the same Playwright
-  version, so the start script derives the image tag from the version in `package.json`. A dependency update moves both.
+  `src/main/javascript`. Verified: `npm install` does not download browsers (they live in the container anyway).
+* The version is pinned exactly, like all other dependencies: `1.63.0` (1.64.0 was released only days before).
+  Client and container image must use the same Playwright version, so `browser-server.mjs` derives the image tag
+  (`mcr.microsoft.com/playwright:v<version>-noble`) from `package.json`. A dependency update moves both.
 
 ### 16. Screenshot settings
 
@@ -265,22 +315,22 @@ Visual regression tests never run automatically.
 
 ## Status
 
-| Topic                                       | Status          |
-|---------------------------------------------|-----------------|
-| Fixed application clock (`visualtest`)      | implemented     |
-| Deterministic personnel numbers             | implemented     |
-| Fixed version `1.33.7` in `visualtest`      | open            |
-| Git LFS for baselines (`.gitattributes`)    | open            |
-| Manual CI workflow (`workflow_dispatch`)    | open            |
-| Enable readiness probe if needed            | open            |
-| Playwright setup (clock, timezone, locale)  | open            |
-| Remote browser in pinned container          | open            |
-| Verify Keycloak login via `exposeNetwork`   | open            |
-| Fresh database (compose `down -v`)          | open            |
-| Page discovery and manifest                 | open            |
-| Projects per role and variant, setup login  | open            |
-| Desktop and mobile, light theme             | open            |
-| Dark theme                                  | open, required  |
+| Topic                                       | Status                         |
+|---------------------------------------------|--------------------------------|
+| Fixed application clock (`visualtest`)      | implemented                    |
+| Deterministic personnel numbers             | implemented                    |
+| Fixed version `1.33.7` in `visualtest`      | implemented                    |
+| Fresh database (compose `down -v`)          | implemented, verified          |
+| Readiness probe                             | implemented, verified          |
+| Remote browser in pinned container          | implemented                    |
+| Keycloak login via `exposeNetwork`          | verified                       |
+| Playwright setup (clock, timezone, locale)  | implemented                    |
+| Page discovery and manifest                 | implemented                    |
+| Screenshot tests, desktop and mobile light  | implemented, 322 baselines     |
+| Git LFS for baselines, pre-push hook        | implemented                    |
+| Manual CI workflow (`workflow_dispatch`)    | implemented, not yet run on CI |
+| Dark theme                                  | open, required                 |
+| Hand-written tests for UI states            | open                           |
 
 ## Future improvements
 
