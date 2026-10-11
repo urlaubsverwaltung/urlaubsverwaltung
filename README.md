@@ -415,6 +415,21 @@ git config core.hooksPath '.githooks'
 
 Die Git-Hooks sind im [.githooks](.githooks/) Verzeichnis zu finden.
 
+### Git LFS (für Visual Regression Tests)
+
+Die Baselines der [Visual Regression Tests](docs/visual-regression-tests.md) liegen in [Git LFS](https://git-lfs.com).
+Wer an den Visual Regression Tests arbeitet oder Baselines ändert, benötigt Git LFS. Für alle anderen ist es nicht
+notwendig, ohne Git LFS werden nur Platzhalter-Dateien ausgecheckt, die der normale Build nicht verwendet.
+
+```bash
+git lfs install
+git lfs pull
+```
+
+`git lfs install` richtet den `pre-push` Hook ein, der die Baselines beim Push hochlädt. Wer die git hooks des
+Projekts nutzt (`core.hooksPath`), dem hilft dieser nicht, git ignoriert dann `.git/hooks`. Dafür gibt es
+[.githooks/pre-push](.githooks/pre-push), der das Hochladen übernimmt.
+
 ### Anwendung starten
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
