@@ -6,9 +6,14 @@ import { readFileSync } from "node:fs";
  */
 export function readFixedInstant() {
   const profile = readFileSync(new URL("../../main/resources/application-visualtest.yaml", import.meta.url), "utf8");
-  const match = profile.match(/^\s*fixed-instant:\s*(\S+)\s*$/m);
+  // optionally quoted, optionally followed by a comment
+  const match = profile.match(/^\s*fixed-instant:\s*(["']?)([^"'\s#]+)\1\s*(#.*)?$/m);
   if (!match) {
     throw new Error("could not read 'uv.development.clock.fixed-instant' from application-visualtest.yaml");
   }
-  return match[1];
+  const fixedInstant = match[2];
+  if (Number.isNaN(Date.parse(fixedInstant))) {
+    throw new TypeError(`'uv.development.clock.fixed-instant' is no valid instant: ${fixedInstant}`);
+  }
+  return fixedInstant;
 }
