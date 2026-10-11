@@ -44,11 +44,18 @@ function isCrawlable(url, origin) {
 
 async function crawl(page, origin) {
   const discovered = new Map();
-  const knownPatterns = new Set();
-  const queue = [{ url: "/web/overview", depth: 0 }];
+  const start = "/web/overview";
+  const queuedUrls = new Set([start]);
+  const queue = [{ url: start, depth: 0 }];
 
   while (queue.length > 0) {
     const { url, depth } = queue.shift();
+
+    // a pattern counts as discovered only once one of its urls loaded successfully. until then further urls of the
+    // same pattern stay in the queue, so a single failing url does not drop the page from the manifest.
+    if (discovered.has(toPattern(url))) {
+      continue;
+    }
 
     let response;
     try {
@@ -70,7 +77,6 @@ async function crawl(page, origin) {
     if (discovered.has(finalPattern)) {
       continue;
     }
-    knownPatterns.add(finalPattern);
     discovered.set(finalPattern, finalUrl.pathname);
 
     if (depth >= MAX_DEPTH) {
@@ -87,9 +93,8 @@ async function crawl(page, origin) {
       .toSorted();
 
     for (const link of links) {
-      const pattern = toPattern(link);
-      if (!knownPatterns.has(pattern)) {
-        knownPatterns.add(pattern);
+      if (!queuedUrls.has(link) && !discovered.has(toPattern(link))) {
+        queuedUrls.add(link);
         queue.push({ url: link, depth: depth + 1 });
       }
     }
