@@ -21,7 +21,6 @@ import { authFile, roles } from "./roles.mjs";
 // | changed (-u)    | add new pages, remove stale pages and screenshots       |
 // | all             | rebuild the manifest, keep 'ignored' decisions          |
 
-const ORIGIN = "http://localhost:8080";
 const MAX_DEPTH = 5;
 
 const EXCLUDED = [
@@ -37,13 +36,13 @@ const EXCLUDED = [
   /^\/web\/google-api-handshake$/,
 ];
 
-function isCrawlable(url) {
+function isCrawlable(url, origin) {
   return (
-    url.origin === ORIGIN && url.pathname.startsWith("/web") && !EXCLUDED.some((regex) => regex.test(url.pathname))
+    url.origin === origin && url.pathname.startsWith("/web") && !EXCLUDED.some((regex) => regex.test(url.pathname))
   );
 }
 
-async function crawl(page) {
+async function crawl(page, origin) {
   const discovered = new Map();
   const knownPatterns = new Set();
   const queue = [{ url: "/web/overview", depth: 0 }];
@@ -82,7 +81,7 @@ async function crawl(page) {
     const hrefs = await page.$$eval("a[href]", (anchors) => anchors.map((anchor) => anchor.href));
     const links = [...new Set(hrefs)]
       .map((href) => new URL(href))
-      .filter((link) => isCrawlable(link))
+      .filter((link) => isCrawlable(link, origin))
       // query parameters only filter data, the fragment does not address another page
       .map((link) => link.pathname)
       .sort();
@@ -127,12 +126,12 @@ for (const role of roles) {
   test.describe(role.name, () => {
     test.use({ storageState: authFile(role) });
 
-    test(`discover pages of ${role.name}`, async ({ page }) => {
+    test(`discover pages of ${role.name}`, async ({ page, baseURL }) => {
       test.setTimeout(15 * 60 * 1000);
 
       const mode = test.info().config.updateSnapshots;
       const manifest = loadManifest(role);
-      const discovered = await crawl(page);
+      const discovered = await crawl(page, new URL(baseURL).origin);
 
       const newPatterns = [...discovered.keys()].filter((pattern) => !(pattern in manifest));
       const removedPatterns = Object.keys(manifest).filter((pattern) => !discovered.has(pattern));
