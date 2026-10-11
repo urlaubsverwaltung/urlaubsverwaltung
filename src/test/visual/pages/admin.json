@@ -1,0 +1,66 @@
+{
+  "/web/absences": {
+    "url": "/web/absences",
+    "status": "covered"
+  },
+  "/web/application": {
+    "url": "/web/application",
+    "status": "covered"
+  },
+  "/web/application/new": {
+    "url": "/web/application/new",
+    "status": "covered"
+  },
+  "/web/application/replacement": {
+    "url": "/web/application/replacement",
+    "status": "covered"
+  },
+  "/web/calendars/share/persons/{id}": {
+    "url": "/web/calendars/share/persons/6",
+    "status": "covered"
+  },
+  "/web/overtime": {
+    "url": "/web/overtime",
+    "status": "covered"
+  },
+  "/web/overtime/new": {
+    "url": "/web/overtime/new",
+    "status": "covered"
+  },
+  "/web/person/{id}": {
+    "url": "/web/person/6",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications": {
+    "url": "/web/person/6/notifications",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications/departments": {
+    "url": "/web/person/6/notifications/departments",
+    "status": "covered"
+  },
+  "/web/person/{id}/overview": {
+    "url": "/web/person/6/overview",
+    "status": "covered"
+  },
+  "/web/person/{id}/settings": {
+    "url": "/web/person/6/settings",
+    "status": "covered"
+  },
+  "/web/persons/{id}/applications": {
+    "url": "/web/persons/6/applications",
+    "status": "covered"
+  },
+  "/web/persons/{id}/sicknotes": {
+    "url": "/web/persons/6/sicknotes",
+    "status": "covered"
+  },
+  "/web/persons/me/applications/statistics": {
+    "url": "/web/persons/me/applications/statistics",
+    "status": "covered"
+  },
+  "/web/sicknote/new": {
+    "url": "/web/sicknote/new",
+    "status": "covered"
+  }
+}

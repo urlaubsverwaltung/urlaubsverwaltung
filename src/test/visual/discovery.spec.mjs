@@ -1,0 +1,174 @@
+import { rmSync } from "node:fs";
+import { expect, test } from "./fixtures.mjs";
+import {
+  existingScreenshots,
+  loadManifest,
+  manifestFile,
+  saveManifest,
+  screenshotDirectory,
+  screenshotName,
+  toPattern,
+} from "./manifest.mjs";
+import { authFile, roles } from "./roles.mjs";
+
+// Crawls the application per role and compares the discovered pages with the committed manifest - just like
+// snapshot tests: new or removed pages fail the test, '-u' updates the manifest.
+//
+// | updateSnapshots | manifest                                                |
+// |-----------------|---------------------------------------------------------|
+// | none            | new or removed pages, orphaned screenshots -> fail      |
+// | missing         | add new pages (and fail), removed pages -> fail         |
+// | changed (-u)    | add new pages, remove stale pages and screenshots       |
+// | all             | rebuild the manifest, keep 'ignored' decisions          |
+
+const ORIGIN = "http://localhost:8080";
+const MAX_DEPTH = 5;
+
+const EXCLUDED = [
+  // not part of the web ui
+  /^\/api(\/|$)/,
+  /^\/actuator(\/|$)/,
+  /^\/logout$/,
+  // downloads: csv exports and ical feeds
+  /\/download$/,
+  /\/export$/,
+  /^\/web\/(company\/|departments\/\d+\/)?persons\/\d+\/calendar$/,
+  // redirects to google
+  /^\/web\/google-api-handshake$/,
+];
+
+function isCrawlable(url) {
+  return (
+    url.origin === ORIGIN && url.pathname.startsWith("/web") && !EXCLUDED.some((regex) => regex.test(url.pathname))
+  );
+}
+
+async function crawl(page) {
+  const discovered = new Map();
+  const knownPatterns = new Set();
+  const queue = [{ url: "/web/overview", depth: 0 }];
+
+  while (queue.length > 0) {
+    const { url, depth } = queue.shift();
+
+    let response;
+    try {
+      response = await page.goto(url);
+    } catch (error) {
+      console.warn(`skipping ${url}: ${error.message.split("\n")[0]}`);
+      continue;
+    }
+
+    const contentType = response?.headers()["content-type"] ?? "";
+    if (!response?.ok() || !contentType.includes("text/html")) {
+      console.warn(`skipping ${url}: status ${response?.status()}, content type '${contentType}'`);
+      continue;
+    }
+
+    // redirects are recorded with their target, e.g. '/web/overview' is the overview of the logged in person
+    const finalUrl = new URL(page.url());
+    const finalPattern = toPattern(finalUrl.pathname);
+    if (discovered.has(finalPattern)) {
+      continue;
+    }
+    knownPatterns.add(finalPattern);
+    discovered.set(finalPattern, finalUrl.pathname);
+
+    if (depth >= MAX_DEPTH) {
+      continue;
+    }
+
+    await page.waitForLoadState("networkidle");
+    const hrefs = await page.$$eval("a[href]", (anchors) => anchors.map((anchor) => anchor.href));
+    const links = [...new Set(hrefs)]
+      .map((href) => new URL(href))
+      .filter((link) => isCrawlable(link))
+      // query parameters only filter data, the fragment does not address another page
+      .map((link) => link.pathname)
+      .sort();
+
+    for (const link of links) {
+      const pattern = toPattern(link);
+      if (!knownPatterns.has(pattern)) {
+        knownPatterns.add(pattern);
+        queue.push({ url: link, depth: depth + 1 });
+      }
+    }
+  }
+
+  return discovered;
+}
+
+function updateManifest(manifest, discovered, mode) {
+  if (mode === "all") {
+    return Object.fromEntries(
+      [...discovered].map(([pattern, url]) => {
+        const previous = manifest[pattern];
+        return [pattern, previous?.status === "ignored" ? previous : { url, status: "covered" }];
+      }),
+    );
+  }
+
+  const updated = { ...manifest };
+  for (const [pattern, url] of discovered) {
+    updated[pattern] ??= { url, status: "covered" };
+  }
+  if (mode === "changed") {
+    for (const pattern of Object.keys(updated)) {
+      if (!discovered.has(pattern)) {
+        delete updated[pattern];
+      }
+    }
+  }
+  return updated;
+}
+
+for (const role of roles) {
+  test.describe(role.name, () => {
+    test.use({ storageState: authFile(role) });
+
+    test(`discover pages of ${role.name}`, async ({ page }) => {
+      test.setTimeout(15 * 60 * 1000);
+
+      const mode = test.info().config.updateSnapshots;
+      const manifest = loadManifest(role);
+      const discovered = await crawl(page);
+
+      const newPatterns = [...discovered.keys()].filter((pattern) => !(pattern in manifest));
+      const removedPatterns = Object.keys(manifest).filter((pattern) => !discovered.has(pattern));
+
+      if (mode !== "none") {
+        const updated = updateManifest(manifest, discovered, mode);
+        if (JSON.stringify(updated) !== JSON.stringify(manifest)) {
+          saveManifest(role, updated);
+        }
+      }
+
+      const expectedScreenshots = new Set(
+        Object.entries(loadManifest(role))
+          .filter(([, entry]) => entry.status === "covered")
+          .map(([pattern]) => screenshotName(role, pattern)),
+      );
+      const orphanedScreenshots = existingScreenshots(role).filter(({ name }) => !expectedScreenshots.has(name));
+      if (mode === "changed" || mode === "all") {
+        for (const { project, name } of orphanedScreenshots) {
+          rmSync(`${screenshotDirectory}/${project}/${name}`);
+        }
+      }
+
+      const updatesAccepted = mode === "changed" || mode === "all";
+      const problems = [
+        ...(updatesAccepted ? [] : newPatterns.map((pattern) => `new page: ${pattern}`)),
+        ...(updatesAccepted ? [] : removedPatterns.map((pattern) => `removed page: ${pattern}`)),
+        ...(updatesAccepted
+          ? []
+          : orphanedScreenshots.map(({ project, name }) => `orphaned screenshot: ${project}/${name}`)),
+      ];
+
+      expect(
+        problems,
+        `pages of ${role.name} differ from ${manifestFile(role)}${mode === "missing" ? " (new pages have been added)" : ""}, run with -u to accept`,
+      ).toEqual([]);
+    });
+  });
+}

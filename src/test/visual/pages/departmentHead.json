@@ -1,0 +1,98 @@
+{
+  "/web/absence/statistics": {
+    "url": "/web/absence/statistics",
+    "status": "covered"
+  },
+  "/web/absences": {
+    "url": "/web/absences",
+    "status": "covered"
+  },
+  "/web/application": {
+    "url": "/web/application",
+    "status": "covered"
+  },
+  "/web/application/{id}": {
+    "url": "/web/application/28",
+    "status": "covered"
+  },
+  "/web/application/new": {
+    "url": "/web/application/new",
+    "status": "covered"
+  },
+  "/web/application/replacement": {
+    "url": "/web/application/replacement",
+    "status": "covered"
+  },
+  "/web/application/statistics": {
+    "url": "/web/application/statistics",
+    "status": "covered"
+  },
+  "/web/calendars/share/persons/{id}": {
+    "url": "/web/calendars/share/persons/2",
+    "status": "covered"
+  },
+  "/web/overtime": {
+    "url": "/web/overtime",
+    "status": "covered"
+  },
+  "/web/overtime/new": {
+    "url": "/web/overtime/new",
+    "status": "covered"
+  },
+  "/web/overtime/statistics": {
+    "url": "/web/overtime/statistics",
+    "status": "covered"
+  },
+  "/web/person": {
+    "url": "/web/person",
+    "status": "covered"
+  },
+  "/web/person/{id}": {
+    "url": "/web/person/2",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications": {
+    "url": "/web/person/2/notifications",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications/departments": {
+    "url": "/web/person/2/notifications/departments",
+    "status": "covered"
+  },
+  "/web/person/{id}/overview": {
+    "url": "/web/person/2/overview",
+    "status": "covered"
+  },
+  "/web/person/{id}/settings": {
+    "url": "/web/person/2/settings",
+    "status": "covered"
+  },
+  "/web/persons/{id}/applications": {
+    "url": "/web/persons/2/applications",
+    "status": "covered"
+  },
+  "/web/persons/{id}/sicknotes": {
+    "url": "/web/persons/2/sicknotes",
+    "status": "covered"
+  },
+  "/web/persons/me/applications/statistics": {
+    "url": "/web/persons/me/applications/statistics",
+    "status": "covered"
+  },
+  "/web/sickdays": {
+    "url": "/web/sickdays",
+    "status": "covered"
+  },
+  "/web/sicknote/{id}": {
+    "url": "/web/sicknote/19",
+    "status": "covered"
+  },
+  "/web/sicknote/new": {
+    "url": "/web/sicknote/new",
+    "status": "covered"
+  },
+  "/web/sicknote/statistics": {
+    "url": "/web/sicknote/statistics",
+    "status": "covered"
+  }
+}
