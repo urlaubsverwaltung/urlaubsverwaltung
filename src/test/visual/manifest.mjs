@@ -42,12 +42,16 @@ export function toPattern(pathname) {
 }
 
 /**
- * Name of the screenshot of the given pattern and role, relative to the project directory of the screenshots.
- * '/web/person/{id}/overview' -> 'office/web_person_id_overview.png'
+ * Name of the screenshot of the given pattern and role as path segments, relative to the project directory of the
+ * screenshots. Playwright replaces everything but letters, digits and '-' in file names, so the slug consists of those
+ * only. '/web/person/{id}/overview' -> ['office', 'web-person-id-overview.png']
  */
 export function screenshotName(role, pattern) {
-  const slug = pattern.replace(/^\//, "").replaceAll(/[{}]/g, "").replaceAll("/", "_");
-  return `${role.name}/${slug}.png`;
+  const slug = pattern
+    .replace(/^\//, "")
+    .replaceAll(/[{}]/g, "")
+    .replaceAll(/[^A-Za-z0-9-]+/g, "-");
+  return [role.name, `${slug}.png`];
 }
 
 /**
@@ -67,6 +71,6 @@ export function existingScreenshots(role) {
       }
       return readdirSync(roleDirectory)
         .filter((file) => file.endsWith(".png"))
-        .map((file) => ({ project: projectDirectory.name, name: `${role.name}/${file}` }));
+        .map((file) => ({ project: projectDirectory.name, name: [role.name, file] }));
     });
 }
