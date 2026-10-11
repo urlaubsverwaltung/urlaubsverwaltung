@@ -1,0 +1,8 @@
+# Use together with the 'demodata' profile: -Dspring.profiles.active=demodata,visualtest
+# Freezes the application time so that demo data and everything relative to 'today' is stable for screenshots.
+uv:
+  development:
+    clock:
+      # A wednesday mid-september: no public holidays in the demo data range (today -40 days up to +16 days),
+      # and all demo applications for leave stay in the current year.
+      fixed-instant: 2026-09-16T09:00:00Z
