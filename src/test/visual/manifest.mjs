@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 // The manifest is the golden master of the pages to verify, one file per role:
 // { "<url pattern>": { "url": "<example url>", "status": "covered" | "ignored", "reason": "<why ignored>" } }
 
-const visualTestDirectory = dirname(fileURLToPath(import.meta.url));
+const visualTestDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const screenshotDirectory = `${visualTestDirectory}/__screenshots__`;
 
 export function manifestFile(role) {
@@ -19,8 +19,8 @@ export function loadManifest(role) {
 
 export function saveManifest(role, manifest) {
   const file = manifestFile(role);
-  mkdirSync(dirname(file), { recursive: true });
-  const sorted = Object.fromEntries(Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b)));
+  mkdirSync(path.dirname(file), { recursive: true });
+  const sorted = Object.fromEntries(Object.entries(manifest).toSorted(([a], [b]) => a.localeCompare(b)));
   writeFileSync(file, JSON.stringify(sorted, undefined, 2) + "\n");
 }
 

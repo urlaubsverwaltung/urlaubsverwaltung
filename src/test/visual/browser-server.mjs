@@ -10,7 +10,7 @@ const packageJson = JSON.parse(readFileSync(new URL("../../../package.json", imp
 const version = packageJson.devDependencies["@playwright/test"];
 const port = process.env.PLAYWRIGHT_SERVER_PORT ?? "3000";
 
-const args = [
+const dockerArguments = [
   "run",
   "--rm",
   "--init",
@@ -29,8 +29,10 @@ const args = [
 ];
 
 console.log(`starting playwright ${version} browser server on port ${port}`);
-const docker = spawn("docker", args, { stdio: "inherit" });
-docker.on("exit", (code) => process.exit(code ?? 0));
+const docker = spawn("docker", dockerArguments, { stdio: "inherit" });
+docker.on("exit", (code) => {
+  process.exitCode = code ?? 0;
+});
 for (const signal of ["SIGINT", "SIGTERM"]) {
   process.on(signal, () => docker.kill(signal));
 }

@@ -84,7 +84,7 @@ async function crawl(page, origin) {
       .filter((link) => isCrawlable(link, origin))
       // query parameters only filter data, the fragment does not address another page
       .map((link) => link.pathname)
-      .sort();
+      .toSorted();
 
     for (const link of links) {
       const pattern = toPattern(link);
