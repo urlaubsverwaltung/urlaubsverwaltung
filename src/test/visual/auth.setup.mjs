@@ -13,7 +13,8 @@ for (const role of roles) {
     await page.fill("#username", role.username);
     await page.fill("#password", password);
     await page.click("#kc-login");
-    await page.waitForURL("http://localhost:8080/web/**");
+    // relative to baseURL, the keycloak login page is on another origin
+    await page.waitForURL("/web/**");
     await page.context().storageState({ path: authFile(role) });
   });
 }
