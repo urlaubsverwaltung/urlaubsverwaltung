@@ -1,24 +1,16 @@
-import { rmSync } from "node:fs";
 import { expect, test } from "./fixtures.mjs";
-import {
-  existingScreenshots,
-  loadManifest,
-  manifestFile,
-  saveManifest,
-  screenshotDirectory,
-  screenshotName,
-  toPattern,
-} from "./manifest.mjs";
+import { loadManifest, manifestFile, saveManifest, toPattern } from "./manifest.mjs";
 import { authFile, roles } from "./roles.mjs";
 
 // Crawls the application per role and compares the discovered pages with the committed manifest - just like
-// snapshot tests: new or removed pages fail the test, '-u' updates the manifest.
+// snapshot tests: new or removed pages fail the test, '-u' updates the manifest. Orphaned screenshots are handled by
+// screenshots.teardown.mjs, after all screenshot tests have finished.
 //
 // | updateSnapshots | manifest                                                |
 // |-----------------|---------------------------------------------------------|
-// | none            | new or removed pages, orphaned screenshots -> fail      |
-// | missing         | add new pages (and fail), removed pages -> fail         |
-// | changed (-u)    | add new pages, remove stale pages and screenshots       |
+// | none            | new or removed pages -> fail                            |
+// | missing         | add new pages, new or removed pages -> fail             |
+// | changed (-u)    | add new pages, remove stale pages                       |
 // | all             | rebuild the manifest, keep 'ignored' decisions          |
 
 const MAX_DEPTH = 5;
@@ -148,38 +140,18 @@ for (const role of roles) {
         }
       }
 
-      const patternsByScreenshot = Map.groupBy(
-        Object.entries(loadManifest(role))
-          .filter(([, entry]) => entry.status === "covered")
-          .map(([pattern]) => pattern),
-        (pattern) => screenshotName(role, pattern).join("/"),
-      );
-      const collisions = [...patternsByScreenshot.values()].filter((patterns) => patterns.length > 1);
-
-      const orphanedScreenshots = existingScreenshots(role).filter(
-        ({ name }) => !patternsByScreenshot.has(name.join("/")),
-      );
-      if (mode === "changed" || mode === "all") {
-        for (const { project, name } of orphanedScreenshots) {
-          rmSync(`${screenshotDirectory}/${project}/${name.join("/")}`);
-        }
-      }
-
       const updatesAccepted = mode === "changed" || mode === "all";
-      const problems = [
-        ...(updatesAccepted ? [] : newPatterns.map((pattern) => `new page: ${pattern}`)),
-        ...(updatesAccepted ? [] : removedPatterns.map((pattern) => `removed page: ${pattern}`)),
-        ...(updatesAccepted
-          ? []
-          : orphanedScreenshots.map(({ project, name }) => `orphaned screenshot: ${project}/${name.join("/")}`)),
-        // never accepted, two pages would share one screenshot
-        ...collisions.map((patterns) => `pages with the same screenshot name: ${patterns.join(", ")}`),
-      ];
+      const problems = updatesAccepted
+        ? []
+        : [
+            ...newPatterns.map((pattern) => `new page: ${pattern}`),
+            ...removedPatterns.map((pattern) => `removed page: ${pattern}`),
+          ];
 
-      expect(
-        problems,
-        `pages of ${role.name} differ from ${manifestFile(role)}${mode === "missing" ? " (new pages have been added)" : ""}, run with -u to accept`,
-      ).toEqual([]);
+      const hint = mode === "missing" && newPatterns.length > 0 ? " (new pages have been added)" : "";
+      expect(problems, `pages of ${role.name} differ from ${manifestFile(role)}${hint}, run with -u to accept`).toEqual(
+        [],
+      );
     });
   });
 }

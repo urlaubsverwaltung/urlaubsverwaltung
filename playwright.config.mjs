@@ -57,7 +57,9 @@ export default defineConfig({
     colorScheme: "light",
   },
   projects: [
-    { name: "setup", testMatch: /auth\.setup\.mjs/ },
+    // the teardown runs after setup and all projects depending on it
+    { name: "setup", testMatch: /auth\.setup\.mjs/, teardown: "screenshots" },
+    { name: "screenshots", testMatch: /screenshots\.teardown\.mjs/ },
     {
       name: "discovery",
       testMatch: /discovery\.spec\.mjs/,
