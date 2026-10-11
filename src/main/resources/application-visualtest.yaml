@@ -1,8 +1,28 @@
 # Use together with the 'demodata' profile: -Dspring.profiles.active=demodata,visualtest
-# Freezes the application time so that demo data and everything relative to 'today' is stable for screenshots.
+# Stable environment for visual regression tests, see docs/visual-regression-tests.md
 uv:
   development:
     clock:
       # A wednesday mid-september: no public holidays in the demo data range (today -40 days up to +16 days),
       # and all demo applications for leave stay in the current year.
       fixed-instant: 2026-09-16T09:00:00Z
+
+info:
+  app:
+    # rendered in the footer, must not change with every release
+    version: 1.33.7
+
+spring:
+  docker:
+    compose:
+      stop:
+        # remove containers and volumes on shutdown, so every run starts with an empty database
+        command: down
+        arguments: -v
+
+management:
+  endpoint:
+    health:
+      probes:
+        # tests must wait for readiness, demo data is created while tomcat already accepts requests
+        enabled: true
