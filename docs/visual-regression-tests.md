@@ -16,18 +16,42 @@ there and the open points for future improvements.
 
 Requirements: Docker and Git LFS (`git lfs install` once, then `git lfs pull` to get the baselines).
 
+### With Maven
+
 ```bash
-# 1. application with an empty database (docker compose down -v, then spring-boot:run with demodata,visualtest)
-npm run test:visual:app
+./mvnw verify -Pvisual-test                          # compare
+./mvnw verify -Pvisual-test -Dvisual-test.args=-u    # accept new and changed pages and screenshots
+```
 
-# 2. browser server in the pinned linux container
-npm run test:visual:browser
+The profile `visual-test` does everything in one go:
 
-# 3. once the application is ready (http://localhost:8081/actuator/health/readiness)
+| Phase                   | What                                                                                   |
+|-------------------------|----------------------------------------------------------------------------------------|
+| (like `ui-test`)        | skips unit tests, integration tests, JavaScript linting and tests                      |
+| `package`               | `docker compose down -v`, also after a killed previous run; resets the last result     |
+| `pre-integration-test`  | `spring-boot:start` with `demodata,visualtest`, waits until ready (demo data created)  |
+| `integration-test`      | `npm run test:visual`, failures do not stop the build yet                              |
+| `post-integration-test` | `spring-boot:stop`, graceful shutdown removes compose containers and volumes           |
+| `verify`                | fails the build if the playwright run failed (`target/visual-tests/results/.last-run.json`) |
+
+Failures must not stop the build in `integration-test`, otherwise Maven would skip `spring-boot:stop` and the
+application and containers would keep running. A full run takes about 3 minutes, including build and startup.
+
+### Iterating locally
+
+Maven builds and starts the application on every run. While working on the UI, keep the application running and run
+the tests directly:
+
+```bash
+docker compose down -v
+./mvnw spring-boot:run -Dspring-boot.run.profiles=demodata,visualtest
+
+# once the application is ready (http://localhost:8081/actuator/health/readiness)
 npm run test:visual            # compare
 npm run test:visual -- -u      # accept new and changed pages and screenshots
 ```
 
+* The browser server in the pinned container is started by playwright (`webServer`) and reused if already running.
 * Run a single variant or role: `npm run test:visual -- --project=desktop --grep office`
 * Report with expected, actual and diff images: `npx playwright show-report target/visual-tests/report`
 * New pages need two runs with `-u`: the first adds them to the manifest, the second creates their screenshots (see
@@ -44,7 +68,9 @@ The `visualtest` profile (`application-visualtest.yaml`) is meant to be used tog
 | Path                                   | Content                                                          |
 |----------------------------------------|------------------------------------------------------------------|
 | `playwright.config.mjs`                | remote browser, projects `setup`, `discovery`, `desktop`, `mobile` |
-| `src/test/visual/browser-server.mjs`   | starts the browser server, image tag from `package.json`         |
+| `pom.xml`, profile `visual-test`       | maven entry point                                                |
+| `src/test/visual/browser-server.mjs`   | browser server in the container, image tag from `package.json`, started by playwright `webServer` |
+| `src/test/visual/verify-last-run.mjs`  | fails the maven `verify` phase if the playwright run failed      |
 | `src/test/visual/auth.setup.mjs`       | logs in every demo role once, sessions in `target/visual-tests/auth` |
 | `src/test/visual/discovery.spec.mjs`   | crawler, compares with the manifests                             |
 | `src/test/visual/pages.spec.mjs`       | screenshot tests generated from the manifests                    |
@@ -88,7 +114,7 @@ in parallel and in any order. No reset between tests is needed.
 * Spring's docker compose support runs `docker compose stop` on shutdown by default, which keeps the Postgres container
   and its (anonymous) volume. The `visualtest` profile configures `spring.docker.compose.stop.command: down` with
   `stop.arguments: -v`. Verified: containers and volumes are removed on shutdown.
-* A killed application (cancelled CI run, hard kill) skips the shutdown hook, so `npm run test:visual:app` runs
+* A killed application (cancelled CI run, hard kill) skips the shutdown hook, so the Maven profile runs
   `docker compose down -v` beforehand as well.
 * Verified: after a restart with an empty database, all screenshots match without any update.
 * It is the same compose project as for local development: a visual test run wipes the local development database,
@@ -133,6 +159,8 @@ is rejected by the `@CronExpression` validation of the cron properties.
 Demo data is created on `LivenessState.CORRECT`, while Tomcat is already accepting requests. Tests must not start before
 the readiness probe `/actuator/health/readiness` (management port 8081) reports `UP`. Outside Kubernetes the probes are
 disabled by default, the `visualtest` profile enables them with `management.endpoint.health.probes.enabled: true`.
+The Maven profile does not need the probe: `spring-boot:start` waits until the application is ready, which is after the
+demo data has been created.
 
 ### 7. Rendering environment
 
@@ -288,11 +316,11 @@ global UI change rewrites nearly all of them. In plain git, the repository would
 Visual regression tests never run automatically.
 
 * CI: `.github/workflows/visual-regression-tests.yml` with `workflow_dispatch` only. Not part of `build.yml`, not
-  triggered by pull requests or pushes. It checks out with LFS, starts application and browser server, runs with
-  `CI=true` (`updateSnapshots: 'none'`) and uploads report, results and logs as artifact. Baselines are created locally
-  with `-u`, the pixels are the same since the browser runs in the same container.
-* Local: only by an explicit command. Not part of the Maven build and not part of `npm test` (vitest must not pick up
-  the Playwright specs).
+  triggered by pull requests or pushes. It checks out with LFS, runs `./mvnw verify -Pvisual-test` with `CI=true`
+  (`updateSnapshots: 'none'`, no reuse of a running browser server) and uploads report and results as artifact.
+  Baselines are created locally with `-u`, the pixels are the same since the browser runs in the same container.
+* Local: only by an explicit command. Not part of the default Maven build (profile `visual-test`) and not part of
+  `npm test` (vitest must not pick up the Playwright specs).
 * Discovery is blocking for the manual run, not for pull requests.
 
 ### 15. Location in the repository
