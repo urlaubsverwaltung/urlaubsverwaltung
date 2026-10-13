@@ -36,6 +36,7 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -655,4 +656,15 @@ class WorkDaysCountServiceTest {
         return workingTime;
     }
 
+    @Test
+    void ensureGetWorkDaysCountThrowsForDateRangeLongerThanTheMaximumCalculatedDuration() {
+        final Person person = new Person();
+        final LocalDate startDate = LocalDate.of(2000, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2101, JANUARY, 1);
+
+        assertThatThrownBy(() -> sut.getWorkDaysCount(FULL, startDate, endDate, person))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        verifyNoInteractions(workingTimeService);
+    }
 }

@@ -42,6 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
@@ -109,11 +110,14 @@ public class SickDaysOverviewViewController implements HasLaunchpad, HasPersonSe
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage;
         final List<SickDaysOverviewDto> sickDaysOverviewDtos;
 
-        boolean hasErrors = period.endDate().isBefore(period.startDate());
-        if (hasErrors) {
+        if (period.endDate().isBefore(period.startDate())) {
             sickDaysStatisticsPage = Page.empty(pageable);
             sickDaysOverviewDtos = List.of();
-            model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
+            model.addAttribute("errorPeriod", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
+        } else if (exceedsMaximumRequestedDuration(period.startDate(), period.endDate())) {
+            sickDaysStatisticsPage = Page.empty(pageable);
+            sickDaysOverviewDtos = List.of();
+            model.addAttribute("errorPeriod", "sicknotes.daysOverview.sickDays.error.periodTooLong");
         } else {
 
             final PageableSearchQuery searchQuery = new PageableSearchQuery(pageable, query);

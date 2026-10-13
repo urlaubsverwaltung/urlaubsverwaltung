@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -123,6 +124,18 @@ class WorkingTimeCalendarApiControllerTest {
             .param("length", "FULL"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
+    }
+
+    @Test
+    void ensureBadRequestForPeriodLongerThanThreeYears() throws Exception {
+
+        perform(get("/api/persons/23/workdays")
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31")
+            .param("length", "FULL"))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(personService, workDaysCountService);
     }
 
     @Test

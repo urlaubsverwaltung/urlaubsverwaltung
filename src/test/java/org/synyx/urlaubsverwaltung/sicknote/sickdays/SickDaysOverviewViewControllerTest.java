@@ -61,6 +61,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -176,8 +177,39 @@ class SickDaysOverviewViewControllerTest {
             .containsEntry("to", toDate)
             .containsEntry("sortSelect", expectedPersonSortSelect())
             .containsEntry("period", new FilterPeriod(fromDate, toDate))
-            .containsEntry("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate")
+            .containsEntry("errorPeriod", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate")
             .containsEntry("statisticsPagination", pagination);
+    }
+
+    @Test
+    void ensureErrorHandlingWhenPeriodIsLongerThanThreeYears() {
+
+        final Locale locale = Locale.GERMAN;
+
+        final String fromDateIsoString = "2026-01-01";
+        final LocalDate fromDate = LocalDate.parse(fromDateIsoString);
+
+        final String toDateIsoString = "+999999998-12-31";
+        final LocalDate toDate = LocalDate.parse(toDateIsoString);
+
+        when(dateFormatAware.parse(fromDateIsoString, locale)).thenReturn(Optional.of(fromDate));
+        when(dateFormatAware.parse(toDateIsoString, locale)).thenReturn(Optional.of(toDate));
+
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("from", fromDateIsoString)
+            .param("to", toDateIsoString)
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("period", new FilterPeriod(fromDate, toDate))
+            .containsEntry("errorPeriod", "sicknotes.daysOverview.sickDays.error.periodTooLong");
+
+        verifyNoInteractions(sickDaysStatisticsService);
     }
 
     @ParameterizedTest

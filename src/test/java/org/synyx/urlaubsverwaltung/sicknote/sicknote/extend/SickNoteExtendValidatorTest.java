@@ -13,11 +13,15 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -36,9 +40,44 @@ class SickNoteExtendValidatorTest {
     @Mock
     private Errors errors;
 
+    private final Clock clock = Clock.fixed(Instant.parse("2024-08-08T00:00:00.00Z"), UTC);
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteExtendValidator(sickNoteService, dateFormatAware);
+        sut = new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock);
+    }
+
+    @Test
+    void ensureEndDateTooFarInTheFutureIsRejected() {
+
+        final LocalDate sickNoteEndDate = LocalDate.of(2024, AUGUST, 8);
+        final SickNote sickNote = SickNote.builder().id(1L).endDate(sickNoteEndDate).build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        final SickNoteExtendDto dto = new SickNoteExtendDto();
+        dto.setSickNoteId(1L);
+        dto.setEndDate(LocalDate.of(999_999_998, DECEMBER, 31));
+
+        sut.validate(dto, errors);
+
+        verify(errors).rejectValue("endDate", "error.entry.tooFarInTheFuture");
+        verify(errors).rejectValue("extendToDate", "error.entry.tooFarInTheFuture");
+    }
+
+    @Test
+    void ensureEndDateTwoYearsInTheFutureIsValid() {
+
+        final LocalDate sickNoteEndDate = LocalDate.of(2024, AUGUST, 8);
+        final SickNote sickNote = SickNote.builder().id(1L).endDate(sickNoteEndDate).build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        final SickNoteExtendDto dto = new SickNoteExtendDto();
+        dto.setSickNoteId(1L);
+        dto.setEndDate(LocalDate.of(2026, AUGUST, 8));
+
+        sut.validate(dto, errors);
+
+        verifyNoInteractions(errors);
     }
 
     @Test

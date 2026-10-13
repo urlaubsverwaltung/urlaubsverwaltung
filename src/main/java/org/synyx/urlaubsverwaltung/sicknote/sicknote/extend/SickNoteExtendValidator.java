@@ -7,19 +7,25 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 
+import java.time.Clock;
 import java.time.LocalDate;
+
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
 
 @Component
 class SickNoteExtendValidator implements Validator {
 
     private static final String ERROR_ENDDATE_FUTURE = "sicknote.extend.validation.constraints.end-date.future.message";
+    private static final String ERROR_TOO_FAR_IN_THE_FUTURE = "error.entry.tooFarInTheFuture";
 
     private final SickNoteService sickNoteService;
     private final DateFormatAware dateFormatAware;
+    private final Clock clock;
 
-    SickNoteExtendValidator(SickNoteService sickNoteService, DateFormatAware dateFormatAware) {
+    SickNoteExtendValidator(SickNoteService sickNoteService, DateFormatAware dateFormatAware, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.dateFormatAware = dateFormatAware;
+        this.clock = clock;
     }
 
     @Override
@@ -45,6 +51,9 @@ class SickNoteExtendValidator implements Validator {
             // input field of custom date
             // use this to ease handling of css error class
             errors.rejectValue("extendToDate", ERROR_ENDDATE_FUTURE, args, "");
+        } else if (isTooFarInTheFuture(nextEndDate, clock)) {
+            errors.rejectValue("endDate", ERROR_TOO_FAR_IN_THE_FUTURE);
+            errors.rejectValue("extendToDate", ERROR_TOO_FAR_IN_THE_FUTURE);
         }
     }
 

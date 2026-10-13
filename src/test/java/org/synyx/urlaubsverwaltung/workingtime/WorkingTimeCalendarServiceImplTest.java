@@ -31,9 +31,11 @@ import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
 import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -552,5 +554,18 @@ class WorkingTimeCalendarServiceImplTest {
         entity.setSunday(sunday);
         entity.setFederalStateOverride(federalState);
         return entity;
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsThrowsForDateRangeLongerThanTheMaximumCalculatedDuration() {
+        final Person person = new Person();
+        person.setId(1L);
+        final DateRange dateRange = new DateRange(LocalDate.of(2000, JANUARY, 1), LocalDate.of(2101, JANUARY, 1));
+        final List<Person> persons = List.of(person);
+
+        assertThatThrownBy(() -> sut.getWorkingTimesByPersons(persons, dateRange))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        verifyNoInteractions(workingTimeRepository, publicHolidaysService);
     }
 }

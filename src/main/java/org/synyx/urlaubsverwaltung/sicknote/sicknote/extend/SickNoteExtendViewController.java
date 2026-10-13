@@ -45,6 +45,7 @@ import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURBO_REQUEST_ID;
 
@@ -268,13 +269,20 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     private void prepareSickNoteExtendPreview(Person signedInUser, SickNote sickNote, SickNoteExtendDto sickNoteExtendDto, String extend,
-                                              LocalDate extendToDate, Optional<String> customDateSubmit, Model model) {
+                                              LocalDate requestedExtendToDate, Optional<String> customDateSubmit, Model model) {
+
+        // the working time is calculated for every day until the custom date, a custom date too far in the future cannot be previewed
+        final LocalDate extendToDate = requestedExtendToDate == null || isTooFarInTheFuture(requestedExtendToDate, clock) ? null : requestedExtendToDate;
 
         final WorkingTimeCalendar workingTimeCalendar = getWorkingTimeCalendar(sickNote, extendToDate);
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
         prepareModel(model, signedInUser, extendToDate, sickNote);
+        if (requestedExtendToDate != null) {
+            // keep the rejected custom date in the input field
+            model.addAttribute("extendToDate", requestedExtendToDate);
+        }
 
         final SickNoteExtendPreviewDto sickNotePreviewNext;
         final String selectedExtend;

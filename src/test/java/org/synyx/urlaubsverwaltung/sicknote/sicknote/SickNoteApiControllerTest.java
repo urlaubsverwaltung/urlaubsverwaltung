@@ -226,6 +226,28 @@ class SickNoteApiControllerTest {
     }
 
     @Test
+    void getSickNotesBadRequestForPeriodLongerThanThreeYears() throws Exception {
+        perform(get("/api/sicknotes")
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(sickNoteService);
+    }
+
+    @Test
+    void personsSickNotesBadRequestForPeriodLongerThanThreeYears() throws Exception {
+        perform(get("/api/persons/23/sicknotes")
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(personService, sickNoteService);
+    }
+
+    @Test
     void getSickNotesBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")

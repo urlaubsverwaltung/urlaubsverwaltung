@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -41,9 +42,11 @@ class OvertimeFormDtoValidatorTest {
     @Mock
     private SettingsService settingsService;
 
+    private final Clock clock = Clock.systemDefaultZone();
+
     @BeforeEach
     void setUp() {
-        sut = new OvertimeFormValidator(overtimeService, settingsService);
+        sut = new OvertimeFormValidator(overtimeService, settingsService, clock);
     }
 
     // Support method --------------------------------------------------------------------------------------------------
@@ -143,6 +146,38 @@ class OvertimeFormDtoValidatorTest {
         sut.validate(overtimeFormDto, errors);
 
         verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+    }
+
+    @Test
+    void ensureEndDateTooFarInTheFutureIsRejected() {
+
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
+
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
+        overtimeFormDto.setEndDate(LocalDate.now(clock).plusYears(2).plusDays(1));
+
+        sut.validate(overtimeFormDto, errors);
+
+        verify(errors).rejectValue("endDate", "error.entry.tooFarInTheFuture");
+    }
+
+    @Test
+    void ensureStartDateTooFarInThePastIsRejected() {
+
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
+
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
+        overtimeFormDto.setStartDate(LocalDate.now(clock).minusYears(10).minusDays(1));
+
+        sut.validate(overtimeFormDto, errors);
+
+        verify(errors).rejectValue("startDate", "error.entry.tooFarInThePast");
     }
 
     @Test

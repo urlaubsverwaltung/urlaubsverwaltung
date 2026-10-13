@@ -251,14 +251,10 @@
           </turbo-stream>
         </th:block>
 
-        <div
-          th:if="${errorEndDateBeforeStartDate}"
-          th:text="#{__${errorEndDateBeforeStartDate}__}"
-          class="mt-8 alert alert-danger"
-        ></div>
+        <div th:if="${errorPeriod}" th:text="#{__${errorPeriod}__}" class="mt-8 alert alert-danger"></div>
 
         <table
-          th:unless="${errorEndDateBeforeStartDate}"
+          th:unless="${errorPeriod}"
           id="sick-note-table"
           class="mt-8 @3xl/main:mt-16 list-table hoverable-table text-sm"
           data-test-id="sick-notes-table"
