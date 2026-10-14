@@ -65,6 +65,11 @@ class MailServiceImpl implements MailService {
     }
 
     private void sendToRecipient(Mail mail, Person recipient, Map<Person, Locale> effectiveLocales) {
+        if (recipient.isEmailUnverified()) {
+            LOG.debug("Not sending mail to person with id {}, because the email address is not verified.", recipient.getId());
+            return;
+        }
+
         final Locale effectiveLocale = effectiveLocales.get(recipient);
 
         final Context context = new Context(effectiveLocale);
