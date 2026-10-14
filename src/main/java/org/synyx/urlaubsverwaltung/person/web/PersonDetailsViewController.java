@@ -123,9 +123,11 @@ public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearc
         model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
             .orElseGet(() -> settingsService.getSettings().getPublicHolidaysSettings().getFederalState()));
 
+        final boolean isViewingOwnPerson = personId.equals(signedInUser.getId());
+        model.addAttribute("isViewingOwnPerson", isViewingOwnPerson);
         model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
-        model.addAttribute("canEditNotifications", personId.equals(signedInUser.getId()) || signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditNotifications", isViewingOwnPerson || signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));

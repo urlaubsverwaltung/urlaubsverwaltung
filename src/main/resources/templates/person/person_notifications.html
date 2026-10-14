@@ -54,6 +54,15 @@
         Aktiviere oder Deaktiviere E-Mail Benachrichtigungen nach deinem Belieben.
       </p>
 
+      <p
+        th:if="${emailUnverified}"
+        class="alert alert-warning mt-4"
+        th:text="${isViewingOwnNotifications ? #messages.msg('person.notifications.email-unverified.self') : #messages.msg('person.notifications.email-unverified.other', personNiceName)}"
+        data-test-id="email-unverified-hint"
+      >
+        Deine E-Mail-Adresse ist in dem Konto, mit dem du dich anmeldest, nicht bestätigt.
+      </p>
+
       <div class="mt-8">
         <div
           th:replace="~{fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})}"

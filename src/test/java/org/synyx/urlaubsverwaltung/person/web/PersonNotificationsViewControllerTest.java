@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -141,6 +142,47 @@ class PersonNotificationsViewControllerTest {
             final String actual = strategy.buildSuggestionMainLink(suggestion, searchContext(request));
             assertThat(actual).isEqualTo("/web/person/42/notifications/departments");
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureEmailUnverifiedModelAttributeIsTrueWhenEmailIsNotVerified(String givenUrl) throws Exception {
+
+        final Person signedInPerson = personWithId(1);
+        signedInPerson.setPermissions(List.of(USER));
+        signedInPerson.setEmailVerified(false);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(signedInPerson));
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(new UserNotificationSettings(new PersonId(1L), false));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        userIsAllowedToSubmitSickNotes(false);
+
+        perform(get(givenUrl, 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("emailUnverified", is(true)));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(booleans = true)
+    void ensureEmailUnverifiedModelAttributeIsFalseWhenEmailIsVerifiedOrUnknown(Boolean emailVerified) throws Exception {
+
+        final Person signedInPerson = personWithId(1);
+        signedInPerson.setPermissions(List.of(USER));
+        signedInPerson.setEmailVerified(emailVerified);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(signedInPerson));
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(new UserNotificationSettings(new PersonId(1L), false));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        userIsAllowedToSubmitSickNotes(false);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("emailUnverified", is(false)));
     }
 
     @ParameterizedTest
@@ -783,7 +825,11 @@ class PersonNotificationsViewControllerTest {
         personWithoutNotifications.setId(1L);
         personWithoutNotifications.setFirstName("Hans");
         personWithoutNotifications.setNotifications(List.of());
+        personWithoutNotifications.setEmailVerified(false);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithoutNotifications));
+
+        final Person signedInPerson = personWithId(42);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);
@@ -799,6 +845,9 @@ class PersonNotificationsViewControllerTest {
             .param("applicationAppliedAndChanges.active", "true")
         )
             .andExpect(model().attribute("error", true))
+            .andExpect(model().attribute("isViewingOwnNotifications", false))
+            .andExpect(model().attribute("personNiceName", "Hans"))
+            .andExpect(model().attribute("emailUnverified", true))
             .andExpect(view().name("person/person_notifications"));
 
         verify(personService, never()).update(any(), any());

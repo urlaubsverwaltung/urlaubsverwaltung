@@ -243,6 +243,83 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureCreatedPersonHasGivenEmailVerified() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de", false);
+        assertThat(createdPerson.getEmailVerified()).isFalse();
+    }
+
+    @Test
+    void ensureCreatedPersonHasUnknownEmailVerifiedIfNotGiven() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de");
+        assertThat(createdPerson.getEmailVerified()).isNull();
+    }
+
+    @Test
+    void ensureUpdateSetsEmailVerified() {
+
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L),
+            PersonUpdate.ofPersonalData("muster", "Marlene", "Muster", "muster@example.org").withEmailVerified(true));
+
+        assertThat(updatedPerson.getEmailVerified()).isTrue();
+    }
+
+    @Test
+    void ensureUpdateSetsEmailVerifiedToUnknown() {
+
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        existingPerson.setEmailVerified(false);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L),
+            PersonUpdate.ofPersonalData("muster", "Marlene", "Muster", "muster@example.org").withEmailVerified(null));
+
+        assertThat(updatedPerson.getEmailVerified()).isNull();
+    }
+
+    @Test
+    void ensureUpdateKeepsEmailVerifiedIfNotGivenAndEmailIsUnchanged() {
+
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        existingPerson.setEmailVerified(false);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L),
+            PersonUpdate.ofPersonalData("muster", "Marlene", "Muster", "muster@example.org"));
+
+        assertThat(updatedPerson.getEmailVerified()).isFalse();
+    }
+
+    @Test
+    void ensureUpdateResetsEmailVerifiedToUnknownIfEmailChangesWithoutEmailVerified() {
+
+        final Person existingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        existingPerson.setId(1L);
+        existingPerson.setEmailVerified(true);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(existingPerson));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(new PersonId(1L),
+            PersonUpdate.ofPersonalData("muster", "Marlene", "Muster", "new-mail@example.org"));
+
+        assertThat(updatedPerson.getEmailVerified()).isNull();
+    }
+
+    @Test
     void ensureThrowsIfPersonToBeUpdatedDoesNotExist() {
 
         when(personRepository.findById(1L)).thenReturn(Optional.empty());

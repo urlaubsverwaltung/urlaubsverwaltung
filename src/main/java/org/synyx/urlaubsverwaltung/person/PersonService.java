@@ -28,6 +28,19 @@ public interface PersonService {
     Person create(String username, String firstName, String lastName, String email);
 
     /**
+     * Create a new person using the given attributes.
+     * Sets default mail notifications and roles
+     *
+     * @param username      with that the person can sign in
+     * @param firstName     of the person
+     * @param lastName      of the person
+     * @param email         address to get mail notifications
+     * @param emailVerified whether the identity provider has verified the email address, {@code null} if unknown
+     * @return created person
+     */
+    Person create(String username, String firstName, String lastName, String email, Boolean emailVerified);
+
+    /**
      * Create a new person using the given attributes, generating and setting key pair.
      *
      * @param username      with that the person can sign in

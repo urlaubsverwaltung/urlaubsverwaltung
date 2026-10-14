@@ -110,6 +110,35 @@ class MailServiceImplTest {
     }
 
     @Test
+    void ensureNoMailIsSentToPersonWithUnverifiedEmail() {
+
+        setupMockServletRequest();
+
+        final Person verified = new Person();
+        verified.setEmail("verified@example.org");
+        verified.setEmailVerified(true);
+
+        final Person unknown = new Person();
+        unknown.setEmail("unknown@example.org");
+
+        final Person unverified = new Person();
+        unverified.setEmail("unverified@example.org");
+        unverified.setEmailVerified(false);
+
+        final Mail mail = Mail.builder()
+            .withRecipient(List.of(verified, unknown, unverified))
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", _ -> new HashMap<>())
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "verified@example.org", "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "unknown@example.org", "subject", "emailBody");
+        verifyNoMoreInteractions(mailSenderService);
+    }
+
+    @Test
     void sendMailWithAttachment() {
 
         setupMockServletRequest();
