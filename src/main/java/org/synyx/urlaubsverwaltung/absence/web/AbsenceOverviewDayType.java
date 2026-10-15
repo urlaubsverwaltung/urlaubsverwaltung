@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
-
 public final class AbsenceOverviewDayType {
 
     private final boolean waitingSickNoteMorning;
@@ -32,8 +30,6 @@ public final class AbsenceOverviewDayType {
     private final boolean publicHolidayNoon;
     private final boolean publicHolidayFull;
 
-    private final AbsenceOverviewDayTypeColor color;
-
     @SuppressWarnings("java:S107")
     // Methods should not have too many parameters -> builder below must be used for construction
     private AbsenceOverviewDayType(boolean waitingSickNoteMorning, boolean waitingSickNoteNoon, boolean waitingSickNoteFull,
@@ -43,7 +39,7 @@ public final class AbsenceOverviewDayType {
                                    boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
                                    boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
                                    boolean publicHolidayMorning, boolean publicHolidayNoon,
-                                   boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
+                                   boolean publicHolidayFull) {
         this.waitingSickNoteMorning = waitingSickNoteMorning;
         this.waitingSickNoteNoon = waitingSickNoteNoon;
         this.waitingSickNoteFull = waitingSickNoteFull;
@@ -65,7 +61,6 @@ public final class AbsenceOverviewDayType {
         this.publicHolidayMorning = publicHolidayMorning;
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
-        this.color = color;
     }
 
     public static Builder builder() {
@@ -156,10 +151,6 @@ public final class AbsenceOverviewDayType {
         return publicHolidayFull;
     }
 
-    public AbsenceOverviewDayTypeColor getColor() {
-        return color;
-    }
-
     public static class Builder {
 
         private boolean waitingSickNoteMorning = false;
@@ -189,10 +180,6 @@ public final class AbsenceOverviewDayType {
         private boolean publicHolidayMorning = false;
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
-
-        private VacationTypeColor colorMorning;
-        private VacationTypeColor colorNoon;
-        private VacationTypeColor colorFull;
 
         public Builder waitingSickNoteMorning() {
             this.waitingSickNoteMorning = true;
@@ -299,21 +286,6 @@ public final class AbsenceOverviewDayType {
             return this;
         }
 
-        public Builder colorMorning(VacationTypeColor colorMorning) {
-            this.colorMorning = colorMorning;
-            return this;
-        }
-
-        public Builder colorNoon(VacationTypeColor colorNoon) {
-            this.colorNoon = colorNoon;
-            return this;
-        }
-
-        public Builder colorFull(VacationTypeColor colorFull) {
-            this.colorFull = colorFull;
-            return this;
-        }
-
         public AbsenceOverviewDayType build() {
             return new AbsenceOverviewDayType(
                 waitingSickNoteMorning,
@@ -336,8 +308,7 @@ public final class AbsenceOverviewDayType {
                 allowedCancellationRequestedAbsenceFull,
                 publicHolidayMorning,
                 publicHolidayNoon,
-                publicHolidayFull,
-                new AbsenceOverviewDayTypeColor(colorMorning, colorNoon, colorFull));
+                publicHolidayFull);
         }
     }
 }
