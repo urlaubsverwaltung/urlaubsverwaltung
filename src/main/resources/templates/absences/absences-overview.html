@@ -224,14 +224,16 @@
                         th:href="${barHref}"
                         th:tabindex="${bar.tabStop} ? null : '-1'"
                       >
-                        <span class="sr-only" th:text="${bar.title}"></span>
-                        <span
-                          th:if="${bar.label != null}"
-                          class="absence-bar-label"
-                          aria-hidden="true"
-                          th:style="|--label-halves:${bar.labelHalves}|"
-                          th:text="${bar.label}"
-                        ></span>
+                        <th:block th:fragment="absence-bar-content(bar)">
+                          <span class="sr-only" th:text="${bar.title}"></span>
+                          <span
+                            th:if="${bar.label != null}"
+                            class="absence-bar-label"
+                            aria-hidden="true"
+                            th:style="|--label-halves:${bar.labelHalves}|"
+                            th:text="${bar.label}"
+                          ></span>
+                        </th:block>
                       </a>
                       <span
                         th:unless="${barHref != null}"
@@ -239,14 +241,7 @@
                         th:style="${barStyle}"
                         th:data-title="${bar.title}"
                       >
-                        <span class="sr-only" th:text="${bar.title}"></span>
-                        <span
-                          th:if="${bar.label != null}"
-                          class="absence-bar-label"
-                          aria-hidden="true"
-                          th:style="|--label-halves:${bar.labelHalves}|"
-                          th:text="${bar.label}"
-                        ></span>
+                        <th:block th:replace="~{::absence-bar-content(${bar})}"></th:block>
                       </span>
                     </th:block>
                     <span class="hidden print:inline print:font-mono">
