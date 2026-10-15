@@ -184,11 +184,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !recordInfo.getPerson().equals(signedInUser)
             && !membersOfSignedInUser.contains(recordInfo.getPerson()) && !recordInfo.isVisibleToEveryone();
 
-        final Function<AbsencePeriod.RecordInfo, String> detailUrl = recordInfo -> absenceDetailUrl(recordInfo, signedInUser,
+        final Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail = recordInfo -> absenceDetail(recordInfo, signedInUser,
             membersOfSignedInUser, managedMembersOfSignedInUser, isSignedInUserAllowedToViewAllSickNotes);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, vacationTypesById::get, detailUrl);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, vacationTypesById::get, detail);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
@@ -234,7 +234,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                                                                         Locale locale,
                                                                         Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
                                                                         Function<Long, VacationType<?>> vacationTypeById,
-                                                                        Function<AbsencePeriod.RecordInfo, String> detailUrl) {
+                                                                        Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail) {
 
         final LocalDate today = LocalDate.now(clock);
         final DateRange barTimeline = new DateRange(dateRange.startDate().minusDays(BAR_TIMELINE_MARGIN_DAYS), dateRange.endDate().plusDays(BAR_TIMELINE_MARGIN_DAYS));
@@ -262,7 +262,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> {
             final boolean anonymize = shouldAnonymizeAbsenceType.apply(recordInfo);
             return barAbsencesByKey.computeIfAbsent(barAbsenceKey(recordInfo, anonymize),
-                key -> barAbsence(key, recordInfo, anonymize, vacationTypeById, detailUrl, locale, message));
+                key -> barAbsence(key, recordInfo, anonymize, vacationTypeById, detail, locale, message));
         };
 
         final Map<Person, Map<LocalDate, List<AbsenceBars.Piece>>> barPiecesByPerson = new HashMap<>();
@@ -310,7 +310,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
                 final List<AbsenceOverviewBarPieceDto> bars = new ArrayList<>();
                 for (AbsenceBars.Piece piece : barPiecesByPerson.get(person).getOrDefault(date, List.of())) {
-                    final boolean tabStop = piece.absence().detailUrl() != null
+                    final boolean tabStop = piece.absence().detail() != null
                         && barsWithTabStop.add(person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key());
                     bars.add(toBarPieceDto(piece, tabStop, message));
                 }
@@ -583,7 +583,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     private static AbsenceBars.Absence barAbsence(String key, AbsencePeriod.RecordInfo recordInfo, boolean anonymize,
                                                   Function<Long, VacationType<?>> vacationTypeById,
-                                                  Function<AbsencePeriod.RecordInfo, String> detailUrl, Locale locale,
+                                                  Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail, Locale locale,
                                                   UnaryOperator<String> message) {
         if (anonymize) {
             return new AbsenceBars.Absence(key, AbsenceBars.Status.ALLOWED, ANONYMIZED_ABSENCE_COLOR.name(), message.apply("absences.overview.absence"), null, true, null);
@@ -593,23 +593,23 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             // sickNote has only one of two statuses: whether WAITING or ACTIVE
             final boolean waiting = recordInfo.hasStatusWaiting();
             return new AbsenceBars.Absence(key, waiting ? AbsenceBars.Status.WAITING : AbsenceBars.Status.ALLOWED, SICK_NOTE_BAR_COLOR,
-                message.apply("absences.overview.sick"), waiting ? message.apply("sicknote.status.SUBMITTED") : null, false, detailUrl.apply(recordInfo));
+                message.apply("absences.overview.sick"), waiting ? message.apply("sicknote.status.SUBMITTED") : null, false, detail.apply(recordInfo));
         }
 
         final AbsenceBars.Status status = barStatus(recordInfo);
         final VacationType<?> vacationType = recordInfo.getTypeId().map(vacationTypeById).orElseThrow();
-        return new AbsenceBars.Absence(key, status, vacationType.getColor().name(), vacationType.getLabel(locale), barStatusText(status, message), false, detailUrl.apply(recordInfo));
+        return new AbsenceBars.Absence(key, status, vacationType.getColor().name(), vacationType.getLabel(locale), barStatusText(status, message), false, detail.apply(recordInfo));
     }
 
     /**
-     * Path of the page showing the absence, if the signed-in user may open it. Follows the rules of the pages
+     * The page showing the absence, if the signed-in user may open it. Follows the rules of the pages
      * themselves: {@code DepartmentService#isSignedInUserAllowedToAccessPersonData} for applications for leave and
      * {@code SickNotePermissions#isAllowedToView} for sick notes. Seeing the vacation type is not enough - types that
      * are visible to everyone are shown to every colleague.
      *
-     * @return the path, {@code null} if the signed-in user may not open the absence
+     * @return the page, {@code null} if the signed-in user may not open the absence
      */
-    private static String absenceDetailUrl(AbsencePeriod.RecordInfo recordInfo, Person signedInUser, List<Person> membersOfSignedInUser,
+    private static AbsenceBars.Detail absenceDetail(AbsencePeriod.RecordInfo recordInfo, Person signedInUser, List<Person> membersOfSignedInUser,
                                            List<Person> managedMembersOfSignedInUser, boolean isSignedInUserAllowedToViewAllSickNotes) {
 
         final Person person = recordInfo.getPerson();
@@ -617,9 +617,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Long id = recordInfo.getId().orElseThrow();
 
         return switch (recordInfo.getAbsenceType()) {
-            case VACATION -> ownAbsence || membersOfSignedInUser.contains(person) ? "/web/application/" + id : null;
+            case VACATION -> ownAbsence || membersOfSignedInUser.contains(person)
+                ? new AbsenceBars.Detail(AbsenceBars.DetailPage.APPLICATION, id)
+                : null;
             case SICK -> ownAbsence || isSignedInUserAllowedToViewAllSickNotes || managedMembersOfSignedInUser.contains(person)
-                ? "/web/sicknote/" + id
+                ? new AbsenceBars.Detail(AbsenceBars.DetailPage.SICK_NOTE, id)
                 : null;
             case PUBLIC_HOLIDAY, NO_WORKDAY -> null;
         };
@@ -662,7 +664,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final String label = piece.labelHalves() > 0 ? absence.label() : null;
 
         return new AbsenceOverviewBarPieceDto(piece.half(), piece.kind(), piece.roundedStart(), piece.roundedEnd(),
-            absence.status(), absence.color(), label, piece.labelHalves(), title, absence.detailUrl(), tabStop);
+            absence.status(), absence.color(), label, piece.labelHalves(), title, absence.detail(), tabStop);
     }
 
     private static String barAbsenceTitle(AbsenceBars.Absence absence, AbsenceBars.Half half, UnaryOperator<String> message) {

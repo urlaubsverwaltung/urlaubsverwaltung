@@ -5187,8 +5187,8 @@ class AbsenceOverviewViewControllerTest {
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
 
-        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
-        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
     }
 
     @Test
@@ -5204,8 +5204,8 @@ class AbsenceOverviewViewControllerTest {
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
 
-        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
-        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
     }
 
     @Test
@@ -5221,8 +5221,8 @@ class AbsenceOverviewViewControllerTest {
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
 
-        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
-        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isNull();
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId, AbsenceOverviewBarPieceDto::getSickNoteId).containsOnlyNulls();
     }
 
     @Test
@@ -5236,7 +5236,7 @@ class AbsenceOverviewViewControllerTest {
         when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
             .thenReturn(List.of(sickNote(other, 3L, 13)));
 
-        assertThat(januaryDays(1).get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+        assertThat(januaryDays(1).get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
     }
 
     @Test
@@ -5253,8 +5253,8 @@ class AbsenceOverviewViewControllerTest {
 
         final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
 
-        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/application/7");
-        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isEqualTo("/web/sicknote/3");
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
     }
 
     @Test
@@ -5274,7 +5274,8 @@ class AbsenceOverviewViewControllerTest {
 
         assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
             assertThat(bar.getLabel()).isEqualTo("Erholungsurlaub");
-            assertThat(bar.getHref()).isNull();
+            assertThat(bar.getApplicationId()).isNull();
+            assertThat(bar.getSickNoteId()).isNull();
         });
     }
 
@@ -5287,7 +5288,7 @@ class AbsenceOverviewViewControllerTest {
         when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
             .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9)));
 
-        assertThat(januaryDays(1).get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getHref).isNull();
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId, AbsenceOverviewBarPieceDto::getSickNoteId).containsOnlyNulls();
     }
 
     @Test
@@ -5318,15 +5319,15 @@ class AbsenceOverviewViewControllerTest {
         final List<AbsenceOverviewPersonDayDto> february = overview.getMonths().get(1).getPersons().get(1).getDays();
 
         assertThat(january.get(29).getBars()).singleElement().satisfies(bar -> {
-            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
             assertThat(bar.isTabStop()).isTrue();
         });
         assertThat(january.get(30).getBars()).singleElement().satisfies(bar -> {
-            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
             assertThat(bar.isTabStop()).isFalse();
         });
         assertThat(february.get(0).getBars()).singleElement().satisfies(bar -> {
-            assertThat(bar.getHref()).isEqualTo("/web/application/7");
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
             assertThat(bar.isTabStop()).isTrue();
         });
         assertThat(february.get(3).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);

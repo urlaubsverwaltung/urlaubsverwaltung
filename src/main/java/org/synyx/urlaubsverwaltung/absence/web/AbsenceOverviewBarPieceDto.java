@@ -11,13 +11,13 @@ public class AbsenceOverviewBarPieceDto {
     private final String label;
     private final int labelHalves;
     private final String title;
-    private final String href;
+    private final AbsenceBars.Detail detail;
     private final boolean tabStop;
 
     @SuppressWarnings("java:S107") // a plain value holder for the template
     AbsenceOverviewBarPieceDto(AbsenceBars.Half half, AbsenceBars.Kind kind, boolean roundedStart, boolean roundedEnd,
                                AbsenceBars.Status status, String color, String label, int labelHalves, String title,
-                               String href, boolean tabStop) {
+                               AbsenceBars.Detail detail, boolean tabStop) {
         this.half = half;
         this.kind = kind;
         this.roundedStart = roundedStart;
@@ -27,7 +27,7 @@ public class AbsenceOverviewBarPieceDto {
         this.label = label;
         this.labelHalves = labelHalves;
         this.title = title;
-        this.href = href;
+        this.detail = detail;
         this.tabStop = tabStop;
     }
 
@@ -68,10 +68,17 @@ public class AbsenceOverviewBarPieceDto {
     }
 
     /**
-     * @return path of the page showing the absence, {@code null} when the viewer may not open it
+     * @return id of the application for leave this piece links to, {@code null} when it links to none
      */
-    public String getHref() {
-        return href;
+    public Long getApplicationId() {
+        return detail != null && detail.page() == AbsenceBars.DetailPage.APPLICATION ? detail.id() : null;
+    }
+
+    /**
+     * @return id of the sick note this piece links to, {@code null} when it links to none
+     */
+    public Long getSickNoteId() {
+        return detail != null && detail.page() == AbsenceBars.DetailPage.SICK_NOTE ? detail.id() : null;
     }
 
     /**

@@ -40,14 +40,27 @@ final class AbsenceBars {
         CANCELLATION_REQUESTED
     }
 
+    enum DetailPage {
+        APPLICATION,
+        SICK_NOTE
+    }
+
+    /**
+     * The page showing an absence.
+     *
+     * @param id id of the application for leave or the sick note
+     */
+    record Detail(DetailPage page, long id) {
+    }
+
     /**
      * @param key        identity of the absence - half days with the same key belong to the same absence
      * @param color      name of the colour, used as suffix of the css variables {@code --absence-color-*}
      * @param statusText text of the status, {@code null} when the status needs no mention
-     * @param detailUrl  path of the page showing the absence, {@code null} when the viewer may not open it
+     * @param detail     the page showing the absence, {@code null} when the viewer may not open it
      */
     record Absence(String key, Status status, String color, String label, String statusText, boolean anonymized,
-                   String detailUrl) {
+                   Detail detail) {
     }
 
     record Gap(String title) {
