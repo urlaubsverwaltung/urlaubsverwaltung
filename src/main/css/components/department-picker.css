@@ -4,6 +4,8 @@ uv-department-picker {
 
 .department-picker__button {
   width: 100%;
+  /* the margin of the caret is all the room the badge keeps to it */
+  gap: 0;
 
   /* the summary takes the free room instead of the caret, which keeps the badge next to the caret */
   &::after {
@@ -24,6 +26,7 @@ uv-department-picker {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-inline-start: --spacing(1);
   min-width: --spacing(5);
   height: --spacing(5);
   padding-inline: --spacing(1.5);
