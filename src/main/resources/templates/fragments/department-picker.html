@@ -32,6 +32,19 @@
         ></span>
       </button>
       <div th:id="|${id}-popover|" popover class="department-picker__popover">
+        <!--/* full screen there is no button left to click on to close the popover */-->
+        <div class="department-picker__header xs:hidden">
+          <span class="department-picker__title" th:text="#{department-picker.departments}">Abteilungen</span>
+          <button
+            type="button"
+            class="department-picker__close"
+            th:popovertarget="|${id}-popover|"
+            popovertargetaction="hide"
+            th:aria-label="#{department-picker.close}"
+          >
+            <svg th:replace="~{icon/x::svg(className='w-5 h-5')}"></svg>
+          </button>
+        </div>
         <div class="department-picker__content">
           <div th:if="${#lists.size(picker.options) > 8}" class="department-picker__search">
             <label th:for="|${id}-search|" class="sr-only" th:text="#{department-picker.search}"

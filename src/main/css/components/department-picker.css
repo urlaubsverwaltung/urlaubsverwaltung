@@ -184,6 +184,34 @@ uv-department-picker {
   }
 }
 
+.department-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* the title lines up with the options below it, the close button keeps a small gap to the edge */
+  padding: --spacing(2) --spacing(2) 0 calc(--spacing(2) + var(--department-picker-padding-inline));
+}
+
+.department-picker__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.department-picker__close {
+  padding: --spacing(2);
+  border-radius: 9999px;
+  color: var(--department-picker-muted-color);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-neutral-100);
+      @variant dark {
+        background-color: var(--color-zinc-700);
+      }
+    }
+  }
+}
+
 .department-picker__content {
   display: flex;
   flex-direction: column;
@@ -220,10 +248,12 @@ uv-department-picker {
   font-size: var(--text-sm);
   cursor: pointer;
 
-  &:hover {
-    background-color: var(--color-neutral-100);
-    @variant dark {
-      background-color: var(--color-zinc-700);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-neutral-100);
+      @variant dark {
+        background-color: var(--color-zinc-700);
+      }
     }
   }
 
