@@ -1,8 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.synyx.urlaubsverwaltung.ui.components.DepartmentPickerPage;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -12,51 +11,19 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class AbsenceOverviewPage {
 
     private final Page page;
+    private final DepartmentPickerPage departmentPicker;
 
     public AbsenceOverviewPage(Page page) {
         this.page = page;
+        this.departmentPicker = new DepartmentPickerPage(page);
     }
 
     public void navigate(int port) {
         page.navigate("http://localhost:%d/web/absences".formatted(port));
     }
 
-    public Locator getDepartmentPickerButtonLocator() {
-        return page.locator("#department-picker");
-    }
-
-    public Locator getDepartmentPickerPopoverLocator() {
-        return page.locator("#department-picker-popover");
-    }
-
-    public void openDepartmentPicker() {
-        getDepartmentPickerButtonLocator().click();
-        assertThat(getDepartmentPickerPopoverLocator()).isVisible();
-    }
-
-    public void checkDepartment(String departmentName) {
-        getDepartmentPickerPopoverLocator()
-            .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(departmentName))
-            .check();
-    }
-
-    public void checkAllPersons() {
-        getDepartmentPickerPopoverLocator()
-            .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName("Alle Personen"))
-            .check();
-    }
-
-    public void confirmDepartmentPicker() {
-        getDepartmentPickerPopoverLocator()
-            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Bestätigen"))
-            .click();
-    }
-
-    /**
-     * @return computed colour of the caret - the caret is a mask on the button's {@code ::after}, painted by its background
-     */
-    public String getDepartmentPickerCaretColor() {
-        return ThemeColors.backgroundColorOf(getDepartmentPickerButtonLocator(), "::after");
+    public DepartmentPickerPage getDepartmentPicker() {
+        return departmentPicker;
     }
 
     public void selectYear(String year) {

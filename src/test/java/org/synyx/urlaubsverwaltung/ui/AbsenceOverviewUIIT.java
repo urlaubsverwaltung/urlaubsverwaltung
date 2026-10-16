@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +24,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.AbsenceOverviewPage;
+import org.synyx.urlaubsverwaltung.ui.components.DepartmentPickerPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -110,24 +109,26 @@ class AbsenceOverviewUIIT {
         final AbsenceOverviewPage overview = new AbsenceOverviewPage(page);
         overview.navigate(port);
 
+        final DepartmentPickerPage departmentPicker = overview.getDepartmentPicker();
+
         // without a selection the own department is shown
-        assertThat(overview.getDepartmentPickerButtonLocator()).containsText("Vertrieb");
+        assertThat(departmentPicker.getButtonLocator()).containsText("Vertrieb");
         // the label names the button, the selection has to reach screen readers as its description
-        assertThat(overview.getDepartmentPickerButtonLocator()).hasAccessibleDescription("Vertrieb");
+        assertThat(departmentPicker.getButtonLocator()).hasAccessibleDescription("Vertrieb");
         overview.showsPersons("Bob", "Olga");
 
-        overview.openDepartmentPicker();
-        overview.checkDepartment("Buchhaltung");
-        overview.confirmDepartmentPicker();
+        departmentPicker.open();
+        departmentPicker.checkDepartment("Buchhaltung");
+        departmentPicker.confirm();
 
         assertThat(page).hasURL(Pattern.compile("department=Buchhaltung"));
         assertThat(page).hasURL(Pattern.compile("department=Vertrieb"));
-        assertThat(overview.getDepartmentPickerButtonLocator()).containsText("Buchhaltung, Vertrieb");
+        assertThat(departmentPicker.getButtonLocator()).containsText("Buchhaltung, Vertrieb");
         overview.showsPersons("Alice", "Bob", "Olga");
 
-        overview.openDepartmentPicker();
-        overview.checkAllPersons();
-        overview.confirmDepartmentPicker();
+        departmentPicker.open();
+        departmentPicker.checkAllPersons();
+        departmentPicker.confirm();
 
         // "Alle Personen" is every active person for office - including Zoe without department and the persons of
         // the other tests of this class, which share the database
@@ -137,8 +138,8 @@ class AbsenceOverviewUIIT {
             .toArray(String[]::new);
 
         assertThat(page).hasURL(Pattern.compile("allPersons=true"));
-        assertThat(overview.getDepartmentPickerButtonLocator()).containsText("Alle Personen");
-        assertThat(overview.getDepartmentPickerButtonLocator()).hasAccessibleDescription("Alle Personen");
+        assertThat(departmentPicker.getButtonLocator()).containsText("Alle Personen");
+        assertThat(departmentPicker.getButtonLocator()).hasAccessibleDescription("Alle Personen");
         overview.showsPersons(everyActivePerson);
 
         // changing the year keeps "Alle Personen"
@@ -161,19 +162,21 @@ class AbsenceOverviewUIIT {
 
         final AbsenceOverviewPage overview = new AbsenceOverviewPage(page);
         overview.navigate(port);
+
+        final DepartmentPickerPage departmentPicker = overview.getDepartmentPicker();
+
         overview.showsPersons("Paula");
 
-        overview.openDepartmentPicker();
-        overview.checkDepartment("Einkauf");
+        departmentPicker.open();
+        departmentPicker.checkDepartment("Einkauf");
         page.keyboard().press("Escape");
 
-        assertThat(overview.getDepartmentPickerPopoverLocator()).isHidden();
+        assertThat(departmentPicker.getPopoverLocator()).isHidden();
         assertThat(page).not().hasURL(Pattern.compile("department="));
         overview.showsPersons("Paula");
 
-        overview.openDepartmentPicker();
-        assertThat(overview.getDepartmentPickerPopoverLocator()
-            .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName("Einkauf"))).not().isChecked();
+        departmentPicker.open();
+        assertThat(departmentPicker.getDepartmentCheckboxLocator("Einkauf")).not().isChecked();
     }
 
     private void login(Page page, Person person) {
