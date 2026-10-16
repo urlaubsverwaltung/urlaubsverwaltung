@@ -83,6 +83,7 @@ uv-department-picker {
 }
 
 .department-picker__option--all {
+  padding-block: --spacing(2);
   border-bottom: 1px solid var(--color-zinc-300);
   @variant dark {
     border-color: var(--color-zinc-600);
