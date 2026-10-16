@@ -120,14 +120,12 @@ uv-department-picker {
       /* the menu is as wide as its button - a narrow button would squeeze the department names */
       min-width: min(18rem, calc(100vw - --spacing(4)));
       max-width: calc(100vw - --spacing(4));
-      max-height: calc(100% - --spacing(1) - --spacing(4));
-      margin-block: auto;
+      /* the popover keeps its height and is only limited by the screen. with too little room below its button the
+       * browser shifts it upwards into the screen, over the button - the footer with the submit button stays in
+       * sight. the margin keeps a gap to the bottom of the screen. */
+      max-height: calc(100dvh - 2 * --spacing(4));
+      margin-block: 0 --spacing(4);
       margin-inline: auto 0;
-      overflow: auto;
-
-      &:popover-open {
-        display: block;
-      }
 
       &::backdrop {
         display: none;
