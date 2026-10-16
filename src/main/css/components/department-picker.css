@@ -82,6 +82,8 @@ uv-department-picker {
     /* the list scrolls between the "all persons" option and the footer, which stay in place */
     overflow: hidden;
     overscroll-behavior: contain;
+    /* the popover slides up by this distance while it fades in */
+    --department-picker-popover-offset: --spacing(2);
 
     background-color: var(--color-white);
     border: 1px solid rgb(0 0 0 / 0.15);
@@ -109,6 +111,8 @@ uv-department-picker {
     }
 
     @variant xs {
+      /* hanging from its button the popover just fades in */
+      --department-picker-popover-offset: 0;
       position-area: bottom;
       inset: --spacing(1) 0 0;
       width: anchor-size(width);
@@ -127,6 +131,56 @@ uv-department-picker {
 
       &::backdrop {
         display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      --department-picker-popover-offset: 0;
+    }
+
+    /* webkit loses the anchor of a popover whose hiding is animated (https://bugs.webkit.org/show_bug.cgi?id=309921).
+     * it is only animated where `overlay` can be transitioned, which keeps the popover in the top layer until it has
+     * faded out. */
+    @supports (overlay: auto) {
+      /* the transition of the state the popover changes to runs - it fades in quickly and out a little slower */
+      --department-picker-popover-duration: 150ms;
+      opacity: 0;
+      translate: 0 var(--department-picker-popover-offset);
+      transition:
+        opacity var(--department-picker-popover-duration) ease-out,
+        translate var(--department-picker-popover-duration) ease-out,
+        display var(--department-picker-popover-duration) allow-discrete,
+        overlay var(--department-picker-popover-duration) allow-discrete;
+
+      &:popover-open {
+        --department-picker-popover-duration: 20ms;
+        opacity: 1;
+        translate: none;
+      }
+
+      &::backdrop {
+        --department-picker-popover-duration: 150ms;
+        background-color: rgb(0 0 0 / 0);
+        transition:
+          background-color var(--department-picker-popover-duration) ease-out,
+          display var(--department-picker-popover-duration) allow-discrete,
+          overlay var(--department-picker-popover-duration) allow-discrete;
+      }
+
+      &:popover-open::backdrop {
+        --department-picker-popover-duration: 20ms;
+        background-color: rgb(0 0 0 / 0.5);
+      }
+
+      @starting-style {
+        &:popover-open {
+          opacity: 0;
+          translate: 0 var(--department-picker-popover-offset);
+        }
+
+        &:popover-open::backdrop {
+          background-color: rgb(0 0 0 / 0);
+        }
       }
     }
   }
