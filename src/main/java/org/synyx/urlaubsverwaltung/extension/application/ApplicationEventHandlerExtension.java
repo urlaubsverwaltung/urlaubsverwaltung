@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.extension.application;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationAllowedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCancelledEventDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCreatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCreatedFromSickNoteEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPersonDTO;
@@ -14,6 +15,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationAppliedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCreatedFromSickNoteEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
@@ -41,6 +43,11 @@ public class ApplicationEventHandlerExtension {
     ) {
         this.tenantSupplier = tenantSupplier;
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @EventListener
+    void on(ApplicationAppliedEvent event) {
+        applicationEventPublisher.publishEvent(toApplicationCreatedEventDTO(tenantSupplier.get(), event));
     }
 
     @EventListener
@@ -113,6 +120,30 @@ public class ApplicationEventHandlerExtension {
             .reason(event.application().getReason())
             .status(status)
             .teamInformed(event.application().isTeamInformed())
+            .build();
+    }
+
+    private static ApplicationCreatedEventDTO toApplicationCreatedEventDTO(String tenantId, ApplicationAppliedEvent event) {
+        final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+        final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+        final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+        final ApplicationPeriodDTO period = toPeriod(event.application());
+        final String status = toStatus(event.application());
+
+        return ApplicationCreatedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.application().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .appliedBy(appliedBy)
+            .twoStageApproval(event.application().isTwoStageApproval())
+            .period(period)
+            .vacationType(vacationType)
+            .reason(event.application().getReason())
+            .status(status)
+            .teamInformed(event.application().isTeamInformed())
+            .hours(event.application().getHours())
             .build();
     }
 
