@@ -56,7 +56,8 @@ select {
 input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
 select,
-.popover-button-select {
+.popover-button-select,
+.department-picker__button {
   --input-padding-y: 6px;
   --input-padding-x: 12px;
 

@@ -15,7 +15,7 @@
         th:id="${id}"
         th:popovertarget="|${id}-popover|"
         th:aria-describedby="|${id}-summary|"
-        class="popover-button-select department-picker__button"
+        class="department-picker__button"
       >
         <!--/* a host label names the button and hides its content from the accessible name - the summary is its description */-->
         <span th:id="|${id}-summary|" class="department-picker__summary">
@@ -31,11 +31,7 @@
           th:text="${selectedCount}"
         ></span>
       </button>
-      <div
-        th:id="|${id}-popover|"
-        popover
-        class="popover-menu popover--backdrop-screen department-picker__popover xs:popover--backdrop-none"
-      >
+      <div th:id="|${id}-popover|" popover class="department-picker__popover">
         <div th:if="${#lists.size(picker.options) > 8}" class="department-picker__search">
           <label th:for="|${id}-search|" class="sr-only" th:text="#{department-picker.search}">Abteilung suchen</label>
           <input
