@@ -88,15 +88,26 @@ uv-department-picker {
   @variant dark {
     border-color: var(--color-zinc-600);
   }
+}
 
-  small {
-    display: block;
-    color: var(--color-zinc-500);
-    font-size: var(--text-xs);
-    @variant dark {
-      color: var(--color-zinc-400);
-    }
+.department-picker__option small {
+  display: block;
+  color: var(--color-zinc-500);
+  font-size: var(--text-xs);
+  @variant dark {
+    color: var(--color-zinc-400);
   }
+}
+
+/* a flex item does not shrink below its content - the description would widen the menu instead of being cut off */
+.department-picker__label {
+  min-width: 0;
+}
+
+.department-picker__description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .department-picker__count {

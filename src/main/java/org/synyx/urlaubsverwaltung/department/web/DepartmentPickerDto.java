@@ -11,7 +11,10 @@ import java.util.List;
  */
 public record DepartmentPickerDto(List<Option> options, boolean allPersonsSelected, int allPersonsCount) {
 
-    public record Option(String name, int activeMemberCount, boolean selected) {
+    /**
+     * @param description optional description of the department, {@code null} when there is none
+     */
+    public record Option(String name, String description, int activeMemberCount, boolean selected) {
     }
 
     public List<String> selectedNames() {

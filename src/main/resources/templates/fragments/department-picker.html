@@ -67,7 +67,7 @@
           <span class="sr-only" th:text="#{department-picker.persons(${picker.allPersonsCount})}"></span>
         </label>
         <ul class="department-picker__list" role="group" th:aria-label="#{department-picker.departments}">
-          <li th:each="option : ${picker.options}">
+          <li th:each="option, optionStat : ${picker.options}">
             <label class="department-picker__option">
               <input
                 type="checkbox"
@@ -76,9 +76,20 @@
                 autocomplete="off"
                 th:value="${option.name}"
                 th:checked="${option.selected}"
+                th:aria-describedby="${#strings.isEmpty(option.description)} ? null : |${id}-department-${optionStat.index}-description|"
                 data-department-picker-department
               />
-              <span th:text="${option.name}"></span>
+              <span class="department-picker__label leading-tight">
+                <th:block th:text="${option.name}"></th:block>
+                <!--/* the description is the description of the checkbox - as part of the label it would lengthen its name */-->
+                <small
+                  th:unless="${#strings.isEmpty(option.description)}"
+                  th:id="|${id}-department-${optionStat.index}-description|"
+                  class="department-picker__description"
+                  aria-hidden="true"
+                  th:text="${option.description}"
+                ></small>
+              </span>
               <span class="department-picker__count" aria-hidden="true" th:text="${option.activeMemberCount}"></span>
               <span class="sr-only" th:text="#{department-picker.persons(${option.activeMemberCount})}"></span>
             </label>

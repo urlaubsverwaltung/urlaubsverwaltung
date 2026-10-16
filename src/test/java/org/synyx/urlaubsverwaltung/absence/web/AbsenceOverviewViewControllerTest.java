@@ -455,7 +455,7 @@ class AbsenceOverviewViewControllerTest {
             .andReturn().getModelAndView().getModel();
 
         assertThat(model.get("departmentPicker")).isEqualTo(new DepartmentPickerDto(
-            List.of(new DepartmentPickerDto.Option("marketing", 1, false)), true, 3));
+            List.of(new DepartmentPickerDto.Option("marketing", null, 1, false)), true, 3));
 
         // the members of the signed-in user are loaded once and reused for "Alle Personen"
         verify(personService).getActivePersons();
@@ -600,6 +600,7 @@ class AbsenceOverviewViewControllerTest {
         bob.setId(4L);
 
         final var accounting = department("accounting");
+        accounting.setDescription("bookkeeping and payroll");
         accounting.setMembers(List.of(alice, inactive));
         final var sales = department("sales");
         sales.setMembers(List.of(bob));
@@ -615,8 +616,8 @@ class AbsenceOverviewViewControllerTest {
 
         assertThat(model.get("departmentPicker")).isEqualTo(new DepartmentPickerDto(
             List.of(
-                new DepartmentPickerDto.Option("accounting", 1, false),
-                new DepartmentPickerDto.Option("sales", 1, true)
+                new DepartmentPickerDto.Option("accounting", "bookkeeping and payroll", 1, false),
+                new DepartmentPickerDto.Option("sales", null, 1, true)
             ), false, 3));
     }
 

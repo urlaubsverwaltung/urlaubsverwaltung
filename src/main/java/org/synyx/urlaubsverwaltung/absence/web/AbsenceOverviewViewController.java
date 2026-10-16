@@ -239,6 +239,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final List<DepartmentPickerDto.Option> options = visibleDepartments.stream()
             .map(department -> new DepartmentPickerDto.Option(
                 department.getName(),
+                department.getDescription(),
                 (int) department.getMembers().stream().filter(Person::isActive).count(),
                 selectedDepartmentNames.contains(department.getName())
             ))
