@@ -50,11 +50,17 @@
             value="true"
             autocomplete="off"
             th:checked="${picker.allPersonsSelected}"
+            th:aria-describedby="|${id}-all-persons-hint|"
             data-department-picker-all
           />
           <span class="leading-tight">
             <th:block th:text="#{department-picker.all-persons}">Alle Personen</th:block>
-            <small th:text="#{department-picker.all-persons.hint}"></small>
+            <!--/* the hint is the description of the checkbox - as part of the label it would lengthen its name */-->
+            <small
+              th:id="|${id}-all-persons-hint|"
+              aria-hidden="true"
+              th:text="#{department-picker.all-persons.hint}"
+            ></small>
           </span>
           <!--/* the bare number would be read as part of the name of the checkbox without telling what it counts */-->
           <span class="department-picker__count" aria-hidden="true" th:text="${picker.allPersonsCount}"></span>
