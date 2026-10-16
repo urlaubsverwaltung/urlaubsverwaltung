@@ -148,7 +148,7 @@ jobs:
       - name: Set new snapshot version
         run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
       - name: Commit new snapshot version
-        run: git add pom.xml && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
+        run: git add pom.xml && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}" -m "[skip ci]"
       - name: Push snapshot commit
         uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c
         with:
