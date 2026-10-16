@@ -38,11 +38,42 @@ uv-department-picker {
   font-variant-numeric: tabular-nums;
 }
 
-.department-picker__menu {
-  /* `.popover-button-select ~ [popover]` makes the menu as wide as its button - a narrow button would squeeze the
-   * department names. */
-  min-width: min(18rem, calc(100vw - --spacing(4)));
-  padding: 0;
+.department-picker {
+  .department-picker__menu {
+    position-area: none;
+    inset: --spacing(4);
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    /* the list scrolls between the "all persons" option and the footer, which stay in place */
+    overflow: hidden;
+
+    &:popover-open {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @variant xs {
+      position-area: bottom;
+      inset: --spacing(1) 0 0;
+      width: anchor-size(width);
+      height: fit-content;
+      /* the menu is as wide as its button - a narrow button would squeeze the department names */
+      min-width: min(18rem, calc(100vw - --spacing(4)));
+      max-width: calc(100vw - --spacing(4));
+      max-height: calc(100% - --spacing(1) - --spacing(4));
+      margin-block: auto;
+      margin-inline: auto 0;
+      overflow: auto;
+
+      &:popover-open {
+        display: block;
+      }
+    }
+  }
 }
 
 .department-picker__search {
@@ -126,9 +157,14 @@ uv-department-picker {
 
 /* `.popover-menu ul` resets margin and padding with a higher specificity */
 .department-picker__menu .department-picker__list {
-  max-height: 18rem;
+  flex-grow: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-block: --spacing(1);
+
+  @variant xs {
+    max-height: 18rem;
+  }
 }
 
 .department-picker__no-hit {
