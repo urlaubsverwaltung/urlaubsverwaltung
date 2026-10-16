@@ -7,7 +7,7 @@
   <body>
     <uv-department-picker
       th:fragment="department-picker(id, picker)"
-      th:with="withButtonLabel=${withButtonLabel ?: false}, selectedNames=${picker.selectedNames()}, selectedCount=${#lists.size(selectedNames)}"
+      th:with="selectedNames=${picker.selectedNames()}, selectedCount=${#lists.size(selectedNames)}"
       class="department-picker"
     >
       <button
@@ -17,7 +17,6 @@
         th:aria-describedby="|${id}-summary|"
         class="popover-button-select department-picker__button"
       >
-        <th:block th:if="${withButtonLabel}" th:text="#{department-picker.button}">Abteilungen</th:block>
         <!--/* a host label names the button and hides its content from the accessible name - the summary is its description */-->
         <span th:id="|${id}-summary|" class="department-picker__summary">
           <th:block th:if="${picker.allPersonsSelected}" th:text="#{department-picker.all-persons}"></th:block>
