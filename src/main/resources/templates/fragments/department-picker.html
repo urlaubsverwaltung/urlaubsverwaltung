@@ -5,7 +5,6 @@
     <title>department-picker</title>
   </head>
   <body>
-    <!--/* must be placed inside the form it filters - the checkboxes are its `department` and `allPersons` fields */-->
     <uv-department-picker
       th:fragment="department-picker(id, picker)"
       th:with="withButtonLabel=${withButtonLabel ?: false}, selectedNames=${picker.selectedNames()}, selectedCount=${#lists.size(selectedNames)}"
