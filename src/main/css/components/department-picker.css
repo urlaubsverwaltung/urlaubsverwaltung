@@ -59,6 +59,9 @@ uv-department-picker {
 }
 
 .department-picker__option {
+  /* contains the absolutely positioned `.sr-only` texts. their containing block would be the popover otherwise -
+   * outside of the scrolling list they are not clipped and stretch the popover down to the last department. */
+  position: relative;
   display: flex;
   align-items: center;
   gap: --spacing(2.5);
