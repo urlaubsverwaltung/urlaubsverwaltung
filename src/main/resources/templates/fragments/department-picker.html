@@ -24,7 +24,7 @@
           <th:block th:if="${picker.allPersonsSelected}" th:text="#{department-picker.all-persons}"></th:block>
           <th:block
             th:unless="${picker.allPersonsSelected}"
-            th:text="${selectedCount <= 2 ? #strings.listJoin(selectedNames, ', ') : selectedNames[0] + ' +' + (selectedCount - 1)}"
+            th:text="${#strings.listJoin(selectedNames, ', ')}"
           ></th:block>
         </span>
         <span

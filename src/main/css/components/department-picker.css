@@ -4,9 +4,17 @@ uv-department-picker {
 
 .department-picker__button {
   width: 100%;
+
+  /* the summary takes the free room instead of the caret, which keeps the badge next to the caret */
+  &::after {
+    flex-grow: 0;
+  }
 }
 
 .department-picker__summary {
+  flex-grow: 1;
+  /* a flex item does not shrink below its content - the ellipsis would never show */
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
