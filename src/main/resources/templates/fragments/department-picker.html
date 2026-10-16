@@ -56,7 +56,9 @@
             <th:block th:text="#{department-picker.all-persons}">Alle Personen</th:block>
             <small th:text="#{department-picker.all-persons.hint}"></small>
           </span>
-          <span class="department-picker__count" th:text="${picker.allPersonsCount}"></span>
+          <!--/* the bare number would be read as part of the name of the checkbox without telling what it counts */-->
+          <span class="department-picker__count" aria-hidden="true" th:text="${picker.allPersonsCount}"></span>
+          <span class="sr-only" th:text="#{department-picker.persons(${picker.allPersonsCount})}"></span>
         </label>
         <ul class="department-picker__list" role="group" th:aria-label="#{department-picker.departments}">
           <li th:each="option : ${picker.options}">
@@ -71,7 +73,8 @@
                 data-department-picker-department
               />
               <span th:text="${option.name}"></span>
-              <span class="department-picker__count" th:text="${option.activeMemberCount}"></span>
+              <span class="department-picker__count" aria-hidden="true" th:text="${option.activeMemberCount}"></span>
+              <span class="sr-only" th:text="#{department-picker.persons(${option.activeMemberCount})}"></span>
             </label>
           </li>
           <li
