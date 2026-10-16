@@ -88,12 +88,16 @@ uv-department-picker {
     border-radius: 4px;
     box-shadow: 0 6px 12px rgb(0 0 0 / 0.175);
     font-size: 1rem;
-    @apply dark:shadow-none;
-    @apply dark:border-zinc-700;
-    @apply dark:bg-zinc-900;
-    @apply dark:backdrop-filter;
-    @apply dark:backdrop-blur-xl;
-    @apply dark:supports-backdrop-blur:bg-zinc-900/70;
+    @variant dark {
+      box-shadow: none;
+      border-color: var(--color-zinc-700);
+      background-color: var(--color-zinc-900);
+      backdrop-filter: blur(var(--blur-xl));
+
+      @variant supports-backdrop-blur {
+        background-color: --alpha(var(--color-zinc-900) / 70%);
+      }
+    }
 
     &:popover-open {
       display: flex;
