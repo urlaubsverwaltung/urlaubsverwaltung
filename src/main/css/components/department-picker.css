@@ -39,7 +39,7 @@ uv-department-picker {
 }
 
 .department-picker {
-  .department-picker__menu {
+  .department-picker__popover {
     position-area: none;
     inset: --spacing(4);
     width: auto;
@@ -156,7 +156,7 @@ uv-department-picker {
 }
 
 /* `.popover-menu ul` resets margin and padding with a higher specificity */
-.department-picker__menu .department-picker__list {
+.department-picker__popover .department-picker__list {
   flex-grow: 1;
   min-height: 0;
   overflow-y: auto;

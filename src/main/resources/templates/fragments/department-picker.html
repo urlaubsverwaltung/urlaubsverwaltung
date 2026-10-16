@@ -34,7 +34,7 @@
       <div
         th:id="|${id}-popover|"
         popover
-        class="popover-menu popover--backdrop-screen department-picker__menu xs:popover--backdrop-none"
+        class="popover-menu popover--backdrop-screen department-picker__popover xs:popover--backdrop-none"
       >
         <div th:if="${#lists.size(picker.options) > 8}" class="department-picker__search">
           <label th:for="|${id}-search|" class="sr-only" th:text="#{department-picker.search}">Abteilung suchen</label>
