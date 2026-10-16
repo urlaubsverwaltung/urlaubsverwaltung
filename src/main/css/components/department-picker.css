@@ -296,6 +296,16 @@ uv-department-picker {
   font-variant-numeric: tabular-nums;
 }
 
+/* passes the remaining height on to the scrolling list */
+.department-picker__fieldset {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+  /* a fieldset does not shrink below its content by default */
+  min-width: 0;
+}
+
 .department-picker__list {
   flex-grow: 1;
   min-height: 0;
