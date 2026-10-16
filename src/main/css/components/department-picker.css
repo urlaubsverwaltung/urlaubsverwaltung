@@ -117,6 +117,18 @@ uv-department-picker {
   }
 }
 
+.department-picker__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+  padding: --spacing(2);
+
+  @variant xs {
+    padding: 0;
+  }
+}
+
 .department-picker__search {
   padding: --spacing(3) --spacing(3) --spacing(2);
 
