@@ -28,7 +28,18 @@ uv-department-picker {
 }
 
 .department-picker {
-  /* looks like a form control (see form.css), with a caret at its end */
+  /* the inline padding of search, options and footer - checkboxes, search field and submit button line up */
+  --department-picker-padding-inline: --spacing(3);
+  --department-picker-muted-color: var(--color-zinc-500);
+  --department-picker-divider-color: var(--color-zinc-300);
+
+  @variant dark {
+    --department-picker-muted-color: var(--color-zinc-400);
+    --department-picker-divider-color: var(--color-zinc-600);
+  }
+
+  /* looks like a form control (see form.css), with a caret at its end. nested to outdo the padding of form.css, which
+   * comes later. */
   .department-picker__button {
     display: flex;
     align-items: center;
@@ -130,7 +141,7 @@ uv-department-picker {
 }
 
 .department-picker__search {
-  padding: --spacing(3) --spacing(3) --spacing(2);
+  padding: --spacing(3) var(--department-picker-padding-inline) --spacing(2);
 
   /* the search filters on the client only */
   @media (scripting: none) {
@@ -149,7 +160,7 @@ uv-department-picker {
   display: flex;
   align-items: center;
   gap: --spacing(2.5);
-  padding: --spacing(1.5) --spacing(3);
+  padding: --spacing(1.5) var(--department-picker-padding-inline);
   font-size: var(--text-sm);
   cursor: pointer;
 
@@ -171,19 +182,13 @@ uv-department-picker {
 
 .department-picker__option--all {
   padding-block: --spacing(2);
-  border-bottom: 1px solid var(--color-zinc-300);
-  @variant dark {
-    border-color: var(--color-zinc-600);
-  }
+  border-bottom: 1px solid var(--department-picker-divider-color);
 }
 
 .department-picker__option small {
   display: block;
-  color: var(--color-zinc-500);
+  color: var(--department-picker-muted-color);
   font-size: var(--text-xs);
-  @variant dark {
-    color: var(--color-zinc-400);
-  }
 }
 
 /* a flex item does not shrink below its content - the description would widen the menu instead of being cut off */
@@ -200,12 +205,9 @@ uv-department-picker {
 .department-picker__count {
   margin-inline-start: auto;
   padding-inline-start: --spacing(2);
-  color: var(--color-zinc-500);
+  color: var(--department-picker-muted-color);
   font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
-  @variant dark {
-    color: var(--color-zinc-400);
-  }
 }
 
 .department-picker__list {
@@ -222,18 +224,12 @@ uv-department-picker {
 }
 
 .department-picker__no-hit {
-  padding: --spacing(2) --spacing(3);
-  color: var(--color-zinc-500);
+  padding: --spacing(2) var(--department-picker-padding-inline);
+  color: var(--department-picker-muted-color);
   font-size: var(--text-sm);
-  @variant dark {
-    color: var(--color-zinc-400);
-  }
 }
 
 .department-picker__footer {
-  padding: --spacing(3);
-  border-top: 1px solid var(--color-zinc-300);
-  @variant dark {
-    border-color: var(--color-zinc-600);
-  }
+  padding: --spacing(3) var(--department-picker-padding-inline);
+  border-top: 1px solid var(--department-picker-divider-color);
 }
