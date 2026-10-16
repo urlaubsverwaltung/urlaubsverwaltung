@@ -72,20 +72,6 @@ public class NavigationPage {
         return page.locator(OVERVIEW_LINK_SELECTOR);
     }
 
-    /**
-     * The drag handle on the right edge of the desktop navigation, added by navigation.js.
-     */
-    public Locator resizeHandle() {
-        return page.locator(RESIZE_HANDLE_SELECTOR);
-    }
-
-    /**
-     * @return computed colour of the resize handle's line - its {@code ::before}, faded in on hover or while resizing
-     */
-    public String resizeHandleLineColor() {
-        return ThemeColors.backgroundColorOf(resizeHandle(), "::before");
-    }
-
     public static final class QuickAdd {
         private static final String APPLICATION_SELECTOR = "[data-test-id=create-application-link]";
         private static final String SICKNOTE_SELECTOR = "[data-test-id=create-sicknote-link]";
