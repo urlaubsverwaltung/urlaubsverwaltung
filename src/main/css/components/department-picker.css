@@ -45,6 +45,11 @@ uv-department-picker {
 .department-picker__search {
   padding: --spacing(3) --spacing(3) --spacing(2);
 
+  /* the search filters on the client only */
+  @media (scripting: none) {
+    display: none;
+  }
+
   input {
     width: 100%;
   }
