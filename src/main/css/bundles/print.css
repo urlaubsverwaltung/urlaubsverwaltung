@@ -112,8 +112,6 @@
 
   #main {
     overflow: visible !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
   }
 
   /* Do not show sort icons in tables */
