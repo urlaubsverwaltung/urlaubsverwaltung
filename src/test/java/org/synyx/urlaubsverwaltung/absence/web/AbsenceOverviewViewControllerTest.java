@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -40,6 +43,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +57,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
@@ -77,6 +82,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -135,8 +141,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", emptyList()))
-            .andExpect(model().attribute("selectedDepartments", nullValue()))
+            .andExpect(model().attributeDoesNotExist("departmentPicker"))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(view().name("absences/absences-overview"));
@@ -161,8 +166,8 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
-            .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains(department.getName()))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains(department.getName()))))
             .andExpect(view().name("absences/absences-overview"));
 
         verify(personService).getActivePersons();
@@ -191,8 +196,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", nullValue()))
-            .andExpect(model().attribute("selectedDepartments", nullValue()))
+            .andExpect(model().attributeDoesNotExist("departmentPicker"))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
             .andExpect(view().name("absences/absences-overview"));
@@ -295,7 +299,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains(department.getName()))))
             .andExpect(view().name("absences/absences-overview"));
     }
 
@@ -320,8 +324,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("superheroes"))));
     }
 
     @ParameterizedTest
@@ -359,8 +363,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", contains(accounting, marketing, sales)))
-            .andExpect(model().attribute("selectedDepartments", contains("marketing", "sales")))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("accounting", "marketing", "sales"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("marketing", "sales"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(
                     hasProperty("persons", contains(
@@ -389,8 +393,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", hasItem("villains")));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("villains"))));
     }
 
     @Test
@@ -412,8 +416,199 @@ class AbsenceOverviewViewControllerTest {
             .param("department", "villains")
             .param("department", "superheroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("superheroes"), hasItem("villains"))));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("superheroes", "villains"))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureAllPersonsShowsEveryActivePersonForBossOrOffice(Role role) throws Exception {
+
+        final var signedInUser = person("olga");
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, role));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var alice = person("alice");
+        alice.setId(2L);
+        final var withoutDepartment = person("zoe");
+        withoutDepartment.setId(3L);
+
+        final var marketing = department("marketing");
+        marketing.setMembers(List.of(alice));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(marketing));
+        when(personService.getActivePersons()).thenReturn(List.of(signedInUser, alice, withoutDepartment));
+
+        final var model = perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("allPersons", "true"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alice", "olga", "zoe")))
+            .andReturn().getModelAndView().getModel();
+
+        assertThat(model).containsEntry("departmentPicker", new DepartmentPickerDto(
+            List.of(new DepartmentPickerDto.Option("marketing", 1, false)), true, 3));
+
+        // the members of the signed-in user are loaded once and reused for "Alle Personen"
+        verify(personService).getActivePersons();
+    }
+
+    @Test
+    void ensureAllPersonsShowsManagedMembersAndOwnDepartmentColleaguesForDepartmentHead() throws Exception {
+
+        final var head = person("hanna");
+        head.setId(1L);
+        head.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(head);
+
+        final var managedMember = person("mia");
+        managedMember.setId(2L);
+        final var colleague = person("carl");
+        colleague.setId(3L);
+
+        final var managed = department("managed");
+        managed.setMembers(List.of(managedMember));
+        final var own = department("own");
+        own.setMembers(List.of(head, colleague));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(head)).thenReturn(List.of(managed, own));
+        when(departmentService.getMembersForDepartmentHead(head)).thenReturn(List.of(managedMember));
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("allPersons", "true"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("carl", "hanna", "mia")));
+    }
+
+    @Test
+    void ensureAllPersonsShowsTheMembersOfTheOwnDepartmentsForPlainMember() throws Exception {
+
+        final var bruce = person("bruce");
+        bruce.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(bruce);
+
+        final var robin = person("robin");
+        robin.setId(2L);
+        final var alfred = person("alfred");
+        alfred.setId(3L);
+
+        final var heroes = department("heroes");
+        heroes.setMembers(List.of(bruce, robin));
+        final var butlers = department("butlers");
+        butlers.setMembers(List.of(alfred, bruce));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(bruce)).thenReturn(List.of(butlers, heroes));
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("allPersons", "true"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alfred", "bruce", "robin")));
+
+        verify(personService, never()).getActivePersons();
+    }
+
+    @Test
+    void ensureAllPersonsIgnoresSelectedDepartments() throws Exception {
+
+        final var bruce = person("bruce");
+        bruce.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(bruce);
+
+        final var alfred = person("alfred");
+        alfred.setId(2L);
+
+        final var heroes = department("heroes");
+        heroes.setMembers(List.of(bruce));
+        final var butlers = department("butlers");
+        butlers.setMembers(List.of(alfred));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(bruce)).thenReturn(List.of(butlers, heroes));
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("allPersons", "true")
+            .param("department", "heroes"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(empty())))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alfred", "bruce")));
+    }
+
+    @Test
+    void ensureAllPersonsWithoutVisibleDepartmentsShowsOnlyTheSignedInUser() throws Exception {
+
+        final var bruce = person("bruce");
+        bruce.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(bruce);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(bruce)).thenReturn(List.of());
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("allPersons", "true"))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeDoesNotExist("departmentPicker"))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("bruce")));
+    }
+
+    @Test
+    void ensureDepartmentPickerCountsActiveMembersAndMarksTheSelectedDepartments() throws Exception {
+
+        final var signedInUser = person("olga");
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var alice = person("alice");
+        alice.setId(2L);
+        final var inactive = person("ida");
+        inactive.setId(3L);
+        inactive.setPermissions(List.of());
+        final var bob = person("bob");
+        bob.setId(4L);
+
+        final var accounting = department("accounting");
+        accounting.setMembers(List.of(alice, inactive));
+        final var sales = department("sales");
+        sales.setMembers(List.of(bob));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(accounting, sales));
+        when(personService.getActivePersons()).thenReturn(List.of(signedInUser, alice, bob));
+
+        final var model = perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("department", "sales"))
+            .andExpect(status().isOk())
+            .andReturn().getModelAndView().getModel();
+
+        assertThat(model).containsEntry("departmentPicker", new DepartmentPickerDto(
+            List.of(
+                new DepartmentPickerDto.Option("accounting", 1, false),
+                new DepartmentPickerDto.Option("sales", 1, true)
+            ), false, 3));
+    }
+
+    @Test
+    void ensureUnknownSelectedDepartmentFallsBackToTheDepartmentsOfTheSignedInUser() throws Exception {
+
+        final var bruce = person("bruce");
+        bruce.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(bruce);
+
+        final var heroes = department("heroes");
+        heroes.setMembers(List.of(bruce));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(bruce)).thenReturn(List.of(heroes));
+        when(departmentService.getAssignedDepartmentsOfMember(bruce)).thenReturn(List.of(heroes));
+
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("department", "renamed-meanwhile"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("heroes"))))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("bruce")));
     }
 
     @ParameterizedTest
@@ -713,7 +908,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", hasItem("villains")))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("villains"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(3))
@@ -750,7 +945,7 @@ class AbsenceOverviewViewControllerTest {
             .param("department", "villains")
             .param("department", "heroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("heroes"), hasItem("villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("heroes", "villains"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(4))
@@ -5271,6 +5466,31 @@ class AbsenceOverviewViewControllerTest {
         person.setPermissions(List.of(USER));
 
         return person;
+    }
+
+    private static Matcher<DepartmentPickerDto> departmentNames(Matcher<? super List<String>> namesMatcher) {
+        return new FeatureMatcher<DepartmentPickerDto, List<String>>(namesMatcher, "department picker with department names", "department names") {
+            @Override
+            protected List<String> featureValueOf(DepartmentPickerDto picker) {
+                return picker.options().stream().map(DepartmentPickerDto.Option::name).toList();
+            }
+        };
+    }
+
+    private static Matcher<DepartmentPickerDto> selectedDepartmentNames(Matcher<? super List<String>> namesMatcher) {
+        return new FeatureMatcher<DepartmentPickerDto, List<String>>(namesMatcher, "department picker with selected department names", "selected department names") {
+            @Override
+            protected List<String> featureValueOf(DepartmentPickerDto picker) {
+                return picker.selectedNames();
+            }
+        };
+    }
+
+    private static Matcher<Object> hasMonthWithPersons(String... firstNames) {
+        final List<Matcher<? super Object>> persons = Arrays.stream(firstNames)
+            .<Matcher<? super Object>>map(firstName -> hasProperty("firstName", is(firstName)))
+            .toList();
+        return hasProperty("months", hasItem(hasProperty("persons", contains(persons))));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

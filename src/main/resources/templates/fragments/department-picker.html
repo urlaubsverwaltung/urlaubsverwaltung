@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>department-picker</title>
+  </head>
+  <body>
+    <uv-department-picker
+      th:fragment="department-picker(id, picker)"
+      th:with="selectedNames=${picker.selectedNames()}, selectedCount=${#lists.size(selectedNames)}"
+      class="department-picker"
+    >
+      <button
+        type="button"
+        th:id="${id}"
+        th:popovertarget="|${id}-popover|"
+        th:aria-describedby="|${id}-summary|"
+        class="department-picker__button"
+      >
+        <!--/* a host label names the button and hides its content from the accessible name - the summary is its description */-->
+        <span th:id="|${id}-summary|" class="department-picker__summary">
+          <th:block th:if="${picker.allPersonsSelected}" th:text="#{department-picker.all-persons}"></th:block>
+          <th:block
+            th:unless="${picker.allPersonsSelected}"
+            th:text="${#strings.listJoin(selectedNames, ', ')}"
+          ></th:block>
+        </span>
+        <!--/* from three names on the summary is likely cut off - the badge still tells how many are chosen */-->
+        <span
+          th:if="${!picker.allPersonsSelected and selectedCount >= 3}"
+          class="department-picker__badge"
+          th:text="${selectedCount}"
+        ></span>
+      </button>
+      <div th:id="|${id}-popover|" popover class="department-picker__popover">
+        <!--/* full screen there is no button left to click on to close the popover */-->
+        <div class="department-picker__header xs:hidden">
+          <span class="department-picker__title" th:text="#{department-picker.departments}">Abteilungen</span>
+          <button
+            type="button"
+            class="department-picker__close"
+            th:popovertarget="|${id}-popover|"
+            popovertargetaction="hide"
+            th:aria-label="#{department-picker.close}"
+          >
+            <svg th:replace="~{icon/x::svg(className='w-5 h-5')}"></svg>
+          </button>
+        </div>
+        <div class="department-picker__content">
+          <!--/* up to eight departments are scanned at a glance, a search would only be in the way */-->
+          <div th:if="${#lists.size(picker.options) > 8}" class="department-picker__search">
+            <label th:for="|${id}-search|" class="sr-only" th:text="#{department-picker.search}"
+              >Abteilung suchen</label
+            >
+            <input
+              th:id="|${id}-search|"
+              type="search"
+              th:placeholder="#{department-picker.search}"
+              autocomplete="off"
+              data-department-picker-search
+            />
+          </div>
+          <label class="department-picker__option department-picker__option--all">
+            <input
+              type="checkbox"
+              class="uv-checkbox"
+              name="allPersons"
+              value="true"
+              autocomplete="off"
+              th:checked="${picker.allPersonsSelected}"
+              th:aria-describedby="|${id}-all-persons-hint|"
+              data-department-picker-all
+            />
+            <span class="leading-tight">
+              <th:block th:text="#{department-picker.all-persons}">Alle Personen</th:block>
+              <!--/* the hint is the description of the checkbox - as part of the label it would lengthen its name */-->
+              <small
+                th:id="|${id}-all-persons-hint|"
+                aria-hidden="true"
+                th:text="#{department-picker.all-persons.hint}"
+              ></small>
+            </span>
+            <!--/* the bare number would be read as part of the name of the checkbox without telling what it counts */-->
+            <span class="department-picker__count" aria-hidden="true" th:text="${picker.allPersonsCount}"></span>
+            <span class="sr-only" th:text="#{department-picker.persons(${picker.allPersonsCount})}"></span>
+          </label>
+          <!--/* a fieldset groups the departments - role=group on the list would take away its list semantics */-->
+          <fieldset class="department-picker__fieldset">
+            <legend class="sr-only" th:text="#{department-picker.departments}">Abteilungen</legend>
+            <ul class="department-picker__list" role="list">
+              <li th:each="option : ${picker.options}">
+                <label class="department-picker__option">
+                  <input
+                    type="checkbox"
+                    class="uv-checkbox"
+                    name="department"
+                    autocomplete="off"
+                    th:value="${option.name}"
+                    th:checked="${option.selected}"
+                    data-department-picker-department
+                  />
+                  <span th:text="${option.name}"></span>
+                  <span
+                    class="department-picker__count"
+                    aria-hidden="true"
+                    th:text="${option.activeMemberCount}"
+                  ></span>
+                  <span class="sr-only" th:text="#{department-picker.persons(${option.activeMemberCount})}"></span>
+                </label>
+              </li>
+              <li
+                class="department-picker__no-hit"
+                hidden
+                data-department-picker-no-hit
+                th:text="#{department-picker.search.no-hit}"
+              ></li>
+            </ul>
+          </fieldset>
+        </div>
+        <div class="department-picker__footer">
+          <button
+            type="submit"
+            class="button-main py-1.5 px-3 w-full"
+            th:text="#{action.confirm}"
+            data-department-picker-confirm
+          ></button>
+        </div>
+      </div>
+    </uv-department-picker>
+  </body>
+</html>

@@ -234,7 +234,13 @@
       mask-repeat: no-repeat;
 
       background-color: var(--color-zinc-700);
-      @variant dark {
+    }
+
+    /* the dark variant has to wrap the pseudo-element. nested inside `&::after` it compiles to
+     * `::after:where(.theme-dark, …)`, a pseudo-class after a pseudo-element, which the browser drops.
+     * it comes after the light colour, both rules have the same specificity. */
+    @variant dark {
+      &::after {
         background-color: var(--color-zinc-50);
       }
     }
