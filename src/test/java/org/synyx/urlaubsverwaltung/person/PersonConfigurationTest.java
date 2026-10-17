@@ -22,4 +22,24 @@ class PersonConfigurationTest {
             .withPropertyValues("uv.person.ui-deactivation-enabled=false")
             .run(context -> assertThat(context.getBean(PersonProperties.class).isUiDeactivationEnabled()).isFalse());
     }
+
+    @Test
+    void ensureCustomerPortalUrlIsNotSetByDefault() {
+        contextRunner
+            .run(context -> assertThat(context.getBean(PersonProperties.class).getCustomerPortalUrl()).isNull());
+    }
+
+    @Test
+    void ensureCustomerPortalUrlCanBeSet() {
+        contextRunner
+            .withPropertyValues("uv.person.customer-portal-url=https://portal.example.org")
+            .run(context -> assertThat(context.getBean(PersonProperties.class).getCustomerPortalUrl()).isEqualTo("https://portal.example.org"));
+    }
+
+    @Test
+    void ensureCustomerPortalUrlMustBeAnUrl() {
+        contextRunner
+            .withPropertyValues("uv.person.customer-portal-url=not an url")
+            .run(context -> assertThat(context).hasFailed());
+    }
 }

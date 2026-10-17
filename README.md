@@ -256,16 +256,19 @@ uv.info-banner.text.de=Wartungsarbeiten ab Freitag 14:00. Es kann zu Beeinträch
 
 Standardmäßig kann das Office Benutzer über die Oberfläche deaktivieren. Werden Benutzer von einem externen System
 verwaltet und über ein Event (z. B. via RabbitMQ und Extension) deaktiviert, kann das Deaktivieren über die Oberfläche
-abgeschaltet werden. Die Option "Inaktiv" wird dann bei den Berechtigungen aktiver Benutzer nicht mehr angezeigt.
+abgeschaltet werden. Die Optionen "Inaktiv" und "Benutzer" werden dann bei den Berechtigungen aktiver Benutzer nicht mehr
+angezeigt. Stattdessen verweist ein Hinweis auf das Kundenportal und die Hilfe zum Deaktivieren einer Person.
 Bereits inaktive Benutzer können weiterhin über die Oberfläche reaktiviert werden.
 
 ```properties
 uv.person.ui-deactivation-enabled=false
+uv.person.customer-portal-url=https://example.org/kundenportal
 ```
 
-| Property                          | Type    | Description                                                                    |
-|-----------------------------------|---------|--------------------------------------------------------------------------------|
-| uv.person.ui-deactivation-enabled | Boolean | (default) `true`, `false` blendet die Option "Inaktiv" für aktive Benutzer aus |
+| Property                          | Type    | Description                                                                                    |
+|-----------------------------------|---------|------------------------------------------------------------------------------------------------|
+| uv.person.ui-deactivation-enabled | Boolean | (default) `true`, `false` blendet die Optionen "Inaktiv" und "Benutzer" für aktive Benutzer aus |
+| uv.person.customer-portal-url     | String  | URL des Kundenportals, in dem Benutzer deaktiviert werden. Ohne URL wird kein Link angezeigt.  |
 
 #### Launchpad
 

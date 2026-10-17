@@ -1,8 +1,11 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 @ConfigurationProperties("uv.person")
+@Validated
 public class PersonProperties {
 
     /**
@@ -12,11 +15,26 @@ public class PersonProperties {
      */
     private boolean uiDeactivationEnabled = true;
 
+    /**
+     * URL of the customer portal where persons are deactivated. Linked on the permissions page of active persons
+     * when the deactivation via the user interface is disabled.
+     */
+    @URL
+    private String customerPortalUrl;
+
     public boolean isUiDeactivationEnabled() {
         return uiDeactivationEnabled;
     }
 
     public void setUiDeactivationEnabled(boolean uiDeactivationEnabled) {
         this.uiDeactivationEnabled = uiDeactivationEnabled;
+    }
+
+    public String getCustomerPortalUrl() {
+        return customerPortalUrl;
+    }
+
+    public void setCustomerPortalUrl(String customerPortalUrl) {
+        this.customerPortalUrl = customerPortalUrl;
     }
 }

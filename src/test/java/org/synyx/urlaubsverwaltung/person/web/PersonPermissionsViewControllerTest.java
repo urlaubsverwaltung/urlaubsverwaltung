@@ -343,6 +343,22 @@ class PersonPermissionsViewControllerTest {
     }
 
     @Test
+    void showPersonPermissionsLinksToCustomerPortalWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+        personProperties.setCustomerPortalUrl("https://portal.example.org");
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("canDeactivatePerson", false))
+            .andExpect(model().attribute("customerPortalUrl", "https://portal.example.org"));
+    }
+
+    @Test
     void showPersonPermissionsKeepsInactiveStateOfInactivePersonWhenUiDeactivationIsDisabled() throws Exception {
 
         personProperties.setUiDeactivationEnabled(false);
@@ -360,6 +376,7 @@ class PersonPermissionsViewControllerTest {
     void ensureDeactivatingActivePersonIsRejectedWhenUiDeactivationIsDisabled() throws Exception {
 
         personProperties.setUiDeactivationEnabled(false);
+        personProperties.setCustomerPortalUrl("https://portal.example.org");
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setId(1L);
@@ -372,7 +389,8 @@ class PersonPermissionsViewControllerTest {
         )
             .andExpect(view().name("person/person_permissions"))
             .andExpect(model().attributeHasFieldErrorCode("person", "permissions", "person.form.permissions.error.inactive.disabled"))
-            .andExpect(model().attribute("canDeactivatePerson", false));
+            .andExpect(model().attribute("canDeactivatePerson", false))
+            .andExpect(model().attribute("customerPortalUrl", "https://portal.example.org"));
 
         verify(personService, never()).update(any(), any());
     }

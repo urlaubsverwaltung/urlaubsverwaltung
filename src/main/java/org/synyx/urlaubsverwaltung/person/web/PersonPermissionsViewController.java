@@ -87,7 +87,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
-        model.addAttribute("canDeactivatePerson", canDeactivate(person));
+        addDeactivationAttributes(model, person);
 
         return "person/person_permissions";
     }
@@ -106,7 +106,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("canDeactivatePerson", canDeactivate(person));
+            addDeactivationAttributes(model, person);
             return "person/person_permissions";
         }
 
@@ -123,6 +123,11 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + updatedPerson.getId();
+    }
+
+    private void addDeactivationAttributes(Model model, Person person) {
+        model.addAttribute("canDeactivatePerson", canDeactivate(person));
+        model.addAttribute("customerPortalUrl", personProperties.getCustomerPortalUrl());
     }
 
     /**

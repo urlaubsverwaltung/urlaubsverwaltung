@@ -54,29 +54,59 @@
           </h2>
 
           <div class="uv-form__group">
-            <div class="uv-form__group-info">
+            <th:block th:if="${canDeactivatePerson}">
+              <div class="uv-form__group-info">
+                <p class="uv-help-block">
+                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                  <th:block th:text="#{person.form.permissions.description}" />
+                </p>
+              </div>
+              <div class="uv-form__input-col">
+                <strong class="uv-form__label" th:text="#{person.form.permissions.roles.INACTIVE}"></strong>
+                <label>
+                  <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
+                  <span th:text="#{person.form.permissions.roles.INACTIVE.description}">
+                    hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben bestehen)
+                  </span>
+                </label>
+              </div>
+              <div class="uv-form__input-col">
+                <strong class="uv-form__label" th:text="#{person.form.permissions.roles.USER}"></strong>
+                <label>
+                  <input type="checkbox" th:field="*{permissions}" value="USER" />
+                  <span th:text="#{person.form.permissions.roles.USER.description}">
+                    hat Zugang zur Urlaubsverwaltung und darf Abwesenheiten für sich selbst beantragen
+                  </span>
+                </label>
+              </div>
+            </th:block>
+            <div class="uv-form__input-col" th:unless="${canDeactivatePerson}">
+              <input type="hidden" name="permissions" value="USER" />
               <p class="uv-help-block">
                 <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-                <th:block th:text="#{person.form.permissions.description}" />
+                <span>
+                  <th:block th:text="#{person.form.permissions.deactivation.disabled.info}" />
+                  <a
+                    th:if="${customerPortalUrl}"
+                    class="inline-flex items-center"
+                    target="_blank"
+                    rel="noopener"
+                    th:href="${customerPortalUrl}"
+                  >
+                    <th:block th:text="#{person.form.permissions.deactivation.disabled.customer-portal}" />
+                    <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+                  </a>
+                  <a
+                    class="inline-flex items-center"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://focus-shift.de/hilfe/kundenportal/mitarbeitende/#wie-deaktiviere-ich-eine-person"
+                  >
+                    <th:block th:text="#{person.form.permissions.deactivation.disabled.help}" />
+                    <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+                  </a>
+                </span>
               </p>
-            </div>
-            <div class="uv-form__input-col" th:if="${canDeactivatePerson}">
-              <strong class="uv-form__label" th:text="#{person.form.permissions.roles.INACTIVE}"></strong>
-              <label>
-                <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
-                <span th:text="#{person.form.permissions.roles.INACTIVE.description}">
-                  hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben bestehen)
-                </span>
-              </label>
-            </div>
-            <div class="uv-form__input-col">
-              <strong class="uv-form__label" th:text="#{person.form.permissions.roles.USER}"></strong>
-              <label>
-                <input type="checkbox" th:field="*{permissions}" value="USER" />
-                <span th:text="#{person.form.permissions.roles.USER.description}">
-                  hat Zugang zur Urlaubsverwaltung und darf Abwesenheiten für sich selbst beantragen
-                </span>
-              </label>
             </div>
           </div>
         </div>
