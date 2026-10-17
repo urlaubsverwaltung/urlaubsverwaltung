@@ -22,8 +22,9 @@ public class PersonProperties {
     private boolean uiDeactivationEnabled = true;
 
     /**
-     * URL of the customer portal where persons are deactivated. Linked on the permissions page of active persons
-     * when the deactivation via the user interface is disabled.
+     * URL of the customer portal where persons are deactivated and deleted. Linked on the permissions page of active
+     * persons when the deactivation via the user interface is disabled and on the details page of a person when the
+     * deletion via the user interface is disabled.
      */
     @URL
     private String customerPortalUrl;

@@ -278,12 +278,14 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(model().attribute("canDeletePerson", true));
+            .andExpect(model().attribute("canDeletePerson", true))
+            .andExpect(model().attribute("canDeletePersonInCustomerPortal", false));
     }
 
     @Test
     void showPersonInformationOfficeCannotDeletePersonWhenUiDeletionIsDisabled() throws Exception {
         personProperties.setUiDeletionEnabled(false);
+        personProperties.setCustomerPortalUrl("https://portal.example.org");
 
         final Person person = new Person();
         person.setId(1L);
@@ -297,7 +299,9 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(model().attribute("canDeletePerson", false));
+            .andExpect(model().attribute("canDeletePerson", false))
+            .andExpect(model().attribute("canDeletePersonInCustomerPortal", true))
+            .andExpect(model().attribute("customerPortalUrl", "https://portal.example.org"));
     }
 
     @Test
@@ -316,6 +320,27 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/1"))
             .andExpect(model().attribute("canDeletePerson", false));
+    }
+
+    @Test
+    void showPersonInformationNonOfficeIsNotPointedToCustomerPortalWhenUiDeletionIsDisabled() throws Exception {
+        personProperties.setUiDeletionEnabled(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(2L);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        userIsAllowedToSubmitSickNotes(false);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("canDeletePerson", false))
+            .andExpect(model().attribute("canDeletePersonInCustomerPortal", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
