@@ -130,6 +130,8 @@ public class PersonDetailsViewController implements HasLaunchpad, HasPersonSearc
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));
         model.addAttribute("canDeletePerson", signedInUser.hasRole(OFFICE) && personProperties.isUiDeletionEnabled());
+        model.addAttribute("canDeletePersonInCustomerPortal", signedInUser.hasRole(OFFICE) && !personProperties.isUiDeletionEnabled());
+        model.addAttribute("customerPortalUrl", personProperties.getCustomerPortalUrl());
 
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(selectedYear, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));

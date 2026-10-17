@@ -524,6 +524,32 @@
           <div th:if="${canDeletePerson}" class="@3xl/main:col-start-2 @3xl/main:row-start-4">
             <th:block th:replace="~{person/detail-section/action-delete-person::section}"></th:block>
           </div>
+
+          <div th:if="${canDeletePersonInCustomerPortal}" class="@3xl/main:col-start-2 @3xl/main:row-start-4">
+            <div
+              th:replace="~{fragments/section-heading::section-heading(~{::person-details-customer-portal-deletion-body}, ~{})}"
+            >
+              <th:block th:ref="person-details-customer-portal-deletion-body">
+                <h2 th:text="#{person.account.dangerzone.title}">Benutzer löschen</h2>
+              </th:block>
+            </div>
+            <p class="uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span>
+                <th:block th:text="#{person.account.dangerzone.customer-portal.info}" />
+                <a
+                  th:if="${customerPortalUrl}"
+                  class="inline-flex items-center"
+                  target="_blank"
+                  rel="noopener"
+                  th:href="${customerPortalUrl}"
+                >
+                  <th:block th:text="#{person.account.dangerzone.customer-portal.link}" />
+                  <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+                </a>
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </main>
