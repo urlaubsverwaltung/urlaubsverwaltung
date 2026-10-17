@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.ui.components;
+package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

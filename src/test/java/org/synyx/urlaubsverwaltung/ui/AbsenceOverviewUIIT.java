@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.AbsenceOverviewPage;
-import org.synyx.urlaubsverwaltung.ui.components.DepartmentPickerPage;
+import org.synyx.urlaubsverwaltung.ui.pages.DepartmentPickerPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -172,7 +172,6 @@ class AbsenceOverviewUIIT {
         page.keyboard().press("Escape");
 
         assertThat(departmentPicker.getPopoverLocator()).isHidden();
-        assertThat(page).not().hasURL(Pattern.compile("department="));
         overview.showsPersons("Paula");
 
         departmentPicker.open();

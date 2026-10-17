@@ -60,9 +60,6 @@ class NavigationUIIT {
     // narrower than the `desktop` breakpoint (1280px) so the mobile hamburger menu / drawer is used
     private static final int MOBILE_VIEWPORT_WIDTH = 390;
     private static final int MOBILE_VIEWPORT_HEIGHT = 844;
-    // wide enough for the `desktop` breakpoint (1280px), where the navigation gets its resize handle
-    private static final int DESKTOP_VIEWPORT_WIDTH = 1440;
-    private static final int DESKTOP_VIEWPORT_HEIGHT = 900;
 
     @LocalServerPort
     private int port;

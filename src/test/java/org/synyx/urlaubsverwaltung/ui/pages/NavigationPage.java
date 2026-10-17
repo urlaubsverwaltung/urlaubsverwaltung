@@ -13,7 +13,6 @@ public class NavigationPage {
     private static final String MOBILE_MENU_TOGGLE_SELECTOR = "button[popovertarget=navigation]";
     private static final String MOBILE_MENU_SELECTOR = "#navigation";
     private static final String OVERVIEW_LINK_SELECTOR = "#basic-overview-link";
-    private static final String RESIZE_HANDLE_SELECTOR = ".nav-resize-handle";
 
     private final Page page;
     private final AvatarMenu avatarMenu;

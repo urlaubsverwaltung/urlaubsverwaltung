@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
-import org.synyx.urlaubsverwaltung.ui.components.DepartmentPickerPage;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
