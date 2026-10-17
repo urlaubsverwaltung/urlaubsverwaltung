@@ -252,6 +252,21 @@ uv.info-banner.text.de=Wartungsarbeiten ab Freitag 14:00. Es kann zu Beeinträch
 | uv.info-banner.enabled          | Boolean | (default) `false`, `true` zum aktivieren des Banners |
 | uv.info-banner.text.de          | String  | Text des Info-Banners für das Deutsche Locale.       |
 
+#### Benutzer deaktivieren
+
+Standardmäßig kann das Office Benutzer über die Oberfläche deaktivieren. Werden Benutzer von einem externen System
+verwaltet und über ein Event (z. B. via RabbitMQ und Extension) deaktiviert, kann das Deaktivieren über die Oberfläche
+abgeschaltet werden. Die Option "Inaktiv" wird dann bei den Berechtigungen aktiver Benutzer nicht mehr angezeigt.
+Bereits inaktive Benutzer können weiterhin über die Oberfläche reaktiviert werden.
+
+```properties
+uv.person.ui-deactivation-enabled=false
+```
+
+| Property                          | Type    | Description                                                                    |
+|-----------------------------------|---------|--------------------------------------------------------------------------------|
+| uv.person.ui-deactivation-enabled | Boolean | (default) `true`, `false` blendet die Option "Inaktiv" für aktive Benutzer aus |
+
 #### Launchpad
 
 Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 

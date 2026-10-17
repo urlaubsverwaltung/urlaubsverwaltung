@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonMailService;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -68,10 +69,13 @@ class PersonPermissionsViewControllerTest {
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
+    private PersonProperties personProperties;
+
     @BeforeEach
     void setUp() {
+        personProperties = new PersonProperties();
         sut = new PersonPermissionsViewController(personService, departmentService, personMailService, validator,
-            sessionService, personSearchUiFragmentSupplier);
+            sessionService, personSearchUiFragmentSupplier, personProperties);
     }
 
     @Nested
@@ -313,7 +317,114 @@ class PersonPermissionsViewControllerTest {
     }
 
     @Test
+    void showPersonPermissionsCanDeactivateActivePersonByDefault() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("canDeactivatePerson", true));
+    }
+
+    @Test
+    void showPersonPermissionsCannotDeactivateActivePersonWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("canDeactivatePerson", false));
+    }
+
+    @Test
+    void showPersonPermissionsKeepsInactiveStateOfInactivePersonWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/person/1/permissions"))
+            .andExpect(model().attribute("canDeactivatePerson", true));
+    }
+
+    @Test
+    void ensureDeactivatingActivePersonIsRejectedWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/1/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "INACTIVE")
+        )
+            .andExpect(view().name("person/person_permissions"))
+            .andExpect(model().attributeHasFieldErrorCode("person", "permissions", "person.form.permissions.error.inactive.disabled"))
+            .andExpect(model().attribute("canDeactivatePerson", false));
+
+        verify(personService, never()).update(any(), any());
+    }
+
+    @Test
+    void ensureInactivePersonCanStayInactiveWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(any(), any())).thenReturn(person);
+
+        perform(post("/web/person/1/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "INACTIVE")
+        )
+            .andExpect(redirectedUrl("/web/person/1"));
+
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
+    }
+
+    @Test
+    void ensureEditingPermissionsOfActivePersonWorksWhenUiDeactivationIsDisabled() throws Exception {
+
+        personProperties.setUiDeactivationEnabled(false);
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(any(), any())).thenReturn(person);
+
+        perform(post("/web/person/1/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "USER")
+            .param("permissions[1]", "OFFICE")
+        )
+            .andExpect(redirectedUrl("/web/person/1"));
+
+        verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
+    }
+
+    @Test
     void editPersonPermissionsForwardsToViewIfValidationFails() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);

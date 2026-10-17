@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonMailService;
+import org.synyx.urlaubsverwaltung.person.PersonProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonUpdate;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -32,6 +33,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapPermissionsDtoToRole;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapToPersonPermissionsDto;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.INACTIVE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -44,6 +46,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     private final PersonPermissionsDtoValidator validator;
     private final SessionService sessionService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final PersonProperties personProperties;
 
     @Autowired
     PersonPermissionsViewController(
@@ -52,7 +55,8 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         PersonMailService personMailService,
         PersonPermissionsDtoValidator validator,
         SessionService sessionService,
-        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
+        PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+        PersonProperties personProperties
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -60,6 +64,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         this.validator = validator;
         this.sessionService = sessionService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.personProperties = personProperties;
     }
 
     @Override
@@ -82,6 +87,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+        model.addAttribute("canDeactivatePerson", canDeactivate(person));
 
         return "person/person_permissions";
     }
@@ -90,14 +96,20 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     @PostMapping("/person/{personId}/permissions")
     public String editPersonPermissions(@PathVariable("personId") Long personId,
                                         @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors,
-                                        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         validator.validate(personPermissionsDto, errors);
+        if (personPermissionsDto.getPermissions().contains(INACTIVE) && !canDeactivate(person)) {
+            errors.rejectValue("permissions", "person.form.permissions.error.inactive.disabled");
+        }
+
         if (errors.hasErrors()) {
+            model.addAttribute("canDeactivatePerson", canDeactivate(person));
             return "person/person_permissions";
         }
 
-        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Collection<Role> oldRoles = List.copyOf(person.getPermissions());
         final Person updatedPerson = personService.update(person.getIdAsPersonId(),
             PersonUpdate.ofPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions())));
@@ -111,6 +123,14 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + updatedPerson.getId();
+    }
+
+    /**
+     * An inactive person can always stay inactive. Only the deactivation of an active person
+     * can be disabled via {@link PersonProperties#isUiDeactivationEnabled()}.
+     */
+    private boolean canDeactivate(Person person) {
+        return personProperties.isUiDeactivationEnabled() || person.isInactive();
     }
 
     private static List<Role> calculateAddedPermissions(Collection<Role> oldRoles, Person updatedPerson) {

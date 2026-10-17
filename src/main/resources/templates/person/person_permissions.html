@@ -60,7 +60,7 @@
                 <th:block th:text="#{person.form.permissions.description}" />
               </p>
             </div>
-            <div class="uv-form__input-col">
+            <div class="uv-form__input-col" th:if="${canDeactivatePerson}">
               <strong class="uv-form__label" th:text="#{person.form.permissions.roles.INACTIVE}"></strong>
               <label>
                 <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
