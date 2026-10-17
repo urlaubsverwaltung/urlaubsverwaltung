@@ -447,7 +447,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alice", "olga", "zoe")))
             .andReturn().getModelAndView().getModel();
 
-        assertThat(model.get("departmentPicker")).isEqualTo(new DepartmentPickerDto(
+        assertThat(model).containsEntry("departmentPicker", new DepartmentPickerDto(
             List.of(new DepartmentPickerDto.Option("marketing", 1, false)), true, 3));
 
         // the members of the signed-in user are loaded once and reused for "Alle Personen"
@@ -583,7 +583,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andReturn().getModelAndView().getModel();
 
-        assertThat(model.get("departmentPicker")).isEqualTo(new DepartmentPickerDto(
+        assertThat(model).containsEntry("departmentPicker", new DepartmentPickerDto(
             List.of(
                 new DepartmentPickerDto.Option("accounting", 1, false),
                 new DepartmentPickerDto.Option("sales", 1, true)
