@@ -270,6 +270,20 @@ uv.person.customer-portal-url=https://example.org/kundenportal
 | uv.person.ui-deactivation-enabled | Boolean | (default) `true`, `false` blendet die Optionen "Inaktiv" und "Benutzer" für aktive Benutzer aus |
 | uv.person.customer-portal-url     | String  | URL des Kundenportals, in dem Benutzer deaktiviert werden. Ohne URL wird kein Link angezeigt.  |
 
+#### Benutzer löschen
+
+Standardmäßig kann das Office Benutzer über die Oberfläche löschen. Werden Benutzer von einem externen System verwaltet
+und über ein Event (z. B. via RabbitMQ und Extension) gelöscht, kann das Löschen über die Oberfläche deaktiviert werden.
+Der Bereich zum Löschen wird dann auf der Detailseite der Person nicht mehr angezeigt.
+
+```properties
+uv.person.ui-deletion-enabled=false
+```
+
+| Property                      | Type    | Description                                                                 |
+|-------------------------------|---------|-----------------------------------------------------------------------------|
+| uv.person.ui-deletion-enabled | Boolean | (default) `true`, `false` zum Deaktivieren des Löschens über die Oberfläche |
+
 #### Launchpad
 
 Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 
