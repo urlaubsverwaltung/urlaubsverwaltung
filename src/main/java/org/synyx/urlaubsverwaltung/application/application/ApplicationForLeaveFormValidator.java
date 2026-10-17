@@ -8,11 +8,15 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -56,6 +60,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_TOO_FAR_IN_FUTURE = "application.error.tooFarInTheFuture";
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
     private static final String ERROR_OVERLAP = "application.error.overlap";
+    private static final String ERROR_BLACKOUT_PERIOD = "application.error.blackoutPeriod";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
     private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING = "application.error.alreadyAbsentOn.christmasEve.morning";
     private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON = "application.error.alreadyAbsentOn.christmasEve.noon";
@@ -85,6 +90,9 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final OvertimeService overtimeService;
     private final VacationTypeService vacationTypeService;
     private final ApplicationMapper applicationMapper;
+    private final BlackoutPeriodService blackoutPeriodService;
+    private final PersonService personService;
+    private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final Clock clock;
 
     @Autowired
@@ -97,6 +105,9 @@ class ApplicationForLeaveFormValidator implements Validator {
         OvertimeService overtimeService,
         VacationTypeService vacationTypeService,
         ApplicationMapper applicationMapper,
+        BlackoutPeriodService blackoutPeriodService,
+        PersonService personService,
+        ApplicationForLeavePermissionEvaluator permissionEvaluator,
         Clock clock
     ) {
         this.workingTimeService = workingTimeService;
@@ -107,6 +118,9 @@ class ApplicationForLeaveFormValidator implements Validator {
         this.overtimeService = overtimeService;
         this.vacationTypeService = vacationTypeService;
         this.applicationMapper = applicationMapper;
+        this.blackoutPeriodService = blackoutPeriodService;
+        this.personService = personService;
+        this.permissionEvaluator = permissionEvaluator;
         this.clock = clock;
     }
 
@@ -366,6 +380,19 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
 
         /*
+         * Ensure that the period does not fall into a blackout period ("Urlaubssperre"). A blackout period blocks
+         * self-service only: persons who may apply for leave on behalf of the person are not blocked.
+         */
+        final Optional<BlackoutPeriod> blockingBlackoutPeriod = blackoutPeriodService.findBlockingBlackoutPeriod(
+            applicationForm.getPerson(), applicationForm.getStartDate(), applicationForm.getEndDate(), vacationType);
+
+        if (blockingBlackoutPeriod.isPresent() && isBlockedByBlackoutPeriod(applicationForm.getPerson())) {
+            errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{blockingBlackoutPeriod.get().getTitle()}, null);
+
+            return;
+        }
+
+        /*
          * Ensure that the person has enough vacation days left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY}
          */
@@ -380,6 +407,11 @@ class ApplicationForLeaveFormValidator implements Validator {
         if (!enoughOvertimeHoursLeft(applicationForm, settings, vacationType)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
+    }
+
+    private boolean isBlockedByBlackoutPeriod(Person person) {
+        final Person signedInUser = personService.getSignedInUser();
+        return signedInUser.equals(person) || !permissionEvaluator.isAllowedToApplyForPerson(signedInUser, person);
     }
 
     private boolean personHasWorkingTime(ApplicationForLeaveForm applicationForLeaveForm) {

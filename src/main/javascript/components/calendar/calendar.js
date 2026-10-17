@@ -35,6 +35,7 @@ const CSS = {
   dayPublicHolidayFull: "datepicker-day-public-holiday-full",
   dayPublicHolidayMorning: "datepicker-day-public-holiday-morning",
   dayPublicHolidayNoon: "datepicker-day-public-holiday-noon",
+  dayBlackout: "datepicker-day-blackout",
   dayPersonalHolidayFullWaiting: "datepicker-day-absence-full absence-full--outline",
   dayPersonalHolidayHalf: "datepicker-day-absence-full absence-full--outline-solid-half",
   dayPersonalHolidaySecondHalf: "datepicker-day-absence-full absence-full--outline-solid-second-half",
@@ -132,6 +133,15 @@ const View = (function () {
       '<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
   };
 
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
       if (typeof data === "function") {
@@ -228,6 +238,7 @@ const View = (function () {
         holidayService.isPublicHolidayFull(date) ? CSS.dayPublicHolidayFull : "",
         holidayService.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
         holidayService.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
+        holidayService.isBlackoutPeriod(date) ? CSS.dayBlackout : "",
         holidayService.isPersonalHolidayFullWaiting(date) ? CSS.dayPersonalHolidayFullWaiting : "",
         holidayService.isPersonalHolidayFullTemporaryApproved(date) ? CSS.dayPersonalHolidayHalf : "",
         holidayService.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
@@ -324,15 +335,17 @@ const View = (function () {
       }
     }
 
+    const blackoutPeriodDescription = holidayService.getBlackoutPeriodDescription(date);
+
     return render(TMPL.day, {
       date: format(date, "yyyy-MM-dd"),
       day: format(date, "dd"),
-      ariaDay: format(date, "dd. MMMM"),
+      ariaDay: escapeHtml([format(date, "dd. MMMM"), blackoutPeriodDescription].filter(Boolean).join(", ")),
       css: classes(),
       style: style(),
       cellStyle: cellStyle(),
       selectable: isSelectable(),
-      title: holidayService.getDescription(date),
+      title: escapeHtml([holidayService.getDescription(date), blackoutPeriodDescription].filter(Boolean).join(" · ")),
       absenceId: holidayService.getAbsenceId(date),
       absenceType: holidayService.getAbsenceType(date),
       icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,

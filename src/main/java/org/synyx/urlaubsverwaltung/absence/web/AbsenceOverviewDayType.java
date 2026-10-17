@@ -32,6 +32,8 @@ public final class AbsenceOverviewDayType {
     private final boolean publicHolidayNoon;
     private final boolean publicHolidayFull;
 
+    private final String blackoutPeriodDescription;
+
     private final AbsenceOverviewDayTypeColor color;
 
     @SuppressWarnings("java:S107")
@@ -43,7 +45,7 @@ public final class AbsenceOverviewDayType {
                                    boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
                                    boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
                                    boolean publicHolidayMorning, boolean publicHolidayNoon,
-                                   boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
+                                   boolean publicHolidayFull, String blackoutPeriodDescription, AbsenceOverviewDayTypeColor color) {
         this.waitingSickNoteMorning = waitingSickNoteMorning;
         this.waitingSickNoteNoon = waitingSickNoteNoon;
         this.waitingSickNoteFull = waitingSickNoteFull;
@@ -65,6 +67,7 @@ public final class AbsenceOverviewDayType {
         this.publicHolidayMorning = publicHolidayMorning;
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
+        this.blackoutPeriodDescription = blackoutPeriodDescription;
         this.color = color;
     }
 
@@ -156,6 +159,14 @@ public final class AbsenceOverviewDayType {
         return publicHolidayFull;
     }
 
+    public boolean isBlackoutPeriod() {
+        return blackoutPeriodDescription != null;
+    }
+
+    public String getBlackoutPeriodDescription() {
+        return blackoutPeriodDescription;
+    }
+
     public AbsenceOverviewDayTypeColor getColor() {
         return color;
     }
@@ -189,6 +200,8 @@ public final class AbsenceOverviewDayType {
         private boolean publicHolidayMorning = false;
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
+
+        private String blackoutPeriodDescription;
 
         private VacationTypeColor colorMorning;
         private VacationTypeColor colorNoon;
@@ -299,6 +312,11 @@ public final class AbsenceOverviewDayType {
             return this;
         }
 
+        public Builder blackoutPeriod(String description) {
+            this.blackoutPeriodDescription = description;
+            return this;
+        }
+
         public Builder colorMorning(VacationTypeColor colorMorning) {
             this.colorMorning = colorMorning;
             return this;
@@ -337,6 +355,7 @@ public final class AbsenceOverviewDayType {
                 publicHolidayMorning,
                 publicHolidayNoon,
                 publicHolidayFull,
+                blackoutPeriodDescription,
                 new AbsenceOverviewDayTypeColor(colorMorning, colorNoon, colorFull));
         }
     }
