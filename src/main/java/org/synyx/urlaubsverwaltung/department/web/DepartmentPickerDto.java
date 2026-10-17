@@ -11,10 +11,9 @@ import java.util.List;
  */
 public record DepartmentPickerDto(List<Option> options, boolean allPersonsSelected, int allPersonsCount) {
 
-    /**
-     * @param description optional description of the department, {@code null} when there is none
-     */
-    public record Option(String name, String description, int activeMemberCount, boolean selected) {
+    // no description of the department: we do not know whether it is meant for everyone who can choose the
+    // department. at the moment only boss and office see it, in the department list.
+    public record Option(String name, int activeMemberCount, boolean selected) {
     }
 
     public List<String> selectedNames() {
