@@ -11,13 +11,17 @@ import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.NOVEMBER;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,9 +46,85 @@ class SickNoteValidatorTest {
     @Mock
     private WorkingTimeService workingTimeService;
 
+    private final Clock clock = Clock.fixed(Instant.parse("2014-01-01T00:00:00.00Z"), UTC);
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService);
+        sut = new SickNoteValidator(overlapService, workingTimeService, clock);
+    }
+
+    @Test
+    void ensureEndDateTooFarInTheFutureIsRejected() {
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .startDate(LocalDate.of(2014, JANUARY, 1))
+            .endDate(LocalDate.of(2016, JANUARY, 2))
+            .dayLength(FULL)
+            .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.tooFarInTheFuture");
+        verifyNoInteractions(overlapService, workingTimeService);
+    }
+
+    @Test
+    void ensureStartDateTooFarInThePastIsRejected() {
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .startDate(LocalDate.of(2003, DECEMBER, 31))
+            .endDate(LocalDate.of(2014, JANUARY, 1))
+            .dayLength(FULL)
+            .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("startDate").getFirst().getCode()).isEqualTo("error.entry.tooFarInThePast");
+        verifyNoInteractions(overlapService, workingTimeService);
+    }
+
+    @Test
+    void ensureAUEndDateTooFarInTheFutureIsRejected() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .startDate(LocalDate.of(2013, NOVEMBER, 1))
+            .endDate(LocalDate.of(2013, NOVEMBER, 30))
+            .dayLength(FULL)
+            .aubStartDate(LocalDate.of(2013, NOVEMBER, 1))
+            .aubEndDate(LocalDate.of(999_999_998, DECEMBER, 31))
+            .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubEndDate").getFirst().getCode()).isEqualTo("error.entry.tooFarInTheFuture");
+    }
+
+    @Test
+    void ensureAUStartDateTooFarInThePastIsRejected() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .startDate(LocalDate.of(2013, NOVEMBER, 1))
+            .endDate(LocalDate.of(2013, NOVEMBER, 30))
+            .dayLength(FULL)
+            .aubStartDate(LocalDate.of(1, JANUARY, 1))
+            .aubEndDate(LocalDate.of(2013, NOVEMBER, 30))
+            .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("aubStartDate").getFirst().getCode()).isEqualTo("error.entry.tooFarInThePast");
     }
 
     @Test

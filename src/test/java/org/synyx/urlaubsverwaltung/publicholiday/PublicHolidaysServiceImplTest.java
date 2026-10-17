@@ -37,6 +37,7 @@ import static java.time.Month.MAY;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BULGARIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
@@ -297,5 +298,13 @@ class PublicHolidaysServiceImplTest {
 
     private HolidayManager getHolidayManager(HolidayCalendar holidayCalendar) {
         return HolidayManager.getInstance(ManagerParameters.create(holidayCalendar));
+    }
+
+    @Test
+    void ensureThrowsForDateRangeLongerThanTheMaximumCalculatedDuration() {
+        final LocalDate from = LocalDate.of(2000, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2101, JANUARY, 1);
+        assertThatThrownBy(() -> sut.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

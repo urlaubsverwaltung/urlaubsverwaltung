@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.groupingBy;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
 @Service
@@ -86,6 +87,8 @@ public class WorkDaysCountService {
     private SortedMap<Integer, BigDecimal> getWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person) {
 
         final DateRange dateRange = new DateRange(startDate, endDate);
+        requireCalculableDuration(dateRange);
+
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
         return calculateWorkDaysByYear(startDate, endDate, person, workingTimes);
     }

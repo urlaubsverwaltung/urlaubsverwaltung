@@ -27,6 +27,7 @@ import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -94,6 +95,17 @@ class PublicHolidayApiControllerTest {
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+    }
+
+    @Test
+    void getPublicHolidaysForPeriodLongerThanThreeYears() throws Exception {
+        perform(get("/api/public-holidays")
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(publicHolidaysService, settingsService);
     }
 
     @Test
@@ -182,6 +194,17 @@ class PublicHolidayApiControllerTest {
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+    }
+
+    @Test
+    void personsPublicHolidaysForPeriodLongerThanThreeYears() throws Exception {
+        perform(get("/api/persons/1/public-holidays")
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(personService, publicHolidaysService, workingTimeService);
     }
 
     @Test

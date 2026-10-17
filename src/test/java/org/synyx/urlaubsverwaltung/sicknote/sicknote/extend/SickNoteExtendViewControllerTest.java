@@ -35,12 +35,15 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
+import static java.time.Month.DECEMBER;
 import static java.time.Month.OCTOBER;
 import static java.time.Month.SEPTEMBER;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -391,13 +394,48 @@ class SickNoteExtendViewControllerTest {
     }
 
     @Test
+    void ensurePreviewOfACustomDateTooFarInTheFutureDoesNotCalculateUntilThatDate() throws Exception {
+
+        final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
+            workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
+            new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
+            new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock), dateFormatAware,
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        final SickNote sickNote = sickNoteToExtend(person, LocalDate.of(2024, SEPTEMBER, 23), LocalDate.of(2024, SEPTEMBER, 24));
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        standaloneSetup(sutWithValidator).build()
+            .perform(
+                post("/web/sicknote/extend")
+                    .param("sickNoteId", "1")
+                    .param("startDate", "2024-09-23")
+                    .param("extendToDate", "+999999998-12-31")
+                    .param("custom-date-preview", "")
+            )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extend"))
+            .andExpect(model().attributeHasFieldErrorCode("sickNoteExtension", "extendToDate", "error.entry.tooFarInTheFuture"))
+            .andExpect(model().attribute("sickNotePreviewNext", nullValue()));
+
+        verify(workingTimeCalendarService, never()).getWorkingTimesByPersons(eq(List.of(person)),
+            argThat((DateRange dateRange) -> dateRange.endDate().isAfter(LocalDate.of(2024, DECEMBER, 31))));
+        verifyNoInteractions(sickNoteExtensionInteractionService);
+    }
+
+    @Test
     void ensurePreviewWithoutACustomDateRendersThePageAgain() throws Exception {
 
         // the real validator, the page fails on the way into it, see #6489
         final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
             workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
             new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
-            new SickNoteExtendValidator(sickNoteService, dateFormatAware), dateFormatAware,
+            new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock), dateFormatAware,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
 
         final Person person = new Person();

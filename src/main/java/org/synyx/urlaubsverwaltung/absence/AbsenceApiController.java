@@ -31,6 +31,8 @@ import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORK
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.MAXIMUM_REQUESTED_DURATION;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -81,7 +83,7 @@ public class AbsenceApiController {
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate startDate,
-        @Parameter(description = "end of interval to get absences from (inclusive)")
+        @Parameter(description = "end of interval to get absences from (inclusive), at most 1098 days after the start")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
@@ -91,6 +93,10 @@ public class AbsenceApiController {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final Optional<Person> optionalPerson = personService.getPersonByID(personId);

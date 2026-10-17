@@ -27,6 +27,8 @@ import static java.util.Comparator.comparing;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.MAXIMUM_REQUESTED_DURATION;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -66,13 +68,17 @@ public class SickNoteApiController {
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate startDate,
-        @Parameter(description = "End date with pattern yyyy-MM-dd")
+        @Parameter(description = "End date with pattern yyyy-MM-dd, at most 1098 days after the start date")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -101,13 +107,17 @@ public class SickNoteApiController {
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate startDate,
-        @Parameter(description = "End date with pattern yyyy-MM-dd")
+        @Parameter(description = "End date with pattern yyyy-MM-dd, at most 1098 days after the start date")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final Optional<Person> optionalPerson = personService.getPersonByID(personId);

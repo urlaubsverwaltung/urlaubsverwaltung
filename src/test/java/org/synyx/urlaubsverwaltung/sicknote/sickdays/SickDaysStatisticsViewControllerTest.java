@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.util.Locale.JAPANESE;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -223,6 +224,30 @@ class SickDaysStatisticsViewControllerTest {
             .param("query", "")
         )
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void ensureThatCreatingAExportWithAPeriodLongerThanThreeYearsFailsWithBadRequest() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final String startDateString = "2026-01-01";
+        final String endDateString = "+999999998-12-31";
+        final LocalDate startDate = LocalDate.parse(startDateString);
+        final LocalDate endDate = LocalDate.parse(endDateString);
+
+        when(dateFormatAware.parse(startDateString, locale)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(endDateString, locale)).thenReturn(Optional.of(endDate));
+
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
+            .param("from", startDateString)
+            .param("to", endDateString)
+            .param("allElements", "true")
+        )
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(sickDaysStatisticsService);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

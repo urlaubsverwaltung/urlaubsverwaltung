@@ -23,6 +23,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -863,6 +864,20 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void ensureBadRequestForPeriodLongerThanThreeYears() throws Exception {
+        when(personService.getPersonByID(anyLong()))
+            .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
+
+        perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
+            .param("from", "2026-01-01")
+            .param("to", "+999999998-12-31"))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(absenceService);
     }
 
     private static AbsencePeriod.Record anyVacationRecord(Person person, LocalDate date) {
