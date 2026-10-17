@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    Whether the identity provider has verified the email address of the person. NULL means unknown: it is
+    set with the next login of the person, from the email_verified claim of the identity provider.
+  -->
+  <changeSet author="schneider" id="add-email-verified-to-person">
+    <addColumn tableName="person">
+      <column name="email_verified" type="boolean"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

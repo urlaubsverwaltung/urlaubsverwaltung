@@ -241,6 +241,39 @@ class PersonDetailsViewControllerTest {
             .andExpect(view().name("person/person_detail"));
     }
 
+    @Test
+    void showPersonInformationOfSignedInUserIsViewingOwnPerson() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        userIsAllowedToSubmitSickNotes(false);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("isViewingOwnPerson", true));
+    }
+
+    @Test
+    void showPersonInformationOfOtherPersonIsNotViewingOwnPerson() throws Exception {
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person office = new Person();
+        office.setId(2L);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+        userIsAllowedToSubmitSickNotes(false);
+
+        perform(get("/web/person/1"))
+            .andExpect(model().attribute("isViewingOwnPerson", false));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"canEditPermissions", "canEditDepartments", "canEditAccounts", "canEditWorkingtime"})
     void showPersonInformationOfficeCanEdit(String canEdit) throws Exception {

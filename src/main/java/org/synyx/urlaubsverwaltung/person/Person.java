@@ -47,6 +47,11 @@ public class Person extends AbstractTenantAwareEntity {
     private String firstName;
     private String email;
 
+    /**
+     * Whether the identity provider has verified the {@linkplain #email}. {@code null} means unknown.
+     */
+    private Boolean emailVerified;
+
     @Column(nullable = false)
     private Instant createdAt;
 
@@ -89,6 +94,22 @@ public class Person extends AbstractTenantAwareEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    /**
+     * @return {@code true} if the identity provider explicitly states that the email address is not verified,
+     * {@code false} if it is verified or unknown.
+     */
+    public boolean isEmailUnverified() {
+        return Boolean.FALSE.equals(emailVerified);
     }
 
     public Instant getCreatedAt() {

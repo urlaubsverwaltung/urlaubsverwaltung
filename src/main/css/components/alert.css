@@ -49,6 +49,9 @@ form.alert-info {
   color: #8a6d3b;
   background-color: #fcf8e3;
   border-color: #fcf8e3ff;
+  @apply dark:bg-amber-400;
+  @apply dark:text-zinc-900;
+  @apply dark:border-transparent;
 }
 
 .alert-success {

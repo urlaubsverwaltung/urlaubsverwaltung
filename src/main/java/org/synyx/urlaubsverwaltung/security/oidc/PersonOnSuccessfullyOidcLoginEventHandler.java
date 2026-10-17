@@ -44,6 +44,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
         final String firstName = extractGivenName(oidcUser);
         final String lastName = extractFamilyName(oidcUser);
         final String emailAddress = extractMailAddress(oidcUser);
+        final Boolean emailVerified = oidcUser.getEmailVerified();
 
         Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
@@ -61,10 +62,10 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             }
 
             personService.update(existentPerson.getIdAsPersonId(),
-                PersonUpdate.ofPersonalData(userUniqueID, firstName, lastName, emailAddress));
+                PersonUpdate.ofPersonalData(userUniqueID, firstName, lastName, emailAddress).withEmailVerified(emailVerified));
 
         } else {
-            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
+            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress, emailVerified);
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson.getIdAsPersonId());
         }
     }

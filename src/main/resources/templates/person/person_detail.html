@@ -260,6 +260,14 @@
                 </div>
               </th:block>
               <th:block th:ref="person-details-notifications-box-body">
+                <p
+                  th:if="${person.emailUnverified}"
+                  class="alert alert-warning text-sm"
+                  th:text="${isViewingOwnPerson ? #messages.msg('person.notifications.email-unverified.self') : #messages.msg('person.notifications.email-unverified.other', person.niceName)}"
+                  data-test-id="email-unverified-hint"
+                >
+                  Deine E-Mail-Adresse ist bei deinem Login-Anbieter nicht bestätigt.
+                </p>
                 <th:block
                   th:replace="~{person/detail-section/person_detail_notifications::section(${personNotificationsDto})}"
                 ></th:block>
