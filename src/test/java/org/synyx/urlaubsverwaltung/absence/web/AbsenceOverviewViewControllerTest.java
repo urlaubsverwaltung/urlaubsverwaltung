@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +43,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +57,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
@@ -137,8 +141,6 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", emptyList()))
-            .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attributeDoesNotExist("departmentPicker"))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
@@ -164,8 +166,8 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
-            .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains(department.getName()))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains(department.getName()))))
             .andExpect(view().name("absences/absences-overview"));
 
         verify(personService).getActivePersons();
@@ -194,8 +196,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", nullValue()))
-            .andExpect(model().attribute("selectedDepartments", nullValue()))
+            .andExpect(model().attributeDoesNotExist("departmentPicker"))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
             .andExpect(view().name("absences/absences-overview"));
@@ -298,7 +299,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains(department.getName()))))
             .andExpect(view().name("absences/absences-overview"));
     }
 
@@ -323,8 +324,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("superheroes"))));
     }
 
     @ParameterizedTest
@@ -362,8 +363,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", contains(accounting, marketing, sales)))
-            .andExpect(model().attribute("selectedDepartments", contains("marketing", "sales")))
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("accounting", "marketing", "sales"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("marketing", "sales"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(
                     hasProperty("persons", contains(
@@ -392,8 +393,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", hasItem("villains")));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("villains"))));
     }
 
     @Test
@@ -415,8 +416,8 @@ class AbsenceOverviewViewControllerTest {
             .param("department", "villains")
             .param("department", "superheroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("superheroes"), hasItem("villains"))));
+            .andExpect(model().attribute("departmentPicker", departmentNames(contains("superheroes", "villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("superheroes", "villains"))));
     }
 
     @ParameterizedTest
@@ -443,15 +444,7 @@ class AbsenceOverviewViewControllerTest {
         final var model = perform(get("/web/absences").locale(Locale.GERMANY)
             .param("allPersons", "true"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", emptyList()))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(
-                        hasProperty("firstName", is("alice")),
-                        hasProperty("firstName", is("olga")),
-                        hasProperty("firstName", is("zoe"))
-                    ))
-                ))))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alice", "olga", "zoe")))
             .andReturn().getModelAndView().getModel();
 
         assertThat(model.get("departmentPicker")).isEqualTo(new DepartmentPickerDto(
@@ -486,14 +479,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("allPersons", "true"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(
-                        hasProperty("firstName", is("carl")),
-                        hasProperty("firstName", is("hanna")),
-                        hasProperty("firstName", is("mia"))
-                    ))
-                ))));
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("carl", "hanna", "mia")));
     }
 
     @Test
@@ -519,14 +505,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("allPersons", "true"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(
-                        hasProperty("firstName", is("alfred")),
-                        hasProperty("firstName", is("bruce")),
-                        hasProperty("firstName", is("robin"))
-                    ))
-                ))));
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alfred", "bruce", "robin")));
 
         verify(personService, never()).getActivePersons();
     }
@@ -553,14 +532,8 @@ class AbsenceOverviewViewControllerTest {
             .param("allPersons", "true")
             .param("department", "heroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", emptyList()))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(
-                        hasProperty("firstName", is("alfred")),
-                        hasProperty("firstName", is("bruce"))
-                    ))
-                ))));
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(empty())))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("alfred", "bruce")));
     }
 
     @Test
@@ -577,10 +550,7 @@ class AbsenceOverviewViewControllerTest {
             .param("allPersons", "true"))
             .andExpect(status().isOk())
             .andExpect(model().attributeDoesNotExist("departmentPicker"))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(hasProperty("firstName", is("bruce"))))
-                ))));
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("bruce")));
     }
 
     @Test
@@ -638,11 +608,8 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "renamed-meanwhile"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", contains("heroes")))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(
-                    hasProperty("persons", contains(hasProperty("firstName", is("bruce"))))
-                ))));
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("heroes"))))
+            .andExpect(model().attribute("absenceOverview", hasMonthWithPersons("bruce")));
     }
 
     @ParameterizedTest
@@ -942,7 +909,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", hasItem("villains")))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("villains"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(3))
@@ -979,7 +946,7 @@ class AbsenceOverviewViewControllerTest {
             .param("department", "villains")
             .param("department", "heroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("heroes"), hasItem("villains"))))
+            .andExpect(model().attribute("departmentPicker", selectedDepartmentNames(contains("heroes", "villains"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(4))
@@ -5500,6 +5467,31 @@ class AbsenceOverviewViewControllerTest {
         person.setPermissions(List.of(USER));
 
         return person;
+    }
+
+    private static Matcher<DepartmentPickerDto> departmentNames(Matcher<? super List<String>> namesMatcher) {
+        return new FeatureMatcher<DepartmentPickerDto, List<String>>(namesMatcher, "department picker with department names", "department names") {
+            @Override
+            protected List<String> featureValueOf(DepartmentPickerDto picker) {
+                return picker.options().stream().map(DepartmentPickerDto.Option::name).toList();
+            }
+        };
+    }
+
+    private static Matcher<DepartmentPickerDto> selectedDepartmentNames(Matcher<? super List<String>> namesMatcher) {
+        return new FeatureMatcher<DepartmentPickerDto, List<String>>(namesMatcher, "department picker with selected department names", "selected department names") {
+            @Override
+            protected List<String> featureValueOf(DepartmentPickerDto picker) {
+                return picker.selectedNames();
+            }
+        };
+    }
+
+    private static Matcher<Object> hasMonthWithPersons(String... firstNames) {
+        final List<Matcher<? super Object>> persons = Arrays.stream(firstNames)
+            .<Matcher<? super Object>>map(firstName -> hasProperty("firstName", is(firstName)))
+            .toList();
+        return hasProperty("months", hasItem(hasProperty("persons", contains(persons))));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -125,7 +125,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         if (departmentService.getNumberOfDepartments() > 0) {
 
             final List<Department> visibleDepartments = departmentService.getDepartmentsPersonHasAccessTo(signedInUser);
-            model.addAttribute("visibleDepartments", visibleDepartments);
 
             if (visibleDepartments.isEmpty()) {
                 overviewPersons = List.of(signedInUser);
@@ -138,7 +137,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                 final List<String> selectedDepartmentNames = allPersonsSelected
                     ? List.of()
                     : getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments, signedInUser);
-                model.addAttribute("selectedDepartments", selectedDepartmentNames);
                 model.addAttribute("departmentPicker",
                     toDepartmentPicker(visibleDepartments, selectedDepartmentNames, allPersonsSelected, allPersons.size()));
 
