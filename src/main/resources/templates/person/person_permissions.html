@@ -18,6 +18,9 @@
   </head>
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{person/back-to-account::back-to-account(personId=${person.id}, personNiceName=${person.niceName}, year=null)}"
+      ></div>
       <div th:replace="~{fragments/section-heading::section-heading(~{::person-permissions-body}, ~{})}">
         <th:block th:ref="person-permissions-body">
           <h2 th:text="#{person.form.permissions.title(${person.niceName})}">Berechtigungen für</h2>

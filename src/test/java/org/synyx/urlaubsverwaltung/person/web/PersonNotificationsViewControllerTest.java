@@ -776,14 +776,26 @@ class PersonNotificationsViewControllerTest {
             .andExpect(status().isNotFound());
     }
 
-    @Test
-    void ensuresWhenEditingPersonNotificationsHasValidationError() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensuresWhenEditingPersonNotificationsHasValidationErrorTheNotificationsAreShownAgain(String givenUrl) throws Exception {
 
-        final Person personWithoutNotifications = new Person();
-        personWithoutNotifications.setId(1L);
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person personWithoutNotifications = personWithId(1);
         personWithoutNotifications.setFirstName("Hans");
+        personWithoutNotifications.setLastName("Dampf");
+        personWithoutNotifications.setPermissions(List.of(USER));
         personWithoutNotifications.setNotifications(List.of());
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithoutNotifications));
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), true));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(4L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(personWithoutNotifications)).thenReturn(List.of(new Department()));
 
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);
@@ -793,13 +805,23 @@ class PersonNotificationsViewControllerTest {
 
         userIsAllowedToSubmitSickNotes(false);
 
-        perform(post("/web/person/{personId}/notifications", 1)
+        perform(post(givenUrl, 1)
             .param("personId", "1")
-            .param("applicationAppliedAndChanges.visible", "true")
-            .param("applicationAppliedAndChanges.active", "true")
+            .param("applicationAppliedForManagement.active", "true")
         )
+            .andExpect(status().isOk())
+            .andExpect(view().name("person/person_notifications"))
             .andExpect(model().attribute("error", true))
-            .andExpect(view().name("person/person_notifications"));
+            .andExpect(model().attribute("isViewingOwnNotifications", is(false)))
+            .andExpect(model().attribute("personNiceName", is("Hans Dampf")))
+            .andExpect(model().attribute("departmentsAvailable", is(true)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(true)))
+            .andExpect(model().attribute("isOvertimeSyncActive", is(false)))
+            .andExpect(model().attribute("personNotificationsDto", allOf(
+                hasProperty("personId", is(1L)),
+                hasProperty("applicationAppliedForManagement", hasProperty("active", is(false))),
+                hasProperty("restrictToDepartments", hasProperty("active", is(true)))
+            )));
 
         verify(personService, never()).update(any(), any());
     }
