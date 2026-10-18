@@ -52,6 +52,11 @@ npm run test:visual -- -u      # accept new and changed pages and screenshots
 
 * The browser server in the pinned container is started by playwright (`webServer`) and reused if already running.
 * Run a single variant or role: `npm run test:visual -- --project=desktop --grep office`
+* Another application instance, e.g. in a git worktree: start the compose services once (`docker compose up -d`) and
+  every instance with `spring.docker.compose.enabled=false`, explicit datasource properties and its own
+  `server.port`/`management.server.port`, then `UV_BASE_URL=http://localhost:8180 npm run test:visual`. The instances
+  share postgres (demo data, sessions) and keycloak (any redirect uri is allowed). Start one instance on a fresh
+  database first, the others only once its demo data is created.
 * Report with expected, actual and diff images: `npx playwright show-report target/visual-tests/report`
 * New pages need two runs with `-u`: the first adds them to the manifest, the second creates their screenshots (see
   10.).

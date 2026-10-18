@@ -8,6 +8,9 @@ import { defineConfig } from "@playwright/test";
 
 const browserServerPort = process.env.PLAYWRIGHT_SERVER_PORT ?? "3000";
 const wsEndpoint = `ws://127.0.0.1:${browserServerPort}/`;
+// another port for a second application instance, e.g. in a git worktree. it shares postgres and keycloak (any
+// redirect uri is allowed), sessions are stored in the database.
+const baseURL = process.env.UV_BASE_URL ?? "http://localhost:8080";
 
 const variants = [
   {
@@ -53,7 +56,7 @@ export default defineConfig({
     gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
   },
   use: {
-    baseURL: "http://localhost:8080",
+    baseURL,
     browserName: "chromium",
     // the browser runs in the container, exposeNetwork tunnels its localhost requests to this machine
     // (application on 8080, keycloak redirect on 8090)
