@@ -27,8 +27,27 @@ class WebManifestControllerTest {
             .andExpect(jsonPath("$.short_name", is("Abwesenheiten")))
             .andExpect(jsonPath("$.start_url", is(".")))
             .andExpect(jsonPath("$.display", is("standalone")))
-            .andExpect(jsonPath("$.icons.length()", is(2)))
-            .andExpect(jsonPath("$.icons[0].src", is("favicons/android-chrome-192x192.png")));
+            .andExpect(jsonPath("$.icons.length()", is(6)))
+            .andExpect(jsonPath("$.icons[0].src", is("favicons/android-chrome-192x192.png")))
+            .andExpect(jsonPath("$.icons[0].purpose", is("any")));
+    }
+
+    @Test
+    void ensureManifestContainsMaskableAndMonochromeIcons() throws Exception {
+
+        final WebManifestController sut = new WebManifestController(new BrandingProperties("Abwesenheiten"));
+
+        standaloneSetup(sut).build()
+            .perform(get("/site.webmanifest"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.icons[2].src", is("favicons/android-chrome-maskable-192x192.png")))
+            .andExpect(jsonPath("$.icons[2].purpose", is("maskable")))
+            .andExpect(jsonPath("$.icons[3].src", is("favicons/android-chrome-maskable-512x512.png")))
+            .andExpect(jsonPath("$.icons[3].purpose", is("maskable")))
+            .andExpect(jsonPath("$.icons[4].src", is("favicons/android-chrome-monochrome-192x192.png")))
+            .andExpect(jsonPath("$.icons[4].purpose", is("monochrome")))
+            .andExpect(jsonPath("$.icons[5].src", is("favicons/android-chrome-monochrome-512x512.png")))
+            .andExpect(jsonPath("$.icons[5].purpose", is("monochrome")));
     }
 
     @Test

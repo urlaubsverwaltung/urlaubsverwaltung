@@ -29,8 +29,12 @@ class WebManifestController {
             brandingProperties.name(),
             ".",
             List.of(
-                new IconDto("favicons/android-chrome-192x192.png", "192x192", "image/png"),
-                new IconDto("favicons/android-chrome-512x512.png", "512x512", "image/png")
+                new IconDto("favicons/android-chrome-192x192.png", "192x192", "image/png", "any"),
+                new IconDto("favicons/android-chrome-512x512.png", "512x512", "image/png", "any"),
+                new IconDto("favicons/android-chrome-maskable-192x192.png", "192x192", "image/png", "maskable"),
+                new IconDto("favicons/android-chrome-maskable-512x512.png", "512x512", "image/png", "maskable"),
+                new IconDto("favicons/android-chrome-monochrome-192x192.png", "192x192", "image/png", "monochrome"),
+                new IconDto("favicons/android-chrome-monochrome-512x512.png", "512x512", "image/png", "monochrome")
             ),
             "#ffffff",
             "#ffffff",
@@ -54,7 +58,8 @@ class WebManifestController {
     record IconDto(
         @JsonProperty("src") String src,
         @JsonProperty("sizes") String sizes,
-        @JsonProperty("type") String type
+        @JsonProperty("type") String type,
+        @JsonProperty("purpose") String purpose
     ) {
     }
 
