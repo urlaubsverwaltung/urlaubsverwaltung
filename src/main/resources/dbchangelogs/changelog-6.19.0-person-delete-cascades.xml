@@ -1,0 +1,141 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    Deleting a person row lets the database clean up everything referencing the person: data owned by the person
+    (and the data hanging off it, like comments of the person's applications) is deleted, references to the person
+    on data of others (applier, boss, canceller, comment author) are set to null. The recreated constraints get
+    readable names.
+  -->
+  <changeSet author="schneider" id="person-delete-cascades">
+
+    <dropForeignKeyConstraint baseTableName="account" constraintName="fkd9dhia7smrg88vcbiykhofxee"/>
+    <addForeignKeyConstraint baseTableName="account" baseColumnNames="person_id"
+                             constraintName="fk_account_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="working_time" constraintName="fkjrowf2nwuoflpyph0d495y5ae"/>
+    <addForeignKeyConstraint baseTableName="working_time" baseColumnNames="person_id"
+                             constraintName="fk_working_time_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="person_permissions" constraintName="fktggoyu7sfqifef59ksbk2r4mr"/>
+    <addForeignKeyConstraint baseTableName="person_permissions" baseColumnNames="person_id"
+                             constraintName="fk_person_permissions_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="person_notifications" constraintName="fk667b972v099ct2ip5af248tqd"/>
+    <addForeignKeyConstraint baseTableName="person_notifications" baseColumnNames="person_id"
+                             constraintName="fk_person_notifications_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="person_calendar" constraintName="fkkft9x29wo89tjvxd116sc0hs6"/>
+    <addForeignKeyConstraint baseTableName="person_calendar" baseColumnNames="person_id"
+                             constraintName="fk_person_calendar_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="company_calendar" constraintName="fkrna4e8hk3gbcbf95l8fj06fp6"/>
+    <addForeignKeyConstraint baseTableName="company_calendar" baseColumnNames="person_id"
+                             constraintName="fk_company_calendar_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="department_calendar" constraintName="fkg1vrncgfl6a25osr648sr4inc"/>
+    <addForeignKeyConstraint baseTableName="department_calendar" baseColumnNames="person_id"
+                             constraintName="fk_department_calendar_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application" constraintName="fk8beb5qvi7h8b4s9vsk7byjnpm"/>
+    <addForeignKeyConstraint baseTableName="application" baseColumnNames="person_id"
+                             constraintName="fk_application_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application_comment" constraintName="fkil1cps8t7x98nek0b63wx7flt"/>
+    <addForeignKeyConstraint baseTableName="application_comment" baseColumnNames="application_id"
+                             constraintName="fk_application_comment_application"
+                             referencedTableName="application" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="holiday_replacements" constraintName="fkpf8m8p5ec0f3rl2wp62xcldse"/>
+    <addForeignKeyConstraint baseTableName="holiday_replacements" baseColumnNames="application_id"
+                             constraintName="fk_holiday_replacements_application"
+                             referencedTableName="application" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="holiday_replacements" constraintName="fkhj1etgfxf8ja1yks2igyta8b0"/>
+    <addForeignKeyConstraint baseTableName="holiday_replacements" baseColumnNames="person_id"
+                             constraintName="fk_holiday_replacements_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="sick_note" constraintName="fk134nni6nwa976n1debfh6aeyc"/>
+    <addForeignKeyConstraint baseTableName="sick_note" baseColumnNames="person_id"
+                             constraintName="fk_sick_note_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="overtime" constraintName="fkr3apeyjt5a6hh5btt2ras6r7m"/>
+    <addForeignKeyConstraint baseTableName="overtime" baseColumnNames="person_id"
+                             constraintName="fk_overtime_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="overtime_comment" constraintName="fkofgobbi68ure8t3rerclergyq"/>
+    <addForeignKeyConstraint baseTableName="overtime_comment" baseColumnNames="overtime_id"
+                             constraintName="fk_overtime_comment_overtime"
+                             referencedTableName="overtime" referencedColumnNames="id"
+                             onDelete="CASCADE" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application" constraintName="fkn5crvlcxc4thbenl7ivvtbklq"/>
+    <addForeignKeyConstraint baseTableName="application" baseColumnNames="applier_id"
+                             constraintName="fk_application_applier"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application" constraintName="fk6rpjm6c93ei39h2kswv215egf"/>
+    <addForeignKeyConstraint baseTableName="application" baseColumnNames="boss_id"
+                             constraintName="fk_application_boss"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application" constraintName="fk9xn27lvr2087ar3lbsvr8vfh5"/>
+    <addForeignKeyConstraint baseTableName="application" baseColumnNames="canceller_id"
+                             constraintName="fk_application_canceller"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="application_comment" constraintName="fktje5lde6lfr2wkabxtbog7q9o"/>
+    <addForeignKeyConstraint baseTableName="application_comment" baseColumnNames="person_id"
+                             constraintName="fk_application_comment_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="sick_note" constraintName="fk99jlbvv98cnnmu4aai3j3sm9g"/>
+    <addForeignKeyConstraint baseTableName="sick_note" baseColumnNames="applier_id"
+                             constraintName="fk_sick_note_applier"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="sick_note_comment" constraintName="fkca8k3tbf9by0slanlps1gdrug"/>
+    <addForeignKeyConstraint baseTableName="sick_note_comment" baseColumnNames="person_id"
+                             constraintName="fk_sick_note_comment_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+    <dropForeignKeyConstraint baseTableName="overtime_comment" constraintName="fka69rnisl69l0fyowh7kjamu"/>
+    <addForeignKeyConstraint baseTableName="overtime_comment" baseColumnNames="person_id"
+                             constraintName="fk_overtime_comment_person"
+                             referencedTableName="person" referencedColumnNames="id"
+                             onDelete="SET NULL" onUpdate="NO ACTION"/>
+
+  </changeSet>
+</databaseChangeLog>
