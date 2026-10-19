@@ -318,6 +318,80 @@ describe("absence-statistics", function () {
     });
   });
 
+  // absence type names are maintained by the office, and apexcharts inserts legend and tooltip texts as html
+  describe("absence type names with markup", function () {
+    const markupName = "<img src=x onerror=alert(1)>";
+
+    function setAbsenceStatisticsWithMarkupName() {
+      setAbsenceStatistics({
+        types: [{ name: markupName, color: "YELLOW", monthlyDays: [5, 0, 3], yearSum: 8, share: 100, active: true }],
+      });
+    }
+
+    function insertAsHtml(html) {
+      const element = document.createElement("div");
+      element.innerHTML = html;
+      return element;
+    }
+
+    it("renders the name as text in the monthly chart legend", async function () {
+      setAbsenceStatisticsWithMarkupName();
+      await loadModule();
+
+      const element = insertAsHtml(monthlyChart().options.legend.formatter(markupName, { seriesIndex: 0 }));
+
+      expect(element.querySelector("img")).toBeNull();
+      expect(element.textContent).toBe(markupName);
+    });
+
+    it("keeps the name readable in the monthly chart legend, since apexcharts uses it as aria-label as well", async function () {
+      setAbsenceStatistics();
+      await loadModule();
+
+      expect(monthlyChart().options.legend.formatter(`Kur & "Reha"`, { seriesIndex: 0 })).toBe(`Kur & "Reha"`);
+    });
+
+    it("renders the name as text in the tooltip labels apexcharts builds itself", async function () {
+      setAbsenceStatisticsWithMarkupName();
+      await loadModule();
+
+      for (const chart of [monthlyChart(), distributionChart()]) {
+        const element = insertAsHtml(chart.options.tooltip.y.title.formatter(markupName, { seriesIndex: 0 }));
+
+        expect(element.querySelector("img")).toBeNull();
+        expect(element.textContent).toBe(markupName);
+      }
+    });
+
+    it("renders the name as text in the monthly chart tooltip", async function () {
+      setAbsenceStatisticsWithMarkupName();
+      await loadModule();
+
+      const element = insertAsHtml(
+        monthlyChart().options.tooltip.custom({
+          series: [[5, 0, 3]],
+          dataPointIndex: 0,
+          w: { globals: { seriesNames: [markupName] }, config: { colors: ["yellow"] } },
+        }),
+      );
+
+      expect(element.querySelector("img")).toBeNull();
+      expect(element.textContent).toContain(markupName);
+    });
+
+    it("renders the name as text in the distribution chart tooltip", async function () {
+      setAbsenceStatisticsWithMarkupName();
+      await loadModule();
+
+      const element = insertAsHtml(
+        distributionChart().options.tooltip.custom({ seriesIndex: 0, w: { config: { colors: ["yellow"] } } }),
+      );
+
+      expect(element.querySelector("img")).toBeNull();
+      expect(element.textContent).toContain(markupName);
+    });
+  });
+
   describe("empty model", function () {
     it("builds empty series for the monthly and distribution charts without throwing", async function () {
       setAbsenceStatistics({ types: [] });
