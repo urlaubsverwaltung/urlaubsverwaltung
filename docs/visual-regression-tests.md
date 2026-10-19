@@ -7,7 +7,7 @@ there and the open points for future improvements.
 ## Scope
 
 * Tests verify **read-only pages** only. Forms may be opened and filled in for a screenshot, but are never submitted.
-* Tests run locally and in CI, in parallel, and are always triggered manually.
+* Tests run locally and in CI, in parallel. CI runs them with every build, like the UI and accessibility tests.
 * Browser: Chromium for now. Firefox and WebKit may become a requirement, so no browser specific solutions.
 * Variants: desktop and mobile in the light theme, desktop in the dark theme.
 
@@ -81,7 +81,7 @@ The `visualtest` profile (`application-visualtest.yaml`) is meant to be used tog
 | `src/test/visual/pages.spec.mjs`       | screenshot tests generated from the manifests                    |
 | `src/test/visual/pages/<role>.json`    | manifests, golden master of the pages                            |
 | `src/test/visual/__screenshots__/`     | baselines (Git LFS), `<project>/<role>/<page>.png`               |
-| `.github/workflows/visual-regression-tests.yml` | manual CI workflow                                      |
+| `.github/workflows/build.yml`, job `visual-test` | CI job                                                 |
 
 ## Decisions
 
@@ -154,7 +154,8 @@ Cron jobs run on real time, so they could fire during a test run. They were chec
 * The mail jobs only write 'already sent' markers. None of them is rendered in templates or view controllers, so
   screenshots are not affected. Without a mail server the jobs log errors, which is irrelevant as well.
 * Only the turn of the year job has visible effects, and it fires on january 1st at 05:00 only.
-* Tests are triggered manually only (see 14.), so the risk is negligible.
+* CI runs on pushes, pull requests and the nightly builds (see 14.). A run at january 1st 05:00 is unlikely, a
+  re-run fixes it.
 
 Re-check this if a job starts writing fields that are rendered. Disabling jobs would not be trivial: Spring's `"-"`
 is rejected by the `@CronExpression` validation of the cron properties.
@@ -318,24 +319,31 @@ global UI change rewrites nearly all of them. In plain git, the repository would
 
 * Track the snapshot directory via `.gitattributes` before the first baseline is committed. Moving baselines to LFS
   later requires rewriting history.
-* Regular CI builds check out without `lfs: true` and get pointer files only, no LFS bandwidth is used.
-* Contributors without `git-lfs` get pointer files as well, which is harmless since the tests are not part of the
-  regular build.
+* Only the CI job `visual-test` pulls the baselines. It caches `.git/lfs` keyed by the list of LFS objects, so LFS
+  bandwidth is only used when baselines change. All other CI jobs get pointer files only.
+* Contributors without `git-lfs` get pointer files as well, which is harmless for the regular build. Changing the UI
+  requires git-lfs though, to update the baselines.
+* Without git-lfs, the clean filter is missing and git silently commits a changed baseline as regular object. The CI
+  job runs `git lfs fsck --pointers` first and fails in this case, before the PNG is merged into the history.
+* Contributors who do not need the baselines skip the download with
+  `git config lfs.fetchexclude 'src/test/visual/__screenshots__'`.
 * `core.hooksPath` points to the tracked `.githooks`, so git lfs cannot install its `pre-push` hook. `.githooks/pre-push`
   calls `git lfs pre-push` and is skipped without git-lfs. Without it, a push would upload pointers but no PNGs.
 * The initial 322 baselines are about 28 MB, the 161 dark baselines another 18 MB.
 
-### 14. Manual execution only
+### 14. Execution in CI
 
-Visual regression tests never run automatically.
+Visual regression tests run with every CI build, like the UI and accessibility tests.
 
-* CI: `.github/workflows/visual-regression-tests.yml` with `workflow_dispatch` only. Not part of `build.yml`, not
-  triggered by pull requests or pushes. It checks out with LFS, runs `./mvnw verify -Pvisual-test` with `CI=true`
-  (`updateSnapshots: 'none'`, no reuse of a running browser server) and uploads report and results as artifact.
-  Baselines are created locally with `-u`, the pixels are the same since the browser runs in the same container.
+* CI: job `visual-test` in `.github/workflows/build.yml`, triggered like the other jobs by pushes, pull requests and
+  the nightly builds. It pulls the baselines from LFS, runs `./mvnw verify -Pvisual-test` (GitHub sets `CI=true`:
+  `updateSnapshots: 'none'`, no reuse of a running browser server) and uploads report and results of a failed run as
+  artifact. No browser matrix, the screenshots are rendered by Chromium in the pinned container only.
+* Baselines are created locally with `-u`, the pixels are the same since the browser runs in the same container.
+  A pull request changing the UI must contain the updated baselines.
 * Local: only by an explicit command. Not part of the default Maven build (profile `visual-test`) and not part of
   `npm test` (vitest must not pick up the Playwright specs).
-* Discovery is blocking for the manual run, not for pull requests.
+* Discovery is blocking for pull requests as well: a new or removed page needs the updated manifest and screenshots.
 
 ### 15. Location in the repository
 
@@ -371,7 +379,7 @@ Visual regression tests never run automatically.
 | Screenshot tests, desktop and mobile light  | implemented, 322 baselines     |
 | Screenshot tests, desktop dark              | implemented, 161 baselines     |
 | Git LFS for baselines, pre-push hook        | implemented                    |
-| Manual CI workflow (`workflow_dispatch`)    | implemented, not yet run on CI |
+| CI job in `build.yml`                       | implemented, not yet run on CI |
 | Hand-written tests for UI states            | open                           |
 
 ## Future improvements

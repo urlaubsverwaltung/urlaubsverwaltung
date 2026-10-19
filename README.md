@@ -418,17 +418,28 @@ Die Git-Hooks sind im [.githooks](.githooks/) Verzeichnis zu finden.
 ### Git LFS (für Visual Regression Tests)
 
 Die Baselines der [Visual Regression Tests](docs/visual-regression-tests.md) liegen in [Git LFS](https://git-lfs.com).
-Wer an den Visual Regression Tests arbeitet oder Baselines ändert, benötigt Git LFS. Für alle anderen ist es nicht
-notwendig, ohne Git LFS werden nur Platzhalter-Dateien ausgecheckt, die der normale Build nicht verwendet.
+Die Visual Regression Tests laufen im CI Build. Wer die Oberfläche ändert, muss die Baselines aktualisieren und
+benötigt dafür Git LFS. Für alle anderen ist es nicht notwendig, ohne Git LFS werden nur Platzhalter-Dateien
+ausgecheckt, die der normale Build nicht verwendet.
+
+**Wichtig:** Git LFS muss installiert und mit `git lfs install` eingerichtet sein, _bevor_ Baselines geändert und
+committet werden. Ohne Git LFS landen die Bilder als normale Dateien im Git Repository und vergrößern es dauerhaft.
+Der CI Build schlägt in diesem Fall fehl (`git lfs fsck --pointers`).
 
 ```bash
 git lfs install
 git lfs pull
 ```
 
-`git lfs install` richtet den `pre-push` Hook ein, der die Baselines beim Push hochlädt. Wer die git hooks des
-Projekts nutzt (`core.hooksPath`), dem hilft dieser nicht, git ignoriert dann `.git/hooks`. Dafür gibt es
-[.githooks/pre-push](.githooks/pre-push), der das Hochladen übernimmt.
+`git lfs install` richtet den Filter ein, der die Baselines beim Commit in Git LFS ablegt, und den `pre-push` Hook,
+der sie beim Push hochlädt. Wer die git hooks des Projekts nutzt (`core.hooksPath`), dem hilft dieser Hook nicht, git
+ignoriert dann `.git/hooks`. Dafür gibt es [.githooks/pre-push](.githooks/pre-push), der das Hochladen übernimmt.
+
+Wer Git LFS installiert hat, die Baselines aber nicht benötigt, kann den Download (ca. 46 MB) überspringen:
+
+```bash
+git config lfs.fetchexclude 'src/test/visual/__screenshots__'
+```
 
 ### Anwendung starten
 
