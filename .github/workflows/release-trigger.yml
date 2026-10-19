@@ -132,9 +132,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set release version
         run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
+      - name: Set helm chart version and app version
+        env:
+          CHART: charts/urlaubsverwaltung/Chart.yaml
+          RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
+        run: |
+          current=$(sed -n 's/^version: "\(.*\)"$/\1/p' "$CHART")
+          next="${current%%.*}.${RELEASE_VERSION#*.}"
+          if [ "$(printf '%s\n%s\n' "$current" "$next" | sort -V | tail -n1)" != "$next" ]; then
+            echo "::error::Helm chart version $next would be lower than $current. Bump the chart major version in $CHART first."
+            exit 1
+          fi
+          sed -i -e "s/^version: .*/version: \"$next\"/" -e "s/^appVersion: .*/appVersion: $RELEASE_VERSION/" "$CHART"
       - name: Commit release notes and release version
         run: |
-          git add .chglog/*.md pom.xml
+          git add .chglog/*.md pom.xml charts/urlaubsverwaltung/Chart.yaml
           git commit -m "New Release Version urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}"
       - name: Add release tag
         run: git tag -a -m "urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}" urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}

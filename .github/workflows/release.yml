@@ -81,3 +81,9 @@ jobs:
           -Ddocker-publish-registry-path=urlaubsverwaltung
           -Ddocker-publish-registry-username=${{ secrets.DOCKER_UV_USERNAME }}
           -Ddocker-publish-registry-password=${{ secrets.DOCKER_UV_TOKEN }}
+
+  helm-chart-release:
+    needs:
+      - container-upload-github
+      - container-upload-docker-hub-urlaubsverwaltung
+    uses: ./.github/workflows/helm-chart-release.yml
