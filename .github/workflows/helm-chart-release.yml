@@ -2,6 +2,7 @@ name: Helm Charts Release
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   release:
