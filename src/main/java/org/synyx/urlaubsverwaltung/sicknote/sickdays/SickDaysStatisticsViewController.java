@@ -33,6 +33,7 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -75,7 +76,7 @@ class SickDaysStatisticsViewController {
 
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
-        if (period.endDate().isBefore(period.startDate())) {
+        if (period.endDate().isBefore(period.startDate()) || exceedsMaximumRequestedDuration(period.startDate(), period.endDate())) {
             return ResponseEntity.badRequest().build();
         }
 

@@ -11,11 +11,14 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInThePast;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
@@ -27,6 +30,8 @@ public class SickNoteValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_TOO_FAR_IN_THE_PAST = "error.entry.tooFarInThePast";
+    private static final String ERROR_TOO_FAR_IN_THE_FUTURE = "error.entry.tooFarInTheFuture";
     private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "sicknote.error.noValidWorkingTime";
@@ -39,11 +44,13 @@ public class SickNoteValidator implements Validator {
 
     private final OverlapService overlapService;
     private final WorkingTimeService workingTimeService;
+    private final Clock clock;
 
     @Autowired
-    SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService) {
+    SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, Clock clock) {
         this.overlapService = overlapService;
         this.workingTimeService = workingTimeService;
+        this.clock = clock;
     }
 
     @Override
@@ -76,7 +83,7 @@ public class SickNoteValidator implements Validator {
         }
 
         if (dayLength != null && startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, dayLength, ATTRIBUTE_END_DATE, errors);
+            validatePeriod(startDate, endDate, dayLength, ATTRIBUTE_START_DATE, ATTRIBUTE_END_DATE, errors);
 
             if (!errors.hasErrors()) {
                 validateNoOverlapping(sickNote, errors);
@@ -94,7 +101,7 @@ public class SickNoteValidator implements Validator {
         validateNotNull(aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
 
         if (aubStartDate != null && aubEndDate != null) {
-            validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_END_DATE, errors);
+            validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_START_DATE, ATTRIBUTE_AUB_END_DATE, errors);
         }
     }
 
@@ -107,16 +114,21 @@ public class SickNoteValidator implements Validator {
     }
 
     /**
-     * Validate that the given start date is not after the given end date.
+     * Validate that the given start date is not after the given end date
+     * and that the period does not lie too far in the past or in the future.
      */
-    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String field, Errors errors) {
+    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, String startField, String endField, Errors errors) {
 
         if (startDate.isAfter(endDate)) {
-            errors.rejectValue(field, ERROR_PERIOD);
+            errors.rejectValue(endField, ERROR_PERIOD);
+        } else if (isTooFarInThePast(startDate, clock)) {
+            errors.rejectValue(startField, ERROR_TOO_FAR_IN_THE_PAST);
+        } else if (isTooFarInTheFuture(endDate, clock)) {
+            errors.rejectValue(endField, ERROR_TOO_FAR_IN_THE_FUTURE);
         } else {
             final boolean isHalfDay = dayLength == MORNING || dayLength == NOON;
             if (isHalfDay && !startDate.isEqual(endDate)) {
-                errors.rejectValue(field, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
+                errors.rejectValue(endField, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
             }
         }
     }

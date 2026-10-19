@@ -32,6 +32,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
@@ -116,6 +117,8 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
+        requireCalculableDuration(dateRange);
+
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
         final CachedSupplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
 

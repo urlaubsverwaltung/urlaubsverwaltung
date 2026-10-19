@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static de.focus_shift.jollyday.core.HolidayType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -82,11 +83,12 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
     private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
 
+        final DateRange requestRange = new DateRange(from, to);
+        requireCalculableDuration(requestRange);
+
         final Set<Holiday> holidays = getHolidayManager(federalState)
             .map(holidayManager -> holidayManager.getHolidays(from, to, PUBLIC_HOLIDAY, federalState.getCodes()))
             .orElseGet(HashSet::new);
-
-        final DateRange requestRange = new DateRange(from, to);
 
         int year = from.getYear();
         while (year <= to.getYear()) {

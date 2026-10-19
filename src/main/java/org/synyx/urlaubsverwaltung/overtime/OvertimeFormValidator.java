@@ -9,9 +9,13 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInThePast;
 
 /**
  * Validates overtime record.
@@ -21,6 +25,8 @@ public class OvertimeFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY = "error.entry.mandatory";
     private static final String ERROR_INVALID_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_TOO_FAR_IN_THE_PAST = "error.entry.tooFarInThePast";
+    private static final String ERROR_TOO_FAR_IN_THE_FUTURE = "error.entry.tooFarInTheFuture";
     private static final String ERROR_MAX_OVERTIME = "overtime.data.numberOfHours.error.maxOvertime";
     private static final String ERROR_MIN_OVERTIME = "overtime.data.numberOfHours.error.minOvertime";
     private static final String ERROR_OVERTIME_DEACTIVATED = "overtime.record.error.deactivated";
@@ -30,11 +36,13 @@ public class OvertimeFormValidator implements Validator {
 
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
-    OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService) {
+    OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService, Clock clock) {
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
@@ -70,6 +78,14 @@ public class OvertimeFormValidator implements Validator {
 
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
             errors.rejectValue(ATTRIBUTE_END_DATE, ERROR_INVALID_PERIOD);
+        }
+
+        if (startDate != null && isTooFarInThePast(startDate, clock)) {
+            errors.rejectValue(ATTRIBUTE_START_DATE, ERROR_TOO_FAR_IN_THE_PAST);
+        }
+
+        if (endDate != null && isTooFarInTheFuture(endDate, clock)) {
+            errors.rejectValue(ATTRIBUTE_END_DATE, ERROR_TOO_FAR_IN_THE_FUTURE);
         }
     }
 
