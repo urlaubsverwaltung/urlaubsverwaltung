@@ -35,35 +35,6 @@ class SickNoteCommentEntityRepositoryIT extends SingleTenantTestContainersBase {
     private SickNoteCommentService sickNoteCommentService;
 
     @Test
-    void ensureDeletionBySickNotePerson() {
-
-        final LocalDate now = LocalDate.now(UTC);
-
-        final Person batman = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
-        final Person robin = personService.create("robin", "Dick", "Grayson", "robin@example.org");
-        final Person alfred = personService.create("alfred", "Alfred", "Pennyworth", "alfred@example.org");
-
-        final SickNote sickNoteBatmanOne = sickNoteService.save(SickNote.builder().person(batman).startDate(now.minusDays(10)).endDate(now.minusDays(10)).build());
-        final SickNote sickNoteBatmanTwo = sickNoteService.save(SickNote.builder().person(batman).startDate(now.minusDays(5)).endDate(now.minusDays(5)).build());
-        final SickNote sickNoteRobinOne = sickNoteService.save(SickNote.builder().person(robin).startDate(now.minusDays(3)).endDate(now.minusDays(3)).build());
-
-        sickNoteCommentService.create(sickNoteBatmanOne, COMMENTED, robin, "miss you, not");
-        sickNoteCommentService.create(sickNoteBatmanOne, COMMENTED, robin, "well... actually...");
-        sickNoteCommentService.create(sickNoteBatmanTwo, COMMENTED, robin, "aaaand again");
-        sickNoteCommentService.create(sickNoteRobinOne, COMMENTED, alfred, "Get well soon!");
-
-        final List<SickNoteCommentEntity> allCommentsBeforeDelete = getAllComments();
-        assertThat(allCommentsBeforeDelete).hasSize(4);
-
-        sut.deleteBySickNotePerson(batman);
-
-        final List<SickNoteCommentEntity> allComments = getAllComments();
-        assertThat(allComments).hasSize(1);
-        assertThat(allComments.getFirst().getSickNoteId()).isEqualTo(sickNoteRobinOne.getId());
-        assertThat(allComments.getFirst().getText()).isEqualTo("Get well soon!");
-    }
-
-    @Test
     void ensureToGetSickNoteCommentsInCorrectOrder() {
 
         final LocalDate now = LocalDate.now(UTC);

@@ -4,12 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
@@ -104,12 +102,6 @@ public class PersonCalendarService {
         personCalendarRepository.deleteByPerson(person);
 
         publishPersonalCalendarDeletedEvent(person);
-    }
-
-    @EventListener
-    void deletePersonalCalendar(PersonDeletedEvent event) {
-
-        personCalendarRepository.deleteByPerson(event.person());
     }
 
     private void publishPersonalCalendarCreatedEvent(Person person) {

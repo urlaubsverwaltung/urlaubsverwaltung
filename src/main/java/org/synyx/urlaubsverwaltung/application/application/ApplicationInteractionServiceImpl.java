@@ -475,22 +475,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     /**
-     * Deletes all {@link Application} and {@link org.synyx.urlaubsverwaltung.application.comment.ApplicationComment}
-     * in the database of applicant with person.
+     * Deletes all {@link Application}s of the person to be deleted, so that an {@link ApplicationDeletedEvent} is
+     * published for each of them. Everything else referencing the person is cleaned up by the database.
      *
      * @param event the person which is deleted and whose applications should be deleted
      */
     @EventListener
     void deleteAllByPerson(PersonDeletedEvent event) {
-        final Person personToBeDeleted = event.person();
-        commentService.deleteByApplicationPerson(personToBeDeleted);
-        commentService.deleteCommentAuthor(personToBeDeleted);
-
-        final List<Application> deletedApplications = applicationService.deleteApplicationsByPerson(personToBeDeleted);
-
-        applicationService.deleteInteractionWithApplications(personToBeDeleted);
-
-        deletedApplications.stream()
+        applicationService.deleteApplicationsByPerson(event.person()).stream()
             .map(ApplicationDeletedEvent::of)
             .forEach(applicationEventPublisher::publishEvent);
     }

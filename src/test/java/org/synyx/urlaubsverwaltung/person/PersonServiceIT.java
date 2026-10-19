@@ -190,6 +190,11 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).hasSize(1);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).hasSize(1);
 
+        // the database cleans up the data of the deleted person, so like in a separate request nothing of it may be
+        // managed anymore, e.g. the holidays account created together with the person
+        entityManager.flush();
+        entityManager.clear();
+
         personService.delete(personWithId.getIdAsPersonId(), new PersonId(personId + 1));
 
         assertThat(personRepository.existsById(personId)).isFalse();

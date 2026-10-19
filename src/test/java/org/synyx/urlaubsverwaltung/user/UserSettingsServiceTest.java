@@ -13,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -257,15 +256,6 @@ class UserSettingsServiceTest {
 
         final Optional<Theme> actual = sut.findThemeForUsername("batman");
         assertThat(actual).hasValue(Theme.DARK);
-    }
-
-    @Test
-    void ensureDeletionOnPersonDeletionEvent() {
-        final Person person = new Person();
-
-        sut.delete(new PersonDeletedEvent(person));
-
-        verify(userSettingsRepository).deleteByPerson(person);
     }
 
     @Nested

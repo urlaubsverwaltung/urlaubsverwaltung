@@ -599,16 +599,15 @@ class PersonServiceImplTest {
 
         sut.delete(new PersonId(personId), new PersonId(1L));
 
-        final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
+        final InOrder inOrder = inOrder(applicationEventPublisher, personRepository);
 
         inOrder.verify(personRepository).findById(42L);
         inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
         assertThat(personDeletedEventArgumentCaptor.getValue().person())
             .isEqualTo(person);
 
-        inOrder.verify(accountInteractionService).deleteAllByPerson(person);
-        inOrder.verify(workingTimeWriteService).deleteAllByPerson(person);
         inOrder.verify(personRepository).delete(person);
+        verifyNoInteractions(accountInteractionService, workingTimeWriteService);
     }
 
     @Test

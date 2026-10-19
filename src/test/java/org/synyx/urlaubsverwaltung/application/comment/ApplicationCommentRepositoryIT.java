@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.COMMENTED;
 
 
@@ -36,40 +34,6 @@ class ApplicationCommentRepositoryIT extends SingleTenantTestContainersBase {
     private ApplicationCommentService applicationCommentService;
     @Autowired
     private VacationTypeService vacationTypeService;
-
-    @Test
-    void ensureDeleteByApplicationPerson() {
-
-        final VacationType<?> vacationType = vacationTypeService.getActiveVacationTypes().getFirst();
-
-        final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
-        final Application application = new Application();
-        application.setPerson(person);
-        application.setVacationType(vacationType);
-
-        final Person personToDelete = personService.create("robin", "Grayson", "Dick", "robin@example.org");
-        final Application applicationToDelete = new Application();
-        applicationToDelete.setPerson(personToDelete);
-        applicationToDelete.setVacationType(vacationType);
-
-        final Application applicationWithId = applicationService.save(application);
-        final Application applicationToDeleteWithId = applicationService.save(applicationToDelete);
-
-        applicationCommentService.create(applicationToDeleteWithId, ALLOWED_DIRECTLY, Optional.empty(), person);
-        applicationCommentService.create(applicationWithId, ALLOWED, Optional.of("Whoop"), person);
-
-        assertThat(sut.findAll()).hasSize(2);
-
-        sut.deleteByApplicationPerson(personToDelete);
-
-        final Iterable<ApplicationCommentEntity> commentsAfterDelete = sut.findAll();
-        assertThat(commentsAfterDelete).hasSize(1);
-        assertThat(commentsAfterDelete.iterator().next()).satisfies(commentEntity -> {
-            assertThat(commentEntity.getApplicationId()).isEqualTo(applicationWithId.getId());
-            assertThat(commentEntity.getPerson()).isSameAs(person);
-            assertThat(commentEntity.getText()).isEqualTo("Whoop");
-        });
-    }
 
     @Test
     void ensureToGetApplicationCommentsInCorrectOrder() {

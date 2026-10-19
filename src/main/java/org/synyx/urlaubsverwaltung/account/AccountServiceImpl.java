@@ -113,11 +113,6 @@ class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAllByPerson(Person person) {
-        accountRepository.deleteByPerson(person);
-    }
-
-    @Override
     public List<Account> getHolidaysAccountsByPerson(Person person) {
 
         final CachedSupplier<Boolean> expireGlobally = new CachedSupplier<>(this::remainingVacationDaysExpireGlobally);

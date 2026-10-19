@@ -4,13 +4,11 @@ import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -425,25 +423,6 @@ class OvertimeServiceImpl implements OvertimeService {
                 final Duration dateRangeReduction = application.getOvertimeReductionShareFor(dateRange, (_, _) -> workingTimeCalendar);
                 return new OvertimeReduction(yearReduction, dateRangeReduction);
             }, OvertimeReduction::plus));
-    }
-
-    /**
-     * Deletes all {@link OvertimeEntity} in the database of person with id.
-     *
-     * @param event deletion event with the id of the person which is deleted
-     */
-    @EventListener
-    void deleteAll(PersonDeletedEvent event) {
-        final Person personToBeDeleted = event.person();
-        overtimeCommentRepository.deleteByOvertimePerson(personToBeDeleted);
-        deleteCommentAuthor(personToBeDeleted);
-        overtimeRepository.deleteByPerson(personToBeDeleted);
-    }
-
-    void deleteCommentAuthor(Person author) {
-        final List<OvertimeCommentEntity> overtimeComments = overtimeCommentRepository.findByPerson(author);
-        overtimeComments.forEach(overtimeComment -> overtimeComment.setPerson(null));
-        overtimeCommentRepository.saveAll(overtimeComments);
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {

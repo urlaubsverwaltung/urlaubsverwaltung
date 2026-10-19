@@ -1,13 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -186,45 +183,6 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> deleteApplicationsByPerson(Person person) {
         return toApplication(applicationRepository.deleteByPerson(person));
-    }
-
-    @Override
-    public void deleteInteractionWithApplications(Person person) {
-        final List<ApplicationEntity> applicationsWithoutBoss = applicationRepository.findByBoss(person);
-        applicationsWithoutBoss.forEach(application -> application.setBoss(null));
-        applicationRepository.saveAll(applicationsWithoutBoss);
-
-        final List<ApplicationEntity> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
-        applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
-        applicationRepository.saveAll(applicationsWithoutCanceller);
-
-        final List<ApplicationEntity> applicationsWithoutApplier = applicationRepository.findByApplier(person);
-        applicationsWithoutApplier.forEach(application -> application.setApplier(null));
-        applicationRepository.saveAll(applicationsWithoutApplier);
-    }
-
-    /**
-     * Deletes all application replacements of applications.
-     *
-     * @param event the person which is deleted
-     */
-    @EventListener
-    void deleteHolidayReplacements(PersonDeletedEvent event) {
-        final List<ApplicationEntity> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.person()).stream()
-            .map(deleteHolidayReplacement(event.person()))
-            .toList();
-        applicationRepository.saveAll(applicationsWithReplacedApplicationReplacements);
-    }
-
-    private Function<ApplicationEntity, ApplicationEntity> deleteHolidayReplacement(Person deletedPerson) {
-        return applicationEntity -> {
-            applicationEntity.setHolidayReplacements(
-                applicationEntity.getHolidayReplacements().stream()
-                    .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
-                    .collect(toList())
-            );
-            return applicationEntity;
-        };
     }
 
     private List<Application> toApplication(Iterable<ApplicationEntity> entityList) {

@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
@@ -34,7 +33,6 @@ import static java.time.Month.OCTOBER;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -682,107 +680,6 @@ class ApplicationServiceImplTest {
             assertThat(applications).containsExactly(application);
 
             verify(applicationRepository).deleteByPerson(person);
-        }
-    }
-
-    @Nested
-    class DeleteInteractionWithApplications {
-
-        @Test
-        void deleteBossInteractionOnPersonDeletionEvent() {
-
-            final Person boss = new Person();
-            boss.setId(1L);
-
-            final Application application = new Application();
-            application.setId(1L);
-            application.setCanceller(boss);
-
-            final ApplicationEntity applicationEntity = new ApplicationEntity();
-            applicationEntity.setId(1L);
-            applicationEntity.setCanceller(boss);
-
-            when(applicationRepository.findByBoss(boss)).thenReturn(List.of(applicationEntity));
-
-            sut.deleteInteractionWithApplications(boss);
-
-            verify(applicationRepository, atLeastOnce()).saveAll(List.of(applicationEntity));
-        }
-
-        @Test
-        void deleteCancellerInteractionOnPersonDeletionEvent() {
-
-            final Person canceller = new Person();
-            canceller.setId(1L);
-
-            final Application application = new Application();
-            application.setId(1L);
-            application.setCanceller(canceller);
-
-            final ApplicationEntity applicationEntity = new ApplicationEntity();
-            applicationEntity.setId(1L);
-            applicationEntity.setCanceller(canceller);
-
-            when(applicationRepository.findByCanceller(canceller)).thenReturn(List.of(applicationEntity));
-
-            sut.deleteInteractionWithApplications(canceller);
-
-            verify(applicationRepository, atLeastOnce()).saveAll(List.of(applicationEntity));
-        }
-
-        @Test
-        void deleteApplierInteractionOnPersonDeletionEvent() {
-
-            final Person applier = new Person();
-            applier.setId(1L);
-
-            final Application application = new Application();
-            application.setId(1L);
-            application.setApplier(applier);
-
-            final ApplicationEntity applicationEntity = new ApplicationEntity();
-            applicationEntity.setId(1L);
-            applicationEntity.setApplier(applier);
-
-            when(applicationRepository.findByApplier(applier)).thenReturn(List.of(applicationEntity));
-
-            sut.deleteInteractionWithApplications(applier);
-
-            verify(applicationRepository, atLeastOnce()).saveAll(List.of(applicationEntity));
-        }
-    }
-
-    @Nested
-    class DeleteHolidayReplacements {
-
-        @Test
-        void deleteApplicationReplacement() {
-
-            final Person person = new Person();
-            person.setId(42L);
-
-            final Person other = new Person();
-            other.setId(21L);
-
-            final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
-            holidayReplacement.setPerson(person);
-
-            final HolidayReplacementEntity otherHolidayReplacement = new HolidayReplacementEntity();
-            otherHolidayReplacement.setPerson(other);
-
-            final Application application = new Application();
-            application.setId(1L);
-            application.setHolidayReplacements(List.of(holidayReplacement, otherHolidayReplacement));
-
-            final ApplicationEntity applicationEntity = new ApplicationEntity();
-            applicationEntity.setId(1L);
-            applicationEntity.setHolidayReplacements(List.of(holidayReplacement, otherHolidayReplacement));
-
-            when(applicationRepository.findAllByHolidayReplacements_Person(person)).thenReturn(List.of(applicationEntity));
-
-            sut.deleteHolidayReplacements(new PersonDeletedEvent(person));
-
-            verify(applicationRepository).saveAll(List.of(applicationEntity));
         }
     }
 

@@ -201,11 +201,6 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         this.touch(defaultWorkingDays, today.with(firstDayOfYear()), person);
     }
 
-    @Override
-    public void deleteAllByPerson(Person person) {
-        workingTimeRepository.deleteByPerson(person);
-    }
-
     private void publishWorkingTimeConfiguredEvent(Person person, LocalDate validFrom, List<Integer> workingDays, FederalState federalState) {
         applicationEventPublisher.publishEvent(WorkingTimeConfiguredEvent.of(
             person.getUsername(), validFrom, workingDays, federalState != null ? federalState.name() : null));

@@ -79,14 +79,6 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
 
     List<ApplicationEntity> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 
-    List<ApplicationEntity> findByBoss(Person person);
-
-    List<ApplicationEntity> findByCanceller(Person person);
-
-    List<ApplicationEntity> findByApplier(Person person);
-
     @Modifying
     List<ApplicationEntity> deleteByPerson(Person person);
-
-    List<ApplicationEntity> findAllByHolidayReplacements_Person(Person person);
 }

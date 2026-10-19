@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +26,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -337,21 +335,6 @@ class SickNoteInteractionServiceImplTest {
 
             assertThat(captor.getValue()).isSameAs(savedSickNote);
         }
-    }
-
-    @Test
-    void ensureDeletionOfAllSickNotesAndAllCommentsOnPersonDeletedEvent() {
-        final Person person = new Person();
-        final long personId = 1;
-        person.setId(personId);
-
-        sut.deleteAll(new PersonDeletedEvent(person));
-
-        final InOrder inOrder = inOrder(commentService, sickNoteService);
-        inOrder.verify(commentService).deleteAllBySickNotePerson(person);
-        inOrder.verify(commentService).deleteCommentAuthor(person);
-        inOrder.verify(sickNoteService).deleteAllByPerson(person);
-        inOrder.verify(sickNoteService).deleteSickNoteApplier(person);
     }
 
     @Test

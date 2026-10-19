@@ -103,11 +103,4 @@ public interface SickNoteService {
      * @return list of deleted sick notes
      */
     List<SickNote> deleteAllByPerson(Person person);
-
-    /**
-     * Deletes the given applier from all sicknotes as applier
-     *
-     * @param applier to delete
-     */
-    void deleteSickNoteApplier(Person applier);
 }

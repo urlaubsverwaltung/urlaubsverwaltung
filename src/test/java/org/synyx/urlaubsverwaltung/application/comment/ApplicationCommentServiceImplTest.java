@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,40 +104,5 @@ class ApplicationCommentServiceImplTest {
 
         assertThat(captor.getValue()).satisfies(persistedComment ->
             assertThat(persistedComment.getText()).isEqualTo("Foo"));
-    }
-
-    @Test
-    void ensureDeletionOfCommentAuthor() {
-
-        final Person person = new Person();
-        person.setId(1L);
-
-        final Application application = new Application();
-        application.setId(1337L);
-
-        final ApplicationCommentEntity entity = new ApplicationCommentEntity();
-        entity.setId(1L);
-        entity.setPerson(person);
-
-        when(commentRepository.findByPerson(person)).thenReturn(List.of(entity));
-
-        sut.deleteCommentAuthor(person);
-
-        verify(commentRepository).findByPerson(person);
-
-        final ArgumentCaptor<List<ApplicationCommentEntity>> argument = ArgumentCaptor.forClass(List.class);
-        verify(commentRepository).saveAll(argument.capture());
-        assertThat(argument.getValue().getFirst().getPerson()).isNull();
-    }
-
-    @Test
-    void ensureDeletionByApplicationPerson() {
-
-        final Person person = new Person();
-        person.setId(1L);
-
-        sut.deleteByApplicationPerson(person);
-
-        verify(commentRepository).deleteByApplicationPerson(person);
     }
 }

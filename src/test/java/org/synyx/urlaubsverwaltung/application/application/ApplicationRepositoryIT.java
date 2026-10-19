@@ -658,24 +658,6 @@ class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void findAllByReplacements_Person() {
-
-        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
-
-        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
-        holidayReplacement.setPerson(person);
-
-        final ApplicationEntity application = new ApplicationEntity();
-        application.setHolidayReplacements(List.of(holidayReplacement));
-
-        sut.save(application);
-
-        final List<ApplicationEntity> applicationsByHolidayReplacement = sut.findAllByHolidayReplacements_Person(person);
-
-        assertThat(applicationsByHolidayReplacement).contains(application);
-    }
-
-    @Test
     void ensureHolidayReplacementsAreFetchedWithoutOneQueryPerApplication() {
 
         // one applicant and one holiday replacement, reused for every application, so that unrelated eager

@@ -40,6 +40,11 @@ class DepartmentMembershipIT extends SingleTenantTestContainersBase {
         departmentService.create(department);
         assertThat(departmentMembershipRepository.findAll()).hasSize(1);
 
+        // the database cleans up the data of the deleted person, so like in a separate request nothing of it may be
+        // managed anymore, e.g. the holidays account created together with the person
+        entityManager.flush();
+        entityManager.clear();
+
         personService.delete(person.getIdAsPersonId(), person.getIdAsPersonId());
         entityManager.flush();
 

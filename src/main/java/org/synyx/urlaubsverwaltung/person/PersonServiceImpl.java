@@ -164,8 +164,6 @@ class PersonServiceImpl implements PersonService {
         final Person person = findPerson(personId);
 
         applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
-        accountInteractionService.deleteAllByPerson(person);
-        workingTimeWriteService.deleteAllByPerson(person);
         personRepository.delete(person);
 
         final String status = person.isActive() ? "active" : "inactive";

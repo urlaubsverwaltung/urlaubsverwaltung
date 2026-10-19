@@ -279,15 +279,6 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void deleteAllDelegatesToRepository() {
-        final Person person = new Person();
-
-        sut.deleteAllByPerson(person);
-
-        verify(accountRepository).deleteByPerson(person);
-    }
-
-    @Test
     void ensureSave() {
 
         final Account account = new Account();

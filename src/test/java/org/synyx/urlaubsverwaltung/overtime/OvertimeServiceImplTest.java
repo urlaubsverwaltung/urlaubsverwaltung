@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,7 +21,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -51,7 +49,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -1005,17 +1002,6 @@ class OvertimeServiceImplTest {
         assertThat(leftOvertime).isNotNull();
         assertThat(leftOvertime.leftOvertimeOverall()).isEqualTo(Duration.ZERO);
         assertThat(leftOvertime.leftOvertimeDateRange()).isEqualTo(Duration.ZERO);
-    }
-
-    @Test
-    void ensureDeletionOnPersonDeletionEvent() {
-        final Person person = new Person();
-
-        sut.deleteAll(new PersonDeletedEvent(person));
-
-        final InOrder inOrder = inOrder(overtimeCommentRepository, overtimeRepository);
-        inOrder.verify(overtimeCommentRepository).deleteByOvertimePerson(person);
-        inOrder.verify(overtimeRepository).deleteByPerson(person);
     }
 
     @Test

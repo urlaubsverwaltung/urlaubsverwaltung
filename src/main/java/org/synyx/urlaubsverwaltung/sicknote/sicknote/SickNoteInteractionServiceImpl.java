@@ -158,20 +158,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     /**
-     * Deletes all {@link SickNote} and {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity}
-     * in the database of person.
+     * Deletes all {@link SickNote}s of the person to be deleted, so that a {@link SickNoteDeletedEvent} is published
+     * for each of them. Everything else referencing the person is cleaned up by the database.
      *
      * @param event the person which is deleted and whose sicknotes should be deleted
      */
     @EventListener
     void deleteAll(PersonDeletedEvent event) {
-        final Person personToBeDeleted = event.person();
-        commentService.deleteAllBySickNotePerson(personToBeDeleted);
-        commentService.deleteCommentAuthor(personToBeDeleted);
-
-        sickNoteService.deleteAllByPerson(personToBeDeleted)
+        sickNoteService.deleteAllByPerson(event.person())
             .forEach(sickNote -> applicationEventPublisher.publishEvent(SickNoteDeletedEvent.of(sickNote)));
-
-        sickNoteService.deleteSickNoteApplier(personToBeDeleted);
     }
 }

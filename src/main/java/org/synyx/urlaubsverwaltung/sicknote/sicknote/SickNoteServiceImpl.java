@@ -164,15 +164,6 @@ class SickNoteServiceImpl implements SickNoteService {
             .toList();
     }
 
-    @Override
-    public void deleteSickNoteApplier(Person applier) {
-        final List<SickNoteEntity> entities = sickNoteRepository.findByApplier(applier);
-        for (SickNoteEntity entity : entities) {
-            entity.setApplier(null);
-        }
-        sickNoteRepository.saveAll(entities);
-    }
-
     private static SickNoteEntity toSickNoteEntity(SickNote sickNote) {
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(sickNote.getId());

@@ -11,7 +11,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
@@ -327,15 +326,6 @@ class PersonCalendarServiceTest {
         sut.deletePersonalCalendarForPerson(1);
 
         verify(applicationEventPublisher).publishEvent(any(PersonalCalendarDeletedEvent.class));
-    }
-
-    @Test
-    void deleteOnPersonDeletionEvent() {
-        final Person person = new Person();
-
-        sut.deletePersonalCalendar(new PersonDeletedEvent(person));
-
-        verify(personCalendarRepository).deleteByPerson(person);
     }
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

@@ -58,7 +58,4 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
 
     @Modifying
     List<SickNoteEntity> deleteByPerson(Person person);
-
-    List<SickNoteEntity> findByApplier(Person applier);
-
 }

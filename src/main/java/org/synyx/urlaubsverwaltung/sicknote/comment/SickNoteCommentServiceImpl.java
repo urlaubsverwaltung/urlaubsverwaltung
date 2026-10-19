@@ -47,16 +47,4 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
         return sickNoteCommentEntityRepository.findBySickNoteIdOrderByIdDesc(sickNote.getId());
     }
-
-    @Override
-    public void deleteAllBySickNotePerson(Person sickNotePerson) {
-        sickNoteCommentEntityRepository.deleteBySickNotePerson(sickNotePerson);
-    }
-
-    @Override
-    public void deleteCommentAuthor(Person author) {
-        final List<SickNoteCommentEntity> sickNoteComments = sickNoteCommentEntityRepository.findByPerson(author);
-        sickNoteComments.forEach(sickNoteComment -> sickNoteComment.setPerson(null));
-        sickNoteCommentEntityRepository.saveAll(sickNoteComments);
-    }
 }

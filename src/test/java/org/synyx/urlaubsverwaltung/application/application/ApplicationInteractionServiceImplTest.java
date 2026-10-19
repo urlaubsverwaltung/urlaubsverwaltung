@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -1600,21 +1598,6 @@ class ApplicationInteractionServiceImplTest {
 
         verifyNoInteractions(applicationMailService);
         verifyNoInteractions(commentService);
-    }
-
-    @Test
-    void ensureDeletionOfApplicationAndCommentsOnPersonDeletedEvent() {
-        final Person person = new Person();
-        final long personId = 42;
-        person.setId(personId);
-
-        sut.deleteAllByPerson(new PersonDeletedEvent(person));
-
-        InOrder inOrder = inOrder(commentService, applicationService);
-        inOrder.verify(commentService).deleteByApplicationPerson(person);
-        inOrder.verify(commentService).deleteCommentAuthor(person);
-        inOrder.verify(applicationService).deleteApplicationsByPerson(person);
-        inOrder.verify(applicationService).deleteInteractionWithApplications(person);
     }
 
     @Test

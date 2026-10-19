@@ -75,18 +75,6 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
         return commentEntities.stream().map(entity -> toApplicationComment(entity, applicationById::get)).toList();
     }
 
-    @Override
-    public void deleteByApplicationPerson(Person applicationPerson) {
-        commentRepository.deleteByApplicationPerson(applicationPerson);
-    }
-
-    @Override
-    public void deleteCommentAuthor(Person author) {
-        final List<ApplicationCommentEntity> applicationComments = commentRepository.findByPerson(author);
-        applicationComments.forEach(applicationComment -> applicationComment.setPerson(null));
-        commentRepository.saveAll(applicationComments);
-    }
-
     private ApplicationComment toApplicationComment(ApplicationCommentEntity entity, LongFunction<Application> applicationSupplier) {
         final Application application = applicationSupplier.apply(entity.getApplicationId());
         return new ApplicationComment(entity.getId(), entity.getDate(), application, entity.getAction(), entity.getPerson(), entity.getText());

@@ -4,14 +4,12 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,11 +34,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
     ) {
         this.userSettingsRepository = userSettingsRepository;
         this.localeResolver = localeResolver;
-    }
-
-    @EventListener
-    void delete(PersonDeletedEvent event) {
-        userSettingsRepository.deleteByPerson(event.person());
     }
 
     Optional<Theme> findThemeForUsername(String username) {

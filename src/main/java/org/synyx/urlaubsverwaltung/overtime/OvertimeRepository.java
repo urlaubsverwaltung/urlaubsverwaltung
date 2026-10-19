@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -42,7 +41,4 @@ interface OvertimeRepository extends CrudRepository<OvertimeEntity, Long> {
     List<OvertimeEntity> findByPersonIdIn(Collection<Long> personIds);
 
     Optional<OvertimeEntity> findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(Long personId, LocalDate start, LocalDate end);
-
-    @Modifying
-    void deleteByPerson(Person personId);
 }

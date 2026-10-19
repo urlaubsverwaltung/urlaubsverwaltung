@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
@@ -94,14 +92,6 @@ class PersonBasedataServiceImplTest {
             assertThat(basedata.personnelNumber()).isEqualTo("1887");
             assertThat(basedata.additionalInformation()).isNull();
         });
-    }
-
-    @Test
-    void delete() {
-        final Person person = new Person();
-        sut.delete(new PersonDeletedEvent(person));
-
-        verify(personBasedataRepository).deleteByPerson(person);
     }
 
     @Test

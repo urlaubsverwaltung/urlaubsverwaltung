@@ -49,13 +49,6 @@ public interface AccountService {
     Account save(Account account);
 
     /**
-     * Deletes all {@link Account}s in the database of person id.
-     *
-     * @param person the person whose account should be deleted
-     */
-    void deleteAllByPerson(Person person);
-
-    /**
      * Get all {@link Account}s for the given person.
      *
      * @param person to get the holidays accounts for
