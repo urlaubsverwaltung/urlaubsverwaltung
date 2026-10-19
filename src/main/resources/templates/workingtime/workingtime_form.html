@@ -33,6 +33,9 @@
   </head>
   <body th:replace="~{_layout::body(content=~{::main})}">
     <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{person/back-to-account::back-to-account(personId=${person.id}, personNiceName=${person.niceName}, year=null)}"
+      ></div>
       <form
         method="post"
         th:action="@{/web/person/__${person.id}__/workingtime}"
