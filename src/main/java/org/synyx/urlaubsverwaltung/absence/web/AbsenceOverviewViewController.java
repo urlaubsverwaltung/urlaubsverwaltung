@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -38,12 +39,16 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,6 +69,9 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isWeekend;
 public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final VacationTypeColor ANONYMIZED_ABSENCE_COLOR = VacationTypeColor.YELLOW;
+    // a bar may continue beyond the requested range - the margin tells whether it does
+    static final int BAR_TIMELINE_MARGIN_DAYS = 14;
+    private static final String SICK_NOTE_BAR_COLOR = "SICK_NOTE";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -71,6 +79,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     private final AbsenceService absenceService;
     private final WorkingTimeService workingTimeService;
     private final VacationTypeService vacationTypeService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final MessageSource messageSource;
@@ -80,6 +89,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         PersonService personService, DepartmentService departmentService,
         PublicHolidaysService publicHolidaysService, AbsenceService absenceService,
         WorkingTimeService workingTimeService, VacationTypeService vacationTypeService,
+        SickNotePermissionEvaluator sickNotePermissionEvaluator,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy, PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         MessageSource messageSource, Clock clock
     ) {
@@ -89,6 +99,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
         this.vacationTypeService = vacationTypeService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.messageSource = messageSource;
@@ -119,7 +130,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
+        final boolean isSignedInUserBossOrOffice = signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE);
+        final boolean isSignedInUserAllowedToViewAllSickNotes = sickNotePermissionEvaluator.isAllowedToViewSickNotesOfAllPersons(signedInUser);
+        // the managed members only matter for sick notes when the signed-in user may not see all of them anyway
+        final List<Person> managedMembersOfSignedInUser = isSignedInUserBossOrOffice && isSignedInUserAllowedToViewAllSickNotes
+            ? List.of()
+            : getActiveManagedMembersOfPerson(signedInUser);
+        final List<Person> membersOfSignedInUser = isSignedInUserBossOrOffice ? personService.getActivePersons() : managedMembersOfSignedInUser;
 
         final List<Person> overviewPersons;
         if (departmentService.getNumberOfDepartments() > 0) {
@@ -176,10 +193,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !recordInfo.getPerson().equals(signedInUser)
             && !membersOfSignedInUser.contains(recordInfo.getPerson()) && !recordInfo.isVisibleToEveryone();
 
-        final Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor = recordInfo -> recordInfoToColor(recordInfo, vacationTypesById::get);
+        final Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail = recordInfo -> absenceDetail(recordInfo, signedInUser,
+            membersOfSignedInUser, managedMembersOfSignedInUser, isSignedInUserAllowedToViewAllSickNotes);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, recordInfoToColor);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, vacationTypesById::get, detail);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
@@ -248,17 +266,18 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                                                                         List<Person> personList,
                                                                         Locale locale,
                                                                         Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                        Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+                                                                        Function<Long, VacationType<?>> vacationTypeById,
+                                                                        Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail) {
 
         final LocalDate today = LocalDate.now(clock);
-        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.startDate(), dateRange.endDate());
+        final DateRange barTimeline = new DateRange(dateRange.startDate().minusDays(BAR_TIMELINE_MARGIN_DAYS), dateRange.endDate().plusDays(BAR_TIMELINE_MARGIN_DAYS));
+        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, barTimeline.startDate(), barTimeline.endDate());
 
-        final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
-
-        final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
+        // index the records once - a lookup per person and date must not scan all records of the person
+        final Map<Person, Map<LocalDate, List<AbsencePeriod.Record>>> absenceRecordsByPersonAndDate = openAbsences.stream()
             .map(AbsencePeriod::absenceRecords)
             .flatMap(List::stream)
-            .collect(groupingBy(AbsencePeriod.Record::getPerson));
+            .collect(groupingBy(AbsencePeriod.Record::getPerson, groupingBy(AbsencePeriod.Record::getDate)));
 
         // load the working times of all persons with a single query instead of one query per person
         final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(personList, dateRange);
@@ -268,6 +287,37 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
         }
 
+        // resolve each message at most once per request
+        final Map<String, String> messages = new HashMap<>();
+        final UnaryOperator<String> message = code -> messages.computeIfAbsent(code, c -> messageSource.getMessage(c, new Object[]{}, locale));
+
+        final Map<String, AbsenceBars.Absence> barAbsencesByKey = new HashMap<>();
+        final Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence = recordInfo -> {
+            final boolean anonymize = shouldAnonymizeAbsenceType.apply(recordInfo);
+            return barAbsencesByKey.computeIfAbsent(barAbsenceKey(recordInfo, anonymize),
+                key -> barAbsence(key, recordInfo, anonymize, vacationTypeById, detail, locale, message));
+        };
+
+        final Map<Person, Map<LocalDate, List<AbsenceBars.Piece>>> barPiecesByPerson = new HashMap<>();
+        for (Person person : personList) {
+            final Map<LocalDate, PublicHoliday> publicHolidays = publicHolidaysOfAllPersons.get(person);
+            final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
+            absenceRecordsByPersonAndDate.getOrDefault(person, Map.of()).forEach((date, records) -> {
+                final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> gapType == AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY
+                    ? Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"))
+                    : message.apply("absences.overview.no-workday");
+                barDays.put(date, new AbsenceBars.Day(
+                    barHalfDay(records, AbsencePeriod.Record::getMorning, toBarAbsence, gapTitle),
+                    barHalfDay(records, AbsencePeriod.Record::getNoon, toBarAbsence, gapTitle)
+                ));
+            });
+            barPiecesByPerson.put(person, AbsenceBars.compute(barTimeline, barDays, dateRange));
+        }
+
+        final Map<Integer, AbsenceOverviewMonthDto> monthsByNr = new LinkedHashMap<>();
+        // the first linked piece of a bar in a month - person, month and bar
+        final Set<String> barsWithTabStop = new HashSet<>();
+
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 _ -> initializeAbsenceOverviewMonthDto(date, personList, locale));
@@ -275,33 +325,33 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, today, locale);
             monthView.getDays().add(tableHeadDay);
 
-            final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
-                .collect(
-                    toMap(person -> monthView.getPersons().stream()
-                        .filter(view -> view.getId().equals(person.getId()))
-                        .findFirst()
-                        .orElse(null), Function.identity())
-                );
+            // the person views of a month are created in the order of personList
+            final List<AbsenceOverviewMonthPersonDto> personViews = monthView.getPersons();
+            for (int index = 0; index < personList.size(); index++) {
 
-            // create an absence day dto for every person of the department
-            for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
-
-                final Person person = personByView.get(personView);
-
+                final Person person = personList.get(index);
                 final Map<DateRange, WorkingTime> personWorkingTimes = workingTimesByPerson.getOrDefault(person, Map.of());
 
-                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
-                    .stream()
-                    .flatMap(List::stream)
-                    .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
-                    .toList();
+                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = absenceRecordsByPersonAndDate
+                    .getOrDefault(person, Map.of())
+                    .getOrDefault(date, List.of());
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
-                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday, recordInfoToColor))
-                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, recordInfoToColor))
+                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday))
+                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType))
                     .build();
 
-                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes)));
+                final List<AbsenceOverviewBarPieceDto> bars = new ArrayList<>();
+                for (AbsenceBars.Piece piece : barPiecesByPerson.get(person).getOrDefault(date, List.of())) {
+                    final boolean tabStop = piece.absence().detail() != null
+                        && barsWithTabStop.add(person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key());
+                    bars.add(toBarPieceDto(piece, tabStop, message));
+                }
+                final String publicHolidayName = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
+                    .map(PublicHoliday::description)
+                    .orElse(null);
+
+                personViews.get(index).getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimes), bars, publicHolidayName));
             }
         }
 
@@ -347,10 +397,9 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords,
                                                                      Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                     PublicHoliday publicHoliday,
-                                                                     Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+                                                                     PublicHoliday publicHoliday) {
 
-        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType, recordInfoToColor);
+        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType);
         if (publicHoliday.dayLength().isMorning()) {
             builder = builder.publicHolidayMorning();
         }
@@ -364,8 +413,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords,
-                                                                     Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                     Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+                                                                     Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType) {
         if (absenceRecords.isEmpty()) {
             return AbsenceOverviewDayType.builder();
         }
@@ -373,9 +421,9 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
         for (AbsencePeriod.Record absenceRecord : absenceRecords) {
             if (absenceRecord.isHalfDayAbsence()) {
-                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, shouldAnonymizeAbsenceType, recordInfoToColor);
+                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, shouldAnonymizeAbsenceType);
             } else {
-                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, shouldAnonymizeAbsenceType, recordInfoToColor);
+                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, shouldAnonymizeAbsenceType);
             }
         }
 
@@ -384,8 +432,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder,
                                                                                AbsencePeriod.Record absenceRecord,
-                                                                               Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                               Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+                                                                               Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType) {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
@@ -398,7 +445,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         if (AbsencePeriod.AbsenceType.SICK.equals(morningGenericAbsenceType)) {
             if (anonymizeMorning) {
-                return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
+                return builder.absenceMorning();
             } else {
                 // sickNote has only one of two statuses: whether WAITING or ACTIVE
                 final boolean hasStatusWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -407,7 +454,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonGenericAbsenceType)) {
             if (anonymizeNoon) {
-                return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
+                return builder.absenceNoon();
             } else {
                 // sickNote has only one of two statuses: whether WAITING or ACTIVE
                 final boolean hasStatusWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -415,28 +462,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             }
         }
 
-        // public holiday and no_workday both don't need morning or noon colors
+        // public holiday and no_workday are no absence of their own
         boolean ignoreMorning = hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.NO_WORKDAY)
             || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
         boolean ignoreNoon = hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.NO_WORKDAY)
             || hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
-
-        if (!ignoreMorning && morning.isPresent()) {
-            if (anonymizeMorning) {
-                builder.colorMorning(ANONYMIZED_ABSENCE_COLOR);
-            } else {
-                final VacationTypeColor color = recordInfoToColor.apply(morning.orElseThrow());
-                builder.colorMorning(color);
-            }
-        }
-        if (!ignoreNoon && noon.isPresent()) {
-            if (anonymizeNoon) {
-                builder.colorNoon(ANONYMIZED_ABSENCE_COLOR);
-            } else {
-                final VacationTypeColor color = recordInfoToColor.apply(noon.orElseThrow());
-                builder.colorNoon(color);
-            }
-        }
 
         if (!ignoreMorning && morning.isPresent()) {
             final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -488,8 +518,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder,
                                                                                AbsencePeriod.Record absenceRecord,
-                                                                               Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                               Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+                                                                               Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType) {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
@@ -506,7 +535,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         if (sickFull) {
             if (anonymizeAbsenceType) {
-                return builder.colorFull(ANONYMIZED_ABSENCE_COLOR).absenceFull();
+                return builder.absenceFull();
             } else {
                 // sickNote has only one of two statuses: whether WAITING or ACTIVE
                 final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -519,7 +548,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         if (morningType.isPresent()) {
             if (morningType.get().equals(AbsencePeriod.AbsenceType.NO_WORKDAY)) {
-                // no workday is highlighted differently as an absenceFull day. no color required to be set.
+                // no workday is highlighted differently as an absenceFull day.
                 return builder;
             }
             if (morningType.get().equals(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)) {
@@ -538,15 +567,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final boolean morningAllowedCancellationRequested = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
         final boolean noonAllowedCancellationRequested = noon.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
 
-        if (anonymizeAbsenceType) {
-            builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
-        } else {
-            // full day absence consists of a morning and a noon recordInfo.
-            // both recordInfos have the same vacationType, therefore we can use the morning color.
-            final VacationTypeColor color = recordInfoToColor.apply(morning.orElseThrow());
-            builder.colorFull(color);
-        }
-
         if (morningWaiting && noonWaiting) {
             return anonymizeAbsenceType ? builder.absenceFull() : builder.waitingAbsenceFull();
         } else if (morningTemporaryAllowed && noonTemporaryAllowed) {
@@ -560,13 +580,142 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         return builder;
     }
 
-    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Long, VacationType<?>> vacationTypById) {
-        return recordInfo.getTypeId()
-            .map(vacationTypById)
-            .map(VacationType::getColor)
-            // sick-note does not have a vacationTypeId, but is handled separately. therefore just throw.
-            // same for public-holiday and no-workday.
-            .orElseThrow();
+    private static AbsenceBars.HalfDay barHalfDay(List<AbsencePeriod.Record> records,
+                                                  Function<AbsencePeriod.Record, Optional<AbsencePeriod.RecordInfo>> half,
+                                                  Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence,
+                                                  Function<AbsencePeriod.AbsenceType, String> gapTitle) {
+
+        final List<AbsencePeriod.RecordInfo> recordInfos = records.stream().map(half).flatMap(Optional::stream).toList();
+
+        // a sick note during a vacation is what the person really is - it wins over the vacation
+        final AbsenceBars.Absence absence = firstOfType(recordInfos, AbsencePeriod.AbsenceType.SICK)
+            .or(() -> firstOfType(recordInfos, AbsencePeriod.AbsenceType.VACATION))
+            .map(toBarAbsence)
+            .orElse(null);
+
+        // the name of a public holiday tells more than "no workday"
+        final AbsenceBars.Gap gap = firstOfType(recordInfos, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)
+            .or(() -> firstOfType(recordInfos, AbsencePeriod.AbsenceType.NO_WORKDAY))
+            .map(recordInfo -> new AbsenceBars.Gap(gapTitle.apply(recordInfo.getAbsenceType())))
+            .orElse(null);
+
+        return new AbsenceBars.HalfDay(absence, gap);
+    }
+
+    private static Optional<AbsencePeriod.RecordInfo> firstOfType(List<AbsencePeriod.RecordInfo> recordInfos, AbsencePeriod.AbsenceType absenceType) {
+        return recordInfos.stream().filter(recordInfo -> recordInfo.getAbsenceType() == absenceType).findFirst();
+    }
+
+    private static String barAbsenceKey(AbsencePeriod.RecordInfo recordInfo, boolean anonymize) {
+        // anonymized absences of a person are one bar - their boundaries would reveal what is hidden, e.g. a sick day
+        if (anonymize) {
+            return "ANONYMIZED-" + recordInfo.getPerson().getId();
+        }
+        return recordInfo.getAbsenceType().name() + "-" + recordInfo.getId().orElseThrow();
+    }
+
+    private static AbsenceBars.Absence barAbsence(String key, AbsencePeriod.RecordInfo recordInfo, boolean anonymize,
+                                                  Function<Long, VacationType<?>> vacationTypeById,
+                                                  Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail, Locale locale,
+                                                  UnaryOperator<String> message) {
+        if (anonymize) {
+            return new AbsenceBars.Absence(key, AbsenceBars.Status.ALLOWED, ANONYMIZED_ABSENCE_COLOR.name(), message.apply("absences.overview.absence"), null, true, null);
+        }
+
+        if (recordInfo.getAbsenceType() == AbsencePeriod.AbsenceType.SICK) {
+            // sickNote has only one of two statuses: whether WAITING or ACTIVE
+            final boolean waiting = recordInfo.hasStatusWaiting();
+            return new AbsenceBars.Absence(key, waiting ? AbsenceBars.Status.WAITING : AbsenceBars.Status.ALLOWED, SICK_NOTE_BAR_COLOR,
+                message.apply("absences.overview.sick"), waiting ? message.apply("sicknote.status.SUBMITTED") : null, false, detail.apply(recordInfo));
+        }
+
+        final AbsenceBars.Status status = barStatus(recordInfo);
+        final VacationType<?> vacationType = recordInfo.getTypeId().map(vacationTypeById).orElseThrow();
+        return new AbsenceBars.Absence(key, status, vacationType.getColor().name(), vacationType.getLabel(locale), barStatusText(status, message), false, detail.apply(recordInfo));
+    }
+
+    /**
+     * The page showing the absence, if the signed-in user may open it. Follows the rules of the pages
+     * themselves: {@code DepartmentService#isSignedInUserAllowedToAccessPersonData} for applications for leave and
+     * {@code SickNotePermissions#isAllowedToView} for sick notes. Seeing the vacation type is not enough - types that
+     * are visible to everyone are shown to every colleague.
+     *
+     * @return the page, {@code null} if the signed-in user may not open the absence
+     */
+    private static AbsenceBars.Detail absenceDetail(AbsencePeriod.RecordInfo recordInfo, Person signedInUser, List<Person> membersOfSignedInUser,
+                                           List<Person> managedMembersOfSignedInUser, boolean isSignedInUserAllowedToViewAllSickNotes) {
+
+        final Person person = recordInfo.getPerson();
+        final boolean ownAbsence = person.equals(signedInUser);
+        final Long id = recordInfo.getId().orElseThrow();
+
+        return switch (recordInfo.getAbsenceType()) {
+            case VACATION -> ownAbsence || membersOfSignedInUser.contains(person)
+                ? new AbsenceBars.Detail(AbsenceBars.DetailPage.APPLICATION, id)
+                : null;
+            case SICK -> ownAbsence || isSignedInUserAllowedToViewAllSickNotes || managedMembersOfSignedInUser.contains(person)
+                ? new AbsenceBars.Detail(AbsenceBars.DetailPage.SICK_NOTE, id)
+                : null;
+            case PUBLIC_HOLIDAY, NO_WORKDAY -> null;
+        };
+    }
+
+    private static AbsenceBars.Status barStatus(AbsencePeriod.RecordInfo recordInfo) {
+        if (recordInfo.hasStatusWaiting()) {
+            return AbsenceBars.Status.WAITING;
+        }
+        if (recordInfo.hasStatusTemporaryAllowed()) {
+            return AbsenceBars.Status.TEMPORARY_ALLOWED;
+        }
+        if (recordInfo.hasStatusAllowedCancellationRequested()) {
+            return AbsenceBars.Status.CANCELLATION_REQUESTED;
+        }
+        return AbsenceBars.Status.ALLOWED;
+    }
+
+    private static String barStatusText(AbsenceBars.Status status, UnaryOperator<String> message) {
+        return switch (status) {
+            case ALLOWED -> null;
+            case WAITING -> message.apply("WAITING");
+            case TEMPORARY_ALLOWED -> message.apply("TEMPORARY_ALLOWED");
+            case CANCELLATION_REQUESTED -> message.apply("ALLOWED_CANCELLATION_REQUESTED");
+        };
+    }
+
+    private static AbsenceOverviewBarPieceDto toBarPieceDto(AbsenceBars.Piece piece, boolean tabStop, UnaryOperator<String> message) {
+
+        final AbsenceBars.Absence absence = piece.absence();
+
+        final String title = switch (piece.kind()) {
+            case SOLID -> barAbsenceTitle(absence, piece.half(), message);
+            // anonymized, a sick note's own weekend must look like the weekend inside a vacation
+            case BRIDGE -> piece.coveredByAbsence() && !absence.anonymized()
+                ? barAbsenceTitle(absence, piece.half(), message) + ", " + piece.gap().title()
+                : piece.gap().title();
+        };
+
+        final String label = piece.labelHalves() > 0 ? absence.label() : null;
+
+        return new AbsenceOverviewBarPieceDto(piece.half(), piece.kind(), piece.roundedStart(), piece.roundedEnd(),
+            absence.status(), absence.color(), label, piece.labelHalves(), title, absence.detail(), tabStop);
+    }
+
+    private static String barAbsenceTitle(AbsenceBars.Absence absence, AbsenceBars.Half half, UnaryOperator<String> message) {
+        if (absence.anonymized()) {
+            return absence.label();
+        }
+
+        final List<String> parts = new ArrayList<>();
+        parts.add(absence.label());
+        if (half == AbsenceBars.Half.MORNING) {
+            parts.add(message.apply("MORNING"));
+        } else if (half == AbsenceBars.Half.NOON) {
+            parts.add(message.apply("NOON"));
+        }
+        if (absence.statusText() != null) {
+            parts.add(absence.statusText());
+        }
+        return String.join(", ", parts);
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
@@ -640,11 +789,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         return now.with(firstOrLastOfMonthSupplier.get());
     }
 
-    private List<Person> getActiveMembersOfPerson(final Person person) {
-
-        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            return personService.getActivePersons();
-        }
+    private List<Person> getActiveManagedMembersOfPerson(final Person person) {
 
         final List<Person> relevantPersons = new ArrayList<>();
         if (person.hasRole(DEPARTMENT_HEAD)) {

@@ -10,6 +10,7 @@
   </root>
 
   <logger name="org.synyx.urlaubsverwaltung.ui.AccessibilityCrawlerAccessibilityIT" level="INFO" />
+  <logger name="org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewPerformanceIT" level="INFO" />
 
   <!-- Optional: If Spring Boot's startup noise is too quiet, -->
   <!-- you can see what Spring is doing at INFO level while keeping everything else at ERROR -->

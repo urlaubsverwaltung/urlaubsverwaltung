@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
@@ -34,6 +33,8 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -47,9 +48,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,14 +114,16 @@ class AbsenceOverviewViewControllerTest {
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    @Mock
+    private SettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, clock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
     }
 
     @Test
@@ -747,7 +752,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -844,7 +850,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -958,8 +965,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -1060,7 +1067,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(42L).color(ORANGE).category(VacationCategory.HOLIDAY).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "HOLIDAY", 42L, false);
@@ -1069,7 +1076,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1098,14 +1105,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1130,7 +1130,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1139,7 +1139,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1168,14 +1168,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(ORANGE)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1200,7 +1193,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1210,7 +1203,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1239,14 +1232,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(ORANGE))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1281,7 +1267,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1290,7 +1276,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1319,14 +1305,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1351,7 +1330,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1360,7 +1339,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1389,14 +1368,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(ORANGE)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1421,7 +1393,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1431,7 +1403,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -1460,14 +1432,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(ORANGE))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1501,7 +1466,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -1509,7 +1474,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1536,14 +1501,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1568,7 +1526,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OTHER).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).category(OTHER).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -1576,7 +1534,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1603,14 +1561,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1643,7 +1594,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -1651,7 +1602,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1678,14 +1629,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1710,7 +1654,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -1718,7 +1662,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1745,14 +1689,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1785,7 +1722,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1794,7 +1731,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1821,14 +1758,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(YELLOW))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1853,7 +1783,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1862,7 +1792,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1889,14 +1819,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(CYAN))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1929,7 +1852,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -1937,7 +1860,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1964,14 +1887,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -1996,7 +1912,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -2004,7 +1920,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2031,14 +1947,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2071,7 +1980,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -2079,7 +1988,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2106,14 +2015,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2138,7 +2040,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -2146,7 +2048,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2173,14 +2075,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2213,7 +2108,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -2222,7 +2117,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2249,14 +2144,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(YELLOW))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2281,7 +2169,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -2290,7 +2178,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2317,14 +2205,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(CYAN))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2352,7 +2233,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2361,7 +2242,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -2390,14 +2271,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2422,7 +2296,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2431,7 +2305,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -2460,14 +2334,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(ORANGE)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2492,7 +2359,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2502,7 +2369,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -2531,14 +2398,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(ORANGE))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2572,7 +2432,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -2580,7 +2440,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2607,14 +2467,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2638,7 +2491,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -2646,7 +2499,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2673,14 +2526,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2712,7 +2558,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -2720,7 +2566,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2747,13 +2593,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2777,7 +2617,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -2785,7 +2625,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2812,13 +2652,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2850,7 +2684,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2859,7 +2693,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2886,13 +2720,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(YELLOW))
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2916,7 +2744,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2925,7 +2753,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -2952,13 +2780,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(CYAN))
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -2986,7 +2808,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -2995,7 +2817,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3024,14 +2846,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3056,7 +2871,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -3065,7 +2880,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3094,14 +2909,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(ORANGE)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3126,7 +2934,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -3136,7 +2944,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3165,14 +2973,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(ORANGE))
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3205,7 +3006,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -3213,7 +3014,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3240,14 +3041,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3271,7 +3065,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -3279,7 +3073,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3306,14 +3100,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3345,7 +3132,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -3353,7 +3140,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3380,13 +3167,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3410,7 +3191,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -3418,7 +3199,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3445,13 +3226,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3483,7 +3258,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -3492,7 +3267,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3519,13 +3294,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(YELLOW))
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3549,7 +3318,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -3558,7 +3327,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3585,13 +3354,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(CYAN))
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3625,7 +3388,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3654,13 +3417,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3691,7 +3448,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3720,14 +3477,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(true))
                                 )
                             )
                         ))
@@ -3759,7 +3509,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -3788,13 +3538,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(true)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3834,7 +3578,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3861,13 +3605,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3897,7 +3635,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3924,13 +3662,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(true)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -3968,7 +3700,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -3995,14 +3727,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4032,7 +3757,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -4059,14 +3784,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(true))
                                 )
                             )
                         ))
@@ -4105,7 +3823,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -4132,13 +3850,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", is(YELLOW))
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4169,7 +3881,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -4196,13 +3908,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(true)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4246,7 +3952,7 @@ class AbsenceOverviewViewControllerTest {
         final AbsencePeriod.RecordMorningPublicHoliday christmasEveMorning = new AbsencePeriod.RecordMorningPublicHoliday(person);
         final AbsencePeriod.Record christmasEveRecord = new AbsencePeriod.Record(december24, person, christmasEveMorning, null);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(christmasEveRecord));
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriod));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriod));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -4310,7 +4016,7 @@ class AbsenceOverviewViewControllerTest {
         final AbsencePeriod.Record christmasEveRecord = new AbsencePeriod.Record(december24, person, null, christmasEveNoon);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(christmasEveRecord));
 
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriod));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriod));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -4356,7 +4062,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -4369,7 +4075,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -4398,14 +4104,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(true))
                                 )
                             )
                         ))
@@ -4430,7 +4129,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -4443,7 +4142,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -4472,14 +4171,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(true)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(ORANGE)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4523,7 +4215,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4552,13 +4244,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4578,7 +4264,7 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final var department = department();
@@ -4595,7 +4281,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4624,13 +4310,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(true))
                                 )
                             )
                         ))
@@ -4672,7 +4352,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4701,13 +4381,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4727,7 +4401,7 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final var department = department();
@@ -4744,7 +4418,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4773,13 +4447,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(true)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4805,7 +4473,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, CYAN, true)
             )
         );
@@ -4820,7 +4488,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4849,13 +4517,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(CYAN)),
-                                            hasProperty("noon", nullValue()),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(true))
                                 )
                             )
                         ))
@@ -4889,7 +4551,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, CYAN, true)
             )
         );
@@ -4904,7 +4566,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -4933,13 +4595,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -4965,7 +4621,7 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, CYAN, true)
             )
         );
@@ -4980,7 +4636,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -5009,13 +4665,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(true)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", nullValue()),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        ))
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -5042,8 +4692,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build(),
-                ProvidedVacationType.builder(new StaticMessageSource()).id(2L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build(),
+                ProvidedVacationType.builder(messageSource).id(2L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, ORANGE, false),
 //                new VacationType(2L, true, null, "", false, false, CYAN, false)
             ));
@@ -5058,7 +4708,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -5087,14 +4737,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -5128,8 +4771,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build(),
-                ProvidedVacationType.builder(new StaticMessageSource()).id(2L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build(),
+                ProvidedVacationType.builder(messageSource).id(2L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, ORANGE, false),
 //                new VacationType(2L, true, null, "", false, false, CYAN, false)
             ));
@@ -5144,7 +4787,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -5171,14 +4814,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(YELLOW)),
-                                            hasProperty("noon", is(YELLOW)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -5204,8 +4840,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(ORANGE).build(),
-                ProvidedVacationType.builder(new StaticMessageSource()).id(2L).color(CYAN).build()
+                ProvidedVacationType.builder(messageSource).id(1L).color(ORANGE).build(),
+                ProvidedVacationType.builder(messageSource).id(2L).color(CYAN).build()
 //                new VacationType(1L, true, null, "", false, false, ORANGE, false),
 //                new VacationType(2L, true, null, "", false, false, CYAN, false)
             ));
@@ -5220,7 +4856,7 @@ class AbsenceOverviewViewControllerTest {
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14))).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -5247,14 +4883,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingSickNoteNoon", is(false)),
                                     hasProperty("activeSickNoteFull", is(false)),
                                     hasProperty("activeSickNoteMorning", is(false)),
-                                    hasProperty("activeSickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is(ORANGE)),
-                                            hasProperty("noon", is(CYAN)),
-                                            hasProperty("full", nullValue())
-                                        )
-                                    )
+                                    hasProperty("activeSickNoteNoon", is(false))
                                 )
                             )
                         ))
@@ -5269,8 +4898,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setId(1L);
@@ -5328,8 +4957,8 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
-            workingTimeService, vacationTypeService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
-            messageSource, fixedClock);
+            workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -5491,6 +5120,501 @@ class AbsenceOverviewViewControllerTest {
             .<Matcher<? super Object>>map(firstName -> hasProperty("firstName", is(firstName)))
             .toList();
         return hasProperty("months", hasItem(hasProperty("persons", contains(persons))));
+    }
+
+    @Test
+    void ensureVacationBarBridgesTheWeekendAndCarriesLabelAndTitles() throws Exception {
+
+        final Person person = privilegedPerson();
+        final VacationType<?> holiday = holidayVacationType();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holiday));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9, 10, 13), noWorkdays(person, 11, 12)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHalf()).isEqualTo(AbsenceBars.Half.FULL);
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.SOLID);
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isFalse();
+            assertThat(bar.getStatus()).isEqualTo(AbsenceBars.Status.ALLOWED);
+            assertThat(bar.getColor()).isEqualTo("ORANGE");
+            assertThat(bar.getLabel()).isEqualTo("Erholungsurlaub");
+            assertThat(bar.getLabelHalves()).isEqualTo(4);
+            assertThat(bar.getTitle()).isEqualTo("Erholungsurlaub");
+        });
+        assertThat(days.get(10).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getLabel()).isNull();
+            assertThat(bar.getTitle()).isEqualTo("Kein Arbeitstag");
+        });
+        assertThat(days.get(12).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedEnd()).isTrue();
+            assertThat(bar.getLabel()).isNull();
+        });
+        assertThat(days.get(13).getBars()).isEmpty();
+    }
+
+    @Test
+    void ensureTitleNamesHalfDayAndStatusOfAWaitingVacation() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("MORNING", new Object[]{}, Locale.GERMANY)).thenReturn("vormittags");
+        when(messageSource.getMessage("WAITING", new Object[]{}, Locale.GERMANY)).thenReturn("wartend");
+        // the month name is resolved before the bar titles - the stubs above are not all used yet then
+        when(messageSource.getMessage("month.january", new Object[]{}, Locale.GERMANY)).thenReturn("Januar");
+
+        final AbsencePeriod.Record morning = new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 9), person,
+            new AbsencePeriod.RecordMorningVacation(person, 7L, AbsencePeriod.AbsenceStatus.WAITING, "HOLIDAY", 42L, false));
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(new AbsencePeriod(List.of(morning))));
+
+        assertThat(januaryDays(0).get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHalf()).isEqualTo(AbsenceBars.Half.MORNING);
+            assertThat(bar.getStatus()).isEqualTo(AbsenceBars.Status.WAITING);
+            assertThat(bar.getTitle()).isEqualTo("Erholungsurlaub, vormittags, wartend");
+        });
+    }
+
+    @Test
+    void ensureSickNoteWinsOverVacationOnTheSameDay() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("absences.overview.sick", new Object[]{}, Locale.GERMANY)).thenReturn("Krankmeldung");
+
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9, 10), sickNote(person, 3L, 9)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(7).getBars()).singleElement().satisfies(bar -> assertThat(bar.isRoundedEnd()).isTrue());
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getColor()).isEqualTo("SICK_NOTE");
+            assertThat(bar.getLabel()).isEqualTo("Krankmeldung");
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isTrue();
+        });
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.getLabel()).isEqualTo("Erholungsurlaub");
+        });
+    }
+
+    @Test
+    void ensureBridgeOverASickNotesOwnWeekendNamesTheSickNote() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+        when(messageSource.getMessage("absences.overview.sick", new Object[]{}, Locale.GERMANY)).thenReturn("Krankmeldung");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(sickNote(person, 3L, 11, 12), noWorkdays(person, 11, 12)));
+
+        assertThat(januaryDays(0).get(10).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Krankmeldung, Kein Arbeitstag");
+        });
+    }
+
+    @Test
+    void ensureAnonymizedBarHidesTypeAndStatus() throws Exception {
+
+        final var signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setId(2L);
+        other.setPermissions(List.of(USER));
+        other.setFirstName("Dorie");
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.WAITING, 9)));
+
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getStatus()).isEqualTo(AbsenceBars.Status.ALLOWED);
+            assertThat(bar.getColor()).isEqualTo("YELLOW");
+            assertThat(bar.getLabel()).isEqualTo("Abwesend");
+            assertThat(bar.getTitle()).isEqualTo("Abwesend");
+        });
+    }
+
+    @Test
+    void ensureAdjacentAnonymizedAbsencesOfAPersonAreOneBar() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9), sickNote(other, 3L, 10)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isFalse();
+            assertThat(bar.getLabel()).isEqualTo("Abwesend");
+        });
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isTrue();
+        });
+        assertThat(days.stream().flatMap(day -> day.getBars().stream()).filter(bar -> bar.getLabel() != null)).hasSize(1);
+    }
+
+    @Test
+    void ensureAnonymizedSickNoteDuringAnAnonymizedVacationDoesNotSplitTheBar() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 8, 9, 10), sickNote(other, 3L, 9)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isFalse();
+        });
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isRoundedEnd()).isTrue();
+        });
+    }
+
+    @Test
+    void ensureAnonymizedBridgeNamesOnlyTheGap() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("absences.overview.absence", new Object[]{}, Locale.GERMANY)).thenReturn("Abwesend");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        // a sick note covers its own weekend - anonymized, that must look like the weekend inside a vacation
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
+            .thenReturn(List.of(sickNote(other, 3L, 10, 11, 12, 13), noWorkdays(other, 11, 12)));
+
+        assertThat(januaryDays(1).get(10).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Kein Arbeitstag");
+        });
+    }
+
+    @Test
+    void ensureBridgeOverAPublicHolidayNamesTheHoliday() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+
+        final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
+            .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(publicHolidaysService.getPublicHolidays(january.startDate(), january.endDate(), GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, JANUARY, 8), FULL, "Tag der Bars")));
+
+        final AbsencePeriod publicHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 8), person,
+            new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person))));
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 7, 9), publicHoliday));
+
+        assertThat(januaryDays(0).get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Tag der Bars");
+        });
+    }
+
+    private Person signedInUserAndOtherInOneDepartment() {
+        final var signedInUser = new Person();
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setId(2L);
+        other.setPermissions(List.of(USER));
+        other.setFirstName("Dorie");
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        return other;
+    }
+
+    @Test
+    void ensurePublicHolidayNameOnTheDay() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
+            .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(publicHolidaysService.getPublicHolidays(january.startDate(), january.endDate(), GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2025, JANUARY, 1), FULL, "Neujahr")));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.getFirst().getPublicHolidayName()).isEqualTo("Neujahr");
+        assertThat(days.get(1).getPublicHolidayName()).isNull();
+    }
+
+    @Test
+    void ensureOwnAbsencesLinkToTheirDetailPages() throws Exception {
+
+        final Person person = viewer(Role.USER);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(person, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
+    }
+
+    @Test
+    void ensureOfficeGetsLinksToApplicationsAndSickNotesOfOthers() throws Exception {
+
+        final Person office = viewer(Role.USER, Role.OFFICE);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(office, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
+    }
+
+    @Test
+    void ensureBossWithoutSickNoteViewGetsNoLinkToSickNotesOfOthers() throws Exception {
+
+        final Person boss = viewer(Role.USER, Role.BOSS);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(boss, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId, AbsenceOverviewBarPieceDto::getSickNoteId).containsOnlyNulls();
+    }
+
+    @Test
+    void ensureBossWithSickNoteViewGetsLinksToSickNotesOfOthers() throws Exception {
+
+        final Person boss = viewer(Role.USER, Role.BOSS, Role.SICK_NOTE_VIEW);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(boss, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(absenceService.getOpenAbsences(List.of(boss, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(sickNote(other, 3L, 13)));
+
+        assertThat(januaryDays(1).get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
+    }
+
+    @Test
+    void ensureDepartmentHeadGetsLinksToAbsencesOfMembers() throws Exception {
+
+        final Person departmentHead = viewer(Role.USER, Role.DEPARTMENT_HEAD);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(departmentHead, other));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(departmentHead, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(other, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
+    }
+
+    @Test
+    void ensureColleagueGetsNoLinkToAVacationTypeVisibleToEveryone() throws Exception {
+
+        final Person colleague = viewer(Role.USER);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(colleague, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+
+        final AbsencePeriod visibleToEveryone = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 9), other,
+            new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true),
+            new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, true))));
+        when(absenceService.getOpenAbsences(List.of(colleague, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(visibleToEveryone));
+
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getLabel()).isEqualTo("Erholungsurlaub");
+            assertThat(bar.getApplicationId()).isNull();
+            assertThat(bar.getSickNoteId()).isNull();
+        });
+    }
+
+    @Test
+    void ensureAnonymizedBarHasNoLink() throws Exception {
+
+        final Person other = signedInUserAndOtherInOneDepartment();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(anyList(), eq(LocalDate.of(2024, DECEMBER, 18)), eq(LocalDate.of(2025, FEBRUARY, 14))))
+            .thenReturn(List.of(vacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9)));
+
+        assertThat(januaryDays(1).get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId, AbsenceOverviewBarPieceDto::getSickNoteId).containsOnlyNulls();
+    }
+
+    @Test
+    void ensureOnlyTheFirstPieceOfABarInAMonthIsATabStop() throws Exception {
+
+        final Person office = viewer(Role.USER, Role.OFFICE);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(office, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        // Thu 30th January to Tue 4th February 2025, weekend 1st/2nd February
+        final AbsencePeriod vacation = new AbsencePeriod(Stream.of(LocalDate.of(2025, JANUARY, 30), LocalDate.of(2025, JANUARY, 31), LocalDate.of(2025, FEBRUARY, 3), LocalDate.of(2025, FEBRUARY, 4))
+            .map(date -> new AbsencePeriod.Record(date, other,
+                new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
+                new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false)))
+            .toList());
+        final AbsencePeriod weekend = new AbsencePeriod(Stream.of(LocalDate.of(2025, FEBRUARY, 1), LocalDate.of(2025, FEBRUARY, 2))
+            .map(date -> new AbsencePeriod.Record(date, other, new AbsencePeriod.RecordMorningNoWorkday(other), new AbsencePeriod.RecordNoonNoWorkday(other)))
+            .toList());
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2026, JANUARY, 14)))
+            .thenReturn(List.of(vacation, weekend));
+
+        final AbsenceOverviewDto overview = (AbsenceOverviewDto) perform(get("/web/absences")
+                .param("year", "2025").param("month", "").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andReturn().getModelAndView().getModel().get("absenceOverview");
+        final List<AbsenceOverviewPersonDayDto> january = overview.getMonths().get(0).getPersons().get(1).getDays();
+        final List<AbsenceOverviewPersonDayDto> february = overview.getMonths().get(1).getPersons().get(1).getDays();
+
+        assertThat(january.get(29).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
+            assertThat(bar.isTabStop()).isTrue();
+        });
+        assertThat(january.get(30).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
+            assertThat(bar.isTabStop()).isFalse();
+        });
+        assertThat(february.get(0).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getApplicationId()).isEqualTo(7L);
+            assertThat(bar.isTabStop()).isTrue();
+        });
+        assertThat(february.get(3).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);
+    }
+
+    private Person viewer(Role... roles) {
+        final Person viewer = new Person();
+        viewer.setId(1L);
+        viewer.setPermissions(List.of(roles));
+        viewer.setFirstName("Bruce");
+        when(personService.getSignedInUser()).thenReturn(viewer);
+        return viewer;
+    }
+
+    private static Person otherPerson() {
+        final Person other = new Person();
+        other.setId(2L);
+        other.setPermissions(List.of(USER));
+        other.setFirstName("Dorie");
+        return other;
+    }
+
+    private Person privilegedPerson() {
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        return person;
+    }
+
+    private VacationType<?> holidayVacationType() {
+        return ProvidedVacationType.builder(messageSource).id(42L).color(ORANGE)
+            .category(VacationCategory.HOLIDAY).messageKey("application.data.vacationType.holiday").build();
+    }
+
+    private static AbsencePeriod vacation(Person person, Long id, AbsencePeriod.AbsenceStatus status, int... januaryDays) {
+        return new AbsencePeriod(IntStream.of(januaryDays)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
+                new AbsencePeriod.RecordMorningVacation(person, id, status, "HOLIDAY", 42L, false),
+                new AbsencePeriod.RecordNoonVacation(person, id, status, "HOLIDAY", 42L, false)))
+            .toList());
+    }
+
+    private static AbsencePeriod sickNote(Person person, Long id, int... januaryDays) {
+        return new AbsencePeriod(IntStream.of(januaryDays)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
+                new AbsencePeriod.RecordMorningSick(person, id, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L),
+                new AbsencePeriod.RecordNoonSick(person, id, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L)))
+            .toList());
+    }
+
+    private static AbsencePeriod noWorkdays(Person person, int... januaryDays) {
+        return new AbsencePeriod(IntStream.of(januaryDays)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
+                new AbsencePeriod.RecordMorningNoWorkday(person), new AbsencePeriod.RecordNoonNoWorkday(person)))
+            .toList());
+    }
+
+    private List<AbsenceOverviewPersonDayDto> januaryDays(int personIndex) throws Exception {
+        final AbsenceOverviewDto overview = (AbsenceOverviewDto) perform(get("/web/absences")
+                .param("year", "2025").param("month", "1").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andReturn().getModelAndView().getModel().get("absenceOverview");
+        return overview.getMonths().getFirst().getPersons().get(personIndex).getDays();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
