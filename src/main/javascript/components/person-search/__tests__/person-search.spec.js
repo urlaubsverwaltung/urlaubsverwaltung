@@ -47,8 +47,10 @@ describe("person-search", function () {
     const form = document.querySelector("form");
     const popover = document.querySelector("[popover]");
     form.requestSubmit = vi.fn();
-    popover.showPopover = vi.fn();
-    popover.hidePopover = vi.fn();
+    // jsdom has no popover implementation and its default stylesheet hides every closed popover,
+    // which prevents focusing the suggestions. therefore the stubs toggle the visibility themselves.
+    popover.showPopover = vi.fn(() => (popover.style.display = "block"));
+    popover.hidePopover = vi.fn(() => (popover.style.display = ""));
 
     return {
       widget: document.querySelector("uv-person-search"),
