@@ -9,6 +9,7 @@ import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
 import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
+import { escapeHtml, escapeHtmlContent } from "../js/escape-html";
 
 // Series-visibility persistence (apexOptionsWithPersistence) is intentionally not used here - it's
 // optional per the task, only supports cartesian chart types (not the pie or the ring below), and
@@ -73,6 +74,9 @@ const monthlyOptions = {
   legend: {
     position: "top",
     horizontalAlign: "left",
+    // absence type names are maintained by the office, and apexcharts inserts the series names as html.
+    // the result is the legend's aria-label as well, so only what could start markup is escaped.
+    formatter: escapeHtmlContent,
   },
   // eight stacked segments across twelve months would put ~96 numbers into the plot; the tooltip
   // carries the exact values instead.
@@ -95,6 +99,10 @@ const monthlyOptions = {
     shared: true,
     intersect: false,
     followCursor: true,
+    // apexcharts fills its own tooltip labels even with a custom tooltip, with the series names as html
+    y: {
+      title: { formatter: escapeHtml },
+    },
     custom: function ({ series, dataPointIndex, w }) {
       const rows = series
         .map((values, index) => ({
@@ -163,6 +171,9 @@ const distributionOptions = {
   tooltip: {
     // same follow-cursor behaviour as the monthly chart's tooltip, for a consistent feel
     followCursor: true,
+    y: {
+      title: { formatter: escapeHtml },
+    },
     custom: function ({ seriesIndex, w }) {
       const type = types[seriesIndex];
       return tooltip(type.name, [
