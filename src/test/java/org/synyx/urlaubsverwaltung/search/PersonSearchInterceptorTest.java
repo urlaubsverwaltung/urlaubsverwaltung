@@ -168,6 +168,32 @@ class PersonSearchInterceptorTest {
         }
 
         @Test
+        void ensurePreHandleStripsLineBreaksFromQuery() throws Exception {
+
+            final Person signedInUser = person(1L, OFFICE);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+            final View view = mock(View.class);
+            when(thymeleafViewResolver.resolveViewName(eq("fragments/person-search"), any(Locale.class))).thenReturn(view);
+
+            final MockHttpServletRequest request = searchFrameRequest();
+            request.setParameter(PERSON_SEARCH_QUERY_PARAM, "ma\r\nr");
+            final MockHttpServletResponse response = response();
+
+            final HandlerMethod handlerMethod = mock(HandlerMethod.class);
+            when(handlerMethod.getBean()).thenReturn(new PersonSearchController());
+
+            sut.preHandle(request, response, handlerMethod);
+
+            verify(personSearchViewHelper).personSuggestions(eq(signedInUser), eq("mar"), any());
+
+            @SuppressWarnings("unchecked")
+            final ArgumentCaptor<Map<String, Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
+            verify(view).render(modelCaptor.capture(), eq(request), eq(response));
+            assertThat(modelCaptor.getValue()).containsEntry("personSearchQuery", "mar");
+        }
+
+        @Test
         void ensurePreHandleRendersWithoutSuggestionsForUnprivilegedUserAndReturnsFalse() throws Exception {
 
             final Person signedInUser = person(1L, USER);
@@ -296,6 +322,25 @@ class PersonSearchInterceptorTest {
                 .containsEntry("personSearchQuery", "mar")
                 .containsEntry("personSearchFragment", "fragments/person-search");
             verifyNoInteractions(personSearchViewHelper);
+        }
+
+        @Test
+        void ensurePostHandleStripsLineBreaksFromQuery() {
+
+            final Person signedInUser = person(1L, OFFICE);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+            final MockHttpServletRequest request = request();
+            request.setParameter(PERSON_SEARCH_QUERY_PARAM, "ma\r\nr");
+
+            final HandlerMethod handlerMethod = mock(HandlerMethod.class);
+            when(handlerMethod.getBean()).thenReturn(new PersonSearchController());
+
+            final ModelAndView modelAndView = anyView();
+
+            sut.postHandle(request, response(), handlerMethod, modelAndView);
+
+            assertThat(modelAndView.getModel()).containsEntry("personSearchQuery", "mar");
         }
     }
 
