@@ -34,11 +34,15 @@
             <button type="button" popovertarget="csv-export-popover">
               <span class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row">
                 <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
-                <span id="statistics-download-label" th:text="#{applications.export.button}"></span>
+                <span th:text="#{applications.export.button}"></span>
               </span>
             </button>
             <div id="csv-export-popover" popover class="popover-menu">
-              <span class="block mb-2 px-4 font-bold" th:text="#{applications.statistics}">
+              <span
+                id="statistics-download-label"
+                class="block mb-2 px-4 font-bold"
+                th:text="#{applications.statistics}"
+              >
                 Abwesenheitsstatistik
               </span>
               <ul aria-labelledby="statistics-download-label">
@@ -65,10 +69,14 @@
                   </a>
                 </li>
               </ul>
-              <span class="inline-block mt-4 mb-2 px-4 font-bold" th:text="#{applications.export.absences.title}">
+              <span
+                id="export-absences-download-label"
+                class="inline-block mt-4 mb-2 px-4 font-bold"
+                th:text="#{applications.export.absences.title}"
+              >
                 Abwesenheiten
               </span>
-              <ul aria-labelledby="statistics-download-label">
+              <ul aria-labelledby="export-absences-download-label">
                 <li>
                   <a
                     id="export-csv-download-link-all"
