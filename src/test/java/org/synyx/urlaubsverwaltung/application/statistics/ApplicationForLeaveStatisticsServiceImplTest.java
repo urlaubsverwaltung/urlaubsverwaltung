@@ -38,7 +38,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -99,7 +101,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 );
 
             final Page<ApplicationForLeaveStatistics> actual =
-                sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "");
+                sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "", List.of());
 
             assertThat(actual.getContent()).hasSize(1);
             assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(person);
@@ -135,10 +137,75 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 );
 
             final Page<ApplicationForLeaveStatistics> actual =
-                sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "");
+                sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "", List.of());
 
             assertThat(actual.getContent()).hasSize(1);
             assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(member);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+        void ensureCountsAllActivePersonsForRole(Role role) {
+
+            final Person person = new Person();
+            person.setId(1L);
+            person.setPermissions(List.of(USER, role));
+
+            when(personService.getActivePersons(PersonPageRequest.of(0, 1), ""))
+                .thenReturn(new PageImpl<>(List.of(person), PersonPageRequest.of(0, 1).toPageable(), 42));
+
+            assertThat(sut.countRelevantPersons(person)).isEqualTo(42);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureCountsManagedMembersForRole(Role role) {
+
+            final Person person = new Person();
+            person.setId(1L);
+            person.setPermissions(List.of(USER, role));
+
+            when(departmentService.getManagedActiveMembersOfPerson(person, PersonPageRequest.of(0, 1), ""))
+                .thenReturn(new PageImpl<>(List.of(person), PersonPageRequest.of(0, 1).toPageable(), 3));
+
+            assertThat(sut.countRelevantPersons(person)).isEqualTo(3);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureUsingManagedMembersOfSelectedDepartments(Role role) {
+
+            final LocalDate startDate = LocalDate.parse("2018-01-01");
+            final LocalDate endDate = LocalDate.parse("2018-12-31");
+            final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+            final Person personRequestingStatistics = new Person();
+            personRequestingStatistics.setId(1L);
+            personRequestingStatistics.setPermissions(List.of(USER, role));
+
+            final Person member = new Person();
+            member.setId(2L);
+            member.setPermissions(List.of(USER));
+
+            final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
+            when(departmentService.getManagedActiveMembersOfPersonAndDepartments(personRequestingStatistics, List.of(42L), personPageRequest, "max"))
+                .thenReturn(new PageImpl<>(List.of(member)));
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType);
+            when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(member), startDate, endDate, vacationTypes))
+                .thenReturn(Map.of(
+                    member, Optional.of(new ApplicationForLeaveStatistics(member, vacationTypes)))
+                );
+
+            final Page<ApplicationForLeaveStatistics> actual =
+                sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "max", List.of(42L));
+
+            assertThat(actual.getContent()).extracting(ApplicationForLeaveStatistics::getPerson).containsExactly(member);
+            verifyNoInteractions(personService);
+            verify(departmentService, never()).getManagedActiveMembersOfPerson(any(), any(), any());
         }
 
         @Test
@@ -183,7 +250,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 ));
 
             final Page<ApplicationForLeaveStatistics> actual =
-                sut.getStatisticsSortedByPerson(officePerson, filterPeriod, personPageRequest, "");
+                sut.getStatisticsSortedByPerson(officePerson, filterPeriod, personPageRequest, "", List.of());
 
             final List<ApplicationForLeaveStatistics> actualStatistics = actual.getContent();
             assertThat(actualStatistics).hasSize(3);
@@ -211,7 +278,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 .thenReturn(Map.of(user, Optional.of(new ApplicationForLeaveStatistics(user, vacationTypes))));
 
             final PersonPageRequest pageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
-            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(user, filterPeriod, pageRequest, "");
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(user, filterPeriod, pageRequest, "", List.of());
             assertThat(statisticsPage.getContent()).hasSize(1);
             assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(user);
         }
@@ -245,7 +312,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
             when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes))
                 .thenReturn(Map.of(person, Optional.of(applicationForLeaveStatistics)));
 
-            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "", List.of());
             assertThat(statisticsPage.getContent()).hasSize(1);
 
             final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().getFirst();
@@ -282,7 +349,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
             when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes))
                 .thenReturn(Map.of(person, Optional.of(applicationForLeaveStatistics)));
 
-            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "", List.of());
             assertThat(statisticsPage.getContent()).hasSize(1);
 
             final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().getFirst();
@@ -329,7 +396,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 .thenReturn(Map.of(office, Optional.of(new ApplicationForLeaveStatistics(office, vacationTypes))));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
-            final Page<ApplicationForLeaveStatistics> actual = sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "");
+            final Page<ApplicationForLeaveStatistics> actual = sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "", List.of());
 
             assertThat(actual.getContent()).hasSize(1);
             assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(office);
@@ -365,7 +432,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 .thenReturn(Map.of(office, Optional.of(new ApplicationForLeaveStatistics(office, vacationTypes))));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
-            sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "");
+            sut.getStatisticsSortedByStatistics(office, filterPeriod, pageRequest, "", List.of());
 
             verify(applicationService).getApplicationsForACertainPeriodAndStatus(
                 LocalDate.parse("2018-01-01"), LocalDate.parse("2018-12-31"), ApplicationStatus.activeStatuses(), "");
@@ -404,7 +471,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 .thenReturn(Map.of(anyPerson, Optional.of(new ApplicationForLeaveStatistics(anyPerson, vacationTypes))));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
-            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(personWithRole, filterPeriod, pageRequest, "");
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(personWithRole, filterPeriod, pageRequest, "", List.of());
 
             assertThat(statisticsPage.getContent()).hasSize(1);
             assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(anyPerson);
@@ -460,13 +527,50 @@ class ApplicationForLeaveStatisticsServiceImplTest {
                 ));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
-            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(departmentManagement, filterPeriod, pageRequest, "");
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(departmentManagement, filterPeriod, pageRequest, "", List.of());
 
             assertThat(statisticsPage.getContent()).hasSize(2);
             assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(departmentMemberTwo);
             assertThat(statisticsPage.getContent().getFirst().getLeftVacationDaysForYear()).isEqualTo(BigDecimal.ZERO);
             assertThat(statisticsPage.getContent().get(1).getPerson()).isEqualTo(departmentMember);
             assertThat(statisticsPage.getContent().get(1).getLeftVacationDaysForYear()).isEqualTo(BigDecimal.TEN);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+        void ensureManagedMembersOfSelectedDepartmentsAreRequestedWhenSortedByStatisticsAttribute(Role role) {
+
+            final LocalDate startDate = LocalDate.parse("2018-01-01");
+            final LocalDate endDate = LocalDate.parse("2018-12-31");
+            final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+            final Person personWithRole = new Person();
+            personWithRole.setId(1L);
+            personWithRole.setPermissions(List.of(USER, role));
+
+            final Person member = new Person();
+            member.setId(2L);
+            member.setPermissions(List.of(USER));
+
+            when(departmentService.getManagedActiveMembersOfPersonAndDepartments(eq(personWithRole), eq(List.of(42L)), any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
+                .thenReturn(new PageImpl<>(List.of(member)));
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType);
+            when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+            final List<Application> applications = List.of(new Application());
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), ""))
+                .thenReturn(applications);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(member), startDate, endDate, vacationTypes, applications))
+                .thenReturn(Map.of(member, Optional.of(new ApplicationForLeaveStatistics(member, vacationTypes))));
+
+            final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
+            final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(personWithRole, filterPeriod, pageRequest, "", List.of(42L));
+
+            assertThat(statisticsPage.getContent()).extracting(ApplicationForLeaveStatistics::getPerson).containsExactly(member);
+            verifyNoInteractions(personService);
         }
     }
 }

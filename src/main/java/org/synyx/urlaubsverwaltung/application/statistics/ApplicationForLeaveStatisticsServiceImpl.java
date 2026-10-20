@@ -69,11 +69,12 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
      * @param filterPeriod   filter result set for a given period of time
      * @param personPageable person pageable criteria
      * @param query          optional person query, to search for firstname for instance
+     * @param departmentIds  optional departments to restrict the relevant persons to, empty for all relevant persons
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
-    Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query) {
+    Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query, List<Long> departmentIds) {
 
-        final Page<Person> personPage = getAllRelevantPersons(person, personPageable, query);
+        final Page<Person> personPage = getAllRelevantPersons(person, personPageable, query, departmentIds);
         final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
 
         final Iterable<ApplicationForLeaveStatistics> statistics =
@@ -84,9 +85,19 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
         return new PageImpl<>(content, personPageable.toPageable(), personPage.getTotalElements());
     }
 
+    /**
+     * Counts the active persons the given person is allowed to see statistics of.
+     *
+     * @param person person to count the relevant persons for
+     * @return number of relevant persons
+     */
+    long countRelevantPersons(Person person) {
+        return getAllRelevantPersons(person, PersonPageRequest.of(0, 1), "", List.of()).getTotalElements();
+    }
+
     @Override
     public Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period) {
-        return getStatisticsSortedByStatistics(person, period, ApplicationForLeaveStatisticsPageRequest.unpaged(), "");
+        return getStatisticsSortedByStatistics(person, period, ApplicationForLeaveStatisticsPageRequest.unpaged(), "", List.of());
     }
 
 
@@ -98,9 +109,10 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
      * @param period             filter result set for a given period of time
      * @param statisticsPageable the page request
      * @param query              optional query to filter for person firstname for instance
+     * @param departmentIds      optional departments to restrict the relevant persons to, empty for all relevant persons
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
-    Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
+    Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query, List<Long> departmentIds) {
 
         final Pageable pageable = statisticsPageable.toPageable();
         final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
@@ -109,7 +121,7 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
             getApplicationsOfInterest(period.startDate(), period.endDate(), query);
 
         // fetch all allowed persons, there may be persons without applications
-        final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query).getContent();
+        final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query, departmentIds).getContent();
 
         final Collection<ApplicationForLeaveStatistics> allStatistics =
             getStatistics(period, persons, vacationTypes, allApplications);
@@ -175,7 +187,11 @@ public class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForL
             from.with(firstDayOfYear()), from.with(lastDayOfYear()), activeStatuses(), personQuery);
     }
 
-    private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {
+    private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query, List<Long> departmentIds) {
+
+        if (!departmentIds.isEmpty()) {
+            return departmentService.getManagedActiveMembersOfPersonAndDepartments(person, departmentIds, pageRequest, query);
+        }
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
             return personService.getActivePersons(pageRequest, query);
