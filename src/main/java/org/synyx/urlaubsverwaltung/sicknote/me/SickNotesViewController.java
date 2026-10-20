@@ -21,6 +21,8 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissions;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -120,7 +122,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
-        prepareSickNoteList(person, permissions, yearToShow, model);
+        prepareSickNoteList(person, permissions, yearToShow, now, model);
 
         model.addAttribute("userIsAllowedToSubmitSickNotes", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes());
 
@@ -133,7 +135,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         return "me/sicknotes";
     }
 
-    private void prepareSickNoteList(Person person, SickNotePermissions permissions, int year, Model model) {
+    private void prepareSickNoteList(Person person, SickNotePermissions permissions, int year, LocalDate today, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
         final LocalDate to = from.with(lastDayOfYear());
@@ -145,6 +147,9 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
             .map(sickNote -> mapToSickNoteDtos(sickNote, permissions))
             .toList();
         model.addAttribute("sickNotes", sortedSickNotes);
+        model.addAttribute("sickNotesTodayMarker", TodayMarker.of(sortedSickNotes,
+            SickNoteDto::getStartDate, SickNoteDto::getEndDate,
+            sickNote -> SickNoteStatus.activeStatuses().contains(sickNote.getStatus()), today, year));
 
         final YearlySickDaysSummary yearlySickDaysSummary = new YearlySickDaysSummary(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", yearlySickDaysSummary);

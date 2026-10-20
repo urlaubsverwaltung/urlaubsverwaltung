@@ -5,8 +5,10 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import static java.math.BigDecimal.ONE;
@@ -888,6 +891,51 @@ class SickNotesViewControllerTest {
 
     private static SearchContext searchContext(HttpServletRequest request) {
         return SearchContext.of(request, null);
+    }
+
+    @Test
+    void ensureTodayMarkerIsInFrontOfTheRunningSickNote() throws Exception {
+        personWithOwnSickNotes(40L,
+            sickNote(1L, LocalDate.of(2022, JANUARY, 2), LocalDate.of(2022, JANUARY, 4)),
+            sickNote(2L, LocalDate.of(2022, JUNE, 14), LocalDate.of(2022, JUNE, 16)));
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "40")))
+            .andExpect(model().attribute("sickNotesTodayMarker",
+                equalTo(new TodayMarker(LocalDate.of(2022, JUNE, 15), 0, Set.of(0)))));
+    }
+
+    @Test
+    void ensureNoSickNotesTodayMarkerForAnotherYear() throws Exception {
+        personWithOwnSickNotes(41L, sickNote(1L, LocalDate.of(2021, JUNE, 14), LocalDate.of(2021, JUNE, 16)));
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "41")).param("year", "2021"))
+            .andExpect(model().attribute("sickNotesTodayMarker", equalTo(TodayMarker.none())));
+    }
+
+    private void personWithOwnSickNotes(long id, SickNote.Builder... sickNotes) {
+        final Person person = new Person();
+        person.setId(id);
+        when(personService.getPersonByID(id)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
+            .thenReturn(Arrays.stream(sickNotes).map(builder -> builder.person(person).build()).toList());
+        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
+    }
+
+    private SickNote.Builder sickNote(long id, LocalDate startDate, LocalDate endDate) {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setId(1L);
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("key");
+        return SickNote.builder()
+            .id(id)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType)
+            .status(ACTIVE);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
