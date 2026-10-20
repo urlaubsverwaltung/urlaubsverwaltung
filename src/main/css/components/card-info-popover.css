@@ -74,6 +74,12 @@
     padding: 0 --spacing(4) --spacing(4) --spacing(4);
     overflow: auto;
 
+    /* the popover clips its overflow, draw the focus ring inside */
+    &:focus-visible {
+      outline: 2px solid var(--uv-focus-ring-color);
+      outline-offset: -2px;
+    }
+
     p {
       max-width: 50ch;
     }
