@@ -62,12 +62,12 @@ public class ICalService {
 
     public ByteArrayResource getCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
         final Calendar calendar = generateCalendar(title, absences, recipient);
-        return writeCalenderIntoRessource(calendar);
+        return writeCalendarIntoResource(calendar);
     }
 
     public ByteArrayResource getSingleAppointment(CalendarAbsence absence, ICalType method, Person recipient) {
         final Calendar calendar = generateForSingleAppointment(absence, method, recipient);
-        return writeCalenderIntoRessource(calendar);
+        return writeCalendarIntoResource(calendar);
     }
 
     private Calendar generateCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
@@ -157,7 +157,7 @@ public class ICalService {
         return DigestUtils.md5Hex(data).toUpperCase();
     }
 
-    private ByteArrayResource writeCalenderIntoRessource(Calendar calendar) {
+    private ByteArrayResource writeCalendarIntoResource(Calendar calendar) {
 
         final boolean validation = !calendar.getComponents().isEmpty();
 
