@@ -40,10 +40,10 @@ public class TestKeycloakContainer extends KeycloakContainer {
 
         // Get realm
         final RealmResource realmResource = keycloak.realm(REALM_URLAUBSVERWALTUNG);
-        final UsersResource usersRessource = realmResource.users();
+        final UsersResource usersResource = realmResource.users();
 
         // Create user (requires manage-users role)
-        final Response response = usersRessource.create(user);
+        final Response response = usersResource.create(user);
 
         // Define password credential
         final CredentialRepresentation passwordCred = new CredentialRepresentation();
@@ -52,7 +52,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
         passwordCred.setValue(secret);
 
         // Set password credential
-        final UserResource userResource = usersRessource.get(getCreatedId(response));
+        final UserResource userResource = usersResource.get(getCreatedId(response));
         userResource.resetPassword(passwordCred);
 
         return userResource.toRepresentation().getId();
