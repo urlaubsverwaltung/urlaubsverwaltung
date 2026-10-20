@@ -531,6 +531,58 @@ describe("calendar", () => {
     });
   });
 
+  describe("small screen media query", () => {
+    function mockMatchMedia(matches) {
+      let changeListener;
+      globalThis.matchMedia = vi.fn().mockReturnValue({
+        matches,
+        addEventListener: (type, listener) => {
+          changeListener = listener;
+        },
+      });
+      return (event) => changeListener(event);
+    }
+
+    function buttonClassLists() {
+      return [...document.querySelectorAll("#datepicker button")].map((button) => button.classList.contains("button"));
+    }
+
+    test("ensure buttons are styled as buttons on small screens", async () => {
+      mockDate(1_512_130_448_379);
+      mockMatchMedia(true);
+      await calendarTestSetup();
+
+      renderCalendar(createHolidayService());
+
+      expect(buttonClassLists()).toEqual([true, true]);
+    });
+
+    test("ensure buttons follow the media query when it changes", async () => {
+      mockDate(1_512_130_448_379);
+      const fireChange = mockMatchMedia(false);
+      await calendarTestSetup();
+
+      renderCalendar(createHolidayService());
+
+      fireChange({ matches: true });
+      expect(buttonClassLists()).toEqual([true, true]);
+
+      fireChange({ matches: false });
+      expect(buttonClassLists()).toEqual([false, false]);
+    });
+
+    test("ensure buttons keep their style when change is fired without the media query changing", async () => {
+      mockDate(1_512_130_448_379);
+      const fireChange = mockMatchMedia(false);
+      await calendarTestSetup();
+
+      renderCalendar(createHolidayService());
+
+      fireChange({ matches: false });
+      expect(buttonClassLists()).toEqual([false, false]);
+    });
+  });
+
   test("ensure rendering of no-workdays", async () => {
     // today is 2020-12-13
     mockDate(1_607_848_867_000);

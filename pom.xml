@@ -577,6 +577,133 @@
       </build>
     </profile>
 
+    <!-- Run only visual regression tests with `mvn verify`, see docs/visual-regression-tests.md -->
+    <!-- Accept new and changed screenshots and pages with `-Dvisual-test.args=-u` -->
+    <profile>
+      <id>visual-test</id>
+      <properties>
+        <visual-test.args></visual-test.args>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <!-- skip javascript linting and tests -->
+              <execution>
+                <id>npm-lint</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>npm-test</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>visual-test-reset</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <arguments>run test:visual:verify -- --reset</arguments>
+                </configuration>
+              </execution>
+              <!-- failures must not stop the build here, otherwise the application would not be stopped -->
+              <execution>
+                <id>visual-test</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <arguments>run test:visual -- ${visual-test.args}</arguments>
+                  <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+              </execution>
+              <execution>
+                <id>visual-test-verify</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <arguments>run test:visual:verify</arguments>
+                </configuration>
+              </execution>
+            </executions>
+            <version>2.0.2</version>
+          </plugin>
+          <!-- skip unit and integration tests -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <skipITs>true</skipITs>
+            </configuration>
+          </plugin>
+          <!-- empty database, also after a previous run that was killed before removing its containers -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>visual-test-compose-down</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <!-- package instead of pre-integration-test: must run before spring-boot:start -->
+                <phase>package</phase>
+                <configuration>
+                  <executable>docker</executable>
+                  <arguments>
+                    <argument>compose</argument>
+                    <argument>down</argument>
+                    <argument>-v</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- start the application with demo data, waits until it is ready (demo data created) -->
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>visual-test-start</id>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <profiles>
+                    <profile>demodata</profile>
+                    <profile>visualtest</profile>
+                  </profiles>
+                  <!-- docker compose, keycloak realm import and demo data take a while -->
+                  <maxAttempts>360</maxAttempts>
+                </configuration>
+              </execution>
+              <!-- graceful shutdown, removes compose containers and volumes -->
+              <execution>
+                <id>visual-test-stop</id>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>coverage</id>
       <build>

@@ -604,9 +604,9 @@ const Controller = (function () {
         }
       }
 
-      smScreenQuery.addEventListener("change", function () {
+      smScreenQuery.addEventListener("change", function (event) {
         for (const button of view.getRootElement().querySelectorAll("button")) {
-          button.classList.toggle("button");
+          button.classList.toggle("button", event.matches);
         }
       });
     },

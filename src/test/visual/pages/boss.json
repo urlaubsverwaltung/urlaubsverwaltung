@@ -1,0 +1,110 @@
+{
+  "/web/absence/statistics": {
+    "url": "/web/absence/statistics",
+    "status": "covered"
+  },
+  "/web/absences": {
+    "url": "/web/absences",
+    "status": "covered"
+  },
+  "/web/application": {
+    "url": "/web/application",
+    "status": "covered"
+  },
+  "/web/application/{id}": {
+    "url": "/web/application/10",
+    "status": "covered"
+  },
+  "/web/application/{id}/edit": {
+    "url": "/web/application/10/edit",
+    "status": "covered"
+  },
+  "/web/application/new": {
+    "url": "/web/application/new",
+    "status": "covered"
+  },
+  "/web/application/replacement": {
+    "url": "/web/application/replacement",
+    "status": "covered"
+  },
+  "/web/application/statistics": {
+    "url": "/web/application/statistics",
+    "status": "covered"
+  },
+  "/web/calendars/share/persons/{id}": {
+    "url": "/web/calendars/share/persons/4",
+    "status": "covered"
+  },
+  "/web/company/overview": {
+    "url": "/web/company/overview",
+    "status": "covered"
+  },
+  "/web/department": {
+    "url": "/web/department",
+    "status": "covered"
+  },
+  "/web/overtime": {
+    "url": "/web/overtime",
+    "status": "covered"
+  },
+  "/web/overtime/{id}": {
+    "url": "/web/overtime/100",
+    "status": "covered"
+  },
+  "/web/overtime/{id}/edit": {
+    "url": "/web/overtime/100/edit",
+    "status": "covered"
+  },
+  "/web/overtime/new": {
+    "url": "/web/overtime/new",
+    "status": "covered"
+  },
+  "/web/overtime/statistics": {
+    "url": "/web/overtime/statistics",
+    "status": "covered"
+  },
+  "/web/person": {
+    "url": "/web/person",
+    "status": "covered"
+  },
+  "/web/person/{id}": {
+    "url": "/web/person/4",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications": {
+    "url": "/web/person/4/notifications",
+    "status": "covered"
+  },
+  "/web/person/{id}/notifications/departments": {
+    "url": "/web/person/4/notifications/departments",
+    "status": "covered"
+  },
+  "/web/person/{id}/overview": {
+    "url": "/web/person/4/overview",
+    "status": "covered"
+  },
+  "/web/person/{id}/settings": {
+    "url": "/web/person/4/settings",
+    "status": "covered"
+  },
+  "/web/persons/{id}/applications": {
+    "url": "/web/persons/4/applications",
+    "status": "covered"
+  },
+  "/web/persons/{id}/sicknotes": {
+    "url": "/web/persons/4/sicknotes",
+    "status": "covered"
+  },
+  "/web/persons/me/applications/statistics": {
+    "url": "/web/persons/me/applications/statistics",
+    "status": "covered"
+  },
+  "/web/sicknote/{id}": {
+    "url": "/web/sicknote/11",
+    "status": "covered"
+  },
+  "/web/sicknote/new": {
+    "url": "/web/sicknote/new",
+    "status": "covered"
+  }
+}

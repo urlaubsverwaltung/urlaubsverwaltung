@@ -151,3 +151,53 @@ jobs:
         with:
           name: failed-a11y-tests-${{ matrix.browser }}-${{ github.run_attempt }}
           path: target/a11y-test/**/FAILED-*
+
+  visual-test:
+    name: Visual Regression Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-visual-test
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      # without git-lfs, a changed baseline is committed as regular git object and grows the repository permanently
+      - name: Check that baselines are committed as LFS pointers
+        run: git lfs fsck --pointers
+
+      # baselines are stored in git lfs, cached to not use up the lfs bandwidth with every build
+      - name: List LFS objects
+        run: git lfs ls-files --long | cut -d ' ' -f1 | sort > .lfs-objects
+
+      - name: Cache LFS objects
+        uses: actions/cache@v6
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-objects') }}
+          restore-keys: lfs-
+
+      - name: Pull LFS objects
+        run: git lfs pull
+
+      - name: Set up JDK from .tool-versions
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: 'liberica'
+          java-version-file: ".tool-versions"
+          cache: 'maven'
+
+      # starts the application with an empty database and the browser server in the pinned container, see
+      # docs/visual-regression-tests.md. no browser matrix, the screenshots are rendered by chromium only.
+      - name: Test
+        run: ./mvnw dependency:go-offline verify -Pvisual-test
+
+      - name: Upload artifacts of failed tests
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: ${{ failure() }}
+        with:
+          name: failed-visual-tests-${{ github.run_attempt }}
+          path: |
+            target/visual-tests/report
+            target/visual-tests/results
