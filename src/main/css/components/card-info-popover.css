@@ -36,8 +36,13 @@
   overflow: clip;
   border-radius: var(--card-info-border-radius);
 
+  /* display: flex above overrides the UA's display: none for closed popovers, so hide them explicitly to keep their
+     content out of the tab order and the accessibility tree. visibility stays visible while fading out */
+  visibility: hidden;
   opacity: 0;
-  transition: opacity 150ms;
+  transition:
+    opacity 150ms,
+    visibility 150ms;
 
   pointer-events: none;
   inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
@@ -46,6 +51,7 @@
   margin: var(--card-info-popover-margin);
 
   &:popover-open {
+    visibility: visible;
     opacity: 1;
     pointer-events: all;
   }
