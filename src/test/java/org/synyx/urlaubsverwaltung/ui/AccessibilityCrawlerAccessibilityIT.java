@@ -33,10 +33,10 @@ import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -102,20 +102,16 @@ class AccessibilityCrawlerAccessibilityIT {
 
         final String baseUrl = "http://localhost:%d".formatted(port);
 
-        final Set<String> visitedLinks = new HashSet<>();
-        final Queue<String> linksToVisit = new LinkedList<>();
+        // every link that was ever queued, so each page is queued and visited only once
+        final Set<String> discoveredLinks = new HashSet<>();
+        final Queue<String> linksToVisit = new ArrayDeque<>();
         final Map<String, List<Rule>> scanFailures = new HashMap<>();
 
+        discoveredLinks.add(baseUrl);
         linksToVisit.add(baseUrl);
 
         while (!linksToVisit.isEmpty()) {
             final String currentUrl = linksToVisit.poll();
-
-            // Skip if already visited
-            if (visitedLinks.contains(currentUrl)) {
-                continue;
-            }
-            visitedLinks.add(currentUrl);
 
             LOG.info("--------------------------------------------");
             LOG.info("🔍 Navigating to: {}", currentUrl);
@@ -139,15 +135,14 @@ class AccessibilityCrawlerAccessibilityIT {
                             final String absoluteUrl = new URI(absoluteUri.getScheme(), null, absoluteUri.getHost(),
                                 absoluteUri.getPort(), absoluteUri.getPath(), null, null).toString();
 
-                            // Ensure it's internal, not visited, not already queued, and skip destructive paths like
-                            // /logout as well as file downloads (/download, /export) - these don't navigate to an
-                            // HTML document at all, so there's nothing for axe to meaningfully audit there
+                            // Ensure it's internal, skip destructive paths like /logout as well as file downloads
+                            // (/download, /export) - these don't navigate to an HTML document at all, so there's
+                            // nothing for axe to meaningfully audit there - and queue it only if not discovered yet
                             if (absoluteUrl.startsWith(baseUrl)
-                                && !visitedLinks.contains(absoluteUrl)
-                                && !linksToVisit.contains(absoluteUrl)
                                 && !absoluteUrl.contains("/logout")
                                 && !absoluteUrl.contains("/download")
-                                && !absoluteUrl.contains("/export")) {
+                                && !absoluteUrl.contains("/export")
+                                && discoveredLinks.add(absoluteUrl)) {
 
                                 linksToVisit.add(absoluteUrl);
                             }
@@ -201,7 +196,7 @@ class AccessibilityCrawlerAccessibilityIT {
         // --- Final Reporting Block ---
         final int totalFailures = scanFailures.values().stream().mapToInt(List::size).sum();
         LOG.info("\n============================================");
-        LOG.info("🏁 Crawl Complete. Audited {} unique pages.", visitedLinks.size());
+        LOG.info("🏁 Crawl Complete. Audited {} unique pages.", discoveredLinks.size());
         LOG.info("   ❌ Pages with violations: {}", scanFailures.size());
         LOG.info("   ❌ Total violations: {}", totalFailures);
         LOG.info("============================================\n");
