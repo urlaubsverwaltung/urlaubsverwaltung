@@ -121,9 +121,9 @@ class CalculationService {
         final BigDecimal vacationDaysLeftAfterExpiryDate = getVacationDaysLeftAfterExpiryDate(account, vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysRequestedAfterExpiryDate, vacationDaysAlreadyUsedNextYear);
 
         if (vacationDaysLeftBeforeExpiryDate.signum() < 0 || vacationDaysLeftAfterExpiryDate.signum() < 0) {
-            LOG.info("Person {} does not have enough vacation days left to add/edit application {} because vacationDaysLeftBeforeExpiryDate {} is negative or vacationDaysLeftAfterExpiryDate {} is negative", person, application, vacationDaysLeftBeforeExpiryDate, vacationDaysLeftAfterExpiryDate);
+            LOG.info("Person with id {} does not have enough vacation days left to add/edit application with id {} from {} to {} because vacationDaysLeftBeforeExpiryDate {} is negative or vacationDaysLeftAfterExpiryDate {} is negative", person.getId(), application.getId(), application.getStartDate(), application.getEndDate(), vacationDaysLeftBeforeExpiryDate, vacationDaysLeftAfterExpiryDate);
             if (vacationDaysAlreadyUsedNextYear.signum() > 0) {
-                LOG.info("Rejecting application by {} for {} days in {} because {} remaining days have already been used in {}", person, requestedVacationDays, year, vacationDaysAlreadyUsedNextYear, year + 1);
+                LOG.info("Rejecting application by person with id {} for {} days in {} because {} remaining days have already been used in {}", person.getId(), requestedVacationDays, year, vacationDaysAlreadyUsedNextYear, year + 1);
             }
             return false;
         }
