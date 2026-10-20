@@ -65,7 +65,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
      * <pre><code>
      * static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
      * &#64;DynamicPropertySource
-     * static void setupDataSource(DynamicPropertySource registry) {
+     * static void setupDataSource(DynamicPropertyRegistry registry) {
      *     keycloak.start();
      *     keycloak.configureSpringDataSource(registry);
      * }
