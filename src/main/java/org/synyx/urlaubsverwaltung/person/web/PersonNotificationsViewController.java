@@ -104,7 +104,6 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        final Person signedInUser = personService.getSignedInUser();
         final long numberOfDepartments = departmentService.getNumberOfDepartments();
         final List<Department> personDepartments = numberOfDepartments == 0 ? List.of() : departmentService.getDepartmentsPersonHasAccessTo(person);
 
@@ -114,8 +113,7 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person, userIsAllowedToSubmitSickNotes);
         personNotificationsDto.setRestrictToDepartments(new PersonNotificationDto(person.hasAnyRole(OFFICE, BOSS), notificationSettings.restrictToDepartments()));
 
-        model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
-        model.addAttribute("personNiceName", person.getNiceName());
+        addPersonAttributes(person, model);
         model.addAttribute("personNotificationsDto", personNotificationsDto);
         model.addAttribute("departmentsAvailable", numberOfDepartments != 0);
         model.addAttribute("personAssignedToDepartments", !personDepartments.isEmpty());
@@ -153,6 +151,13 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
     }
 
 
+    private void addPersonAttributes(Person person, Model model) {
+        final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
+        model.addAttribute("personNiceName", person.getNiceName());
+        model.addAttribute("emailUnverified", person.isEmailUnverified());
+    }
+
     private String editNotifications(boolean isDepartmentSection, long personId, PersonNotificationsDto newPersonNotificationsDto, Errors errors,
                                      Model model, RedirectAttributes redirectAttributes, String section) throws UnknownPersonException {
 
@@ -170,6 +175,7 @@ public class PersonNotificationsViewController implements HasLaunchpad, HasPerso
             final PersonNotificationsDto mergedPersonNotificationsDto = new PersonNotificationsDto();
             final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
             BeanUtils.copyProperties(mapToPersonNotificationsDto(person, userIsAllowedToSubmitSickNotes), mergedPersonNotificationsDto);
+            addPersonAttributes(person, model);
             model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
             model.addAttribute("error", true);
 

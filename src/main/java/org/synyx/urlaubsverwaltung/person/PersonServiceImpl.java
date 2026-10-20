@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -69,6 +70,24 @@ class PersonServiceImpl implements PersonService {
     @Override
     @Transactional
     public Person create(String username, String firstName, String lastName, String email) {
+        return createPersonWithDefaults(username, firstName, lastName, email, null);
+    }
+
+    @Override
+    @Transactional
+    public Person create(String username, String firstName, String lastName, String email, Boolean emailVerified) {
+        return createPersonWithDefaults(username, firstName, lastName, email, emailVerified);
+    }
+
+    @Override
+    @Transactional
+    public Person create(String username, String firstName, String lastName, String email,
+                         List<MailNotification> notifications, List<Role> permissions) {
+
+        return createPerson(username, firstName, lastName, email, null, notifications, permissions);
+    }
+
+    private Person createPersonWithDefaults(String username, String firstName, String lastName, String email, Boolean emailVerified) {
 
         final List<MailNotification> defaultMailNotifications = List.of(
             NOTIFICATION_EMAIL_APPLICATION_APPLIED,
@@ -94,21 +113,14 @@ class PersonServiceImpl implements PersonService {
             USER
         );
 
-        return createPerson(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
+        return createPerson(username, firstName, lastName, email, emailVerified, defaultMailNotifications, defaultPermissions);
     }
 
-    @Override
-    @Transactional
-    public Person create(String username, String firstName, String lastName, String email,
-                         List<MailNotification> notifications, List<Role> permissions) {
-
-        return createPerson(username, firstName, lastName, email, notifications, permissions);
-    }
-
-    private Person createPerson(String username, String firstName, String lastName, String email,
+    private Person createPerson(String username, String firstName, String lastName, String email, Boolean emailVerified,
                                 List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = new Person(username.strip(), lastName.strip(), firstName.strip(), email.strip());
+        person.setEmailVerified(emailVerified);
         person.setCreatedAt(Instant.now(clock));
         person.setNotifications(notifications);
         person.setPermissions(permissions);
@@ -135,11 +147,16 @@ class PersonServiceImpl implements PersonService {
         final Collection<Role> previousPermissions = List.copyOf(person.getPermissions());
 
         personUpdate.personalData().ifPresent(personalData -> {
+            if (!Objects.equals(person.getEmail(), personalData.email())) {
+                // a verification of the previous email address says nothing about the new one
+                person.setEmailVerified(null);
+            }
             person.setUsername(personalData.username());
             person.setFirstName(personalData.firstName());
             person.setLastName(personalData.lastName());
             person.setEmail(personalData.email());
         });
+        personUpdate.emailVerification().ifPresent(emailVerification -> person.setEmailVerified(emailVerification.verified()));
         personUpdate.permissions().ifPresent(person::setPermissions);
         personUpdate.notifications().ifPresent(person::setNotifications);
 

@@ -37,6 +37,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -77,16 +78,42 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             when(personService.getPersonByMailAddress(email)).thenReturn(Optional.empty());
             final Person createdPerson = new Person(uniqueID, familyName, givenName, email);
             createdPerson.setId(1L);
-            when(personService.create(uniqueID, givenName, familyName, email)).thenReturn(createdPerson);
+            when(personService.create(uniqueID, givenName, familyName, email, null)).thenReturn(createdPerson);
 
             sut.handle(event);
 
             verify(personService).getPersonByUsername(uniqueID);
             verify(personService).getPersonByMailAddress(email);
 
-            verify(personService).create(uniqueID, givenName, familyName, email);
+            verify(personService).create(uniqueID, givenName, familyName, email, null);
 
             verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
+        }
+
+        @Test
+        void createNewPersonWithEmailVerifiedFromClaim() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email,
+                EMAIL_VERIFIED, false
+            ));
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+            when(personService.getPersonByMailAddress(email)).thenReturn(Optional.empty());
+            final Person createdPerson = new Person(uniqueID, familyName, givenName, email);
+            createdPerson.setId(1L);
+            when(personService.create(uniqueID, givenName, familyName, email, false)).thenReturn(createdPerson);
+
+            sut.handle(event);
+
+            verify(personService).create(uniqueID, givenName, familyName, email, false);
         }
     }
 
@@ -121,6 +148,68 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             assertThat(personUpdateArgumentCaptor.getValue().personalData()).hasValue(
                 new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
+            assertThat(personUpdateArgumentCaptor.getValue().emailVerification()).hasValue(
+                new PersonUpdate.EmailVerification(null));
+        }
+
+        @Test
+        void updateExistingPersonWithEmailVerifiedFromClaim() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email,
+                EMAIL_VERIFIED, true
+            ));
+
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
+
+            sut.handle(event);
+
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
+
+            assertThat(personUpdateArgumentCaptor.getValue().emailVerification()).hasValue(
+                new PersonUpdate.EmailVerification(true));
+        }
+
+        @Test
+        void updateExistingPersonWithEmailVerifiedFromUserInfo() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(
+                Map.of(SUB, uniqueID),
+                Map.of(
+                    SUB, uniqueID,
+                    GIVEN_NAME, givenName,
+                    FAMILY_NAME, familyName,
+                    EMAIL, email,
+                    EMAIL_VERIFIED, false
+                ));
+
+            final Person existingPerson = new Person(uniqueID, familyName, givenName, email);
+            existingPerson.setId(1L);
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(existingPerson));
+
+            sut.handle(event);
+
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
+
+            assertThat(personUpdateArgumentCaptor.getValue().emailVerification()).hasValue(
+                new PersonUpdate.EmailVerification(false));
         }
 
         @Test
