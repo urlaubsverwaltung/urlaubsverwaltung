@@ -76,7 +76,7 @@ class PersonSearchInterceptor implements HandlerInterceptor {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final String query = request.getParameter(PERSON_SEARCH_QUERY_PARAM);
+        final String query = personSearchQuery(request);
         final boolean allowedToSearch = signedInUser.isPrivileged();
 
         final Map<String, Object> model = new HashMap<>();
@@ -118,7 +118,7 @@ class PersonSearchInterceptor implements HandlerInterceptor {
 
         // only the cheap search-box attributes; suggestions are served by the short-circuited preHandle frame request
         modelAndView.addObject("personSearchEnabled", signedInUser.isPrivileged());
-        modelAndView.addObject("personSearchQuery", request.getParameter(PERSON_SEARCH_QUERY_PARAM));
+        modelAndView.addObject("personSearchQuery", personSearchQuery(request));
         modelAndView.addObject("personSearchFragment", personSearch.personSearchUiFragmentSupplier().get());
     }
 
@@ -129,5 +129,14 @@ class PersonSearchInterceptor implements HandlerInterceptor {
             throw new IllegalStateException("could not resolve person search view '%s'".formatted(viewName));
         }
         view.render(model, request, response);
+    }
+
+    /**
+     * The search input cannot hold line breaks, so a query containing some was not typed into it. Stripping them keeps
+     * them from being forged into log lines wherever the query ends up.
+     */
+    private static String personSearchQuery(HttpServletRequest request) {
+        final String query = request.getParameter(PERSON_SEARCH_QUERY_PARAM);
+        return query == null ? null : query.replaceAll("[\r\n]", "");
     }
 }
