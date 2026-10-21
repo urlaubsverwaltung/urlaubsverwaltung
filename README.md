@@ -550,7 +550,6 @@ Go to the GitHub action with the name [release trigger][github-action-release-tr
 * Click on "Run workflow"
 * Add the "Milestone ID" (see in the uri of a milestone)
 * Add "Release version"
-* Add "Next version"
 * Run the workflow
 
 
