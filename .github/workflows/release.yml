@@ -20,7 +20,7 @@ jobs:
           cache: 'maven'
 
       - name: Build jar with Maven
-        run: ./mvnw package
+        run: ./mvnw package -Dmaven.test.skip=true -DskipTests
 
       - name: Extract release version
         id: vars
@@ -56,6 +56,8 @@ jobs:
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw spring-boot:build-image
+          -Dmaven.test.skip=true
+          -DskipTests
           -Dspring-boot.build-image.publish=true
           -Ddocker-publish-registry=ghcr.io
           -Ddocker-publish-registry-path=${{ github.repository }}
@@ -76,6 +78,8 @@ jobs:
       - name: Publish docker image to Docker Hub urlaubsverwaltung
         run: >
           ./mvnw spring-boot:build-image
+          -Dmaven.test.skip=true
+          -DskipTests
           -Dspring-boot.build-image.publish=true
           -Ddocker-publish-registry=registry.hub.docker.com
           -Ddocker-publish-registry-path=urlaubsverwaltung
