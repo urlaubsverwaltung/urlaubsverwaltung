@@ -96,7 +96,6 @@ class SecurityWebConfiguration {
                     .requestMatchers("/api", "/api/", "/swagger-ui/index.html").hasAuthority(USER.name())
                     // Assets
                     .requestMatchers("/favicons/**").permitAll()
-                    .requestMatchers("/browserconfig.xml").permitAll()
                     .requestMatchers("/site.webmanifest").permitAll()
                     .requestMatchers("/css/**").permitAll()
                     .requestMatchers("/fonts/**").permitAll()

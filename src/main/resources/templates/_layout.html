@@ -28,8 +28,6 @@
     <th:block th:replace="${scriptsAsync}"></th:block>
     <th:block th:replace="${importmaps}"></th:block>
 
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" th:content="@{/favicons/ms-icon-144x144.png}" />
     <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa" />
     <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b" />
     <meta name="turbo-root" th:content="@{/web}" />
@@ -101,8 +99,7 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicons/favicon-32x32.png}" />
     <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicons/favicon-16x16.png}" />
     <link rel="manifest" th:href="@{/site.webmanifest}" />
-    <link rel="mask-icon" th:href="@{/favicons/safari-pinned-tab.svg}" color="#5bbad5" />
-    <meta name="msapplication-TileColor" content="#5bbad5" />
+    <link rel="mask-icon" th:href="@{/favicons/safari-pinned-tab.svg}" color="#50287d" />
     <meta name="theme-color" content="#ffffff" />
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/print.css}" media="print" />
