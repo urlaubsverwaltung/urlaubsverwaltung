@@ -194,6 +194,8 @@ class SickNoteUIIT {
 
         // office creates a sick note for the user instead of extending one of its own
         login(loginPage, office);
+        // navigating before the login has landed aborts the login request
+        page.waitForURL(OverviewPage.URL_PATTERN);
         addSickNoteForAnotherPerson(page, user);
 
         // without the permission to hand in sick notes there is no way to the extension page at all
