@@ -81,9 +81,11 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+        // the whole absence, the requested days show only a part of it
+        final DateRange period = new DateRange(LocalDate.of(2015, DECEMBER, 28), LocalDate.of(2016, JANUARY, 8));
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false, period);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, "HOLIDAY", 1L, false, period);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -108,6 +110,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": "2015-12-28",
+                          "to": "2016-01-08",
                           "status": "WAITING"
                         }
                     ]
@@ -149,6 +153,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         }
                     ]
@@ -190,6 +196,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         }
                     ]
@@ -232,6 +240,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "OVERTIME",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING",
                           "_links": {
                              "overtime": {
@@ -253,9 +263,11 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+        // the whole absence, the requested days show only a part of it
+        final DateRange period = new DateRange(LocalDate.of(2015, DECEMBER, 28), LocalDate.of(2016, JANUARY, 8));
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L, period);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE", 1L, period);
         final AbsencePeriod.Record fullDaySickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySickRecord));
 
@@ -280,6 +292,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": "2015-12-28",
+                          "to": "2016-01-08",
                           "status": "ACTIVE"
                         }
                     ]
@@ -321,6 +335,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -362,6 +378,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -405,6 +423,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         },
                         {
@@ -415,6 +435,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -457,6 +479,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         },
                         {
@@ -467,6 +491,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         }
                     ]
@@ -510,6 +536,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         },
                         {
@@ -520,6 +548,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "PUBLIC_HOLIDAY",
                           "category": null,
                           "typeId": null,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -564,6 +594,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         }
                     ]
@@ -606,6 +638,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -657,6 +691,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "PUBLIC_HOLIDAY",
                           "category": null,
                           "typeId": null,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         },
                         {
@@ -667,6 +703,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "NO_WORKDAY",
                           "category": null,
                           "typeId": null,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -708,6 +746,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         },
                         {
@@ -718,6 +758,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "ACTIVE"
                         }
                     ]
@@ -760,6 +802,8 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
+                          "from": null,
+                          "to": null,
                           "status": "WAITING"
                         },
                         {
@@ -770,7 +814,9 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "status": "WAITING",
                           "category": "HOLIDAY",
-                          "typeId": 1
+                          "typeId": 1,
+                          "from": null,
+                          "to": null
                         }
                     ]
                 }
