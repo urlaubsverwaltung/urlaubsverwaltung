@@ -311,11 +311,14 @@ describe("calendar", () => {
       ]);
     });
 
-    it("without a link to apply for the free half of a day in the past", async () => {
+    it("with a link to apply for the free half of a day in the past", async () => {
       await clickDayWithAbsences("2017-11-15", [{ absenceType: "VACATION", absent: "NOON", status: "ALLOWED" }]);
 
       expect(popoverEntries()).toEqual([["Erholungsurlaub i18n:NOON i18n:ALLOWED", "/web/application/1337"]]);
-      expect(popoverFreeHalf()).toBeNull();
+      expect(popoverFreeHalf()).toEqual([
+        "i18n:overview.calendar.day-popover.free.MORNING",
+        "/web/application/new?personId=42&from=2017-11-15&to=2017-11-15&dayLength=MORNING",
+      ]);
     });
 
     it("without a link to apply for the free half when it is a public holiday", async () => {

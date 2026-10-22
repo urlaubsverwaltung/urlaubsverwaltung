@@ -456,12 +456,7 @@ const View = (function () {
       [noon, "NOON", holidayService.isPublicHolidayNoon(date)],
     ].find(
       ([absence, absent, isPublicHoliday]) =>
-        !full &&
-        !absence &&
-        canApplyForLeave &&
-        !assert.isPast(date) &&
-        !isPublicHoliday &&
-        !holidayService.isNoWorkdayHalf(date, absent),
+        !full && !absence && canApplyForLeave && !isPublicHoliday && !holidayService.isNoWorkdayHalf(date, absent),
     );
 
     return render(TMPL.dayPopover, {
