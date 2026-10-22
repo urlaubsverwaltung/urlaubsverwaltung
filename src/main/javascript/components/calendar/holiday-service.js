@@ -284,12 +284,20 @@ export const HolidayService = (function () {
       document.location.href = this.getNewHolidayUrl(from, to);
     },
 
-    getNewHolidayUrl: function (from, to) {
+    /**
+     * @param {Date} from
+     * @param {Date} [to]
+     * @param {"MORNING"|"NOON"} [dayLength] the form preselects a full day without it
+     */
+    getNewHolidayUrl: function (from, to, dayLength) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
         to: to ? format(to, "yyyy-MM-dd") : undefined,
       };
+      if (dayLength) {
+        parameters.dayLength = dayLength;
+      }
 
       return webPrefix + "/application/new" + paramize(parameters);
     },

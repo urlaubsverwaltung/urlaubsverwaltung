@@ -162,7 +162,7 @@ describe("calendar", () => {
       expect(popoverEntries()).toEqual([
         [
           "i18n:application.data.title.new, i18n:MORNING",
-          "/web/application/new?personId=42&from=2017-12-15&to=2017-12-15",
+          "/web/application/new?personId=42&from=2017-12-15&to=2017-12-15&dayLength=MORNING",
         ],
         ["i18n:application.data.title, i18n:NOON (i18n:ALLOWED)", "/web/application/1337"],
       ]);

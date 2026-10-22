@@ -378,7 +378,7 @@ const View = (function () {
           !holidayService.isNoWorkdayHalf(date, absent)
         ) {
           return render(TMPL.dayPopoverEntry, {
-            href: holidayService.getNewHolidayUrl(date, date),
+            href: holidayService.getNewHolidayUrl(date, date, absent),
             text: `${i18n("application.data.title.new")}, ${i18n(absent)}`,
           });
         }
