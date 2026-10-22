@@ -237,20 +237,14 @@ export const HolidayService = (function () {
         .join(", ");
     },
 
-    getAbsenceId: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].id;
-      }
-      return "-1";
-    },
-
-    getAbsenceType: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].absenceType;
-      }
-      return "";
+    /**
+     * @returns {Array} the vacation or sick note of the day as `[full, morning, noon]`, `undefined` for free parts
+     */
+    getPersonalAbsences: function (date) {
+      const personal = getAbsencesForDate(date).filter(
+        (absence) => absence.absenceType === "VACATION" || absence.absenceType === "SICK_NOTE",
+      );
+      return ["FULL", "MORNING", "NOON"].map((absent) => personal.find((absence) => absence.absent === absent));
     },
 
     getTypeId: function (date) {
@@ -277,21 +271,21 @@ export const HolidayService = (function () {
      * @param {Date} [to]
      */
     bookHoliday: function (from, to) {
+      document.location.href = this.getNewHolidayUrl(from, to);
+    },
+
+    getNewHolidayUrl: function (from, to) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
         to: to ? format(to, "yyyy-MM-dd") : undefined,
       };
 
-      document.location.href = webPrefix + "/application/new" + paramize(parameters);
+      return webPrefix + "/application/new" + paramize(parameters);
     },
 
-    navigateToApplicationForLeave: function (applicationId) {
-      document.location.href = webPrefix + "/application/" + applicationId;
-    },
-
-    navigateToSickNote: function (sickNoteId) {
-      document.location.href = webPrefix + "/sicknote/" + sickNoteId;
+    getAbsenceUrl: function (absence) {
+      return webPrefix + (absence.absenceType === "SICK_NOTE" ? "/sicknote/" : "/application/") + absence.id;
     },
 
     /**

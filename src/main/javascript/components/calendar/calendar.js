@@ -53,6 +53,7 @@ const CSS = {
   daySickDayMorningActive: "datepicker-day-sick-note-morning absence-morning--solid",
   daySickDayNoonWaiting: "datepicker-day-sick-note-noon absence-noon--outline",
   daySickDayNoonActive: "datepicker-day-sick-note-noon absence-noon--solid",
+  dayPopoverAnchor: "datepicker-day--popover-anchor",
   next: "datepicker-next",
   previous: "datepicker-prev",
   month: "calendar-month-container",
@@ -124,7 +125,9 @@ const View = (function () {
 
     weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header">{{text}}</li>`,
 
-    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+
+    dayPopoverEntry: '<li><a href="{{href}}">{{text}}</a></li>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 
@@ -334,20 +337,79 @@ const View = (function () {
       cellStyle: cellStyle(),
       selectable: isSelectable(),
       title: holidayService.getDescription(date),
-      absenceId: holidayService.getAbsenceId(date),
-      absenceType: holidayService.getAbsenceType(date),
       icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
     });
+  }
+
+  function absenceStatusText(absence) {
+    if (absence.absenceType === "SICK_NOTE") {
+      return i18n(`sicknote.status.${absence.status === "WAITING" ? "SUBMITTED" : absence.status}`);
+    }
+    return i18n(absence.status);
+  }
+
+  function renderAbsenceEntry(absence) {
+    const type = i18n(absence.absenceType === "SICK_NOTE" ? "sicknote.title" : "application.data.title");
+    return render(TMPL.dayPopoverEntry, {
+      href: holidayService.getAbsenceUrl(absence),
+      text: `${type}, ${i18n(absence.absent)} (${absenceStatusText(absence)})`,
+    });
+  }
+
+  function renderDayPopoverEntries(date) {
+    const [full, morning, noon] = holidayService.getPersonalAbsences(date);
+    if (full) {
+      return renderAbsenceEntry(full);
+    }
+
+    return [
+      [morning, "MORNING", holidayService.isPublicHolidayMorning(date)],
+      [noon, "NOON", holidayService.isPublicHolidayNoon(date)],
+    ]
+      .map(function ([absence, absent, isPublicHoliday]) {
+        if (absence) {
+          return renderAbsenceEntry(absence);
+        }
+        // the free half of a half-day absence can still be applied for
+        if (canApplyForLeave && !assert.isPast(date) && !isPublicHoliday) {
+          return render(TMPL.dayPopoverEntry, {
+            href: holidayService.getNewHolidayUrl(date, date),
+            text: `${i18n("application.data.title.new")}, ${i18n(absent)}`,
+          });
+        }
+        return "";
+      })
+      .join("");
   }
 
   const View = {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
       rootElement.classList.add("unselectable");
+
+      const dayPopover = document.createElement("div");
+      dayPopover.id = "calendar-day-popover";
+      dayPopover.className = "popover-menu calendar-day-popover";
+      dayPopover.setAttribute("popover", "");
+      dayPopover.innerHTML = "<ul></ul>";
+      rootElement.append(dayPopover);
     },
 
     getRootElement() {
       return rootElement;
+    },
+
+    hasDayPopover(date) {
+      return holidayService.getPersonalAbsences(date).some(Boolean);
+    },
+
+    displayDayPopover(dayElement) {
+      const dayPopover = rootElement.querySelector("#calendar-day-popover");
+      dayPopover.querySelector("ul").innerHTML = renderDayPopoverEntries(getDateFromElement(dayElement));
+
+      rootElement.querySelector(`.${CSS.dayPopoverAnchor}`)?.classList.remove(CSS.dayPopoverAnchor);
+      dayElement.classList.add(CSS.dayPopoverAnchor);
+      dayPopover.showPopover();
     },
 
     displayNext: function () {
@@ -449,13 +511,11 @@ const Controller = (function () {
       const dateThis = getDateFromElement(this);
 
       const isSelectable = this.dataset.datepickerSelectable;
-      const absenceId = this.dataset.datepickerAbsenceId;
-      const absenceType = this.dataset.datepickerAbsenceType;
 
-      if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
-        holidayService.navigateToApplicationForLeave(absenceId);
-      } else if (isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
-        holidayService.navigateToSickNote(absenceId);
+      if (view.hasDayPopover(dateThis)) {
+        // mousedown started a selection on this day, which is not meant to be applied for now
+        clearSelection();
+        view.displayDayPopover(this);
       } else if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&

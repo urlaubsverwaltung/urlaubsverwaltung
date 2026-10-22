@@ -416,3 +416,16 @@ td.datepicker-day {
   --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
+
+/* the day popover is a `.popover-menu` opening at the clicked day */
+.datepicker-day--popover-anchor {
+  anchor-name: --uv-calendar-day;
+}
+.calendar-day-popover {
+  position-anchor: --uv-calendar-day;
+  /* days at the bottom of the screen open the popover above them */
+  position-try-fallbacks:
+    flip-inline,
+    flip-block,
+    flip-block flip-inline;
+}
