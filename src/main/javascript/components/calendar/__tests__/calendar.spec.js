@@ -186,6 +186,17 @@ describe("calendar", () => {
       ]);
     });
 
+    it("without a link to apply for the free half when it is no workday", async () => {
+      await clickDayWithAbsences("2017-12-15", [
+        { absenceType: "VACATION", absent: "MORNING", status: "ALLOWED" },
+        { absenceType: "NO_WORKDAY", absent: "NOON", status: "ACTIVE" },
+      ]);
+
+      expect(popoverEntries()).toEqual([
+        ["i18n:application.data.title, i18n:MORNING (i18n:ALLOWED)", "/web/application/1337"],
+      ]);
+    });
+
     it("without a link to apply for the free half without the permission to apply for leave", async () => {
       await clickDayWithAbsences("2017-12-15", [{ absenceType: "VACATION", absent: "NOON", status: "ALLOWED" }], {
         canApplyForLeave: false,

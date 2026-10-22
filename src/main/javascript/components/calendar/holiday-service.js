@@ -247,6 +247,16 @@ export const HolidayService = (function () {
       return ["FULL", "MORNING", "NOON"].map((absent) => personal.find((absence) => absence.absent === absent));
     },
 
+    /**
+     * @param {Date} date
+     * @param {"MORNING"|"NOON"} absent
+     */
+    isNoWorkdayHalf: function (date, absent) {
+      return getAbsencesForDate(date).some(
+        (absence) => absence.absenceType === "NO_WORKDAY" && absence.absent === absent,
+      );
+    },
+
     getTypeId: function (date) {
       let morningOrFull;
       let noon;

@@ -371,7 +371,12 @@ const View = (function () {
           return renderAbsenceEntry(absence);
         }
         // the free half of a half-day absence can still be applied for
-        if (canApplyForLeave && !assert.isPast(date) && !isPublicHoliday) {
+        if (
+          canApplyForLeave &&
+          !assert.isPast(date) &&
+          !isPublicHoliday &&
+          !holidayService.isNoWorkdayHalf(date, absent)
+        ) {
           return render(TMPL.dayPopoverEntry, {
             href: holidayService.getNewHolidayUrl(date, date),
             text: `${i18n("application.data.title.new")}, ${i18n(absent)}`,
