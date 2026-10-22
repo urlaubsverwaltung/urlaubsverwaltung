@@ -8634,9 +8634,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
       class="popover-menu calendar-day-popover"
       id="calendar-day-popover"
       popover=""
-    >
-      <ul />
-    </div>
+    />
   </div>
 </body>
 `;
@@ -17275,9 +17273,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
       class="popover-menu calendar-day-popover"
       id="calendar-day-popover"
       popover=""
-    >
-      <ul />
-    </div>
+    />
   </div>
 </body>
 `;
@@ -25914,9 +25910,7 @@ exports[`calendar > renders 1`] = `
       class="popover-menu calendar-day-popover"
       id="calendar-day-popover"
       popover=""
-    >
-      <ul />
-    </div>
+    />
   </div>
 </body>
 `;

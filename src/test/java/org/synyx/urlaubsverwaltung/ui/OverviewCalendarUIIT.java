@@ -213,7 +213,7 @@ class OverviewCalendarUIIT {
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         overviewPage.clickDay(date);
-        overviewPage.assertDayPopoverLinksTo("Krankmeldung, ganztägig (aktiv)", Pattern.compile("/web/sicknote/%d$".formatted(sickNote.getId())));
+        overviewPage.assertDayPopoverLinksTo("Krankmeldung ganztägig aktiv", Pattern.compile("/web/sicknote/%d$".formatted(sickNote.getId())));
 
         navigationPage.logout();
     }

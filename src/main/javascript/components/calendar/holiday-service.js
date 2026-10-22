@@ -1,5 +1,5 @@
 import { getJSON } from "../../js/fetch";
-import { endOfYear, formatISO, getYear, startOfYear } from "date-fns";
+import { endOfYear, formatISO, getYear, parseISO, startOfYear } from "date-fns";
 import format from "../../lib/date-fns/format";
 import {
   isNoWorkday,
@@ -81,6 +81,19 @@ export const HolidayService = (function () {
     const absencesForYear = cache[year] || [];
 
     return absencesForYear.filter((absence) => absence.date === formattedDate);
+  }
+
+  const isSameAbsence = (one, other) => one.absenceType === other.absenceType && one.id === other.id;
+
+  const HALVES = { FULL: ["MORNING", "NOON"], MORNING: ["MORNING"], NOON: ["NOON"] };
+
+  // a sick note has days on no workdays and public holidays as well, which are no work days
+  function isWorkingHalf(date, half) {
+    const covers = (absent) => absent === "FULL" || absent === half;
+    return (
+      !getAbsencesForDate(date).some((absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent)) &&
+      !getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName))
+    );
   }
 
   function getPublicHolidaysForDate(date) {
@@ -300,6 +313,41 @@ export const HolidayService = (function () {
       }
 
       return webPrefix + "/application/new" + paramize(parameters);
+    },
+
+    /**
+     * The whole vacation or sick note - its work days are counted as far as its years are loaded,
+     * see {@link fetchAbsencePeriod}.
+     *
+     * @returns {{from: Date, to: Date, workDays: number}}
+     */
+    getAbsencePeriod: function (absence) {
+      const workingHalves = Object.values(_CACHE["absences"] || {})
+        .flat()
+        .filter((day) => isSameAbsence(day, absence))
+        .flatMap((day) => HALVES[day.absent].filter((half) => isWorkingHalf(parseISO(day.date), half)));
+      return {
+        from: parseISO(absence.from),
+        to: parseISO(absence.to),
+        workDays: workingHalves.length / 2,
+      };
+    },
+
+    /**
+     * Loads the years of the vacation or sick note the calendar has not loaded.
+     *
+     * @returns {Promise<boolean>} whether a year has been loaded
+     */
+    fetchAbsencePeriod: async function (absence) {
+      const loadedYears = new Set(Object.keys(_CACHE["absences"] || {}).map(Number));
+      const missingYears = [];
+      for (let year = getYear(parseISO(absence.from)); year <= getYear(parseISO(absence.to)); year++) {
+        if (!loadedYears.has(year)) {
+          missingYears.push(year);
+        }
+      }
+      await Promise.all(missingYears.flatMap((year) => [this.fetchAbsences(year), this.fetchPublicHolidays(year)]));
+      return missingYears.length > 0;
     },
 
     getAbsenceUrl: function (absence) {
