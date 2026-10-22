@@ -299,10 +299,10 @@ const View = (function () {
         // a bridge has no vacation of its own, it takes the colour of the vacation it bridges
         ...absenceBarPieces
           .filter(({ bridge, absence }) => bridge && absence.absenceType === "VACATION")
-          .map(
-            ({ absent, absence }) =>
-              `--absence-bar-color${absent === "FULL" ? "" : `-${absent.toLowerCase()}`}:var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`,
-          ),
+          .map(({ absent, absence }) => {
+            const property = absent === "FULL" ? "--absence-bar-color" : `--absence-bar-color-${absent.toLowerCase()}`;
+            return `${property}:var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`;
+          }),
       ]
         .filter(Boolean)
         .join(";");
@@ -511,7 +511,7 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      fetchYearsOf(date, addMonths(date, 1)).then(view.displayNext);
+      void fetchYearsOf(date, addMonths(date, 1)).then(view.displayNext);
     },
 
     clickPrevious: function () {
@@ -524,7 +524,7 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      fetchYearsOf(date, subMonths(date, 1)).then(view.displayPrevious);
+      void fetchYearsOf(date, subMonths(date, 1)).then(view.displayPrevious);
     },
   };
 
