@@ -597,6 +597,10 @@ class AbsenceServiceImplTest {
         assertThat(absenceRecords.getFirst().getDate()).isEqualTo(LocalDate.of(2021, MAY, 31));
         assertThat(absenceRecords.getFirst().getMorning()).isPresent();
         assertThat(absenceRecords.getFirst().getNoon()).isPresent();
+        // the whole absence, not only the asked days of it
+        final DateRange period = new DateRange(LocalDate.of(2021, MAY, 31), LocalDate.of(2021, JUNE, 10));
+        assertThat(absenceRecords.getFirst().getMorning()).flatMap(AbsencePeriod.RecordInfo::getPeriod).hasValue(period);
+        assertThat(absenceRecords.getFirst().getNoon()).flatMap(AbsencePeriod.RecordInfo::getPeriod).hasValue(period);
     }
 
     @Test
@@ -632,6 +636,10 @@ class AbsenceServiceImplTest {
         assertThat(absenceRecords.getFirst().getDate()).isEqualTo(LocalDate.of(2021, MAY, 31));
         assertThat(absenceRecords.getFirst().getMorning()).isPresent();
         assertThat(absenceRecords.getFirst().getNoon()).isPresent();
+        // the whole absence, not only the asked days of it
+        final DateRange period = new DateRange(LocalDate.of(2021, MAY, 31), LocalDate.of(2021, JUNE, 10));
+        assertThat(absenceRecords.getFirst().getMorning()).flatMap(AbsencePeriod.RecordInfo::getPeriod).hasValue(period);
+        assertThat(absenceRecords.getFirst().getNoon()).flatMap(AbsencePeriod.RecordInfo::getPeriod).hasValue(period);
     }
 
     @Test
