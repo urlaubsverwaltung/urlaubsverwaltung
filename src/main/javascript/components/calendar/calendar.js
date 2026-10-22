@@ -226,6 +226,17 @@ const View = (function () {
     });
   }
 
+  // the custom property of the day piece, e.g. `--absence-bar-color-morning`
+  function barProperty(name, absent) {
+    return absent === "FULL" ? name : `${name}-${absent.toLowerCase()}`;
+  }
+
+  // how much of the piece is in the first half of its bar, in percent
+  function barFill({ absent, barOffset, barLength }) {
+    const halves = absent === "FULL" ? 2 : 1;
+    return Math.round(Math.min(Math.max((barLength / 2 - barOffset) / halves, 0), 1) * 100);
+  }
+
   function renderDay(date) {
     const absenceBarPieces = holidayService.getAbsenceBarPieces(date);
 
@@ -296,13 +307,18 @@ const View = (function () {
           ? "--absence-bar-color-noon: var(--sick-note-color)"
           : "",
 
+        // a temporarily allowed vacation fills the first half of its whole bar, not of each day
+        ...absenceBarPieces
+          .filter(({ absence }) => absence.status === "TEMPORARY_ALLOWED")
+          .map((piece) => `${barProperty("--absence-bar-fill", piece.absent)}:${barFill(piece)}%`),
+
         // a bridge has no vacation of its own, it takes the colour of the vacation it bridges
         ...absenceBarPieces
           .filter(({ bridge, absence }) => bridge && absence.absenceType === "VACATION")
-          .map(({ absent, absence }) => {
-            const property = absent === "FULL" ? "--absence-bar-color" : `--absence-bar-color-${absent.toLowerCase()}`;
-            return `${property}:var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`;
-          }),
+          .map(
+            ({ absent, absence }) =>
+              `${barProperty("--absence-bar-color", absent)}:var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`,
+          ),
       ]
         .filter(Boolean)
         .join(";");

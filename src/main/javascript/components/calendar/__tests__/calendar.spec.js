@@ -700,6 +700,65 @@ describe("calendar", () => {
       );
     });
 
+    describe("filling the first half of the whole bar of a temporarily allowed vacation", () => {
+      const temporarilyAllowed = (date, absent = "FULL") => vacation(date, absent, { status: "TEMPORARY_ALLOWED" });
+      const fillOf = (date) =>
+        document
+          .querySelector(`[data-datepicker-date="${date}"]`)
+          .getAttribute("style")
+          .match(/--absence-bar-fill(-morning|-noon)?:(\d+)%/)
+          ?.slice(1, 3);
+
+      test("from monday to friday", async () => {
+        await renderWithAbsences(
+          ["2017-12-11", "2017-12-12", "2017-12-13", "2017-12-14", "2017-12-15"].map((date) =>
+            temporarilyAllowed(date),
+          ),
+        );
+
+        expect(
+          ["2017-12-11", "2017-12-12", "2017-12-13", "2017-12-14", "2017-12-15"].map((date) => fillOf(date)),
+        ).toEqual([
+          [undefined, "100"],
+          [undefined, "100"],
+          [undefined, "50"],
+          [undefined, "0"],
+          [undefined, "0"],
+        ]);
+      });
+
+      test("counting the bridged weekend in", async () => {
+        await renderWithAbsences([
+          temporarilyAllowed("2017-12-14"),
+          temporarilyAllowed("2017-12-15"),
+          noWorkday("2017-12-16"),
+          noWorkday("2017-12-17"),
+          temporarilyAllowed("2017-12-18"),
+          temporarilyAllowed("2017-12-19"),
+        ]);
+
+        expect(
+          ["2017-12-14", "2017-12-15", "2017-12-16", "2017-12-17", "2017-12-18", "2017-12-19"].map(
+            (date) => fillOf(date)?.[1],
+          ),
+        ).toEqual(["100", "100", "100", "0", "0", "0"]);
+      });
+
+      test("as one day did before, when it is a single day", async () => {
+        await renderWithAbsences([temporarilyAllowed("2017-12-13")]);
+
+        expect(fillOf("2017-12-13")).toEqual([undefined, "50"]);
+      });
+
+      test("counting the half days of a bar starting in the afternoon", async () => {
+        await renderWithAbsences([temporarilyAllowed("2017-12-13", "NOON"), temporarilyAllowed("2017-12-14")]);
+
+        // three half days: the afternoon is the first half and a half, the next day the rest
+        expect(fillOf("2017-12-13")).toEqual(["-noon", "100"]);
+        expect(fillOf("2017-12-14")).toEqual([undefined, "25"]);
+      });
+    });
+
     test("in the sick note colour on the bridge of a sick note", async () => {
       await renderWithAbsences([
         sickNote("2017-12-15"),

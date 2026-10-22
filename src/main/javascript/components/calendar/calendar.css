@@ -265,7 +265,11 @@
 
 .datepicker-day.absence-full--outline-solid-half::after {
   border: solid 1px var(--absence-bar-color);
-  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+  background: linear-gradient(
+    135deg,
+    var(--absence-bar-color) var(--absence-bar-fill, 50%),
+    transparent var(--absence-bar-fill, 50%)
+  );
 }
 
 .datepicker-day.absence-full--outline-solid-second-half::after {
@@ -294,7 +298,11 @@
 
 .datepicker-day.absence-morning--outline-solid-half::before {
   border: solid 1px var(--absence-bar-color-morning);
-  background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, transparent 50%);
+  background: linear-gradient(
+    135deg,
+    var(--absence-bar-color-morning) var(--absence-bar-fill-morning, 50%),
+    transparent var(--absence-bar-fill-morning, 50%)
+  );
 }
 
 .datepicker-day.absence-morning--outline-solid-second-half::before {
@@ -322,7 +330,11 @@
 
 .datepicker-day.absence-noon--outline-solid-half::after {
   border: solid 1px var(--absence-bar-color-noon);
-  background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, transparent 50%);
+  background: linear-gradient(
+    135deg,
+    var(--absence-bar-color-noon) var(--absence-bar-fill-noon, 50%),
+    transparent var(--absence-bar-fill-noon, 50%)
+  );
 }
 
 .datepicker-day.absence-noon--outline-solid-second-half::after {
@@ -457,6 +469,9 @@ td.datepicker-day {
   border-bottom-left-radius: 0;
   border-left-width: 0;
 }
+
+/* a temporarily allowed absence fills the first half of its bar - the calendar sets `--absence-bar-fill` (and its
+ * `-morning` and `-noon` variants) for each day of it, see the `outline-solid-half` classes above */
 
 /* a bridge over a day off shows the absence it belongs to translucent */
 .datepicker-day.absence-full--bridge::after,
