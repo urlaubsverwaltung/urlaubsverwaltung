@@ -401,7 +401,8 @@ const Controller = (function () {
 
   const datepickerHandlers = {
     mousedown: function (event) {
-      if (event.button !== mouseButtons.left || !canApplyForLeave) {
+      // a single click on a day in the past does not apply for leave, so a range must not include it either
+      if (event.button !== mouseButtons.left || !canApplyForLeave || this.classList.contains(CSS.dayPast)) {
         return;
       }
 
@@ -426,7 +427,7 @@ const Controller = (function () {
     },
 
     mouseover: function () {
-      if (!canApplyForLeave) {
+      if (!canApplyForLeave || this.classList.contains(CSS.dayPast)) {
         return;
       }
 

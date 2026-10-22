@@ -2,7 +2,7 @@
 
 exports[`calendar > ensure correct rendering when clicking .datepicker-next  > click 1`] = `
 <body
-  class="mousedown"
+  class=""
 >
   <div
     class="unselectable"
@@ -9244,7 +9244,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
 
 exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > click 1`] = `
 <body
-  class="mousedown"
+  class=""
 >
   <div
     class="unselectable"
@@ -18485,7 +18485,9 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
 `;
 
 exports[`calendar > renders 1`] = `
-<body>
+<body
+  class=""
+>
   <div
     class="unselectable"
     id="datepicker"

@@ -269,6 +269,51 @@ describe("calendar", () => {
     });
   });
 
+  describe("selecting a range by dragging", () => {
+    async function setupCalendar() {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+      mockEmptyYear(42, 2017);
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      holidayService.bookHoliday = vi.fn();
+      await holidayService.fetchAbsences(2017);
+
+      renderCalendar(holidayService);
+      return holidayService;
+    }
+
+    function drag(fromDate, toDate) {
+      const day = (date) => document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+      day(fromDate).dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      day(toDate).dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+      document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+      return day;
+    }
+
+    it("does not start on a day in the past", async () => {
+      const holidayService = await setupCalendar();
+
+      const day = drag("2017-11-28", "2017-12-05");
+      day("2017-12-04").click();
+
+      expect(document.querySelectorAll(`.datepicker-day-selected`)).toHaveLength(0);
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+    });
+
+    it("does not extend into the past", async () => {
+      const holidayService = await setupCalendar();
+
+      const day = drag("2017-12-05", "2017-11-28");
+      day("2017-12-05").click();
+
+      expect(day("2017-11-28").classList).not.toContain("datepicker-day-selected");
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(new Date(2017, 11, 5), new Date(2017, 11, 5));
+    });
+  });
+
   describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
     "ensure correct rendering when clicking %s ",
     (buttonSelector) => {
@@ -671,6 +716,8 @@ describe("calendar", () => {
       1: "#B4D455",
     };
 
+    // a drag of a previous test may have left the `mousedown` class
+    document.body.className = "";
     document.body.innerHTML = `<div id="datepicker"></div>`;
 
     await import("./../index.js");
