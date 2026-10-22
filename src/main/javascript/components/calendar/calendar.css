@@ -494,3 +494,20 @@ td.datepicker-day {
 .datepicker-day.absence-morning--bridge::before {
   opacity: 0.35;
 }
+
+/* the day popover is a `.popover-menu` opening at the clicked day */
+.datepicker-day--popover-anchor {
+  anchor-name: --uv-calendar-day;
+}
+.calendar-day-popover {
+  position-anchor: --uv-calendar-day;
+  /* `.popover-menu` limits its height to the room below its button and scrolls the rest. the popover would never
+   * overflow, so no fallback would be tried - a day at the bottom of the screen would show a cut off popover instead
+   * of one above it. its few entries always fit on the screen as a whole. */
+  max-height: none;
+  /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start */
+  position-try-fallbacks:
+    flip-block,
+    flip-inline,
+    flip-block flip-inline;
+}
