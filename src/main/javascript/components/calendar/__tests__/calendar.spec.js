@@ -443,6 +443,55 @@ describe("calendar", () => {
     },
   );
 
+  describe.each([
+    ["VACATION", "MORNING"],
+    ["VACATION", "NOON"],
+    ["SICK_NOTE", "MORNING"],
+    ["SICK_NOTE", "NOON"],
+  ])("ensure half day %s in the %s is clickable", (givenAbsenceType, givenAbsent) => {
+    async function setupHalfDayAbsence() {
+      // today is 2017-12-01
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        {
+          absences: [
+            {
+              date: "2017-11-01",
+              absenceType: givenAbsenceType,
+              id: 1337,
+              absent: givenAbsent,
+              absentNumeric: 0.5,
+              status: givenAbsenceType === "VACATION" ? "ALLOWED" : "ACTIVE",
+              typeId: 1,
+            },
+          ],
+        },
+      );
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2017);
+      return holidayService;
+    }
+
+    test("in the past", async () => {
+      renderCalendar(await setupHalfDayAbsence());
+
+      const day = document.querySelector(`.datepicker-day[data-datepicker-date="2017-11-01"]`);
+      expect(day.dataset.datepickerSelectable).toBe("true");
+    });
+
+    test("without the permission to apply for leave", async () => {
+      renderCalendar(await setupHalfDayAbsence(), { canApplyForLeave: false });
+
+      const day = document.querySelector(`.datepicker-day[data-datepicker-date="2017-11-01"]`);
+      expect(day.dataset.datepickerSelectable).toBe("true");
+    });
+  });
+
   describe("highlights days", () => {
     test("weekend with absences", async () => {
       // today is 2020-12-13

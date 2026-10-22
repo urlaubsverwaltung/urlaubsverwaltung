@@ -292,7 +292,8 @@ const View = (function () {
         isPersonalHolidayTemporaryApproved ||
         isPersonalHolidayCancellationRequest ||
         isSickDayActive ||
-        isSickDayWaiting
+        isSickDayWaiting ||
+        holidayService.isHalfDayAbsence(date)
       ) {
         return true;
       }
@@ -309,7 +310,7 @@ const View = (function () {
         return false;
       }
 
-      return holidayService.isHalfDayAbsence(date) || !holidayService.isPublicHolidayFull(date);
+      return !holidayService.isPublicHolidayFull(date);
     }
 
     function cellStyle() {
