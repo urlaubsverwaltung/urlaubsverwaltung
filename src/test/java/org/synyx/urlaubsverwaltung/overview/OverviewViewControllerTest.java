@@ -706,6 +706,7 @@ class OverviewViewControllerTest {
         stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeLabels(GERMAN)).thenReturn(Map.of(1L, "Erholungsurlaub"));
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
 
@@ -764,6 +765,7 @@ class OverviewViewControllerTest {
         final ModelAndView mav = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN)).andReturn().getModelAndView();
         assertThat(mav).isNotNull();
         assertThat(mav.getModel()).containsEntry("vacationTypeColors", List.of(new VacationTypeDto(1L, ORANGE)));
+        assertThat(mav.getModel()).containsEntry("vacationTypeLabels", Map.of(1L, "Erholungsurlaub"));
     }
 
     // OVERTIME TESTS

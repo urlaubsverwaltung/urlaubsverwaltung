@@ -1,5 +1,14 @@
 import { getJSON } from "../../js/fetch";
-import { addDays, differenceInCalendarDays, endOfYear, formatISO, getYear, startOfYear, subDays } from "date-fns";
+import {
+  addDays,
+  differenceInCalendarDays,
+  endOfYear,
+  formatISO,
+  getYear,
+  parseISO,
+  startOfYear,
+  subDays,
+} from "date-fns";
 import format from "../../lib/date-fns/format";
 import {
   isNoWorkday,
@@ -34,6 +43,9 @@ function paramize(parameters) {
 
 export const HolidayService = (function () {
   const _CACHE = {};
+  // the requests of the years not cached yet by cache key and year. a year requested again meanwhile waits for the
+  // same request, a second response would add its data to the cache once more.
+  const _PENDING = {};
 
   let webPrefix;
   let apiPrefix;
@@ -95,6 +107,30 @@ export const HolidayService = (function () {
     const absencesForYear = cache[year] || [];
 
     return absencesForYear.filter((absence) => absence.date === formattedDate);
+  }
+
+  const HALVES = { FULL: ["MORNING", "NOON"], MORNING: ["MORNING"], NOON: ["NOON"] };
+
+  // a sick note has days on no workdays and public holidays as well, which are no work days
+  function isWorkingHalf(date, half) {
+    const covers = (absent) => absent === "FULL" || absent === half;
+    return (
+      !getAbsencesForDate(date).some((absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent)) &&
+      !getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName))
+    );
+  }
+
+  const isLoaded = (cacheKey, year) => Boolean(_CACHE[cacheKey]?.[year]);
+
+  // the years of the vacation or sick note whose absences or public holidays are not loaded yet
+  function missingYearsOf(absence) {
+    const missingYears = [];
+    for (let year = getYear(parseISO(absence.from)); year <= getYear(parseISO(absence.to)); year++) {
+      if (!isLoaded("absences", year) || !isLoaded("publicHoliday", year)) {
+        missingYears.push(year);
+      }
+    }
+    return missingYears;
   }
 
   function getPublicHolidaysForDate(date) {
@@ -467,6 +503,36 @@ export const HolidayService = (function () {
       return webPrefix + "/application/new" + paramize(parameters);
     },
 
+    /**
+     * The whole vacation or sick note. Its work days are known once all of its years are loaded,
+     * see {@link fetchAbsencePeriod}.
+     *
+     * @returns {{from: Date, to: Date, workDays: number|undefined}} `workDays` is `undefined` while a year is missing
+     */
+    getAbsencePeriod: function (absence) {
+      const from = parseISO(absence.from);
+      const to = parseISO(absence.to);
+      if (missingYearsOf(absence).length > 0) {
+        return { from, to, workDays: undefined };
+      }
+      const workingHalves = Object.values(_CACHE["absences"] || {})
+        .flat()
+        .filter((day) => isSameAbsence(day, absence))
+        .flatMap((day) => HALVES[day.absent].filter((half) => isWorkingHalf(parseISO(day.date), half)));
+      return { from, to, workDays: workingHalves.length / 2 };
+    },
+
+    /**
+     * Loads the years of the vacation or sick note the calendar has not loaded.
+     *
+     * @returns {Promise<boolean>} whether a year has been loaded
+     */
+    fetchAbsencePeriod: async function (absence) {
+      const missingYears = missingYearsOf(absence);
+      await Promise.all(missingYears.flatMap((year) => [this.fetchAbsences(year), this.fetchPublicHolidays(year)]));
+      return missingYears.length > 0;
+    },
+
     getAbsenceUrl: function (absence) {
       return webPrefix + (absence.absenceType === "SICK_NOTE" ? "/sicknote/" : "/application/") + absence.id;
     },
@@ -487,6 +553,11 @@ export const HolidayService = (function () {
         return Promise.resolve(_CACHE[cacheKey][year]);
       }
 
+      _PENDING[cacheKey] = _PENDING[cacheKey] || {};
+      if (_PENDING[cacheKey][year]) {
+        return _PENDING[cacheKey][year];
+      }
+
       const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
         representation: "date",
       });
@@ -494,7 +565,14 @@ export const HolidayService = (function () {
         representation: "date",
       });
 
-      return fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters }).then(cacheHandler(year));
+      const request = fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters })
+        .then(cacheHandler(year))
+        .finally(() => {
+          // a failed request is sent again the next time the year is asked for
+          delete _PENDING[cacheKey][year];
+        });
+      _PENDING[cacheKey][year] = request;
+      return request;
     },
 
     /**
