@@ -2,7 +2,7 @@ import { addMonths, getYear, isValid, parseISO, setYear, startOfYear, subMonths 
 import "../../components/calendar";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { personId, webPrefix, apiPrefix, canApplyForLeave, i18n: i18nMessages } = globalThis.uv;
+  const { personId, webPrefix, apiPrefix, canApplyForLeave, allowHalfDays, i18n: i18nMessages } = globalThis.uv;
 
   const i18n = (key) => i18nMessages?.[key] ?? `/i18n:${key}/`;
   const getUrlParameter = (name) => new URL(globalThis.location).searchParams.get(name);
@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const calendarParentElement = document.querySelector("#datepicker");
     Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n, {
       canApplyForLeave: canApplyForLeave === true,
+      allowHalfDays: allowHalfDays === true,
     });
   };
 

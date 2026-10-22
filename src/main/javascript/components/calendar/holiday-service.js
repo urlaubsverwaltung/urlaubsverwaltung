@@ -402,20 +402,24 @@ export const HolidayService = (function () {
       ].filter((piece) => piece.absence);
     },
 
-    getAbsenceId: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].id;
-      }
-      return "-1";
+    /**
+     * @returns {Array} the vacation or sick note of the day as `[full, morning, noon]`, `undefined` for free parts
+     */
+    getPersonalAbsences: function (date) {
+      const personal = getAbsencesForDate(date).filter(
+        (absence) => absence.absenceType === "VACATION" || absence.absenceType === "SICK_NOTE",
+      );
+      return ["FULL", "MORNING", "NOON"].map((absent) => personal.find((absence) => absence.absent === absent));
     },
 
-    getAbsenceType: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].absenceType;
-      }
-      return "";
+    /**
+     * @param {Date} date
+     * @param {"MORNING"|"NOON"} absent
+     */
+    isNoWorkdayHalf: function (date, absent) {
+      return getAbsencesForDate(date).some(
+        (absence) => absence.absenceType === "NO_WORKDAY" && absence.absent === absent,
+      );
     },
 
     getTypeId: function (date) {
@@ -442,21 +446,29 @@ export const HolidayService = (function () {
      * @param {Date} [to]
      */
     bookHoliday: function (from, to) {
+      document.location.href = this.getNewHolidayUrl(from, to);
+    },
+
+    /**
+     * @param {Date} from
+     * @param {Date} [to]
+     * @param {"MORNING"|"NOON"} [dayLength] the form preselects a full day without it
+     */
+    getNewHolidayUrl: function (from, to, dayLength) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
         to: to ? format(to, "yyyy-MM-dd") : undefined,
       };
+      if (dayLength) {
+        parameters.dayLength = dayLength;
+      }
 
-      document.location.href = webPrefix + "/application/new" + paramize(parameters);
+      return webPrefix + "/application/new" + paramize(parameters);
     },
 
-    navigateToApplicationForLeave: function (applicationId) {
-      document.location.href = webPrefix + "/application/" + applicationId;
-    },
-
-    navigateToSickNote: function (sickNoteId) {
-      document.location.href = webPrefix + "/sicknote/" + sickNoteId;
+    getAbsenceUrl: function (absence) {
+      return webPrefix + (absence.absenceType === "SICK_NOTE" ? "/sicknote/" : "/application/") + absence.id;
     },
 
     /**
