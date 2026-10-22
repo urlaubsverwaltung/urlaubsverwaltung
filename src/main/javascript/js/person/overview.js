@@ -18,8 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
     const shownMonths = 10;
+    // a month more than shown on either side: an absence bar continuing there must not be drawn as ending
     const startDate = subMonths(date, shownMonths / 2);
-    const endDate = addMonths(date, shownMonths / 2);
+    const endDate = addMonths(date, shownMonths / 2 + 1);
 
     const yearOfStartDate = getYear(startDate);
     const yearOfEndDate = getYear(endDate);

@@ -1,5 +1,5 @@
 import { getJSON } from "../../js/fetch";
-import { endOfYear, formatISO, getYear, startOfYear } from "date-fns";
+import { addDays, endOfYear, formatISO, getYear, startOfYear, subDays } from "date-fns";
 import format from "../../lib/date-fns/format";
 import {
   isNoWorkday,
@@ -90,6 +90,65 @@ export const HolidayService = (function () {
     const publicHolidaysForYear = cache[year] || [];
 
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
+  }
+
+  const covers = (absent, half) => absent === "FULL" || absent === half;
+
+  // the vacation or sick note on the half ("MORNING" or "NOON") of a day
+  function personalAbsenceOn({ date, half }) {
+    return getAbsencesForDate(date).find(
+      (absence) =>
+        (absence.absenceType === "VACATION" || absence.absenceType === "SICK_NOTE") && covers(absence.absent, half),
+    );
+  }
+
+  // a no workday or public holiday, which an absence bar runs across
+  function isOffOn({ date, half }) {
+    return (
+      getAbsencesForDate(date).some(
+        (absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent, half),
+      ) || getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
+    );
+  }
+
+  const nextHalfDay = ({ date, half }) =>
+    half === "MORNING" ? { date, half: "NOON" } : { date: addDays(date, 1), half: "MORNING" };
+  const previousHalfDay = ({ date, half }) =>
+    half === "NOON" ? { date, half: "MORNING" } : { date: subDays(date, 1), half: "NOON" };
+
+  /**
+   * @returns the vacation or sick note next to the half day, skipping half days off;
+   *          `undefined` when a working half day without one comes first. ends with the loaded years.
+   */
+  function adjacentAbsence(halfDay, step) {
+    let current = step(halfDay);
+    while (!personalAbsenceOn(current) && isOffOn(current)) {
+      current = step(current);
+    }
+    return personalAbsenceOn(current);
+  }
+
+  const isSameAbsence = (one, other) =>
+    Boolean(one && other) && one.absenceType === other.absenceType && one.id === other.id;
+
+  // an empty piece when no bar runs across the half day
+  function absenceBarPiece(halfDay) {
+    const before = adjacentAbsence(halfDay, previousHalfDay);
+    const after = adjacentAbsence(halfDay, nextHalfDay);
+
+    const absence = personalAbsenceOn(halfDay);
+    if (absence) {
+      return {
+        absence,
+        bridge: false,
+        continuesBefore: isSameAbsence(absence, before),
+        continuesAfter: isSameAbsence(absence, after),
+      };
+    }
+    if (isOffOn(halfDay) && isSameAbsence(before, after)) {
+      return { absence: before, bridge: true, continuesBefore: true, continuesAfter: true };
+    }
+    return {};
   }
 
   const HolidayService = {
@@ -235,6 +294,27 @@ export const HolidayService = (function () {
       return getPublicHolidaysForDate(date)
         .map((publicHoliday) => publicHoliday.description)
         .join(", ");
+    },
+
+    /**
+     * A vacation or sick note of several days is drawn as one bar. It runs across no workdays and public holidays
+     * in between, which are drawn as a bridge.
+     *
+     * @param {Date} date
+     * @returns {Array} the pieces of the bars on the day, as `{absent, absence, bridge, continuesBefore, continuesAfter}`.
+     *          `absent` is "FULL" for a piece over the whole day, else "MORNING" or "NOON".
+     */
+    getAbsenceBarPieces: function (date) {
+      const morning = absenceBarPiece({ date, half: "MORNING" });
+      const noon = absenceBarPiece({ date, half: "NOON" });
+
+      if (morning.bridge === noon.bridge && isSameAbsence(morning.absence, noon.absence)) {
+        return [{ ...morning, absent: "FULL", continuesAfter: noon.continuesAfter }];
+      }
+      return [
+        { ...morning, absent: "MORNING" },
+        { ...noon, absent: "NOON" },
+      ].filter((piece) => piece.absence);
     },
 
     getAbsenceId: function (date) {

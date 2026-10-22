@@ -416,3 +416,51 @@ td.datepicker-day {
   --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
+
+/* ABSENCE BARS
+ * the overview calendar draws an absence of several days as one bar, as the absence overview does: a piece reaches
+ * the edge of the day where the absence continues and is rounded at the start and the end only. the date picker of
+ * the application form shares this file but sets none of these classes. */
+
+.datepicker-day:is(.absence-full--continues-after, .absence-noon--continues-after) {
+  /* the piece reaches over the cell border to the next day */
+  overflow: visible;
+}
+
+.datepicker-day.absence-full--continues-before::after,
+.datepicker-day.absence-morning--continues-before::before {
+  left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+.datepicker-day.absence-full--continues-after::after,
+.datepicker-day.absence-noon--continues-after::after {
+  right: -1px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+}
+
+/* the half-day pieces of the same bar meet in the middle of the day */
+.datepicker-day.absence-morning--continues-after::before {
+  right: 50%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+}
+
+.datepicker-day.absence-noon--continues-before::after {
+  left: 50%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+/* a bridge over a day off shows the absence it belongs to translucent */
+.datepicker-day.absence-full--bridge::after,
+.datepicker-day.absence-noon--bridge::after,
+.datepicker-day.absence-morning--bridge::before {
+  opacity: 0.35;
+}

@@ -79,6 +79,16 @@ describe("person/overview", function () {
     expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2024);
   });
 
+  it("fetches the year after the last month shown, so an absence bar continuing there is not drawn as ending", async function () {
+    // the calendar shows march to december 2024
+    vi.setSystemTime(new Date(2024, 6, 15));
+
+    const holidayServiceInstance = await renderAndLoad();
+
+    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2025);
+    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2025);
+  });
+
   it("snaps to January 1st of the requested year and fetches every spanned year", async function () {
     globalThis.history.pushState({}, "", "/web/person/1/overview?year=2020");
 
