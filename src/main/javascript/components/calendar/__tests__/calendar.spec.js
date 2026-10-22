@@ -85,6 +85,27 @@ describe("calendar", () => {
     expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-15"), parseISO("2017-12-15"));
   });
 
+  it("clicking on an empty day in the past redirects to new application", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+    mockEmptyYear(42, 2017);
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    holidayService.bookHoliday = vi.fn();
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const day = document.querySelector(`.datepicker-day[data-datepicker-date="2017-11-28"]`);
+    expect(day.dataset.datepickerSelectable).toBe("true");
+    day.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+    day.click();
+
+    expect(holidayService.bookHoliday).toHaveBeenCalledWith(new Date(2017, 10, 28), new Date(2017, 10, 28));
+  });
+
   it("clicking on day with absence redirects to existing application", async () => {
     // today is 2017-12-01
     mockDate(1_512_130_448_379);
