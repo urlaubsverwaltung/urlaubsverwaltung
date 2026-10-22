@@ -416,3 +416,144 @@ td.datepicker-day {
   --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
+
+/* the day popover is a `.popover-menu` opening at the clicked day */
+.datepicker-day--popover-anchor {
+  anchor-name: --uv-calendar-day;
+}
+.calendar-day-popover {
+  position-anchor: --uv-calendar-day;
+  /* days at the bottom of the screen open the popover above them */
+  position-try-fallbacks:
+    flip-inline,
+    flip-block,
+    flip-block flip-inline;
+}
+.calendar-day-popover {
+  width: 20rem;
+  padding: 0;
+  font-size: var(--text-sm);
+
+  .calendar-day-popover__date {
+    margin: 0;
+    padding: --spacing(3) --spacing(4);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+
+  /* overrides the plain entries of `.popover-menu`. the bar runs along the name and the day length only, the details
+   * go below them. */
+  ul li a.calendar-day-popover__absence {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: --spacing(3);
+    padding: --spacing(3) --spacing(4);
+
+    .calendar-day-popover__bar,
+    .calendar-day-popover__text {
+      grid-row: 1;
+    }
+    .calendar-day-popover__details {
+      grid-column: 2;
+    }
+    .calendar-day-popover__chevron {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+  }
+
+  li + li {
+    border-top: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+}
+
+/* the bar of the calendar day turned upright, the status sets the fill. it spans its full height for half a day
+ * as well - each half of the day is an entry of its own. */
+.calendar-day-popover__bar {
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 0.375rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: solid 1px var(--absence-bar-color);
+    border-radius: 99999px;
+    background: var(--absence-bar-color);
+  }
+
+  &.calendar-day-popover__bar--outline::after {
+    background: none;
+  }
+  &.calendar-day-popover__bar--outline-solid-half::after {
+    background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+  }
+}
+
+.calendar-day-popover__text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.calendar-day-popover__day-length,
+.calendar-day-popover__details > span:nth-child(odd) {
+  color: var(--color-zinc-500);
+  @variant dark {
+    color: var(--color-zinc-400);
+  }
+}
+
+/* label and value side by side */
+.calendar-day-popover__details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: --spacing(3);
+  margin-top: --spacing(1);
+
+  /* a long period breaks after the dash, not inside a date */
+  time {
+    white-space: nowrap;
+  }
+}
+
+.calendar-day-popover__chevron {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-zinc-500);
+}
+
+.calendar-day-popover__free {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: --spacing(3);
+  padding: --spacing(3) --spacing(4);
+  border-top: 1px solid var(--color-neutral-200);
+  background-color: var(--color-neutral-50);
+  color: var(--color-zinc-600);
+  @variant dark {
+    border-color: var(--color-zinc-700);
+    background-color: transparent;
+    color: var(--color-zinc-300);
+  }
+
+  .button {
+    margin-inline-start: auto;
+  }
+}

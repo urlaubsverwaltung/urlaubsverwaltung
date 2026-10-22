@@ -184,6 +184,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Long typeId = application.getVacationType().getId();
         final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
         final DayLength applicationDayLength = application.getDayLength();
+        final DateRange period = new DateRange(application.getStartDate(), application.getEndDate());
 
         final AbsencePeriod.RecordMorningVacation morning;
         final AbsencePeriod.RecordNoonVacation noon;
@@ -191,7 +192,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (workingDayLength.isMorning()) {
             noon = null;
             if (applicationDayLength.isFull() || applicationDayLength.isMorning()) {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
             } else {
                 LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={}", workingDayLength, applicationDayLength, applicationId);
                 morning = null;
@@ -199,20 +200,20 @@ public class AbsenceServiceImpl implements AbsenceService {
         } else if (workingDayLength.isNoon()) {
             morning = null;
             if (applicationDayLength.isFull() || applicationDayLength.isNoon()) {
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
             } else {
                 LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={} ", workingDayLength, applicationDayLength, applicationId);
                 noon = null;
             }
         } else if (applicationDayLength.isMorning()) {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
             noon = null;
         } else if (applicationDayLength.isNoon()) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
         } else {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone, period);
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);
@@ -253,30 +254,31 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(sickNote.getStatus());
         final String typeCategory = sickNote.getSickNoteType().getCategory().name();
         final Long typeId = sickNote.getSickNoteType().getId();
+        final DateRange period = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
 
         final AbsencePeriod.RecordMorningSick morning;
         final AbsencePeriod.RecordNoonSick noon;
 
         if (workingTimeDayLength.isHalfDay()) {
             if (workingTimeDayLength.isMorning()) {
-                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId, period);
                 noon = null;
             } else {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId, period);
             }
             return new AbsencePeriod.Record(date, person, morning, noon);
         }
 
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId, period);
             noon = null;
         } else if (DayLength.NOON.equals(sickNote.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId, period);
         } else {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId, period);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId, period);
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);

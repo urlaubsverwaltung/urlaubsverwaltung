@@ -35,6 +35,8 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     private final double absentNumeric;
     private final String category;
     private final Long typeId;
+    private final String from;
+    private final String to;
 
     AbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
         this.date = date.format(ofPattern(DATE_PATTERN));
@@ -45,6 +47,8 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
         this.absentNumeric = dayLength.getDuration().doubleValue();
         this.category = recordInfo.getCategory().orElse(null);
         this.typeId = recordInfo.getTypeId().orElse(null);
+        this.from = recordInfo.getPeriod().map(period -> period.startDate().format(ofPattern(DATE_PATTERN))).orElse(null);
+        this.to = recordInfo.getPeriod().map(period -> period.endDate().format(ofPattern(DATE_PATTERN))).orElse(null);
 
         if (VacationCategory.OVERTIME.name().equals(category) && id != null) {
             this.add(linkTo(methodOn(OvertimeAbsenceApiController.class).overtimeAbsence(recordInfo.getPerson().getId(), id)).withRel("overtime"));
@@ -90,5 +94,19 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
 
     public Long getTypeId() {
         return typeId;
+    }
+
+    /**
+     * @return the first day of the whole vacation or sick note, not only of the requested days
+     */
+    public String getFrom() {
+        return from;
+    }
+
+    /**
+     * @return the last day of the whole vacation or sick note, not only of the requested days
+     */
+    public String getTo() {
+        return to;
     }
 }

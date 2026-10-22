@@ -151,6 +151,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
         @RequestParam(value = "personId", required = false) Long personId,
         @RequestParam(value = "from", required = false) String startDateString,
         @RequestParam(value = "to", required = false) String endDateString,
+        @RequestParam(value = "dayLength", defaultValue = "FULL") DayLength dayLength,
         Model model, Locale locale
     ) {
 
@@ -170,6 +171,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
             final ApplicationForLeaveForm appForLeaveForm = new ApplicationForLeaveForm();
             appForLeaveForm.setStartDate(startDate);
             appForLeaveForm.setEndDate(endDate);
+            appForLeaveForm.setDayLength(dayLength);
 
             prepareApplicationForLeaveForm(signedInUser, person, appForLeaveForm, model, locale);
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));

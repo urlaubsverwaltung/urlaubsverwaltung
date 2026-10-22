@@ -671,6 +671,23 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void getNewApplicationFormWithGivenDayLength() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Account account = new Account(person, LocalDate.of(2014, JANUARY, 1), LocalDate.of(2014, DECEMBER, 31), true, LocalDate.of(2014, APRIL, 1), TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        perform(
+            get("/web/application/new")
+                .param("dayLength", "NOON")
+        )
+            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("dayLength", is(DayLength.NOON))));
+    }
+
+    @Test
     void getNewApplicationFormShowsForm() throws Exception {
 
         final Person person = new Person();

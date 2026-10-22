@@ -23,11 +23,34 @@
         window.uv.canApplyForLeave = /*[[${applicationOverviewInformation.canAddApplicationForLeave}]]*/ false;
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
+        window.uv.vacationTypes = window.uv.vacationTypes || {};
+        window.uv.vacationTypes.labels = /*[[${vacationTypeLabels}]]*/ {};
 
         window.uv.i18n = window.uv.i18n || {};
         window.uv.i18n["overview.calendar.button.previous.label"] =
           /*[[#{overview.calendar.button.previous.label}]]*/ "";
         window.uv.i18n["overview.calendar.button.next.label"] = /*[[#{overview.calendar.button.next.label}]]*/ "";
+        window.uv.i18n["application.data.title.new"] = /*[[#{application.data.title.new}]]*/ "";
+        window.uv.i18n["sicknote.title"] = /*[[#{sicknote.title}]]*/ "";
+        window.uv.i18n["absence.period"] = /*[[#{absence.period}]]*/ "";
+        window.uv.i18n["overview.calendar.day-popover.duration"] = /*[[#{overview.calendar.day-popover.duration}]]*/ "";
+        window.uv.i18n["overview.calendar.day-popover.work-days"] =
+          /*[[#{overview.calendar.day-popover.work-days}]]*/ "";
+        window.uv.i18n["overview.calendar.day-popover.work-days.one"] =
+          /*[[#{overview.calendar.day-popover.work-days.one}]]*/ "";
+        window.uv.i18n["overview.calendar.day-popover.free.MORNING"] =
+          /*[[#{overview.calendar.day-popover.free.MORNING}]]*/ "";
+        window.uv.i18n["overview.calendar.day-popover.free.NOON"] =
+          /*[[#{overview.calendar.day-popover.free.NOON}]]*/ "";
+        window.uv.i18n["FULL"] = /*[[#{FULL}]]*/ "";
+        window.uv.i18n["MORNING"] = /*[[#{MORNING}]]*/ "";
+        window.uv.i18n["NOON"] = /*[[#{NOON}]]*/ "";
+        window.uv.i18n["WAITING"] = /*[[#{WAITING}]]*/ "";
+        window.uv.i18n["TEMPORARY_ALLOWED"] = /*[[#{TEMPORARY_ALLOWED}]]*/ "";
+        window.uv.i18n["ALLOWED"] = /*[[#{ALLOWED}]]*/ "";
+        window.uv.i18n["ALLOWED_CANCELLATION_REQUESTED"] = /*[[#{ALLOWED_CANCELLATION_REQUESTED}]]*/ "";
+        window.uv.i18n["sicknote.status.SUBMITTED"] = /*[[#{sicknote.status.SUBMITTED}]]*/ "";
+        window.uv.i18n["sicknote.status.ACTIVE"] = /*[[#{sicknote.status.ACTIVE}]]*/ "";
         /*]]>*/
       </script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>

@@ -20,9 +20,14 @@ import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.ui.extension.UiIntegrationTest;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
@@ -112,6 +117,10 @@ class OverviewCalendarUIIT {
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
     @Autowired
+    private SickNoteService sickNoteService;
+    @Autowired
+    private SickNoteTypeService sickNoteTypeService;
+    @Autowired
     private MessageSource messageSource;
     @Autowired
     private Clock clock;
@@ -177,6 +186,37 @@ class OverviewCalendarUIIT {
         navigationPage.logout();
     }
 
+
+    @Test
+    void userSeesSickNoteInPopoverOfCalendarDay(Page page) {
+        page.clock().setFixedTime(clock.instant().toEpochMilli());
+
+        final Person officePerson = createPerson("Selina", "Kyle", List.of(USER, OFFICE));
+        final LocalDate date = LocalDate.of(2022, MARCH, 16);
+        final SickNote sickNote = sickNoteService.save(SickNote.builder()
+            .person(officePerson)
+            .applier(officePerson)
+            .sickNoteType(sickNoteTypeService.getSickNoteTypes().getFirst())
+            .startDate(date)
+            .endDate(date)
+            .dayLength(DayLength.FULL)
+            .status(SickNoteStatus.ACTIVE)
+            .build());
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
+
+        page.waitForURL(OverviewPage.URL_PATTERN);
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitlePattern(officePerson.getNiceName(), FIXED_DATE.getYear()));
+
+        overviewPage.clickDay(date);
+        overviewPage.assertDayPopoverLinksTo("Krankmeldung ganztägig aktiv", Pattern.compile("/web/sicknote/%d$".formatted(sickNote.getId())));
+
+        navigationPage.logout();
+    }
 
     @Test
     void departmentHeadWithoutApplicationAddCannotStartLeaveApplicationFromCalendarOfMember(Page page) {
