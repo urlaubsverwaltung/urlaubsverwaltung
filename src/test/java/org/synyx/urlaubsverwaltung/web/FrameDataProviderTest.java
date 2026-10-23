@@ -854,7 +854,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companyBlackoutPeriodLink(boolean active) {
-        return new NavigationItemDto("company-blackoutperiod-link", "/web/blackoutperiod", "nav.company.blackoutperiods", "slash", active);
+        return new NavigationItemDto("company-blackoutperiod-link", "/web/blackoutperiod", "nav.company.blackoutperiods", "lock", active);
     }
 
     private static NavigationItemDto companyOvertimeLink() {

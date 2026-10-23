@@ -181,7 +181,7 @@ public class FrameDataProvider implements DataProviderInterface {
         final boolean canViewBlackoutPeriods = user.hasRole(OFFICE) || user.hasRole(BOSS);
         if (canViewBlackoutPeriods) {
             final String blackoutPeriod = "/web/blackoutperiod";
-            elements.add(new NavigationItemDto("company-blackoutperiod-link", blackoutPeriod, "nav.company.blackoutperiods", "slash", url.equals(blackoutPeriod)));
+            elements.add(new NavigationItemDto("company-blackoutperiod-link", blackoutPeriod, "nav.company.blackoutperiods", "lock", url.equals(blackoutPeriod)));
         }
 
         final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
