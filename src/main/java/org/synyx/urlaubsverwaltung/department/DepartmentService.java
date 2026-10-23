@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.PersonPageable;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -231,6 +232,18 @@ public interface DepartmentService {
      * @return all managed and active members for the person
      */
     Page<Person> getManagedActiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
+
+    /**
+     * Returns a {@link Page} of the distinct active members of the given departments. Departments the person is not
+     * allowed to manage are skipped, so the result never contains a person the person is not responsible for.
+     *
+     * @param person         person to get managed members for
+     * @param departmentIds  departments to get managed members for
+     * @param personPageable person pageable
+     * @param query          query for firstname, lastname
+     * @return managed and active members of the given departments
+     */
+    Page<Person> getManagedActiveMembersOfPersonAndDepartments(Person person, Collection<Long> departmentIds, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the
