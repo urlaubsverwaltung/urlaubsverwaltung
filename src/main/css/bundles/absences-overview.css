@@ -380,7 +380,14 @@ a.absence-bar[href]:focus-visible {
 }
 
 .absence-bar--status-temporary_allowed {
-  background: linear-gradient(135deg, var(--absence-bar-fill) 50%, transparent 50%);
+  /* one diagonal through the middle of the whole bar: filled before it, empty after it. A 135deg gradient line runs
+     at 1/sqrt(2) of the horizontal distance, so the stop moves from the piece's centre by that share of the distance */
+  background: linear-gradient(
+    135deg,
+    var(--absence-bar-fill)
+      calc(50% + var(--quarters-to-bar-middle, 0) * var(--absence-overview-day-width) / 4 * 0.7071),
+    transparent 0
+  );
 }
 
 .absence-bar-label {

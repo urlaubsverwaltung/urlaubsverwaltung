@@ -10,14 +10,15 @@ public class AbsenceOverviewBarPieceDto {
     private final String color;
     private final String label;
     private final int labelHalves;
+    private final int quartersToBarMiddle;
     private final String title;
     private final AbsenceBars.Detail detail;
     private final boolean tabStop;
 
     @SuppressWarnings("java:S107") // a plain value holder for the template
     AbsenceOverviewBarPieceDto(AbsenceBars.Half half, AbsenceBars.Kind kind, boolean roundedStart, boolean roundedEnd,
-                               AbsenceBars.Status status, String color, String label, int labelHalves, String title,
-                               AbsenceBars.Detail detail, boolean tabStop) {
+                               AbsenceBars.Status status, String color, String label, int labelHalves,
+                               int quartersToBarMiddle, String title, AbsenceBars.Detail detail, boolean tabStop) {
         this.half = half;
         this.kind = kind;
         this.roundedStart = roundedStart;
@@ -26,6 +27,7 @@ public class AbsenceOverviewBarPieceDto {
         this.color = color;
         this.label = label;
         this.labelHalves = labelHalves;
+        this.quartersToBarMiddle = quartersToBarMiddle;
         this.title = title;
         this.detail = detail;
         this.tabStop = tabStop;
@@ -61,6 +63,10 @@ public class AbsenceOverviewBarPieceDto {
 
     public int getLabelHalves() {
         return labelHalves;
+    }
+
+    public int getQuartersToBarMiddle() {
+        return quartersToBarMiddle;
     }
 
     public String getTitle() {

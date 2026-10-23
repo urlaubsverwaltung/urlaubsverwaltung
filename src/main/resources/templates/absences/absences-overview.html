@@ -214,7 +214,7 @@
                     ></span>
                     <th:block
                       th:each="bar : ${day.bars}"
-                      th:with="barClass=|absence-bar absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|, barStyle=|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})|, barHref=${bar.applicationId != null} ? @{/web/application/{id} (id=${bar.applicationId})} : (${bar.sickNoteId != null} ? @{/web/sicknote/{id} (id=${bar.sickNoteId})})"
+                      th:with="barClass=|absence-bar absence-bar--${#strings.toLowerCase(bar.half)} absence-bar--${#strings.toLowerCase(bar.kind)} absence-bar--status-${#strings.toLowerCase(bar.status)}${bar.roundedStart ? ' absence-bar--start' : ''}${bar.roundedEnd ? ' absence-bar--end' : ''}|, barStyle=|--absence-bar-color:var(--absence-color-${bar.color});--absence-bar-label-color:var(--absence-label-color-${bar.color})${bar.status.name() == 'TEMPORARY_ALLOWED' ? ';--quarters-to-bar-middle:' + bar.quartersToBarMiddle : ''}|, barHref=${bar.applicationId != null} ? @{/web/application/{id} (id=${bar.applicationId})} : (${bar.sickNoteId != null} ? @{/web/sicknote/{id} (id=${bar.sickNoteId})})"
                     >
                       <a
                         th:if="${barHref != null}"

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -354,9 +355,31 @@ class AbsenceBarsTest {
         assertThat(pieces).isEmpty();
     }
 
+    @Test
+    void quartersToBarMiddle() {
+        final DateRange timeline = new DateRange(dec(18), feb(14));
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = AbsenceBars.compute(timeline, Map.of(
+            jan(6), new AbsenceBars.Day(AbsenceBars.HalfDay.EMPTY, new AbsenceBars.HalfDay(VACATION_7, null)),
+            jan(7), full(VACATION_7),
+            jan(8), new AbsenceBars.Day(new AbsenceBars.HalfDay(VACATION_7, null), AbsenceBars.HalfDay.EMPTY)
+        ), JANUARY_2025);
+
+        assertThat(pieces.get(jan(6))).extracting(AbsenceBars.Piece::quartersToBarMiddle).containsExactly(3);
+        assertThat(pieces.get(jan(7))).extracting(AbsenceBars.Piece::quartersToBarMiddle).containsExactly(0);
+        assertThat(pieces.get(jan(8))).extracting(AbsenceBars.Piece::quartersToBarMiddle).containsExactly(-3);
+    }
+
+    /**
+     * @return the pieces without their distance to the bar middle, which only {@link #quartersToBarMiddle()} looks at
+     */
     private static Map<LocalDate, List<AbsenceBars.Piece>> compute(Map<LocalDate, AbsenceBars.Day> days, DateRange visible) {
         final DateRange timeline = new DateRange(visible.startDate().minusDays(14), visible.endDate().plusDays(14));
-        return AbsenceBars.compute(timeline, days, visible);
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = new HashMap<>();
+        AbsenceBars.compute(timeline, days, visible).forEach((date, datePieces) -> pieces.put(date, datePieces.stream()
+            .map(piece -> new AbsenceBars.Piece(piece.half(), piece.kind(), piece.roundedStart(), piece.roundedEnd(), piece.absence(),
+                piece.gap(), piece.coveredByAbsence(), piece.labelHalves(), 0))
+            .toList()));
+        return pieces;
     }
 
     private static AbsenceBars.Absence absence(String key) {
@@ -376,11 +399,11 @@ class AbsenceBarsTest {
     }
 
     private static AbsenceBars.Piece solid(AbsenceBars.Half half, boolean roundedStart, boolean roundedEnd, AbsenceBars.Absence absence, int labelHalves) {
-        return new AbsenceBars.Piece(half, SOLID, roundedStart, roundedEnd, absence, null, true, labelHalves);
+        return new AbsenceBars.Piece(half, SOLID, roundedStart, roundedEnd, absence, null, true, labelHalves, 0);
     }
 
     private static AbsenceBars.Piece bridge(AbsenceBars.Half half, boolean roundedStart, boolean roundedEnd, AbsenceBars.Absence absence, AbsenceBars.Gap gap, boolean coveredByAbsence) {
-        return new AbsenceBars.Piece(half, BRIDGE, roundedStart, roundedEnd, absence, gap, coveredByAbsence, 0);
+        return new AbsenceBars.Piece(half, BRIDGE, roundedStart, roundedEnd, absence, gap, coveredByAbsence, 0, 0);
     }
 
     private static LocalDate jan(int day) {

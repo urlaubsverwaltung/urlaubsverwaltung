@@ -84,13 +84,15 @@ final class AbsenceBars {
      *                         absence does not cover, e.g. the weekend inside a vacation
      * @param labelHalves      number of half days the label spans, 0 when this piece carries no label; a bar is labelled
      *                         once per month, on the first solid stretch of at least a whole day (two half days)
+     * @param quartersToBarMiddle quarter days from the centre of this piece to the middle of its bar, negative when the
+     *                            middle lies before the piece
      */
     record Piece(Half half, Kind kind, boolean roundedStart, boolean roundedEnd, Absence absence, Gap gap,
-                 boolean coveredByAbsence, int labelHalves) {
+                 boolean coveredByAbsence, int labelHalves, int quartersToBarMiddle) {
     }
 
     private record SlotPiece(int bar, Absence absence, Kind kind, Gap gap, boolean coveredByAbsence,
-                             boolean first, boolean last) {
+                             boolean first, boolean last, int barStart, int barEnd) {
     }
 
     private record BarMonth(int bar, YearMonth month) {
@@ -145,7 +147,7 @@ final class AbsenceBars {
             for (int s = start; s <= last; s++) {
                 final HalfDay slot = slots[s];
                 final Kind kind = slot.gap() == null ? Kind.SOLID : Kind.BRIDGE;
-                assigned[s] = new SlotPiece(bar, absence, kind, slot.gap(), slot.absence() != null, s == start, s == last);
+                assigned[s] = new SlotPiece(bar, absence, kind, slot.gap(), slot.absence() != null, s == start, s == last, start, last);
             }
 
             bar++;
@@ -245,13 +247,14 @@ final class AbsenceBars {
             if (morning != null && noon != null && morning.bar() == noon.bar() && morning.kind() == noon.kind()
                 && Objects.equals(morning.gap(), noon.gap()) && morning.coveredByAbsence() == noon.coveredByAbsence()) {
                 final int halves = Math.max(labelHalves[morningSlot], labelHalves[noonSlot]);
-                pieces.add(new Piece(Half.FULL, morning.kind(), morning.first(), noon.last(), morning.absence(), morning.gap(), morning.coveredByAbsence(), halves));
+                final int quartersToBarMiddle = morning.barStart() + morning.barEnd() - morningSlot - noonSlot;
+                pieces.add(new Piece(Half.FULL, morning.kind(), morning.first(), noon.last(), morning.absence(), morning.gap(), morning.coveredByAbsence(), halves, quartersToBarMiddle));
             } else {
                 if (morning != null) {
-                    pieces.add(piece(Half.MORNING, morning, labelHalves[morningSlot]));
+                    pieces.add(piece(Half.MORNING, morning, morningSlot, labelHalves[morningSlot]));
                 }
                 if (noon != null) {
-                    pieces.add(piece(Half.NOON, noon, labelHalves[noonSlot]));
+                    pieces.add(piece(Half.NOON, noon, noonSlot, labelHalves[noonSlot]));
                 }
             }
 
@@ -263,8 +266,9 @@ final class AbsenceBars {
         return piecesByDate;
     }
 
-    private static Piece piece(Half half, SlotPiece slotPiece, int labelHalves) {
-        return new Piece(half, slotPiece.kind(), slotPiece.first(), slotPiece.last(), slotPiece.absence(), slotPiece.gap(), slotPiece.coveredByAbsence(), labelHalves);
+    private static Piece piece(Half half, SlotPiece slotPiece, int slot, int labelHalves) {
+        final int quartersToBarMiddle = slotPiece.barStart() + slotPiece.barEnd() - 2 * slot;
+        return new Piece(half, slotPiece.kind(), slotPiece.first(), slotPiece.last(), slotPiece.absence(), slotPiece.gap(), slotPiece.coveredByAbsence(), labelHalves, quartersToBarMiddle);
     }
 
     private static boolean isVisible(LocalDate date, DateRange visible) {
