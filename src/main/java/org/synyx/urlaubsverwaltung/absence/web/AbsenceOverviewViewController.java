@@ -697,7 +697,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final String label = piece.labelHalves() > 0 ? absence.label() : null;
 
         return new AbsenceOverviewBarPieceDto(piece.half(), piece.kind(), piece.roundedStart(), piece.roundedEnd(),
-            absence.status(), absence.color(), label, piece.labelHalves(), title, absence.detail(), tabStop);
+            absence.status(), absence.color(), label, piece.labelHalves(), piece.quartersToBarMiddle(), title, absence.detail(), tabStop);
     }
 
     private static String barAbsenceTitle(AbsenceBars.Absence absence, AbsenceBars.Half half, UnaryOperator<String> message) {
