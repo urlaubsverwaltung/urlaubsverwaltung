@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,6 +33,8 @@ class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
     private SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     @Autowired
     private PersonService personService;
+    @Autowired
+    private SickNoteTypeService sickNoteTypeService;
 
     @Test
     void ensureFindAllBySickNoteIdOrderByCreatedAt() {
@@ -44,7 +47,7 @@ class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
         final Person office = personService.create("alfred", "Alfred", "Pennyworth", "alfred@example.org");
         office.setPermissions(List.of(USER, OFFICE));
 
-        final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).startDate(now.minusDays(10)).endDate(now.minusDays(10)).status(SickNoteStatus.ACTIVE).build());
+        final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).sickNoteType(sickNoteTypeService.getSickNoteTypes().getFirst()).startDate(now.minusDays(10)).endDate(now.minusDays(10)).status(SickNoteStatus.ACTIVE).build());
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
 
         final Long sickNoteId = sickNote.getId();
