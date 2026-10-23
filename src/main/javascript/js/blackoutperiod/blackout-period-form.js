@@ -190,6 +190,13 @@ export function initImpact(root, dates) {
 
   // the turbo frame renders the applications colliding with the blackout period of the form
   const loadConflicts = () => {
+    if (!currentDates.startDate || !currentDates.endDate) {
+      // without a complete period nothing collides. without a src the frame loads again once the period is back.
+      conflictsFrame.removeAttribute("src");
+      conflictsFrame.replaceChildren();
+      return;
+    }
+
     const formData = new FormData(form);
     // only the scope, the form also holds the csrf token which must not end up in a url
     const parameters = new URLSearchParams();
@@ -198,9 +205,9 @@ export function initImpact(root, dates) {
         parameters.append(name, value);
       }
     }
-    parameters.set("startDate", currentDates.startDate ?? "");
-    parameters.set("endDate", currentDates.endDate ?? "");
-    conflictsFrame.src = `${conflictsFrame.dataset.src}?${parameters}`;
+    parameters.set("startDate", currentDates.startDate);
+    parameters.set("endDate", currentDates.endDate);
+    conflictsFrame.setAttribute("src", `${conflictsFrame.dataset.src}?${parameters}`);
   };
 
   const update = () => {

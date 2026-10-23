@@ -376,7 +376,7 @@ describe("blackout-period-form", () => {
       initImpact(document, { startDate: "2026-12-22", endDate: "2027-01-06" });
 
       const frame = document.querySelector("[data-blackout-conflicts-frame]");
-      const [path, query] = frame.src.split("?");
+      const [path, query] = frame.getAttribute("src").split("?");
       const parameters = new URLSearchParams(query);
       expect(path).toBe("/web/blackoutperiod/conflicts");
       expect(parameters.get("companyWide")).toBe("false");
@@ -391,7 +391,27 @@ describe("blackout-period-form", () => {
       support.checked = false;
       support.dispatchEvent(new Event("change", { bubbles: true }));
 
-      expect(new URLSearchParams(frame.src.split("?")[1]).getAll("departmentIds")).toEqual(["1"]);
+      expect(new URLSearchParams(frame.getAttribute("src").split("?")[1]).getAll("departmentIds")).toEqual(["1"]);
+    });
+
+    it("loads no colliding applications without a complete period and clears the shown ones", async () => {
+      render();
+      const frame = document.querySelector("[data-blackout-conflicts-frame]");
+      frame.innerHTML = "<p>old conflicts</p>";
+      const { initImpact } = await import("../blackout-period-form.js");
+      initImpact(document, { startDate: "2026-12-22", endDate: "" });
+
+      expect(frame.hasAttribute("src")).toBe(false);
+      expect(frame.innerHTML).toBe("");
+
+      const endDate = document.createElement("duet-date-picker");
+      endDate.setAttribute("name", "endDate");
+      document.body.append(endDate);
+      endDate.dispatchEvent(new CustomEvent("duetChange", { bubbles: true, detail: { value: "2027-01-06" } }));
+      expect(frame.getAttribute("src")).toContain("endDate=2027-01-06");
+
+      endDate.dispatchEvent(new CustomEvent("duetChange", { bubbles: true, detail: { value: "" } }));
+      expect(frame.hasAttribute("src")).toBe(false);
     });
 
     it("hides the expand button when all affected persons are shown", async () => {
