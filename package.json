@@ -51,7 +51,7 @@
     "@vitest/coverage-v8": "5.0.5",
     "concurrently": "10.0.6",
     "cross-env": "10.1.0",
-    "cssnano": "9.8.0",
+    "cssnano": "9.9.0",
     "esbuild": "0.28.2",
     "eslint": "10.13.0",
     "eslint-plugin-unicorn": "64.0.0",
