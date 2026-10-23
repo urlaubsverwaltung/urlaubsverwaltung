@@ -126,21 +126,22 @@ function hydrateDatepicker(duetDateElement, options) {
     });
 
     const personId = getPersonId();
-    if (!personId) {
-      return;
-    }
+    // without a person (e.g. the blackout period form) the days get the common look, but no absences
+    const markers = personId
+      ? Promise.allSettled([
+          getJSON(
+            `${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+          ).then(pick("publicHolidays")),
+          getJSON(
+            `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
+          ).then(pick("absences")),
+          getJSON(
+            `${urlPrefix}/persons/${personId}/blackout-periods?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
+          ).then(pick("blackoutPeriods")),
+        ])
+      : Promise.resolve([{ value: [] }, { value: [] }, { value: [] }]);
 
-    Promise.allSettled([
-      getJSON(
-        `${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
-      ).then(pick("publicHolidays")),
-      getJSON(
-        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}&absence-types=vacation,sick_note,no_workday`,
-      ).then(pick("absences")),
-      getJSON(
-        `${urlPrefix}/persons/${personId}/blackout-periods?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
-      ).then(pick("blackoutPeriods")),
-    ]).then(([publicHolidays, absences, blackoutPeriods]) => {
+    markers.then(([publicHolidays, absences, blackoutPeriods]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {

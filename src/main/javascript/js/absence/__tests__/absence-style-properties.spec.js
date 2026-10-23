@@ -1,6 +1,15 @@
 import { addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "../absence-style-properties";
 
 describe("absence-style-properties", () => {
+  it("adds nothing without absences on a page without vacation type colors", () => {
+    globalThis.uv = {};
+    const div = document.createElement("div");
+
+    addAbsenceTypeStyleToNode(div, []);
+
+    expect(div.getAttribute("style")).toBeNull();
+  });
+
   describe("addAbsenceTypeStyleToNode", () => {
     beforeEach(() => {
       globalThis.uv = {};

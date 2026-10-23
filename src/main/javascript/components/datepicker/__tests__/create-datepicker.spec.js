@@ -443,6 +443,26 @@ describe("create-datepicker", () => {
       });
     });
 
+    test("gives the days the common look without fetching anything when there is no person", async () => {
+      document.body.innerHTML = `
+        <input value="24.12.2020" data-iso-value="2020-12-24" />
+      `;
+
+      await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => "" });
+
+      document.querySelector("button.duet-date__toggle").click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const dayOf = (dayAndMonth) =>
+        [...document.querySelectorAll(".duet-date__vhidden")].find((span) => span.textContent === dayAndMonth)
+          .parentElement;
+
+      expect(fetchMock.callHistory.calls()).toHaveLength(0);
+      expect(dayOf("24. Dezember").classList).toContain("datepicker-day");
+      expect(dayOf("26. Dezember").classList).toContain("datepicker-day-weekend");
+      expect(dayOf("24. Dezember").querySelector("[data-uv-icon]")).not.toBeNull();
+    });
+
     describe("highlights days", () => {
       function mockAbsences(absences) {
         fetchMock.route(
