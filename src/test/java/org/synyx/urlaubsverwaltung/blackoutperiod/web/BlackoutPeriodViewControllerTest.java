@@ -20,6 +20,8 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
@@ -28,7 +30,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -69,6 +73,8 @@ class BlackoutPeriodViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
+    private PersonService personService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -80,7 +86,7 @@ class BlackoutPeriodViewControllerTest {
     @BeforeEach
     void setUp() {
         messageSource.setUseCodeAsDefaultMessage(true);
-        sut = new BlackoutPeriodViewController(blackoutPeriodService, departmentService, vacationTypeService, validator,
+        sut = new BlackoutPeriodViewController(blackoutPeriodService, departmentService, personService, vacationTypeService, validator,
             messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 
@@ -196,7 +202,6 @@ class BlackoutPeriodViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
-        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
 
         final BlackoutPeriod savedBlackoutPeriod = new BlackoutPeriod();
         savedBlackoutPeriod.setId(1L);
@@ -218,7 +223,6 @@ class BlackoutPeriodViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
-        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
 
         final BlackoutPeriod savedBlackoutPeriod = new BlackoutPeriod();
         savedBlackoutPeriod.setId(1L);
@@ -238,33 +242,7 @@ class BlackoutPeriodViewControllerTest {
     }
 
     @Test
-    void createBlackoutPeriodWithConflictsAndNoConfirmationRedisplaysFormWithoutSaving() throws Exception {
-
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
-        when(departmentService.getAllDepartments()).thenReturn(List.of());
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application conflictingApplication = new Application();
-        conflictingApplication.setPerson(person);
-        conflictingApplication.setStartDate(LocalDate.of(2026, DECEMBER, 22));
-        conflictingApplication.setEndDate(LocalDate.of(2026, DECEMBER, 23));
-        conflictingApplication.setVacationType(createVacationType(1L, HOLIDAY, messageSource));
-
-        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of(conflictingApplication));
-
-        perform(post("/web/blackoutperiod/new")
-            .param("title", "Jahresabschluss")
-            .param("startDate", "2026-12-20")
-            .param("endDate", "2027-01-05"))
-            .andExpect(view().name("blackoutperiod/blackout_period_form"))
-            .andExpect(model().attribute("confirmRequired", true))
-            .andExpect(model().attributeExists("conflictingApplications"));
-
-        verify(blackoutPeriodService, never()).create(any(BlackoutPeriod.class));
-    }
-
-    @Test
-    void createBlackoutPeriodWithConflictsAndConfirmationSavesAnyway() throws Exception {
+    void createBlackoutPeriodSavesWithoutLookingForCollidingApplications() throws Exception {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(departmentService.getAllDepartments()).thenReturn(List.of());
@@ -277,11 +255,59 @@ class BlackoutPeriodViewControllerTest {
         perform(post("/web/blackoutperiod/new")
             .param("title", "Jahresabschluss")
             .param("startDate", "2026-12-20")
-            .param("endDate", "2027-01-05")
-            .param("confirm", "true"))
+            .param("endDate", "2027-01-05"))
             .andExpect(redirectedUrl("/web/blackoutperiod"));
 
         verify(blackoutPeriodService).create(any(BlackoutPeriod.class));
+        verify(blackoutPeriodService, never()).findConflictingApplications(any(BlackoutPeriod.class));
+    }
+
+    @Test
+    void conflictingApplicationsRendersTheCollidingApplicationsOfTheScope() throws Exception {
+
+        final Department department = createDepartment("Vertrieb");
+        department.setId(42L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        final VacationType<?> vacationType = activeVacationType(1L, messageSource);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application conflictingApplication = new Application();
+        conflictingApplication.setPerson(person);
+        conflictingApplication.setStartDate(LocalDate.of(2026, DECEMBER, 22));
+        conflictingApplication.setEndDate(LocalDate.of(2026, DECEMBER, 23));
+        conflictingApplication.setVacationType(vacationType);
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of(conflictingApplication));
+
+        perform(get("/web/blackoutperiod/conflicts")
+            .param("startDate", "2026-12-20")
+            .param("endDate", "2027-01-05")
+            .param("companyWide", "false")
+            .param("departmentIds", "42")
+            .param("allVacationTypes", "false")
+            .param("vacationTypeIds", "1"))
+            .andExpect(view().name("blackoutperiod/blackout_period_form::conflicts"))
+            .andExpect(model().attribute("conflictingApplications", List.of(new BlackoutPeriodConflictDto("Marlene Muster",
+                LocalDate.of(2026, DECEMBER, 22), LocalDate.of(2026, DECEMBER, 23), "application.data.vacationType.holiday"))));
+
+        final ArgumentCaptor<BlackoutPeriod> captor = ArgumentCaptor.forClass(BlackoutPeriod.class);
+        verify(blackoutPeriodService).findConflictingApplications(captor.capture());
+        assertThat(captor.getValue().getStartDate()).isEqualTo(LocalDate.of(2026, DECEMBER, 20));
+        assertThat(captor.getValue().getEndDate()).isEqualTo(LocalDate.of(2027, JANUARY, 5));
+        assertThat(captor.getValue().getDepartments()).containsExactly(department);
+        assertThat(captor.getValue().getVacationTypes()).containsExactly(vacationType);
+    }
+
+    @Test
+    void conflictingApplicationsRendersNothingWithoutACompletePeriod() throws Exception {
+
+        perform(get("/web/blackoutperiod/conflicts").param("startDate", "2026-12-20"))
+            .andExpect(view().name("blackoutperiod/blackout_period_form::conflicts"))
+            .andExpect(model().attribute("conflictingApplications", List.of()));
+
+        perform(get("/web/blackoutperiod/conflicts").param("startDate", "2026-12-20").param("endDate", "2026-12-19"))
+            .andExpect(model().attribute("conflictingApplications", List.of()));
+
         verify(blackoutPeriodService, never()).findConflictingApplications(any(BlackoutPeriod.class));
     }
 
@@ -367,9 +393,43 @@ class BlackoutPeriodViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(activeVacationType(1L, messageSource)));
 
         perform(get("/web/blackoutperiod/new"))
-            .andExpect(model().attribute("departmentOptions", List.of(new BlackoutPeriodOptionDto(42L, "Vertrieb", false))))
+            .andExpect(model().attribute("departmentOptions", List.of(new BlackoutPeriodDepartmentOptionDto(42L, "Vertrieb", false, 0))))
             .andExpect(model().attribute("vacationTypeOptions",
-                List.of(new BlackoutPeriodOptionDto(1L, "application.data.vacationType.holiday", false))));
+                List.of(new BlackoutPeriodVacationTypeOptionDto(1L, "application.data.vacationType.holiday", false, ORANGE))));
+    }
+
+    @Test
+    void newBlackoutPeriodFormAddsActivePersonsWithTheirDepartmentsAndMemberCountsToModel() throws Exception {
+
+        final Department vertrieb = createDepartment("Vertrieb");
+        vertrieb.setId(42L);
+        final Department marketing = createDepartment("Marketing");
+        marketing.setId(43L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(vertrieb, marketing));
+
+        final Person anna = new Person("anna", "Schmidt", "Anna", "anna@example.org");
+        anna.setId(1L);
+        final Person lea = new Person("lea", "Schulz", "Lea", "lea@example.org");
+        lea.setId(2L);
+        final Person tom = new Person("tom", "Klein", "Tom", "tom@example.org");
+        tom.setId(3L);
+        final List<Person> activePersons = List.of(anna, lea, tom);
+        when(personService.getActivePersons()).thenReturn(activePersons);
+        when(departmentService.getDepartmentIdsByMembers(activePersons)).thenReturn(Map.of(
+            new PersonId(1L), Set.of(42L),
+            new PersonId(2L), Set.of(43L, 42L)
+        ));
+
+        perform(get("/web/blackoutperiod/new"))
+            .andExpect(model().attribute("departmentOptions", List.of(
+                new BlackoutPeriodDepartmentOptionDto(42L, "Vertrieb", false, 2),
+                new BlackoutPeriodDepartmentOptionDto(43L, "Marketing", false, 1)
+            )))
+            .andExpect(model().attribute("affectablePersons", List.of(
+                new BlackoutPeriodPersonDto("Anna Schmidt", "AS", anna.getGravatarURL(), List.of(42L)),
+                new BlackoutPeriodPersonDto("Lea Schulz", "LS", lea.getGravatarURL(), List.of(42L, 43L)),
+                new BlackoutPeriodPersonDto("Tom Klein", "TK", tom.getGravatarURL(), List.of())
+            )));
     }
 
     @Test
@@ -395,9 +455,9 @@ class BlackoutPeriodViewControllerTest {
             .andExpect(view().name("blackoutperiod/blackout_period_form"))
             .andExpect(model().attribute("blackoutPeriod", hasProperty("id", is(1L))))
             .andExpect(model().attribute("blackoutPeriod", hasProperty("title", is("Vertriebssperre"))))
-            .andExpect(model().attribute("departmentOptions", List.of(new BlackoutPeriodOptionDto(42L, "Vertrieb", true))))
+            .andExpect(model().attribute("departmentOptions", List.of(new BlackoutPeriodDepartmentOptionDto(42L, "Vertrieb", true, 0))))
             .andExpect(model().attribute("vacationTypeOptions",
-                List.of(new BlackoutPeriodOptionDto(1L, "application.data.vacationType.holiday", true))));
+                List.of(new BlackoutPeriodVacationTypeOptionDto(1L, "application.data.vacationType.holiday", true, ORANGE))));
     }
 
     @Test
@@ -427,8 +487,7 @@ class BlackoutPeriodViewControllerTest {
         perform(post("/web/blackoutperiod/1")
             .param("title", "Jahresabschluss")
             .param("startDate", "2026-12-20")
-            .param("endDate", "2027-01-05")
-            .param("confirm", "true"))
+            .param("endDate", "2027-01-05"))
             .andExpect(redirectedUrl("/web/blackoutperiod"))
             .andExpect(flash().attribute("updatedBlackoutPeriodTitle", "Jahresabschluss"));
 
@@ -445,8 +504,7 @@ class BlackoutPeriodViewControllerTest {
         assertThatThrownBy(() -> perform(post("/web/blackoutperiod/1")
             .param("title", "Jahresabschluss")
             .param("startDate", "2026-12-20")
-            .param("endDate", "2027-01-05")
-            .param("confirm", "true")))
+            .param("endDate", "2027-01-05")))
             .hasCauseInstanceOf(UnknownBlackoutPeriodException.class);
 
         verify(blackoutPeriodService, never()).update(any(BlackoutPeriod.class));
@@ -497,8 +555,8 @@ class BlackoutPeriodViewControllerTest {
 
         perform(get("/web/blackoutperiod/1/edit").locale(GERMAN))
             .andExpect(model().attribute("vacationTypeOptions", contains(
-                new BlackoutPeriodOptionDto(1L, "Erholungsurlaub", false),
-                new BlackoutPeriodOptionDto(2L, "Bildungsurlaub (inaktiv)", true)
+                new BlackoutPeriodVacationTypeOptionDto(1L, "Erholungsurlaub", false, null),
+                new BlackoutPeriodVacationTypeOptionDto(2L, "Bildungsurlaub (inaktiv)", true, null)
             )));
     }
 

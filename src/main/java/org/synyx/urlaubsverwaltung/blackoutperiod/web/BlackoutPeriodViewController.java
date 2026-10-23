@@ -20,6 +20,9 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -29,11 +32,15 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.blackoutperiod.web.BlackoutPeriodFormMapper.mapToBlackoutPeriod;
@@ -50,6 +57,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
 
     private final BlackoutPeriodService blackoutPeriodService;
     private final DepartmentService departmentService;
+    private final PersonService personService;
     private final VacationTypeService vacationTypeService;
     private final BlackoutPeriodFormValidator validator;
     private final MessageSource messageSource;
@@ -60,6 +68,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     BlackoutPeriodViewController(
         BlackoutPeriodService blackoutPeriodService,
         DepartmentService departmentService,
+        PersonService personService,
         VacationTypeService vacationTypeService,
         BlackoutPeriodFormValidator validator,
         MessageSource messageSource,
@@ -69,6 +78,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     ) {
         this.blackoutPeriodService = blackoutPeriodService;
         this.departmentService = departmentService;
+        this.personService = personService;
         this.vacationTypeService = vacationTypeService;
         this.validator = validator;
         this.messageSource = messageSource;
@@ -122,10 +132,30 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     @PostMapping("/blackoutperiod/new")
     public String createBlackoutPeriod(
         @ModelAttribute("blackoutPeriod") BlackoutPeriodForm form, Errors errors,
-        @RequestParam(value = "confirm", required = false, defaultValue = "false") boolean confirm,
         Model model, Locale locale, RedirectAttributes redirectAttributes
     ) {
-        return saveBlackoutPeriod(form, errors, confirm, true, model, locale, redirectAttributes, blackoutPeriodService::create);
+        return saveBlackoutPeriod(form, errors, true, model, locale, redirectAttributes, blackoutPeriodService::create);
+    }
+
+    /**
+     * Renders the approved and waiting applications the blackout period of the form collides with, as a hint while the
+     * form is filled in. These applications stay valid, a blackout period only blocks new ones.
+     */
+    @PreAuthorize(IS_BOSS_OR_OFFICE)
+    @GetMapping("/blackoutperiod/conflicts")
+    public String conflictingApplications(@ModelAttribute("blackoutPeriod") BlackoutPeriodForm form, Model model, Locale locale) {
+
+        final LocalDate startDate = form.getStartDate();
+        final LocalDate endDate = form.getEndDate();
+
+        List<BlackoutPeriodConflictDto> conflicts = List.of();
+        if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
+            final BlackoutPeriod blackoutPeriod = mapToBlackoutPeriod(form, departmentService.getAllDepartments(), vacationTypeService.getAllVacationTypes());
+            conflicts = mapToConflictDtos(blackoutPeriodService.findConflictingApplications(blackoutPeriod), locale);
+        }
+        model.addAttribute("conflictingApplications", conflicts);
+
+        return "blackoutperiod/blackout_period_form::conflicts";
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
@@ -145,7 +175,6 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     @PostMapping("/blackoutperiod/{id}")
     public String updateBlackoutPeriod(
         @PathVariable("id") Long id, @ModelAttribute("blackoutPeriod") BlackoutPeriodForm form, Errors errors,
-        @RequestParam(value = "confirm", required = false, defaultValue = "false") boolean confirm,
         Model model, Locale locale, RedirectAttributes redirectAttributes
     ) throws UnknownBlackoutPeriodException {
 
@@ -154,7 +183,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         form.setId(id);
-        return saveBlackoutPeriod(form, errors, confirm, false, model, locale, redirectAttributes, blackoutPeriodService::update);
+        return saveBlackoutPeriod(form, errors, false, model, locale, redirectAttributes, blackoutPeriodService::update);
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
@@ -171,7 +200,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     private String saveBlackoutPeriod(
-        BlackoutPeriodForm form, Errors errors, boolean confirm, boolean isNew,
+        BlackoutPeriodForm form, Errors errors, boolean isNew,
         Model model, Locale locale, RedirectAttributes redirectAttributes, UnaryOperator<BlackoutPeriod> persist
     ) {
 
@@ -186,17 +215,6 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         final BlackoutPeriod blackoutPeriod = mapToBlackoutPeriod(form, allDepartments, allVacationTypes);
-
-        if (!confirm) {
-            final List<Application> conflicts = blackoutPeriodService.findConflictingApplications(blackoutPeriod);
-            if (!conflicts.isEmpty()) {
-                model.addAttribute("conflictingApplications", mapToConflictDtos(conflicts, locale));
-                model.addAttribute("confirmRequired", true);
-                prepareFormModel(model, locale, blackoutPeriod.getDepartments(), blackoutPeriod.getVacationTypes());
-                return "blackoutperiod/blackout_period_form";
-            }
-        }
-
         final BlackoutPeriod savedBlackoutPeriod = persist.apply(blackoutPeriod);
         redirectAttributes.addFlashAttribute(isNew ? "createdBlackoutPeriodTitle" : "updatedBlackoutPeriodTitle", savedBlackoutPeriod.getTitle());
 
@@ -208,18 +226,34 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         final Set<Long> selectedDepartmentIds = selectedDepartments.stream().map(Department::getId).collect(toSet());
         final Set<Long> selectedVacationTypeIds = selectedVacationTypes.stream().map(VacationType::getId).collect(toSet());
 
-        final List<BlackoutPeriodOptionDto> departmentOptions = departmentService.getAllDepartments().stream()
-            .map(department -> new BlackoutPeriodOptionDto(department.getId(), department.getName(), selectedDepartmentIds.contains(department.getId())))
+        // inactive persons cannot apply for leave, so only active ones are affected by a blackout period
+        final List<Person> activePersons = personService.getActivePersons();
+        final Map<PersonId, Set<Long>> departmentIdsByPerson = activePersons.isEmpty()
+            ? Map.of()
+            : departmentService.getDepartmentIdsByMembers(activePersons);
+        final Map<Long, Long> memberCountByDepartmentId = departmentIdsByPerson.values().stream()
+            .flatMap(Set::stream)
+            .collect(groupingBy(identity(), counting()));
+
+        final List<BlackoutPeriodDepartmentOptionDto> departmentOptions = departmentService.getAllDepartments().stream()
+            .map(department -> new BlackoutPeriodDepartmentOptionDto(department.getId(), department.getName(),
+                selectedDepartmentIds.contains(department.getId()), memberCountByDepartmentId.getOrDefault(department.getId(), 0L)))
             .toList();
 
-        final List<BlackoutPeriodOptionDto> vacationTypeOptions = vacationTypeService.getAllVacationTypes().stream()
+        final List<BlackoutPeriodVacationTypeOptionDto> vacationTypeOptions = vacationTypeService.getAllVacationTypes().stream()
             .filter(vacationType -> vacationType.isActive() || selectedVacationTypeIds.contains(vacationType.getId()))
-            .map(vacationType -> new BlackoutPeriodOptionDto(vacationType.getId(), vacationTypeOptionLabel(vacationType, locale),
-                selectedVacationTypeIds.contains(vacationType.getId())))
+            .map(vacationType -> new BlackoutPeriodVacationTypeOptionDto(vacationType.getId(), vacationTypeOptionLabel(vacationType, locale),
+                selectedVacationTypeIds.contains(vacationType.getId()), vacationType.getColor()))
+            .toList();
+
+        final List<BlackoutPeriodPersonDto> affectablePersons = activePersons.stream()
+            .map(person -> new BlackoutPeriodPersonDto(person.getNiceName(), person.getInitials(), person.getGravatarURL(),
+                departmentIdsByPerson.getOrDefault(person.getIdAsPersonId(), Set.of()).stream().sorted().toList()))
             .toList();
 
         model.addAttribute("departmentOptions", departmentOptions);
         model.addAttribute("vacationTypeOptions", vacationTypeOptions);
+        model.addAttribute("affectablePersons", affectablePersons);
     }
 
     private String vacationTypeOptionLabel(VacationType<?> vacationType, Locale locale) {
