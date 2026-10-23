@@ -59,6 +59,13 @@ const CSS = {
   mousedown: "mousedown",
 };
 
+// the bar style of an absence status, named as in the absence classes above. other statuses are solid.
+const barVariants = {
+  WAITING: "outline",
+  TEMPORARY_ALLOWED: "outline-solid-half",
+  ALLOWED_CANCELLATION_REQUESTED: "outline-solid-second-half",
+};
+
 const DATA = {
   date: "datepickerDate",
   month: "datepickerMonth",
@@ -219,7 +226,20 @@ const View = (function () {
     });
   }
 
+  // the custom property of the day piece, e.g. `--absence-bar-color-morning`
+  function barProperty(name, absent) {
+    return absent === "FULL" ? name : `${name}-${absent.toLowerCase()}`;
+  }
+
+  // how much of the piece is in the first half of its bar, in percent
+  function barFill({ absent, barOffset, barLength }) {
+    const halves = absent === "FULL" ? 2 : 1;
+    return Math.round(Math.min(Math.max((barLength / 2 - barOffset) / halves, 0), 1) * 100);
+  }
+
   function renderDay(date) {
+    const absenceBarPieces = holidayService.getAbsenceBarPieces(date);
+
     function classes() {
       return [
         assert.isToday(date) ? CSS.dayToday : "",
@@ -246,9 +266,24 @@ const View = (function () {
         holidayService.isSickDayMorningActive(date) ? CSS.daySickDayMorningActive : "",
         holidayService.isSickDayNoonWaiting(date) ? CSS.daySickDayNoonWaiting : "",
         holidayService.isSickDayNoonActive(date) ? CSS.daySickDayNoonActive : "",
+        ...absenceBarClasses(),
       ]
         .filter(Boolean)
         .join(" ");
+    }
+
+    function absenceBarClasses() {
+      return absenceBarPieces.flatMap(({ absent, absence, bridge, continuesBefore, continuesAfter }) => {
+        const part = absent.toLowerCase();
+        const type = absence.absenceType === "SICK_NOTE" ? "sick-note" : "absence";
+        return [
+          bridge
+            ? `datepicker-day-${type}-${part} absence-${part}--${barVariants[absence.status] ?? "solid"} absence-${part}--bridge`
+            : "",
+          continuesBefore ? `absence-${part}--continues-before` : "",
+          continuesAfter ? `absence-${part}--continues-after` : "",
+        ];
+      });
     }
 
     function style() {
@@ -271,6 +306,19 @@ const View = (function () {
         holidayService.isSickDayNoonWaiting(date) || holidayService.isSickDayNoonActive(date)
           ? "--absence-bar-color-noon: var(--sick-note-color)"
           : "",
+
+        // a temporarily allowed vacation fills the first half of its whole bar, not of each day
+        ...absenceBarPieces
+          .filter(({ absence }) => absence.status === "TEMPORARY_ALLOWED")
+          .map((piece) => `${barProperty("--absence-bar-fill", piece.absent)}:${barFill(piece)}%`),
+
+        // a bridge has no vacation of its own, it takes the colour of the vacation it bridges
+        ...absenceBarPieces
+          .filter(({ bridge, absence }) => bridge && absence.absenceType === "VACATION")
+          .map(
+            ({ absent, absence }) =>
+              `${barProperty("--absence-bar-color", absent)}:var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`,
+          ),
       ]
         .filter(Boolean)
         .join(";");
@@ -473,10 +521,7 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
-        holidayService.fetchPublicHolidays(getYear(date)),
-        holidayService.fetchAbsences(getYear(date)),
-      ]).then(view.displayNext);
+      void fetchYearsOf(date, addMonths(date, 1)).then(view.displayNext);
     },
 
     clickPrevious: function () {
@@ -489,12 +534,17 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      Promise.all([
-        holidayService.fetchPublicHolidays(getYear(date)),
-        holidayService.fetchAbsences(getYear(date)),
-      ]).then(view.displayPrevious);
+      void fetchYearsOf(date, subMonths(date, 1)).then(view.displayPrevious);
     },
   };
+
+  // the month beyond the new one as well: an absence bar continuing there must not be drawn as ending
+  function fetchYearsOf(...dates) {
+    const years = new Set(dates.map((date) => getYear(date)));
+    return Promise.all(
+      [...years].flatMap((year) => [holidayService.fetchPublicHolidays(year), holidayService.fetchAbsences(year)]),
+    );
+  }
 
   function selectionFrom(date) {
     if (date) {

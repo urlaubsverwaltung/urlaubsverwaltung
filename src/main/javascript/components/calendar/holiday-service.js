@@ -1,5 +1,5 @@
 import { getJSON } from "../../js/fetch";
-import { endOfYear, formatISO, getYear, startOfYear } from "date-fns";
+import { addDays, differenceInCalendarDays, endOfYear, formatISO, getYear, startOfYear, subDays } from "date-fns";
 import format from "../../lib/date-fns/format";
 import {
   isNoWorkday,
@@ -55,6 +55,7 @@ export const HolidayService = (function () {
 
     return function (data) {
       absenceCache[year] = absenceCache[year] || [];
+      barExtents = [];
 
       for (let absence of data.absences) {
         absenceCache[year].push(absence);
@@ -67,6 +68,7 @@ export const HolidayService = (function () {
 
     return function (data) {
       publicHolidayCache[year] = publicHolidayCache[year] || [];
+      barExtents = [];
 
       for (let publicHoliday of data.publicHolidays) {
         publicHolidayCache[year].push(publicHoliday);
@@ -90,6 +92,115 @@ export const HolidayService = (function () {
     const publicHolidaysForYear = cache[year] || [];
 
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
+  }
+
+  const covers = (absent, half) => absent === "FULL" || absent === half;
+
+  // the vacation or sick note on the half ("MORNING" or "NOON") of a day
+  function personalAbsenceOn({ date, half }) {
+    return getAbsencesForDate(date).find(
+      (absence) =>
+        (absence.absenceType === "VACATION" || absence.absenceType === "SICK_NOTE") && covers(absence.absent, half),
+    );
+  }
+
+  // a no workday or public holiday, which an absence bar runs across
+  function isOffOn({ date, half }) {
+    return (
+      getAbsencesForDate(date).some(
+        (absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent, half),
+      ) || getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
+    );
+  }
+
+  const nextHalfDay = ({ date, half }) =>
+    half === "MORNING" ? { date, half: "NOON" } : { date: addDays(date, 1), half: "MORNING" };
+  const previousHalfDay = ({ date, half }) =>
+    half === "NOON" ? { date, half: "MORNING" } : { date: subDays(date, 1), half: "NOON" };
+
+  /**
+   * @returns the vacation or sick note next to the half day, skipping half days off;
+   *          `undefined` when a working half day without one comes first. ends with the loaded years.
+   */
+  function adjacentAbsence(halfDay, step) {
+    let current = step(halfDay);
+    while (!personalAbsenceOn(current) && isOffOn(current)) {
+      current = step(current);
+    }
+    return personalAbsenceOn(current);
+  }
+
+  const isSameAbsence = (one, other) =>
+    Boolean(one && other) && one.absenceType === other.absenceType && one.id === other.id;
+
+  const halfDayIndex = ({ date, half }) =>
+    differenceInCalendarDays(date, new Date(2000, 0, 1)) * 2 + (half === "NOON" ? 1 : 0);
+
+  // the outermost half day of the absence the bar reaches in the direction of step, across half days off
+  function barEnd(halfDay, absence, step) {
+    let end = halfDay;
+    let current = step(halfDay);
+    let absenceOnCurrent = personalAbsenceOn(current);
+    while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && isOffOn(current))) {
+      if (absenceOnCurrent) {
+        end = current;
+      }
+      current = step(current);
+      absenceOnCurrent = personalAbsenceOn(current);
+    }
+    return end;
+  }
+
+  // the first and last half day index of the bars drawn so far. an absence interrupted by another one has two bars.
+  let barExtents = [];
+
+  function barExtent(halfDay, absence) {
+    const index = halfDayIndex(halfDay);
+    let extent = barExtents.find(
+      (candidate) => isSameAbsence(candidate.absence, absence) && candidate.first <= index && index <= candidate.last,
+    );
+    if (!extent) {
+      extent = {
+        absence,
+        first: halfDayIndex(barEnd(halfDay, absence, previousHalfDay)),
+        last: halfDayIndex(barEnd(halfDay, absence, nextHalfDay)),
+      };
+      barExtents.push(extent);
+    }
+    return extent;
+  }
+
+  // where the half day is in its bar, counted in half days
+  function barPosition(halfDay, absence) {
+    const { first, last } = barExtent(halfDay, absence);
+    return { barOffset: halfDayIndex(halfDay) - first, barLength: last - first + 1 };
+  }
+
+  // an empty piece when no bar runs across the half day
+  function absenceBarPiece(halfDay) {
+    const before = adjacentAbsence(halfDay, previousHalfDay);
+    const after = adjacentAbsence(halfDay, nextHalfDay);
+
+    const absence = personalAbsenceOn(halfDay);
+    if (absence) {
+      return {
+        absence,
+        bridge: false,
+        continuesBefore: isSameAbsence(absence, before),
+        continuesAfter: isSameAbsence(absence, after),
+        ...barPosition(halfDay, absence),
+      };
+    }
+    if (isOffOn(halfDay) && isSameAbsence(before, after)) {
+      return {
+        absence: before,
+        bridge: true,
+        continuesBefore: true,
+        continuesAfter: true,
+        ...barPosition(halfDay, before),
+      };
+    }
+    return {};
   }
 
   const HolidayService = {
@@ -235,6 +346,29 @@ export const HolidayService = (function () {
       return getPublicHolidaysForDate(date)
         .map((publicHoliday) => publicHoliday.description)
         .join(", ");
+    },
+
+    /**
+     * A vacation or sick note of several days is drawn as one bar. It runs across no workdays and public holidays
+     * in between, which are drawn as a bridge.
+     *
+     * @param {Date} date
+     * @returns {Array} the pieces of the bars on the day, as
+     *          `{absent, absence, bridge, continuesBefore, continuesAfter, barOffset, barLength}`.
+     *          `absent` is "FULL" for a piece over the whole day, else "MORNING" or "NOON". `barOffset` is the number of
+     *          half days of the bar before the piece, `barLength` the number of half days of the whole bar.
+     */
+    getAbsenceBarPieces: function (date) {
+      const morning = absenceBarPiece({ date, half: "MORNING" });
+      const noon = absenceBarPiece({ date, half: "NOON" });
+
+      if (morning.bridge === noon.bridge && isSameAbsence(morning.absence, noon.absence)) {
+        return [{ ...morning, absent: "FULL", continuesAfter: noon.continuesAfter }];
+      }
+      return [
+        { ...morning, absent: "MORNING" },
+        { ...noon, absent: "NOON" },
+      ].filter((piece) => piece.absence);
     },
 
     getAbsenceId: function (date) {

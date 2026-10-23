@@ -527,6 +527,7 @@ describe("calendar", () => {
           absences: [
             {
               date: "2020-12-05",
+              id: 1,
               absent: "FULL",
               absenceType: "VACATION",
               status: "ALLOWED",
@@ -534,6 +535,7 @@ describe("calendar", () => {
             },
             {
               date: "2020-12-06",
+              id: 2,
               absent: "MORNING",
               absenceType: "VACATION",
               status: "ALLOWED",
@@ -541,18 +543,21 @@ describe("calendar", () => {
             },
             {
               date: "2020-12-06",
+              id: 3,
               absent: "NOON",
               absenceType: "SICK_NOTE",
               status: "ACTIVE",
             },
             {
               date: "2020-12-12",
+              id: 4,
               absent: "MORNING",
               absenceType: "SICK_NOTE",
               status: "ACTIVE",
             },
             {
               date: "2020-12-12",
+              id: 5,
               absent: "NOON",
               absenceType: "VACATION",
               status: "ALLOWED",
@@ -560,6 +565,7 @@ describe("calendar", () => {
             },
             {
               date: "2020-12-13",
+              id: 6,
               absent: "FULL",
               absenceType: "SICK_NOTE",
               status: "ACTIVE",
@@ -598,6 +604,279 @@ describe("calendar", () => {
           '[data-datepicker-date="2020-12-13"][class="datepicker-day datepicker-day-today datepicker-day-weekend datepicker-day-sick-note-full absence-full--solid"]',
         ),
       ).toBeTruthy();
+    });
+  });
+
+  describe("draws an absence of several days as one bar", () => {
+    // today is 2017-12-01. 2017-12-11 is a monday
+    async function renderWithAbsences(absences, publicHolidays = []) {
+      mockDate(1_512_130_448_379);
+
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        { absences },
+      );
+      fetchMock.route("/persons/42/public-holidays?from=2017-01-01&to=2017-12-31", { publicHolidays });
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2017);
+      await holidayService.fetchPublicHolidays(2017);
+
+      renderCalendar(holidayService);
+    }
+
+    const vacation = (date, absent = "FULL", { id = 1, status = "ALLOWED" } = {}) => ({
+      date,
+      absent,
+      absenceType: "VACATION",
+      id,
+      status,
+      typeId: 1,
+    });
+    const sickNote = (date, absent = "FULL", { id = 2, status = "ACTIVE" } = {}) => ({
+      date,
+      absent,
+      absenceType: "SICK_NOTE",
+      id,
+      status,
+    });
+    const noWorkday = (date) => ({ date, absent: "FULL", absenceType: "NO_WORKDAY", status: "ACTIVE" });
+    const publicHoliday = (date) => ({ date, absencePeriodName: "FULL", dayLength: "0", description: "Christmas" });
+
+    const classesOf = (date) => [...document.querySelector(`[data-datepicker-date="${date}"]`).classList];
+
+    test("with rounded ends on the first and the last day only", async () => {
+      await renderWithAbsences([vacation("2017-12-11"), vacation("2017-12-12"), vacation("2017-12-13")]);
+
+      expect(classesOf("2017-12-11")).not.toContain("absence-full--continues-before");
+      expect(classesOf("2017-12-11")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-12")).toContain("absence-full--continues-before");
+      expect(classesOf("2017-12-12")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-13")).toContain("absence-full--continues-before");
+      expect(classesOf("2017-12-13")).not.toContain("absence-full--continues-after");
+    });
+
+    test("ending where the next absence starts", async () => {
+      await renderWithAbsences([vacation("2017-12-11", "FULL", { id: 1 }), vacation("2017-12-12", "FULL", { id: 3 })]);
+
+      expect(classesOf("2017-12-11")).not.toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-12")).not.toContain("absence-full--continues-before");
+    });
+
+    test("bridging the weekend in between", async () => {
+      await renderWithAbsences([
+        vacation("2017-12-15"),
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        vacation("2017-12-18"),
+      ]);
+
+      expect(classesOf("2017-12-15")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-16")).toEqual(
+        expect.arrayContaining([
+          "datepicker-day-absence-full",
+          "absence-full--solid",
+          "absence-full--bridge",
+          "absence-full--continues-before",
+          "absence-full--continues-after",
+        ]),
+      );
+      expect(document.querySelector('[data-datepicker-date="2017-12-16"]').getAttribute("style")).toContain(
+        "--absence-bar-color:var(--absence-color-#B4D455)",
+      );
+      expect(classesOf("2017-12-18")).toContain("absence-full--continues-before");
+    });
+
+    test("bridging public holidays in between", async () => {
+      await renderWithAbsences(
+        [vacation("2017-12-22"), noWorkday("2017-12-23"), noWorkday("2017-12-24"), vacation("2017-12-27")],
+        [publicHoliday("2017-12-25"), publicHoliday("2017-12-26")],
+      );
+
+      expect(classesOf("2017-12-22")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-25")).toContain("absence-full--bridge");
+      expect(classesOf("2017-12-26")).toContain("absence-full--bridge");
+      expect(classesOf("2017-12-27")).toContain("absence-full--continues-before");
+    });
+
+    test("without a bridge over a weekend no absence continues across", async () => {
+      await renderWithAbsences([vacation("2017-12-15"), noWorkday("2017-12-16"), noWorkday("2017-12-17")]);
+
+      expect(classesOf("2017-12-15")).not.toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-16")).not.toContain("absence-full--bridge");
+    });
+
+    test("keeping the outline of a waiting absence on its bridge", async () => {
+      await renderWithAbsences([
+        vacation("2017-12-15", "FULL", { status: "WAITING" }),
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        vacation("2017-12-18", "FULL", { status: "WAITING" }),
+      ]);
+
+      expect(classesOf("2017-12-16")).toEqual(
+        expect.arrayContaining(["absence-full--outline", "absence-full--bridge"]),
+      );
+    });
+
+    describe("filling the first half of the whole bar of a temporarily allowed vacation", () => {
+      const temporarilyAllowed = (date, absent = "FULL") => vacation(date, absent, { status: "TEMPORARY_ALLOWED" });
+      const fillOf = (date) =>
+        document
+          .querySelector(`[data-datepicker-date="${date}"]`)
+          .getAttribute("style")
+          .match(/--absence-bar-fill(-morning|-noon)?:(\d+)%/)
+          ?.slice(1, 3);
+
+      test("from monday to friday", async () => {
+        await renderWithAbsences(
+          ["2017-12-11", "2017-12-12", "2017-12-13", "2017-12-14", "2017-12-15"].map((date) =>
+            temporarilyAllowed(date),
+          ),
+        );
+
+        expect(
+          ["2017-12-11", "2017-12-12", "2017-12-13", "2017-12-14", "2017-12-15"].map((date) => fillOf(date)),
+        ).toEqual([
+          [undefined, "100"],
+          [undefined, "100"],
+          [undefined, "50"],
+          [undefined, "0"],
+          [undefined, "0"],
+        ]);
+      });
+
+      test("counting the bridged weekend in", async () => {
+        await renderWithAbsences([
+          temporarilyAllowed("2017-12-14"),
+          temporarilyAllowed("2017-12-15"),
+          noWorkday("2017-12-16"),
+          noWorkday("2017-12-17"),
+          temporarilyAllowed("2017-12-18"),
+          temporarilyAllowed("2017-12-19"),
+        ]);
+
+        expect(
+          ["2017-12-14", "2017-12-15", "2017-12-16", "2017-12-17", "2017-12-18", "2017-12-19"].map(
+            (date) => fillOf(date)?.[1],
+          ),
+        ).toEqual(["100", "100", "100", "0", "0", "0"]);
+      });
+
+      test("as one day did before, when it is a single day", async () => {
+        await renderWithAbsences([temporarilyAllowed("2017-12-13")]);
+
+        expect(fillOf("2017-12-13")).toEqual([undefined, "50"]);
+      });
+
+      test("counting the half days of a bar starting in the afternoon", async () => {
+        await renderWithAbsences([temporarilyAllowed("2017-12-13", "NOON"), temporarilyAllowed("2017-12-14")]);
+
+        // three half days: the afternoon is the first half and a half, the next day the rest
+        expect(fillOf("2017-12-13")).toEqual(["-noon", "100"]);
+        expect(fillOf("2017-12-14")).toEqual([undefined, "25"]);
+      });
+    });
+
+    test("in the sick note colour on the bridge of a sick note", async () => {
+      await renderWithAbsences([
+        sickNote("2017-12-15"),
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        sickNote("2017-12-18"),
+      ]);
+
+      expect(classesOf("2017-12-16")).toEqual(
+        expect.arrayContaining(["datepicker-day-sick-note-full", "absence-full--solid", "absence-full--bridge"]),
+      );
+    });
+
+    test("ending in the middle of a day with a half-day absence", async () => {
+      await renderWithAbsences([sickNote("2017-12-11"), sickNote("2017-12-12", "MORNING")]);
+
+      expect(classesOf("2017-12-11")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-12")).toContain("absence-morning--continues-before");
+      expect(classesOf("2017-12-12")).not.toContain("absence-morning--continues-after");
+    });
+
+    test("starting in the middle of a day with a half-day absence", async () => {
+      await renderWithAbsences([vacation("2017-12-11", "NOON"), vacation("2017-12-12")]);
+
+      expect(classesOf("2017-12-11")).not.toContain("absence-noon--continues-before");
+      expect(classesOf("2017-12-11")).toContain("absence-noon--continues-after");
+      expect(classesOf("2017-12-12")).toContain("absence-full--continues-before");
+    });
+
+    test("continuing into the next year after navigating to december", async () => {
+      // today is 2018-06-01, the calendar shows february to november
+      mockDate(1_527_847_200_000);
+
+      for (const year of [2018, 2019]) {
+        fetchMock.route(
+          `/persons/42/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,
+          { absences: year === 2018 ? [vacation("2018-12-31")] : [vacation("2019-01-01")] },
+        );
+        fetchMock.route(`/persons/42/public-holidays?from=${year}-01-01&to=${year}-12-31`, { publicHolidays: [] });
+      }
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2018);
+      await holidayService.fetchPublicHolidays(2018);
+
+      renderCalendar(holidayService);
+      document.querySelector(".datepicker-next").click();
+
+      await vi.waitFor(() => expect(document.querySelector('[data-datepicker-date="2018-12-31"]')).toBeTruthy());
+      expect(classesOf("2018-12-31")).toContain("absence-full--continues-after");
+    });
+
+    test("continuing into the previous year after navigating to january", async () => {
+      // today is 2019-06-01, the calendar shows february 2019 to november 2019
+      mockDate(1_559_383_200_000);
+
+      for (const year of [2018, 2019]) {
+        fetchMock.route(
+          `/persons/42/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,
+          { absences: year === 2018 ? [vacation("2018-12-31")] : [vacation("2019-01-01")] },
+        );
+        fetchMock.route(`/persons/42/public-holidays?from=${year}-01-01&to=${year}-12-31`, { publicHolidays: [] });
+      }
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      await holidayService.fetchAbsences(2019);
+      await holidayService.fetchPublicHolidays(2019);
+
+      renderCalendar(holidayService);
+      document.querySelector(".datepicker-prev").click();
+
+      await vi.waitFor(() => expect(document.querySelector('[data-datepicker-date="2019-01-01"]')).toBeTruthy());
+      expect(classesOf("2019-01-01")).toContain("absence-full--continues-before");
+    });
+
+    test("bridging the afternoon off of a half working day", async () => {
+      await renderWithAbsences([
+        vacation("2017-12-15", "MORNING"),
+        { ...noWorkday("2017-12-15"), absent: "NOON" },
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        vacation("2017-12-18"),
+      ]);
+
+      expect(classesOf("2017-12-15")).toEqual(
+        expect.arrayContaining([
+          "absence-morning--continues-after",
+          "absence-noon--bridge",
+          "absence-noon--continues-before",
+          "absence-noon--continues-after",
+        ]),
+      );
+      expect(classesOf("2017-12-18")).toContain("absence-full--continues-before");
     });
   });
 
