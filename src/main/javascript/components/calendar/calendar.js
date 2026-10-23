@@ -304,12 +304,6 @@ const View = (function () {
         return false;
       }
 
-      const isPast = assert.isPast(date);
-
-      if (isPast) {
-        return false;
-      }
-
       return !holidayService.isPublicHolidayFull(date);
     }
 

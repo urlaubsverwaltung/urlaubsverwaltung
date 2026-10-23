@@ -356,7 +356,7 @@ td.datepicker-day {
   @apply dark:shadow-sky-400;
 }
 
-.datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(
+.datepicker-day:not(.datepicker-day-today):not([data-datepicker-selectable="false"]):not(.datepicker-day-weekend):not(
     .datepicker-day-public-holiday-full
   ):hover,
 .datepicker-day-today.datepicker-day-selected,
@@ -384,7 +384,7 @@ td.datepicker-day {
   /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
   --font-color: var(--uv-cal-weekend-color) !important;
 }
-.datepicker-day-weekend:not(.datepicker-day-past):hover,
+.datepicker-day-weekend:not([data-datepicker-selectable="false"]):hover,
 .datepicker-day-weekend.datepicker-day-today,
 .datepicker-day-weekend.datepicker-day-selected {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
@@ -408,7 +408,7 @@ td.datepicker-day {
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
 }
-.datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
+.datepicker-day-public-holiday-full:not([data-datepicker-selectable="false"]):hover,
 .datepicker-day-public-holiday-full.datepicker-day-selected {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
   @apply shadow-cyan-600;

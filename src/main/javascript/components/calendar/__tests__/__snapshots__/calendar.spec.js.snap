@@ -112,7 +112,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -140,7 +140,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -168,7 +168,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -196,7 +196,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -224,7 +224,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -252,7 +252,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -280,7 +280,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -308,7 +308,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -336,7 +336,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -364,7 +364,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -392,7 +392,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -420,7 +420,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -448,7 +448,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -476,7 +476,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -504,7 +504,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -532,7 +532,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -560,7 +560,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -588,7 +588,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -616,7 +616,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -644,7 +644,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -672,7 +672,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -700,7 +700,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -728,7 +728,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -756,7 +756,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -784,7 +784,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -812,7 +812,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -840,7 +840,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -868,7 +868,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -896,7 +896,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -924,7 +924,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -952,7 +952,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1047,7 +1047,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1075,7 +1075,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1103,7 +1103,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1131,7 +1131,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1159,7 +1159,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1187,7 +1187,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1215,7 +1215,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1243,7 +1243,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1271,7 +1271,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1299,7 +1299,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1327,7 +1327,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1355,7 +1355,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1383,7 +1383,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1411,7 +1411,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1439,7 +1439,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1467,7 +1467,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1495,7 +1495,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1523,7 +1523,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1551,7 +1551,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1579,7 +1579,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1607,7 +1607,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1635,7 +1635,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1663,7 +1663,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1691,7 +1691,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1719,7 +1719,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1747,7 +1747,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1775,7 +1775,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1803,7 +1803,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1831,7 +1831,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1859,7 +1859,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1954,7 +1954,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -1982,7 +1982,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2010,7 +2010,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2038,7 +2038,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2066,7 +2066,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2094,7 +2094,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2122,7 +2122,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2150,7 +2150,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2178,7 +2178,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2206,7 +2206,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2234,7 +2234,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2262,7 +2262,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2290,7 +2290,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2318,7 +2318,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2346,7 +2346,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2374,7 +2374,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2402,7 +2402,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2430,7 +2430,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2458,7 +2458,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2486,7 +2486,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2514,7 +2514,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2542,7 +2542,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2570,7 +2570,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2598,7 +2598,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2626,7 +2626,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2654,7 +2654,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2682,7 +2682,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2710,7 +2710,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2738,7 +2738,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2766,7 +2766,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2794,7 +2794,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2889,7 +2889,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2917,7 +2917,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2945,7 +2945,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -2973,7 +2973,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3001,7 +3001,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3029,7 +3029,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3057,7 +3057,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3085,7 +3085,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3113,7 +3113,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3141,7 +3141,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3169,7 +3169,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3197,7 +3197,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3225,7 +3225,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3253,7 +3253,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3281,7 +3281,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3309,7 +3309,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3337,7 +3337,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3365,7 +3365,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3393,7 +3393,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3421,7 +3421,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3449,7 +3449,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3477,7 +3477,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3505,7 +3505,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3533,7 +3533,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3561,7 +3561,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3589,7 +3589,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3617,7 +3617,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3645,7 +3645,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3673,7 +3673,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -3701,7 +3701,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9354,7 +9354,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9382,7 +9382,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9410,7 +9410,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9438,7 +9438,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9466,7 +9466,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9494,7 +9494,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9522,7 +9522,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9550,7 +9550,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9578,7 +9578,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9606,7 +9606,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9634,7 +9634,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9662,7 +9662,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9690,7 +9690,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9718,7 +9718,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9746,7 +9746,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9774,7 +9774,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9802,7 +9802,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9830,7 +9830,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9858,7 +9858,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9886,7 +9886,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9914,7 +9914,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9942,7 +9942,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9970,7 +9970,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -9998,7 +9998,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10026,7 +10026,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10054,7 +10054,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10082,7 +10082,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10110,7 +10110,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10138,7 +10138,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10166,7 +10166,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10194,7 +10194,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10289,7 +10289,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10317,7 +10317,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10345,7 +10345,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10373,7 +10373,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10401,7 +10401,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10429,7 +10429,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10457,7 +10457,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10485,7 +10485,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10513,7 +10513,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10541,7 +10541,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10569,7 +10569,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10597,7 +10597,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10625,7 +10625,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10653,7 +10653,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10681,7 +10681,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10709,7 +10709,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10737,7 +10737,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10765,7 +10765,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10793,7 +10793,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10821,7 +10821,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10849,7 +10849,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10877,7 +10877,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10905,7 +10905,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10933,7 +10933,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10961,7 +10961,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -10989,7 +10989,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11017,7 +11017,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11045,7 +11045,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11073,7 +11073,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11101,7 +11101,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11196,7 +11196,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11224,7 +11224,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11252,7 +11252,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11280,7 +11280,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11308,7 +11308,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11336,7 +11336,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11364,7 +11364,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11392,7 +11392,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11420,7 +11420,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11448,7 +11448,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11476,7 +11476,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11504,7 +11504,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11532,7 +11532,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11560,7 +11560,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11588,7 +11588,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11616,7 +11616,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11644,7 +11644,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11672,7 +11672,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11700,7 +11700,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11728,7 +11728,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11756,7 +11756,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11784,7 +11784,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11812,7 +11812,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11840,7 +11840,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11868,7 +11868,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11896,7 +11896,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11924,7 +11924,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11952,7 +11952,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -11980,7 +11980,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12008,7 +12008,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12036,7 +12036,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12131,7 +12131,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12159,7 +12159,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12187,7 +12187,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12215,7 +12215,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12243,7 +12243,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12271,7 +12271,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12299,7 +12299,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12327,7 +12327,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12355,7 +12355,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12383,7 +12383,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12411,7 +12411,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12439,7 +12439,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12467,7 +12467,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12495,7 +12495,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12523,7 +12523,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12551,7 +12551,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12579,7 +12579,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12607,7 +12607,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12635,7 +12635,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12663,7 +12663,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12691,7 +12691,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12719,7 +12719,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12747,7 +12747,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12775,7 +12775,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12803,7 +12803,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12831,7 +12831,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12859,7 +12859,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12887,7 +12887,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12915,7 +12915,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -12943,7 +12943,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18594,7 +18594,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18622,7 +18622,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18650,7 +18650,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18678,7 +18678,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18706,7 +18706,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18734,7 +18734,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18762,7 +18762,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18790,7 +18790,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18818,7 +18818,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18846,7 +18846,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18874,7 +18874,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18902,7 +18902,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18930,7 +18930,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18958,7 +18958,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -18986,7 +18986,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19014,7 +19014,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19042,7 +19042,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19070,7 +19070,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19098,7 +19098,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19126,7 +19126,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19154,7 +19154,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19182,7 +19182,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19210,7 +19210,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19238,7 +19238,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19266,7 +19266,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19294,7 +19294,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19322,7 +19322,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19350,7 +19350,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19378,7 +19378,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19406,7 +19406,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19434,7 +19434,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-08-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19529,7 +19529,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19557,7 +19557,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19585,7 +19585,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19613,7 +19613,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19641,7 +19641,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19669,7 +19669,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19697,7 +19697,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19725,7 +19725,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19753,7 +19753,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19781,7 +19781,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19809,7 +19809,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19837,7 +19837,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19865,7 +19865,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19893,7 +19893,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19921,7 +19921,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19949,7 +19949,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -19977,7 +19977,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20005,7 +20005,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20033,7 +20033,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20061,7 +20061,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20089,7 +20089,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20117,7 +20117,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20145,7 +20145,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20173,7 +20173,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20201,7 +20201,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20229,7 +20229,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20257,7 +20257,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20285,7 +20285,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20313,7 +20313,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20341,7 +20341,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-09-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20436,7 +20436,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20464,7 +20464,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20492,7 +20492,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20520,7 +20520,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20548,7 +20548,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20576,7 +20576,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20604,7 +20604,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20632,7 +20632,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20660,7 +20660,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20688,7 +20688,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20716,7 +20716,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20744,7 +20744,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20772,7 +20772,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20800,7 +20800,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20828,7 +20828,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20856,7 +20856,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20884,7 +20884,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20912,7 +20912,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20940,7 +20940,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20968,7 +20968,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -20996,7 +20996,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21024,7 +21024,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21052,7 +21052,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21080,7 +21080,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21108,7 +21108,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21136,7 +21136,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21164,7 +21164,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21192,7 +21192,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21220,7 +21220,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21248,7 +21248,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21276,7 +21276,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-10-31"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21371,7 +21371,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-01"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21399,7 +21399,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-02"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21427,7 +21427,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-03"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21455,7 +21455,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-04"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21483,7 +21483,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-05"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21511,7 +21511,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-06"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21539,7 +21539,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-07"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21567,7 +21567,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-08"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21595,7 +21595,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-09"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21623,7 +21623,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-10"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21651,7 +21651,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-11"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21679,7 +21679,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-12"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21707,7 +21707,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-13"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21735,7 +21735,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-14"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21763,7 +21763,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-15"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21791,7 +21791,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-16"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21819,7 +21819,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-17"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21847,7 +21847,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-18"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21875,7 +21875,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-19"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21903,7 +21903,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-20"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21931,7 +21931,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-21"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21959,7 +21959,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-22"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -21987,7 +21987,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-23"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22015,7 +22015,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-24"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22043,7 +22043,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-25"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22071,7 +22071,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-26"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22099,7 +22099,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-27"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22127,7 +22127,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-28"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22155,7 +22155,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-29"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
@@ -22183,7 +22183,7 @@ exports[`calendar > renders 1`] = `
               data-datepicker-absence-id="-1"
               data-datepicker-absence-type=""
               data-datepicker-date="2017-11-30"
-              data-datepicker-selectable="false"
+              data-datepicker-selectable="true"
               style=""
               title=""
             >
