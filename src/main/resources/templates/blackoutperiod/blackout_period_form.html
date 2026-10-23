@@ -376,12 +376,11 @@
                     th:each="person : ${affectablePersons}"
                     th:data-department-ids="${#strings.listJoin(person.departmentIds, ' ')}"
                     data-blackout-person
+                    th:with="className='w-6 h-6 text-cyan-100 dark:text-sky-900'"
                     class="inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-zinc-100 text-sm font-medium dark:bg-zinc-800"
                   >
-                    <img
-                      th:replace="~{fragments/avatar::avatar(className='w-6 h-6 text-cyan-100 dark:text-sky-900',url=${person.gravatarUrl + '?d=404&s=48'},niceName=${person.niceName},initials=${person.initials},width='24',height='24',personId=null)}"
-                      alt=""
-                    />
+                    <!--/* initials only: the list holds every active person, a gravatar each would load them all */-->
+                    <svg th:replace="~{icon/avatar::svg(avatarText=${person.initials}, height='24', width='24')}"></svg>
                     <th:block th:text="${person.niceName}"></th:block>
                   </li>
                   <li>

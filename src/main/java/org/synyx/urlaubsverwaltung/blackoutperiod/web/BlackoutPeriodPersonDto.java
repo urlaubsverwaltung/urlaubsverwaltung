@@ -7,5 +7,5 @@ import java.util.List;
  *
  * @param departmentIds ids of the departments the person is a member of
  */
-record BlackoutPeriodPersonDto(String niceName, String initials, String gravatarUrl, List<Long> departmentIds) {
+record BlackoutPeriodPersonDto(String niceName, String initials, List<Long> departmentIds) {
 }

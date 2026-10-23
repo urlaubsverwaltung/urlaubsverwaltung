@@ -247,7 +247,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
             .toList();
 
         final List<BlackoutPeriodPersonDto> affectablePersons = activePersons.stream()
-            .map(person -> new BlackoutPeriodPersonDto(person.getNiceName(), person.getInitials(), person.getGravatarURL(),
+            .map(person -> new BlackoutPeriodPersonDto(person.getNiceName(), person.getInitials(),
                 departmentIdsByPerson.getOrDefault(person.getIdAsPersonId(), Set.of()).stream().sorted().toList()))
             .toList();
 

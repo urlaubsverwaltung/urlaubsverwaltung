@@ -426,9 +426,9 @@ class BlackoutPeriodViewControllerTest {
                 new BlackoutPeriodDepartmentOptionDto(43L, "Marketing", false, 1)
             )))
             .andExpect(model().attribute("affectablePersons", List.of(
-                new BlackoutPeriodPersonDto("Anna Schmidt", "AS", anna.getGravatarURL(), List.of(42L)),
-                new BlackoutPeriodPersonDto("Lea Schulz", "LS", lea.getGravatarURL(), List.of(42L, 43L)),
-                new BlackoutPeriodPersonDto("Tom Klein", "TK", tom.getGravatarURL(), List.of())
+                new BlackoutPeriodPersonDto("Anna Schmidt", "AS", List.of(42L)),
+                new BlackoutPeriodPersonDto("Lea Schulz", "LS", List.of(42L, 43L)),
+                new BlackoutPeriodPersonDto("Tom Klein", "TK", List.of())
             )));
     }
 
