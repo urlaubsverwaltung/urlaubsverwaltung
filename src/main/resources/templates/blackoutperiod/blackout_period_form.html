@@ -235,11 +235,7 @@
               </div>
 
               <ul class="max-h-80 overflow-y-auto px-1.5 pb-1.5">
-                <li
-                  th:each="departmentOption : ${departmentOptions}"
-                  th:data-label="${departmentOption.label}"
-                  data-blackout-department
-                >
+                <li th:each="departmentOption : ${departmentOptions}" data-blackout-department>
                   <label
                     class="flex items-center gap-3 px-2.5 min-h-11 rounded-md cursor-pointer has-checked:bg-cyan-50 dark:has-checked:bg-sky-950"
                   >

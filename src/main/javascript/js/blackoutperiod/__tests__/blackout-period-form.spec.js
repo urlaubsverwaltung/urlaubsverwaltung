@@ -94,9 +94,9 @@ describe("blackout-period-form", () => {
           <button data-blackout-departments-select-all></button>
           <button data-blackout-departments-clear></button>
           <ul>
-            <li data-blackout-department data-label="Entwicklung"><input type="checkbox" name="departmentIds" value="1" data-label="Entwicklung" checked /></li>
-            <li data-blackout-department data-label="Support"><input type="checkbox" name="departmentIds" value="2" data-label="Support" /></li>
-            <li data-blackout-department data-label="Vertrieb"><input type="checkbox" name="departmentIds" value="3" data-label="Vertrieb" /></li>
+            <li data-blackout-department><input type="checkbox" name="departmentIds" value="1" data-label="Entwicklung" checked /></li>
+            <li data-blackout-department><input type="checkbox" name="departmentIds" value="2" data-label="Support" /></li>
+            <li data-blackout-department><input type="checkbox" name="departmentIds" value="3" data-label="Vertrieb" /></li>
             <li data-blackout-department-not-found hidden></li>
           </ul>
         </div>

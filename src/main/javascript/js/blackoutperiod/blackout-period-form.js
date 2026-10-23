@@ -123,7 +123,7 @@ export function initDepartmentPicker(root) {
     const query = search.value.trim().toLocaleLowerCase();
     let visible = 0;
     for (const row of rows) {
-      row.hidden = !row.dataset.label.toLocaleLowerCase().includes(query);
+      row.hidden = !row.querySelector("input").dataset.label.toLocaleLowerCase().includes(query);
       visible += row.hidden ? 0 : 1;
     }
     notFound.hidden = visible > 0;
