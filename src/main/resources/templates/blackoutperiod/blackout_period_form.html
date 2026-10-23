@@ -155,7 +155,6 @@
               </label>
               <label
                 class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
-                th:unless="${#lists.isEmpty(departmentOptions)}"
               >
                 <span class="flex items-center gap-2 font-semibold">
                   <input type="radio" th:field="*{companyWide}" value="false" data-blackout-scope="departments" />
