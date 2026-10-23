@@ -93,7 +93,11 @@
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   position: relative;
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  /* blackout stripes on top, shrunk to the half of a day that is no public holiday */
+  background:
+    var(--blackout-stripes, none) var(--blackout-stripes-position, left) / var(--blackout-stripes-size, 100%) 100%
+      no-repeat,
+    linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   color: var(--font-color);
 }
 
@@ -132,24 +136,30 @@ svg.no-workday-icon {
   --background-color-left: var(--uv-cal-blackout-bg);
   --background-color-right: var(--uv-cal-blackout-bg);
   --font-color: var(--uv-cal-blackout-color);
+  --blackout-stripes: var(--uv-cal-blackout-stripes);
 }
 
 .public-holiday-morning {
   --background-color-left: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-position: right;
+  --blackout-stripes-size: 50%;
 }
 .public-holiday-noon {
   --background-color-right: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-size: 50%;
 }
 .public-holiday-full {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
+  --blackout-stripes: none;
 }
 
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
+  --blackout-stripes: none;
 }
 
 .vacationOverview-tbody tr:hover th:first-child {

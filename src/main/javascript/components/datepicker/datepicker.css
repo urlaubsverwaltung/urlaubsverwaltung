@@ -128,7 +128,11 @@ duet-date-picker[disabled] input {
   --background-color-left: var(--uv-cal-default-bg);
   --background-color-right: var(--uv-cal-default-bg);
   --font-color: var(--uv-cal-default-color);
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  /* blackout stripes on top, shrunk to the half of a day that is no public holiday */
+  background:
+    var(--blackout-stripes, none) var(--blackout-stripes-position, left) / var(--blackout-stripes-size, 100%) 100%
+      no-repeat,
+    linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   color: var(--font-color);
   padding: 0.5rem 0.375rem 1rem 0.5rem;
 }
@@ -145,21 +149,26 @@ duet-date-picker[disabled] input {
   --background-color-left: var(--uv-cal-blackout-bg);
   --background-color-right: var(--uv-cal-blackout-bg);
   --font-color: var(--uv-cal-blackout-color);
+  --blackout-stripes: var(--uv-cal-blackout-stripes);
 }
 
 .duet-date__day.datepicker-day-public-holiday-morning,
 .duet-date__day.datepicker-day-public-holiday-morning:not(.is-month) {
   --background-color-left: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-position: right;
+  --blackout-stripes-size: 50%;
 }
 .duet-date__day.datepicker-day-public-holiday-noon,
 .duet-date__day.datepicker-day-public-holiday-noon:not(.is-month) {
   --background-color-right: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-size: 50%;
 }
 .duet-date__day.datepicker-day-public-holiday-full,
 .duet-date__day.datepicker-day-public-holiday-full:not(.is-month) {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
+  --blackout-stripes: none;
 }
 
 .duet-date__day.datepicker-day-today {
