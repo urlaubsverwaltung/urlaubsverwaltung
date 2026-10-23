@@ -156,6 +156,26 @@ describe("blackout-period-form", () => {
       expect(document.querySelector("[data-blackout-department-not-found]").hidden).toBe(false);
     });
 
+    it("tells the form about selecting all departments with a single change event", async () => {
+      const { initDepartmentPicker } = await import("../blackout-period-form.js");
+      initDepartmentPicker(document);
+      const changes = vi.fn();
+      document.addEventListener("change", changes);
+
+      document.querySelector("[data-blackout-departments-select-all]").click();
+      expect(changes).toHaveBeenCalledTimes(1);
+      expect(checkedValues()).toEqual(["1", "2", "3"]);
+
+      document.querySelector("[data-blackout-departments-clear]").click();
+      expect(changes).toHaveBeenCalledTimes(2);
+
+      // nothing changes, nothing to tell
+      document.querySelector("[data-blackout-departments-clear]").click();
+      expect(changes).toHaveBeenCalledTimes(2);
+
+      document.removeEventListener("change", changes);
+    });
+
     it("clears the selection", async () => {
       const { initDepartmentPicker } = await import("../blackout-period-form.js");
       initDepartmentPicker(document);

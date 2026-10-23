@@ -28,12 +28,14 @@ function messageInto(element, key, ...parameters) {
   element.replaceChildren(...parts);
 }
 
-// changes the checkbox like a click of the user does, so listeners of the form see it
-function setChecked(checkbox, checked) {
-  if (checkbox.checked !== checked) {
+// changes the checkboxes like clicks of the user do, but with a single change event,
+// so listeners of the form (e.g. the request of the colliding applications) run once
+function setChecked(checkboxes, checked) {
+  const changed = checkboxes.filter((checkbox) => checkbox.checked !== checked);
+  for (const checkbox of changed) {
     checkbox.checked = checked;
-    checkbox.dispatchEvent(new Event("change", { bubbles: true }));
   }
+  changed[0]?.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 function strong(content) {
@@ -106,7 +108,7 @@ export function initDepartmentPicker(root) {
       const remove = chip.querySelector("[data-blackout-department-chip-remove]");
       remove.setAttribute("aria-label", message("blackoutperiod.data.departments.remove", checkbox.dataset.label));
       remove.addEventListener("click", () => {
-        setChecked(checkbox, false);
+        setChecked([checkbox], false);
         // the chip is gone, keep the keyboard focus inside the picker
         search.focus();
       });
@@ -128,15 +130,14 @@ export function initDepartmentPicker(root) {
   });
 
   picker.querySelector("[data-blackout-departments-select-all]").addEventListener("click", () => {
-    for (const row of rows.filter((row) => !row.hidden)) {
-      setChecked(row.querySelector("input[type='checkbox']"), true);
-    }
+    setChecked(
+      rows.filter((row) => !row.hidden).map((row) => row.querySelector("input[type='checkbox']")),
+      true,
+    );
   });
 
   picker.querySelector("[data-blackout-departments-clear]").addEventListener("click", () => {
-    for (const checkbox of checkboxes) {
-      setChecked(checkbox, false);
-    }
+    setChecked(checkboxes, false);
   });
 
   picker.addEventListener("change", render);
