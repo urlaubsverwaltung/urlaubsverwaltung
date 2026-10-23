@@ -42,6 +42,14 @@
   --uv-cal-weekend-color: var(--color-neutral-950);
   --uv-cal-public-holiday-bg: var(--color-slate-300);
   --uv-cal-public-holiday-color: var(--color-neutral-950);
+  --uv-cal-blackout-bg: var(--color-amber-300);
+  --uv-cal-blackout-color: var(--color-neutral-950);
+  --uv-cal-blackout-stripe-color: var(--color-amber-400);
+  --uv-cal-blackout-stripes: repeating-linear-gradient(
+    135deg,
+    var(--uv-cal-blackout-stripe-color) 0 4px,
+    transparent 4px 8px
+  );
   --uv-chart-container-background: var(--color-white);
   --uv-chart-background: var(--color-white);
   --uv-chart-border: var(--color-gray-100);
@@ -100,6 +108,9 @@
     --uv-cal-weekend-color: var(--color-neutral-900);
     --uv-cal-public-holiday-bg: #0369a1;
     --uv-cal-public-holiday-color: var(--color-neutral-900);
+    --uv-cal-blackout-bg: var(--color-amber-700);
+    --uv-cal-blackout-color: var(--color-neutral-900);
+    --uv-cal-blackout-stripe-color: var(--color-amber-600);
     --uv-chart-container-background: var(--color-zinc-800);
     --uv-chart-background: var(--color-zinc-800);
     --uv-chart-border: var(--color-zinc-700);

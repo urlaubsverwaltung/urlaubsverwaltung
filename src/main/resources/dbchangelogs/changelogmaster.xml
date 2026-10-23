@@ -33,5 +33,6 @@
   <include relativeToChangelogFile="true" file="changelog-6.15.0-remaining-vacation-days-management-notifications.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.17.0-add-index-for-username-ignore-case.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.18.0-add-email-verified-to-person.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.20.0-add-blackout-period.xml"/>
 
 </databaseChangeLog>

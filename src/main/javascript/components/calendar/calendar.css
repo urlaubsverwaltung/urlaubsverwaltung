@@ -223,7 +223,11 @@
   display: flex;
   align-items: center;
   padding: --spacing(2) calc(--spacing(1) / 2) calc(--spacing(3) + (--spacing(1) / 2)) --spacing(2);
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  /* blackout stripes on top, shrunk to the half of a day that is no public holiday */
+  background:
+    var(--blackout-stripes, none) var(--blackout-stripes-position, left) / var(--blackout-stripes-size, 100%) 100%
+      no-repeat,
+    linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
   @apply dark:font-semibold;
@@ -406,19 +410,30 @@ td.datepicker-day {
   --background-color-right: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
 }
 
+.datepicker-day-blackout {
+  --background-color-left: var(--uv-cal-blackout-bg);
+  --background-color-right: var(--uv-cal-blackout-bg);
+  --font-color: var(--uv-cal-blackout-color);
+  --blackout-stripes: var(--uv-cal-blackout-stripes);
+}
+
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
 .datepicker-day-public-holiday-morning {
   --background-color-left: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-position: right;
+  --blackout-stripes-size: 50%;
 }
 .datepicker-day-public-holiday-noon {
   --background-color-right: var(--uv-cal-public-holiday-bg);
+  --blackout-stripes-size: 50%;
 }
 .datepicker-day-public-holiday-full {
   --background-color-left: var(--uv-cal-public-holiday-bg);
   --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
+  --blackout-stripes: none;
 }
 .datepicker-day-public-holiday-full:not([data-datepicker-selectable="false"]):hover,
 .datepicker-day-public-holiday-full.datepicker-day-selected {

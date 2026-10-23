@@ -1,0 +1,432 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title
+      th:replace="~{fragments/page-title::page-title(${blackoutPeriod.id == null} ? #{blackoutperiod.data.header.title.new} : #{blackoutperiod.data.header.title.edit(${blackoutPeriod.title})})}"
+    ></title>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        window.uv.i18n = window.uv.i18n || {};
+        window.uv.i18n["blackoutperiod.data.departments.count"] = /*[[#{blackoutperiod.data.departments.count}]]*/ "";
+        window.uv.i18n["blackoutperiod.data.departments.remove"] = /*[[#{blackoutperiod.data.departments.remove}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.persons.one"] = /*[[#{blackoutperiod.impact.persons.one}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.persons.other"] = /*[[#{blackoutperiod.impact.persons.other}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.who.companyWide"] = /*[[#{blackoutperiod.impact.who.companyWide}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.who.departments"] = /*[[#{blackoutperiod.impact.who.departments}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.sentence.one"] = /*[[#{blackoutperiod.impact.sentence.one}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.sentence.other"] = /*[[#{blackoutperiod.impact.sentence.other}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.period.range"] = /*[[#{blackoutperiod.impact.period.range}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.period.day"] = /*[[#{blackoutperiod.impact.period.day}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.period.unknown"] = /*[[#{blackoutperiod.impact.period.unknown}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.vacationTypes.all"] =
+          /*[[#{blackoutperiod.impact.vacationTypes.all}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.vacationType"] = /*[[#{blackoutperiod.impact.vacationType}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.and"] = /*[[#{blackoutperiod.impact.and}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.nobody"] = /*[[#{blackoutperiod.impact.nobody}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.incomplete"] = /*[[#{blackoutperiod.impact.incomplete}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.persons.heading"] = /*[[#{blackoutperiod.impact.persons.heading}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.persons.more"] = /*[[#{blackoutperiod.impact.persons.more}]]*/ "";
+        window.uv.i18n["blackoutperiod.impact.persons.less"] = /*[[#{blackoutperiod.impact.persons.less}]]*/ "";
+        /*]]>*/
+      </script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('blackout_period_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="blackout_period_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <form
+        method="post"
+        th:with="action=${blackoutPeriod.id == null ? '/web/blackoutperiod/new' : '/web/blackoutperiod/' + blackoutPeriod.id}"
+        th:action="@{__${action}__}"
+        th:object="${blackoutPeriod}"
+        class="uv-form uv-form-grid"
+      >
+        <button type="submit" class="hidden"></button>
+        <input type="hidden" th:field="*{id}" />
+
+        <p
+          class="uv-form__global-feedback alert alert-danger"
+          th:if="${#fields.hasGlobalErrors()}"
+          th:errors="*{global}"
+        ></p>
+
+        <div
+          role="group"
+          aria-describedby="group-blackoutperiod-data-description"
+          th:with="blackoutPeriodTitleMessageKey=${blackoutPeriod.id == null ? 'blackoutperiod.data.header.title.new' : 'blackoutperiod.data.header.title.edit'}"
+        >
+          <h2
+            id="group-blackoutperiod-data-description"
+            class="uv-form-legend"
+            th:text="#{__${blackoutPeriodTitleMessageKey}__(${blackoutPeriod.title})}"
+          >
+            Urlaubssperre
+          </h2>
+
+          <div class="uv-form__group">
+            <div class="uv-form__input-row">
+              <label for="title" class="is-required" th:text="|#{blackoutperiod.data.title}:|"> Titel </label>
+              <input id="title" type="text" th:field="*{title}" th:errorclass="error" />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('title')}">
+                <th:block th:errors="*{title}"> title Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="startDate" class="is-required" th:text="|#{blackoutperiod.data.startDate}:|"> Beginn </label>
+              <input
+                id="startDate"
+                th:field="*{startDate}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                autocomplete="off"
+                th:data-iso-value="${blackoutPeriod.startDateIsoValue}"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
+                <th:block th:errors="*{startDate}"> startDate Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="endDate" class="is-required" th:text="|#{blackoutperiod.data.endDate}:|"> Ende </label>
+              <input
+                id="endDate"
+                th:field="*{endDate}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                autocomplete="off"
+                th:data-iso-value="${blackoutPeriod.endDateIsoValue}"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
+                <th:block th:errors="*{endDate}"> endDate Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-blackoutperiod-departments-description">
+          <h2
+            id="group-blackoutperiod-departments-description"
+            class="uv-form-legend"
+            th:text="#{blackoutperiod.data.departments}"
+          >
+            Abteilungen
+          </h2>
+
+          <div class="uv-form__group flex flex-col gap-4">
+            <p
+              class="text-sm text-zinc-600 dark:text-zinc-400"
+              th:text="#{blackoutperiod.data.departments.question}"
+            ></p>
+            <p class="uv-form__input-error" th:if="${#fields.hasErrors('departmentIds')}">
+              <th:block th:errors="*{departmentIds}">departments error</th:block>
+            </p>
+
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+              <label
+                class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
+              >
+                <span class="flex items-center gap-2 font-semibold">
+                  <input type="radio" th:field="*{companyWide}" value="true" data-blackout-scope="departments" />
+                  <th:block th:text="#{blackoutperiod.data.companyWide}">Ganzes Unternehmen</th:block>
+                </span>
+                <span
+                  class="pl-6 text-sm text-zinc-600 dark:text-zinc-400"
+                  th:text="#{blackoutperiod.data.companyWide.description}"
+                ></span>
+              </label>
+              <label
+                class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
+              >
+                <span class="flex items-center gap-2 font-semibold">
+                  <input type="radio" th:field="*{companyWide}" value="false" data-blackout-scope="departments" />
+                  <th:block th:text="#{blackoutperiod.data.selectedDepartments}">Ausgewählte Abteilungen</th:block>
+                </span>
+                <span
+                  class="pl-6 text-sm text-zinc-600 dark:text-zinc-400"
+                  th:text="#{blackoutperiod.data.selectedDepartments.description}"
+                ></span>
+              </label>
+            </div>
+
+            <p th:if="${#lists.isEmpty(departmentOptions)}" th:text="#{blackoutperiod.data.departments.none}"></p>
+
+            <div
+              th:unless="${#lists.isEmpty(departmentOptions)}"
+              th:hidden="${blackoutPeriod.companyWide}"
+              data-blackout-scope-selection="departments"
+              data-blackout-departments
+              class="border border-zinc-300 rounded-lg overflow-hidden dark:border-zinc-700"
+            >
+              <div
+                class="flex flex-wrap items-center gap-2 p-3 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800"
+                data-blackout-department-chips
+              >
+                <span
+                  class="text-sm font-medium text-amber-800 dark:text-amber-300"
+                  data-blackout-department-none
+                  th:text="#{blackoutperiod.data.departments.noneSelected}"
+                ></span>
+              </div>
+              <template data-blackout-department-chip-template>
+                <span
+                  class="inline-flex items-center gap-1 py-1 pl-3 pr-1 rounded-full bg-cyan-100 text-cyan-900 text-sm font-medium dark:bg-sky-900 dark:text-sky-100"
+                >
+                  <span data-blackout-department-chip-label></span>
+                  <button
+                    type="button"
+                    class="inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-cyan-200 dark:hover:bg-sky-800"
+                    data-blackout-department-chip-remove
+                  >
+                    <svg th:replace="~{icon/x::svg(className='w-3.5 h-3.5')}"></svg>
+                  </button>
+                </span>
+              </template>
+
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-2 p-3">
+                <input
+                  type="search"
+                  class="flex-1 basis-60"
+                  data-blackout-department-search
+                  th:placeholder="#{blackoutperiod.data.departments.search}"
+                  th:aria-label="#{blackoutperiod.data.departments.search}"
+                />
+                <span
+                  class="text-sm text-zinc-600 dark:text-zinc-400"
+                  data-blackout-department-count
+                  aria-live="polite"
+                ></span>
+                <span class="flex gap-1">
+                  <button
+                    type="button"
+                    class="text-link text-sm font-medium px-2 min-h-9"
+                    data-blackout-departments-select-all
+                    th:text="#{blackoutperiod.data.departments.selectAll}"
+                  >
+                    Alle auswählen
+                  </button>
+                  <button
+                    type="button"
+                    class="text-link text-sm font-medium px-2 min-h-9"
+                    data-blackout-departments-clear
+                    th:text="#{blackoutperiod.data.departments.clear}"
+                  >
+                    Leeren
+                  </button>
+                </span>
+              </div>
+
+              <ul class="max-h-80 overflow-y-auto px-1.5 pb-1.5">
+                <li th:each="departmentOption : ${departmentOptions}" data-blackout-department>
+                  <label
+                    class="flex items-center gap-3 px-2.5 min-h-11 rounded-md cursor-pointer has-checked:bg-cyan-50 dark:has-checked:bg-sky-950"
+                  >
+                    <input
+                      type="checkbox"
+                      name="departmentIds"
+                      th:value="${departmentOption.id}"
+                      th:checked="${departmentOption.selected}"
+                      th:data-label="${departmentOption.label}"
+                    />
+                    <span class="flex-auto font-medium" th:text="${departmentOption.label}"></span>
+                    <span
+                      class="text-sm text-zinc-600 dark:text-zinc-400"
+                      th:text="#{blackoutperiod.data.departments.members(${departmentOption.memberCount})}"
+                    ></span>
+                  </label>
+                </li>
+                <li
+                  hidden
+                  class="px-2.5 py-4 text-sm text-zinc-600 dark:text-zinc-400"
+                  data-blackout-department-not-found
+                  th:text="#{blackoutperiod.data.departments.notFound}"
+                ></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-blackoutperiod-vacationtypes-description">
+          <h2
+            id="group-blackoutperiod-vacationtypes-description"
+            class="uv-form-legend"
+            th:text="#{blackoutperiod.data.vacationTypes}"
+          >
+            Abwesenheitsarten
+          </h2>
+
+          <div class="uv-form__group flex flex-col gap-4">
+            <p
+              class="text-sm text-zinc-600 dark:text-zinc-400"
+              th:text="#{blackoutperiod.data.vacationTypes.question}"
+            ></p>
+            <p class="uv-form__input-error" th:if="${#fields.hasErrors('vacationTypeIds')}">
+              <th:block th:errors="*{vacationTypeIds}">vacation types error</th:block>
+            </p>
+
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+              <label
+                class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
+              >
+                <span class="flex items-center gap-2 font-semibold">
+                  <input type="radio" th:field="*{allVacationTypes}" value="true" data-blackout-scope="vacationTypes" />
+                  <th:block th:text="#{blackoutperiod.data.allVacationTypes}">Alle Abwesenheitsarten</th:block>
+                </span>
+                <span
+                  class="pl-6 text-sm text-zinc-600 dark:text-zinc-400"
+                  th:text="#{blackoutperiod.data.allVacationTypes.description}"
+                ></span>
+              </label>
+              <label
+                class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
+              >
+                <span class="flex items-center gap-2 font-semibold">
+                  <input
+                    type="radio"
+                    th:field="*{allVacationTypes}"
+                    value="false"
+                    data-blackout-scope="vacationTypes"
+                  />
+                  <th:block th:text="#{blackoutperiod.data.selectedVacationTypes}"
+                    >Ausgewählte Abwesenheitsarten</th:block
+                  >
+                </span>
+                <span
+                  class="pl-6 text-sm text-zinc-600 dark:text-zinc-400"
+                  th:text="#{blackoutperiod.data.selectedVacationTypes.description}"
+                ></span>
+              </label>
+            </div>
+
+            <div
+              th:hidden="${blackoutPeriod.allVacationTypes}"
+              data-blackout-scope-selection="vacationTypes"
+              class="flex flex-wrap gap-2"
+            >
+              <label
+                th:each="vacationTypeOption : ${vacationTypeOptions}"
+                class="inline-flex items-center gap-2 min-h-11 px-4 rounded-full border-2 border-zinc-200 font-medium cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
+              >
+                <input
+                  type="checkbox"
+                  name="vacationTypeIds"
+                  th:value="${vacationTypeOption.id}"
+                  th:checked="${vacationTypeOption.selected}"
+                  th:data-label="${vacationTypeOption.label}"
+                />
+                <span
+                  aria-hidden="true"
+                  class="w-3 h-3 rounded-full shrink-0"
+                  th:style="|background-color: var(--absence-color-${vacationTypeOption.color})|"
+                ></span>
+                <th:block th:text="${vacationTypeOption.label}"></th:block>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-blackoutperiod-impact-description" data-blackout-impact>
+          <h2 id="group-blackoutperiod-impact-description" class="uv-form-legend" th:text="#{blackoutperiod.impact}">
+            Auswirkung
+          </h2>
+
+          <div class="uv-form__group flex flex-col">
+            <div class="rounded-lg border border-amber-300 overflow-hidden dark:border-amber-700">
+              <div
+                class="flex items-start gap-3 p-4 text-amber-950 bg-[repeating-linear-gradient(135deg,var(--color-amber-100)_0_6px,var(--color-amber-50)_6px_12px)] dark:text-amber-50 dark:bg-[repeating-linear-gradient(135deg,var(--color-amber-950)_0_6px,var(--color-zinc-900)_6px_12px)]"
+              >
+                <svg th:replace="~{icon/lock::svg(className='w-5 h-5 shrink-0 mt-0.5')}"></svg>
+                <p class="leading-relaxed" aria-live="polite">
+                  <span data-blackout-impact-sentence></span>
+                  <span data-blackout-impact-on-behalf th:text="#{blackoutperiod.impact.onBehalf}"></span>
+                </p>
+              </div>
+              <div
+                class="p-4 border-t border-amber-300 bg-white dark:border-amber-700 dark:bg-zinc-900"
+                data-blackout-impact-persons
+              >
+                <h3
+                  class="mb-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400"
+                  data-blackout-impact-persons-heading
+                ></h3>
+                <ul class="flex flex-wrap gap-2">
+                  <li
+                    th:each="person : ${affectablePersons}"
+                    th:data-department-ids="${#strings.listJoin(person.departmentIds, ' ')}"
+                    data-blackout-person
+                    th:with="className='w-6 h-6 text-cyan-100 dark:text-sky-900'"
+                    class="inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-zinc-100 text-sm font-medium dark:bg-zinc-800"
+                  >
+                    <!--/* initials only: the list holds every active person, a gravatar each would load them all */-->
+                    <svg th:replace="~{icon/avatar::svg(avatarText=${person.initials}, height='24', width='24')}"></svg>
+                    <th:block th:text="${person.niceName}"></th:block>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      class="text-link text-sm font-medium px-2 min-h-8"
+                      aria-expanded="false"
+                      data-blackout-impact-persons-toggle
+                    ></button>
+                  </li>
+                </ul>
+              </div>
+              <turbo-frame
+                id="blackout-period-conflicts"
+                data-blackout-conflicts-frame
+                th:data-src="@{/web/blackoutperiod/conflicts}"
+                th:fragment="conflicts"
+              >
+                <div
+                  th:unless="${#lists.isEmpty(conflictingApplications)}"
+                  class="p-4 border-t border-amber-300 bg-white text-sm dark:border-amber-700 dark:bg-zinc-900"
+                >
+                  <h3
+                    class="mb-2 font-semibold text-zinc-600 dark:text-zinc-400"
+                    th:text="#{blackoutperiod.conflict.warning}"
+                  >
+                    Kollidierende Anträge
+                  </h3>
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li th:each="conflict : ${conflictingApplications}">
+                      <th:block th:text="${conflict.personName}"></th:block>:
+                      <th:block th:text="${{conflict.startDate}}"></th:block>
+                      &ndash;
+                      <th:block th:text="${{conflict.endDate}}"></th:block>
+                      (<th:block th:text="${conflict.vacationTypeLabel}"></th:block>)
+                    </li>
+                  </ul>
+                </div>
+              </turbo-frame>
+            </div>
+          </div>
+        </div>
+
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
+      </form>
+    </main>
+  </body>
+</html>

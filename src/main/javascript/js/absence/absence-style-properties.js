@@ -81,8 +81,10 @@ function getVacationTypeColors(absences) {
     }
   }
 
-  const colorMorningOrFull = globalThis.uv.vacationTypes.colors[typeIdMorningOrFull];
-  const colorNoon = globalThis.uv.vacationTypes.colors[typeIdNoon];
+  // pages without vacation type colors (e.g. a datepicker without a person) have no absences to color
+  const colors = globalThis.uv?.vacationTypes?.colors ?? {};
+  const colorMorningOrFull = colors[typeIdMorningOrFull];
+  const colorNoon = colors[typeIdNoon];
 
   return [colorMorningOrFull, colorNoon];
 }
