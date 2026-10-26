@@ -8,5 +8,6 @@ public record UrlaubsverwaltungBackupDTO(String tenantId, String urlaubsverwaltu
                                          List<DepartmentMembershipDTO> departmentMemberships, CalendarBackupDTO calendars,
                                          CalendarIntegrationBackupDTO calendarIntegration,
                                          SettingsDTO settings,
-                                         List<PersonActivePeriodDTO> personActivePeriods) {
+                                         List<PersonActivePeriodDTO> personActivePeriods,
+                                         List<BlackoutPeriodDTO> blackoutPeriods) {
 }
