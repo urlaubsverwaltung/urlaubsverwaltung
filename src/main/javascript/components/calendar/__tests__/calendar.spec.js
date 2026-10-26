@@ -290,6 +290,25 @@ describe("calendar", () => {
     });
   });
 
+  describe.each([
+    [`.datepicker-prev`, "2017-11"],
+    [`.datepicker-next`, "2018-01"],
+  ])("remembers the shown months for the browser back button when clicking %s", (buttonSelector, expected) => {
+    test("click", async () => {
+      // 01.12.2017
+      mockDate(1_512_130_448_379);
+      mockEmptyYear(42, 2017);
+      mockEmptyYear(42, 2018);
+
+      await calendarTestSetup();
+      renderCalendar(createHolidayService({ webPrefix: "", apiPrefix: "", personId: 42 }));
+
+      document.querySelector(buttonSelector).click();
+
+      await vi.waitFor(() => expect(new URL(globalThis.location).searchParams.get("calendarMonth")).toEqual(expected));
+    });
+  });
+
   describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
     "ensure correct rendering when clicking %s ",
     (buttonSelector) => {

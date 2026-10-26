@@ -1,4 +1,4 @@
-import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
+import { addMonths, getYear, isValid, parseISO, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,9 +9,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const initCalendar = async () => {
     const yearParameter = getUrlParameter("year");
+    const calendarMonth = parseISO(getUrlParameter("calendarMonth") ?? "");
     let date = new Date();
 
-    if (yearParameter && Number(yearParameter) !== getYear(date)) {
+    if (isValid(calendarMonth)) {
+      date = calendarMonth;
+    } else if (yearParameter && Number(yearParameter) !== getYear(date)) {
       date = startOfYear(setYear(date, Number(yearParameter)));
     }
 
