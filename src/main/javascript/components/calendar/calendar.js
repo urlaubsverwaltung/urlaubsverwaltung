@@ -534,7 +534,9 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      void fetchYearsOf(date, addMonths(date, 1)).then(view.displayNext);
+      void fetchYearsOf(date, addMonths(date, 1))
+        .then(view.displayNext)
+        .then(() => rememberShownMonths(subMonths(date, numberOfMonths - 1)));
     },
 
     clickPrevious: function () {
@@ -547,9 +549,20 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      void fetchYearsOf(date, subMonths(date, 1)).then(view.displayPrevious);
+      void fetchYearsOf(date, subMonths(date, 1))
+        .then(view.displayPrevious)
+        .then(() => rememberShownMonths(date));
     },
   };
+
+  // the browser back button restores the shown months instead of the ones around today
+  function rememberShownMonths(firstMonth) {
+    // in the url, not in history.state: turbo replaces the whole history.state on page load
+    const url = new URL(globalThis.location);
+    // the reference date is the fifth of the shown months, see renderCalendar
+    url.searchParams.set("calendarMonth", format(addMonths(firstMonth, 4), "yyyy-MM"));
+    history.replaceState(history.state, "", url);
+  }
 
   // the month beyond the new one as well: an absence bar continuing there must not be drawn as ending
   function fetchYearsOf(...dates) {
