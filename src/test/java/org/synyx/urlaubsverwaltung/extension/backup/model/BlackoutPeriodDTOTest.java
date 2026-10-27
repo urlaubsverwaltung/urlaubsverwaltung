@@ -6,6 +6,8 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodEntity;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackoutPeriodDTOTest {
@@ -13,10 +15,10 @@ class BlackoutPeriodDTOTest {
     @Test
     void happyPathDTOToEntity() {
 
-        final LocalDate startDate = LocalDate.of(2025, 6, 10);
-        final LocalDate endDate = LocalDate.of(2025, 6, 20);
-        final LocalDate createdAt = LocalDate.of(2025, 3, 1);
-        final LocalDate lastModification = LocalDate.of(2025, 3, 2);
+        final LocalDate startDate = LocalDate.of(2025, JUNE, 10);
+        final LocalDate endDate = LocalDate.of(2025, JUNE, 20);
+        final LocalDate createdAt = LocalDate.of(2025, MARCH, 1);
+        final LocalDate lastModification = LocalDate.of(2025, MARCH, 2);
 
         final BlackoutPeriodDTO dto = new BlackoutPeriodDTO("Release", startDate, endDate, createdAt, lastModification,
             false, false, List.of(1L), List.of(10000L));

@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.backup;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.BlackoutPeriodDTO;
 
 import java.util.List;
 
-@Component
+@Service
 @ConditionalOnBackupCreateEnabled
 class BlackoutPeriodDataCollectionService {
 
