@@ -14,7 +14,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @ConditionalOnBackupRestoreEnabled
@@ -36,8 +39,11 @@ class ApplicationRestoreService {
         this.personService = personService;
     }
 
-    List<ImportedIdTuple> restore(ApplicationBackupDTO applications) {
-        return importApplications(applications, importVacationTypes(applications));
+    RestoredApplications restore(ApplicationBackupDTO applications) {
+        final List<VacationTypeTuple> createdVacationTypes = importVacationTypes(applications);
+        final Map<Long, Long> newVacationTypeIdByOldId = createdVacationTypes.stream()
+            .collect(toMap(VacationTypeTuple::idOfImport, tuple -> tuple.createdVacationType().getId()));
+        return new RestoredApplications(importApplications(applications, createdVacationTypes), newVacationTypeIdByOldId);
     }
 
     /**
@@ -115,5 +121,8 @@ class ApplicationRestoreService {
     }
 
     private record VacationTypeTuple(Long idOfImport, VacationTypeEntity createdVacationType) {
+    }
+
+    record RestoredApplications(List<ImportedIdTuple> createdApplications, Map<Long, Long> newVacationTypeIdByOldId) {
     }
 }

@@ -2937,5 +2937,29 @@
       "validFrom": "2025-01-01T12:21:20.973065Z",
       "validTo": null
     }
+  ],
+  "blackoutPeriods": [
+    {
+      "title": "Inventur",
+      "startDate": "2025-01-02",
+      "endDate": "2025-01-03",
+      "createdAt": "2024-11-01",
+      "lastModification": "2024-11-02",
+      "companyWide": true,
+      "allVacationTypes": true,
+      "departmentIds": [],
+      "vacationTypeIds": []
+    },
+    {
+      "title": "Release",
+      "startDate": "2025-06-10",
+      "endDate": "2025-06-20",
+      "createdAt": "2025-03-01",
+      "lastModification": "2025-03-01",
+      "companyWide": false,
+      "allVacationTypes": false,
+      "departmentIds": [1, 2],
+      "vacationTypeIds": [10000]
+    }
   ]
 }

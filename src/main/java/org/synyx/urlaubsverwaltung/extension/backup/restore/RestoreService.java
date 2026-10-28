@@ -27,6 +27,7 @@ class RestoreService {
     private final ApplicationRestoreService applicationRestoreService;
     private final CalendarIntegrationRestoreService calendarIntegrationRestoreService;
     private final PersonActivePeriodRestoreService personActivePeriodRestoreService;
+    private final BlackoutPeriodRestoreService blackoutPeriodRestoreService;
 
     RestoreService(
         SettingsRestoreService settingsRestoreService,
@@ -38,7 +39,8 @@ class RestoreService {
         DepartmentMembershipRestoreService departmentMembershipRestoreService,
         ApplicationRestoreService applicationRestoreService,
         CalendarIntegrationRestoreService calendarIntegrationRestoreService,
-        PersonActivePeriodRestoreService personActivePeriodRestoreService
+        PersonActivePeriodRestoreService personActivePeriodRestoreService,
+        BlackoutPeriodRestoreService blackoutPeriodRestoreService
     ) {
         this.settingsRestoreService = settingsRestoreService;
         this.personRestoreService = personRestoreService;
@@ -50,6 +52,7 @@ class RestoreService {
         this.applicationRestoreService = applicationRestoreService;
         this.calendarIntegrationRestoreService = calendarIntegrationRestoreService;
         this.personActivePeriodRestoreService = personActivePeriodRestoreService;
+        this.blackoutPeriodRestoreService = blackoutPeriodRestoreService;
     }
 
     void restoreData(UrlaubsverwaltungBackupDTO backupToRestore) {
@@ -59,12 +62,13 @@ class RestoreService {
         personActivePeriodRestoreService.restore(backupToRestore.personActivePeriods());
         overtimeRestoreService.restore(backupToRestore.overtimes());
 
-        final List<ImportedIdTuple> createdApplications = applicationRestoreService.restore(backupToRestore.applications());
+        final ApplicationRestoreService.RestoredApplications restoredApplications = applicationRestoreService.restore(backupToRestore.applications());
         final List<ImportedIdTuple> createdSicknotes = sickNoteRestoreService.restore(backupToRestore.sickNotes());
-        calendarIntegrationRestoreService.restore(backupToRestore.calendarIntegration(), createdApplications, createdSicknotes);
+        calendarIntegrationRestoreService.restore(backupToRestore.calendarIntegration(), restoredApplications.createdApplications(), createdSicknotes);
 
         final Map<Long, Long> newDepartmentIdByOldId = departmentRestoreService.restore(backupToRestore.departments());
         departmentMembershipRestoreService.restore(backupToRestore.departmentMemberships(), newDepartmentIdByOldId);
+        blackoutPeriodRestoreService.restore(backupToRestore.blackoutPeriods(), newDepartmentIdByOldId, restoredApplications.newVacationTypeIdByOldId());
 
         calendarsRestoreService.restore(backupToRestore.calendars(), backupToRestore.departments());
 
