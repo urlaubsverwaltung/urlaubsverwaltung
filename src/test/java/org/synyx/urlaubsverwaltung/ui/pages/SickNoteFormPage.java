@@ -37,10 +37,10 @@ public class SickNoteFormPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(DUET_FROM_SELECTOR);
-        page.waitForSelector(DUET_TO_SELECTOR);
-        page.waitForSelector(DUET_AUB_FROM_SELECTOR);
-        page.waitForSelector(DUET_AUB_TO_SELECTOR);
+        page.locator(DUET_FROM_SELECTOR).waitFor();
+        page.locator(DUET_TO_SELECTOR).waitFor();
+        page.locator(DUET_AUB_FROM_SELECTOR).waitFor();
+        page.locator(DUET_AUB_TO_SELECTOR).waitFor();
     }
 
     public void startDate(LocalDate startDate) {
@@ -90,15 +90,7 @@ public class SickNoteFormPage {
      * @param name the displayed username
      */
     public void personSelected(String name) {
-        final Locator selectElement = page.locator(PERSON_SELECTOR);
-        // read current selected value of <select> (which is the id of the person)
-        final String value = (String) selectElement.evaluate("node => node.value");
-        // and verify this selected person has the expected name
-        assertThat(selectElement.locator("option[value=\"" + value + "\"]")).hasText(name);
-
-        // note: there could be a race condition, I think?
-        // evaluate reads the current value, which could not match the expected name,
-        // because the value changes eventually to the matching name.
+        assertThat(page.locator(PERSON_SELECTOR).locator("option:checked")).hasText(name);
     }
 
     private void setDate(LocalDate date, String selector) {

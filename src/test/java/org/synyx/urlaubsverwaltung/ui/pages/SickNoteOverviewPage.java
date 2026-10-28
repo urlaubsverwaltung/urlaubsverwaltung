@@ -23,7 +23,7 @@ public class SickNoteOverviewPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(TABLE_SELECTOR);
+        page.locator(TABLE_SELECTOR).waitFor();
     }
 
     public void showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {

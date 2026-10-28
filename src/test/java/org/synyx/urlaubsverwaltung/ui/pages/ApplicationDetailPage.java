@@ -24,7 +24,7 @@ public class ApplicationDetailPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(DATA_PAGE);
+        page.locator(DATA_PAGE).waitFor();
     }
 
     public boolean isVisibleForPerson(String username) {
