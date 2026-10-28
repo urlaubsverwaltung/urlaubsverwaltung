@@ -60,6 +60,6 @@ public class SickNoteOverviewPage {
                 : new Locator.FilterOptions().setHasText(aubText)
             );
 
-        assertThat(page.locator(TABLE_SELECTOR).locator(personRowLocator)).isVisible();
+        assertThat(personRowLocator.within(page.locator(TABLE_SELECTOR))).isVisible();
     }
 }
