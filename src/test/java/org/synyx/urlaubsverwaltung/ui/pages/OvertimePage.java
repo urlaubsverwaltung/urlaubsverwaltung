@@ -23,8 +23,8 @@ public class OvertimePage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(DUET_START_DATE_SELECTOR);
-        page.waitForSelector(DUET_END_DATE_SELECTOR);
+        page.locator(DUET_START_DATE_SELECTOR).waitFor();
+        page.locator(DUET_END_DATE_SELECTOR).waitFor();
     }
 
     public void setStartDate(LocalDate startDate) {

@@ -27,8 +27,8 @@ public class SickNoteDetailPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(PERSON_SELECTOR);
-        page.waitForSelector(TYPE_SELECTOR);
+        page.locator(PERSON_SELECTOR).waitFor();
+        page.locator(TYPE_SELECTOR).waitFor();
     }
 
     public void showsSickNoteForPerson(String name) {

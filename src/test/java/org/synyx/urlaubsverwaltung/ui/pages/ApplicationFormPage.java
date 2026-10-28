@@ -30,9 +30,9 @@ public class ApplicationFormPage {
     }
 
     public void waitForVisible() {
-        page.waitForSelector(VACATION_TYPE_SELECT_SELECTOR);
-        page.waitForSelector(DUET_FROM_INPUT_SELECTOR);
-        page.waitForSelector(DUET_TO_INPUT_SELECTOR);
+        page.locator(VACATION_TYPE_SELECT_SELECTOR).waitFor();
+        page.locator(DUET_FROM_INPUT_SELECTOR).waitFor();
+        page.locator(DUET_TO_INPUT_SELECTOR).waitFor();
     }
 
     public void assertDatesAreSelected(LocalDate startDate, LocalDate endDate) {
@@ -70,7 +70,7 @@ public class ApplicationFormPage {
      */
     public void selectReplacement(Person person) {
         // wait for JavaScript to be ready, otherwise the selection happens without a `change` listener and is lost.
-        page.waitForSelector(HOLIDAY_REPLACEMENT_SELECT_READY_SELECTOR);
+        page.locator(HOLIDAY_REPLACEMENT_SELECT_READY_SELECTOR).waitFor();
         final Locator element = page.locator(HOLIDAY_REPLACEMENT_SELECT_SELECTOR);
         element.selectOption(String.valueOf(person.getId()));
     }

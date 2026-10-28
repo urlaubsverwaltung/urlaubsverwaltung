@@ -47,7 +47,7 @@ public class SickNoteExtensionPage {
      */
     public void waitForVisible() {
         page.waitForCondition(this::isVisible);
-        page.waitForSelector(DUET_CUSTOM_NEXT_END_DATE_SELECTOR);
+        page.locator(DUET_CUSTOM_NEXT_END_DATE_SELECTOR).waitFor();
     }
 
     public void setCustomNextEndDate(LocalDate nextEndDate) {
