@@ -55,6 +55,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.ui.pages.OverviewPage.URL_PATTERN;
 
 @Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -181,6 +182,8 @@ class AbsenceOverviewUIIT {
     private void login(Page page, Person person) {
         final LoginPage loginPage = new LoginPage(page, port);
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+        // login does not wait for the redirect back from keycloak, navigating earlier aborts it without a session
+        page.waitForURL(URL_PATTERN);
     }
 
     private Department createDepartment(String name, List<Person> members) {
