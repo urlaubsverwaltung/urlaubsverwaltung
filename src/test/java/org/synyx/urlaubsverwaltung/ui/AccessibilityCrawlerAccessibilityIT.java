@@ -123,8 +123,8 @@ class AccessibilityCrawlerAccessibilityIT {
 
                 // 2. Discover new internal links on this page
                 @SuppressWarnings("unchecked")
-                final List<String> hrefs = (List<String>) page.evalOnSelectorAll("a[href]",
-                    "els => els.map(el => el.getAttribute('href'))");
+                final List<String> hrefs = (List<String>) page.locator("a[href]")
+                    .evaluateAll("els => els.map(el => el.getAttribute('href'))");
                 for (String href : hrefs) {
                     if (href != null && !href.trim().isEmpty()) {
                         try {

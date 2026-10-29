@@ -21,6 +21,7 @@ class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback 
         context.tracing().start(new Tracing.StartOptions()
             .setScreenshots(true)
             .setSnapshots(true)
+            .setAriaSnapshots(true)
             .setSources(true));
     }
 
