@@ -78,7 +78,7 @@ public @interface UiIntegrationTest {
 
             return new Options()
                 .setBrowserName(browser)
-                .setConnectOptions(new BrowserType.ConnectOptions()
+                .setLaunchOptions(new BrowserType.LaunchOptions()
                     .setSlowMo(slowMo)
                 )
                 .setContextOptions(new Browser.NewContextOptions()
@@ -87,6 +87,8 @@ public @interface UiIntegrationTest {
                     .setScreenSize(1500, 2000)
                     .setViewportSize(1500, 2000)
                     .setRecordVideoSize(1500, 2000)
+                    // enough for quick analysis and keeps videos small, the trace has every step anyway
+                    .setRecordVideoFps(10)
                 );
         }
     }

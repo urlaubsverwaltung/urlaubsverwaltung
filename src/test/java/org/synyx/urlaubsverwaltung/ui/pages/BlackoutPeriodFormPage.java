@@ -74,7 +74,7 @@ public class BlackoutPeriodFormPage {
     }
 
     public Locator affectedPersons() {
-        return page.locator("[data-blackout-person]:visible");
+        return page.locator("[data-blackout-person]").visible();
     }
 
     public Locator affectedPersonsHeading() {
