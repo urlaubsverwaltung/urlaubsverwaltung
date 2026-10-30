@@ -155,7 +155,12 @@ fieldset[disabled] input {
 
 /* the required control follows its label or is nested in the following element (e.g. a select wrapper or the datepicker). */
 /* a label nesting its own input (radio, checkbox) is not meant, the following label may belong to a required radio of the same group */
-label:not(:has(input)):has(+ :required, + * :required):after,
+label:not(:has(input)):has(+ :required, + * :required):after {
+  content: "*";
+  /* the required attribute is announced already, the asterisk is for sighted users only */
+  content: "*" / "";
+}
+
 /* explicit marker for a control composed of several inputs which are not required each, e.g. hours and minutes */
 label.is-required:after {
   content: "*";
@@ -278,6 +283,10 @@ textarea.error {
         &.uv-form__label--required::after {
           content: "*";
           display: inline-block;
+        }
+        /* the required radios of the group are announced already, the asterisk is for sighted users only */
+        &.uv-form__label--required:has(~ * :required)::after {
+          content: "*" / "";
         }
       }
 
