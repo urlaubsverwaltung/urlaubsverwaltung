@@ -168,11 +168,12 @@
 
         <!-- Maximum Overtime Settings -->
         <div th:if="${overtimeSyncActive == false}" class="uv-form__input-row">
-          <label th:text="|#{settings.overtime.maximum}:|" class="is-required" for="overtimeSettings.maximumOvertime">
+          <label th:text="|#{settings.overtime.maximum}:|" for="overtimeSettings.maximumOvertime">
             Maximale Anzahl der Überstunden
           </label>
           <input
             id="overtimeSettings.maximumOvertime"
+            required
             th:field="*{overtimeSettings.maximumOvertime}"
             th:errorclass="error"
             type="number"
@@ -187,11 +188,12 @@
 
         <!-- Minimum Overtime Settings -->
         <div th:if="${overtimeSyncActive == false}" class="uv-form__input-row">
-          <label th:text="|#{settings.overtime.minimum}:|" class="is-required" for="overtimeSettings.minimumOvertime">
+          <label th:text="|#{settings.overtime.minimum}:|" for="overtimeSettings.minimumOvertime">
             Maximale Anzahl der Minusstunden
           </label>
           <input
             id="overtimeSettings.minimumOvertime"
+            required
             th:field="*{overtimeSettings.minimumOvertime}"
             th:errorclass="error"
             type="number"
@@ -208,13 +210,13 @@
         <div class="uv-form__input-row">
           <label
             th:text="|#{settings.overtime.minimumOvertimeReduction}:|"
-            class="is-required"
             for="overtimeSettings.minimumOvertimeReduction"
           >
             Minimale Anzahl an abgebauten Stunden pro Antrag
           </label>
           <input
             id="overtimeSettings.minimumOvertimeReduction"
+            required
             th:field="*{overtimeSettings.minimumOvertimeReduction}"
             th:errorclass="error"
             type="number"

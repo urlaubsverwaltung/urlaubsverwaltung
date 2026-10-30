@@ -47,13 +47,13 @@
         <div class="uv-form__input-row">
           <label
             th:text="|#{settings.vacation.daysBeforeRemindForUpcomingApplications}:|"
-            class="is-required"
             for="applicationSettings.daysBeforeRemindForUpcomingApplications"
           >
             Wie viele Tage im Voraus soll die Antragsteller:in benachrichtigt werden
           </label>
           <input
             id="applicationSettings.daysBeforeRemindForUpcomingApplications"
+            required
             th:field="*{applicationSettings.daysBeforeRemindForUpcomingApplications}"
             th:errorclass="error"
             type="number"
