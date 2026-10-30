@@ -153,6 +153,9 @@ fieldset[disabled] input {
 
 **************************************************************************/
 
+/* the required control follows its label or is nested in the following element (e.g. a select wrapper or the datepicker) */
+label:has(+ :required, + * :required):after,
+/* explicit marker for a control composed of several inputs which are not required each, e.g. hours and minutes */
 label.is-required:after {
   content: "*";
 }
