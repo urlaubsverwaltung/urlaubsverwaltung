@@ -31,6 +31,7 @@
           th:action="@{/web/person/{personId}/settings (personId=${personId})}"
           method="post"
           th:object="${userSettings}"
+          novalidate
         >
           <fieldset id="fieldset-language">
             <legend
