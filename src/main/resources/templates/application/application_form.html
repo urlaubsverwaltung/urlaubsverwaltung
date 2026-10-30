@@ -65,9 +65,9 @@
             th:errors="*{global}"
           ></p>
 
-          <div role="group" aria-describedby="group-new-description">
+          <div role="group" aria-labelledby="group-new-label">
             <h2
-              id="group-new-description"
+              id="group-new-label"
               class="uv-form-legend"
               th:text="${applicationForLeaveForm.id == null} ? #{application.data.title.new}: #{application.data.title.edit}"
             >
@@ -285,9 +285,9 @@
             </div>
           </div>
 
-          <div role="group" aria-describedby="group-more-info-description">
+          <div role="group" aria-labelledby="group-more-info-label">
             <h2
-              id="group-more-info-description"
+              id="group-more-info-label"
               class="uv-form-legend"
               th:text="#{application.data.furtherInformation.title}"
             >

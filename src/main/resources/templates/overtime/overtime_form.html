@@ -47,10 +47,10 @@
           th:errors="*{global}"
         ></p>
 
-        <div role="group" aria-describedby="group-overtime-description">
+        <div role="group" aria-labelledby="group-overtime-label">
           <div class="uv-form-legend">
             <h2
-              id="group-overtime-description"
+              id="group-overtime-label"
               th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
               th:text="#{__${overtimeHeadingSectionMessagekey}__}"
             >

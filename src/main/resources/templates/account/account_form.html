@@ -51,9 +51,9 @@
             th:text="#{error.info.message}"
           ></p>
 
-          <div role="group" aria-describedby="group-timespan-description">
+          <div role="group" aria-labelledby="group-timespan-label">
             <div class="uv-form-legend">
-              <h1 id="group-timespan-description" th:text="#{person.form.annualVacation.title(${person.niceName})}">
+              <h1 id="group-timespan-label" th:text="#{person.form.annualVacation.title(${person.niceName})}">
                 Urlaubsanspruch
               </h1>
               <div
@@ -111,9 +111,9 @@
             </div>
           </div>
 
-          <div role="group" aria-describedby="group-annual-vacation-description">
+          <div role="group" aria-labelledby="group-annual-vacation-label">
             <h2
-              id="group-annual-vacation-description"
+              id="group-annual-vacation-label"
               class="uv-form-legend"
               th:text="#{person.form.annualVacation.annualVacation.group.legend}"
             >
@@ -164,9 +164,9 @@
             </div>
           </div>
 
-          <div role="group" aria-describedby="group-remaining-vacation-description">
+          <div role="group" aria-labelledby="group-remaining-vacation-label">
             <h2
-              id="group-remaining-vacation-description"
+              id="group-remaining-vacation-label"
               class="uv-form-legend"
               th:text="#{person.form.annualVacation.remainingVacation}"
             >
@@ -263,13 +263,13 @@
 
           <div
             role="group"
-            aria-describedby="group-expire-description"
+            aria-labelledby="group-expire-label"
             id="remaining-vacation-days-expire-fieldset"
             th:disabled="${not account.doRemainingVacationDaysExpire}"
             th:data-globally-enabled="${account.doRemainingVacationDaysExpireGlobally}"
           >
             <h2
-              id="group-expire-description"
+              id="group-expire-label"
               class="uv-form-legend"
               th:text="#{person.form.annualVacation.remainingVacation.expire}"
             >

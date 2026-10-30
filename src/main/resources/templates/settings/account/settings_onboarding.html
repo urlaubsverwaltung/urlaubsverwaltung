@@ -27,15 +27,15 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-working-time-description">
-            <h2 id="group-working-time-description" class="uv-form-legend" th:text="#{settings.workingTime.title}">
+          <div role="group" aria-labelledby="group-working-time-label">
+            <h2 id="group-working-time-label" class="uv-form-legend" th:text="#{settings.workingTime.title}">
               Einstellungen für Arbeitszeiten
             </h2>
             <div th:replace="~{settings/account/default-workingtime::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-vacation-description">
-            <h2 id="group-vacation-description" class="uv-form-legend" th:text="#{settings.vacation.title}">
+          <div role="group" aria-labelledby="group-vacation-label">
+            <h2 id="group-vacation-label" class="uv-form-legend" th:text="#{settings.vacation.title}">
               Einstellungen zu Urlaub
             </h2>
             <div th:replace="~{settings/account/account::section}"></div>

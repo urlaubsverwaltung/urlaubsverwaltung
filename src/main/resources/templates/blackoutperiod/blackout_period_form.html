@@ -70,11 +70,11 @@
 
         <div
           role="group"
-          aria-describedby="group-blackoutperiod-data-description"
+          aria-labelledby="group-blackoutperiod-data-label"
           th:with="blackoutPeriodTitleMessageKey=${blackoutPeriod.id == null ? 'blackoutperiod.data.header.title.new' : 'blackoutperiod.data.header.title.edit'}"
         >
           <h2
-            id="group-blackoutperiod-data-description"
+            id="group-blackoutperiod-data-label"
             class="uv-form-legend"
             th:text="#{__${blackoutPeriodTitleMessageKey}__(${blackoutPeriod.title})}"
           >
@@ -122,9 +122,9 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-departments-description">
+        <div role="group" aria-labelledby="group-blackoutperiod-departments-label">
           <h2
-            id="group-blackoutperiod-departments-description"
+            id="group-blackoutperiod-departments-label"
             class="uv-form-legend"
             th:text="#{blackoutperiod.data.departments}"
           >
@@ -264,9 +264,9 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-vacationtypes-description">
+        <div role="group" aria-labelledby="group-blackoutperiod-vacationtypes-label">
           <h2
-            id="group-blackoutperiod-vacationtypes-description"
+            id="group-blackoutperiod-vacationtypes-label"
             class="uv-form-legend"
             th:text="#{blackoutperiod.data.vacationTypes}"
           >
@@ -343,8 +343,8 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-impact-description" data-blackout-impact>
-          <h2 id="group-blackoutperiod-impact-description" class="uv-form-legend" th:text="#{blackoutperiod.impact}">
+        <div role="group" aria-labelledby="group-blackoutperiod-impact-label" data-blackout-impact>
+          <h2 id="group-blackoutperiod-impact-label" class="uv-form-legend" th:text="#{blackoutperiod.impact}">
             Auswirkung
           </h2>
 

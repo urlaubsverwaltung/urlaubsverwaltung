@@ -75,9 +75,9 @@
 
         <input type="hidden" name="permissions" value="USER" th:unless="${canDeactivatePerson}" />
 
-        <div role="group" th:if="${canDeactivatePerson}" aria-describedby="group-user-state-description">
+        <div role="group" th:if="${canDeactivatePerson}" aria-labelledby="group-user-state-label">
           <h2
-            id="group-user-state-description"
+            id="group-user-state-label"
             class="sr-only"
             th:text="#{person.form.permissions.roles.active_inactive.description}"
           >
@@ -112,9 +112,9 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-permissions-description">
+        <div role="group" aria-labelledby="group-permissions-label">
           <h2
-            id="group-permissions-description"
+            id="group-permissions-label"
             class="uv-form-legend"
             th:text="#{person.form.permissions.roles.basic_roles.description}"
           >
@@ -213,9 +213,9 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-additional-permissions-description">
+        <div role="group" aria-labelledby="group-additional-permissions-label">
           <h2
-            id="group-additional-permissions-description"
+            id="group-additional-permissions-label"
             class="uv-form-legend"
             th:text="#{person.form.permissions.roles.additional_roles.description}"
           >

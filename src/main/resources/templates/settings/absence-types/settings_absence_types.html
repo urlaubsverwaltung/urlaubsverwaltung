@@ -33,8 +33,8 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-absence-types-description">
-            <h2 id="group-absence-types-description" class="uv-form-legend" th:text="#{settings.absenceTypes.title}">
+          <div role="group" aria-labelledby="group-absence-types-label">
+            <h2 id="group-absence-types-label" class="uv-form-legend" th:text="#{settings.absenceTypes.title}">
               Einstellungen zu Abwesenheitsarten
             </h2>
             <div th:replace="~{settings/absence-types/absence-types::section}"></div>
@@ -53,8 +53,8 @@
             </div>
           </div>
 
-          <div role="group" aria-describedby="group-special-leave-description" class="mt-16">
-            <h2 id="group-special-leave-description" class="uv-form-legend" th:text="#{settings.specialleave.title}">
+          <div role="group" aria-labelledby="group-special-leave-label" class="mt-16">
+            <h2 id="group-special-leave-label" class="uv-form-legend" th:text="#{settings.specialleave.title}">
               Einstellungen zu Sonderurlaub
             </h2>
             <div th:replace="~{settings/absence-types/special-leave::section}"></div>
