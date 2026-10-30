@@ -133,6 +133,7 @@
 
           <div class="uv-form__group flex flex-col gap-4">
             <p
+              id="blackoutperiod-departments-label"
               class="text-sm text-zinc-600 dark:text-zinc-400"
               th:text="#{blackoutperiod.data.departments.question}"
             ></p>
@@ -140,7 +141,11 @@
               <th:block th:errors="*{departmentIds}">departments error</th:block>
             </p>
 
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+            <div
+              role="radiogroup"
+              aria-labelledby="blackoutperiod-departments-label"
+              class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3"
+            >
               <label
                 class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
               >
@@ -275,6 +280,7 @@
 
           <div class="uv-form__group flex flex-col gap-4">
             <p
+              id="blackoutperiod-vacationtypes-label"
               class="text-sm text-zinc-600 dark:text-zinc-400"
               th:text="#{blackoutperiod.data.vacationTypes.question}"
             ></p>
@@ -282,7 +288,11 @@
               <th:block th:errors="*{vacationTypeIds}">vacation types error</th:block>
             </p>
 
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+            <div
+              role="radiogroup"
+              aria-labelledby="blackoutperiod-vacationtypes-label"
+              class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3"
+            >
               <label
                 class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
               >
