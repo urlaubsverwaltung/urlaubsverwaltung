@@ -38,6 +38,7 @@
         th:action="@{__${actionUrl}__}"
         th:object="${overtime}"
         class="uv-form uv-form-grid"
+        novalidate
       >
         <input type="hidden" th:field="*{id}" />
 
@@ -81,9 +82,9 @@
               <th:block th:if="${canAddOvertimeForAnotherUser}">
                 <th:block th:if="${overtime.id == null}">
                   <th:block th:if="${not #lists.isEmpty(persons)}">
-                    <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
+                    <label for="person-select" th:text="|#{overtime.data.person}:|"> </label>
                     <select
-                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options}, required=true)}"
                       id="person-select"
                     >
                       <th:block th:fragment="person-select-options">
@@ -113,9 +114,10 @@
             </div>
 
             <div class="uv-form__input-row">
-              <label for="startDate" class="is-required" th:text="|#{overtime.data.startDate}:|"> Von </label>
+              <label for="startDate" th:text="|#{overtime.data.startDate}:|"> Von </label>
               <input
                 id="startDate"
+                required
                 type="text"
                 th:field="*{startDate}"
                 th:data-iso-value="${overtime.startDateIsoValue}"
@@ -130,9 +132,10 @@
             </div>
 
             <div class="uv-form__input-row">
-              <label for="endDate" class="is-required" th:text="|#{overtime.data.endDate}:|"> Bis </label>
+              <label for="endDate" th:text="|#{overtime.data.endDate}:|"> Bis </label>
               <input
                 id="endDate"
+                required
                 type="text"
                 th:field="*{endDate}"
                 th:data-iso-value="${overtime.endDateIsoValue}"

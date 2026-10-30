@@ -8,11 +8,9 @@
       <div class="uv-form__group">
         <!-- Selection of the time zone -->
         <div class="uv-form__input-row">
-          <label th:text="|#{settings.time.timezone}:|" class="is-required" for="timeSettings.timeZoneId">
-            Zeitzone
-          </label>
+          <label th:text="|#{settings.time.timezone}:|" for="timeSettings.timeZoneId"> Zeitzone </label>
           <select
-            th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})}"
+            th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid}, required=true)}"
             id="yearSelect"
           >
             <th:block th:fragment="settings-time-timezoneid">
@@ -28,21 +26,21 @@
 
         <!-- Start of working hours settings for a work day -->
         <div class="uv-form__input-row">
-          <label th:text="|#{settings.time.workDay.begin}:|" class="is-required" for="timeSettings.workDayBeginHour">
+          <label th:text="|#{settings.time.workDay.begin}:|" for="timeSettings.workDayBeginHour">
             Beginn eines Arbeitstags
           </label>
           <th:block
-            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayBeginHour', 'settings-time-hours', 'timeSettings.workDayBeginMinute', 'settings-time-minutes')}"
+            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input(hourFieldName='timeSettings.workDayBeginHour', hoursTestId='settings-time-hours', minuteFieldName='timeSettings.workDayBeginMinute', minutesTestId='settings-time-minutes', required=true)}"
           ></th:block>
         </div>
 
         <!-- End of working hours settings for a work day -->
         <div class="uv-form__input-row">
-          <label th:text="|#{settings.time.workDay.end}:|" class="is-required" for="timeSettings.workDayEndHour">
+          <label th:text="|#{settings.time.workDay.end}:|" for="timeSettings.workDayEndHour">
             Ende eines Arbeitstags
           </label>
           <th:block
-            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayEndHour', 'settings-time-hours', 'timeSettings.workDayEndMinute', 'settings-time-minutes')}"
+            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input(hourFieldName='timeSettings.workDayEndHour', hoursTestId='settings-time-hours', minuteFieldName='timeSettings.workDayEndMinute', minutesTestId='settings-time-minutes', required=true)}"
           ></th:block>
         </div>
       </div>

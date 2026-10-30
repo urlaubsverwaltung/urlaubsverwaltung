@@ -41,6 +41,7 @@
           th:action="@{/web/person/__${person.id}__/account}"
           th:object="${account}"
           class="uv-form uv-form-grid"
+          novalidate
         >
           <input type="hidden" th:field="*{holidaysAccountYear}" />
           <input type="hidden" th:field="*{doRemainingVacationDaysExpireGlobally}" />
@@ -67,15 +68,12 @@
                 <span th:text="#{person.form.annualVacation.description}"></span>
               </p>
               <div class="uv-form__input-row">
-                <label
-                  for="holidaysAccountValidFrom"
-                  class="is-required"
-                  th:text="|#{person.form.annualVacation.period.start}:|"
-                >
+                <label for="holidaysAccountValidFrom" th:text="|#{person.form.annualVacation.period.start}:|">
                   Von
                 </label>
                 <input
                   id="holidaysAccountValidFrom"
+                  required
                   th:field="*{holidaysAccountValidFrom}"
                   th:data-iso-value="${account.holidaysAccountValidFromIsoValue}"
                   th:data-min="|${year}-01-01|"
@@ -88,15 +86,10 @@
                 </p>
               </div>
               <div class="uv-form__input-row">
-                <label
-                  for="holidaysAccountValidTo"
-                  class="is-required"
-                  th:text="|#{person.form.annualVacation.period.end}:|"
-                >
-                  Bis
-                </label>
+                <label for="holidaysAccountValidTo" th:text="|#{person.form.annualVacation.period.end}:|"> Bis </label>
                 <input
                   id="holidaysAccountValidTo"
+                  required
                   th:field="*{holidaysAccountValidTo}"
                   th:data-iso-value="${account.holidaysAccountValidToIsoValue}"
                   th:data-min="|${year}-01-01|"
@@ -122,15 +115,12 @@
 
             <div class="uv-form__group">
               <div class="uv-form__input-row">
-                <label
-                  for="annualVacationDays"
-                  class="is-required"
-                  th:text="|#{person.form.annualVacation.annualVacation}:|"
-                >
+                <label for="annualVacationDays" th:text="|#{person.form.annualVacation.annualVacation}:|">
                   Jährlicher Urlaubsanspruch
                 </label>
                 <input
                   id="annualVacationDays"
+                  required
                   type="number"
                   th:field="*{annualVacationDays}"
                   th:errorclass="error"
@@ -142,15 +132,12 @@
                 </p>
               </div>
               <div class="uv-form__input-row">
-                <label
-                  class="is-required"
-                  for="actualVacationDays"
-                  th:text="|#{person.form.annualVacation.actualVacation}:|"
-                >
+                <label for="actualVacationDays" th:text="|#{person.form.annualVacation.actualVacation}:|">
                   Anteiliger Urlaubsanspruch
                 </label>
                 <input
                   id="actualVacationDays"
+                  required
                   type="number"
                   th:field="*{actualVacationDays}"
                   th:errorclass="error"
@@ -175,15 +162,12 @@
 
             <div class="uv-form__group">
               <div class="uv-form__input-row">
-                <label
-                  for="remainingVacationDays"
-                  class="is-required"
-                  th:text="|#{person.form.annualVacation.remainingVacation}:|"
-                >
+                <label for="remainingVacationDays" th:text="|#{person.form.annualVacation.remainingVacation}:|">
                   Resturlaub
                 </label>
                 <input
                   id="remainingVacationDays"
+                  required
                   type="number"
                   th:field="*{remainingVacationDays}"
                   th:errorclass="error"
@@ -195,10 +179,7 @@
                 </p>
               </div>
               <div class="uv-form__input-row">
-                <span
-                  class="uv-form__label uv-form__label--required"
-                  th:text="|#{person.form.annualVacation.remainingVacation.expire}:|"
-                >
+                <span class="uv-form__label" th:text="|#{person.form.annualVacation.remainingVacation.expire}:|">
                   Verfall von Resturlaub:
                 </span>
                 <p
@@ -278,11 +259,7 @@
 
             <div class="uv-form__group">
               <div class="uv-form__input-row">
-                <label
-                  for="expiryDate"
-                  class="is-required"
-                  th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
-                >
+                <label for="expiryDate" th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|">
                   Verfallsdatum des Resturlaubs:
                 </label>
                 <p
@@ -315,13 +292,13 @@
               <div class="uv-form__input-row">
                 <label
                   for="remainingVacationDaysNotExpiring"
-                  class="is-required"
                   th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
                 >
                   Anteil des Resturlaubs, welcher zum Verfallsdatum nicht verfällt
                 </label>
                 <input
                   id="remainingVacationDaysNotExpiring"
+                  required
                   type="number"
                   th:field="*{remainingVacationDaysNotExpiring}"
                   th:errorclass="error"

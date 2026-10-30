@@ -58,6 +58,7 @@
         th:action="@{__${action}__}"
         th:object="${blackoutPeriod}"
         class="uv-form uv-form-grid"
+        novalidate
       >
         <button type="submit" class="hidden"></button>
         <input type="hidden" th:field="*{id}" />
@@ -83,17 +84,18 @@
 
           <div class="uv-form__group">
             <div class="uv-form__input-row">
-              <label for="title" class="is-required" th:text="|#{blackoutperiod.data.title}:|"> Titel </label>
-              <input id="title" type="text" th:field="*{title}" th:errorclass="error" />
+              <label for="title" th:text="|#{blackoutperiod.data.title}:|"> Titel </label>
+              <input id="title" required type="text" th:field="*{title}" th:errorclass="error" />
               <p class="uv-form__input-error" th:if="${#fields.hasErrors('title')}">
                 <th:block th:errors="*{title}"> title Error</th:block>
               </p>
             </div>
 
             <div class="uv-form__input-row">
-              <label for="startDate" class="is-required" th:text="|#{blackoutperiod.data.startDate}:|"> Beginn </label>
+              <label for="startDate" th:text="|#{blackoutperiod.data.startDate}:|"> Beginn </label>
               <input
                 id="startDate"
+                required
                 th:field="*{startDate}"
                 th:errorclass="error"
                 th:placeholder="#{pattern.date}"
@@ -106,9 +108,10 @@
             </div>
 
             <div class="uv-form__input-row">
-              <label for="endDate" class="is-required" th:text="|#{blackoutperiod.data.endDate}:|"> Ende </label>
+              <label for="endDate" th:text="|#{blackoutperiod.data.endDate}:|"> Ende </label>
               <input
                 id="endDate"
+                required
                 th:field="*{endDate}"
                 th:errorclass="error"
                 th:placeholder="#{pattern.date}"

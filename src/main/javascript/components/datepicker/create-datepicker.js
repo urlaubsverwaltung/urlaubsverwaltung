@@ -248,6 +248,10 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
     duetDateElement.setAttribute("readonly", "");
   }
 
+  if (dateElement.hasAttribute("required")) {
+    duetDateElement.setAttribute("required", "");
+  }
+
   if (dateElement.dataset.min) {
     duetDateElement.setAttribute("min", dateElement.dataset.min);
   }

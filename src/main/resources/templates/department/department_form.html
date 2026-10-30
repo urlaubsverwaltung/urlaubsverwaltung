@@ -27,6 +27,7 @@
         th:object="${department}"
         class="uv-form uv-form-grid"
         data-turbo="true"
+        novalidate
       >
         <button type="submit" class="hidden"></button>
         <input type="hidden" th:field="*{id}" />
@@ -43,8 +44,8 @@
             </p>
 
             <div class="uv-form__input-row">
-              <label for="name" class="is-required" th:text="|#{department.data.name}:|"> Abteilungsname </label>
-              <input id="name" type="text" th:field="*{name}" th:errorclass="error" />
+              <label for="name" th:text="|#{department.data.name}:|"> Abteilungsname </label>
+              <input id="name" required type="text" th:field="*{name}" th:errorclass="error" />
               <p class="uv-form__input-error" th:if="${#fields.hasErrors('name')}">
                 <th:block th:errors="*{name}"> name Error</th:block>
               </p>
