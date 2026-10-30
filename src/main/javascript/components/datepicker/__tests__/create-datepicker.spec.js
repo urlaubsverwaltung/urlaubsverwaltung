@@ -101,6 +101,32 @@ describe("create-datepicker", () => {
     expect(datepicker.getAttribute("name")).toBe("start-date");
   });
 
+  test("marks the date input as required when the original one is required", async () => {
+    document.body.innerHTML = `
+      <input id="start-date" required />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
+
+    expect(datepicker.querySelector("#start-date").required).toBe(true);
+  });
+
+  test("does not mark the date input as required when the original one is optional", async () => {
+    document.body.innerHTML = `
+      <input id="start-date" />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
+
+    expect(datepicker.querySelector("#start-date").required).toBe(false);
+  });
+
   test("fails to render with preset date value but missing iso-value", async () => {
     document.body.innerHTML = `
       <input value="24.12.2020" />
