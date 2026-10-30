@@ -75,5 +75,9 @@
     "*.{js,html,svg,css}": [
       "prettier --write"
     ]
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "fsevents": false
   }
 }
