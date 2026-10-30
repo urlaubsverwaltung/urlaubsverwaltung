@@ -7,11 +7,9 @@
     <th:block th:fragment="section">
       <div class="uv-form__group">
         <div class="uv-form__input-row">
-          <label th:text="|#{settings.calendar.provider}:|" class="is-required" for="calendarSettingsProvider">
-            Kalenderanbindung
-          </label>
+          <label th:text="|#{settings.calendar.provider}:|" for="calendarSettingsProvider"> Kalenderanbindung </label>
           <select
-            th:replace="~{fragments/select::one(id='calendarSettingsProvider', name='calendarSettings.provider', options=~{::settings-calendar-providers})}"
+            th:replace="~{fragments/select::one(id='calendarSettingsProvider', name='calendarSettings.provider', options=~{::settings-calendar-providers}, required=true)}"
           >
             <th:block th:fragment="settings-calendar-providers">
               <option
