@@ -58,7 +58,10 @@
             <span data-grid-ref="action-buttons"></span>
           </li>
           <th:block th:each="record,it : ${records}">
-            <li role="separator"></li>
+            <th:block th:if="${recordsTodayMarker.isDividerBefore(it.index)}">
+              <li th:replace="~{fragments/today-marker::item(marker=${recordsTodayMarker})}"></li>
+            </th:block>
+            <li th:unless="${recordsTodayMarker.isDividerBefore(it.index)}" role="separator"></li>
             <li
               th:with="recordDetailsUrl=${record.type == 'OVERTIME' ? '/web/overtime/__${record.id}__' : '/web/application/__${record.id}__'}"
               th:onclick="|navigate('__${recordDetailsUrl}__');|"
@@ -105,6 +108,12 @@
                   class="text-lg @2xl/main:mb-1"
                   th:href="@{__${recordDetailsUrl}__}"
                 ></a>
+                <span
+                  th:if="${recordsTodayMarker.isRunning(it.index)}"
+                  class="text-xs font-semibold text-zinc-600 dark:text-zinc-300"
+                  th:text="#{overview.today.running}"
+                  >läuft gerade</span
+                >
               </span>
               <span data-grid-ref="date-range">
                 <th:block th:text="#{absence.period.for}" />
@@ -145,7 +154,10 @@
               </span>
             </li>
           </th:block>
-          <li role="separator"></li>
+          <th:block th:if="${recordsTodayMarker.isDividerBefore(#lists.size(records))}">
+            <li th:replace="~{fragments/today-marker::item(marker=${recordsTodayMarker})}"></li>
+          </th:block>
+          <li th:unless="${recordsTodayMarker.isDividerBefore(#lists.size(records))}" role="separator"></li>
           <li
             th:with="lastYear=${selectedYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
             th:onclick="|navigate('__${lastYearUrl}__');|"
