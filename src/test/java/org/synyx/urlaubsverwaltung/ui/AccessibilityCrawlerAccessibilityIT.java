@@ -106,6 +106,7 @@ class AccessibilityCrawlerAccessibilityIT {
         final Set<String> discoveredLinks = new HashSet<>();
         final Queue<String> linksToVisit = new ArrayDeque<>();
         final Map<String, List<Rule>> scanFailures = new HashMap<>();
+        final Map<String, List<String>> formsValidatedByBrowser = new HashMap<>();
 
         discoveredLinks.add(baseUrl);
         linksToVisit.add(baseUrl);
@@ -121,7 +122,17 @@ class AccessibilityCrawlerAccessibilityIT {
                 // 1. Navigate to the page and wait until network traffic calms down
                 page.navigate(currentUrl, new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
 
-                // 2. Discover new internal links on this page
+                // 2. Forms with required controls must leave the validation to the server (see AGENTS.md).
+                //    Checked before the audit, so a failing audit does not skip it
+                @SuppressWarnings("unchecked")
+                final List<String> formActions = (List<String>) page.locator("form:not([novalidate]):has(:required)")
+                    .evaluateAll("forms => forms.map(form => form.getAttribute('action'))");
+                if (!formActions.isEmpty()) {
+                    LOG.warn("❌ Found forms with required controls but without novalidate on {}: {}", currentUrl, formActions);
+                    formsValidatedByBrowser.put(currentUrl, formActions);
+                }
+
+                // 3. Discover new internal links on this page
                 @SuppressWarnings("unchecked")
                 final List<String> hrefs = (List<String>) page.locator("a[href]")
                     .evaluateAll("els => els.map(el => el.getAttribute('href'))");
@@ -152,12 +163,12 @@ class AccessibilityCrawlerAccessibilityIT {
                     }
                 }
 
-                // 3. Run the WCAG 2.2 AA Accessibility Scan
+                // 4. Run the WCAG 2.2 AA Accessibility Scan
                 final AxeResults accessibilityScanResults = new AxeBuilder(page)
                     .withTags(Arrays.asList("wcag2a", "wcag2aa", "wcag22aa")) // Pulls targets for 2.0, 2.1, and 2.2 AA
                     .analyze();
 
-                // 4. Log and track violations
+                // 5. Log and track violations
                 final List<Rule> violations = accessibilityScanResults.getViolations();
                 if (violations != null && !violations.isEmpty()) {
                     LOG.warn("❌ Found {} accessibility violations on {}", violations.size(), currentUrl);
@@ -200,6 +211,10 @@ class AccessibilityCrawlerAccessibilityIT {
         LOG.info("   ❌ Pages with violations: {}", scanFailures.size());
         LOG.info("   ❌ Total violations: {}", totalFailures);
         LOG.info("============================================\n");
+
+        assertThat(formsValidatedByBrowser)
+            .withFailMessage("Forms with required controls but without novalidate detected:\n%s", formsValidatedByBrowser)
+            .isEmpty();
 
         if (!scanFailures.isEmpty()) {
             final StringBuilder failureSummary = new StringBuilder("Accessibility violations detected:\n");
