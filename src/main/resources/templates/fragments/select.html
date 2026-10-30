@@ -9,12 +9,13 @@
       th:fragment="one(id, name, options)"
       class="inline-block relative w-full"
       th:classappend="${className}"
-      th:with="autosubmit=${autosubmit ?: ''}, testId=${testId ?: ''}"
+      th:with="autosubmit=${autosubmit ?: ''}, testId=${testId ?: ''}, required=${required ?: false}"
     >
       <select
         th:id="${id}"
         th:name="${name}"
         class="appearance-none pr-8"
+        th:required="${required}"
         th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}, is=${is}"
       >
         <option th:replace="${options}"></option>
