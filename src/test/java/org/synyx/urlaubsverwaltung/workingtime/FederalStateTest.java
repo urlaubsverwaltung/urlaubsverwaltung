@@ -49,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SCHLE
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_THUERINGEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GREECE_GREECE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.ITALY;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LATVIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LITHUANIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.MALTA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NETHERLANDS;
@@ -240,6 +241,8 @@ class FederalStateTest {
 
             Arguments.of(BULGARIA, "bg", null),
 
+            Arguments.of(LATVIA, "lv", null),
+
             Arguments.of(USA_MARYLAND, "md", null),
             Arguments.of(USA_VIRGINIA, "va", null),
             Arguments.of(USA_WASHINGTON_DC, "dc", null)
@@ -370,6 +373,8 @@ class FederalStateTest {
 
             Arguments.of(BULGARIA, "bg"),
 
+            Arguments.of(LATVIA, "lv"),
+
             Arguments.of(USA_MARYLAND, "us"),
             Arguments.of(USA_VIRGINIA, "us"),
             Arguments.of(USA_WASHINGTON_DC, "us")
@@ -402,9 +407,10 @@ class FederalStateTest {
         final List<FederalState> roFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ro".equals(federalState.getCountry())).toList();
         final List<FederalState> ptFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "pt".equals(federalState.getCountry())).toList();
         final List<FederalState> bgFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "bg".equals(federalState.getCountry())).toList();
+        final List<FederalState> lvFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "lv".equals(federalState.getCountry())).toList();
         final List<FederalState> usFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "us".equals(federalState.getCountry())).toList();
 
-        assertThat(federalStatesTypesByCountry).hasSize(18)
+        assertThat(federalStatesTypesByCountry).hasSize(19)
             .contains(entry("de", deFederalStates))
             .contains(entry("at", atFederalStates))
             .contains(entry("ch", chFederalStates))
@@ -422,6 +428,7 @@ class FederalStateTest {
             .contains(entry("ro", roFederalStates))
             .contains(entry("pt", ptFederalStates))
             .contains(entry("bg", bgFederalStates))
+            .contains(entry("lv", lvFederalStates))
             .contains(entry("us", usFederalStates));
     }
 }

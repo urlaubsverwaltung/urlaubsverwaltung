@@ -44,6 +44,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN_MUENCHEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LATVIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +61,8 @@ class PublicHolidaysServiceImplTest {
             "de", getHolidayManager(HolidayCalendar.GERMANY),
             "hr", getHolidayManager(HolidayCalendar.CROATIA),
             "pt", getHolidayManager(HolidayCalendar.PORTUGAL),
-            "bg", getHolidayManager(HolidayCalendar.BULGARIA)
+            "bg", getHolidayManager(HolidayCalendar.BULGARIA),
+            "lv", getHolidayManager(HolidayCalendar.LATVIA)
         ));
     }
 
@@ -247,6 +249,12 @@ class PublicHolidaysServiceImplTest {
     void ensureEasterMondayInBulgariaFollowsTheJulianCalendar() {
         assertThat(sut.getPublicHoliday(of(2026, APRIL, 13), BULGARIA)).isPresent();
         assertThat(sut.getPublicHoliday(of(2026, APRIL, 6), BULGARIA)).isEmpty();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2026-05-04", "2026-06-23", "2026-06-24", "2026-11-18"})
+    void ensureNationalPublicHolidaysOfLatvia(LocalDate date) {
+        assertThat(sut.getPublicHoliday(date, LATVIA)).isPresent();
     }
 
     @Test
