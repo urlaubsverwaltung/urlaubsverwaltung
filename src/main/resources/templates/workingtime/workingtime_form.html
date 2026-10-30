@@ -38,6 +38,7 @@
         th:action="@{/web/person/__${person.id}__/workingtime}"
         th:object="${workingTime}"
         class="uv-form uv-form-grid"
+        novalidate
       >
         <div role="group" aria-describedby="group-working-time-description">
           <h1
@@ -81,11 +82,11 @@
 
             <!-- Federal State -->
             <div class="uv-form__input-row">
-              <label th:text="|#{person.form.workingTime.federalState}:|" class="is-required" for="federalStateType">
+              <label th:text="|#{person.form.workingTime.federalState}:|" for="federalStateType">
                 Feiertagsregelung
               </label>
               <select
-                th:replace="~{fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions})}"
+                th:replace="~{fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions}, required=true)}"
                 id="federalStateType"
               >
                 <th:block th:fragment="federalStateOptions">
@@ -121,11 +122,10 @@
 
             <!-- Valid From -->
             <div class="uv-form__input-row">
-              <label for="validFrom" class="is-required" th:text="|#{person.form.workingTime.valid-from}:|">
-                Gültig ab
-              </label>
+              <label for="validFrom" th:text="|#{person.form.workingTime.valid-from}:|"> Gültig ab </label>
               <input
                 id="validFrom"
+                required
                 th:field="*{validFrom}"
                 th:errorclass="error"
                 th:placeholder="#{pattern.date}"
