@@ -150,6 +150,25 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Page<Person> getManagedActiveMembersOfPersonAndDepartments(Person person, Collection<Long> departmentIds, PersonPageable pageable, String query) {
+
+        final Set<PersonId> memberPersonIds = departmentMembershipService.getDepartmentStaff(departmentIds).values().stream()
+            .filter(staff -> doesPersonManageDepartment(person, staff))
+            .map(DepartmentStaff::members)
+            .flatMap(Collection::stream)
+            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .map(DepartmentMembership::personId)
+            .collect(toSet());
+
+        final List<Person> members = personService.getAllPersonsByIds(memberPersonIds).stream()
+            .filter(nameContains(query).and(Person::isActive))
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
+            .toList();
+
+        return toPage(members, pageable);
+    }
+
+    @Override
     public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
         final Predicate<Person> filter = nameContains(query).and(Person::isInactive);
         return managedMembersOfPersonAndDepartment(person, departmentId, pageable, filter);
