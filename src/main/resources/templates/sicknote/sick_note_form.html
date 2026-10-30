@@ -41,6 +41,7 @@
         th:action="@{__${actionUrl}__}"
         th:object="${sickNote}"
         class="uv-form uv-form-grid"
+        novalidate
       >
         <div role="group" aria-describedby="group-sicknote-description">
           <h2 id="group-sicknote-description" class="uv-form-legend">
@@ -68,11 +69,11 @@
             <!-- Employee -->
             <input th:if="${editMode}" type="hidden" th:field="*{id}" />
             <div th:if="${canAddSickNoteForAnotherPerson}" class="uv-form__input-row">
-              <label th:text="|#{sicknote.data.person}:|" class="is-required" for="employee"></label>
+              <label th:text="|#{sicknote.data.person}:|" for="employee"></label>
               <div>
                 <th:block th:if="${not editMode}">
                   <select
-                    th:replace="~{fragments/select::one(id='employee', name='person', options=~{::sicknote-person-select-options}, testId='person-select')}"
+                    th:replace="~{fragments/select::one(id='employee', name='person', options=~{::sicknote-person-select-options}, testId='person-select', required=true)}"
                     id="employee"
                   >
                     <th:block th:fragment="sicknote-person-select-options">
@@ -97,9 +98,9 @@
 
             <!-- Sick Note Type -->
             <div class="uv-form__input-row">
-              <label for="sickNoteType" class="is-required" th:text="|#{sicknote.data.type}:|"> Typ </label>
+              <label for="sickNoteType" th:text="|#{sicknote.data.type}:|"> Typ </label>
               <select
-                th:replace="~{fragments/select::one(id='sickNoteType', name='sickNoteType', options=~{::sicknotetype-select-options}, testId='sicknote-type-select')}"
+                th:replace="~{fragments/select::one(id='sickNoteType', name='sickNoteType', options=~{::sicknotetype-select-options}, testId='sicknote-type-select', required=true)}"
                 id="sickNoteType"
               >
                 <th:block th:fragment="sicknotetype-select-options">
@@ -156,9 +157,10 @@
 
             <!-- From -->
             <div class="uv-form__input-row">
-              <label for="from" class="is-required" th:text="|#{absence.period.startDate}:|"> Von </label>
+              <label for="from" th:text="|#{absence.period.startDate}:|"> Von </label>
               <input
                 id="from"
+                required
                 th:field="*{startDate}"
                 th:data-iso-value="${sickNote.startDateIsoValue}"
                 th:errorclass="error"
@@ -173,9 +175,10 @@
 
             <!-- To -->
             <div class="uv-form__input-row">
-              <label for="to" class="is-required" th:text="|#{absence.period.endDate}:|"> Bis </label>
+              <label for="to" th:text="|#{absence.period.endDate}:|"> Bis </label>
               <input
                 id="to"
+                required
                 th:field="*{endDate}"
                 th:data-iso-value="${sickNote.endDateIsoValue}"
                 th:errorclass="error"
