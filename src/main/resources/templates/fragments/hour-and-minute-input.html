@@ -7,6 +7,7 @@
   <body>
     <div
       th:fragment="hour-and-minute-input(hourFieldName, hoursTestId, minuteFieldName, minutesTestId)"
+      th:with="required=${required ?: false}"
       class="flex items-start gap-3"
     >
       <span class="flex-1">
@@ -20,6 +21,7 @@
             <input
               th:id="${hourFieldName}"
               th:field="*{__${hourFieldName}__}"
+              th:required="${required}"
               th:placeholder="#{input.hours.input.placeholder}"
               type="text"
               inputmode="numeric"
@@ -47,6 +49,7 @@
             <input
               th:id="${minuteFieldName}"
               th:field="*{__${minuteFieldName}__}"
+              th:required="${required}"
               th:placeholder="#{input.minutes.input.placeholder}"
               type="text"
               inputmode="numeric"
