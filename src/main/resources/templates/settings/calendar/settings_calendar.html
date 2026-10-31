@@ -27,8 +27,8 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-time-description">
-            <h2 id="group-time-description" class="uv-form-legend" th:text="#{settings.time.title}">
+          <div role="group" aria-labelledby="group-time-label">
+            <h2 id="group-time-label" class="uv-form-legend" th:text="#{settings.time.title}">
               Einstellungen für Zeitangaben
             </h2>
             <div th:replace="~{settings/calendar/time::section}"></div>

@@ -27,23 +27,23 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-vacation-description">
-            <h2 id="group-vacation-description" class="uv-form-legend" th:text="#{settings.vacation.title}">
+          <div role="group" aria-labelledby="group-vacation-label">
+            <h2 id="group-vacation-label" class="uv-form-legend" th:text="#{settings.vacation.title}">
               Einstellungen zu Urlaub
             </h2>
             <div th:replace="~{settings/absences/vacation::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-sick-note-description">
-            <h2 id="group-sick-note-description" class="uv-form-legend" th:text="#{settings.sickDays.title}">
+          <div role="group" aria-labelledby="group-sick-note-label">
+            <h2 id="group-sick-note-label" class="uv-form-legend" th:text="#{settings.sickDays.title}">
               Einstellungen zu Krankmeldungen
             </h2>
             <div th:replace="~{settings/absences/sick-days::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-reminder-absence-description">
+          <div role="group" aria-labelledby="group-reminder-absence-label">
             <h2
-              id="group-reminder-absence-description"
+              id="group-reminder-absence-label"
               class="uv-form-legend"
               th:text="#{settings.vacation.remindForWaitingApplications.title}"
             >
@@ -52,9 +52,9 @@
             <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-reminder-replacement-description">
+          <div role="group" aria-labelledby="group-reminder-replacement-label">
             <h2
-              id="group-reminder-replacement-description"
+              id="group-reminder-replacement-label"
               class="uv-form-legend"
               th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.title}"
             >
@@ -63,9 +63,9 @@
             <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-reminder-upcoming-absences-description">
+          <div role="group" aria-labelledby="group-reminder-upcoming-absences-label">
             <h2
-              id="group-reminder-upcoming-absences-description"
+              id="group-reminder-upcoming-absences-label"
               class="uv-form-legend"
               th:text="#{settings.vacation.remindForUpcomingApplications.title}"
             >

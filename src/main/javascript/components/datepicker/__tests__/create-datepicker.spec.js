@@ -101,6 +101,36 @@ describe("create-datepicker", () => {
     expect(datepicker.getAttribute("name")).toBe("start-date");
   });
 
+  test("assigns original 'aria-describedby' and 'aria-invalid' attributes to the date input", async () => {
+    document.body.innerHTML = `
+      <input id="start-date" aria-describedby="start-date-error" aria-invalid="true" />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
+
+    const input = datepicker.querySelector("#start-date");
+    expect(input.getAttribute("aria-describedby")).toBe("start-date-error");
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+  });
+
+  test("does not add 'aria-describedby' and 'aria-invalid' attributes to the date input without original ones", async () => {
+    document.body.innerHTML = `
+      <input id="start-date" />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
+
+    const input = datepicker.querySelector("#start-date");
+    expect(input.hasAttribute("aria-describedby")).toBe(false);
+    expect(input.hasAttribute("aria-invalid")).toBe(false);
+  });
+
   test("fails to render with preset date value but missing iso-value", async () => {
     document.body.innerHTML = `
       <input value="24.12.2020" />

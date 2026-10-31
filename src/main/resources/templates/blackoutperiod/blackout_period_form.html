@@ -62,7 +62,9 @@
         <button type="submit" class="hidden"></button>
         <input type="hidden" th:field="*{id}" />
 
+        <!--/* the only global error of this form is an invalid period, the date inputs reference it */-->
         <p
+          id="global-error"
           class="uv-form__global-feedback alert alert-danger"
           th:if="${#fields.hasGlobalErrors()}"
           th:errors="*{global}"
@@ -70,11 +72,11 @@
 
         <div
           role="group"
-          aria-describedby="group-blackoutperiod-data-description"
+          aria-labelledby="group-blackoutperiod-data-label"
           th:with="blackoutPeriodTitleMessageKey=${blackoutPeriod.id == null ? 'blackoutperiod.data.header.title.new' : 'blackoutperiod.data.header.title.edit'}"
         >
           <h2
-            id="group-blackoutperiod-data-description"
+            id="group-blackoutperiod-data-label"
             class="uv-form-legend"
             th:text="#{__${blackoutPeriodTitleMessageKey}__(${blackoutPeriod.title})}"
           >
@@ -84,8 +86,15 @@
           <div class="uv-form__group">
             <div class="uv-form__input-row">
               <label for="title" class="is-required" th:text="|#{blackoutperiod.data.title}:|"> Titel </label>
-              <input id="title" type="text" th:field="*{title}" th:errorclass="error" />
-              <p class="uv-form__input-error" th:if="${#fields.hasErrors('title')}">
+              <input
+                id="title"
+                type="text"
+                th:field="*{title}"
+                th:errorclass="error"
+                th:aria-invalid="${#fields.hasErrors('title')} ? 'true'"
+                th:aria-describedby="${#fields.hasErrors('title')} ? 'title-error'"
+              />
+              <p id="title-error" class="uv-form__input-error" th:if="${#fields.hasErrors('title')}">
                 <th:block th:errors="*{title}"> title Error</th:block>
               </p>
             </div>
@@ -99,8 +108,10 @@
                 th:placeholder="#{pattern.date}"
                 autocomplete="off"
                 th:data-iso-value="${blackoutPeriod.startDateIsoValue}"
+                th:aria-invalid="${#fields.hasErrors('startDate') or #fields.hasGlobalErrors()} ? 'true'"
+                th:aria-describedby="${#fields.hasErrors('startDate') ? (#fields.hasGlobalErrors() ? 'startDate-error global-error' : 'startDate-error') : (#fields.hasGlobalErrors() ? 'global-error' : null)}"
               />
-              <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
+              <p id="startDate-error" class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
                 <th:block th:errors="*{startDate}"> startDate Error</th:block>
               </p>
             </div>
@@ -114,17 +125,23 @@
                 th:placeholder="#{pattern.date}"
                 autocomplete="off"
                 th:data-iso-value="${blackoutPeriod.endDateIsoValue}"
+                th:aria-invalid="${#fields.hasErrors('endDate') or #fields.hasGlobalErrors()} ? 'true'"
+                th:aria-describedby="${#fields.hasErrors('endDate') ? (#fields.hasGlobalErrors() ? 'endDate-error global-error' : 'endDate-error') : (#fields.hasGlobalErrors() ? 'global-error' : null)}"
               />
-              <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
+              <p id="endDate-error" class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
                 <th:block th:errors="*{endDate}"> endDate Error</th:block>
               </p>
             </div>
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-departments-description">
+        <div
+          role="group"
+          aria-labelledby="group-blackoutperiod-departments-label"
+          th:aria-describedby="${#fields.hasErrors('departmentIds')} ? 'departmentIds-error'"
+        >
           <h2
-            id="group-blackoutperiod-departments-description"
+            id="group-blackoutperiod-departments-label"
             class="uv-form-legend"
             th:text="#{blackoutperiod.data.departments}"
           >
@@ -133,14 +150,19 @@
 
           <div class="uv-form__group flex flex-col gap-4">
             <p
+              id="blackoutperiod-departments-label"
               class="text-sm text-zinc-600 dark:text-zinc-400"
               th:text="#{blackoutperiod.data.departments.question}"
             ></p>
-            <p class="uv-form__input-error" th:if="${#fields.hasErrors('departmentIds')}">
+            <p id="departmentIds-error" class="uv-form__input-error" th:if="${#fields.hasErrors('departmentIds')}">
               <th:block th:errors="*{departmentIds}">departments error</th:block>
             </p>
 
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+            <div
+              role="radiogroup"
+              aria-labelledby="blackoutperiod-departments-label"
+              class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3"
+            >
               <label
                 class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
               >
@@ -264,9 +286,13 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-vacationtypes-description">
+        <div
+          role="group"
+          aria-labelledby="group-blackoutperiod-vacationtypes-label"
+          th:aria-describedby="${#fields.hasErrors('vacationTypeIds')} ? 'vacationTypeIds-error'"
+        >
           <h2
-            id="group-blackoutperiod-vacationtypes-description"
+            id="group-blackoutperiod-vacationtypes-label"
             class="uv-form-legend"
             th:text="#{blackoutperiod.data.vacationTypes}"
           >
@@ -275,14 +301,19 @@
 
           <div class="uv-form__group flex flex-col gap-4">
             <p
+              id="blackoutperiod-vacationtypes-label"
               class="text-sm text-zinc-600 dark:text-zinc-400"
               th:text="#{blackoutperiod.data.vacationTypes.question}"
             ></p>
-            <p class="uv-form__input-error" th:if="${#fields.hasErrors('vacationTypeIds')}">
+            <p id="vacationTypeIds-error" class="uv-form__input-error" th:if="${#fields.hasErrors('vacationTypeIds')}">
               <th:block th:errors="*{vacationTypeIds}">vacation types error</th:block>
             </p>
 
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+            <div
+              role="radiogroup"
+              aria-labelledby="blackoutperiod-vacationtypes-label"
+              class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3"
+            >
               <label
                 class="flex flex-col gap-1 p-4 rounded-lg border-2 border-zinc-200 cursor-pointer has-checked:border-cyan-600 has-checked:bg-cyan-50 dark:border-zinc-700 dark:has-checked:border-sky-400 dark:has-checked:bg-sky-950"
               >
@@ -343,8 +374,8 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-blackoutperiod-impact-description" data-blackout-impact>
-          <h2 id="group-blackoutperiod-impact-description" class="uv-form-legend" th:text="#{blackoutperiod.impact}">
+        <div role="group" aria-labelledby="group-blackoutperiod-impact-label" data-blackout-impact>
+          <h2 id="group-blackoutperiod-impact-label" class="uv-form-legend" th:text="#{blackoutperiod.impact}">
             Auswirkung
           </h2>
 

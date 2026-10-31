@@ -32,16 +32,16 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-calendar-sync-description">
-            <h2 id="group-calendar-sync-description" class="uv-form-legend" th:text="#{settings.calendar.title}">
+          <div role="group" aria-labelledby="group-calendar-sync-label">
+            <h2 id="group-calendar-sync-label" class="uv-form-legend" th:text="#{settings.calendar.title}">
               Anbindung an Kalender
             </h2>
             <div th:replace="~{settings/calendar-sync/integration::section}"></div>
           </div>
 
-          <div role="group" aria-describedby="group-calendar-sync-google-description" id="google-calendar">
+          <div role="group" aria-labelledby="group-calendar-sync-google-label" id="google-calendar">
             <h2
-              id="group-calendar-sync-google-description"
+              id="group-calendar-sync-google-label"
               class="uv-form-legend"
               th:text="#{settings.calendar.google.title}"
             >

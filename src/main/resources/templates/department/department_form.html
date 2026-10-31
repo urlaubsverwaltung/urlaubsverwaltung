@@ -31,10 +31,8 @@
         <button type="submit" class="hidden"></button>
         <input type="hidden" th:field="*{id}" />
 
-        <div role="group" aria-describedby="group-department-data-description">
-          <h2 id="group-department-data-description" class="uv-form-legend" th:text="#{department.data}">
-            Abteilungsdaten
-          </h2>
+        <div role="group" aria-labelledby="group-department-data-label">
+          <h2 id="group-department-data-label" class="uv-form-legend" th:text="#{department.data}">Abteilungsdaten</h2>
 
           <div class="uv-form__group">
             <p class="uv-form__group-info uv-help-block">
@@ -89,10 +87,8 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-department-member-description">
-          <h2 id="group-department-member-description" class="uv-form-legend" th:text="#{department.members}">
-            Mitarbeiter
-          </h2>
+        <div role="group" aria-labelledby="group-department-member-label">
+          <h2 id="group-department-member-label" class="uv-form-legend" th:text="#{department.members}">Mitarbeiter</h2>
 
           <div class="uv-form__group">
             <p class="uv-form__group-error alert alert-danger text-sm" th:if="${#fields.hasErrors('departmentHeads')}">

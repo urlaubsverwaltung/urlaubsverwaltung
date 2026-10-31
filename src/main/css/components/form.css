@@ -488,10 +488,10 @@ textarea.error {
 /* ======================== */
 /* debug helpers */
 
-div[role="group"]:not([aria-describedby]) {
+div[role="group"]:not([aria-labelledby]) {
   outline: 2px solid magenta;
   &::after {
-    content: "Form Group ohne aria-describedby";
+    content: "Form Group ohne aria-labelledby";
     position: fixed;
     top: 0;
     right: 0;

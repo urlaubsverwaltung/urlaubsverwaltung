@@ -27,8 +27,8 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <div role="group" aria-describedby="group-overtime-description">
-            <h2 id="group-overtime-description" class="uv-form-legend" th:text="#{settings.overtime.title}">
+          <div role="group" aria-labelledby="group-overtime-label">
+            <h2 id="group-overtime-label" class="uv-form-legend" th:text="#{settings.overtime.title}">
               Einstellungen zu Überstunden
             </h2>
             <div th:replace="~{settings/overtime/overtime::section}"></div>

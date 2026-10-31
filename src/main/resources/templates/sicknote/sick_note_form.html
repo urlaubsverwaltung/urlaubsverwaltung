@@ -42,8 +42,8 @@
         th:object="${sickNote}"
         class="uv-form uv-form-grid"
       >
-        <div role="group" aria-describedby="group-sicknote-description">
-          <h2 id="group-sicknote-description" class="uv-form-legend">
+        <div role="group" aria-labelledby="group-sicknote-label">
+          <h2 id="group-sicknote-label" class="uv-form-legend">
             <th:block th:if="${editMode}" th:text="#{sicknote.edit.title}"> Krankmeldung bearbeiten </th:block>
             <th:block
               th:if="${not editMode}"
@@ -191,8 +191,8 @@
         </div>
 
         <!-- AU -->
-        <div role="group" aria-describedby="group-sicknote-au-description">
-          <h2 id="group-sicknote-au-description" class="uv-form-legend" th:text="#{sicknote.data.aub.short}">
+        <div role="group" aria-labelledby="group-sicknote-au-label">
+          <h2 id="group-sicknote-au-label" class="uv-form-legend" th:text="#{sicknote.data.aub.short}">
             AU-Bescheinigung
           </h2>
 
@@ -238,12 +238,8 @@
           </div>
         </div>
 
-        <div role="group" aria-describedby="group-further-info-description">
-          <h2
-            id="group-further-info-description"
-            class="uv-form-legend"
-            th:text="#{sicknote.data.furtherInformation.title}"
-          >
+        <div role="group" aria-labelledby="group-further-info-label">
+          <h2 id="group-further-info-label" class="uv-form-legend" th:text="#{sicknote.data.furtherInformation.title}">
             Weitere Informationen
           </h2>
 

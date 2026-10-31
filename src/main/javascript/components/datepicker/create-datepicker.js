@@ -264,6 +264,12 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   for (const [key, value] of Object.entries(dateElement.dataset)) {
     duetDateInputElement.dataset[key] = value;
   }
+  // links a validation error to the input actually focused by the user
+  for (const attributeName of ["aria-describedby", "aria-invalid"]) {
+    if (dateElement.hasAttribute(attributeName)) {
+      duetDateInputElement.setAttribute(attributeName, dateElement.getAttribute(attributeName));
+    }
+  }
 
   return duetDateElement;
 }
