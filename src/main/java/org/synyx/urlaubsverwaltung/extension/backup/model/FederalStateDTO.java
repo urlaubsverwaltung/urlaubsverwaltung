@@ -121,6 +121,8 @@ public enum FederalStateDTO {
 
     BULGARIA,
 
+    LATVIA,
+
     USA_MARYLAND,
     USA_VIRGINIA,
     USA_WASHINGTON_DC;
