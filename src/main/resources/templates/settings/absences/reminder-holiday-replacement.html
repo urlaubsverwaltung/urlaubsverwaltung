@@ -25,6 +25,7 @@
             <label>
               <input
                 type="radio"
+                required
                 id="applicationSettings.remindForUpcomingHolidayReplacement.activation.true"
                 th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
                 value="true"
@@ -36,6 +37,7 @@
             <label>
               <input
                 type="radio"
+                required
                 id="applicationSettings.remindForUpcomingHolidayReplacement.activation.false"
                 th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
                 value="false"
@@ -49,13 +51,14 @@
 
         <!-- Number of days before the reminder for upcoming holiday replacements -->
         <div class="uv-form__input-row">
-          <label class="is-required" for="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement">
+          <label for="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement">
             <th:block th:text="|#{settings.vacation.daysBeforeRemindForUpcomingHolidayReplacement}:|">
               Wie viele Tage im Voraus soll die Vertretung über eine bevorstehende Vertretung benachrichtigt werden
             </th:block>
           </label>
           <input
             id="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement"
+            required
             th:field="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}"
             th:errorclass="error"
             type="number"

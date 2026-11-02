@@ -9,13 +9,13 @@
       <div class="uv-form__input-row">
         <label
           th:text="#{settings.vacation.maximumMonthsToApplyForLeaveInAdvance}"
-          class="is-required"
           for="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
         >
           Wie viele Monate im Voraus dürfen Mitarbeitende eine neue Abwesenheit erstellen?
         </label>
         <input
           id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+          required
           th:field="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}"
           th:errorclass="error"
           type="number"
@@ -35,13 +35,13 @@
       <div class="uv-form__input-row">
         <label
           th:text="#{settings.vacation.maximumMonthsToApplyForLeaveAfterwards}"
-          class="is-required"
           for="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
         >
           Wie viele Monate im Nachhinein dürfen Mitarbeitende eine neue Abwesenheit erstellen?
         </label>
         <input
           id="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
+          required
           th:field="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}"
           th:errorclass="error"
           type="number"
@@ -66,6 +66,7 @@
           <label data-test-id="vacation-half-day-enable">
             <input
               type="radio"
+              required
               id="applicationSettings.allowHalfDays.true"
               th:field="*{applicationSettings.allowHalfDays}"
               value="true"
@@ -75,6 +76,7 @@
           <label data-test-id="vacation-half-day-disable">
             <input
               type="radio"
+              required
               id="applicationSettings.allowHalfDays.false"
               th:field="*{applicationSettings.allowHalfDays}"
               value="false"

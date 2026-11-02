@@ -21,7 +21,13 @@
       <main class="content-container content--max-w">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
-        <form method="post" th:action="@{/web/settings/account}" th:object="${settings}" class="uv-form uv-form-grid">
+        <form
+          method="post"
+          th:action="@{/web/settings/account}"
+          th:object="${settings}"
+          class="uv-form uv-form-grid"
+          novalidate
+        >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 

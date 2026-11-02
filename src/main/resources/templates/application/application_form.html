@@ -56,6 +56,7 @@
           th:action="@{__${actionUrl}__}"
           th:object="${applicationForLeaveForm}"
           class="uv-form uv-form-grid"
+          novalidate
         >
           <button type="submit" hidden></button>
 
@@ -77,10 +78,10 @@
             <div class="uv-form__group">
               <th:block th:if="${canAddApplicationForLeaveForAnotherUser}">
                 <div class="uv-form__input-row">
-                  <label for="person-select" class="is-required" th:text="#{application.data.person}"></label>
+                  <label for="person-select" th:text="#{application.data.person}"></label>
                   <th:block th:if="${applicationForLeaveForm.id == null}">
                     <select
-                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options}, required=true)}"
                       id="person-select"
                     >
                       <th:block th:fragment="application-person-select-options">
@@ -114,11 +115,9 @@
               </th:block>
 
               <div class="uv-form__input-row">
-                <label for="vacationType" class="is-required" th:text="|#{application.data.vacationType}:|">
-                  Art der Abwesenheit
-                </label>
+                <label for="vacationType" th:text="|#{application.data.vacationType}:|"> Art der Abwesenheit </label>
                 <select
-                  th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
+                  th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select', required=true)}"
                   id="vacationType"
                 >
                   <th:block th:fragment="application-vacationtype-select-options">
@@ -134,10 +133,11 @@
               </div>
 
               <div class="uv-form__input-row">
-                <label for="from" class="is-required" th:text="|#{absence.period.startDate}:|"> Von </label>
+                <label for="from" th:text="|#{absence.period.startDate}:|"> Von </label>
                 <div>
                   <input
                     id="from"
+                    required
                     name="startDate"
                     class="w-2/3"
                     th:errorclass="error"
@@ -168,10 +168,11 @@
 
             <div class="uv-form__group">
               <div class="uv-form__input-row">
-                <label for="to" class="is-required" th:text="|#{absence.period.endDate}:|"> Bis </label>
+                <label for="to" th:text="|#{absence.period.endDate}:|"> Bis </label>
                 <div>
                   <input
                     id="to"
+                    required
                     name="endDate"
                     class="w-2/3"
                     th:errorclass="error"
@@ -206,11 +207,12 @@
             <div class="uv-form__group">
               <th:block th:if="${showHalfDayOption}">
                 <div class="uv-form__input-row">
-                  <p class="is-required uv-form__label" th:text="|#{absence.period}:|">Zeitraum</p>
+                  <p class="uv-form__label uv-form__label--required" th:text="|#{absence.period}:|">Zeitraum</p>
                   <div>
                     <label data-test-id="day-length-full">
                       <input
                         type="radio"
+                        required
                         id="fullDay"
                         class="dayLength-full"
                         th:field="*{dayLength}"
@@ -220,11 +222,25 @@
                       <th:block th:text="#{FULL}">ganztägig</th:block>
                     </label>
                     <label data-test-id="day-length-morning">
-                      <input type="radio" id="morning" class="dayLength-half" th:field="*{dayLength}" value="MORNING" />
+                      <input
+                        type="radio"
+                        required
+                        id="morning"
+                        class="dayLength-half"
+                        th:field="*{dayLength}"
+                        value="MORNING"
+                      />
                       <th:block th:text="#{MORNING}">vormittags</th:block>
                     </label>
                     <label data-test-id="day-length-noon">
-                      <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
+                      <input
+                        type="radio"
+                        required
+                        id="noon"
+                        class="dayLength-half"
+                        th:field="*{dayLength}"
+                        value="NOON"
+                      />
                       <th:block th:text="#{NOON}">nachmittags</th:block>
                     </label>
                   </div>
@@ -257,9 +273,10 @@
                 th:classappend="${applicationForLeaveForm.vacationType?.category?.name == 'SPECIALLEAVE' ? '' : 'hidden'}"
                 id="special-leave"
               >
-                <label th:text="|#{application.data.reason}:|" class="is-required" for="reason"> Grund </label>
+                <label th:text="|#{application.data.reason}:|" for="reason"> Grund </label>
                 <textarea
                   id="reason"
+                  required
                   rows="1"
                   name="reason"
                   th:text="${applicationForLeaveForm.reason}"

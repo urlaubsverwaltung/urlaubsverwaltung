@@ -26,6 +26,7 @@
           th:action="@{/web/settings/public-holidays}"
           th:object="${settings}"
           class="uv-form uv-form-grid"
+          novalidate
         >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
