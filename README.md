@@ -13,6 +13,7 @@ Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann 
 * [Berechtigungen](#berechtigungen)
 * [Betrieb](#betrieb)
   * [Konfiguration](#konfiguration)
+* [One-Click Deploy](#one-click-deploy)
 * [Demodaten Modus](#demodaten-modus)
 * [Entwicklung](#entwicklung)
 
@@ -329,6 +330,10 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Linux Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-service)
 * [Windows Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-windows)
 
+
+## One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Urlaubsverwaltung/)
 
 ## Demodaten-Modus
 
