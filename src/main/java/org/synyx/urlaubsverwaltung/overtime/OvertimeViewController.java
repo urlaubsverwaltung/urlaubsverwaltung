@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.TodayMarker;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -163,7 +164,8 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
                 signedInUser.getId(), person.getId()));
         }
 
-        final int currentYear = Year.now(clock).getValue();
+        final LocalDate today = LocalDate.now(clock);
+        final int currentYear = today.getYear();
         final int selectedYear = requestedYear != null ? requestedYear : currentYear;
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
@@ -188,6 +190,9 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
         );
 
         model.addAttribute("records", overtimeListDto.getRecords());
+        // overtime absences are loaded with active statuses only, overtimes have no status
+        model.addAttribute("recordsTodayMarker", TodayMarker.of(overtimeListDto.getRecords(),
+            OvertimeListRecordDto::getStartDate, OvertimeListRecordDto::getEndDate, _ -> true, today, selectedYear));
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
         model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
