@@ -14,23 +14,24 @@
   }
 }
 
-.topbar-backdrop {
-  anchor-name: --topbbar-backdrop-anchor;
-  z-index: var(--z-index-topbar);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: calc(var(--topbar-height) + var(--info-banner-height) + var(--search-bar-height));
+/* bottom of the topbar row, e.g. to position the mobile navigation drawer below it. */
+.avatar-cell {
+  anchor-name: --topbar-anchor;
+}
 
-  @variant desktop {
-    height: calc(var(--topbar-height) + var(--info-banner-height));
-  }
+/* the backdrop spans every row above the content row (info-banner, topbar and the
+ * search on mobile). its height is therefore given by the grid and always matches the
+ * actual height of the rows, e.g. when the info-banner text breaks into multiple lines. */
+.topbar-backdrop {
+  anchor-name: --topbar-backdrop-anchor;
+  z-index: var(--z-index-topbar);
+  grid-column: 1 / -1;
+  grid-row: 1 / -2;
 }
 
 .topbar-backdrop--after {
   position: fixed;
-  position-anchor: --topbbar-backdrop-anchor;
+  position-anchor: --topbar-backdrop-anchor;
   position-area: block-end;
   width: anchor-size(width);
   z-index: var(--z-index-topbar);

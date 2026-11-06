@@ -34,11 +34,6 @@
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {
-  :root {
-    /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
-    --info-banner-height: 0px;
-  }
-
   body {
     font-family:
       system-ui,
@@ -60,7 +55,9 @@
     @apply dark:bg-zinc-900;
     @apply dark:text-zinc-200;
     display: grid;
-    grid-template-rows: auto auto auto 1fr;
+    /* minmax(0, ...) instead of 1fr: the content row must not grow with its content,
+       otherwise #main would not be a scroll container anymore. */
+    grid-template-rows: auto auto auto minmax(0, 1fr);
     grid-template-columns: auto 1fr auto auto;
     grid-template-areas:
       "banner banner banner banner"
@@ -86,9 +83,25 @@
     grid-area: avatar;
   }
 
+  /* #main spans all rows to let the content scroll beneath the (frosted glass) topbar.
+     the subgrid places the content into the last row, which starts right below the
+     info-banner, topbar and search rows - whatever height they have. */
+  #main {
+    grid-column: content;
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .main-content {
+    grid-row: -2;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
   @variant desktop {
     body {
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto auto minmax(0, 1fr);
       grid-template-columns: var(--nav-width) 1fr auto;
       grid-template-areas:
         "banner banner banner"

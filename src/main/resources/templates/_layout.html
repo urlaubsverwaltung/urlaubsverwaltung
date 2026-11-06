@@ -154,19 +154,14 @@
     <div
       id="main"
       class="grid overflow-y-scroll bg-linear-to-b from-white to-[#fafafa] dark:from-transparent dark:to-transparent"
-      style="
-        grid-area: content;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr auto;
-        margin-top: calc(-1 * var(--top-content-start));
-        padding-top: var(--top-content-start);
-      "
     >
-      <div class="@container/main">
-        <main th:replace="${content}">content block</main>
-      </div>
-      <div>
-        <footer th:replace="~{_footer::footer}">footer block</footer>
+      <div class="main-content">
+        <div class="@container/main">
+          <main th:replace="${content}">content block</main>
+        </div>
+        <div>
+          <footer th:replace="~{_footer::footer}">footer block</footer>
+        </div>
       </div>
     </div>
   </body>
