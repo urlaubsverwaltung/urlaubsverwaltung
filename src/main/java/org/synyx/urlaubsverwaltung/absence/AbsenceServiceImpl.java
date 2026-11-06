@@ -27,6 +27,7 @@ import static java.util.Collections.max;
 import static java.util.Collections.min;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 
 
@@ -124,18 +125,24 @@ public class AbsenceServiceImpl implements AbsenceService {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningNoWorkday(person), new AbsencePeriod.RecordNoonNoWorkday(person)))));
                         } else if (workingDayInformation.morning() == PUBLIC_HOLIDAY) {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person)))));
+                        } else if (workingDayInformation.morning() == COMPANY_CLOSURE) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person)))));
                         }
                     } else {
                         if (workingDayInformation.morning() == NO_WORKDAY) {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningNoWorkday(person)))));
                         } else if (workingDayInformation.morning() == PUBLIC_HOLIDAY) {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningPublicHoliday(person)))));
+                        } else if (workingDayInformation.morning() == COMPANY_CLOSURE) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningCompanyClosure(person)))));
                         }
 
                         if (workingDayInformation.noon() == NO_WORKDAY) {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordNoonNoWorkday(person)))));
                         } else if (workingDayInformation.noon() == PUBLIC_HOLIDAY) {
                             consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordNoonPublicHoliday(person)))));
+                        } else if (workingDayInformation.noon() == COMPANY_CLOSURE) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordNoonCompanyClosure(person)))));
                         }
                     }
                 }
