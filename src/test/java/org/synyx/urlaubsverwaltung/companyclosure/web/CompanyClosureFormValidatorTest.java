@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
@@ -24,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 @ExtendWith(MockitoExtension.class)
 class CompanyClosureFormValidatorTest {
@@ -33,10 +36,13 @@ class CompanyClosureFormValidatorTest {
     @Mock
     private CompanyClosureService companyClosureService;
 
+    @Mock
+    private BlackoutPeriodService blackoutPeriodService;
+
     @BeforeEach
     void setUp() {
         final Clock clock = Clock.fixed(LocalDate.of(2026, NOVEMBER, 6).atStartOfDay(ZoneId.of("UTC")).toInstant(), ZoneId.of("UTC"));
-        sut = new CompanyClosureFormValidator(companyClosureService, clock);
+        sut = new CompanyClosureFormValidator(companyClosureService, blackoutPeriodService, clock);
     }
 
     @Test
@@ -157,6 +163,84 @@ class CompanyClosureFormValidatorTest {
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), "Heiligabend", List.of(new CompanyClosureVersion(NOON, null)))));
 
         assertThat(validateNew(validForm()).hasErrors()).isFalse();
+    }
+
+    @Test
+    void rejectsWhenCompanyWideBlackoutCoversAFutureClosureDay() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Weihnachtssperre", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), true)));
+        final CompanyClosureForm form = validForm();
+        form.setDayLength(FULL);
+
+        final Errors errors = validateEdit(MonthDay.of(DECEMBER, 24), form);
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+        assertThat(errors.getGlobalError().getArguments()).containsExactly("Weihnachtssperre");
+    }
+
+    @Test
+    void rejectsWhenCompanyWideBlackoutSpansYearBoundary() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Jahreswechsel", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2028, JANUARY, 5), true)));
+
+        final Errors errors = validateEdit(MonthDay.of(JANUARY, 2), validForm());
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+    }
+
+    @Test
+    void rejectsNewDayInsideCompanyWideBlackout() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Weihnachtssperre", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), true)));
+        final CompanyClosureForm form = validForm();
+        form.setDay(22);
+        form.setMonth(12);
+
+        final Errors errors = validateNew(form);
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+        assertThat(errors.getGlobalError().getArguments()).containsExactly("Weihnachtssperre");
+    }
+
+    @Test
+    void allowsDepartmentBlackoutPeriod() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Abteilung", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), false)));
+
+        assertThat(validateEdit(MonthDay.of(DECEMBER, 24), validForm()).hasErrors()).isFalse();
+    }
+
+    @Test
+    void allowsBlackoutBeforeValidFrom() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Alt", LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, JANUARY, 5), true)));
+        final CompanyClosureForm form = validForm();
+        form.setValidFrom(LocalDate.of(2026, NOVEMBER, 6));
+
+        assertThat(validateEdit(MonthDay.of(JANUARY, 2), form).hasErrors()).isFalse();
+    }
+
+    @Test
+    void allowsZero() {
+        final CompanyClosureForm form = validForm();
+        form.setDayLength(ZERO);
+
+        assertThat(validateEdit(MonthDay.of(DECEMBER, 24), form).hasErrors()).isFalse();
+    }
+
+    private static BlackoutPeriod blackout(String title, LocalDate start, LocalDate end, boolean companyWide) {
+        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
+        blackoutPeriod.setTitle(title);
+        blackoutPeriod.setStartDate(start);
+        blackoutPeriod.setEndDate(end);
+        blackoutPeriod.setCompanyWide(companyWide);
+        return blackoutPeriod;
+    }
+
+    private Errors validateEdit(MonthDay monthDay, CompanyClosureForm form) {
+        final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
+        sut.validateEdit(monthDay, form, errors);
+        return errors;
     }
 
     private static CompanyClosureForm validForm() {
