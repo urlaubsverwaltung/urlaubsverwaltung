@@ -189,8 +189,8 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState) {
-        // two public holidays can fall on the same date. their day length only depends on the date, so keep the first
-        // one - just like the first public holiday of a date does.
+        // two public holidays can fall on the same date. public holidays are always full days, so which one is kept
+        // does not change the day length.
         return publicHolidaysService.getPublicHolidays(start, end, federalState).stream()
             .collect(toMap(PublicHoliday::date, identity(), (first, _) -> first));
     }
@@ -206,7 +206,16 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
         final boolean morningWork = morningType == WORKDAY;
         final boolean noonWork = noonType == WORKDAY;
-        final DayLength dayLength = morningWork && noonWork ? DayLength.FULL : morningWork ? MORNING : noonWork ? DayLength.NOON : ZERO;
+        final DayLength dayLength;
+        if (morningWork && noonWork) {
+            dayLength = DayLength.FULL;
+        } else if (morningWork) {
+            dayLength = MORNING;
+        } else if (noonWork) {
+            dayLength = DayLength.NOON;
+        } else {
+            dayLength = ZERO;
+        }
 
         return new WorkingDayInformation(dayLength, morningType, noonType);
     }
