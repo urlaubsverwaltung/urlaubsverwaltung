@@ -57,6 +57,8 @@ export default [
       "eslint.config.mjs",
       "postcss.config.js",
       "vitest.config.mjs",
+      "playwright.config.mjs",
+      "src/test/visual/**/*.mjs",
     ],
     languageOptions: {
       globals: globals.node,
