@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
@@ -59,11 +61,38 @@ class WorkDaysCountServiceTest {
     private WorkingTimeService workingTimeService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private CompanyClosureService companyClosureService;
 
     @BeforeEach
     void setUp() {
         final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
+        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService, companyClosureService);
+    }
+
+    @Test
+    void companyClosureNoonCountsHalfDay() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 24);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Heiligabend")));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(new BigDecimal("0.5"));
+    }
+
+    @Test
+    void holidayAndClosureOnSameDayCountOnce() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 25);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Closure")));
+
+        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
