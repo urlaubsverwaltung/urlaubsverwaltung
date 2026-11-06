@@ -57,7 +57,8 @@ class AbsenceOverviewPerformanceIT extends SingleTenantTestContainersBase {
     private static final int PERSONS = 100;
     // measured before the absence bars - the bars must not add round trips.
     // +1 for the overlapping blackout periods, looked up once for all persons.
-    private static final long MAX_STATEMENTS_PER_REQUEST = 126;
+    // +4: company closures are loaded by the working time calendar and the overview, 2 queries each, constant per page.
+    private static final long MAX_STATEMENTS_PER_REQUEST = 130;
     // the first run warms up caches and the JIT - every run renders the whole year, so keep them few
     private static final int WARM_UP_RUNS = 1;
     private static final int MEASURED_RUNS = 3;
