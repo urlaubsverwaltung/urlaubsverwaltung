@@ -27,6 +27,7 @@ public record AbsencePeriod(
         VACATION,
         SICK,
         PUBLIC_HOLIDAY,
+        COMPANY_CLOSURE,
         NO_WORKDAY
     }
 
@@ -333,6 +334,12 @@ public record AbsencePeriod(
         }
     }
 
+    public static class RecordMorningCompanyClosure extends AbstractRecordInfo implements RecordMorning {
+        public RecordMorningCompanyClosure(Person person) {
+            super(person, AbsenceType.COMPANY_CLOSURE, AbsenceStatus.ACTIVE);
+        }
+    }
+
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone) {
             this(person, applicationId, status, category, typeId, visibleToEveryone, null);
@@ -356,6 +363,12 @@ public record AbsencePeriod(
     public static class RecordNoonNoWorkday extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonNoWorkday(Person person) {
             super(person, AbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
+        }
+    }
+
+    public static class RecordNoonCompanyClosure extends AbstractRecordInfo implements RecordNoon {
+        public RecordNoonCompanyClosure(Person person) {
+            super(person, AbsenceType.COMPANY_CLOSURE, AbsenceStatus.ACTIVE);
         }
     }
 

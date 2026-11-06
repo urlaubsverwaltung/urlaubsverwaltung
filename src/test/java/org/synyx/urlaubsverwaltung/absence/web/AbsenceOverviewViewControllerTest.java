@@ -32,6 +32,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
@@ -111,6 +113,8 @@ class AbsenceOverviewViewControllerTest {
     @Mock
     private PublicHolidaysService publicHolidaysService;
     @Mock
+    private CompanyClosureService companyClosureService;
+    @Mock
     private AbsenceService absenceService;
     @Mock
     private WorkingTimeService workingTimeService;
@@ -129,7 +133,7 @@ class AbsenceOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
@@ -760,7 +764,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
@@ -859,7 +863,7 @@ class AbsenceOverviewViewControllerTest {
     @Test
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, clock);
@@ -975,7 +979,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
@@ -1016,7 +1020,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, fixedClock);
@@ -1068,7 +1072,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier,
             messageSource, fixedClock);
@@ -4084,6 +4088,126 @@ class AbsenceOverviewViewControllerTest {
             ));
     }
 
+
+    @Test
+    void companyClosureDayLooksLikePublicHoliday() throws Exception {
+
+        final LocalDate december24 = LocalDate.of(2026, DECEMBER, 24);
+        final LocalDate firstOfMonth = LocalDate.of(2026, DECEMBER, 1);
+        final LocalDate lastOfMonth = LocalDate.of(2026, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(dateRange)))
+            .thenReturn(Map.of(person, Map.of(dateRange, new WorkingTime(person, firstOfMonth, GERMANY_BADEN_WUERTTEMBERG, false))));
+
+        when(companyClosureService.getCompanyClosures(firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new CompanyClosure(december24, FULL, "Heiligabend")));
+
+        final AbsencePeriod.Record closureRecord = new AbsencePeriod.Record(december24, person,
+            new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14)))
+            .thenReturn(List.of(new AbsencePeriod(List.of(closureRecord))));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(
+            get("/web/absences").locale(Locale.GERMANY)
+                .param("year", "2026")
+                .param("month", "12")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItem(
+                            allOf(
+                                hasProperty("publicHolidayName", is("Heiligabend")),
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("publicHolidayFull", is(true))
+                                ))
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void holidayAndClosureOnSameDayShowBothNames() throws Exception {
+
+        final LocalDate december24 = LocalDate.of(2026, DECEMBER, 24);
+        final LocalDate firstOfMonth = LocalDate.of(2026, DECEMBER, 1);
+        final LocalDate lastOfMonth = LocalDate.of(2026, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(dateRange)))
+            .thenReturn(Map.of(person, Map.of(dateRange, new WorkingTime(person, firstOfMonth, GERMANY_BADEN_WUERTTEMBERG, false))));
+
+        when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(december24, FULL, "Weihnachten")));
+
+        when(companyClosureService.getCompanyClosures(firstOfMonth, lastOfMonth))
+            .thenReturn(List.of(new CompanyClosure(december24, FULL, "Heiligabend")));
+
+        final AbsencePeriod.Record closureRecord = new AbsencePeriod.Record(december24, person,
+            new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth.minusDays(14), lastOfMonth.plusDays(14)))
+            .thenReturn(List.of(new AbsencePeriod(List.of(closureRecord))));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(
+            get("/web/absences").locale(Locale.GERMANY)
+                .param("year", "2026")
+                .param("month", "12")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItem(
+                            allOf(
+                                hasProperty("publicHolidayName", is("Weihnachten/Heiligabend")),
+                                hasProperty("type", allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("publicHolidayFull", is(true))
+                                ))
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureChristmasEveOnNoonForPrivilegedPerson(Role role) throws Exception {
@@ -4998,7 +5122,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
@@ -5058,7 +5182,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, absenceService,
+        sut = new AbsenceOverviewViewController(personService, departmentService, publicHolidaysService, companyClosureService, absenceService,
             workingTimeService, vacationTypeService, new SickNotePermissionEvaluator(departmentService, settingsService),
             blackoutPeriodService,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource, fixedClock);
@@ -5457,6 +5581,30 @@ class AbsenceOverviewViewControllerTest {
         assertThat(januaryDays(0).get(7).getBars()).singleElement().satisfies(bar -> {
             assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
             assertThat(bar.getTitle()).isEqualTo("Tag der Bars");
+        });
+    }
+
+    @Test
+    void ensureBridgeOverACompanyClosureNamesTheClosure() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+
+        final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
+            .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(companyClosureService.getCompanyClosures(january.startDate(), january.endDate()))
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2025, JANUARY, 8), FULL, "Betriebsausflug")));
+
+        final AbsencePeriod closure = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 8), person,
+            new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person))));
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 7, 9), closure));
+
+        assertThat(januaryDays(0).get(7).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.getTitle()).isEqualTo("Betriebsausflug");
         });
     }
 
