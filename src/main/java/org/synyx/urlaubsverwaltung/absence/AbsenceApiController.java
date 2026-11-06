@@ -28,6 +28,7 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.VACATION;
@@ -87,8 +88,8 @@ public class AbsenceApiController {
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
-        @Parameter(description = "Type of absences like vacation, sick_note, public_holiday and no_workday")
-        @RequestParam(value = "absence-types", required = false, defaultValue = "vacation, sick_note, public_holiday, no_workday")
+        @Parameter(description = "Type of absences like vacation, sick_note, public_holiday, company_closure and no_workday")
+        @RequestParam(value = "absence-types", required = false, defaultValue = "vacation, sick_note, public_holiday, company_closure, no_workday")
         List<String> absenceTypes) {
 
         if (startDate.isAfter(endDate)) {
@@ -114,11 +115,13 @@ public class AbsenceApiController {
         final Predicate<AbsenceDto> sickAsked = _ -> types.contains(SICK_NOTE);
         final Predicate<AbsenceDto> noWorkDayAsked = _ -> types.contains(NO_WORKDAY);
         final Predicate<AbsenceDto> publicHolidayAsked = _ -> types.contains(PUBLIC_HOLIDAY);
+        final Predicate<AbsenceDto> companyClosureAsked = _ -> types.contains(COMPANY_CLOSURE);
 
         final Predicate<AbsenceDto> isVacation = dto -> dto.getAbsenceType().equals(VACATION);
         final Predicate<AbsenceDto> isSick = dto -> dto.getAbsenceType().equals(SICK_NOTE);
         final Predicate<AbsenceDto> isNoWorkDay = dto -> dto.getAbsenceType().equals(NO_WORKDAY);
         final Predicate<AbsenceDto> isPublicHoliday = dto -> dto.getAbsenceType().equals(PUBLIC_HOLIDAY);
+        final Predicate<AbsenceDto> isCompanyClosure = dto -> dto.getAbsenceType().equals(COMPANY_CLOSURE);
 
         return absenceService.getOpenAbsences(person, start, end)
             .stream()
@@ -128,6 +131,7 @@ public class AbsenceApiController {
                     .or(sickAsked.and(isSick))
                     .or(noWorkDayAsked.and(isNoWorkDay))
                     .or(publicHolidayAsked.and(isPublicHoliday))
+                    .or(companyClosureAsked.and(isCompanyClosure))
             )
             .toList();
     }
