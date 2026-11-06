@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,34 +11,49 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.Year;
+import java.util.List;
+
+import static java.time.Month.DECEMBER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web/settings/public-holidays")
 public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPersonSearch {
 
+    private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
+    private static final MonthDay NEW_YEARS_EVE = MonthDay.of(DECEMBER, 31);
+
     private final SettingsService settingsService;
     private final SettingsPublicHolidayValidator settingsValidator;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final CompanyClosureService companyClosureService;
+    private final Clock clock;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     SettingsPublicHolidayViewController(
         SettingsService settingsService,
         SettingsPublicHolidayValidator settingsValidator,
-        ApplicationEventPublisher applicationEventPublisher,
+        CompanyClosureService companyClosureService,
+        Clock clock,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.settingsService = settingsService;
         this.settingsValidator = settingsValidator;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.companyClosureService = companyClosureService;
+        this.clock = clock;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
     }
@@ -83,8 +97,11 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
 
         final Settings settings = settingsDtoToSettings(settingsDto);
         settingsService.save(settings);
-        applicationEventPublisher.publishEvent(new WorkingDurationForChristmasEveUpdatedEvent(settings.getPublicHolidaysSettings().getWorkingDurationForChristmasEve()));
-        applicationEventPublisher.publishEvent(new WorkingDurationForNewYearsEveUpdatedEvent(settings.getPublicHolidaysSettings().getWorkingDurationForNewYearsEve()));
+
+        // the service ignores unchanged values
+        final LocalDate today = LocalDate.now(clock);
+        companyClosureService.changeCompanyClosure(CHRISTMAS_EVE, settingsDto.getWorkingDurationForChristmasEve().getInverse(), today);
+        companyClosureService.changeCompanyClosure(NEW_YEARS_EVE, settingsDto.getWorkingDurationForNewYearsEve().getInverse(), today);
 
         redirectAttributes.addFlashAttribute("success", true);
 
@@ -101,13 +118,27 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         final SettingsPublicHolidayDto dto = new SettingsPublicHolidayDto();
         dto.setId(settings.getId());
         dto.setPublicHolidaysSettings(settings.getPublicHolidaysSettings());
+
+        final int year = Year.now(clock).getValue();
+        final List<CompanyClosure> closures = companyClosureService.getCompanyClosures(CHRISTMAS_EVE.atYear(year), NEW_YEARS_EVE.atYear(year));
+        dto.setWorkingDurationForChristmasEve(workingDuration(closures, CHRISTMAS_EVE.atYear(year)));
+        dto.setWorkingDurationForNewYearsEve(workingDuration(closures, NEW_YEARS_EVE.atYear(year)));
         return dto;
+    }
+
+    private static DayLength workingDuration(List<CompanyClosure> closures, LocalDate date) {
+        return closures.stream()
+            .filter(closure -> closure.date().equals(date))
+            .findFirst()
+            .map(closure -> closure.dayLength().getInverse())
+            .orElse(DayLength.FULL);
     }
 
     private Settings settingsDtoToSettings(SettingsPublicHolidayDto settingsDto) {
         final Settings settings = settingsService.getSettings();
         settings.setId(settingsDto.getId());
-        settings.setPublicHolidaysSettings(settingsDto.getPublicHolidaysSettings());
+        // the working durations live in the company closures, keep the (still read) entity values
+        settings.getPublicHolidaysSettings().setFederalState(settingsDto.getPublicHolidaysSettings().getFederalState());
         return settings;
     }
 }

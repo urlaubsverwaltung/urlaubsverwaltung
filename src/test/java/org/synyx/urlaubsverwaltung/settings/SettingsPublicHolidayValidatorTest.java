@@ -33,8 +33,6 @@ class SettingsPublicHolidayValidatorTest {
 
         final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
         publicHolidaysSettings.setFederalState(null);
-        publicHolidaysSettings.setWorkingDurationForChristmasEve(null);
-        publicHolidaysSettings.setWorkingDurationForNewYearsEve(null);
 
         final SettingsPublicHolidayDto dto = new SettingsPublicHolidayDto();
         dto.setPublicHolidaysSettings(publicHolidaysSettings);
@@ -44,7 +42,19 @@ class SettingsPublicHolidayValidatorTest {
         sut.validate(dto, mockError);
 
         verify(mockError).rejectValue("publicHolidaysSettings.federalState", "error.entry.mandatory");
-        verify(mockError).rejectValue("publicHolidaysSettings.workingDurationForChristmasEve", "error.entry.mandatory");
-        verify(mockError).rejectValue("publicHolidaysSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
+    }
+
+    @Test
+    void rejectsMissingWorkingDuration() {
+
+        final SettingsPublicHolidayDto dto = new SettingsPublicHolidayDto();
+        dto.setPublicHolidaysSettings(new PublicHolidaysSettings());
+
+        final Errors mockError = mock(Errors.class);
+
+        sut.validate(dto, mockError);
+
+        verify(mockError).rejectValue("workingDurationForChristmasEve", "error.entry.mandatory");
+        verify(mockError).rejectValue("workingDurationForNewYearsEve", "error.entry.mandatory");
     }
 }
