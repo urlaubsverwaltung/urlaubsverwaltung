@@ -76,6 +76,15 @@ public class OverviewPage {
         assertThat(dayLocator(date)).hasAttribute("data-datepicker-selectable", "true");
     }
 
+    /**
+     * Clicking a day with an absence opens a popover listing the absences of that day, each one linking to its details.
+     */
+    public void assertDayPopoverLinksTo(String text, Pattern hrefPattern) {
+        final Locator link = page.locator("#calendar-day-popover").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(text));
+        assertThat(link).isVisible();
+        assertThat(link).hasAttribute("href", hrefPattern);
+    }
+
     private Locator dayLocator(LocalDate date) {
         final String dayName = "%s%02d".formatted(date.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, locale), date.getDayOfMonth());
         return page.getByRole(AriaRole.LISTITEM).filter(new Locator.FilterOptions().setHasText(dayName)).locator("div");

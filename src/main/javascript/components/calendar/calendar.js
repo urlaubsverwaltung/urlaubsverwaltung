@@ -16,6 +16,8 @@ import {
 } from "date-fns";
 import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
+import { escapeHtml } from "../../js/escape-html";
+import formatNumber from "../../js/format-number";
 import "./calendar.css";
 
 const numberOfMonths = 10;
@@ -54,6 +56,7 @@ const CSS = {
   daySickDayMorningActive: "datepicker-day-sick-note-morning absence-morning--solid",
   daySickDayNoonWaiting: "datepicker-day-sick-note-noon absence-noon--outline",
   daySickDayNoonActive: "datepicker-day-sick-note-noon absence-noon--solid",
+  dayPopoverAnchor: "datepicker-day--popover-anchor",
   next: "datepicker-next",
   previous: "datepicker-prev",
   month: "calendar-month-container",
@@ -79,11 +82,16 @@ const DATA = {
 
 const icons = {
   chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+  close: `<svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-hidden="true"><path d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"></path></svg>`,
   chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
 };
 
 function getDateFromElement(element) {
   return parseISO(element.dataset[DATA.date]);
+}
+
+function formatPeriodDay(date) {
+  return `<time datetime="${format(date, "yyyy-MM-dd")}">${format(date, "EEEEEE, P")}</time>`;
 }
 
 function parseISO(dateStringValue) {
@@ -132,22 +140,22 @@ const View = (function () {
 
     weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header">{{text}}</li>`,
 
-    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+
+    dayPopover:
+      '<div class="calendar-day-popover__header"><p class="calendar-day-popover__date">{{date}}</p><button type="button" class="calendar-day-popover__close" popovertarget="calendar-day-popover" popovertargetaction="hide">{{closeIcon}}<span class="sr-only">{{closeLabel}}</span></button></div><ul>{{absences}}</ul>{{free}}',
+
+    dayPopoverAbsence:
+      '<li><a href="{{href}}" class="calendar-day-popover__absence"><span class="calendar-day-popover__bar calendar-day-popover__bar--{{barStyle}}" style="--absence-bar-color:{{color}}" title="{{status}}" aria-hidden="true"></span><span class="calendar-day-popover__text"><strong>{{type}}</strong> <span class="calendar-day-popover__day-length">{{dayLength}}</span> <span class="sr-only">{{status}}</span></span> <span class="calendar-day-popover__details"><span>{{periodLabel}}</span> <span>{{period}}</span> <span>{{durationLabel}}</span> <span>{{duration}}</span></span>{{chevron}}</a></li>',
+
+    dayPopoverFree:
+      '<div class="calendar-day-popover__free"><span>{{text}}</span><a href="{{href}}" class="button">{{link}}</a></div>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 
     noWorkdayIcon:
       '<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
   };
-
-  function escapeHtml(text) {
-    return String(text)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
 
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
@@ -388,10 +396,126 @@ const View = (function () {
       style: style(),
       cellStyle: cellStyle(),
       selectable: isSelectable(),
-      title: escapeHtml([holidayService.getDescription(date), blackoutPeriodDescription].filter(Boolean).join(" · ")),
-      absenceId: holidayService.getAbsenceId(date),
-      absenceType: holidayService.getAbsenceType(date),
+      title: escapeHtml([dayTitle(date), blackoutPeriodDescription].filter(Boolean).join(" · ")),
       icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
+    });
+  }
+
+  function absenceStatusText(absence) {
+    if (absence.absenceType === "SICK_NOTE") {
+      return i18n(`sicknote.status.${absence.status === "WAITING" ? "SUBMITTED" : absence.status}`);
+    }
+    return i18n(absence.status);
+  }
+
+  function absenceTypeText(absence) {
+    return absence.absenceType === "SICK_NOTE"
+      ? i18n("sicknote.title")
+      : (globalThis.uv.vacationTypes.labels?.[absence.typeId] ?? "");
+  }
+
+  // the absence overview leaves out the status once approved
+  function isSettled(absence) {
+    return absence.status === "ALLOWED" || absence.status === "ACTIVE";
+  }
+
+  // same wording as the bars of the absence overview
+  function dayTitle(date) {
+    const absenceTitles = holidayService
+      .getPersonalAbsences(date)
+      .filter(Boolean)
+      .map((absence) =>
+        [
+          absenceTypeText(absence),
+          absence.absent === "FULL" ? "" : i18n(absence.absent),
+          isSettled(absence) ? "" : absenceStatusText(absence),
+        ]
+          .filter(Boolean)
+          .join(", "),
+      );
+    return [...absenceTitles, holidayService.getDescription(date)].filter(Boolean).join("; ");
+  }
+
+  // the bar styles of the calendar days, see `CSS.dayPersonalHoliday*` and `CSS.daySickDay*`
+  function barStyle(absence) {
+    switch (absence.status) {
+      case "TEMPORARY_ALLOWED": {
+        return "outline-solid-half";
+      }
+      case "ALLOWED_CANCELLATION_REQUESTED": {
+        return "outline-solid-second-half";
+      }
+      case "WAITING": {
+        return "outline";
+      }
+      default: {
+        return "solid";
+      }
+    }
+  }
+
+  function periodText({ from, to }) {
+    return from.getTime() === to.getTime()
+      ? formatPeriodDay(from)
+      : `${formatPeriodDay(from)} – ${formatPeriodDay(to)}`;
+  }
+
+  function workDaysText(workDays) {
+    const key =
+      workDays === 1 ? "overview.calendar.day-popover.work-days.one" : "overview.calendar.day-popover.work-days";
+    return i18n(key).replace("{0}", formatNumber(workDays));
+  }
+
+  function renderAbsenceEntry(absence) {
+    const period = holidayService.getAbsencePeriod(absence);
+    return render(TMPL.dayPopoverAbsence, {
+      href: holidayService.getAbsenceUrl(absence),
+      color:
+        absence.absenceType === "SICK_NOTE"
+          ? "var(--sick-note-color)"
+          : `var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`,
+      // custom absence type labels are free text
+      type: escapeHtml(absenceTypeText(absence)),
+      dayLength: i18n(absence.absent),
+      status: absenceStatusText(absence),
+      barStyle: barStyle(absence),
+      periodLabel: i18n("absence.period"),
+      period: periodText(period),
+      durationLabel: i18n("overview.calendar.day-popover.duration"),
+      duration: workDaysText(period.workDays),
+      chevron: icons.chevronRight.replace("w-6 h-6", "calendar-day-popover__chevron"),
+    });
+  }
+
+  function renderFreeHalf(date, absent) {
+    return render(TMPL.dayPopoverFree, {
+      text: i18n(`overview.calendar.day-popover.free.${absent}`),
+      href: holidayService.getNewHolidayUrl(date, date, absent),
+      link: i18n("application.data.title.new"),
+    });
+  }
+
+  function renderDayPopover(date) {
+    const [full, morning, noon] = holidayService.getPersonalAbsences(date);
+
+    // the free half of a half-day absence can still be applied for
+    const freeHalf = [
+      [morning, "MORNING", holidayService.isPublicHolidayMorning(date)],
+      [noon, "NOON", holidayService.isPublicHolidayNoon(date)],
+    ].find(
+      ([absence, absent, isPublicHoliday]) =>
+        !full && !absence && canApplyForLeave && !isPublicHoliday && !holidayService.isNoWorkdayHalf(date, absent),
+    );
+
+    return render(TMPL.dayPopover, {
+      date: format(date, "PPPP"),
+      closeIcon: icons.close,
+      closeLabel: escapeHtml(i18n("action.close")),
+      absences: [full, morning, noon]
+        .filter(Boolean)
+        .map((absence) => renderAbsenceEntry(absence))
+        .join(""),
+      free: freeHalf ? renderFreeHalf(date, freeHalf[1]) : "",
     });
   }
 
@@ -399,10 +523,38 @@ const View = (function () {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
       rootElement.classList.add("unselectable");
+
+      const dayPopover = document.createElement("div");
+      dayPopover.id = "calendar-day-popover";
+      dayPopover.className = "calendar-day-popover";
+      dayPopover.setAttribute("popover", "");
+      rootElement.append(dayPopover);
     },
 
     getRootElement() {
       return rootElement;
+    },
+
+    hasDayPopover(date) {
+      return holidayService.getPersonalAbsences(date).some(Boolean);
+    },
+
+    displayDayPopover(dayElement) {
+      const dayPopover = rootElement.querySelector("#calendar-day-popover");
+      const date = getDateFromElement(dayElement);
+      dayPopover.innerHTML = renderDayPopover(date);
+
+      rootElement.querySelector(`.${CSS.dayPopoverAnchor}`)?.classList.remove(CSS.dayPopoverAnchor);
+      dayElement.classList.add(CSS.dayPopoverAnchor);
+      dayPopover.showPopover();
+
+      // an absence may continue in a year the calendar has not loaded
+      const absences = holidayService.getPersonalAbsences(date).filter(Boolean);
+      return Promise.all(absences.map((absence) => holidayService.fetchAbsencePeriod(absence))).then((loaded) => {
+        if (loaded.some(Boolean) && dayElement.classList.contains(CSS.dayPopoverAnchor)) {
+          dayPopover.innerHTML = renderDayPopover(date);
+        }
+      });
     },
 
     displayNext: function () {
@@ -504,13 +656,11 @@ const Controller = (function () {
       const dateThis = getDateFromElement(this);
 
       const isSelectable = this.dataset.datepickerSelectable;
-      const absenceId = this.dataset.datepickerAbsenceId;
-      const absenceType = this.dataset.datepickerAbsenceType;
 
-      if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
-        holidayService.navigateToApplicationForLeave(absenceId);
-      } else if (isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
-        holidayService.navigateToSickNote(absenceId);
+      if (view.hasDayPopover(dateThis)) {
+        // mousedown started a selection on this day, which is not meant to be applied for now
+        clearSelection();
+        view.displayDayPopover(this);
       } else if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&

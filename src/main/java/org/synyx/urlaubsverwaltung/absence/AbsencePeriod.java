@@ -160,6 +160,11 @@ public record AbsencePeriod(
         Optional<Long> getTypeId();
 
         boolean isVisibleToEveryone();
+
+        /**
+         * @return the whole period of the vacation or sick note, empty for no workdays and public holidays
+         */
+        Optional<DateRange> getPeriod();
     }
 
     /**
@@ -186,16 +191,17 @@ public record AbsencePeriod(
         private final String category;
         private final Long typeId;
         private final boolean visibleToEveryone;
+        private final DateRange period;
 
         private AbstractRecordInfo(Person person, AbsenceType absenceType, AbsenceStatus status) {
-            this(person, absenceType, null, status, null, null, false);
+            this(person, absenceType, null, status, null, null, false, null);
         }
 
-        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId) {
-            this(person, absenceType, id, status, category, typeId, false);
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId, DateRange period) {
+            this(person, absenceType, id, status, category, typeId, false, period);
         }
 
-        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone) {
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone, DateRange period) {
             this.person = person;
             this.absenceType = absenceType;
             this.id = id;
@@ -203,6 +209,7 @@ public record AbsencePeriod(
             this.category = category;
             this.typeId = typeId;
             this.visibleToEveryone = visibleToEveryone;
+            this.period = period;
         }
 
         @Override
@@ -265,6 +272,11 @@ public record AbsencePeriod(
         }
 
         @Override
+        public Optional<DateRange> getPeriod() {
+            return Optional.ofNullable(period);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -291,13 +303,21 @@ public record AbsencePeriod(
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone) {
-            super(person, AbsenceType.VACATION, applicationId, status, category, typeId, visibleToEveryone);
+            this(person, applicationId, status, category, typeId, visibleToEveryone, null);
+        }
+
+        public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone, DateRange period) {
+            super(person, AbsenceType.VACATION, applicationId, status, category, typeId, visibleToEveryone, period);
         }
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId) {
-            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId);
+            this(person, sickNoteId, status, category, typeId, null);
+        }
+
+        public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId, DateRange period) {
+            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId, period);
         }
     }
 
@@ -315,13 +335,21 @@ public record AbsencePeriod(
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone) {
-            super(person, AbsenceType.VACATION, applicationId, status, category, typeId, visibleToEveryone);
+            this(person, applicationId, status, category, typeId, visibleToEveryone, null);
+        }
+
+        public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone, DateRange period) {
+            super(person, AbsenceType.VACATION, applicationId, status, category, typeId, visibleToEveryone, period);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId) {
-            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId);
+            this(person, sickNoteId, status, category, typeId, null);
+        }
+
+        public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId, DateRange period) {
+            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId, period);
         }
     }
 
