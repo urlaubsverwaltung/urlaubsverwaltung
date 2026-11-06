@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.ApplicationBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.BlackoutPeriodDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CalendarBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CalendarIntegrationBackupDTO;
+import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentMembershipDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeDTO;
@@ -50,6 +51,7 @@ class BackupDataCollectionService {
     private final PersonDataCollectionService personDataCollectionService;
     private final PersonActivePeriodDataCollectionService personActivePeriodDataCollectionService;
     private final BlackoutPeriodDataCollectionService blackoutPeriodDataCollectionService;
+    private final CompanyClosureDataCollectionService companyClosureDataCollectionService;
 
     BackupDataCollectionService(@Value("${info.app.version}") String applicationVersion,
                                 TenantSupplier tenantSupplier,
@@ -64,7 +66,8 @@ class BackupDataCollectionService {
                                 OvertimeDataCollectionService overtimeDataCollectionService,
                                 PersonDataCollectionService personDataCollectionService,
                                 PersonActivePeriodDataCollectionService personActivePeriodDataCollectionService,
-                                BlackoutPeriodDataCollectionService blackoutPeriodDataCollectionService) {
+                                BlackoutPeriodDataCollectionService blackoutPeriodDataCollectionService,
+                                CompanyClosureDataCollectionService companyClosureDataCollectionService) {
         this.applicationVersion = applicationVersion;
         this.tenantSupplier = tenantSupplier;
         this.personService = personService;
@@ -79,6 +82,7 @@ class BackupDataCollectionService {
         this.personDataCollectionService = personDataCollectionService;
         this.personActivePeriodDataCollectionService = personActivePeriodDataCollectionService;
         this.blackoutPeriodDataCollectionService = blackoutPeriodDataCollectionService;
+        this.companyClosureDataCollectionService = companyClosureDataCollectionService;
     }
 
     private static LocalDate getLastDayOfNextYear() {
@@ -107,10 +111,11 @@ class BackupDataCollectionService {
         final CalendarIntegrationBackupDTO calendarIntegration = calendarIntegrationDataCollectionService.collectCalendarIntegration();
         final List<PersonActivePeriodDTO> personActivePeriods = personActivePeriodDataCollectionService.collectPersonActivePeriods(personDTOById::get);
         final List<BlackoutPeriodDTO> blackoutPeriods = blackoutPeriodDataCollectionService.collectBlackoutPeriods();
+        final List<CompanyClosureDTO> companyClosures = companyClosureDataCollectionService.collectCompanyClosures();
 
         LOG.info("Collected data for backup");
 
         return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, personDtos, overtimes, sickNotes,
-            applications, departments, departmentMemberships, calendars, calendarIntegration, settings, personActivePeriods, blackoutPeriods);
+            applications, departments, departmentMemberships, calendars, calendarIntegration, settings, personActivePeriods, blackoutPeriods, companyClosures);
     }
 }

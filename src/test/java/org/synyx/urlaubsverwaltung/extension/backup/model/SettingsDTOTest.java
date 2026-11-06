@@ -18,7 +18,7 @@ class SettingsDTOTest {
         final TimeSettingsDTO timeSettings = new TimeSettingsDTO("UTC", 9, 0, 17, 0);
         final SickNoteSettingsDTO sickNoteSettings = new SickNoteSettingsDTO(30, 5, true);
         final AvatarSettingsDTO avatarSettings = new AvatarSettingsDTO(false);
-        final PublicHolidaysSettingsDTO publicHolidaysSettings = new PublicHolidaysSettingsDTO(DayLengthDTO.MORNING, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
+        final PublicHolidaysSettingsDTO publicHolidaysSettings = new PublicHolidaysSettingsDTO(null, null, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
 
         final SettingsDTO dto = new SettingsDTO(1L, applicationSettings, accountSettings, workingTimeSettings, overTimeSettings, timeSettings, sickNoteSettings, avatarSettings, publicHolidaysSettings);
 
