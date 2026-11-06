@@ -88,12 +88,13 @@ export const HolidayService = (function () {
     };
   }
 
-  // company closures are shown like public holidays. they keep an own cache key, so their request is not mistaken for
-  // the pending public holiday request of the same year.
+  // own cache, so a failed request is retried and never hides the public holidays (or the other way round)
   function cacheCompanyClosures(year) {
-    return (data) => {
-      _CACHE["companyClosure"][year] = data.companyClosures;
-      cachePublicHoliday(year)({ publicHolidays: data.companyClosures });
+    const companyClosureCache = (_CACHE["companyClosure"] = _CACHE["companyClosure"] || {});
+
+    return function (data) {
+      companyClosureCache[year] = data.companyClosures;
+      barExtents = [];
     };
   }
 
@@ -136,8 +137,11 @@ export const HolidayService = (function () {
   function getPublicHolidaysForDate(date) {
     const year = getYear(date);
     const formattedDate = format(date, "yyyy-MM-dd");
-    const cache = _CACHE["publicHoliday"] || {};
-    const publicHolidaysForYear = cache[year] || [];
+    // company closures are shown like public holidays
+    const publicHolidaysForYear = [
+      ...((_CACHE["publicHoliday"] || {})[year] || []),
+      ...((_CACHE["companyClosure"] || {})[year] || []),
+    ];
 
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
   }
@@ -602,6 +606,8 @@ export const HolidayService = (function () {
     },
 
     /**
+     * Fetches the public holidays and the company closures of the year.
+     * A failing company closures request is not fatal, it is retried by the next call.
      *
      * @param {number} year
      * @returns {Promise}
@@ -609,7 +615,7 @@ export const HolidayService = (function () {
     fetchPublicHolidays: function (year) {
       return Promise.all([
         this.fetchAndCache("/persons/" + personId + "/public-holidays", year, {}, "publicHoliday", cachePublicHoliday),
-        this.fetchAndCache("/company-closures", year, {}, "companyClosure", cacheCompanyClosures),
+        this.fetchAndCache("/company-closures", year, {}, "companyClosure", cacheCompanyClosures).catch(() => []),
       ]);
     },
 
