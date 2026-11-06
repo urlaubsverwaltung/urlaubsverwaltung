@@ -82,6 +82,7 @@ const DATA = {
 
 const icons = {
   chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+  close: `<svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-hidden="true"><path d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"></path></svg>`,
   chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
 };
 
@@ -141,7 +142,8 @@ const View = (function () {
 
     day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
-    dayPopover: '<p class="calendar-day-popover__date">{{date}}</p><ul>{{absences}}</ul>{{free}}',
+    dayPopover:
+      '<div class="calendar-day-popover__header"><p class="calendar-day-popover__date">{{date}}</p><button type="button" class="calendar-day-popover__close" popovertarget="calendar-day-popover" popovertargetaction="hide">{{closeIcon}}<span class="sr-only">{{closeLabel}}</span></button></div><ul>{{absences}}</ul>{{free}}',
 
     dayPopoverAbsence:
       '<li><a href="{{href}}" class="calendar-day-popover__absence"><span class="calendar-day-popover__bar calendar-day-popover__bar--{{barStyle}}" style="--absence-bar-color:{{color}}" title="{{status}}" aria-hidden="true"></span><span class="calendar-day-popover__text"><strong>{{type}}</strong> <span class="calendar-day-popover__day-length">{{dayLength}}</span> <span class="sr-only">{{status}}</span></span> <span class="calendar-day-popover__details"><span>{{periodLabel}}</span> <span>{{period}}</span> <span>{{durationLabel}}</span> <span>{{duration}}</span></span>{{chevron}}</a></li>',
@@ -507,6 +509,8 @@ const View = (function () {
 
     return render(TMPL.dayPopover, {
       date: format(date, "PPPP"),
+      closeIcon: icons.close,
+      closeLabel: escapeHtml(i18n("action.close")),
       absences: [full, morning, noon]
         .filter(Boolean)
         .map((absence) => renderAbsenceEntry(absence))
