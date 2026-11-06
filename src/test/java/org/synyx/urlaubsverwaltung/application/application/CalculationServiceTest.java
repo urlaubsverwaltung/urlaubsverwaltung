@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
@@ -69,12 +70,14 @@ class CalculationServiceTest {
     private SettingsService settingsService;
     @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
+    private CompanyClosureService companyClosureService;
 
     @BeforeEach
     void setUp() {
 
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
+        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, companyClosureService);
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService);
     }

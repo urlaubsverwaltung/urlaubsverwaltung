@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -24,6 +26,7 @@ import java.util.TreeMap;
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
@@ -32,14 +35,17 @@ public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
+    private final CompanyClosureService companyClosureService;
 
     @Autowired
     public WorkDaysCountService(
         PublicHolidaysService publicHolidaysService,
-        WorkingTimeService workingTimeService
+        WorkingTimeService workingTimeService,
+        CompanyClosureService companyClosureService
     ) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
+        this.companyClosureService = companyClosureService;
     }
 
     /**
@@ -198,6 +204,8 @@ public class WorkDaysCountService {
         // Build a map from date to WorkingTime for quick lookup
         final Map<LocalDate, WorkingTime> workingTimesByDate = getLocalDateWorkingTime(workingTimes);
         final Map<LocalDate, List<PublicHoliday>> publicHolidaysByDate = getPublicHolidaysByDate(workingTimes);
+        final Map<LocalDate, BigDecimal> closureDurationByDate = companyClosureService.getCompanyClosures(startDate, endDate).stream()
+            .collect(toMap(CompanyClosure::date, closure -> closure.dayLength().getInverse().getDuration()));
 
         final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
         for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
@@ -213,10 +221,11 @@ public class WorkDaysCountService {
             }
 
             final List<PublicHoliday> publicHolidays = publicHolidaysByDate.getOrDefault(day, List.of());
-            final BigDecimal duration = publicHolidays.stream()
+            final BigDecimal holidayDuration = publicHolidays.stream()
                 .map(PublicHoliday::getWorkingDuration)
                 .findFirst()
                 .orElse(BigDecimal.ONE);
+            final BigDecimal duration = holidayDuration.min(closureDurationByDate.getOrDefault(day, BigDecimal.ONE));
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
             workDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
