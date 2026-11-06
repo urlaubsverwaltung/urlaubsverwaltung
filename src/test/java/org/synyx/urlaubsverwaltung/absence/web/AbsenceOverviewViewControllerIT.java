@@ -195,18 +195,16 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void announcesAHalfDayPublicHolidayNextToAMorningAbsence() throws Exception {
+    void announcesAHalfDayCompanyClosureNextToAMorningAbsence() throws Exception {
 
-        // Tue 24th December 2024: vacation in the morning, Heiligabend at noon
+        // Tue 24th December 2024: vacation in the morning, Heiligabend company closure at noon (default closure)
         final DateRange december = new DateRange(LocalDate.of(2024, DECEMBER, 1), LocalDate.of(2024, DECEMBER, 31));
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(december)))
             .thenReturn(Map.of(office, Map.of(december, new WorkingTime(office, december.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
-        when(publicHolidaysService.getPublicHolidays(december.startDate(), december.endDate(), GERMANY_BADEN_WUERTTEMBERG))
-            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), NOON, "Heiligabend")));
 
         final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 24), office,
             new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
-            new AbsencePeriod.RecordNoonPublicHoliday(office))));
+            new AbsencePeriod.RecordNoonCompanyClosure(office))));
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(christmasEve));
 
         mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
@@ -216,6 +214,30 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("absence-bar absence-bar--morning absence-bar--solid")))
             .andExpect(content().string(matchesPattern("(?s).*class=\"sr-only\"\\s*>Heiligabend</span>.*")));
+    }
+
+    @Test
+    void announcesAHalfDayPublicHolidayNextToAMorningAbsence() throws Exception {
+
+        // Mon 23rd December 2024: vacation in the morning, Testfeiertag at noon
+        final DateRange december = new DateRange(LocalDate.of(2024, DECEMBER, 1), LocalDate.of(2024, DECEMBER, 31));
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(december)))
+            .thenReturn(Map.of(office, Map.of(december, new WorkingTime(office, december.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
+        when(publicHolidaysService.getPublicHolidays(december.startDate(), december.endDate(), GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 23), NOON, "Testfeiertag")));
+
+        final AbsencePeriod testHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 23), office,
+            new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
+            new AbsencePeriod.RecordNoonPublicHoliday(office))));
+        when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(testHoliday));
+
+        mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
+                .locale(Locale.GERMAN)
+                .with(csrf())
+                .with(oidcSubject(office, List.of(USER, OFFICE))))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("absence-bar absence-bar--morning absence-bar--solid")))
+            .andExpect(content().string(matchesPattern("(?s).*class=\"sr-only\"\\s*>Testfeiertag</span>.*")));
     }
 
     private static OidcLoginRequestPostProcessor oidcSubject(Person person, List<Role> roles) {
