@@ -1,0 +1,176 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title
+      th:replace="~{fragments/page-title::page-title(${monthDay == null} ? #{company-closure.data.header.title.new} : #{company-closure.data.header.title.edit(${companyClosureName})})}"
+    ></title>
+    <th:block th:fragment="scripts">
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('company_closure_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="company_closure_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <form
+        method="post"
+        th:action="${monthDay == null} ? @{/web/company-closure} : @{/web/company-closure/{id}(id=${monthDayPath})}"
+        th:object="${companyClosure}"
+        class="uv-form uv-form-grid"
+        novalidate
+      >
+        <button type="submit" class="hidden"></button>
+
+        <div role="group" aria-labelledby="group-companyclosure-data-label">
+          <h2
+            id="group-companyclosure-data-label"
+            class="uv-form-legend"
+            th:text="${monthDay == null} ? #{company-closure.data.header.title.new} : #{company-closure.data.header.title.edit(${companyClosureName})}"
+          >
+            Betriebsruhe
+          </h2>
+
+          <div class="uv-form__group">
+            <th:block th:if="${monthDay == null}">
+              <div class="uv-form__input-row">
+                <label for="day" th:text="|#{company-closure.data.day}:|">Tag</label>
+                <input
+                  id="day"
+                  required
+                  type="number"
+                  min="1"
+                  max="31"
+                  th:field="*{day}"
+                  th:errorclass="error"
+                  th:aria-invalid="${#fields.hasErrors('day')} ? 'true'"
+                  th:aria-describedby="${#fields.hasErrors('day')} ? 'day-error'"
+                />
+                <p id="day-error" class="uv-form__input-error" th:if="${#fields.hasErrors('day')}">
+                  <th:block th:errors="*{day}">day Error</th:block>
+                </p>
+              </div>
+
+              <div class="uv-form__input-row">
+                <label for="month" th:text="|#{company-closure.data.month}:|">Monat</label>
+                <span
+                  th:replace="~{fragments/select::one(id='month', name='month', options=~{::companyclosure-month-options}, required=true)}"
+                >
+                  <th:block th:fragment="companyclosure-month-options">
+                    <option value="" th:selected="${companyClosure.month == null}"></option>
+                    <option
+                      th:each="month : ${#numbers.sequence(1, 12)}"
+                      th:value="${month}"
+                      th:text="${#temporals.monthName(#temporals.create(2000, month, 1))}"
+                      th:selected="${companyClosure.month == month}"
+                    ></option>
+                  </th:block>
+                </span>
+                <p id="month-error" class="uv-form__input-error" th:if="${#fields.hasErrors('month')}">
+                  <th:block th:errors="*{month}">month Error</th:block>
+                </p>
+              </div>
+            </th:block>
+
+            <div th:unless="${monthDay == null}" class="uv-form__input-row">
+              <span class="uv-form__label" th:text="|#{company-closure.data.date}:|">Datum</span>
+              <span
+                th:text="${#temporals.format(#temporals.create(2000, monthDay.monthValue, monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
+              ></span>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="name" th:text="|#{company-closure.data.name}:|">Name</label>
+              <input
+                id="name"
+                required
+                type="text"
+                maxlength="100"
+                th:field="*{name}"
+                th:errorclass="error"
+                th:aria-invalid="${#fields.hasErrors('name')} ? 'true'"
+                th:aria-describedby="${#fields.hasErrors('name')} ? 'name-error'"
+              />
+              <p id="name-error" class="uv-form__input-error" th:if="${#fields.hasErrors('name')}">
+                <th:block th:errors="*{name}">name Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="dayLength" th:text="|#{company-closure.data.dayLength}:|">Betriebsruhe</label>
+              <span
+                th:replace="~{fragments/select::one(id='dayLength', name='dayLength', options=~{::companyclosure-daylength-options}, required=true)}"
+              >
+                <th:block th:fragment="companyclosure-daylength-options">
+                  <option
+                    th:each="dayLength : ${ {'ZERO', 'MORNING', 'NOON', 'FULL'} }"
+                    th:value="${dayLength}"
+                    th:text="#{|company-closure.dayLength.${dayLength}|}"
+                    th:selected="${companyClosure.dayLength != null and companyClosure.dayLength.name() == dayLength}"
+                  ></option>
+                </th:block>
+              </span>
+              <p id="dayLength-error" class="uv-form__input-error" th:if="${#fields.hasErrors('dayLength')}">
+                <th:block th:errors="*{dayLength}">dayLength Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-labelledby="group-companyclosure-validfrom-label">
+          <h2
+            id="group-companyclosure-validfrom-label"
+            class="uv-form-legend"
+            th:text="#{company-closure.data.validFrom}"
+          >
+            Gültig ab
+          </h2>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span th:text="#{company-closure.data.validFrom.description}"></span>
+            </p>
+            <div class="uv-form__input-row">
+              <label for="validFrom" th:text="|#{company-closure.data.validFrom}:|">Gültig ab</label>
+              <input
+                id="validFrom"
+                required
+                th:field="*{validFrom}"
+                th:errorclass="error"
+                th:placeholder="#{pattern.date}"
+                autocomplete="off"
+                th:data-iso-value="${companyClosure.validFromIsoValue}"
+                th:data-min="${minValidFrom}"
+                th:aria-invalid="${#fields.hasErrors('validFrom')} ? 'true'"
+                th:aria-describedby="${#fields.hasErrors('validFrom')} ? 'validFrom-error'"
+              />
+              <p id="validFrom-error" class="uv-form__input-error" th:if="${#fields.hasErrors('validFrom')}">
+                <th:block th:errors="*{validFrom}">validFrom Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
+      </form>
+    </main>
+  </body>
+</html>
