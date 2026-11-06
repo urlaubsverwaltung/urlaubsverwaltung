@@ -495,7 +495,7 @@ td.datepicker-day {
   opacity: 0.35;
 }
 
-/* the day popover is a `.popover-menu` opening at the clicked day */
+/* the day popover is a box of its own opening at the clicked day - no menu, see `calendar.js` */
 .datepicker-day--popover-anchor {
   anchor-name: --uv-calendar-day;
 }
@@ -504,21 +504,35 @@ td.datepicker-day {
   anchor-name: --uv-calendar-day, --uv-tooltip-anchor;
 }
 .calendar-day-popover {
+  /* native popover reset */
+  inset: auto;
+  margin: 0;
+
   position-anchor: --uv-calendar-day;
-  /* `.popover-menu` limits its height to the room below its button and scrolls the rest. the popover would never
-   * overflow, so no fallback would be tried - a day at the bottom of the screen would show a cut off popover instead
-   * of one above it. its few entries always fit on the screen as a whole. */
-  max-height: none;
-  /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start */
+  position-area: block-end span-inline-end;
+  margin-block-start: --spacing(1);
+  /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start.
+   * the popover has no max-height, so it overflows the screen instead of shrinking - which is what makes the browser
+   * try the fallbacks. its few entries always fit on the screen as a whole. */
   position-try-fallbacks:
     flip-block,
     flip-inline,
     flip-block flip-inline;
-}
-.calendar-day-popover {
+
   width: 20rem;
+  max-width: calc(100vw - --spacing(4));
   padding: 0;
   font-size: var(--text-sm);
+  color: inherit;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  @variant dark {
+    background-color: var(--color-zinc-900);
+    border-color: var(--color-zinc-700);
+    box-shadow: none;
+  }
 
   .calendar-day-popover__date {
     margin: 0;
@@ -530,26 +544,10 @@ td.datepicker-day {
     }
   }
 
-  /* overrides the plain entries of `.popover-menu`. the bar runs along the name and the day length only, the details
-   * go below them. */
-  ul li a.calendar-day-popover__absence {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    column-gap: --spacing(3);
-    padding: --spacing(3) --spacing(4);
-
-    .calendar-day-popover__bar,
-    .calendar-day-popover__text {
-      grid-row: 1;
-    }
-    .calendar-day-popover__details {
-      grid-column: 2;
-    }
-    .calendar-day-popover__chevron {
-      grid-column: 3;
-      grid-row: 1 / span 2;
-      align-self: center;
-    }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
   }
 
   li + li {
@@ -557,6 +555,44 @@ td.datepicker-day {
     @variant dark {
       border-color: var(--color-zinc-700);
     }
+  }
+}
+
+/* the bar runs along the name and the day length only, the details go below them */
+.calendar-day-popover__absence {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: --spacing(3);
+  padding: --spacing(3) --spacing(4);
+  overflow-wrap: anywhere;
+
+  /* the whole entry is the link, it keeps the colours of its text */
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    color: inherit;
+    text-decoration: none;
+  }
+  &:hover,
+  &:focus {
+    background-color: var(--color-neutral-100);
+    @variant dark {
+      background-color: var(--color-zinc-700);
+    }
+  }
+
+  .calendar-day-popover__bar,
+  .calendar-day-popover__text {
+    grid-row: 1;
+  }
+  .calendar-day-popover__details {
+    grid-column: 2;
+  }
+  .calendar-day-popover__chevron {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
   }
 }
 
