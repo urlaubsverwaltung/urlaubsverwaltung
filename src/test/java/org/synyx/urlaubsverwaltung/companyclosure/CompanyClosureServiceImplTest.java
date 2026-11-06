@@ -16,6 +16,7 @@ import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,6 +69,15 @@ class CompanyClosureServiceImplTest {
             .containsExactly(
                 new CompanyClosure(LocalDate.of(2025, DECEMBER, 24), NOON, "Heiligabend"),
                 new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), FULL, "Heiligabend"));
+    }
+
+    @Test
+    void skipsVersionQueryWhenNoClosureDayInRange() {
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
+
+        assertThat(sut.getCompanyClosures(LocalDate.of(2026, MARCH, 1), LocalDate.of(2026, MARCH, 31))).isEmpty();
+
+        verifyNoInteractions(companyClosureVersionRepository);
     }
 
     @Test

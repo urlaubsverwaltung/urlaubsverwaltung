@@ -16,6 +16,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Comparator.nullsFirst;
@@ -47,8 +48,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     public List<CompanyClosure> getCompanyClosures(LocalDate from, LocalDate to) {
         DateLimits.requireCalculableDuration(new DateRange(from, to));
 
-        final var versions = companyClosureVersionRepository.findAll();
-        final var closures = new ArrayList<CompanyClosure>();
+        // only closure days within the range need their versions, most ranges contain none
+        final var candidates = new ArrayList<Map.Entry<CompanyClosureEntity, LocalDate>>();
         for (CompanyClosureEntity entity : companyClosureRepository.findAll()) {
             final var monthDay = MonthDay.of(entity.getMonth(), entity.getDayOfMonth());
             for (int year = from.getYear(); year <= to.getYear(); year++) {
@@ -56,14 +57,24 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
                     continue;
                 }
                 final LocalDate date = monthDay.atYear(year);
-                if (date.isBefore(from) || date.isAfter(to)) {
-                    continue;
+                if (!date.isBefore(from) && !date.isAfter(to)) {
+                    candidates.add(Map.entry(entity, date));
                 }
-                versionValidAt(versions, entity.getId(), date)
-                    .map(CompanyClosureVersionEntity::getDayLength)
-                    .filter(dayLength -> dayLength != ZERO)
-                    .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, entity.getName())));
             }
+        }
+        if (candidates.isEmpty()) {
+            return List.of();
+        }
+
+        final var versions = companyClosureVersionRepository.findAll();
+        final var closures = new ArrayList<CompanyClosure>();
+        for (var candidate : candidates) {
+            final CompanyClosureEntity entity = candidate.getKey();
+            final LocalDate date = candidate.getValue();
+            versionValidAt(versions, entity.getId(), date)
+                .map(CompanyClosureVersionEntity::getDayLength)
+                .filter(dayLength -> dayLength != ZERO)
+                .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, entity.getName())));
         }
         closures.sort(Comparator.comparing(CompanyClosure::date));
         return closures;
