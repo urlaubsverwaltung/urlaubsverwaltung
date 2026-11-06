@@ -76,8 +76,9 @@ class CompanyClosureMigrationIT extends SingleTenantTestContainersBase {
     }
 
     private void migrate(String christmasEve, String newYearsEve) {
-        companyClosureVersionRepository.deleteAll();
-        companyClosureRepository.deleteAll();
+        // executed immediately, default rows would violate uq_company_closure_day once the inserts below run
+        jdbcTemplate.update("DELETE FROM company_closure_version");
+        jdbcTemplate.update("DELETE FROM company_closure");
         jdbcTemplate.update(
             "UPDATE settings SET working_duration_for_christmas_eve = ?, working_duration_for_new_years_eve = ?",
             christmasEve, newYearsEve);
