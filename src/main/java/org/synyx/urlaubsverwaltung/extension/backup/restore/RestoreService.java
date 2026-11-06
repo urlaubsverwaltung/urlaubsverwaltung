@@ -28,6 +28,7 @@ class RestoreService {
     private final CalendarIntegrationRestoreService calendarIntegrationRestoreService;
     private final PersonActivePeriodRestoreService personActivePeriodRestoreService;
     private final BlackoutPeriodRestoreService blackoutPeriodRestoreService;
+    private final CompanyClosureRestoreService companyClosureRestoreService;
 
     RestoreService(
         SettingsRestoreService settingsRestoreService,
@@ -40,7 +41,8 @@ class RestoreService {
         ApplicationRestoreService applicationRestoreService,
         CalendarIntegrationRestoreService calendarIntegrationRestoreService,
         PersonActivePeriodRestoreService personActivePeriodRestoreService,
-        BlackoutPeriodRestoreService blackoutPeriodRestoreService
+        BlackoutPeriodRestoreService blackoutPeriodRestoreService,
+        CompanyClosureRestoreService companyClosureRestoreService
     ) {
         this.settingsRestoreService = settingsRestoreService;
         this.personRestoreService = personRestoreService;
@@ -53,11 +55,13 @@ class RestoreService {
         this.calendarIntegrationRestoreService = calendarIntegrationRestoreService;
         this.personActivePeriodRestoreService = personActivePeriodRestoreService;
         this.blackoutPeriodRestoreService = blackoutPeriodRestoreService;
+        this.companyClosureRestoreService = companyClosureRestoreService;
     }
 
     void restoreData(UrlaubsverwaltungBackupDTO backupToRestore) {
         LOG.info("Starting to restore data...");
         settingsRestoreService.restore(backupToRestore.settings());
+        companyClosureRestoreService.restore(backupToRestore.companyClosures(), backupToRestore.settings().publicHolidaysSettings());
         personRestoreService.restore(backupToRestore.persons());
         personActivePeriodRestoreService.restore(backupToRestore.personActivePeriods());
         overtimeRestoreService.restore(backupToRestore.overtimes());
