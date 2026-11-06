@@ -503,30 +503,38 @@ td.datepicker-day {
 .datepicker-day--popover-anchor.uv-tooltip-anchor--active {
   anchor-name: --uv-calendar-day, --uv-tooltip-anchor;
 }
+.calendar-day-popover,
+.calendar-day-popover::backdrop {
+  /* older browsers do not let `::backdrop` inherit from the popover */
+  --calendar-day-popover-duration: 400ms;
+  @media (prefers-reduced-motion: reduce) {
+    --calendar-day-popover-duration: 0ms;
+  }
+}
+
+/* small screens show the popover as a bottom sheet, like the date picker (duet) does: it slides up from the bottom
+ * edge over a dark overlay, and a tap on the overlay closes it. from xs on it opens at the clicked day. */
 .calendar-day-popover {
-  /* native popover reset */
-  inset: auto;
+  /* the bottom sheet gives the content more room */
+  --calendar-day-popover-padding-block: --spacing(4);
+  --calendar-day-popover-padding-inline: --spacing(6);
+  /* the bottom space below the content, clear of the home bar of a phone */
+  --calendar-day-popover-padding-bottom: calc(--spacing(4) + env(safe-area-inset-bottom));
+
+  inset: auto 0 0 0;
+  width: 100%;
+  /* the smaller part of the screen divided by the golden ratio (1/φ² ≈ 38.2%), so a single entry does not show
+   * as a thin strip */
+  min-height: 38.2dvh;
+  max-height: 80dvh;
   margin: 0;
-
-  position-anchor: --uv-calendar-day;
-  position-area: block-end span-inline-end;
-  margin-block-start: --spacing(1);
-  /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start.
-   * the popover has no max-height, so it overflows the screen instead of shrinking - which is what makes the browser
-   * try the fallbacks. its few entries always fit on the screen as a whole. */
-  position-try-fallbacks:
-    flip-block,
-    flip-inline,
-    flip-block flip-inline;
-
-  width: 20rem;
-  max-width: calc(100vw - --spacing(4));
   padding: 0;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: inherit;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: var(--radius-sm);
+  border-width: 1px 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   @variant dark {
     background-color: var(--color-zinc-900);
@@ -534,13 +542,115 @@ td.datepicker-day {
     box-shadow: none;
   }
 
-  .calendar-day-popover__date {
-    margin: 0;
-    padding: --spacing(3) --spacing(4);
-    font-weight: 600;
+  transform: translateY(100%);
+  transition:
+    transform var(--calendar-day-popover-duration) ease,
+    display var(--calendar-day-popover-duration) allow-discrete,
+    overlay var(--calendar-day-popover-duration) allow-discrete;
+
+  /* `display` on the popover itself would override the `display: none` of the closed popover */
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+  }
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0);
+    transition:
+      background-color var(--calendar-day-popover-duration) ease,
+      display var(--calendar-day-popover-duration) allow-discrete,
+      overlay var(--calendar-day-popover-duration) allow-discrete;
+  }
+  &:popover-open::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  @starting-style {
+    &:popover-open {
+      transform: translateY(100%);
+    }
+    &:popover-open::backdrop {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
+
+  /* from xs on the popover opens at the clicked day */
+  @variant xs {
+    --calendar-day-popover-padding-block: --spacing(3);
+    --calendar-day-popover-padding-inline: --spacing(4);
+    /* no home bar to keep clear of, the bottom paddings fall back to the regular ones */
+    --calendar-day-popover-padding-bottom: 0px;
+
+    position-anchor: --uv-calendar-day;
+    position-area: block-end span-inline-end;
+    /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start.
+     * the popover has no max-height, so it overflows the screen instead of shrinking - which is what makes the
+     * browser try the fallbacks. its few entries always fit on the screen as a whole. */
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+    inset: auto;
+    margin-block-start: --spacing(1);
+
+    width: 20rem;
+    max-width: calc(100vw - --spacing(4));
+    min-height: auto;
+    max-height: none;
+    font-size: var(--text-sm);
+    border-width: 1px;
+    border-radius: var(--radius-sm);
+
+    transform: none;
+    transition: none;
+
+    &::backdrop {
+      display: none;
+    }
+  }
+
+  .calendar-day-popover__header {
+    display: flex;
+    align-items: center;
+    gap: --spacing(3);
+    padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
     border-bottom: 1px solid var(--color-neutral-200);
     @variant dark {
       border-color: var(--color-zinc-700);
+    }
+  }
+
+  .calendar-day-popover__date {
+    flex-grow: 1;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  /* only the bottom sheet needs a close button, the popover at the day closes by a click next to it */
+  .calendar-day-popover__close {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: --spacing(8);
+    height: --spacing(8);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: inherit;
+    background-color: var(--color-neutral-100);
+    @variant dark {
+      background-color: var(--color-zinc-700);
+    }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    @variant xs {
+      display: none;
     }
   }
 
@@ -556,6 +666,16 @@ td.datepicker-day {
       border-color: var(--color-zinc-700);
     }
   }
+
+  /* the content starts at the top, below the date. the free half is the footer of the sheet, its button within
+   * reach of the thumb. */
+  > ul:last-child {
+    padding-bottom: var(--calendar-day-popover-padding-bottom);
+  }
+  .calendar-day-popover__free {
+    margin-top: auto;
+    padding-bottom: calc(var(--calendar-day-popover-padding-block) + var(--calendar-day-popover-padding-bottom));
+  }
 }
 
 /* the bar runs along the name and the day length only, the details go below them */
@@ -563,7 +683,7 @@ td.datepicker-day {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   column-gap: --spacing(3);
-  padding: --spacing(3) --spacing(4);
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
   overflow-wrap: anywhere;
 
   /* the whole entry is the link, it keeps the colours of its text */
@@ -665,7 +785,7 @@ td.datepicker-day {
   align-items: center;
   flex-wrap: wrap;
   gap: --spacing(3);
-  padding: --spacing(3) --spacing(4);
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
   border-top: 1px solid var(--color-neutral-200);
   background-color: var(--color-neutral-50);
   color: var(--color-zinc-600);

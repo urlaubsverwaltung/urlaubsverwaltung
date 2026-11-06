@@ -191,6 +191,15 @@ describe("calendar", () => {
       expect(popoverFreeHalf()).toBeNull();
     });
 
+    it("with a button closing it", async () => {
+      await clickDayWithAbsences("2017-12-15", [{ absenceType: "VACATION", absent: "FULL", status: "ALLOWED" }]);
+
+      const close = document.querySelector("#calendar-day-popover .calendar-day-popover__close");
+      expect(close.getAttribute("popovertarget")).toBe("calendar-day-popover");
+      expect(close.getAttribute("popovertargetaction")).toBe("hide");
+      expect(close.textContent).toBe("i18n:action.close");
+    });
+
     it("with the period and the work days of an absence over several days", async () => {
       const vacation = { absenceType: "VACATION", status: "ALLOWED", from: "2017-12-14", to: "2017-12-18" };
       await clickDayWithAbsences("2017-12-15", [
