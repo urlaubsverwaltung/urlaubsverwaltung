@@ -162,7 +162,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                     ? List.of()
                     : getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments, signedInUser);
                 model.addAttribute("departmentPicker",
-                    toDepartmentPicker(visibleDepartments, selectedDepartmentNames, allPersonsSelected, allPersons.size()));
+                    DepartmentPickerDto.of(visibleDepartments, selectedDepartmentNames, allPersonsSelected, allPersons.size()));
 
                 overviewPersons = allPersonsSelected
                     ? allPersons
@@ -255,18 +255,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .distinct()
             .sorted(comparing(Person::getFirstName))
             .toList();
-    }
-
-    private static DepartmentPickerDto toDepartmentPicker(List<Department> visibleDepartments, List<String> selectedDepartmentNames,
-                                                          boolean allPersonsSelected, int allPersonsCount) {
-        final List<DepartmentPickerDto.Option> options = visibleDepartments.stream()
-            .map(department -> new DepartmentPickerDto.Option(
-                department.getName(),
-                (int) department.getMembers().stream().filter(Person::isActive).count(),
-                selectedDepartmentNames.contains(department.getName())
-            ))
-            .toList();
-        return new DepartmentPickerDto(options, allPersonsSelected, allPersonsCount);
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,

@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.person.Person;
+
 import java.util.List;
 
 /**
@@ -14,6 +17,18 @@ public record DepartmentPickerDto(List<Option> options, boolean allPersonsSelect
     // no description of the department: we do not know whether it is meant for everyone who can choose the
     // department. at the moment only boss and office see it, in the department list.
     public record Option(String name, int activeMemberCount, boolean selected) {
+    }
+
+    public static DepartmentPickerDto of(List<Department> departments, List<String> selectedDepartmentNames,
+                                         boolean allPersonsSelected, int allPersonsCount) {
+        final List<Option> options = departments.stream()
+            .map(department -> new Option(
+                department.getName(),
+                (int) department.getMembers().stream().filter(Person::isActive).count(),
+                selectedDepartmentNames.contains(department.getName())
+            ))
+            .toList();
+        return new DepartmentPickerDto(options, allPersonsSelected, allPersonsCount);
     }
 
     public List<String> selectedNames() {

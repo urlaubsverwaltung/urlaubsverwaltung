@@ -97,7 +97,7 @@ class ApplicationForLeaveExportServiceTest {
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
 
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, pageableSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, pageableSearchQuery, List.of());
 
         assertThat(export.getContent()).hasSize(1);
 
@@ -143,7 +143,7 @@ class ApplicationForLeaveExportServiceTest {
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(departmentMemberId, List.of("department")));
 
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery, List.of());
 
         final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
@@ -151,6 +151,35 @@ class ApplicationForLeaveExportServiceTest {
         assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
         assertThat(applicationForLeaveExport.getDepartments()).containsExactly("department");
         assertThat(applicationForLeaveExport.getApplicationForLeaves()).containsExactly(app);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void getAllForSelectedDepartments(Role role) {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, role));
+
+        final Person departmentMember = new Person();
+        departmentMember.setId(2L);
+        departmentMember.setPermissions(List.of(USER));
+        departmentMember.setFirstName("Marlene");
+        final List<Person> personsForExport = List.of(departmentMember);
+
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        when(departmentService.getManagedActiveMembersOfPersonAndDepartments(person, List.of(42L), personPageRequest, ""))
+            .thenReturn(new PageImpl<>(personsForExport));
+
+        final LocalDate from = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2023, JANUARY, 31);
+        when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of());
+
+        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, personSearchQuery, List.of(42L));
+
+        assertThat(export.getContent()).extracting(ApplicationForLeaveExport::getFirstName).containsExactly("Marlene");
+        verifyNoInteractions(personService);
     }
 
     @Test
@@ -165,7 +194,7 @@ class ApplicationForLeaveExportServiceTest {
             .thenReturn(new PageImpl<>(List.of()));
 
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, JANUARY, 1), LocalDate.of(2023, JANUARY, 31), personSearchQuery, List.of());
 
         verifyNoMoreInteractions(departmentService);
         verifyNoInteractions(applicationService, personBasedataService);
@@ -207,7 +236,7 @@ class ApplicationForLeaveExportServiceTest {
         final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
         final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
 
-        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery, List.of());
 
         assertThat(export.getContent()).hasSize(1);
 
@@ -254,7 +283,7 @@ class ApplicationForLeaveExportServiceTest {
 
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
 
-        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery);
+        final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery, List.of());
 
         assertThat(export.getContent()).hasSize(1);
 

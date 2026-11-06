@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -59,13 +61,51 @@ class ApplicationForLeaveExportViewControllerTest {
     private ApplicationForLeaveCsvExportService applicationForLeaveCsvExportService;
     @Mock
     private DateFormatAware dateFormatAware;
+    @Mock
+    private DepartmentService departmentService;
 
     private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveExportViewController(personService, applicationForLeaveExportService,
-            applicationForLeaveCsvExportService, dateFormatAware, clock);
+            applicationForLeaveCsvExportService, dateFormatAware, departmentService, clock);
+    }
+
+    @Test
+    void ensuresToExportAbsencesOfSelectedDepartments() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Department department = new Department();
+        department.setId(42L);
+        department.setName("Department A, B");
+        when(departmentService.getDepartmentByName("Department A, B")).thenReturn(Optional.of(department));
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", "", "", List.of(), List.of("Department A"));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery, List.of(42L)))
+            .thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveCsvExportService.generateCSV(new FilterPeriod(startDate, endDate), locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, AUGUST, 1)));
+
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("department", "Department A, B"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
     }
 
     @Test
@@ -118,7 +158,7 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery, List.of())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
@@ -167,7 +207,7 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery, List.of())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
@@ -221,7 +261,7 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery, List.of())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
@@ -268,7 +308,7 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery, List.of())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
