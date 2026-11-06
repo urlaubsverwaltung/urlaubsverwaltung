@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
@@ -13,8 +12,6 @@ class PublicHolidaysSettingsDTOTest {
     @Test
     void happyPathPublicHolidaysSettingsToDTO() {
         final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
-        publicHolidaysSettings.setWorkingDurationForChristmasEve(DayLength.MORNING);
-        publicHolidaysSettings.setWorkingDurationForNewYearsEve(DayLength.MORNING);
         publicHolidaysSettings.setFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final PublicHolidaysSettingsDTO dto = PublicHolidaysSettingsDTO.of(publicHolidaysSettings);
@@ -26,8 +23,6 @@ class PublicHolidaysSettingsDTOTest {
         PublicHolidaysSettingsDTO dto = new PublicHolidaysSettingsDTO(null, null, FederalStateDTO.GERMANY_RHEINLAND_PFALZ);
 
         final PublicHolidaysSettings publicHolidaysSettings = dto.toPublicHolidaysSettings();
-        assertThat(publicHolidaysSettings.getWorkingDurationForChristmasEve()).isEqualTo(new PublicHolidaysSettings().getWorkingDurationForChristmasEve());
-        assertThat(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).isEqualTo(new PublicHolidaysSettings().getWorkingDurationForNewYearsEve());
         assertThat(publicHolidaysSettings.getFederalState()).isEqualTo(FederalState.GERMANY_RHEINLAND_PFALZ);
     }
 }
