@@ -43,6 +43,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -539,6 +540,8 @@ class WorkDaysCountServiceTest {
         // the whole point: working times are loaded once, not once per application
         verify(workingTimeService).getByPersons(List.of(marlene, peter));
         verify(workingTimeService, never()).getWorkingTimesByPersonAndDateRange(any(), any());
+        // company closures are loaded once for all applications as well
+        verify(companyClosureService, times(1)).getCompanyClosures(startDate, endDate);
     }
 
     @Test
