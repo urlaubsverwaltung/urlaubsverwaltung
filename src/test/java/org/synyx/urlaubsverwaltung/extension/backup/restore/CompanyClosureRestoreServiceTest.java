@@ -16,7 +16,11 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureVersionD
 import org.synyx.urlaubsverwaltung.extension.backup.model.DayLengthDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.FederalStateDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.PublicHolidaysSettingsDTO;
+import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.io.File;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -88,6 +92,26 @@ class CompanyClosureRestoreServiceTest {
         assertThat(versionsCaptor.getAllValues().get(1))
             .extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
             .containsExactly(tuple(DayLength.NOON, null));
+    }
+
+    @Test
+    void restoresLegacyBackupFileWithoutCompanyClosures() {
+        final UrlaubsverwaltungBackupDTO backup = JsonMapper.builder().build().readValue(
+            new File("src/test/resources/urlaubsverwaltung-backup-legacy-public-holiday-settings.json"), UrlaubsverwaltungBackupDTO.class);
+        final PublicHolidaysSettingsDTO settings = backup.settings().publicHolidaysSettings();
+
+        assertThat(backup.companyClosures()).isNull();
+        assertThat(settings.workingDurationForChristmasEve()).isEqualTo(DayLengthDTO.MORNING);
+        assertThat(settings.workingDurationForNewYearsEve()).isEqualTo(DayLengthDTO.MORNING);
+
+        sut.restore(backup.companyClosures(), settings);
+
+        verify(companyClosureImportService).deleteAll();
+        verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getName).containsExactly("Heiligabend", "Silvester");
+        assertThat(versionsCaptor.getAllValues()).allSatisfy(versions ->
+            assertThat(versions).extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
+                .containsExactly(tuple(DayLength.NOON, null)));
     }
 
     @Test

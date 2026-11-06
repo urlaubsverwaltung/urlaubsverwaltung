@@ -1,0 +1,2965 @@
+{
+  "tenantId": "this-is-a-tenant-id",
+  "urlaubsverwaltungVersion": "@project.version@",
+  "persons": [
+    {
+      "id": 1,
+      "externalId": "user",
+      "firstName": "Klaus",
+      "lastName": "Müller",
+      "email": "user@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "1",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 2,
+      "externalId": "departmentHead",
+      "firstName": "Thorsten",
+      "lastName": "Krüger",
+      "email": "departmentHead@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER",
+        "DEPARTMENT_HEAD"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT"
+      ],
+      "personBaseData": {
+        "personnelNumber": "2",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 3,
+      "externalId": "secondStageAuthority",
+      "firstName": "Juliane",
+      "lastName": "Huber",
+      "email": "secondStageAuthority@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER",
+        "SECOND_STAGE_AUTHORITY"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT"
+      ],
+      "personBaseData": {
+        "personnelNumber": "3",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 4,
+      "externalId": "boss",
+      "firstName": "Theresa",
+      "lastName": "Scherer",
+      "email": "boss@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER",
+        "BOSS"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "4",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 5,
+      "externalId": "office",
+      "firstName": "Marlene",
+      "lastName": "Muster",
+      "email": "office@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER",
+        "OFFICE"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "5",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 6,
+      "externalId": "admin",
+      "firstName": "Anne",
+      "lastName": "Roth",
+      "email": "admin@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [],
+      "personBaseData": {
+        "personnelNumber": "5",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 7,
+      "externalId": "hdampf",
+      "firstName": "Hans",
+      "lastName": "Dampf",
+      "email": "dampf@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "6",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 8,
+      "externalId": "fbaier",
+      "firstName": "Franziska",
+      "lastName": "Baier",
+      "email": "baier@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "7",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 9,
+      "externalId": "eschneider",
+      "firstName": "Elena",
+      "lastName": "Schneider",
+      "email": "schneider@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "8",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 10,
+      "externalId": "bhaendel",
+      "firstName": "Brigitte",
+      "lastName": "Händel",
+      "email": "haendel@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "9",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 11,
+      "externalId": "nschmidt",
+      "firstName": "Niko",
+      "lastName": "Schmidt",
+      "email": "schmidt@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "10",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 12,
+      "externalId": "heinz",
+      "firstName": "Holger",
+      "lastName": "Dieter",
+      "email": "hdieter@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "11",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 13,
+      "externalId": "horst-active-0",
+      "firstName": "Horst",
+      "lastName": "Aktiv",
+      "email": "hdieter-active@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "653",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    },
+    {
+      "id": 14,
+      "externalId": "horst-inactive-0",
+      "firstName": "Horst",
+      "lastName": "Inaktiv",
+      "email": "hdieter-inactive@focus-shift.de",
+      "active": true,
+      "createdAt": "2020-01-01T00:00:00Z",
+      "permissions": [
+        "USER"
+      ],
+      "mailNotification": [
+        "NOTIFICATION_EMAIL_APPLICATION_APPLIED",
+        "NOTIFICATION_EMAIL_APPLICATION_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_REVOKED",
+        "NOTIFICATION_EMAIL_APPLICATION_REJECTED",
+        "NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED",
+        "NOTIFICATION_EMAIL_APPLICATION_CANCELLATION",
+        "NOTIFICATION_EMAIL_APPLICATION_EDITED",
+        "NOTIFICATION_EMAIL_APPLICATION_CONVERTED",
+        "NOTIFICATION_EMAIL_APPLICATION_UPCOMING",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT",
+        "NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING",
+        "NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER",
+        "NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED",
+        "NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED"
+      ],
+      "personBaseData": {
+        "personnelNumber": "591",
+        "additionalInformation": ""
+      },
+      "accounts": [
+        {
+          "validFrom": "2025-01-01",
+          "validTo": "2025-12-31",
+          "doRemainingVacationDaysExpireLocally": null,
+          "doRemainingVacationDaysExpireGlobally": true,
+          "expiryDateLocally": null,
+          "expiryDateGlobally": "2025-04-01",
+          "expiryNotificationSentDate": null,
+          "annualVacationDays": 30.00,
+          "actualVacationDays": 30.00,
+          "remainingVacationDays": 5.00,
+          "remainingVacationDaysNotExpiring": 0.00,
+          "comment": null
+        }
+      ],
+      "workingTimes": [
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2025-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        },
+        {
+          "monday": "FULL",
+          "tuesday": "FULL",
+          "wednesday": "FULL",
+          "thursday": "FULL",
+          "friday": "FULL",
+          "saturday": "ZERO",
+          "sunday": "ZERO",
+          "validFrom": "2024-01-01",
+          "federalState": "GERMANY_BADEN_WUERTTEMBERG",
+          "defaultFederalState": true
+        }
+      ],
+      "userSettings": {
+        "theme": "SYSTEM",
+        "locale": null,
+        "browserSpecific": null,
+        "userNotificationSettings": {
+          "restrictToDepartments": false
+        },
+        "userPaginationSettings": {
+          "defaultPageSize": 10
+        }
+      }
+    }
+  ],
+  "overtimes": [
+    {
+      "id": 1,
+      "externalIdOfOwner": "user",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "user"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "externalIdOfOwner": "user",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "user"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "externalIdOfOwner": "user",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "user"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "externalIdOfOwner": "secondStageAuthority",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "secondStageAuthority"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "externalIdOfOwner": "secondStageAuthority",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "secondStageAuthority"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "externalIdOfOwner": "secondStageAuthority",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "secondStageAuthority"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "externalIdOfOwner": "boss",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "boss"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "externalIdOfOwner": "boss",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "boss"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "externalIdOfOwner": "boss",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "boss"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "externalIdOfOwner": "office",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "office"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "externalIdOfOwner": "office",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "office"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "externalIdOfOwner": "office",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "office"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "externalIdOfOwner": "hdampf",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "hdampf"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "externalIdOfOwner": "hdampf",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "hdampf"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "externalIdOfOwner": "hdampf",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "hdampf"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "externalIdOfOwner": "nschmidt",
+      "startDate": "2024-12-23",
+      "endDate": "2024-12-27",
+      "duration": "PT2H30M",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "nschmidt"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "externalIdOfOwner": "nschmidt",
+      "startDate": "2024-12-16",
+      "endDate": "2024-12-20",
+      "duration": "PT3H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "nschmidt"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "externalIdOfOwner": "nschmidt",
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-05",
+      "duration": "PT4H",
+      "external": false,
+      "lastModificationDate": "2025-01-05",
+      "overtimeComments": [
+        {
+          "date": "2025-01-05T00:00:00Z",
+          "text": "Ich habe ganz viel gearbeitet",
+          "action": "CREATED",
+          "externalIdOfCommentAuthor": "nschmidt"
+        }
+      ]
+    }
+  ],
+  "sickNotes": {
+    "sickNoteTypes": [
+      {
+        "id": 2001,
+        "category": "SICK_NOTE",
+        "messageKey": "application.data.sicknotetype.sicknote"
+      },
+      {
+        "id": 2002,
+        "category": "SICK_NOTE_CHILD",
+        "messageKey": "application.data.sicknotetype.sicknotechild"
+      }
+    ],
+    "sickNotes": [
+      {
+        "id": 1,
+        "externalIdOfPerson": "user",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 2,
+        "externalIdOfPerson": "user",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 3,
+        "externalIdOfPerson": "user",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 4,
+        "externalIdOfPerson": "secondStageAuthority",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 5,
+        "externalIdOfPerson": "secondStageAuthority",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 6,
+        "externalIdOfPerson": "secondStageAuthority",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 7,
+        "externalIdOfPerson": "boss",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 8,
+        "externalIdOfPerson": "boss",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 9,
+        "externalIdOfPerson": "boss",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 10,
+        "externalIdOfPerson": "office",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 11,
+        "externalIdOfPerson": "office",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 12,
+        "externalIdOfPerson": "office",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 13,
+        "externalIdOfPerson": "hdampf",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 14,
+        "externalIdOfPerson": "hdampf",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 15,
+        "externalIdOfPerson": "hdampf",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 16,
+        "externalIdOfPerson": "nschmidt",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2002,
+        "startDate": "2024-11-26",
+        "endDate": "2024-11-28",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 17,
+        "externalIdOfPerson": "nschmidt",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2024-12-06",
+        "endDate": "2024-12-11",
+        "dayLength": "FULL",
+        "aubStartDate": "2024-12-06",
+        "aubEndDate": "2024-12-11",
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      },
+      {
+        "id": 18,
+        "externalIdOfPerson": "nschmidt",
+        "externalIdOfApplier": "office",
+        "sickNoteTypeId": 2001,
+        "startDate": "2025-01-03",
+        "endDate": "2025-01-03",
+        "dayLength": "FULL",
+        "aubStartDate": null,
+        "aubEndDate": null,
+        "lastEdited": "2025-01-05",
+        "endOfSickPayNotificationSend": null,
+        "sickNoteStatus": "ACTIVE",
+        "sickNoteComments": [
+          {
+            "date": "2025-01-05T00:00:00Z",
+            "text": "",
+            "sickNoteCommentAction": "CREATED",
+            "externalIdOfSickNoteCommentAuthor": "office"
+          }
+        ],
+        "sickNoteExtensionHistoryItems": []
+      }
+    ]
+  },
+  "applications": {
+    "vacationTypes": [
+      {
+        "id": 10000,
+        "active": true,
+        "vacationTypeCategory": "HOLIDAY",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.holiday",
+        "labels": {
+          "de": "Erholungsurlaub",
+          "en": "Holiday",
+          "el": "Κανονική άδεια",
+          "de_AT": "Erholungsurlaub"
+        }
+      },
+      {
+        "id": 10001,
+        "active": true,
+        "vacationTypeCategory": "SPECIALLEAVE",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.specialleave",
+        "labels": {
+          "de": "Sonderurlaub",
+          "en": "Special leave",
+          "el": "Ειδική άδεια",
+          "de_AT": "Sonderurlaub"
+        }
+      },
+      {
+        "id": 10002,
+        "active": true,
+        "vacationTypeCategory": "UNPAIDLEAVE",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.unpaidleave",
+        "labels": {
+          "de": "Unbezahlter Urlaub",
+          "en": "Unpaid leave",
+          "el": "Άδεια άνευ αποδοχών",
+          "de_AT": "Unbezahlter Urlaub"
+        }
+      },
+      {
+        "id": 10003,
+        "active": true,
+        "vacationTypeCategory": "OVERTIME",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.overtime",
+        "labels": {
+          "de": "Überstundenabbau",
+          "en": "Overtime reduction",
+          "el": "Μείωση υπερωριών",
+          "de_AT": "Überstundenabbau"
+        }
+      },
+      {
+        "id": 10004,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.parentalLeave",
+        "labels": {
+          "de": "Elternzeit",
+          "en": "Parental leave",
+          "el": "Γονική άδεια",
+          "de_AT": "Elternzeit"
+        }
+      },
+      {
+        "id": 10005,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.maternityProtection",
+        "labels": {
+          "de": "Mutterschutz",
+          "en": "Maternity protection",
+          "el": "Προστασία της μητρότητας",
+          "de_AT": "Mutterschutz"
+        }
+      },
+      {
+        "id": 10006,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.sabbatical",
+        "labels": {
+          "de": "Sabbatical",
+          "en": "Sabbatical",
+          "el": "Σαββατική άδεια",
+          "de_AT": "Sabbatical"
+        }
+      },
+      {
+        "id": 10007,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.paidLeave",
+        "labels": {
+          "de": "Bezahlte Freistellung",
+          "en": "Paid leave",
+          "el": "Άδεια μετ' αποδοχών",
+          "de_AT": "Bezahlte Freistellung"
+        }
+      },
+      {
+        "id": 10008,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.cure",
+        "labels": {
+          "de": "Kur",
+          "en": "Medical rehabilitation",
+          "el": "Θεραπεία",
+          "de_AT": "Kur"
+        }
+      },
+      {
+        "id": 10009,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.education",
+        "labels": {
+          "de": "Ausbildung",
+          "en": "Education",
+          "el": "Εκπαίδευση",
+          "de_AT": "Ausbildung"
+        }
+      },
+      {
+        "id": 10010,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.homeOffice",
+        "labels": {
+          "de": "Home-Office",
+          "en": "Home office",
+          "el": "Τηλε-εργασία",
+          "de_AT": "Home-Office"
+        }
+      },
+      {
+        "id": 10011,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.outOfOffice",
+        "labels": {
+          "de": "Außer Haus",
+          "en": "Out of office",
+          "el": "Εκτός γραφείου",
+          "de_AT": "Außer Haus"
+        }
+      },
+      {
+        "id": 10012,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.training",
+        "labels": {
+          "de": "Fortbildung",
+          "en": "Training",
+          "el": "Περαιτέρω κατάρτιση",
+          "de_AT": "Fortbildung"
+        }
+      },
+      {
+        "id": 10013,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.employmentBan",
+        "labels": {
+          "de": "Beschäftigungsverbot",
+          "en": "Employment ban",
+          "el": "Απαγόρευση απασχόλησης",
+          "de_AT": "Beschäftigungsverbot"
+        }
+      },
+      {
+        "id": 10014,
+        "active": false,
+        "vacationTypeCategory": "OTHER",
+        "requiresApprovalToApply": true,
+        "requiresApprovalToCancel": true,
+        "color": "YELLOW",
+        "visibleToEveryone": false,
+        "customType": false,
+        "messageKey": "application.data.vacationType.educationalLeave",
+        "labels": {
+          "de": "Bildungsurlaub",
+          "en": "Educational leave",
+          "el": "Εκπαιδευτική άδεια",
+          "de_AT": "Bildungsurlaub"
+        }
+      }
+    ],
+    "applications": [
+      {
+        "id": 1,
+        "personExternalId": "user",
+        "applierExternalId": "user",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "user",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "personExternalId": "user",
+        "applierExternalId": "user",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "user",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "personExternalId": "secondStageAuthority",
+        "applierExternalId": "secondStageAuthority",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": true,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "secondStageAuthority",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "personExternalId": "secondStageAuthority",
+        "applierExternalId": "secondStageAuthority",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": true,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "secondStageAuthority",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "personExternalId": "boss",
+        "applierExternalId": "boss",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "boss",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "personExternalId": "boss",
+        "applierExternalId": "boss",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "boss",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "personExternalId": "office",
+        "applierExternalId": "office",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "office",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "personExternalId": "office",
+        "applierExternalId": "office",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "office",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "personExternalId": "hdampf",
+        "applierExternalId": "hdampf",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": true,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "hdampf",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "personExternalId": "hdampf",
+        "applierExternalId": "hdampf",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": true,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "hdampf",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "personExternalId": "nschmidt",
+        "applierExternalId": "nschmidt",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-09",
+        "endDate": "2025-01-11",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10001,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "nschmidt",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "personExternalId": "nschmidt",
+        "applierExternalId": "nschmidt",
+        "bossExternalId": null,
+        "cancellerExternalId": null,
+        "twoStageApproval": false,
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-21",
+        "startTime": null,
+        "endTime": null,
+        "vacationTypeId": 10000,
+        "dayLength": "FULL",
+        "reason": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
+        "holidayReplacements": [],
+        "address": null,
+        "applicationDate": "2025-01-05",
+        "cancelDate": null,
+        "editedDate": null,
+        "remindDate": null,
+        "applicationStatus": "WAITING",
+        "teamInformed": false,
+        "hours": "PT0S",
+        "upcomingHolidayReplacementNotificationSend": null,
+        "upcomingApplicationsReminderSend": null,
+        "applicationComments": [
+          {
+            "action": "APPLIED",
+            "externalId": "nschmidt",
+            "date": "2025-01-05T00:00:00Z",
+            "text": "Ich hätte gerne Urlaub"
+          }
+        ]
+      }
+    ]
+  },
+  "departments": [
+    {
+      "id": 1,
+      "name": "Admins",
+      "description": "Das sind die, die so Admin Sachen machen",
+      "createdAt": "2025-01-05",
+      "lastModification": "2025-01-05",
+      "twoStageApproval": true
+    },
+    {
+      "id": 2,
+      "name": "Entwicklung",
+      "description": "Das sind die, die so entwickeln",
+      "createdAt": "2025-01-05",
+      "lastModification": "2025-01-05",
+      "twoStageApproval": false
+    },
+    {
+      "id": 3,
+      "name": "Geschäftsführung",
+      "description": "Das sind die, die so Geschäftsführung Sachen machen",
+      "createdAt": "2025-01-05",
+      "lastModification": "2025-01-05",
+      "twoStageApproval": false
+    },
+    {
+      "id": 4,
+      "name": "Marketing",
+      "description": "Das sind die, die so Marketing Sachen machen",
+      "createdAt": "2025-01-05",
+      "lastModification": "2025-01-05",
+      "twoStageApproval": false
+    }
+  ],
+  "departmentMemberships": [
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 1,
+      "membershipKind": "DEPARTMENT_HEAD",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "departmentId": 1,
+      "membershipKind": "SECOND_STAGE_AUTHORITY",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "hdampf",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "bhaendel",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "user",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "nschmidt",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "boss",
+      "departmentId": 3,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "office",
+      "departmentId": 3,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "fbaier",
+      "departmentId": 4,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "eschneider",
+      "departmentId": 4,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    }
+  ],
+  "calendars": {
+    "personCalendars": [],
+    "companyCalendars": [],
+    "departmentCalendars": [],
+    "companyCalendarAccessible": false
+  },
+  "calendarIntegration": {
+    "calendarIntegrationSettings": {
+      "id": 1,
+      "provider": null,
+      "googleCalendarSettings": null
+    },
+    "absenceMappings": []
+  },
+  "settings": {
+    "id": 1,
+    "applicationSettings": {
+      "maximumMonthsToApplyForLeaveInAdvance": 18,
+      "maximumMonthsToApplyForLeaveAfterwards": 12,
+      "remindForWaitingApplications": false,
+      "allowHalfDays": true,
+      "daysBeforeRemindForWaitingApplications": 2,
+      "remindForUpcomingApplications": false,
+      "daysBeforeRemindForUpcomingApplications": 3,
+      "remindForUpcomingHolidayReplacement": false,
+      "daysBeforeRemindForUpcomingHolidayReplacement": 3
+    },
+    "accountSettings": {
+      "defaultVacationDays": 24,
+      "maximumAnnualVacationDays": 40,
+      "expiryDateDayOfMonth": 1,
+      "expiryDateMonth": 4,
+      "doRemainingVacationDaysExpireGlobally": true
+    },
+    "workingTimeSettings": {
+      "monday": "FULL",
+      "tuesday": "FULL",
+      "wednesday": "FULL",
+      "thursday": "FULL",
+      "friday": "FULL",
+      "saturday": "ZERO",
+      "sunday": "ZERO"
+    },
+    "publicHolidaysSettings": {
+      "workingDurationForChristmasEve": "MORNING",
+      "workingDurationForNewYearsEve": "MORNING",
+      "federalState": "GERMANY_BADEN_WUERTTEMBERG"
+    },
+    "overTimeSettings": {
+      "overtimeActive": true,
+      "overtimeReductionWithoutApplicationActive": true,
+      "overtimeWritePrivilegedOnly": false,
+      "maximumOvertime": 100,
+      "minimumOvertime": 5,
+      "minimumOvertimeReduction": 0
+    },
+    "timeSettings": {
+      "timeZoneId": "Europe/Berlin",
+      "workDayBeginHour": 8,
+      "workDayBeginMinute": 0,
+      "workDayEndHour": 16,
+      "workDayEndMinute": 0
+    },
+    "sickNoteSettings": {
+      "maximumSickPayDays": 42,
+      "daysBeforeEndOfSickPayNotification": 7,
+      "userIsAllowedToSubmitSickNotes": false
+    },
+    "avatarSettings": {
+      "gravatarEnabled": false
+    }
+  },
+  "personActivePeriods": [
+    {
+      "personExternalId": "user",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "boss",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "office",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "admin",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "hdampf",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "fbaier",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "eschneider",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "bhaendel",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "nschmidt",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "heinz",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "horst-active-0",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "horst-inactive-0",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    }
+  ],
+  "blackoutPeriods": [
+    {
+      "title": "Inventur",
+      "startDate": "2025-01-02",
+      "endDate": "2025-01-03",
+      "createdAt": "2024-11-01",
+      "lastModification": "2024-11-02",
+      "companyWide": true,
+      "allVacationTypes": true,
+      "departmentIds": [],
+      "vacationTypeIds": []
+    },
+    {
+      "title": "Release",
+      "startDate": "2025-06-10",
+      "endDate": "2025-06-20",
+      "createdAt": "2025-03-01",
+      "lastModification": "2025-03-01",
+      "companyWide": false,
+      "allVacationTypes": false,
+      "departmentIds": [1, 2],
+      "vacationTypeIds": [10000]
+    }
+  ]
+}
