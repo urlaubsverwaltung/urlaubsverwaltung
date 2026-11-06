@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType;
@@ -125,7 +124,6 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         requireCalculableDuration(dateRange);
 
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        final CachedSupplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -173,7 +171,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByFederalState.computeIfAbsent(
-                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(publicHolidaysStart, end, federalState, publicHolidaysSettingsSupplier));
+                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(publicHolidaysStart, end, federalState));
 
                 for (LocalDate date : workingTimeDateRange) {
                     dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysByDate, companyClosuresByDate));
@@ -190,10 +188,10 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState) {
         // two public holidays can fall on the same date. their day length only depends on the date, so keep the first
-        // one - just like PublicHolidaysService#getPublicHoliday does.
-        return publicHolidaysService.getPublicHolidays(start, end, federalState, publicHolidaysSettingsSupplier).stream()
+        // one - just like the first public holiday of a date does.
+        return publicHolidaysService.getPublicHolidays(start, end, federalState).stream()
             .collect(toMap(PublicHoliday::date, identity(), (first, _) -> first));
     }
 
@@ -256,14 +254,5 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
     private FederalState getSystemDefaultFederalState() {
         return settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
-    }
-
-    /**
-     * Retrieves the public holiday settings from the system configuration.
-     *
-     * @return the current {@link PublicHolidaysSettings} from the system settings
-     */
-    private PublicHolidaysSettings getPublicHolidaysSettings() {
-        return settingsService.getSettings().getPublicHolidaysSettings();
     }
 }

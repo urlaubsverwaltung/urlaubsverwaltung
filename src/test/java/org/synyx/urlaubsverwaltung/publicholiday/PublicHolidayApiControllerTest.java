@@ -11,6 +11,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
 import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -51,10 +54,12 @@ class PublicHolidayApiControllerTest {
     private WorkingTimeService workingTimeService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private CompanyClosureService companyClosureService;
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidayApiController(publicHolidaysService, personService, workingTimeService, settingsService);
+        sut = new PublicHolidayApiController(publicHolidaysService, personService, workingTimeService, settingsService, companyClosureService);
     }
 
     @Test
@@ -89,6 +94,29 @@ class PublicHolidayApiControllerTest {
     }
 
     @Test
+    void stillDeliversCompanyClosures() throws Exception {
+
+        final Settings settings = settingsWithWorkingTimeSettings(anyWorkingTimeSettings());
+        settings.getPublicHolidaysSettings().setFederalState(GERMANY_BADEN_WUERTTEMBERG);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final LocalDate from = LocalDate.of(2026, DECEMBER, 24);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 26);
+        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of());
+        when(companyClosureService.getCompanyClosures(from, to)).thenReturn(List.of(new CompanyClosure(from, NOON, "Heiligabend")));
+
+        perform(get("/api/public-holidays")
+            .param("from", "2026-12-24")
+            .param("to", "2026-12-26"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.publicHolidays", hasSize(1)))
+            .andExpect(jsonPath("$.publicHolidays[0].date", is("2026-12-24")))
+            .andExpect(jsonPath("$.publicHolidays[0].dayLength", is(0.5)))
+            .andExpect(jsonPath("$.publicHolidays[0].absencePeriodName", is("NOON")))
+            .andExpect(jsonPath("$.publicHolidays[0].description", is("Heiligabend")));
+    }
+
+    @Test
     void getPublicHolidaysForInvalidPeriod() throws Exception {
         perform(get("/api/public-holidays")
             .param("from", "2016-01-01")
@@ -105,7 +133,7 @@ class PublicHolidayApiControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
 
-        verifyNoInteractions(publicHolidaysService, settingsService);
+        verifyNoInteractions(publicHolidaysService, settingsService, companyClosureService);
     }
 
     @Test

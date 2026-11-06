@@ -100,7 +100,6 @@ class SettingsPublicHolidayViewControllerTest {
         final RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
 
         final Settings existing = new Settings();
-        existing.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(DayLength.NOON);
         when(settingsService.getSettings()).thenReturn(existing);
 
         final String view = sut.settingsSaved(dto, errors, new ConcurrentModel(), redirectAttributes);
@@ -110,8 +109,6 @@ class SettingsPublicHolidayViewControllerTest {
 
         verify(settingsService).save(existing);
         assertThat(existing.getPublicHolidaysSettings().getFederalState()).isEqualTo(FederalState.GERMANY_BADEN_WUERTTEMBERG);
-        // not written from the page any more
-        assertThat(existing.getPublicHolidaysSettings().getWorkingDurationForChristmasEve()).isEqualTo(DayLength.NOON);
 
         verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 24), DayLength.FULL, LocalDate.of(2026, NOVEMBER, 6));
         verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 31), DayLength.MORNING, LocalDate.of(2026, NOVEMBER, 6));
