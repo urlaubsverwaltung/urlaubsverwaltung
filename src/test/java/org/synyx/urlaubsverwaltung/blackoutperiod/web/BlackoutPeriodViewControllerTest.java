@@ -17,6 +17,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -75,6 +78,8 @@ class BlackoutPeriodViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+    private CompanyClosureService companyClosureService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -87,7 +92,7 @@ class BlackoutPeriodViewControllerTest {
     void setUp() {
         messageSource.setUseCodeAsDefaultMessage(true);
         sut = new BlackoutPeriodViewController(blackoutPeriodService, departmentService, personService, vacationTypeService, validator,
-            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+            messageSource, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock, companyClosureService);
     }
 
     @Nested
@@ -299,6 +304,66 @@ class BlackoutPeriodViewControllerTest {
     }
 
     @Test
+    void listsCompanyClosureForVacationTypeLimitedBlackout() throws Exception {
+
+        when(departmentService.getAllDepartments()).thenReturn(List.of());
+        final VacationType<?> vacationType = activeVacationType(1L, messageSource);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2026, DECEMBER, 31)))
+            .thenReturn(List.of(
+                new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.NOON, "Heiligabend"),
+                new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), DayLength.NOON, "Silvester")));
+
+        perform(get("/web/blackoutperiod/conflicts")
+            .param("startDate", "2026-12-20")
+            .param("endDate", "2026-12-31")
+            .param("companyWide", "true")
+            .param("allVacationTypes", "false")
+            .param("vacationTypeIds", "1"))
+            .andExpect(model().attribute("conflictingCompanyClosures", List.of(
+                new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 24), "Heiligabend", "company-closure.dayLength.NOON"),
+                new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 31), "Silvester", "company-closure.dayLength.NOON"))));
+    }
+
+    @Test
+    void listsCompanyClosureForDepartmentBlackout() throws Exception {
+
+        final Department department = createDepartment("Vertrieb");
+        department.setId(42L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24)))
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.FULL, "Heiligabend")));
+
+        perform(get("/web/blackoutperiod/conflicts")
+            .param("startDate", "2026-12-24")
+            .param("endDate", "2026-12-24")
+            .param("companyWide", "false")
+            .param("departmentIds", "42")
+            .param("allVacationTypes", "true"))
+            .andExpect(model().attribute("conflictingCompanyClosures", List.of(
+                new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 24), "Heiligabend", "company-closure.dayLength.FULL"))));
+    }
+
+    @Test
+    void noCompanyClosureOutsideRange() throws Exception {
+
+        when(departmentService.getAllDepartments()).thenReturn(List.of());
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, JUNE, 1), LocalDate.of(2026, JUNE, 30))).thenReturn(List.of());
+
+        perform(get("/web/blackoutperiod/conflicts")
+            .param("startDate", "2026-06-01")
+            .param("endDate", "2026-06-30")
+            .param("companyWide", "true")
+            .param("allVacationTypes", "true"))
+            .andExpect(model().attribute("conflictingCompanyClosures", List.of()));
+    }
+
+    @Test
     void conflictingApplicationsRendersNothingWithoutACompletePeriod() throws Exception {
 
         perform(get("/web/blackoutperiod/conflicts").param("startDate", "2026-12-20"))
@@ -309,6 +374,7 @@ class BlackoutPeriodViewControllerTest {
             .andExpect(model().attribute("conflictingApplications", List.of()));
 
         verify(blackoutPeriodService, never()).findConflictingApplications(any(BlackoutPeriod.class));
+        verify(companyClosureService, never()).getCompanyClosures(any(), any());
     }
 
     @Test
