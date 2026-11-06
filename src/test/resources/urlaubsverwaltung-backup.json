@@ -2838,8 +2838,8 @@
       "sunday": "ZERO"
     },
     "publicHolidaysSettings": {
-      "workingDurationForChristmasEve": "MORNING",
-      "workingDurationForNewYearsEve": "MORNING",
+      "workingDurationForChristmasEve": null,
+      "workingDurationForNewYearsEve": null,
       "federalState": "GERMANY_BADEN_WUERTTEMBERG"
     },
     "overTimeSettings": {
@@ -2960,6 +2960,25 @@
       "allVacationTypes": false,
       "departmentIds": [1, 2],
       "vacationTypeIds": [10000]
+    }
+  ],
+  "companyClosures": [
+    {
+      "month": 12,
+      "dayOfMonth": 24,
+      "name": "Heiligabend",
+      "versions": [
+        {"dayLength": "NOON", "validFrom": null},
+        {"dayLength": "FULL", "validFrom": "2027-01-01"}
+      ]
+    },
+    {
+      "month": 12,
+      "dayOfMonth": 31,
+      "name": "Silvester",
+      "versions": [
+        {"dayLength": "NOON", "validFrom": null}
+      ]
     }
   ]
 }

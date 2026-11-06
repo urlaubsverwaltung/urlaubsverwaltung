@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.calendar.CompanyCalendarImportService;
 import org.synyx.urlaubsverwaltung.calendar.PersonCalendarImportService;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingImportService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarIntegrationSettingsImportService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureImportService;
 import org.synyx.urlaubsverwaltung.department.DepartmentImportService;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsImportService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeImportService;
@@ -60,6 +61,7 @@ class ResetUrlaubsverwaltungService {
     private final UserNotificationSettingsImportService userNotificationSettingsImportService;
     private final UserPaginationSettingsImportService userPaginationSettingsImportService;
     private final BlackoutPeriodImportService blackoutPeriodImportService;
+    private final CompanyClosureImportService companyClosureImportService;
 
     ResetUrlaubsverwaltungService(AccountImportService accountImportService,
                                   ApplicationCommentImportService applicationCommentImportService,
@@ -84,7 +86,8 @@ class ResetUrlaubsverwaltungService {
                                   SickNoteTypeImportService sickNoteTypeImportService,
                                   UserNotificationSettingsImportService userNotificationSettingsImportService,
                                   UserPaginationSettingsImportService userPaginationSettingsImportService,
-                                  BlackoutPeriodImportService blackoutPeriodImportService
+                                  BlackoutPeriodImportService blackoutPeriodImportService,
+                                  CompanyClosureImportService companyClosureImportService
     ) {
         this.accountImportService = accountImportService;
         this.applicationCommentImportService = applicationCommentImportService;
@@ -110,12 +113,14 @@ class ResetUrlaubsverwaltungService {
         this.userNotificationSettingsImportService = userNotificationSettingsImportService;
         this.userPaginationSettingsImportService = userPaginationSettingsImportService;
         this.blackoutPeriodImportService = blackoutPeriodImportService;
+        this.companyClosureImportService = companyClosureImportService;
     }
 
 
     void resetData() {
         LOG.info("Resetting all data...");
         blackoutPeriodImportService.deleteAll();
+        companyClosureImportService.deleteAll();
         departmentImportService.deleteAll();
         sickNoteExtensionImportService.deleteAll();
         sickNoteCommentImportService.deleteAll();
