@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -48,6 +50,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.MAY;
 import static java.time.Month.OCTOBER;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,6 +96,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Mock
     private PersonService personService;
     @Mock
+    private CompanyClosureService companyClosureService;
+    @Mock
     private ApplicationForLeavePermissionEvaluator permissionEvaluator;
     @Mock
     private Errors errors;
@@ -101,7 +106,7 @@ class ApplicationForLeaveFormValidatorTest {
     void setUp() {
         sut = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
             settingsService, overtimeService, vacationTypeService, new ApplicationMapper(vacationTypeService),
-            blackoutPeriodService, personService, permissionEvaluator, Clock.systemUTC());
+            blackoutPeriodService, personService, companyClosureService, permissionEvaluator, Clock.systemUTC());
     }
 
     // Supports --------------------------------------------------------------------------------------------------------
@@ -1261,200 +1266,97 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    void ensureAlreadyAbsentOnChristmasEveMorning() {
+    void ensureAlreadyAbsentOnClosureMorning() {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(MORNING));
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        validateOnClosure(LocalDate.of(2026, DECEMBER, 24), MORNING, "Heiligabend", MORNING);
 
-        final int actualYear = Year.now().getValue();
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.morning");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.morning");
+        verify(errors).reject("application.error.alreadyAbsentOn.companyClosure.morning", new Object[]{"Heiligabend"}, null);
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.companyClosure.morning", new Object[]{"Heiligabend"}, null);
     }
 
     @Test
-    void ensureAlreadyAbsentOnChristmasEveMorningIsNotTriggered() {
+    void ensureAlreadyAbsentOnClosureMorningIsNotTriggeredForNoonApplication() {
 
-        setupOvertimeSettings();
+        validateOnClosure(LocalDate.of(2026, DECEMBER, 24), MORNING, "Heiligabend", NOON);
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
-
-        final int actualYear = Year.now().getValue();
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors, never()).reject(anyString());
-        verify(errors, never()).rejectValue(anyString(), anyString());
+        verifyNoClosureRejection();
     }
 
     @Test
-    void ensureAlreadyAbsentOnChristmasEveNoon() {
+    void ensureAlreadyAbsentOnClosureNoon() {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        validateOnClosure(LocalDate.of(2026, DECEMBER, 31), NOON, "Silvester", NOON);
 
-        final int actualYear = Year.now().getValue();
+        verify(errors).reject("application.error.alreadyAbsentOn.companyClosure.noon", new Object[]{"Silvester"}, null);
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.companyClosure.noon", new Object[]{"Silvester"}, null);
+    }
 
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(NOON)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 24))
-            .build();
+    @Test
+    void ensureAlreadyAbsentOnClosureNoonIsNotTriggeredForMorningApplication() {
 
-        sut.validate(appForm, errors);
+        validateOnClosure(LocalDate.of(2026, DECEMBER, 31), NOON, "Silvester", MORNING);
 
-        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.noon");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.noon");
+        verifyNoClosureRejection();
     }
 
     @ParameterizedTest
     @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
-    void ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(final DayLength dayLength) {
+    void ensureAlreadyAbsentOnFullClosureForGivenDayLengthRequest(final DayLength dayLength) {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(FULL));
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        validateOnClosure(LocalDate.of(2026, DECEMBER, 24), FULL, "Heiligabend", dayLength);
 
-        final int actualYear = Year.now().getValue();
-
-        final LocalDate christmasEve = LocalDate.of(actualYear, DECEMBER, 24);
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(dayLength)
-            .startDate(christmasEve)
-            .endDate(christmasEve)
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.full");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.christmasEve.full");
+        verify(errors).reject("application.error.alreadyAbsentOn.companyClosure.full", new Object[]{"Heiligabend"}, null);
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.companyClosure.full", new Object[]{"Heiligabend"}, null);
     }
 
     @Test
-    void ensureAlreadyAbsentOnNewYearsEveMorning() {
+    void validatesEveryClosureDay() {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(MORNING));
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        validateOnClosure(LocalDate.of(2026, MAY, 15), MORNING, "Brückentag", MORNING);
 
-        final int actualYear = Year.now().getValue();
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.morning");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.morning");
+        verify(errors).reject("application.error.alreadyAbsentOn.companyClosure.morning", new Object[]{"Brückentag"}, null);
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.companyClosure.morning", new Object[]{"Brückentag"}, null);
     }
 
     @Test
-    void ensureAlreadyAbsentOnNewYearsEveMorningIsNotTriggered() {
+    void usesTheVersionValidForTheRequestedYear() {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        // the service resolves the version valid for the year of the requested date
+        validateOnClosure(LocalDate.of(2025, DECEMBER, 24), NOON, "Heiligabend", NOON);
 
-        final int actualYear = Year.now().getValue();
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(MORNING)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors, never()).reject(anyString());
-        verify(errors, never()).rejectValue(anyString(), anyString());
+        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.companyClosure.noon", new Object[]{"Heiligabend"}, null);
     }
 
     @Test
-    void ensureAlreadyAbsentOnNewYearsEveNoon() {
+    void acceptsOtherHalfOfTheDayWithinTheVersionValidForTheRequestedYear() {
 
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(NOON));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        validateOnClosure(LocalDate.of(2025, DECEMBER, 24), NOON, "Heiligabend", MORNING);
 
-        final int actualYear = Year.now().getValue();
-
-        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(NOON)
-            .startDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .endDate(LocalDate.of(actualYear, DECEMBER, 31))
-            .build();
-
-        sut.validate(appForm, errors);
-
-        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.noon");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.noon");
+        verifyNoClosureRejection();
     }
 
-    @ParameterizedTest
-    @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
-    void ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(final DayLength dayLength) {
+    private void validateOnClosure(LocalDate date, DayLength closedDayLength, String name, DayLength applicationDayLength) {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+        when(companyClosureService.getCompanyClosures(date, date)).thenReturn(List.of(new CompanyClosure(date, closedDayLength, name)));
 
-        final int actualYear = Year.now().getValue();
-
-        final LocalDate christmasEve = LocalDate.of(actualYear, DECEMBER, 31);
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
-            .dayLength(dayLength)
-            .startDate(christmasEve)
-            .endDate(christmasEve)
+            .dayLength(applicationDayLength)
+            .startDate(date)
+            .endDate(date)
             .build();
 
         sut.validate(appForm, errors);
+    }
 
-        verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.full");
-        verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
+    private void verifyNoClosureRejection() {
+        verify(errors, never()).reject(anyString(), any(Object[].class), any());
+        verify(errors, never()).rejectValue(anyString(), anyString(), any(Object[].class), any());
     }
 
     private ApplicationForLeaveForm overtimeMinimumTest(Duration hours) {
@@ -1499,18 +1401,6 @@ class ApplicationForLeaveFormValidatorTest {
             Arguments.of(null, 1),
             Arguments.of(ZERO, 1)
         );
-    }
-
-    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(absence.getInverse());
-        return settings;
-    }
-
-    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
-        return settings;
     }
 
     private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
