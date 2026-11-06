@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -80,6 +81,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final PublicHolidaysService publicHolidaysService;
+    private final CompanyClosureService companyClosureService;
     private final AbsenceService absenceService;
     private final WorkingTimeService workingTimeService;
     private final VacationTypeService vacationTypeService;
@@ -92,7 +94,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     AbsenceOverviewViewController(
         PersonService personService, DepartmentService departmentService,
-        PublicHolidaysService publicHolidaysService, AbsenceService absenceService,
+        PublicHolidaysService publicHolidaysService, CompanyClosureService companyClosureService, AbsenceService absenceService,
         WorkingTimeService workingTimeService, VacationTypeService vacationTypeService,
         SickNotePermissionEvaluator sickNotePermissionEvaluator,
         BlackoutPeriodService blackoutPeriodService,
@@ -102,6 +104,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         this.personService = personService;
         this.departmentService = departmentService;
         this.publicHolidaysService = publicHolidaysService;
+        this.companyClosureService = companyClosureService;
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
         this.vacationTypeService = vacationTypeService;
@@ -289,9 +292,14 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         // load the working times of all persons with a single query instead of one query per person
         final Map<Person, Map<DateRange, WorkingTime>> workingTimesByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(personList, dateRange);
 
+        // a company closure shows up like a public holiday - for every person
+        final List<PublicHoliday> companyClosures = companyClosureService.getCompanyClosures(dateRange.startDate(), dateRange.endDate()).stream()
+            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name()))
+            .toList();
+
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
-            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of())));
+            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(workingTimesByPerson.getOrDefault(person, Map.of()), companyClosures));
         }
 
         final Map<PersonId, List<BlackoutPeriod>> blackoutPeriodsByPerson =
@@ -316,9 +324,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             final Map<LocalDate, PublicHoliday> publicHolidays = publicHolidaysOfAllPersons.get(person);
             final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
             absenceRecordsByPersonAndDate.getOrDefault(person, Map.of()).forEach((date, records) -> {
-                final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> gapType == AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY
-                    ? Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"))
-                    : message.apply("absences.overview.no-workday");
+                final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> switch (gapType) {
+                    case PUBLIC_HOLIDAY -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"));
+                    case COMPANY_CLOSURE -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.company-closure"));
+                    default -> message.apply("absences.overview.no-workday");
+                };
                 barDays.put(date, new AbsenceBars.Day(
                     barHalfDay(records, AbsencePeriod.Record::getMorning, toBarAbsence, gapTitle),
                     barHalfDay(records, AbsencePeriod.Record::getNoon, toBarAbsence, gapTitle)
@@ -390,11 +400,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .orElse(false);
     }
 
-    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange) {
-        return workingTimesByDateRange
-            .entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
-            .flatMap(List::stream)
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange, List<PublicHoliday> companyClosures) {
+        return Stream.concat(
+                workingTimesByDateRange.entrySet().stream()
+                    .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
+                    .flatMap(List::stream),
+                companyClosures.stream())
             .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 
     }
@@ -488,9 +499,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         // public holiday and no_workday are no absence of their own
         boolean ignoreMorning = hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.NO_WORKDAY)
-            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
+            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)
+            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.COMPANY_CLOSURE);
         boolean ignoreNoon = hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.NO_WORKDAY)
-            || hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
+            || hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)
+            || hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.COMPANY_CLOSURE);
 
         if (!ignoreMorning && morning.isPresent()) {
             final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -575,7 +588,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                 // no workday is highlighted differently as an absenceFull day.
                 return builder;
             }
-            if (morningType.get().equals(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)) {
+            if (morningType.get().equals(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY) || morningType.get().equals(AbsencePeriod.AbsenceType.COMPANY_CLOSURE)) {
                 // public holiday is not required to be handled here currently.
                 // however, this has to be handled as soon as a person could work despite public holiday.
                 return builder;
@@ -619,6 +632,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         // the name of a public holiday tells more than "no workday"
         final AbsenceBars.Gap gap = firstOfType(recordInfos, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)
+            .or(() -> firstOfType(recordInfos, AbsencePeriod.AbsenceType.COMPANY_CLOSURE))
             .or(() -> firstOfType(recordInfos, AbsencePeriod.AbsenceType.NO_WORKDAY))
             .map(recordInfo -> new AbsenceBars.Gap(gapTitle.apply(recordInfo.getAbsenceType())))
             .orElse(null);
@@ -680,7 +694,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             case SICK -> ownAbsence || isSignedInUserAllowedToViewAllSickNotes || managedMembersOfSignedInUser.contains(person)
                 ? new AbsenceBars.Detail(AbsenceBars.DetailPage.SICK_NOTE, id)
                 : null;
-            case PUBLIC_HOLIDAY, NO_WORKDAY -> null;
+            case PUBLIC_HOLIDAY, COMPANY_CLOSURE, NO_WORKDAY -> null;
         };
     }
 
