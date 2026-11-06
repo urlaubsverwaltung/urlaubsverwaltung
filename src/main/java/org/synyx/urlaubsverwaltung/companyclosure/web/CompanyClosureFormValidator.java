@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.Clock;
 import java.time.DateTimeException;
@@ -17,6 +18,9 @@ import java.util.Comparator;
 import java.util.stream.IntStream;
 
 import static java.time.Month.FEBRUARY;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -83,11 +87,24 @@ class CompanyClosureFormValidator implements Validator {
 
     /**
      * Validates the changes of the closure day with the given day and month: the fields of
-     * {@link #validate(Object, Errors)} plus the company-wide blackout periods.
+     * {@link #validate(Object, Errors)} plus the company-wide blackout periods, which only block a change that
+     * closes more of the day than the version valid at "valid from" does.
      */
-    void validateEdit(MonthDay monthDay, CompanyClosureForm form, Errors errors) {
+    void validateEdit(CompanyClosureEntry entry, CompanyClosureForm form, Errors errors) {
         validate(form, errors);
-        validateNoCompanyWideBlackoutPeriod(monthDay, form, errors);
+        if (form.getDayLength() == null || form.getValidFrom() == null) {
+            return;
+        }
+        final DayLength old = entry.dayLengthAt(form.getValidFrom());
+        final DayLength changed = form.getDayLength();
+        final boolean adds = (covers(changed, MORNING) && !covers(old, MORNING)) || (covers(changed, NOON) && !covers(old, NOON));
+        if (adds) {
+            validateNoCompanyWideBlackoutPeriod(entry.monthDay(), form, errors);
+        }
+    }
+
+    private static boolean covers(DayLength dayLength, DayLength half) {
+        return dayLength == FULL || dayLength == half;
     }
 
     /**

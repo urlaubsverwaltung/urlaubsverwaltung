@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -228,6 +230,45 @@ class CompanyClosureFormValidatorTest {
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), form).hasErrors()).isFalse();
     }
 
+    @Test
+    void allowsRenameWhenCompanyWideBlackoutCoversDay() {
+        
+        assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, validForm()).hasErrors()).isFalse();
+        verifyNoInteractions(blackoutPeriodService);
+    }
+
+    @Test
+    void allowsUnchangedDayLength() {
+        final CompanyClosureForm form = validForm();
+        form.setDayLength(NOON);
+
+        assertThat(validateEdit(MonthDay.of(DECEMBER, 24), NOON, form).hasErrors()).isFalse();
+        verifyNoInteractions(blackoutPeriodService);
+    }
+
+    @Test
+    void allowsReductionFromFullToNoon() {
+        final CompanyClosureForm form = validForm();
+        form.setDayLength(NOON);
+
+        assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, form).hasErrors()).isFalse();
+        verifyNoInteractions(blackoutPeriodService);
+    }
+
+    @Test
+    void rejectsExtensionFromNoonToFull() {
+        coveringBlackout();
+
+        final Errors errors = validateEdit(MonthDay.of(DECEMBER, 24), NOON, validForm());
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+    }
+
+    private void coveringBlackout() {
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Weihnachtssperre", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), true)));
+    }
+
     private static BlackoutPeriod blackout(String title, LocalDate start, LocalDate end, boolean companyWide) {
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
         blackoutPeriod.setTitle(title);
@@ -238,8 +279,13 @@ class CompanyClosureFormValidatorTest {
     }
 
     private Errors validateEdit(MonthDay monthDay, CompanyClosureForm form) {
+        return validateEdit(monthDay, ZERO, form);
+    }
+
+    private Errors validateEdit(MonthDay monthDay, DayLength existing, CompanyClosureForm form) {
+        final CompanyClosureEntry entry = new CompanyClosureEntry(monthDay, "Alt", List.of(new CompanyClosureVersion(existing, null)));
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
-        sut.validateEdit(monthDay, form, errors);
+        sut.validateEdit(entry, form, errors);
         return errors;
     }
 
