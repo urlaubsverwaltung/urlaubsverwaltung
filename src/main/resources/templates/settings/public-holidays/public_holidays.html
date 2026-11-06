@@ -10,49 +10,11 @@
           <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
           <th:block th:text="#{settings.publicHolidays.description}" />
         </p>
-
-        <!-- Working duration settings for Christmas Eve -->
-        <div class="uv-form__input-row">
-          <label
-            th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
-            for="workingDurationForChristmasEve"
-          >
-          </label>
-          <select
-            th:replace="~{fragments/select::one(id='workingDurationForChristmasEve', name='workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve}, required=true)}"
-          >
-            <th:block th:fragment="settings-workingtimes-workingDurationForChristmasEve">
-              <option
-                th:each="dayLengthType : ${dayLengthTypes}"
-                th:text="#{__${dayLengthType}__}"
-                th:value="${dayLengthType}"
-                th:selected="${settings.workingDurationForChristmasEve == dayLengthType}"
-              ></option>
-            </th:block>
-          </select>
-        </div>
-
-        <!-- Working duration settings for New Year's Eve -->
-        <div class="uv-form__input-row">
-          <label
-            th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
-            for="workingDurationForNewYearsEve"
-          >
-            Arbeitsdauer an Silvester
-          </label>
-          <select
-            th:replace="~{fragments/select::one(id='workingDurationForNewYearsEve', name='workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve}, required=true)}"
-          >
-            <th:block th:fragment="settings-workingtimes-workingDurationForNewYearsEve">
-              <option
-                th:each="dayLengthType : ${dayLengthTypes}"
-                th:text="#{__${dayLengthType}__}"
-                th:value="${dayLengthType}"
-                th:selected="${settings.workingDurationForNewYearsEve == dayLengthType}"
-              ></option>
-            </th:block>
-          </select>
-        </div>
+        <p class="uv-form__group-info uv-help-block">
+          <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+          <th:block th:text="#{settings.publicHolidays.company-closure.hint}" />
+          <a th:href="@{/web/company-closure}" th:text="#{nav.company.company-closures}">Betriebsruhe</a>
+        </p>
 
         <!-- Federal state settings for public holidays -->
         <div class="uv-form__input-row">
