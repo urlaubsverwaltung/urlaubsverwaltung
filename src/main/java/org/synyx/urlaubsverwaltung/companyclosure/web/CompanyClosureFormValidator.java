@@ -4,6 +4,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 
@@ -11,8 +13,11 @@ import java.time.Clock;
 import java.time.DateTimeException;
 import java.time.MonthDay;
 import java.time.Year;
+import java.util.Comparator;
+import java.util.stream.IntStream;
 
 import static java.time.Month.FEBRUARY;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
@@ -28,6 +33,8 @@ class CompanyClosureFormValidator implements Validator {
     private static final String ERROR_MONTH_DAY_LEAP_DAY = "company-closure.error.monthDay.leapDay";
     private static final String ERROR_MONTH_DAY_EXISTS = "company-closure.error.monthDay.exists";
 
+    private static final String ERROR_BLACKOUT_PERIOD = "company-closure.error.blackout-period";
+
     private static final String ATTRIBUTE_DAY = "day";
     private static final String ATTRIBUTE_MONTH = "month";
     private static final String ATTRIBUTE_NAME = "name";
@@ -35,10 +42,12 @@ class CompanyClosureFormValidator implements Validator {
     private static final String ATTRIBUTE_VALID_FROM = "validFrom";
 
     private final CompanyClosureService companyClosureService;
+    private final BlackoutPeriodService blackoutPeriodService;
     private final Clock clock;
 
-    CompanyClosureFormValidator(CompanyClosureService companyClosureService, Clock clock) {
+    CompanyClosureFormValidator(CompanyClosureService companyClosureService, BlackoutPeriodService blackoutPeriodService, Clock clock) {
         this.companyClosureService = companyClosureService;
+        this.blackoutPeriodService = blackoutPeriodService;
         this.clock = clock;
     }
 
@@ -73,6 +82,15 @@ class CompanyClosureFormValidator implements Validator {
     }
 
     /**
+     * Validates the changes of the closure day with the given day and month: the fields of
+     * {@link #validate(Object, Errors)} plus the company-wide blackout periods.
+     */
+    void validateEdit(MonthDay monthDay, CompanyClosureForm form, Errors errors) {
+        validate(form, errors);
+        validateNoCompanyWideBlackoutPeriod(monthDay, form, errors);
+    }
+
+    /**
      * Validates a new closure day: the fields of {@link #validate(Object, Errors)} plus day and month.
      */
     void validateNew(CompanyClosureForm form, Errors errors) {
@@ -101,6 +119,27 @@ class CompanyClosureFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_LEAP_DAY);
         } else if (companyClosureService.getCompanyClosureEntries().stream().map(CompanyClosureEntry::monthDay).anyMatch(monthDay::equals)) {
             errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_EXISTS);
+        } else {
+            validateNoCompanyWideBlackoutPeriod(monthDay, form, errors);
         }
+    }
+
+    /**
+     * A closure day recurs every year from "valid from" on, so a company-wide blackout period in any of these
+     * years containing the day blocks it. Removing the closure ({@code ZERO}) is never blocked.
+     */
+    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, CompanyClosureForm form, Errors errors) {
+        if (form.getDayLength() == null || form.getDayLength() == ZERO || form.getValidFrom() == null) {
+            return;
+        }
+
+        blackoutPeriodService.getAllBlackoutPeriods().stream()
+            .filter(BlackoutPeriod::isCompanyWide)
+            .sorted(Comparator.comparing(BlackoutPeriod::getStartDate))
+            .filter(period -> IntStream.rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
+                .mapToObj(monthDay::atYear)
+                .anyMatch(date -> !date.isBefore(form.getValidFrom()) && !date.isBefore(period.getStartDate()) && !date.isAfter(period.getEndDate())))
+            .findFirst()
+            .ifPresent(period -> errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{period.getTitle()}, null));
     }
 }

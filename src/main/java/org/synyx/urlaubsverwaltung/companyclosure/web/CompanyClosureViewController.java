@@ -135,7 +135,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         final CompanyClosureEntry entry = getEntry(monthDayPath);
 
-        validator.validate(form, errors);
+        validator.validateEdit(entry.monthDay(), form, errors);
         if (errors.hasErrors()) {
             addEditModel(model, entry, locale);
             return FORM_VIEW;
