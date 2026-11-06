@@ -37,7 +37,10 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     @Column(name = "day_of_month", nullable = false)
     private int dayOfMonth;
 
-    @Column(name = "message_key", nullable = false)
+    /**
+     * messageKey can be {@code null} and is only defined for the closures provided by the application.
+     */
+    @Column(name = "message_key")
     private String messageKey;
 
     /**
@@ -52,6 +55,12 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     @ManyToOne
     @JoinColumn(name = "last_modified_by")
     private Person lastModifiedBy;
+
+    /**
+     * name can be {@code null} and is only defined for closures created or renamed by a user. It takes
+     * precedence over the messageKey.
+     */
+    private String name;
 
     public Long getId() {
         return id;
@@ -103,6 +112,14 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "CompanyClosureEntity{" +
@@ -110,6 +127,7 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
             ", month=" + month +
             ", dayOfMonth=" + dayOfMonth +
             ", messageKey='" + messageKey + '\'' +
+            ", name='" + name + '\'' +
             '}';
     }
 

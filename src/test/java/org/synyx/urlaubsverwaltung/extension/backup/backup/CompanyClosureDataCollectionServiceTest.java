@@ -37,6 +37,7 @@ class CompanyClosureDataCollectionServiceTest {
     void collectsAllVersions() {
         final CompanyClosureEntity christmasEve = closure(1L, 24, "companyclosure.name.christmasEve");
         final CompanyClosureEntity newYearsEve = closure(2L, 31, "companyclosure.name.newYearsEve");
+        newYearsEve.setName("Jahresabschluss");
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
         when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
             changedVersion(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
@@ -46,10 +47,10 @@ class CompanyClosureDataCollectionServiceTest {
         final List<CompanyClosureDTO> actual = sut.collectCompanyClosures();
 
         assertThat(actual).containsExactly(
-            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
                 new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), LAST_MODIFIED_AT, "office"))),
-            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", null, null, List.of(
+            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", "Jahresabschluss", null, null, List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null))));
     }
 

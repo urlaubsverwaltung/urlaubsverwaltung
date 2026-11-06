@@ -2965,6 +2965,7 @@
       "month": 12,
       "dayOfMonth": 24,
       "messageKey": "companyclosure.name.christmasEve",
+      "name": null,
       "lastModifiedAt": null,
       "externalIdOfLastModifier": null,
       "versions": [
@@ -2976,6 +2977,7 @@
       "month": 12,
       "dayOfMonth": 31,
       "messageKey": "companyclosure.name.newYearsEve",
+      "name": null,
       "lastModifiedAt": null,
       "externalIdOfLastModifier": null,
       "versions": [
