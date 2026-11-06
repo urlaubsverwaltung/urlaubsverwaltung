@@ -232,7 +232,6 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void allowsRenameWhenCompanyWideBlackoutCoversDay() {
-        
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, validForm()).hasErrors()).isFalse();
         verifyNoInteractions(blackoutPeriodService);
     }
