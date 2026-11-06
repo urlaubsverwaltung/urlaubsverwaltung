@@ -23,7 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -153,7 +155,7 @@ class CompanyClosureServiceImplTest {
 
         verify(companyClosureRepository).save(entity(12, 24, "Heiligabend"));
         verify(companyClosureRepository).save(entity(12, 31, "Silvester"));
-        verify(companyClosureVersionRepository, org.mockito.Mockito.times(2)).save(any(CompanyClosureVersionEntity.class));
+        verify(companyClosureVersionRepository, times(2)).save(any(CompanyClosureVersionEntity.class));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(CHRISTMAS_EVE));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(MonthDay.of(DECEMBER, 31)));
     }
@@ -190,6 +192,6 @@ class CompanyClosureServiceImplTest {
     }
 
     private static CompanyClosureEntity entity(int month, int day, String name) {
-        return org.mockito.ArgumentMatchers.argThat(e -> e.getMonth() == month && e.getDayOfMonth() == day && name.equals(e.getName()));
+        return argThat(e -> e.getMonth() == month && e.getDayOfMonth() == day && name.equals(e.getName()));
     }
 }
