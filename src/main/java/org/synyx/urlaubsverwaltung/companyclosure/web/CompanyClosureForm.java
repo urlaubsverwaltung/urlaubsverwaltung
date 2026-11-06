@@ -44,7 +44,7 @@ public class CompanyClosureForm {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? null : name.strip();
     }
 
     public DayLength getDayLength() {

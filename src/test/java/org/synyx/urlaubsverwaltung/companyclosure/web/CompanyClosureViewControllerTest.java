@@ -155,6 +155,19 @@ class CompanyClosureViewControllerTest {
     }
 
     @Test
+    void trimsNameBeforeSaving() throws Exception {
+        givenChristmasEve();
+
+        perform(post("/web/company-closure/12-24")
+            .param("name", "  Weihnachten ")
+            .param("dayLength", "FULL")
+            .param("validFrom", "2026-11-06"))
+            .andExpect(redirectedUrl("/web/company-closure"));
+
+        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, "Weihnachten");
+    }
+
+    @Test
     void createsNewDay() throws Exception {
         givenChristmasEve();
 
