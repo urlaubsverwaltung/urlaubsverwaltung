@@ -76,6 +76,11 @@ export const HolidayService = (function () {
     };
   }
 
+  // company closures are cached like public holidays, they are shown the same way
+  function cacheCompanyClosures(year) {
+    return (data) => cachePublicHoliday(year)({ publicHolidays: data.companyClosures });
+  }
+
   function cacheBlackoutPeriods(year) {
     const blackoutPeriodCache = (_CACHE["blackoutPeriod"] = _CACHE["blackoutPeriod"] || {});
 
@@ -491,13 +496,10 @@ export const HolidayService = (function () {
      * @returns {Promise}
      */
     fetchPublicHolidays: function (year) {
-      return this.fetchAndCache(
-        "/persons/" + personId + "/public-holidays",
-        year,
-        {},
-        "publicHoliday",
-        cachePublicHoliday,
-      );
+      return Promise.all([
+        this.fetchAndCache("/persons/" + personId + "/public-holidays", year, {}, "publicHoliday", cachePublicHoliday),
+        this.fetchAndCache("/company-closures", year, {}, "publicHoliday", cacheCompanyClosures),
+      ]);
     },
 
     fetchAbsences: function (year) {
