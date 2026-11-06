@@ -70,10 +70,18 @@ public final class DateLimits {
 
     /**
      * @param dateRange to check
+     * @return true if the date range is not longer than {@link #MAXIMUM_CALCULATED_DURATION}, false otherwise
+     */
+    public static boolean isCalculableDuration(DateRange dateRange) {
+        return dateRange.duration().compareTo(MAXIMUM_CALCULATED_DURATION) <= 0;
+    }
+
+    /**
+     * @param dateRange to check
      * @throws IllegalArgumentException if the date range is longer than {@link #MAXIMUM_CALCULATED_DURATION}
      */
     public static void requireCalculableDuration(DateRange dateRange) {
-        if (dateRange.duration().compareTo(MAXIMUM_CALCULATED_DURATION) > 0) {
+        if (!isCalculableDuration(dateRange)) {
             throw new IllegalArgumentException("Date range " + dateRange + " exceeds the maximum duration of " + MAXIMUM_CALCULATED_DURATION.toDays() + " days.");
         }
     }
