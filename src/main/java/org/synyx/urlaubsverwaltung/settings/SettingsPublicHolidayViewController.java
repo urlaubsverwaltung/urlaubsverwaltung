@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
@@ -22,8 +21,6 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.MonthDay;
-import java.time.Year;
-import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -119,16 +116,21 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         dto.setId(settings.getId());
         dto.setPublicHolidaysSettings(settings.getPublicHolidaysSettings());
 
-        final int year = Year.now(clock).getValue();
-        final List<CompanyClosure> closures = companyClosureService.getCompanyClosures(CHRISTMAS_EVE.atYear(year), NEW_YEARS_EVE.atYear(year));
-        dto.setWorkingDurationForChristmasEve(workingDuration(closures, CHRISTMAS_EVE.atYear(year)));
-        dto.setWorkingDurationForNewYearsEve(workingDuration(closures, NEW_YEARS_EVE.atYear(year)));
+        final LocalDate today = LocalDate.now(clock);
+        dto.setWorkingDurationForChristmasEve(workingDurationOfNextOccurrence(CHRISTMAS_EVE, today));
+        dto.setWorkingDurationForNewYearsEve(workingDurationOfNextOccurrence(NEW_YEARS_EVE, today));
         return dto;
     }
 
-    private static DayLength workingDuration(List<CompanyClosure> closures, LocalDate date) {
-        return closures.stream()
-            .filter(closure -> closure.date().equals(date))
+    // the next occurrence, because a change made after the day has passed is valid from today and applies to next year
+    private DayLength workingDurationOfNextOccurrence(MonthDay monthDay, LocalDate today) {
+        LocalDate date = monthDay.atYear(today.getYear());
+        if (date.isBefore(today)) {
+            date = date.plusYears(1);
+        }
+        final LocalDate day = date;
+        return companyClosureService.getCompanyClosures(day, day).stream()
+            .filter(closure -> closure.date().equals(day))
             .findFirst()
             .map(closure -> closure.dayLength().getInverse())
             .orElse(DayLength.FULL);

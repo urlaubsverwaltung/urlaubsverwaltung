@@ -74,14 +74,34 @@ class SettingsPublicHolidayViewControllerTest {
     void showsWorkingDurationOfCurrentYear() {
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
-        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 31)))
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24)))
             .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.NOON, "Heiligabend")));
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 31), LocalDate.of(2026, DECEMBER, 31)))
+            .thenReturn(List.of());
 
         final Model model = new ConcurrentModel();
         sut.settingsDetails(model);
 
         final SettingsPublicHolidayDto dto = (SettingsPublicHolidayDto) model.getAttribute("settings");
         assertThat(dto.getWorkingDurationForChristmasEve()).isEqualTo(DayLength.MORNING);
+        assertThat(dto.getWorkingDurationForNewYearsEve()).isEqualTo(DayLength.FULL);
+    }
+
+    @Test
+    void showsWorkingDurationOfNextYearWhenDayHasPassed() {
+        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, companyClosureService,
+            Clock.fixed(Instant.parse("2026-12-28T10:00:00Z"), UTC), defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2027, DECEMBER, 24), LocalDate.of(2027, DECEMBER, 24)))
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2027, DECEMBER, 24), DayLength.FULL, "Heiligabend")));
+        when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 31), LocalDate.of(2026, DECEMBER, 31)))
+            .thenReturn(List.of());
+
+        final Model model = new ConcurrentModel();
+        sut.settingsDetails(model);
+
+        final SettingsPublicHolidayDto dto = (SettingsPublicHolidayDto) model.getAttribute("settings");
+        assertThat(dto.getWorkingDurationForChristmasEve()).isEqualTo(DayLength.ZERO);
         assertThat(dto.getWorkingDurationForNewYearsEve()).isEqualTo(DayLength.FULL);
     }
 
