@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
@@ -54,6 +55,8 @@ class CompanyClosureViewControllerTest {
     @Mock
     private CompanyClosureService companyClosureService;
     @Mock
+    private BlackoutPeriodService blackoutPeriodService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -61,7 +64,7 @@ class CompanyClosureViewControllerTest {
     @BeforeEach
     void setUp() {
         final Clock clock = Clock.fixed(TODAY.atStartOfDay(ZoneId.of("UTC")).toInstant(), ZoneId.of("UTC"));
-        sut = new CompanyClosureViewController(companyClosureService, new CompanyClosureFormValidator(companyClosureService, clock),
+        sut = new CompanyClosureViewController(companyClosureService, new CompanyClosureFormValidator(companyClosureService, blackoutPeriodService, clock),
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
     }
 

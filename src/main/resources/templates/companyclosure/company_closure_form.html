@@ -43,6 +43,12 @@
             Betriebsruhe
           </h2>
 
+          <p
+            class="uv-form__global-feedback alert alert-danger"
+            th:if="${#fields.hasGlobalErrors()}"
+            th:errors="*{global}"
+          ></p>
+
           <div class="uv-form__group">
             <th:block th:if="${monthDay == null}">
               <div class="uv-form__input-row">
