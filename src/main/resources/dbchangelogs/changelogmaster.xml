@@ -35,6 +35,5 @@
   <include relativeToChangelogFile="true" file="changelog-6.18.0-add-email-verified-to-person.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.20.0-add-blackout-period.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.22.0-add-company-closure.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-6.22.0-drop-settings-working-duration.xml"/>
 
 </databaseChangeLog>
