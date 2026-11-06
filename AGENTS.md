@@ -12,3 +12,11 @@ Decisions are recorded in [docs/adr](docs/adr). Read the relevant ones before ch
   is sufficient. The server side validation is the source of truth, keep it in sync with the `required`
   attributes and marker classes.
   See [ADR 1](docs/adr/0001-accessible-required-form-fields.md).
+
+## Frontend assets
+
+The running app serves the built assets from `target/classes/static`. Rebuild them after a change:
+
+- `src/main/javascript/**` (including CSS imported by a component, e.g. `calendar.css`): `npm run js`
+- `src/main/css/**`: `npm run css`
+- both, or unsure: `npm run build`
