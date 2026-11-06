@@ -4,17 +4,16 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureChangedEvent;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
-import org.synyx.urlaubsverwaltung.settings.InitialDefaultSettingsSavedEvent;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.WorkingDurationForChristmasEveUpdatedEvent;
-import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdatedEvent;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.MonthDay;
+import java.time.Year;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -32,60 +31,50 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
     private static final String SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE = "settings-christmas-eve";
     private static final String SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE = "settings-new-years-eve";
 
-    private final SettingsService settingsService;
+    private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
+    private static final MonthDay NEW_YEARS_EVE = MonthDay.of(DECEMBER, 31);
+
+    private final CompanyClosureService companyClosureService;
     private final Clock clock;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     CompanyVacationServiceImpl(
-        SettingsService settingsService,
+        CompanyClosureService companyClosureService,
         Clock clock,
         ApplicationEventPublisher applicationEventPublisher
     ) {
-        this.settingsService = settingsService;
+        this.companyClosureService = companyClosureService;
         this.clock = clock;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @EventListener
-    void handleWorkingDurationForChristmasEveUpdatedEvent(WorkingDurationForChristmasEveUpdatedEvent event) {
-        LOG.info("Received WorkingDurationForChristmasEveUpdatedEvent {}", event);
-        convertChristmasEveToCompanyVacationEvent(event.workingDurationForChristmasEve());
-    }
-
-    @EventListener
-    void handleWorkingDurationForNewYearsEveUpdatedEvent(WorkingDurationForNewYearsEveUpdatedEvent event) {
-        LOG.info("Received WorkingDurationForNewYearsEveUpdatedEvent {}", event);
-        convertNewYearsEveToCompanyVacationEvent(event.workingDurationForNewYearsEve());
-    }
-
-    @EventListener(InitialDefaultSettingsSavedEvent.class)
-    void handleInitialDefaultSettingsSavedEvent() {
-        publishCompanyEvents();
+    void handleCompanyClosureChangedEvent(CompanyClosureChangedEvent event) {
+        LOG.info("Received CompanyClosureChangedEvent {}", event);
+        // shortcut: only 24.12./31.12. have source ids, other month days matter with the company closure menu
+        final MonthDay monthDay = event.monthDay();
+        if (CHRISTMAS_EVE.equals(monthDay)) {
+            convertAndPublishCompanyEvent(CHRISTMAS_EVE, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
+        } else if (NEW_YEARS_EVE.equals(monthDay)) {
+            convertAndPublishCompanyEvent(NEW_YEARS_EVE, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
+        }
     }
 
     @Override
     public void publishCompanyEvents() {
-        LOG.info("Publishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
-
-        final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
-        convertChristmasEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForChristmasEve());
-        convertNewYearsEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForNewYearsEve());
-
-        LOG.info("Published all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
+        LOG.info("Publishing all company vacation events based on company closures (Christmas and new years eve)");
+        convertAndPublishCompanyEvent(CHRISTMAS_EVE, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
+        convertAndPublishCompanyEvent(NEW_YEARS_EVE, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
+        LOG.info("Published all company vacation events based on company closures (Christmas and new years eve)");
     }
 
-    private void convertNewYearsEveToCompanyVacationEvent(DayLength workingDurationForNewYearsEve) {
-        convertAndPublishCompanyEvent(workingDurationForNewYearsEve, DECEMBER, 31, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
-    }
+    private void convertAndPublishCompanyEvent(MonthDay monthDay, String sourceId) {
 
-    private void convertChristmasEveToCompanyVacationEvent(DayLength workingDurationForChristmasEve) {
-        convertAndPublishCompanyEvent(workingDurationForChristmasEve, DECEMBER, 24, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
-    }
-
-    private void convertAndPublishCompanyEvent(DayLength dayLength, Month month, int dayOfMonth, String sourceId) {
-
-        final DayLength companyVacationLength = dayLength.getInverse();
-        final LocalDate date = LocalDate.of(LocalDate.now(clock).getYear(), month, dayOfMonth);
+        final LocalDate date = monthDay.atYear(Year.now(clock).getValue());
+        final DayLength companyVacationLength = companyClosureService.getCompanyClosures(date, date).stream()
+            .findFirst()
+            .map(CompanyClosure::dayLength)
+            .orElse(DayLength.ZERO);
 
         if (!companyVacationLength.isZero()) {
             final CompanyVacationPublishedEvent companyVacationPublishedEvent = new CompanyVacationPublishedEvent(sourceId, UUID.randomUUID(), Instant.now(), companyVacationLength, date, date);
