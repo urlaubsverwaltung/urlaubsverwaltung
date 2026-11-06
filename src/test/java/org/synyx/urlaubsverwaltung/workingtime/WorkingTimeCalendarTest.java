@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
@@ -391,18 +392,20 @@ class WorkingTimeCalendarTest {
     @Nested
     class EnsureWorkingDayInformation {
 
-        static Stream<Arguments> truthyHalfDayPublicHolidayTuples() {
+        static Stream<Arguments> truthyHalfDayOffTuples() {
             return Stream.of(
                 arguments(PUBLIC_HOLIDAY, WORKDAY),
                 arguments(PUBLIC_HOLIDAY, NO_WORKDAY),
                 arguments(PUBLIC_HOLIDAY, PUBLIC_HOLIDAY),
                 arguments(WORKDAY, PUBLIC_HOLIDAY),
                 arguments(NO_WORKDAY, PUBLIC_HOLIDAY),
-                arguments(PUBLIC_HOLIDAY, PUBLIC_HOLIDAY)
+                arguments(COMPANY_CLOSURE, WORKDAY),
+                arguments(WORKDAY, COMPANY_CLOSURE),
+                arguments(PUBLIC_HOLIDAY, COMPANY_CLOSURE)
             );
         }
 
-        static Stream<Arguments> falsyHalfDayPublicHolidayTuples() {
+        static Stream<Arguments> falsyHalfDayOffTuples() {
             return Stream.of(
                 arguments(NO_WORKDAY, NO_WORKDAY),
                 arguments(NO_WORKDAY, WORKDAY),
@@ -412,8 +415,8 @@ class WorkingTimeCalendarTest {
         }
 
         @ParameterizedTest
-        @MethodSource("falsyHalfDayPublicHolidayTuples")
-        void ensureHasHalfDayPublicHolidayReturnsFalse(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
+        @MethodSource("falsyHalfDayOffTuples")
+        void ensureHasHalfDayOffReturnsFalse(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
             final LocalDate date = LocalDate.of(2024, DECEMBER, 1);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
@@ -424,8 +427,8 @@ class WorkingTimeCalendarTest {
         }
 
         @ParameterizedTest
-        @MethodSource("truthyHalfDayPublicHolidayTuples")
-        void ensureHasHalfDayPublicHolidayReturnsTrue(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
+        @MethodSource("truthyHalfDayOffTuples")
+        void ensureHasHalfDayOffReturnsTrue(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
             final LocalDate date = LocalDate.of(2024, DECEMBER, 1);
 
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
