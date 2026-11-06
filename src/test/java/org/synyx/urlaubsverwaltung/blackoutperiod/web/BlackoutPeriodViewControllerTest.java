@@ -19,9 +19,9 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -361,6 +361,23 @@ class BlackoutPeriodViewControllerTest {
             .param("companyWide", "true")
             .param("allVacationTypes", "true"))
             .andExpect(model().attribute("conflictingCompanyClosures", List.of()));
+    }
+
+    @Test
+    void noCompanyClosureQueriedForRangeBeyondCalculableDuration() throws Exception {
+
+        when(departmentService.getAllDepartments()).thenReturn(List.of());
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+        when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+
+        perform(get("/web/blackoutperiod/conflicts")
+            .param("startDate", "0001-01-01")
+            .param("endDate", "9999-12-31")
+            .param("companyWide", "true")
+            .param("allVacationTypes", "true"))
+            .andExpect(model().attribute("conflictingCompanyClosures", List.of()));
+
+        verify(companyClosureService, never()).getCompanyClosures(any(), any());
     }
 
     @Test
