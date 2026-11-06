@@ -454,9 +454,9 @@
                     th:unless="${#lists.isEmpty(conflictingCompanyClosures)}"
                     class="mb-2 font-semibold text-zinc-600 dark:text-zinc-400"
                     th:classappend="${#lists.isEmpty(conflictingApplications) ? '' : 'mt-4'}"
-                    th:text="#{company-closure.title}"
+                    th:text="#{blackoutperiod.conflict.companyClosure}"
                   >
-                    Betriebsruhe
+                    Diese Betriebsruhe liegt im Zeitraum. Sie bleibt bestehen:
                   </h3>
                   <ul th:unless="${#lists.isEmpty(conflictingCompanyClosures)}" class="list-disc pl-5 space-y-1">
                     <li th:each="closure : ${conflictingCompanyClosures}">
