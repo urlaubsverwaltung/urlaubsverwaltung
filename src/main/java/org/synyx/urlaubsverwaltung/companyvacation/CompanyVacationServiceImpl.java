@@ -25,9 +25,7 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    // In first place we do not have another source then public holiday settings
-    // later with fully implemented company vacation management this might be used by a source id like source id of
-    // application or sick note to determine origin
+    // legacy source ids of the first two company closure days, the extension already knows them
     private static final String SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE = "settings-christmas-eve";
     private static final String SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE = "settings-new-years-eve";
 
@@ -51,25 +49,27 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
     @EventListener
     void handleCompanyClosureChangedEvent(CompanyClosureChangedEvent event) {
         LOG.info("Received CompanyClosureChangedEvent {}", event);
-        // shortcut: only 24.12./31.12. have source ids, other month days matter with the company closure menu
-        final MonthDay monthDay = event.monthDay();
-        if (CHRISTMAS_EVE.equals(monthDay)) {
-            convertAndPublishCompanyEvent(CHRISTMAS_EVE, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
-        } else if (NEW_YEARS_EVE.equals(monthDay)) {
-            convertAndPublishCompanyEvent(NEW_YEARS_EVE, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
-        }
+        convertAndPublishCompanyEvent(event.monthDay());
     }
 
     @Override
     public void publishCompanyEvents() {
-        LOG.info("Publishing all company vacation events based on company closures (Christmas and new years eve)");
-        convertAndPublishCompanyEvent(CHRISTMAS_EVE, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
-        convertAndPublishCompanyEvent(NEW_YEARS_EVE, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
-        LOG.info("Published all company vacation events based on company closures (Christmas and new years eve)");
+        LOG.info("Publishing all company vacation events based on company closures");
+        companyClosureService.getCompanyClosureEntries().forEach(entry -> convertAndPublishCompanyEvent(entry.monthDay()));
+        LOG.info("Published all company vacation events based on company closures");
     }
 
-    private void convertAndPublishCompanyEvent(MonthDay monthDay, String sourceId) {
+    private static String sourceId(MonthDay monthDay) {
+        if (CHRISTMAS_EVE.equals(monthDay)) {
+            return SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE;
+        } else if (NEW_YEARS_EVE.equals(monthDay)) {
+            return SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE;
+        }
+        return String.format("company-closure-%02d-%02d", monthDay.getMonthValue(), monthDay.getDayOfMonth());
+    }
 
+    private void convertAndPublishCompanyEvent(MonthDay monthDay) {
+        final String sourceId = sourceId(monthDay);
         final LocalDate date = monthDay.atYear(Year.now(clock).getValue());
         final DayLength companyVacationLength = companyClosureService.getCompanyClosures(date, date).stream()
             .findFirst()
