@@ -419,7 +419,7 @@ class WorkingTimeCalendarTest {
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
-            final boolean actual = sut.workingDays().get(date).hasHalfDayPublicHoliday();
+            final boolean actual = sut.workingDays().get(date).hasHalfDayOff();
             assertThat(actual).isFalse();
         }
 
@@ -431,7 +431,7 @@ class WorkingTimeCalendarTest {
             final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
-            final boolean actual = sut.workingDays().get(date).hasHalfDayPublicHoliday();
+            final boolean actual = sut.workingDays().get(date).hasHalfDayOff();
             assertThat(actual).isTrue();
         }
     }
