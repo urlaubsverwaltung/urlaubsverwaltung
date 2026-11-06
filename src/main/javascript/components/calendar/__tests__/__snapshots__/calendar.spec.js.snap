@@ -8631,7 +8631,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-next  > c
       </span>
     </button>
     <div
-      class="popover-menu calendar-day-popover"
+      class="calendar-day-popover"
       id="calendar-day-popover"
       popover=""
     />
@@ -17270,7 +17270,7 @@ exports[`calendar > ensure correct rendering when clicking .datepicker-prev  > c
       </span>
     </button>
     <div
-      class="popover-menu calendar-day-popover"
+      class="calendar-day-popover"
       id="calendar-day-popover"
       popover=""
     />
@@ -25907,7 +25907,7 @@ exports[`calendar > renders 1`] = `
       </span>
     </button>
     <div
-      class="popover-menu calendar-day-popover"
+      class="calendar-day-popover"
       id="calendar-day-popover"
       popover=""
     />

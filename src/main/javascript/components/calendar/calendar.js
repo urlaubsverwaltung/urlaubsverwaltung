@@ -522,7 +522,7 @@ const View = (function () {
 
       const dayPopover = document.createElement("div");
       dayPopover.id = "calendar-day-popover";
-      dayPopover.className = "popover-menu calendar-day-popover";
+      dayPopover.className = "calendar-day-popover";
       dayPopover.setAttribute("popover", "");
       rootElement.append(dayPopover);
     },
