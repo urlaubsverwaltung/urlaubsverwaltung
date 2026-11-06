@@ -11,46 +11,30 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.MonthDay;
-
-import static java.time.Month.DECEMBER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web/settings/public-holidays")
 public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPersonSearch {
 
-    private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
-    private static final MonthDay NEW_YEARS_EVE = MonthDay.of(DECEMBER, 31);
-
     private final SettingsService settingsService;
     private final SettingsPublicHolidayValidator settingsValidator;
-    private final CompanyClosureService companyClosureService;
-    private final Clock clock;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     SettingsPublicHolidayViewController(
         SettingsService settingsService,
         SettingsPublicHolidayValidator settingsValidator,
-        CompanyClosureService companyClosureService,
-        Clock clock,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
     ) {
         this.settingsService = settingsService;
         this.settingsValidator = settingsValidator;
-        this.companyClosureService = companyClosureService;
-        this.clock = clock;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
     }
@@ -95,11 +79,6 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         final Settings settings = settingsDtoToSettings(settingsDto);
         settingsService.save(settings);
 
-        // the service ignores unchanged values
-        final LocalDate today = LocalDate.now(clock);
-        companyClosureService.changeCompanyClosure(CHRISTMAS_EVE, settingsDto.getWorkingDurationForChristmasEve().getInverse(), today);
-        companyClosureService.changeCompanyClosure(NEW_YEARS_EVE, settingsDto.getWorkingDurationForNewYearsEve().getInverse(), today);
-
         redirectAttributes.addFlashAttribute("success", true);
 
         return "redirect:/web/settings/public-holidays";
@@ -108,7 +87,6 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
     private void fillModel(Model model, SettingsPublicHolidayDto settingsDto) {
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
-        model.addAttribute("dayLengthTypes", DayLength.values());
     }
 
     private SettingsPublicHolidayDto settingsToDto(Settings settings) {
@@ -116,30 +94,12 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         dto.setId(settings.getId());
         dto.setPublicHolidaysSettings(settings.getPublicHolidaysSettings());
 
-        final LocalDate today = LocalDate.now(clock);
-        dto.setWorkingDurationForChristmasEve(workingDurationOfNextOccurrence(CHRISTMAS_EVE, today));
-        dto.setWorkingDurationForNewYearsEve(workingDurationOfNextOccurrence(NEW_YEARS_EVE, today));
         return dto;
-    }
-
-    // the next occurrence, because a change made after the day has passed is valid from today and applies to next year
-    private DayLength workingDurationOfNextOccurrence(MonthDay monthDay, LocalDate today) {
-        LocalDate date = monthDay.atYear(today.getYear());
-        if (date.isBefore(today)) {
-            date = date.plusYears(1);
-        }
-        final LocalDate day = date;
-        return companyClosureService.getCompanyClosures(day, day).stream()
-            .filter(closure -> closure.date().equals(day))
-            .findFirst()
-            .map(closure -> closure.dayLength().getInverse())
-            .orElse(DayLength.FULL);
     }
 
     private Settings settingsDtoToSettings(SettingsPublicHolidayDto settingsDto) {
         final Settings settings = settingsService.getSettings();
         settings.setId(settingsDto.getId());
-        // the working durations live in the company closures, keep the (still read) entity values
         settings.getPublicHolidaysSettings().setFederalState(settingsDto.getPublicHolidaysSettings().getFederalState());
         return settings;
     }
