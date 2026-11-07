@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
@@ -167,6 +168,99 @@ class CompanyClosureServiceImplTest {
         sut.createDefaults();
 
         verify(companyClosureRepository, never()).save(any());
+    }
+
+    @Test
+    void createsEntryWithFirstVersion() {
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
+        when(companyClosureRepository.save(any(CompanyClosureEntity.class))).thenAnswer(invocation -> {
+            final CompanyClosureEntity entity = invocation.getArgument(0);
+            entity.setId(2L);
+            return entity;
+        });
+        final var bridgeDay = MonthDay.of(MAY, 15);
+        final var validFrom = LocalDate.of(2026, NOVEMBER, 6);
+
+        sut.createCompanyClosure(bridgeDay, "Brückentag", FULL, validFrom);
+
+        verify(companyClosureRepository).save(entity(5, 15, "Brückentag"));
+        verify(companyClosureVersionRepository).save(argThat(version -> version.getCompanyClosureId().equals(2L)
+            && version.getDayLength() == FULL && validFrom.equals(version.getValidFrom())));
+        verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(bridgeDay));
+    }
+
+    @Test
+    void rejectsExistingDay() {
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
+        final var validFrom = LocalDate.of(2026, NOVEMBER, 6);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(CHRISTMAS_EVE, "Heiligabend", FULL, validFrom));
+        verify(companyClosureRepository, never()).save(any());
+        verifyNoInteractions(companyClosureVersionRepository, applicationEventPublisher);
+    }
+
+    @Test
+    void rejectsLeapDay() {
+        final var leapDay = MonthDay.of(FEBRUARY, 29);
+        final var validFrom = LocalDate.of(2026, NOVEMBER, 6);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(leapDay, "Schalttag", FULL, validFrom));
+        verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
+    }
+
+    @Test
+    void rejectsCreationWithValidFromBeforeCurrentYear() {
+        final var bridgeDay = MonthDay.of(MAY, 15);
+        final var validFrom = LocalDate.of(2025, DECEMBER, 31);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, "Brückentag", FULL, validFrom));
+        verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
+    }
+
+    @Test
+    void renamesEntry() {
+        final var christmasEve = christmasEveEntity();
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
+
+        sut.renameCompanyClosure(CHRISTMAS_EVE, "Weihnachten");
+
+        assertThat(christmasEve.getName()).isEqualTo("Weihnachten");
+        verify(companyClosureRepository).save(christmasEve);
+    }
+
+    @Test
+    void renameRejectsUnknownMonthDay() {
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
+        final var labourDay = MonthDay.of(MAY, 1);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(labourDay, "Tag der Arbeit"));
+        verify(companyClosureRepository, never()).save(any());
+    }
+
+    @Test
+    void returnsEntriesWithSortedVersions() {
+        final var newYearsEve = new CompanyClosureEntity();
+        newYearsEve.setId(3L);
+        newYearsEve.setMonth(12);
+        newYearsEve.setDayOfMonth(31);
+        newYearsEve.setName("Silvester");
+        when(companyClosureRepository.findAll()).thenReturn(List.of(newYearsEve, christmasEveEntity()));
+
+        final var newYearsEveVersion = version(NOON, null);
+        newYearsEveVersion.setCompanyClosureId(3L);
+        when(companyClosureVersionRepository.findAll()).thenReturn(List.of(
+            version(FULL, LocalDate.of(2026, NOVEMBER, 6)),
+            newYearsEveVersion,
+            version(ZERO, LocalDate.of(2026, JANUARY, 1)),
+            version(NOON, null)));
+
+        assertThat(sut.getCompanyClosureEntries()).containsExactly(
+            new CompanyClosureEntry(CHRISTMAS_EVE, "Heiligabend", List.of(
+                new CompanyClosureVersion(NOON, null),
+                new CompanyClosureVersion(ZERO, LocalDate.of(2026, JANUARY, 1)),
+                new CompanyClosureVersion(FULL, LocalDate.of(2026, NOVEMBER, 6)))),
+            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), "Silvester", List.of(
+                new CompanyClosureVersion(NOON, null))));
     }
 
     private void givenChristmasEve(CompanyClosureVersionEntity... versions) {

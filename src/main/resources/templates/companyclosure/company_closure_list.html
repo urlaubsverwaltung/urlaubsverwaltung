@@ -1,0 +1,102 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:replace="~{fragments/page-title::page-title(#{company-closure.title})}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('frame.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="frame.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::companyclosure-list-heading-body}, ~{::companyclosure-list-heading-actions})}"
+      >
+        <th:block th:ref="companyclosure-list-heading-body">
+          <h1 th:text="#{company-closure.title}">Betriebsruhe</h1>
+        </th:block>
+        <th:block th:ref="companyclosure-list-heading-actions">
+          <a
+            th:href="@{/web/company-closure/new}"
+            class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+          >
+            <svg th:replace="~{icon/plus-square::svg(className='w-5 h-5')}"></svg>&nbsp;
+            <span th:text="#{company-closure.action.create}"></span>
+          </a>
+        </th:block>
+      </div>
+
+      <th:block
+        th:if="${createdCompanyClosureName != null or updatedCompanyClosureName != null}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+      >
+        <th:block th:ref="feedback-success-body">
+          <p
+            th:if="${createdCompanyClosureName != null}"
+            th:text="#{company-closure.action.create.success(${createdCompanyClosureName})}"
+          ></p>
+          <p
+            th:if="${updatedCompanyClosureName != null}"
+            th:text="#{company-closure.action.edit.success(${updatedCompanyClosureName})}"
+          ></p>
+        </th:block>
+      </th:block>
+
+      <p class="mb-4" th:text="#{company-closure.description}"></p>
+
+      <table id="companyclosure-table" class="list-table text-sm">
+        <caption class="sr-only" th:text="#{company-closure.title}">
+          Company closure
+        </caption>
+        <thead class="hidden @5xl/main:table-header-group">
+          <tr>
+            <th th:text="#{company-closure.data.date}" scope="col"></th>
+            <th th:text="#{company-closure.data.name}" scope="col"></th>
+            <th th:text="#{company-closure.data.current}" scope="col"></th>
+            <th th:text="#{company-closure.data.history}" scope="col"></th>
+            <th scope="col">
+              <!--placeholder to ensure correct number of th-->
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="companyClosure : ${companyClosures}">
+            <td
+              class="whitespace-nowrap font-bold"
+              th:text="${#temporals.format(#temporals.create(2000, companyClosure.monthDay.monthValue, companyClosure.monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
+            ></td>
+            <td th:text="${companyClosure.name}"></td>
+            <td th:text="#{|company-closure.dayLength.${companyClosure.currentDayLength}|}"></td>
+            <td>
+              <ul>
+                <li
+                  th:each="version : ${companyClosure.versions}"
+                  th:with="dayLengthLabel=#{|company-closure.dayLength.${version.dayLength}|}"
+                  th:text="${version.validFrom == null} ? #{company-closure.data.version.initial(${dayLengthLabel})} : #{company-closure.data.version(${{version.validFrom}}, ${dayLengthLabel})}"
+                ></li>
+              </ul>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                <a class="button" th:href="@{/web/company-closure/{id}/edit(id=${companyClosure.id})}">
+                  <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
+                  <th:block th:text="#{action.edit}" />
+                  <span class="sr-only" th:text="${companyClosure.name}"></span>
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

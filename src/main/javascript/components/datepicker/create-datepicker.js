@@ -138,10 +138,14 @@ function hydrateDatepicker(duetDateElement, options) {
           getJSON(
             `${urlPrefix}/persons/${personId}/blackout-periods?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`,
           ).then(pick("blackoutPeriods")),
+          // company closures affect every person and are shown like public holidays
+          getJSON(`${urlPrefix}/company-closures?from=${firstDayOfDatepicker}&to=${lastDayOfDatepicker}`).then(
+            pick("companyClosures"),
+          ),
         ])
-      : Promise.resolve([{ value: [] }, { value: [] }, { value: [] }]);
+      : Promise.resolve([{ value: [] }, { value: [] }, { value: [] }, { value: [] }]);
 
-    markers.then(([publicHolidays, absences, blackoutPeriods]) => {
+    markers.then(([publicHolidays, absences, blackoutPeriods, companyClosures]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
@@ -162,7 +166,10 @@ function hydrateDatepicker(duetDateElement, options) {
         }
 
         const absencesForDate = findByDate(absences.value, date);
-        const publicHolidaysForDate = findByDate(publicHolidays.value, date);
+        const publicHolidaysForDate = findByDate(
+          [...(publicHolidays.value ?? []), ...(companyClosures.value ?? [])],
+          date,
+        );
         // blocked days are a hint only, a failed blackout period request must not hide absences and public holidays
         const blackoutPeriodsForDate = findByDate(blackoutPeriods.value ?? [], date);
         addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate, blackoutPeriodsForDate);
