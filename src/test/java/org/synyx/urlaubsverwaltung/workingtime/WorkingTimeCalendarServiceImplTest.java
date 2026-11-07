@@ -275,7 +275,7 @@ class WorkingTimeCalendarServiceImplTest {
 
         sut.getWorkingTimesByPersons(persons, Year.of(2022));
 
-        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, JANUARY, 1)), eq(LocalDate.of(2022, DECEMBER, 31)), eq(GERMANY_BERLIN));
+        verify(publicHolidaysService).getPublicHolidays(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31), GERMANY_BERLIN);
     }
 
     @Test
@@ -435,9 +435,9 @@ class WorkingTimeCalendarServiceImplTest {
         final LocalDate start = LocalDate.of(2022, JANUARY, 1);
         final LocalDate end = LocalDate.of(2022, DECEMBER, 31);
 
-        when(publicHolidaysService.getPublicHolidays(eq(start), eq(end), eq(GERMANY_BADEN_WUERTTEMBERG)))
+        when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
-        when(publicHolidaysService.getPublicHolidays(eq(start), eq(end), eq(GERMANY_BERLIN)))
+        when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_BERLIN))
             .thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, MARCH, 8), FULL, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
@@ -449,8 +449,8 @@ class WorkingTimeCalendarServiceImplTest {
         assertThat(actual.get(person).workingTime(LocalDate.of(2022, MARCH, 8))).hasValue(BigDecimal.ONE);
 
         // once per federal state, no matter how many persons share it - and never day by day
-        verify(publicHolidaysService).getPublicHolidays(eq(start), eq(end), eq(GERMANY_BADEN_WUERTTEMBERG));
-        verify(publicHolidaysService).getPublicHolidays(eq(start), eq(end), eq(GERMANY_BERLIN));
+        verify(publicHolidaysService).getPublicHolidays(start, end, GERMANY_BADEN_WUERTTEMBERG);
+        verify(publicHolidaysService).getPublicHolidays(start, end, GERMANY_BERLIN);
         verifyNoMoreInteractions(publicHolidaysService);
     }
 
@@ -524,7 +524,7 @@ class WorkingTimeCalendarServiceImplTest {
         // a date range starting long before any working time, e.g. a date given by a user
         sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2000, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)));
 
-        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, MARCH, 1)), eq(LocalDate.of(2022, DECEMBER, 31)), eq(GERMANY_BADEN_WUERTTEMBERG));
+        verify(publicHolidaysService).getPublicHolidays(LocalDate.of(2022, MARCH, 1), LocalDate.of(2022, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         verifyNoMoreInteractions(publicHolidaysService);
     }
 
@@ -541,7 +541,7 @@ class WorkingTimeCalendarServiceImplTest {
 
         sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30)));
 
-        verify(publicHolidaysService).getPublicHolidays(eq(LocalDate.of(2022, JUNE, 1)), eq(LocalDate.of(2022, JUNE, 30)), eq(GERMANY_BADEN_WUERTTEMBERG));
+        verify(publicHolidaysService).getPublicHolidays(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30), GERMANY_BADEN_WUERTTEMBERG);
         verifyNoMoreInteractions(publicHolidaysService);
     }
 

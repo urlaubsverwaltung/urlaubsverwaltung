@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
 import static java.util.Comparator.nullsFirst;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -122,8 +123,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         if (!companyClosureRepository.findAll().isEmpty()) {
             return;
         }
-        createDefault(MonthDay.of(12, 24), "Heiligabend");
-        createDefault(MonthDay.of(12, 31), "Silvester");
+        createDefault(MonthDay.of(DECEMBER, 24), "Heiligabend");
+        createDefault(MonthDay.of(DECEMBER, 31), "Silvester");
     }
 
     private void createDefault(MonthDay monthDay, String name) {

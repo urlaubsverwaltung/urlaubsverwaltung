@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -54,6 +55,9 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYER
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {
 
+    private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
+    private static final MonthDay NEW_YEARS_EVE = MonthDay.of(DECEMBER, 31);
+
     private WorkDaysCountService sut;
 
     @Mock
@@ -75,8 +79,8 @@ class WorkDaysCountServiceTest {
             final LocalDate from = invocation.getArgument(0);
             final LocalDate to = invocation.getArgument(1);
             return new DateRange(from, to).stream()
-                .filter(date -> date.getMonth() == DECEMBER && (date.getDayOfMonth() == 24 || date.getDayOfMonth() == 31))
-                .map(date -> new CompanyClosure(date, NOON, date.getDayOfMonth() == 24 ? "Heiligabend" : "Silvester"))
+                .filter(date -> MonthDay.from(date).equals(CHRISTMAS_EVE) || MonthDay.from(date).equals(NEW_YEARS_EVE))
+                .map(date -> new CompanyClosure(date, NOON, MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester"))
                 .toList();
         });
     }
