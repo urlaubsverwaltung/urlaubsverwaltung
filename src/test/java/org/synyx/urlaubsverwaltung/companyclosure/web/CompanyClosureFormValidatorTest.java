@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -261,6 +262,38 @@ class CompanyClosureFormValidatorTest {
         final Errors errors = validateEdit(MonthDay.of(DECEMBER, 24), NOON, validForm());
 
         assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+    }
+
+    @Test
+    void ignoresBlackoutInYearsOfTheNextVersion() {
+        // FULL from 2026-11-06 only applies until the MORNING version of 2028, the blackout of 2030 is out of reach
+        when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
+            blackout("Weihnachtssperre 2030", LocalDate.of(2030, DECEMBER, 20), LocalDate.of(2030, DECEMBER, 31), true)));
+
+        final Errors errors = validateEdit(christmasEveWithMorningFrom2028(), validForm());
+
+        assertThat(errors.hasErrors()).isFalse();
+    }
+
+    @Test
+    void rejectsBlackoutBeforeTheNextVersion() {
+        coveringBlackout();
+
+        final Errors errors = validateEdit(christmasEveWithMorningFrom2028(), validForm());
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+    }
+
+    private static CompanyClosureEntry christmasEveWithMorningFrom2028() {
+        return new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), "Heiligabend", List.of(
+            new CompanyClosureVersion(NOON, null),
+            new CompanyClosureVersion(MORNING, LocalDate.of(2028, JANUARY, 1))));
+    }
+
+    private Errors validateEdit(CompanyClosureEntry entry, CompanyClosureForm form) {
+        final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
+        sut.validateEdit(entry, form, errors);
+        return errors;
     }
 
     private void coveringBlackout() {
