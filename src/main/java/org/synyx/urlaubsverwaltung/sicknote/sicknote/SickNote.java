@@ -162,7 +162,7 @@ public final class SickNote {
         for (LocalDate localDate : dateRange) {
             final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
             final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(dateRange.startDate());
-            if (dayLength.isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
+            if (dayLength.isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayOff()) {
                 workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
             } else {
                 workingTimeSum = workingTimeSum.add(workingTime);

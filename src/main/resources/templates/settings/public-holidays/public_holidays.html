@@ -15,18 +15,18 @@
         <div class="uv-form__input-row">
           <label
             th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
-            for="publicHolidaysSettings.workingDurationForChristmasEve"
+            for="workingDurationForChristmasEve"
           >
           </label>
           <select
-            th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForChristmasEve', name='publicHolidaysSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve}, required=true)}"
+            th:replace="~{fragments/select::one(id='workingDurationForChristmasEve', name='workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve}, required=true)}"
           >
             <th:block th:fragment="settings-workingtimes-workingDurationForChristmasEve">
               <option
                 th:each="dayLengthType : ${dayLengthTypes}"
                 th:text="#{__${dayLengthType}__}"
                 th:value="${dayLengthType}"
-                th:selected="${settings.publicHolidaysSettings.workingDurationForChristmasEve == dayLengthType}"
+                th:selected="${settings.workingDurationForChristmasEve == dayLengthType}"
               ></option>
             </th:block>
           </select>
@@ -36,19 +36,19 @@
         <div class="uv-form__input-row">
           <label
             th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
-            for="publicHolidaysSettings.workingDurationForNewYearsEve"
+            for="workingDurationForNewYearsEve"
           >
             Arbeitsdauer an Silvester
           </label>
           <select
-            th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForNewYearsEve', name='publicHolidaysSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve}, required=true)}"
+            th:replace="~{fragments/select::one(id='workingDurationForNewYearsEve', name='workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve}, required=true)}"
           >
             <th:block th:fragment="settings-workingtimes-workingDurationForNewYearsEve">
               <option
                 th:each="dayLengthType : ${dayLengthTypes}"
                 th:text="#{__${dayLengthType}__}"
                 th:value="${dayLengthType}"
-                th:selected="${settings.publicHolidaysSettings.workingDurationForNewYearsEve == dayLengthType}"
+                th:selected="${settings.workingDurationForNewYearsEve == dayLengthType}"
               ></option>
             </th:block>
           </select>

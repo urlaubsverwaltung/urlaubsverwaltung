@@ -1,0 +1,86 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-company-closure--table">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="company_closure_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="company_closure_version_id_seq" startValue="1"/>
+
+    <createTable tableName="company_closure">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="company_closure_pkey"/>
+      </column>
+      <column name="month" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="day_of_month" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addUniqueConstraint tableName="company_closure" columnNames="tenant_id, month, day_of_month"
+                         constraintName="uq_company_closure_day"/>
+
+    <createTable tableName="company_closure_version">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="company_closure_version_pkey"/>
+      </column>
+      <column name="company_closure_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="day_length" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_from" type="date"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableName="company_closure_version"
+                             baseColumnNames="company_closure_id"
+                             constraintName="fk_company_closure_version_company_closure"
+                             referencedTableName="company_closure"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createIndex tableName="company_closure_version" indexName="idx_company_closure_version_company_closure">
+      <column name="company_closure_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-company-closure--migrate-settings">
+    <preConditions onFail="HALT">
+      <tableExists tableName="company_closure_version"/>
+    </preConditions>
+
+    <sql>
+      INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
+      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 24, 'Heiligabend' FROM settings;
+
+      INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
+      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 31, 'Silvester' FROM settings;
+
+      INSERT INTO company_closure_version (tenant_id, id, company_closure_id, day_length, valid_from)
+      SELECT
+        company_closure.tenant_id,
+        nextval('company_closure_version_id_seq'),
+        company_closure.id,
+        CASE
+          WHEN company_closure.day_of_month = 24 THEN
+            CASE settings.working_duration_for_christmas_eve WHEN 'FULL' THEN 'ZERO' WHEN 'NOON' THEN 'MORNING' WHEN 'ZERO' THEN 'FULL' ELSE 'NOON' END
+          ELSE
+            CASE settings.working_duration_for_new_years_eve WHEN 'FULL' THEN 'ZERO' WHEN 'NOON' THEN 'MORNING' WHEN 'ZERO' THEN 'FULL' ELSE 'NOON' END
+        END,
+        NULL
+      FROM company_closure
+      JOIN settings ON settings.tenant_id IS NOT DISTINCT FROM company_closure.tenant_id
+      WHERE company_closure.month = 12 AND company_closure.day_of_month IN (24, 31);
+    </sql>
+  </changeSet>
+</databaseChangeLog>

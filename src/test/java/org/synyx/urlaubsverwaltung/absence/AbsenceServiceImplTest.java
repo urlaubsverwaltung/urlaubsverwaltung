@@ -47,6 +47,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
@@ -632,6 +633,27 @@ class AbsenceServiceImplTest {
         assertThat(absenceRecords.getFirst().getDate()).isEqualTo(LocalDate.of(2021, MAY, 31));
         assertThat(absenceRecords.getFirst().getMorning()).isPresent();
         assertThat(absenceRecords.getFirst().getNoon()).isPresent();
+    }
+
+    @Test
+    void companyClosureBecomesCompanyClosureRecords() {
+        final LocalDate start = LocalDate.of(2026, DECEMBER, 24);
+        final LocalDate end = LocalDate.of(2026, DECEMBER, 24);
+
+        final Person batman = new Person();
+        batman.setId(1L);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> new WorkingDayInformation(NOON, COMPANY_CLOSURE, WORKDAY));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+
+        final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
+
+        assertThat(actualAbsences).hasSize(1);
+        final AbsencePeriod.Record absenceRecord = actualAbsences.getFirst().absenceRecords().getFirst();
+        assertThat(absenceRecord.getDate()).isEqualTo(start);
+        assertThat(absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.COMPANY_CLOSURE);
+        assertThat(absenceRecord.getMorning().orElseThrow()).isInstanceOf(AbsencePeriod.RecordMorningCompanyClosure.class);
+        assertThat(absenceRecord.getNoon()).isEmpty();
     }
 
     @Test

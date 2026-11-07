@@ -15,11 +15,10 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -65,17 +64,17 @@ class CalculationServiceTest {
     @Mock
     private AccountService accountService;
     @Mock
-    private SettingsService settingsService;
-    @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
+    private CompanyClosureService companyClosureService;
     @Mock
     private ApplicationService applicationService;
 
     @BeforeEach
     void setUp() {
 
-        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
+        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(Map.of("de", getHolidayManager()));
+        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, companyClosureService);
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService, applicationService);
     }
@@ -235,7 +234,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationDifferentYearAndEnoughDaysLeftWhenApplicationLengthReducesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -267,7 +265,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationDifferentYearAndEnoughDaysWhenApplicationLengthStaysSameByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -299,7 +296,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationDifferentYearAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -691,7 +687,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationOneDayIsOkayOverAYear() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 30);
@@ -746,7 +741,6 @@ class CalculationServiceTest {
 
     @Test
     void testCheckApplicationOneDayIsNotOkayOverAYear() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate applicationStartDate = LocalDate.of(2012, DECEMBER, 30);
