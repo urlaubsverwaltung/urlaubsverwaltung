@@ -3,4 +3,4 @@ import { createDatepicker } from "../components/datepicker";
 import "../components/back-button";
 
 // company closures apply to everybody, so the datepicker shows no absences of a person
-createDatepicker("#validFrom", { getPersonId: () => {} });
+await createDatepicker("#validFrom", { getPersonId: () => {} });

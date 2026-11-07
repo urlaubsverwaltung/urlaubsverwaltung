@@ -89,7 +89,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(view().name("companyclosure/company_closure_list"))
             .andReturn();
 
-        assertThat(result.getModelAndView().getModel().get("companyClosures")).isEqualTo(List.of(
+        assertThat(result.getModelAndView().getModel()).containsEntry("companyClosures", List.of(
             new CompanyClosureListDto("12-24", CHRISTMAS_EVE, "Heiligabend", FULL, christmasEveVersions),
             new CompanyClosureListDto("12-31", MonthDay.of(DECEMBER, 31), "Silvester", NOON, newYearsEveVersions)));
     }

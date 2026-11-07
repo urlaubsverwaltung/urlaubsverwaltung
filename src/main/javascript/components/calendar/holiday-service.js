@@ -139,8 +139,8 @@ export const HolidayService = (function () {
     const formattedDate = format(date, "yyyy-MM-dd");
     // company closures are shown like public holidays
     const publicHolidaysForYear = [
-      ...((_CACHE["publicHoliday"] || {})[year] || []),
-      ...((_CACHE["companyClosure"] || {})[year] || []),
+      ...(_CACHE["publicHoliday"]?.[year] || []),
+      ...(_CACHE["companyClosure"]?.[year] || []),
     ];
 
     return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
