@@ -193,8 +193,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     }
 
     private void requireNotBeforeCurrentYear(LocalDate validFrom) {
-        if (validFrom.isBefore(Year.now(clock).atDay(1))) {
-            throw new IllegalArgumentException("validFrom " + validFrom + " must not be before the current year.");
+        if (validFrom == null || validFrom.isBefore(Year.now(clock).atDay(1))) {
+            throw new IllegalArgumentException("validFrom " + validFrom + " must be given and must not be before the current year.");
         }
     }
 

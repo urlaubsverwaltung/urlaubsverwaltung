@@ -38,6 +38,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String FORM_VIEW = "companyclosure/company_closure_form";
     private static final String REDIRECT_TO_LIST = "redirect:/web/company-closure";
+    private static final String MIN_VALID_FROM = "minValidFrom";
 
     private final CompanyClosureService companyClosureService;
     private final CompanyClosureFormValidator validator;
@@ -86,7 +87,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         form.setDayLength(FULL);
         form.setValidFrom(LocalDate.now(clock));
         model.addAttribute("companyClosure", form);
-        model.addAttribute("minValidFrom", minValidFrom());
+        model.addAttribute(MIN_VALID_FROM, minValidFrom());
 
         return FORM_VIEW;
     }
@@ -98,7 +99,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         validator.validateNew(form, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("minValidFrom", minValidFrom());
+            model.addAttribute(MIN_VALID_FROM, minValidFrom());
             return FORM_VIEW;
         }
 
@@ -153,7 +154,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("monthDay", entry.monthDay());
         model.addAttribute("monthDayPath", toPath(entry.monthDay()));
         model.addAttribute("companyClosureName", entry.name());
-        model.addAttribute("minValidFrom", minValidFrom());
+        model.addAttribute(MIN_VALID_FROM, minValidFrom());
     }
 
     private LocalDate minValidFrom() {
@@ -164,7 +165,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         final MonthDay monthDay;
         try {
             monthDay = MonthDay.parse("--" + monthDayPath);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException _) {
             throw new ResponseStatusException(NOT_FOUND);
         }
         return companyClosureService.getCompanyClosureEntries().stream()

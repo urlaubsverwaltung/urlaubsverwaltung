@@ -137,7 +137,7 @@ class CompanyClosureFormValidator implements Validator {
         final MonthDay monthDay;
         try {
             monthDay = MonthDay.of(form.getMonth(), form.getDay());
-        } catch (DateTimeException e) {
+        } catch (DateTimeException _) {
             errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_INVALID);
             return;
         }

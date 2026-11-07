@@ -145,7 +145,7 @@ function hydrateDatepicker(duetDateElement, options) {
         ])
       : Promise.resolve([{ value: [] }, { value: [] }, { value: [] }, { value: [] }]);
 
-    markers.then(([publicHolidays, absences, blackoutPeriods, companyClosures]) => {
+    void markers.then(([publicHolidays, absences, blackoutPeriods, companyClosures]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
