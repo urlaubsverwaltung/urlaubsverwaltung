@@ -108,7 +108,88 @@ describe("calendar", () => {
     expect(holidayService.bookHoliday).toHaveBeenCalledWith(new Date(2017, 10, 28), new Date(2017, 10, 28));
   });
 
-  describe("clicking on a day with an absence opens the day popover", () => {
+  describe("clicking on a day within a selected range", () => {
+    // today is 2017-12-01. 2017-12-15 is a friday, 2017-12-18 a monday
+    async function selectRange(absences, publicHolidays = []) {
+      mockDate(1_512_130_448_379);
+      fetchMock.route(
+        "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+        { absences },
+      );
+      fetchMock.route("/persons/42/public-holidays?from=2017-01-01&to=2017-12-31", { publicHolidays });
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ webPrefix: "/web", personId: 42 });
+      holidayService.bookHoliday = vi.fn();
+      await holidayService.fetchAbsences(2017);
+      await holidayService.fetchPublicHolidays(2017);
+
+      renderCalendar(holidayService);
+
+      const dayFrom = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+      const dayTo = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-18"]`);
+      dayFrom.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      dayTo.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+      document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+
+      return holidayService;
+    }
+
+    function clickDay(date) {
+      const day = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+      day.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      day.click();
+    }
+
+    it("without work applies for the range instead of opening the day popover", async () => {
+      const holidayService = await selectRange([
+        { date: "2017-12-16", absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" },
+        { date: "2017-12-17", absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" },
+      ]);
+
+      clickDay("2017-12-16");
+
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(new Date(2017, 11, 15), new Date(2017, 11, 18));
+      expect(document.querySelector("#calendar-day-popover").showPopover).not.toHaveBeenCalled();
+    });
+
+    it("on a public holiday applies for the range instead of opening the day popover", async () => {
+      const holidayService = await selectRange(
+        [],
+        [{ date: "2017-12-18", description: "Feiertag", dayLength: "0", absencePeriodName: "FULL" }],
+      );
+
+      const day = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-18"]`);
+      expect(day.dataset.datepickerSelectable).toBe("false");
+      clickDay("2017-12-18");
+
+      expect(holidayService.bookHoliday).toHaveBeenCalledWith(new Date(2017, 11, 15), new Date(2017, 11, 18));
+      expect(document.querySelector("#calendar-day-popover").showPopover).not.toHaveBeenCalled();
+    });
+
+    it("with an absence opens the day popover", async () => {
+      const holidayService = await selectRange([
+        {
+          date: "2017-12-18",
+          absenceType: "VACATION",
+          absent: "NOON",
+          status: "ALLOWED",
+          id: 1337,
+          typeId: 1,
+          from: "2017-12-18",
+          to: "2017-12-18",
+        },
+      ]);
+
+      clickDay("2017-12-18");
+
+      expect(holidayService.bookHoliday).not.toHaveBeenCalled();
+      expect(document.querySelector("#calendar-day-popover").showPopover).toHaveBeenCalled();
+    });
+  });
+
+  describe("clicking on a day with an absence or without work opens the day popover", () => {
     // today is 2017-12-01
     async function clickDayWithAbsences(
       date,
@@ -149,10 +230,17 @@ describe("calendar", () => {
       renderCalendar(holidayService, { canApplyForLeave, allowHalfDays });
 
       const day = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+      day.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
       day.click();
 
       expect(holidayService.bookHoliday).not.toHaveBeenCalled();
       return day;
+    }
+
+    function popoverDayOff() {
+      return [...document.querySelectorAll("#calendar-day-popover .calendar-day-popover__day-off p")].map(
+        (p) => p.textContent,
+      );
     }
 
     function popoverEntries() {
@@ -381,6 +469,80 @@ describe("calendar", () => {
 
       expect(popoverEntries()).toEqual([["Erholungsurlaub i18n:MORNING i18n:ALLOWED", "/web/application/1337"]]);
       expect(popoverFreeHalf()).toBeNull();
+    });
+
+    it("with the vacation bridging the weekend", async () => {
+      // 2017-12-16 is a saturday
+      const vacation = {
+        absenceType: "VACATION",
+        absent: "FULL",
+        status: "ALLOWED",
+        from: "2017-12-15",
+        to: "2017-12-18",
+      };
+      const day = await clickDayWithAbsences("2017-12-16", [
+        { ...vacation, date: "2017-12-15" },
+        { absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE", date: "2017-12-16" },
+        { absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE", date: "2017-12-17" },
+        { ...vacation, date: "2017-12-18" },
+      ]);
+
+      expect(document.querySelector("#calendar-day-popover").showPopover).toHaveBeenCalled();
+      expect(day.classList).toContain("datepicker-day--popover-anchor");
+      expect(popoverDayOff()).toEqual(["i18n:overview.calendar.day-popover.no-workday"]);
+      expect(popoverEntries()).toEqual([["Erholungsurlaub  i18n:ALLOWED", "/web/application/1337"]]);
+      expect(popoverDetails()).toEqual([
+        [
+          "i18n:absence.period",
+          "Fr, 12/15/2017 – Mo, 12/18/2017",
+          "i18n:overview.calendar.day-popover.duration",
+          "i18n:overview.calendar.day-popover.work-days 2",
+        ],
+      ]);
+      expect(popoverFreeHalf()).toBeNull();
+    });
+
+    it("for a weekend", async () => {
+      await clickDayWithAbsences("2017-12-16", [{ absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" }]);
+
+      expect(document.querySelector("#calendar-day-popover").showPopover).toHaveBeenCalled();
+      expect(popoverDayOff()).toEqual(["i18n:overview.calendar.day-popover.no-workday"]);
+      expect(popoverEntries()).toEqual([]);
+      expect(document.querySelector("#calendar-day-popover ul")).toBeNull();
+      expect(popoverFreeHalf()).toBeNull();
+    });
+
+    it("for a public holiday", async () => {
+      await clickDayWithAbsences("2017-12-15", [], {
+        publicHolidays: [{ dayLength: "0", absencePeriodName: "FULL" }],
+      });
+
+      expect(document.querySelector("#calendar-day-popover").showPopover).toHaveBeenCalled();
+      expect(popoverDayOff()).toEqual(["Christmas"]);
+      expect(popoverEntries()).toEqual([]);
+      expect(popoverFreeHalf()).toBeNull();
+    });
+
+    it("for a public holiday in the afternoon, with a link to apply for the morning", async () => {
+      await clickDayWithAbsences("2017-12-15", [], {
+        publicHolidays: [{ dayLength: "0.5", absencePeriodName: "NOON" }],
+      });
+
+      expect(popoverDayOff()).toEqual(["Christmas, i18n:NOON"]);
+      expect(popoverEntries()).toEqual([]);
+      expect(popoverFreeHalf()).toEqual([
+        "i18n:overview.calendar.day-popover.free.MORNING",
+        "/web/application/new?personId=42&from=2017-12-15&to=2017-12-15&dayLength=MORNING",
+      ]);
+    });
+
+    it("for a weekend without the permission to apply for leave", async () => {
+      await clickDayWithAbsences("2017-12-16", [{ absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" }], {
+        canApplyForLeave: false,
+      });
+
+      expect(document.querySelector("#calendar-day-popover").showPopover).toHaveBeenCalled();
+      expect(popoverDayOff()).toEqual(["i18n:overview.calendar.day-popover.no-workday"]);
     });
 
     it("without a link to apply for the free half without the permission to apply for leave", async () => {

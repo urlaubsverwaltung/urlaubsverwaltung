@@ -6,6 +6,7 @@ import {
   getYear,
   isBefore,
   isPast,
+  isSameDay,
   isToday,
   isValid as isValidDate,
   isWeekend,
@@ -144,7 +145,11 @@ const View = (function () {
     day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
     dayPopover:
-      '<div class="calendar-day-popover__header"><p class="calendar-day-popover__date">{{date}}</p><button type="button" class="calendar-day-popover__close" popovertarget="calendar-day-popover" popovertargetaction="hide">{{closeIcon}}<span class="sr-only">{{closeLabel}}</span></button></div><ul>{{absences}}</ul>{{free}}',
+      '<div class="calendar-day-popover__header"><p class="calendar-day-popover__date">{{date}}</p><button type="button" class="calendar-day-popover__close" popovertarget="calendar-day-popover" popovertargetaction="hide">{{closeIcon}}<span class="sr-only">{{closeLabel}}</span></button></div>{{dayOff}}{{absences}}{{free}}',
+
+    dayPopoverDayOff: '<div class="calendar-day-popover__day-off">{{texts}}</div>',
+
+    dayPopoverAbsences: "<ul>{{absences}}</ul>",
 
     dayPopoverAbsence:
       '<li><a href="{{href}}" class="calendar-day-popover__absence"><span class="calendar-day-popover__bar calendar-day-popover__bar--{{barStyle}}" style="--absence-bar-color:{{color}}" title="{{status}}" aria-hidden="true"></span><span class="calendar-day-popover__text"><strong>{{type}}</strong> <span class="calendar-day-popover__day-length">{{dayLength}}</span> <span class="sr-only">{{status}}</span></span> <span class="calendar-day-popover__details"><span>{{periodLabel}}</span> <span>{{period}}</span> <span>{{durationLabel}}</span> <span>{{duration}}</span></span>{{chevron}}</a></li>',
@@ -471,7 +476,8 @@ const View = (function () {
     return i18n(key).replace("{0}", formatNumber(workDays));
   }
 
-  function renderAbsenceEntry(absence) {
+  // a bridged absence runs across the day without being on it, so it has no day length of its own
+  function renderAbsenceEntry(absence, { bridge = false } = {}) {
     const period = holidayService.getAbsencePeriod(absence);
     return render(TMPL.dayPopoverAbsence, {
       href: holidayService.getAbsenceUrl(absence),
@@ -481,7 +487,7 @@ const View = (function () {
           : `var(--absence-color-${globalThis.uv.vacationTypes.colors[absence.typeId]})`,
       // custom absence type labels are free text
       type: escapeHtml(absenceTypeText(absence)),
-      dayLength: i18n(absence.absent),
+      dayLength: bridge ? "" : i18n(absence.absent),
       status: absenceStatusText(absence),
       barStyle: barStyle(absence),
       periodLabel: i18n("absence.period"),
@@ -500,33 +506,53 @@ const View = (function () {
     });
   }
 
+  // the part of the day, e.g. "Christmas, Afternoon", the whole day goes without
+  function dayPartText(text, absent) {
+    return [text, absent === "FULL" ? "" : i18n(absent)].filter(Boolean).join(", ");
+  }
+
+  function renderDayOff(date) {
+    const publicHoliday = holidayService.getPublicHoliday(date);
+    const noWorkday = holidayService.getNoWorkday(date);
+    const texts = [
+      publicHoliday ? dayPartText(holidayService.getDescription(date), publicHoliday) : "",
+      noWorkday ? dayPartText(i18n("overview.calendar.day-popover.no-workday"), noWorkday) : "",
+    ].filter(Boolean);
+
+    return texts.length > 0
+      ? render(TMPL.dayPopoverDayOff, { texts: texts.map((text) => `<p>${escapeHtml(text)}</p>`).join("") })
+      : "";
+  }
+
   function renderDayPopover(date) {
     const [full, morning, noon] = holidayService.getPersonalAbsences(date);
 
-    // the free half of a half-day absence can still be applied for
+    // the free half of a day can still be applied for
     const freeHalf = [
-      [morning, "MORNING", holidayService.isPublicHolidayMorning(date)],
-      [noon, "NOON", holidayService.isPublicHolidayNoon(date)],
+      [morning, "MORNING"],
+      [noon, "NOON"],
     ].find(
-      ([absence, absent, isPublicHoliday]) =>
-        !full &&
-        !absence &&
-        canApplyForLeave &&
-        allowHalfDays &&
-        !isPublicHoliday &&
-        !holidayService.isNoWorkdayHalf(date, absent),
+      ([absence, half]) =>
+        !full && !absence && canApplyForLeave && allowHalfDays && holidayService.isWorkingHalf(date, half),
     );
+
+    const absences = [
+      ...[full, morning, noon].filter(Boolean).map((absence) => renderAbsenceEntry(absence)),
+      ...holidayService.getBridgedAbsences(date).map((absence) => renderAbsenceEntry(absence, { bridge: true })),
+    ];
 
     return render(TMPL.dayPopover, {
       date: format(date, "PPPP"),
       closeIcon: icons.close,
       closeLabel: escapeHtml(i18n("action.close")),
-      absences: [full, morning, noon]
-        .filter(Boolean)
-        .map((absence) => renderAbsenceEntry(absence))
-        .join(""),
+      dayOff: renderDayOff(date),
+      absences: absences.length > 0 ? render(TMPL.dayPopoverAbsences, { absences: absences.join("") }) : "",
       free: freeHalf ? renderFreeHalf(date, freeHalf[1]) : "",
     });
+  }
+
+  function popoverAbsences(date) {
+    return [...holidayService.getPersonalAbsences(date).filter(Boolean), ...holidayService.getBridgedAbsences(date)];
   }
 
   const View = {
@@ -545,8 +571,13 @@ const View = (function () {
       return rootElement;
     },
 
+    // a workday without an absence leads to the "apply for leave" form straight away
     hasDayPopover(date) {
-      return holidayService.getPersonalAbsences(date).some(Boolean);
+      return (
+        popoverAbsences(date).length > 0 ||
+        holidayService.getPublicHoliday(date) !== undefined ||
+        holidayService.getNoWorkday(date) === "FULL"
+      );
     },
 
     displayDayPopover(dayElement) {
@@ -559,7 +590,7 @@ const View = (function () {
       dayPopover.showPopover();
 
       // an absence may continue in a year the calendar has not loaded
-      const absences = holidayService.getPersonalAbsences(date).filter(Boolean);
+      const absences = popoverAbsences(date);
       return Promise.all(absences.map((absence) => holidayService.fetchAbsencePeriod(absence))).then((loaded) => {
         if (loaded.some(Boolean) && dayElement.classList.contains(CSS.dayPopoverAnchor)) {
           dayPopover.innerHTML = renderDayPopover(date);
@@ -667,20 +698,24 @@ const Controller = (function () {
       const dateThis = getDateFromElement(this);
 
       const isSelectable = this.dataset.datepickerSelectable;
-
-      if (view.hasDayPopover(dateThis)) {
-        // mousedown started a selection on this day, which is not meant to be applied for now
-        clearSelection();
-        view.displayDayPopover(this);
-      } else if (
-        isSelectable === "true" &&
+      const isWithinSelection =
         isValidDate(dateFrom) &&
         isValidDate(dateTo) &&
         isWithinInterval(dateThis, {
           start: dateFrom,
           end: dateTo,
-        })
-      ) {
+        });
+      // a selection of a single day is the one mousedown just started on this day. a range may contain days not
+      // selectable on their own, e.g. a public holiday - the range is applied for anyway.
+      const isWithinSelectedRange = isWithinSelection && !isSameDay(dateFrom, dateTo);
+
+      if (isWithinSelectedRange && !holidayService.getPersonalAbsences(dateThis).some(Boolean)) {
+        holidayService.bookHoliday(dateFrom, dateTo);
+      } else if (view.hasDayPopover(dateThis)) {
+        // mousedown started a selection on this day, which is not meant to be applied for now
+        clearSelection();
+        view.displayDayPopover(this);
+      } else if (isSelectable === "true" && isWithinSelection) {
         holidayService.bookHoliday(dateFrom, dateTo);
       }
     },

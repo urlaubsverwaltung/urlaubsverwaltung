@@ -450,12 +450,37 @@ export const HolidayService = (function () {
 
     /**
      * @param {Date} date
-     * @param {"MORNING"|"NOON"} absent
+     * @param {"MORNING"|"NOON"} half
+     * @returns {boolean} whether the half is neither no workday nor public holiday
      */
-    isNoWorkdayHalf: function (date, absent) {
-      return getAbsencesForDate(date).some(
-        (absence) => absence.absenceType === "NO_WORKDAY" && absence.absent === absent,
-      );
+    isWorkingHalf: function (date, half) {
+      return isWorkingHalf(date, half);
+    },
+
+    /**
+     * @returns {"FULL"|"MORNING"|"NOON"|undefined} the part of the day without work, `undefined` on a workday
+     */
+    getNoWorkday: function (date) {
+      return getAbsencesForDate(date).find((absence) => absence.absenceType === "NO_WORKDAY")?.absent;
+    },
+
+    /**
+     * @returns {"FULL"|"MORNING"|"NOON"|undefined} the part of the day that is a public holiday, `undefined` on none
+     */
+    getPublicHoliday: function (date) {
+      return getPublicHolidaysForDate(date)[0]?.absencePeriodName;
+    },
+
+    /**
+     * @returns {Array} the vacations and sick notes whose bar runs across the day without being on it,
+     *          see {@link getAbsenceBarPieces}
+     */
+    getBridgedAbsences: function (date) {
+      const personal = this.getPersonalAbsences(date).filter(Boolean);
+      return this.getAbsenceBarPieces(date)
+        .filter(({ bridge }) => bridge)
+        .map(({ absence }) => absence)
+        .filter((absence) => !personal.some((other) => isSameAbsence(absence, other)));
     },
 
     getTypeId: function (date) {

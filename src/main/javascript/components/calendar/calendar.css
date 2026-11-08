@@ -660,6 +660,13 @@ td.datepicker-day {
     list-style-type: none;
   }
 
+  .calendar-day-popover__day-off + ul {
+    border-top: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+
   li + li {
     border-top: 1px solid var(--color-neutral-200);
     @variant dark {
@@ -672,9 +679,25 @@ td.datepicker-day {
   > ul:last-child {
     padding-bottom: var(--calendar-day-popover-padding-bottom);
   }
+  > .calendar-day-popover__day-off:last-child {
+    padding-bottom: calc(var(--calendar-day-popover-padding-block) + var(--calendar-day-popover-padding-bottom));
+  }
   .calendar-day-popover__free {
     margin-top: auto;
     padding-bottom: calc(var(--calendar-day-popover-padding-block) + var(--calendar-day-popover-padding-bottom));
+  }
+}
+
+/* why there is no work on the day, e.g. the public holiday */
+.calendar-day-popover__day-off {
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
+  color: var(--color-zinc-600);
+  @variant dark {
+    color: var(--color-zinc-300);
+  }
+
+  p {
+    margin: 0;
   }
 }
 
