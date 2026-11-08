@@ -11,7 +11,9 @@ by Andrew Harmel-Law in *Facilitating Software Architecture*, chapter 6.
   "Required form fields". Read one after the other, the titles tell the history of decisions. Keep it short, it is
   repeated in the index.
 - An accepted ADR is not rewritten, only its frontmatter changes. If the decision changes, write a new ADR and mark
-  the old one as `superseded`.
+  the old one as `superseded`. The one exception: when a part of a decision moves into a newer ADR of its own, e.g.
+  because it applies more broadly, the older ADR replaces that part by a link to the newer one. Otherwise both would
+  state the same rule, and superseding one would leave it in force in the other.
 - Start from [template.md](template.md).
 - Where a rule of the decision can be checked automatically, add a test for it whose failure message names the ADR.
 

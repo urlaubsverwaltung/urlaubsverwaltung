@@ -8,9 +8,8 @@ author: Benjamin Seber
 
 ## Decision
 
-We will prefer native HTML and visible (or visually hidden) text over ARIA attributes, e.g. `required` instead
-of `aria-required`, a `<span class="sr-only">` instead of `aria-label`. ARIA is used where HTML has no
-equivalent.
+We will mark required fields with native HTML. The preference for native HTML over ARIA in general, first decided
+here, moved to [Prefer native HTML and visible text over ARIA](2026-11-08-prefer-native-html-over-aria.md).
 
 For required fields:
 

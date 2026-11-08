@@ -7,7 +7,9 @@ Before working in the area of an ADR, read its Decision section, e.g. `sed '/^##
 only to question or change the decision.
 
 - [Mark required form fields with the required attribute and leave their validation to the server](docs/adr/2026-10-30-accessible-required-form-fields.md):
-  when adding or changing form fields, their labels or their validation, or choosing between ARIA and native HTML.
+  when adding or changing form fields, their labels or their validation.
+- [Prefer native HTML and visible text over ARIA](docs/adr/2026-11-08-prefer-native-html-over-aria.md):
+  when adding interactive elements, icons or labels without visible text, or ARIA attributes.
 
 ## Frontend assets
 
