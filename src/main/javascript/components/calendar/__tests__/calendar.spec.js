@@ -536,6 +536,88 @@ describe("calendar", () => {
       ]);
     });
 
+    describe("sliding from the open popover", () => {
+      // the weekend 2017-12-16 and 2017-12-17 is in one row, 2017-12-23 in the next
+      const weekends = ["2017-12-16", "2017-12-17", "2017-12-23", "2017-12-24"].map((date) => ({
+        absenceType: "NO_WORKDAY",
+        absent: "FULL",
+        status: "ACTIVE",
+        date,
+      }));
+
+      const rowTops = { "2017-12-16": 100, "2017-12-17": 100, "2017-12-23": 140, "2017-12-24": 140 };
+
+      let popover;
+      let popoverLeft;
+
+      async function openPopoverAt(date) {
+        await clickDayWithAbsences(date, weekends);
+
+        for (const [rowDate, top] of Object.entries(rowTops)) {
+          document.querySelector(`.datepicker-day[data-datepicker-date="${rowDate}"]`).getBoundingClientRect = () => ({
+            top,
+            left: 0,
+          });
+        }
+
+        popover = document.querySelector("#calendar-day-popover");
+        popoverLeft = 0;
+        popover.getBoundingClientRect = () => ({ top: 0, left: popoverLeft });
+        popover.animate = vi.fn();
+        const matches = popover.matches.bind(popover);
+        popover.matches = (selector) => selector === ":popover-open" || matches(selector);
+      }
+
+      // the popover is light dismissed between pointerdown and click, it opens at the clicked day again
+      function clickDay(date, { popoverLeftAfter }) {
+        const day = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+        day.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+        popoverLeft = popoverLeftAfter;
+        day.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+        day.click();
+      }
+
+      it("to another day of the same row", async () => {
+        await openPopoverAt("2017-12-16");
+
+        clickDay("2017-12-17", { popoverLeftAfter: 40 });
+
+        expect(popover.animate).toHaveBeenCalledWith([{ translate: "-40px 0px" }, { translate: "0 0" }], {
+          duration: 150,
+          easing: "ease-out",
+        });
+      });
+
+      it("not to a day of another row", async () => {
+        await openPopoverAt("2017-12-16");
+
+        clickDay("2017-12-23", { popoverLeftAfter: 40 });
+
+        expect(popover.animate).not.toHaveBeenCalled();
+      });
+
+      it("not when the popover was closed", async () => {
+        await openPopoverAt("2017-12-16");
+        popover.matches = () => false;
+
+        clickDay("2017-12-17", { popoverLeftAfter: 40 });
+
+        expect(popover.animate).not.toHaveBeenCalled();
+      });
+
+      it("not when reduced motion is preferred", async () => {
+        globalThis.matchMedia = vi.fn((query) => ({
+          matches: query === "(prefers-reduced-motion: reduce)",
+          addEventListener: vi.fn(),
+        }));
+        await openPopoverAt("2017-12-16");
+
+        clickDay("2017-12-17", { popoverLeftAfter: 40 });
+
+        expect(popover.animate).not.toHaveBeenCalled();
+      });
+    });
+
     it("for a weekend without the permission to apply for leave", async () => {
       await clickDayWithAbsences("2017-12-16", [{ absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" }], {
         canApplyForLeave: false,

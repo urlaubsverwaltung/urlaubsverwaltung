@@ -19,6 +19,7 @@ import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
 import { escapeHtml } from "../../js/escape-html";
 import formatNumber from "../../js/format-number";
+import { slideFrom } from "../../js/motion";
 import "./calendar.css";
 
 const numberOfMonths = 10;
@@ -128,6 +129,9 @@ const View = (function () {
   let i18n;
   let canApplyForLeave;
   let allowHalfDays;
+  // the popover open when the pointer went down, see `display`
+  let openDayPopover;
+  let dayPopoverSlide;
 
   const TMPL = {
     container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
@@ -555,6 +559,29 @@ const View = (function () {
     return [...holidayService.getPersonalAbsences(date).filter(Boolean), ...holidayService.getBridgedAbsences(date)];
   }
 
+  // moving on to another day of the same row slides the popover there, as the tooltip does between its anchors
+  function slideDayPopover(dayPopover, dayElement) {
+    const previous = openDayPopover;
+    openDayPopover = undefined;
+
+    dayPopoverSlide?.cancel();
+    dayPopoverSlide = undefined;
+
+    if (!previous) {
+      return;
+    }
+    const anchorRect = dayElement.getBoundingClientRect();
+    if (Math.round(anchorRect.top) !== Math.round(previous.anchorRect.top)) {
+      return;
+    }
+    // nothing to slide for the bottom sheet of small screens, which stays where it is
+    const dx = previous.popoverRect.left - dayPopover.getBoundingClientRect().left;
+    if (dx === 0) {
+      return;
+    }
+    dayPopoverSlide = slideFrom(dayPopover, dx);
+  }
+
   const View = {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
@@ -565,6 +592,20 @@ const View = (function () {
       dayPopover.className = "calendar-day-popover";
       dayPopover.setAttribute("popover", "");
       rootElement.append(dayPopover);
+
+      // a click on another day light dismisses the popover before the click reaches the day. so where the popover was
+      // is remembered on pointerdown already, when it is still open.
+      rootElement.addEventListener(
+        "pointerdown",
+        function () {
+          const anchor = rootElement.querySelector(`.${CSS.dayPopoverAnchor}`);
+          openDayPopover =
+            anchor && dayPopover.matches(":popover-open")
+              ? { anchorRect: anchor.getBoundingClientRect(), popoverRect: dayPopover.getBoundingClientRect() }
+              : undefined;
+        },
+        { capture: true },
+      );
     },
 
     getRootElement() {
@@ -588,6 +629,7 @@ const View = (function () {
       rootElement.querySelector(`.${CSS.dayPopoverAnchor}`)?.classList.remove(CSS.dayPopoverAnchor);
       dayElement.classList.add(CSS.dayPopoverAnchor);
       dayPopover.showPopover();
+      slideDayPopover(dayPopover, dayElement);
 
       // an absence may continue in a year the calendar has not loaded
       const absences = popoverAbsences(date);
