@@ -494,3 +494,331 @@ td.datepicker-day {
 .datepicker-day.absence-morning--bridge::before {
   opacity: 0.35;
 }
+
+/* the day popover is a box of its own opening at the clicked day - no menu, see `calendar.js` */
+.datepicker-day--popover-anchor {
+  anchor-name: --uv-calendar-day;
+}
+/* the day anchors the tooltip as well, see `tooltip.css`. a single anchor name would override the other one. */
+.datepicker-day--popover-anchor.uv-tooltip-anchor--active {
+  anchor-name: --uv-calendar-day, --uv-tooltip-anchor;
+}
+.calendar-day-popover,
+.calendar-day-popover::backdrop {
+  /* older browsers do not let `::backdrop` inherit from the popover */
+  --calendar-day-popover-duration: 400ms;
+  @media (prefers-reduced-motion: reduce) {
+    --calendar-day-popover-duration: 0ms;
+  }
+}
+
+/* small screens show the popover as a bottom sheet, like the date picker (duet) does: it slides up from the bottom
+ * edge over a dark overlay, and a tap on the overlay closes it. from xs on it opens at the clicked day. */
+.calendar-day-popover {
+  /* the bottom sheet gives the content more room */
+  --calendar-day-popover-padding-block: --spacing(4);
+  --calendar-day-popover-padding-inline: --spacing(6);
+  /* the bottom space below the content, clear of the home bar of a phone */
+  --calendar-day-popover-padding-bottom: calc(--spacing(4) + env(safe-area-inset-bottom));
+
+  inset: auto 0 0 0;
+  width: 100%;
+  /* the smaller part of the screen divided by the golden ratio (1/φ² ≈ 38.2%), so a single entry does not show
+   * as a thin strip */
+  min-height: 38.2dvh;
+  max-height: 80dvh;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-base);
+  color: inherit;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-width: 1px 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  @variant dark {
+    background-color: var(--color-zinc-900);
+    border-color: var(--color-zinc-700);
+    box-shadow: none;
+  }
+
+  transform: translateY(100%);
+  transition:
+    transform var(--calendar-day-popover-duration) ease,
+    display var(--calendar-day-popover-duration) allow-discrete,
+    overlay var(--calendar-day-popover-duration) allow-discrete;
+
+  /* `display` on the popover itself would override the `display: none` of the closed popover */
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+  }
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0);
+    transition:
+      background-color var(--calendar-day-popover-duration) ease,
+      display var(--calendar-day-popover-duration) allow-discrete,
+      overlay var(--calendar-day-popover-duration) allow-discrete;
+  }
+  &:popover-open::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  @starting-style {
+    &:popover-open {
+      transform: translateY(100%);
+    }
+    &:popover-open::backdrop {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
+
+  /* from xs on the popover opens at the clicked day */
+  @variant xs {
+    --calendar-day-popover-padding-block: --spacing(3);
+    --calendar-day-popover-padding-inline: --spacing(4);
+    /* no home bar to keep clear of, the bottom paddings fall back to the regular ones */
+    --calendar-day-popover-padding-bottom: 0px;
+
+    position-anchor: --uv-calendar-day;
+    position-area: block-end span-inline-end;
+    /* days at the bottom of the screen open the popover above them, days at the end of the line towards the start.
+     * the popover has no max-height, so it overflows the screen instead of shrinking - which is what makes the
+     * browser try the fallbacks. its few entries always fit on the screen as a whole. */
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+    inset: auto;
+    margin-block-start: --spacing(1);
+
+    width: 20rem;
+    max-width: calc(100vw - --spacing(4));
+    min-height: auto;
+    max-height: none;
+    font-size: var(--text-sm);
+    border-width: 1px;
+    border-radius: var(--radius-sm);
+
+    transform: none;
+    transition: none;
+
+    &::backdrop {
+      display: none;
+    }
+  }
+
+  .calendar-day-popover__header {
+    display: flex;
+    align-items: center;
+    gap: --spacing(3);
+    padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
+    border-bottom: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+
+  .calendar-day-popover__date {
+    flex-grow: 1;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  /* only the bottom sheet needs a close button, the popover at the day closes by a click next to it */
+  .calendar-day-popover__close {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: --spacing(8);
+    height: --spacing(8);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: inherit;
+    background-color: var(--color-neutral-100);
+    @variant dark {
+      background-color: var(--color-zinc-700);
+    }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    @variant xs {
+      display: none;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .calendar-day-popover__day-off + ul {
+    border-top: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+
+  li + li {
+    border-top: 1px solid var(--color-neutral-200);
+    @variant dark {
+      border-color: var(--color-zinc-700);
+    }
+  }
+
+  /* the content starts at the top, below the date. the free half is the footer of the sheet, its button within
+   * reach of the thumb. */
+  > ul:last-child {
+    padding-bottom: var(--calendar-day-popover-padding-bottom);
+  }
+  > .calendar-day-popover__day-off:last-child {
+    padding-bottom: calc(var(--calendar-day-popover-padding-block) + var(--calendar-day-popover-padding-bottom));
+  }
+  .calendar-day-popover__free {
+    margin-top: auto;
+    padding-bottom: calc(var(--calendar-day-popover-padding-block) + var(--calendar-day-popover-padding-bottom));
+  }
+}
+
+/* why there is no work on the day, e.g. the public holiday */
+.calendar-day-popover__day-off {
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
+  color: var(--color-zinc-600);
+  @variant dark {
+    color: var(--color-zinc-300);
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+/* the bar runs along the name and the day length only, the details go below them */
+.calendar-day-popover__absence {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: --spacing(3);
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
+  overflow-wrap: anywhere;
+
+  /* the whole entry is the link, it keeps the colours of its text */
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    color: inherit;
+    text-decoration: none;
+  }
+  &:hover,
+  &:focus {
+    background-color: var(--color-neutral-100);
+    @variant dark {
+      background-color: var(--color-zinc-700);
+    }
+  }
+
+  .calendar-day-popover__bar,
+  .calendar-day-popover__text {
+    grid-row: 1;
+  }
+  .calendar-day-popover__details {
+    grid-column: 2;
+  }
+  .calendar-day-popover__chevron {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
+/* the bar of the calendar day turned upright, the status sets the fill. it spans its full height for half a day
+ * as well - each half of the day is an entry of its own. */
+.calendar-day-popover__bar {
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 0.375rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: solid 1px var(--absence-bar-color);
+    border-radius: 99999px;
+    background: var(--absence-bar-color);
+  }
+
+  &.calendar-day-popover__bar--outline::after {
+    background: none;
+  }
+  &.calendar-day-popover__bar--outline-solid-half::after {
+    background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+  }
+}
+
+.calendar-day-popover__text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.calendar-day-popover__day-length,
+.calendar-day-popover__details > span:nth-child(odd) {
+  color: var(--color-zinc-500);
+  @variant dark {
+    color: var(--color-zinc-400);
+  }
+}
+
+/* label and value side by side */
+.calendar-day-popover__details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: --spacing(3);
+  margin-top: --spacing(1);
+
+  /* a long period breaks after the dash, not inside a date */
+  time {
+    white-space: nowrap;
+  }
+}
+
+.calendar-day-popover__chevron {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-zinc-500);
+}
+
+.calendar-day-popover__free {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: --spacing(3);
+  padding: var(--calendar-day-popover-padding-block) var(--calendar-day-popover-padding-inline);
+  border-top: 1px solid var(--color-neutral-200);
+  background-color: var(--color-neutral-50);
+  color: var(--color-zinc-600);
+  @variant dark {
+    border-color: var(--color-zinc-700);
+    background-color: transparent;
+    color: var(--color-zinc-300);
+  }
+
+  .button {
+    margin-inline-start: auto;
+  }
+}

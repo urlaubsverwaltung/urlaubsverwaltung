@@ -179,6 +179,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         // for calendar.js
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
+        model.addAttribute("vacationTypeLabels", vacationTypeViewModelService.getVacationTypeLabels(locale));
+        model.addAttribute("allowHalfDays", settingsService.getSettings().getApplicationSettings().isAllowHalfDays());
 
         prepareHolidayAccountInformation(person, yearToShow, now, model);
         prepareApplicationInformation(person, signedInUser, yearToShow, model, locale);

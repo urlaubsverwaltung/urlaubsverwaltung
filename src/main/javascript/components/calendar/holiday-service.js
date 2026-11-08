@@ -1,5 +1,14 @@
 import { getJSON } from "../../js/fetch";
-import { addDays, differenceInCalendarDays, endOfYear, formatISO, getYear, startOfYear, subDays } from "date-fns";
+import {
+  addDays,
+  differenceInCalendarDays,
+  endOfYear,
+  formatISO,
+  getYear,
+  parseISO,
+  startOfYear,
+  subDays,
+} from "date-fns";
 import format from "../../lib/date-fns/format";
 import {
   isNoWorkday,
@@ -34,6 +43,9 @@ function paramize(parameters) {
 
 export const HolidayService = (function () {
   const _CACHE = {};
+  // the requests of the years not cached yet by cache key and year. a year requested again meanwhile waits for the
+  // same request, a second response would add its data to the cache once more.
+  const _PENDING = {};
 
   let webPrefix;
   let apiPrefix;
@@ -97,6 +109,21 @@ export const HolidayService = (function () {
     return absencesForYear.filter((absence) => absence.date === formattedDate);
   }
 
+  const HALVES = { FULL: ["MORNING", "NOON"], MORNING: ["MORNING"], NOON: ["NOON"] };
+
+  const isLoaded = (cacheKey, year) => Boolean(_CACHE[cacheKey]?.[year]);
+
+  // the years of the vacation or sick note whose absences or public holidays are not loaded yet
+  function missingYearsOf(absence) {
+    const missingYears = [];
+    for (let year = getYear(parseISO(absence.from)); year <= getYear(parseISO(absence.to)); year++) {
+      if (!isLoaded("absences", year) || !isLoaded("publicHoliday", year)) {
+        missingYears.push(year);
+      }
+    }
+    return missingYears;
+  }
+
   function getPublicHolidaysForDate(date) {
     const year = getYear(date);
     const formattedDate = format(date, "yyyy-MM-dd");
@@ -116,12 +143,13 @@ export const HolidayService = (function () {
     );
   }
 
-  // a no workday or public holiday, which an absence bar runs across
-  function isOffOn({ date, half }) {
+  // neither no workday nor public holiday. an absence bar runs across the half days without work, and a sick note
+  // has days on them as well, which are no work days.
+  function isWorkingHalf({ date, half }) {
     return (
-      getAbsencesForDate(date).some(
+      !getAbsencesForDate(date).some(
         (absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent, half),
-      ) || getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
+      ) && !getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
     );
   }
 
@@ -136,7 +164,7 @@ export const HolidayService = (function () {
    */
   function adjacentAbsence(halfDay, step) {
     let current = step(halfDay);
-    while (!personalAbsenceOn(current) && isOffOn(current)) {
+    while (!personalAbsenceOn(current) && !isWorkingHalf(current)) {
       current = step(current);
     }
     return personalAbsenceOn(current);
@@ -153,7 +181,7 @@ export const HolidayService = (function () {
     let end = halfDay;
     let current = step(halfDay);
     let absenceOnCurrent = personalAbsenceOn(current);
-    while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && isOffOn(current))) {
+    while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && !isWorkingHalf(current))) {
       if (absenceOnCurrent) {
         end = current;
       }
@@ -203,7 +231,7 @@ export const HolidayService = (function () {
         ...barPosition(halfDay, absence),
       };
     }
-    if (isOffOn(halfDay) && isSameAbsence(before, after)) {
+    if (!isWorkingHalf(halfDay) && isSameAbsence(before, after)) {
       return {
         absence: before,
         bridge: true,
@@ -402,20 +430,49 @@ export const HolidayService = (function () {
       ].filter((piece) => piece.absence);
     },
 
-    getAbsenceId: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].id;
-      }
-      return "-1";
+    /**
+     * @returns {Array} the vacation or sick note of the day as `[full, morning, noon]`, `undefined` for free parts
+     */
+    getPersonalAbsences: function (date) {
+      const personal = getAbsencesForDate(date).filter(
+        (absence) => absence.absenceType === "VACATION" || absence.absenceType === "SICK_NOTE",
+      );
+      return ["FULL", "MORNING", "NOON"].map((absent) => personal.find((absence) => absence.absent === absent));
     },
 
-    getAbsenceType: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].absenceType;
-      }
-      return "";
+    /**
+     * @param {Date} date
+     * @param {"MORNING"|"NOON"} half
+     * @returns {boolean} whether the half is neither no workday nor public holiday
+     */
+    isWorkingHalf: function (date, half) {
+      return isWorkingHalf({ date, half });
+    },
+
+    /**
+     * @returns {"FULL"|"MORNING"|"NOON"|undefined} the part of the day without work, `undefined` on a workday
+     */
+    getNoWorkday: function (date) {
+      return getAbsencesForDate(date).find((absence) => absence.absenceType === "NO_WORKDAY")?.absent;
+    },
+
+    /**
+     * @returns {"FULL"|"MORNING"|"NOON"|undefined} the part of the day that is a public holiday, `undefined` on none
+     */
+    getPublicHoliday: function (date) {
+      return getPublicHolidaysForDate(date)[0]?.absencePeriodName;
+    },
+
+    /**
+     * @returns {Array} the vacations and sick notes whose bar runs across the day without being on it,
+     *          see {@link getAbsenceBarPieces}
+     */
+    getBridgedAbsences: function (date) {
+      const personal = this.getPersonalAbsences(date).filter(Boolean);
+      return this.getAbsenceBarPieces(date)
+        .filter(({ bridge }) => bridge)
+        .map(({ absence }) => absence)
+        .filter((absence) => !personal.some((other) => isSameAbsence(absence, other)));
     },
 
     getTypeId: function (date) {
@@ -442,21 +499,59 @@ export const HolidayService = (function () {
      * @param {Date} [to]
      */
     bookHoliday: function (from, to) {
+      document.location.href = this.getNewHolidayUrl(from, to);
+    },
+
+    /**
+     * @param {Date} from
+     * @param {Date} [to]
+     * @param {"MORNING"|"NOON"} [dayLength] the form preselects a full day without it
+     */
+    getNewHolidayUrl: function (from, to, dayLength) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
         to: to ? format(to, "yyyy-MM-dd") : undefined,
       };
+      if (dayLength) {
+        parameters.dayLength = dayLength;
+      }
 
-      document.location.href = webPrefix + "/application/new" + paramize(parameters);
+      return webPrefix + "/application/new" + paramize(parameters);
     },
 
-    navigateToApplicationForLeave: function (applicationId) {
-      document.location.href = webPrefix + "/application/" + applicationId;
+    /**
+     * The whole vacation or sick note. Its work days are known once all of its years are loaded,
+     * see {@link fetchAbsencePeriod}.
+     *
+     * @returns {{from: Date, to: Date, workDays: number|undefined}} `workDays` is `undefined` while a year is missing
+     */
+    getAbsencePeriod: function (absence) {
+      const from = parseISO(absence.from);
+      const to = parseISO(absence.to);
+      if (missingYearsOf(absence).length > 0) {
+        return { from, to, workDays: undefined };
+      }
+      const workingHalves = Object.values(_CACHE["absences"] || {})
+        .flat()
+        .filter((day) => isSameAbsence(day, absence))
+        .flatMap((day) => HALVES[day.absent].filter((half) => isWorkingHalf({ date: parseISO(day.date), half })));
+      return { from, to, workDays: workingHalves.length / 2 };
     },
 
-    navigateToSickNote: function (sickNoteId) {
-      document.location.href = webPrefix + "/sicknote/" + sickNoteId;
+    /**
+     * Loads the years of the vacation or sick note the calendar has not loaded.
+     *
+     * @returns {Promise<boolean>} whether a year has been loaded
+     */
+    fetchAbsencePeriod: async function (absence) {
+      const missingYears = missingYearsOf(absence);
+      await Promise.all(missingYears.flatMap((year) => [this.fetchAbsences(year), this.fetchPublicHolidays(year)]));
+      return missingYears.length > 0;
+    },
+
+    getAbsenceUrl: function (absence) {
+      return webPrefix + (absence.absenceType === "SICK_NOTE" ? "/sicknote/" : "/application/") + absence.id;
     },
 
     /**
@@ -475,6 +570,11 @@ export const HolidayService = (function () {
         return Promise.resolve(_CACHE[cacheKey][year]);
       }
 
+      _PENDING[cacheKey] = _PENDING[cacheKey] || {};
+      if (_PENDING[cacheKey][year]) {
+        return _PENDING[cacheKey][year];
+      }
+
       const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
         representation: "date",
       });
@@ -482,7 +582,14 @@ export const HolidayService = (function () {
         representation: "date",
       });
 
-      return fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters }).then(cacheHandler(year));
+      const request = fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters })
+        .then(cacheHandler(year))
+        .finally(() => {
+          // a failed request is sent again the next time the year is asked for
+          delete _PENDING[cacheKey][year];
+        });
+      _PENDING[cacheKey][year] = request;
+      return request;
     },
 
     /**

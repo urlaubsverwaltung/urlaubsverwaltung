@@ -6,7 +6,7 @@ import "apexcharts/bar";
 import "apexcharts/line";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
-import { useMedia } from "../js/use-media";
+import { prefersReducedMotion } from "../js/motion";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
 import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
@@ -107,7 +107,6 @@ function isPreviousYearSeriesIndex(seriesIndex) {
 }
 
 const { theme } = useTheme();
-const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
 const options = {
   chart: {
@@ -116,7 +115,7 @@ const options = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   states: noHoverStates,
   legend: {
@@ -221,7 +220,7 @@ const sickRateOptions = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   states: noHoverStates,
   legend: {
@@ -300,7 +299,7 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
     width: `${GAUGE_SIZE}px`,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",

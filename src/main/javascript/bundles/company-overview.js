@@ -1,8 +1,8 @@
 import "../js/common";
 import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
+import { prefersReducedMotion } from "../js/motion";
 
 const frame = document.querySelector("#frame-company-overview");
-const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let loadingTimer;
 let requestId = 0;
@@ -82,7 +82,7 @@ function animateNumber(element, oldValue, toValue, duration = 300) {
   const from = parseLocaleNumber(oldValue);
   const to = parseLocaleNumber(toValue);
 
-  if (prefersReducedMotion || from.value === to.value) {
+  if (prefersReducedMotion() || from.value === to.value) {
     element.textContent = toValue;
     return;
   }

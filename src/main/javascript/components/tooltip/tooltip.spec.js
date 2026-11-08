@@ -1,4 +1,4 @@
-import { prepareTooltip, setup, teardown } from "./tooltip";
+import { hideTooltip, prepareTooltip, setup, teardown } from "./tooltip";
 
 describe("tooltip", function () {
   beforeEach(function () {
@@ -354,5 +354,44 @@ describe("tooltip", function () {
     expect(hide).not.toHaveBeenCalled();
     expect(sut().classList.contains("uv-tooltip--is-hiding")).toBe(false);
     expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(true);
+  });
+
+  test("hideTooltip hides an open tooltip at once, without fading out", function () {
+    const button = anchorWith("Edit user");
+    document.body.append(button);
+    const { hide } = spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    hideTooltip();
+
+    expect(hide).toHaveBeenCalledOnce();
+    expect(button.classList.contains("uv-tooltip-anchor--active")).toBe(false);
+    expect(button.hasAttribute("aria-describedby")).toBe(false);
+  });
+
+  test("hideTooltip does not show a tooltip waiting for its hover delay anymore", function () {
+    const button = anchorWith("Edit user");
+    document.body.append(button);
+    const { show } = spyOnPopover(sut());
+
+    button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    hideTooltip();
+    vi.advanceTimersByTime(300);
+
+    expect(show).not.toHaveBeenCalled();
+  });
+
+  test("hideTooltip lets the next hover show the tooltip again", function () {
+    const button = anchorWith("Edit user");
+    document.body.append(button);
+    const { show } = spyOnPopover(sut());
+
+    button.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    hideTooltip();
+    button.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+    button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+    vi.advanceTimersByTime(300);
+
+    expect(show).toHaveBeenCalledTimes(2);
   });
 });

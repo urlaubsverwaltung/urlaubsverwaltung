@@ -5,7 +5,7 @@ import "apexcharts/bar";
 import "apexcharts/line";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
-import { useMedia } from "../js/use-media";
+import { prefersReducedMotion } from "../js/motion";
 import { apexOptionsWithPersistence } from "../js/charts/series-visibility-persistence";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
 import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
@@ -17,7 +17,6 @@ const statistics = globalThis.overtimeStatistics;
 const CHART_HEIGHT = 340;
 
 const { theme } = useTheme();
-const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
 // accrual and reduction are two series stacked around the zero line: the backend hands over the reduction negated, so
 // accrual grows upwards and reduction downwards while both share one column. one such column per year and month, the
@@ -50,7 +49,7 @@ const options = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   states: noHoverStates,
   legend: {
@@ -154,7 +153,7 @@ const balanceOptions = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   states: noHoverStates,
   legend: {

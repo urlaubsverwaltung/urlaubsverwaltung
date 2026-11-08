@@ -18,6 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -82,6 +84,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -286,6 +289,25 @@ class OverviewViewControllerTest {
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
 
         verify(accountService).getHolidaysAccount(currentYear, person);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void showOverviewAddsAllowHalfDaysForTheCalendar(boolean allowHalfDays) throws Exception {
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(allowHalfDays);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = somePerson();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+
+        final Person signedInUser = somePerson();
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("allowHalfDays", allowHalfDays));
     }
 
     @Test
@@ -684,6 +706,7 @@ class OverviewViewControllerTest {
         stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeLabels(GERMAN)).thenReturn(Map.of(1L, "Erholungsurlaub"));
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
 
@@ -742,6 +765,7 @@ class OverviewViewControllerTest {
         final ModelAndView mav = perform(get("/web/person/1/overview").param("year", "2021").locale(GERMAN)).andReturn().getModelAndView();
         assertThat(mav).isNotNull();
         assertThat(mav.getModel()).containsEntry("vacationTypeColors", List.of(new VacationTypeDto(1L, ORANGE)));
+        assertThat(mav.getModel()).containsEntry("vacationTypeLabels", Map.of(1L, "Erholungsurlaub"));
     }
 
     // OVERTIME TESTS

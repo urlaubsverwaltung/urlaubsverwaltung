@@ -11,9 +11,10 @@
  * https://www.nngroup.com/articles/tooltip-guidelines/
  */
 
+import { slideFrom } from "../../js/motion";
+
 const HOVER_SHOW_DELAY_MS = 300;
 const FADE_OUT_MS = 100;
-const SLIDE_MS = 150;
 const TOOLTIP_ID = "uv-tooltip";
 const ANCHOR_ACTIVE_CLASS = "uv-tooltip-anchor--active";
 const TOOLTIP_HIDING_CLASS = "uv-tooltip--is-hiding";
@@ -177,7 +178,7 @@ function retargetTo(anchor) {
   tooltip.dataset.placement = placement;
   activeAnchor = anchor;
 
-  if (previousAnchorRect && !prefersReducedMotion()) {
+  if (previousAnchorRect) {
     const nextAnchorRect = anchor.getBoundingClientRect();
     // both ends of a handoff share the same placement, so the reference point follows it
     let dx;
@@ -191,16 +192,8 @@ function retargetTo(anchor) {
       dx = previousAnchorRect.left + previousAnchorRect.width / 2 - (nextAnchorRect.left + nextAnchorRect.width / 2);
       dy = previousAnchorRect.top - nextAnchorRect.top;
     }
-    slideAnim = tooltip.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0 0" }], {
-      duration: SLIDE_MS,
-      easing: "ease-out",
-      fill: "none",
-    });
+    slideAnim = slideFrom(tooltip, dx, dy);
   }
-}
-
-function prefersReducedMotion() {
-  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 }
 
 function ensureMigratedTitle(anchor) {
@@ -256,4 +249,20 @@ export function prepareTooltip(element, { text, placement, delay }) {
 export function disposeTooltip(element) {
   element.removeAttribute("title");
   delete element.dataset.title;
+}
+
+/**
+ * Hides the tooltip at once, without fading out - e.g. when something else opens over its anchor.
+ * A tooltip waiting for its hover delay is not shown anymore.
+ */
+export function hideTooltip() {
+  clearTimeout(showTimerId);
+  showTimerId = undefined;
+  pendingAnchor = undefined;
+  if (state === "open" || state === "pendingHide") {
+    clearTimeout(hideTimerId);
+    finalizeHide();
+  } else {
+    state = "idle";
+  }
 }

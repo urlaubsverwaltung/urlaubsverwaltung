@@ -6,7 +6,7 @@ import "apexcharts/bar";
 import "apexcharts/pie";
 import "apexcharts/features/legend";
 import "apexcharts/features/keyboard";
-import { useMedia } from "../js/use-media";
+import { prefersReducedMotion } from "../js/motion";
 import { chartDefaults, noHoverStates } from "../js/charts/chart-defaults";
 import { tooltipHtml, tooltipRowHtml } from "../js/charts/chart-tooltip";
 import { escapeHtml, escapeHtmlContent } from "../js/escape-html";
@@ -47,7 +47,6 @@ function tooltipRow(color, text) {
 }
 
 const { theme } = useTheme();
-const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
 function themeMode(value = theme.value) {
   return value === "dark" ? "dark" : "light";
@@ -63,7 +62,7 @@ const monthlyOptions = {
     height: CHART_HEIGHT,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   theme: {
     mode: themeMode(),
@@ -141,7 +140,7 @@ const distributionOptions = {
     width: PIE_SIZE,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   theme: {
     mode: themeMode(),
@@ -201,7 +200,7 @@ const ringOptions = {
     width: RING_SIZE,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
-    ...chartDefaults(reducedMotion.value),
+    ...chartDefaults(prefersReducedMotion()),
   },
   theme: {
     mode: themeMode(),
