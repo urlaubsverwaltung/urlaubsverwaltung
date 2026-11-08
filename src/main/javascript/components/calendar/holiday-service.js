@@ -111,15 +111,6 @@ export const HolidayService = (function () {
 
   const HALVES = { FULL: ["MORNING", "NOON"], MORNING: ["MORNING"], NOON: ["NOON"] };
 
-  // a sick note has days on no workdays and public holidays as well, which are no work days
-  function isWorkingHalf(date, half) {
-    const covers = (absent) => absent === "FULL" || absent === half;
-    return (
-      !getAbsencesForDate(date).some((absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent)) &&
-      !getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName))
-    );
-  }
-
   const isLoaded = (cacheKey, year) => Boolean(_CACHE[cacheKey]?.[year]);
 
   // the years of the vacation or sick note whose absences or public holidays are not loaded yet
@@ -152,12 +143,13 @@ export const HolidayService = (function () {
     );
   }
 
-  // a no workday or public holiday, which an absence bar runs across
-  function isOffOn({ date, half }) {
+  // neither no workday nor public holiday. an absence bar runs across the half days without work, and a sick note
+  // has days on them as well, which are no work days.
+  function isWorkingHalf({ date, half }) {
     return (
-      getAbsencesForDate(date).some(
+      !getAbsencesForDate(date).some(
         (absence) => absence.absenceType === "NO_WORKDAY" && covers(absence.absent, half),
-      ) || getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
+      ) && !getPublicHolidaysForDate(date).some((publicHoliday) => covers(publicHoliday.absencePeriodName, half))
     );
   }
 
@@ -172,7 +164,7 @@ export const HolidayService = (function () {
    */
   function adjacentAbsence(halfDay, step) {
     let current = step(halfDay);
-    while (!personalAbsenceOn(current) && isOffOn(current)) {
+    while (!personalAbsenceOn(current) && !isWorkingHalf(current)) {
       current = step(current);
     }
     return personalAbsenceOn(current);
@@ -189,7 +181,7 @@ export const HolidayService = (function () {
     let end = halfDay;
     let current = step(halfDay);
     let absenceOnCurrent = personalAbsenceOn(current);
-    while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && isOffOn(current))) {
+    while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && !isWorkingHalf(current))) {
       if (absenceOnCurrent) {
         end = current;
       }
@@ -239,7 +231,7 @@ export const HolidayService = (function () {
         ...barPosition(halfDay, absence),
       };
     }
-    if (isOffOn(halfDay) && isSameAbsence(before, after)) {
+    if (!isWorkingHalf(halfDay) && isSameAbsence(before, after)) {
       return {
         absence: before,
         bridge: true,
@@ -454,7 +446,7 @@ export const HolidayService = (function () {
      * @returns {boolean} whether the half is neither no workday nor public holiday
      */
     isWorkingHalf: function (date, half) {
-      return isWorkingHalf(date, half);
+      return isWorkingHalf({ date, half });
     },
 
     /**
@@ -543,7 +535,7 @@ export const HolidayService = (function () {
       const workingHalves = Object.values(_CACHE["absences"] || {})
         .flat()
         .filter((day) => isSameAbsence(day, absence))
-        .flatMap((day) => HALVES[day.absent].filter((half) => isWorkingHalf(parseISO(day.date), half)));
+        .flatMap((day) => HALVES[day.absent].filter((half) => isWorkingHalf({ date: parseISO(day.date), half })));
       return { from, to, workDays: workingHalves.length / 2 };
     },
 
