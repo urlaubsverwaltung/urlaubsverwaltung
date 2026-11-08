@@ -20,6 +20,7 @@ import startOfWeek from "../../lib/date-fns/start-of-week";
 import { escapeHtml } from "../../js/escape-html";
 import formatNumber from "../../js/format-number";
 import { slideFrom } from "../../js/motion";
+import { disposeTooltip, hideTooltip, prepareTooltip } from "../tooltip/tooltip";
 import "./calendar.css";
 
 const numberOfMonths = 10;
@@ -132,6 +133,8 @@ const View = (function () {
   // the popover open when the pointer went down, see `display`
   let openDayPopover;
   let dayPopoverSlide;
+  // the day of the open popover goes without its tooltip, see `withoutTooltip`
+  let dayWithoutTooltip;
 
   const TMPL = {
     container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
@@ -582,6 +585,23 @@ const View = (function () {
     dayPopoverSlide = slideFrom(dayPopover, dx);
   }
 
+  // the popover tells what the tooltip of its day does, and the tooltip would cover a popover opening above the day
+  function withoutTooltip(dayElement) {
+    hideTooltip();
+    const text = dayElement.dataset.title ?? dayElement.getAttribute("title");
+    if (text) {
+      disposeTooltip(dayElement);
+      dayWithoutTooltip = { element: dayElement, text };
+    }
+  }
+
+  function restoreTooltip() {
+    if (dayWithoutTooltip) {
+      prepareTooltip(dayWithoutTooltip.element, { text: dayWithoutTooltip.text });
+      dayWithoutTooltip = undefined;
+    }
+  }
+
   const View = {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
@@ -592,6 +612,13 @@ const View = (function () {
       dayPopover.className = "calendar-day-popover";
       dayPopover.setAttribute("popover", "");
       rootElement.append(dayPopover);
+
+      // the toggle event comes after the popover may have been opened at another day already
+      dayPopover.addEventListener("toggle", function () {
+        if (!dayPopover.matches(":popover-open")) {
+          restoreTooltip();
+        }
+      });
 
       // a click on another day light dismisses the popover before the click reaches the day. so where the popover was
       // is remembered on pointerdown already, when it is still open.
@@ -628,6 +655,8 @@ const View = (function () {
 
       rootElement.querySelector(`.${CSS.dayPopoverAnchor}`)?.classList.remove(CSS.dayPopoverAnchor);
       dayElement.classList.add(CSS.dayPopoverAnchor);
+      restoreTooltip();
+      withoutTooltip(dayElement);
       dayPopover.showPopover();
       slideDayPopover(dayPopover, dayElement);
 

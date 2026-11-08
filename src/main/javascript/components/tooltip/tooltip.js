@@ -250,3 +250,19 @@ export function disposeTooltip(element) {
   element.removeAttribute("title");
   delete element.dataset.title;
 }
+
+/**
+ * Hides the tooltip at once, without fading out - e.g. when something else opens over its anchor.
+ * A tooltip waiting for its hover delay is not shown anymore.
+ */
+export function hideTooltip() {
+  clearTimeout(showTimerId);
+  showTimerId = undefined;
+  pendingAnchor = undefined;
+  if (state === "open" || state === "pendingHide") {
+    clearTimeout(hideTimerId);
+    finalizeHide();
+  } else {
+    state = "idle";
+  }
+}

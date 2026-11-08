@@ -618,6 +618,65 @@ describe("calendar", () => {
       });
     });
 
+    describe("without the tooltip of its day", () => {
+      const vacation = {
+        absenceType: "VACATION",
+        absent: "FULL",
+        status: "ALLOWED",
+        from: "2017-12-14",
+        to: "2017-12-15",
+      };
+
+      function clickDay(date) {
+        const day = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+        day.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+        day.click();
+        return day;
+      }
+
+      it("while it is open", async () => {
+        const day = await clickDayWithAbsences("2017-12-15", [vacation]);
+
+        expect(day.hasAttribute("title")).toBe(false);
+        expect(day.dataset.title).toBeUndefined();
+      });
+
+      it("until it is closed", async () => {
+        const day = await clickDayWithAbsences("2017-12-15", [vacation]);
+
+        // jsdom does not implement the popover api, the popover is never open
+        document.querySelector("#calendar-day-popover").dispatchEvent(new Event("toggle"));
+
+        expect(day.getAttribute("title")).toBe("Erholungsurlaub");
+      });
+
+      it("until it opens at another day", async () => {
+        const day = await clickDayWithAbsences("2017-12-15", [
+          { ...vacation, date: "2017-12-14" },
+          { ...vacation, date: "2017-12-15" },
+        ]);
+
+        const otherDay = clickDay("2017-12-14");
+
+        expect(day.getAttribute("title")).toBe("Erholungsurlaub");
+        expect(otherDay.hasAttribute("title")).toBe(false);
+      });
+
+      it("when the closing of the previous day is told after it opened at another day", async () => {
+        await clickDayWithAbsences("2017-12-15", [
+          { ...vacation, date: "2017-12-14" },
+          { ...vacation, date: "2017-12-15" },
+        ]);
+        const otherDay = clickDay("2017-12-14");
+
+        const popover = document.querySelector("#calendar-day-popover");
+        popover.matches = (selector) => selector === ":popover-open";
+        popover.dispatchEvent(new Event("toggle"));
+
+        expect(otherDay.hasAttribute("title")).toBe(false);
+      });
+    });
+
     it("for a weekend without the permission to apply for leave", async () => {
       await clickDayWithAbsences("2017-12-16", [{ absenceType: "NO_WORKDAY", absent: "FULL", status: "ACTIVE" }], {
         canApplyForLeave: false,
