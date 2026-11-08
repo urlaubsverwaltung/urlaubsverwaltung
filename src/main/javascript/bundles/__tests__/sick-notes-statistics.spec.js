@@ -12,7 +12,7 @@ describe("sick-notes-statistics", function () {
   let chartInstances;
   let MockApexCharts;
   let themeObservable;
-  let reducedMotionObservable;
+  let reducedMotion;
 
   beforeEach(function () {
     vi.resetModules();
@@ -30,11 +30,11 @@ describe("sick-notes-statistics", function () {
     });
 
     themeObservable = observable("light");
-    reducedMotionObservable = observable(false);
+    reducedMotion = false;
 
     vi.doMock("apexcharts/core", () => ({ default: MockApexCharts }));
     vi.doMock("../../js/use-theme", () => ({ useTheme: () => ({ theme: themeObservable }) }));
-    vi.doMock("../../js/use-media", () => ({ useMedia: () => ({ matches: reducedMotionObservable }) }));
+    vi.doMock("../../js/motion", () => ({ prefersReducedMotion: () => reducedMotion }));
 
     document.body.innerHTML = `
       <div id="sicknote-statistic-chart"></div>
@@ -452,7 +452,7 @@ describe("sick-notes-statistics", function () {
   describe("reduced motion handling", function () {
     it("disables animations for every chart when reduced motion is preferred", async function () {
       setSicknoteStatistic();
-      reducedMotionObservable.value = true;
+      reducedMotion = true;
       await loadModule();
 
       for (const { options } of chartInstances) {
@@ -462,7 +462,7 @@ describe("sick-notes-statistics", function () {
 
     it("enables animations for every chart when reduced motion is not preferred", async function () {
       setSicknoteStatistic();
-      reducedMotionObservable.value = false;
+      reducedMotion = false;
       await loadModule();
 
       for (const { options } of chartInstances) {

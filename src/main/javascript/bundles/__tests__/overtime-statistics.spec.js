@@ -11,7 +11,7 @@ describe("overtime-statistics", function () {
   let chartInstances;
   let MockApexCharts;
   let themeObservable;
-  let reducedMotionObservable;
+  let reducedMotion;
 
   beforeEach(function () {
     vi.resetModules();
@@ -28,11 +28,11 @@ describe("overtime-statistics", function () {
     });
 
     themeObservable = observable("light");
-    reducedMotionObservable = observable(false);
+    reducedMotion = false;
 
     vi.doMock("apexcharts/core", () => ({ default: MockApexCharts }));
     vi.doMock("../../js/use-theme", () => ({ useTheme: () => ({ theme: themeObservable }) }));
-    vi.doMock("../../js/use-media", () => ({ useMedia: () => ({ matches: reducedMotionObservable }) }));
+    vi.doMock("../../js/motion", () => ({ prefersReducedMotion: () => reducedMotion }));
 
     document.body.innerHTML = `
       <div id="overtime-statistics-chart"></div>
@@ -227,8 +227,7 @@ describe("overtime-statistics", function () {
   });
 
   it("disables animations when the user prefers reduced motion", async function () {
-    reducedMotionObservable = observable(true);
-    vi.doMock("../../js/use-media", () => ({ useMedia: () => ({ matches: reducedMotionObservable }) }));
+    reducedMotion = true;
 
     setOvertimeStatistics();
     await import("../overtime-statistics.js");
