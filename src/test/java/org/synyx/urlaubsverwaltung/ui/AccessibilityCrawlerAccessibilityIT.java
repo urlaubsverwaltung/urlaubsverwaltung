@@ -122,7 +122,8 @@ class AccessibilityCrawlerAccessibilityIT {
                 // 1. Navigate to the page and wait until network traffic calms down
                 page.navigate(currentUrl, new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
 
-                // 2. Forms with required controls must leave the validation to the server (see AGENTS.md).
+                // 2. Forms with required controls must leave the validation to the server
+                //    (see docs/adr/2026-10-30-accessible-required-form-fields.md).
                 //    Checked before the audit, so a failing audit does not skip it
                 @SuppressWarnings("unchecked")
                 final List<String> formActions = (List<String>) page.locator("form:not([novalidate]):has(:required)")

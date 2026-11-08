@@ -1,17 +1,13 @@
 # AGENTS.md
 
-Decisions are recorded in [docs/adr](docs/adr). Read the relevant ones before changing the affected code.
+## Decisions
 
-## Accessibility
+Decisions are recorded in [docs/adr](docs/adr), see its [README](docs/adr/README.md) for how to add one.
+Before working in the area of an ADR, read its Decision section, e.g. `sed '/^## Context/q' <file>`. Read the rest
+only to question or change the decision.
 
-- Prefer native HTML and visible (or visually hidden) text over ARIA attributes. Use ARIA only where HTML
-  has no equivalent.
-- Required form fields: `required` on the control, `novalidate` on the form, no `is-required` on the label.
-  Radio and checkbox groups keep `uv-form__label--required` on their group label, required radios get
-  `required` as well. `is-required` stays only for a control composed of several inputs where one of them
-  is sufficient. The server side validation is the source of truth, keep it in sync with the `required`
-  attributes and marker classes.
-  See [ADR 1](docs/adr/0001-accessible-required-form-fields.md).
+- [Mark required form fields with the required attribute and leave their validation to the server](docs/adr/2026-10-30-accessible-required-form-fields.md):
+  when adding or changing form fields, their labels or their validation, or choosing between ARIA and native HTML.
 
 ## Frontend assets
 
