@@ -2,6 +2,26 @@ apiVersion: v1
 entries:
   urlaubsverwaltung:
   - apiVersion: v2
+    appVersion: 6.22.0
+    created: "2026-11-09T08:33:23.807182569Z"
+    description: Helm Chart for the urlaubsverwaltung
+    digest: 1f9de25b45f4241080faea98301228db77facdbd62e93715344085cf49703c34
+    home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    keywords:
+    - urlaub
+    maintainers:
+    - email: Johannes.Graf@focus-shift.de
+      name: Johannes Graf
+    - email: Tobias.Schneider@focus-shift.de
+      name: Tobias Schneider
+    name: urlaubsverwaltung
+    sources:
+    - https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    type: application
+    urls:
+    - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-7.22.0.tgz
+    version: 7.22.0
+  - apiVersion: v2
     appVersion: 6.21.0
     created: "2026-11-02T08:45:01.981391503Z"
     description: Helm Chart for the urlaubsverwaltung
@@ -3138,4 +3158,4 @@ entries:
     urls:
     - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-02T08:45:01.980524149Z"
+generated: "2026-11-09T08:33:23.805921032Z"
