@@ -15,9 +15,10 @@
   /*
    * Reserve the box apexcharts will fill. This element is empty until the chart bundle has been
    * downloaded and executed - without a reservation the page paints with a collapsed chart and
-   * then reflows by the full chart height once apexcharts sets its own min-height here.
-   * apexcharts reserves the canvas height only (CHART_HEIGHT in overtime-statistics.js - keep the
-   * 340px in sync), the padding of this border-box element comes on top of it.
+   * then reflows by the full chart height once the chart is drawn. apexcharts reserves the chart
+   * height on its own .apexcharts-canvas and leaves this element alone, so this reservation stays:
+   * the canvas height (CHART_HEIGHT in overtime-statistics.js - keep the 340px in sync) plus
+   * the padding of this border-box element.
    */
   min-height: calc(340px + --spacing(2));
 
