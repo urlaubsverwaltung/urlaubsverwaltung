@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Month.OCTOBER;
+import static java.util.Locale.GERMAN;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +63,7 @@ class CsvExportServiceTest {
 
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, OCTOBER, 2), LocalDate.of(2022, OCTOBER, 3));
         final ByteArrayResource aLotOfData = sut.resource(period, JAPANESE, List.of("A lot of data", "Next data"));
-        assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data;Next data");
+        assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("\"A lot of data\";\"Next data\"");
     }
 
     @Test
@@ -84,5 +85,40 @@ class CsvExportServiceTest {
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, OCTOBER, 2), LocalDate.of(2022, OCTOBER, 3));
         final ByteArrayResource aLotOfData = sut.resource(period, JAPANESE, List.of("A lot of data"));
         assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data");
+    }
+
+    @Test
+    void ensureValuesWithSeparatorOrLineBreakStayInTheirCell() {
+        final String csv = writeRow("Muster; Marlene", "first line\nsecond line", "say \"hi\"");
+        assertThat(csv).contains("\"Muster; Marlene\";\"first line\nsecond line\";\"say \"\"hi\"\"\"");
+    }
+
+    @Test
+    void ensureValuesStartingLikeAFormulaAreEscaped() {
+        final String csv = writeRow("=HYPERLINK(\"https://example.org\")", "+49 123", "-1+1", "@SUM(A1)", "\t=1+1", "\r=1+1");
+        assertThat(csv).contains("\"'=HYPERLINK(\"\"https://example.org\"\")\";\"'+49 123\";\"'-1+1\";\"'@SUM(A1)\";\"'\t=1+1\";\"'\r=1+1\"");
+    }
+
+    @Test
+    void ensureNumbersAreNotEscaped() {
+        final String csv = writeRow("-1,5", "-1.234,5", "+2", "-0.5", "3", "", null);
+        assertThat(csv).contains("\"-1,5\";\"-1.234,5\";\"+2\";\"-0.5\";\"3\";\"\";\"\"");
+    }
+
+    private static String writeRow(String... values) {
+        final CsvExportService<String> sut = new CsvExportService<>() {
+            @Override
+            public void write(FilterPeriod period, Locale locale, List<String> data, CSVWriter csvWriter) {
+                csvWriter.writeNext(values);
+            }
+
+            @Override
+            public String fileName(FilterPeriod period, Locale locale) {
+                return "someFileName.csv";
+            }
+        };
+
+        final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, OCTOBER, 2), LocalDate.of(2022, OCTOBER, 3));
+        return new String(sut.resource(period, GERMAN, List.of()).getByteArray(), UTF_8);
     }
 }

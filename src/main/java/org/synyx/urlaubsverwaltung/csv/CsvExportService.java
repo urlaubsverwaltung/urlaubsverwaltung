@@ -12,9 +12,6 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Locale;
 
-import static com.opencsv.ICSVWriter.DEFAULT_LINE_END;
-import static com.opencsv.ICSVWriter.DEFAULT_QUOTE_CHARACTER;
-import static com.opencsv.ICSVWriter.NO_QUOTE_CHARACTER;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public interface CsvExportService<T> {
@@ -81,7 +78,7 @@ public interface CsvExportService<T> {
             byteArrayOutputStream.write(bom());
 
             try (final OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, UTF_8)) {
-                try (final CSVWriter csvWriter = new CSVWriter(outputStreamWriter, separator(), NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_LINE_END)) {
+                try (final CSVWriter csvWriter = new FormulaEscapingCsvWriter(outputStreamWriter, separator())) {
                     write(period, locale, data, csvWriter);
                 }
             }
