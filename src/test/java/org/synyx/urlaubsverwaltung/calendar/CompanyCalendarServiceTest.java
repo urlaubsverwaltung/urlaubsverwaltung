@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +47,8 @@ class CompanyCalendarServiceTest {
     @Mock
     private CompanyCalendarRepository companyCalendarRepository;
     @Mock
+    private CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
+    @Mock
     private ICalService iCalService;
     @Mock
     private PersonService personService;
@@ -57,7 +62,7 @@ class CompanyCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new CompanyCalendarService(calendarAbsenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
+        sut = new CompanyCalendarService(calendarAbsenceService, companyCalendarRepository, companyCalendarAccessibleRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
@@ -74,6 +79,7 @@ class CompanyCalendarServiceTest {
         companyCalendar.setId(1L);
         companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
+        companyCalendarIsAccessible(true);
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
@@ -203,6 +209,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        companyCalendarIsAccessible(true);
 
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
@@ -218,6 +225,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        companyCalendarIsAccessible(true);
 
         final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();
         final String secretBeforeUpdate = expectedCompanyCalendar.getSecret();
@@ -230,6 +238,50 @@ class CompanyCalendarServiceTest {
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
         assertThat(actualCalendarForPerson.getSecret()).isNotEqualTo(secretBeforeUpdate);
+    }
+
+    @Test
+    void ensureCreateCalendarForPersonIsDeniedWhenCompanyCalendarIsDisabled() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        companyCalendarIsAccessible(false);
+
+        assertThatThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")))
+            .isInstanceOf(AccessDeniedException.class);
+        verify(companyCalendarRepository, never()).save(any());
+    }
+
+    @Test
+    void ensureCreateCalendarForOfficeWhenCompanyCalendarIsDisabled() {
+
+        final Person office = new Person("office", "Office", "Olga", "office@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(office));
+        when(companyCalendarRepository.findByPerson(office)).thenReturn(Optional.empty());
+        when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
+
+        assertThat(sut.createCalendarForPerson(1, java.time.Period.parse("P12M")).getPerson()).isEqualTo(office);
+    }
+
+    @Test
+    void getCalendarForAllFailsWhenCompanyCalendarIsDisabled() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(new CompanyCalendar(person)));
+        companyCalendarIsAccessible(false);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForAll(10L, "secret", GERMAN));
+        verifyNoInteractions(iCalService);
+    }
+
+    private void companyCalendarIsAccessible(boolean accessible) {
+        final CompanyCalendarAccessible companyCalendarAccessible = new CompanyCalendarAccessible();
+        companyCalendarAccessible.setAccessible(accessible);
+        when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of(companyCalendarAccessible));
     }
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

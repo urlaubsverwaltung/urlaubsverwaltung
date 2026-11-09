@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -63,6 +64,12 @@ public class DepartmentCalendarService {
             throw new IllegalStateException("department with id does not exist.");
         }
 
+        final boolean isMember = departmentService.getAssignedDepartmentsOfMember(person).stream()
+            .anyMatch(department -> department.getId().equals(departmentId));
+        if (!isMember) {
+            throw new AccessDeniedException("person=%s is not a member of department=%s".formatted(personId, departmentId));
+        }
+
         final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.orElseGet(DepartmentCalendar::new);
         departmentCalendar.setDepartmentId(departmentId);
@@ -100,6 +107,11 @@ public class DepartmentCalendarService {
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.get();
         if (!departmentCalendar.getDepartmentId().equals(departmentId)) {
             throw new IllegalArgumentException("Secret=%s does not match the given departmentId=%s".formatted(secret, departmentId));
+        }
+
+        // the calendar is deleted asynchronously when the person leaves the department, do not serve it until then
+        if (!department.getMembers().contains(person)) {
+            throw new IllegalArgumentException("person=%s is not a member of department=%s anymore".formatted(personId, departmentId));
         }
 
         final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
