@@ -131,10 +131,10 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         sicknoteExtensionService.updateExtensionsForConvertedSickNote(convertedSickNote);
 
         commentService.create(convertedSickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
-        applicationInteractionService.createFromConvertedSickNote(application, converter);
+        final Application savedApplication = applicationInteractionService.createFromConvertedSickNote(application, converter);
         LOG.info("Converted sick note to vacation: {}", convertedSickNote);
 
-        applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(convertedSickNote, application));
+        applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(convertedSickNote, savedApplication));
 
         return convertedSickNote;
     }

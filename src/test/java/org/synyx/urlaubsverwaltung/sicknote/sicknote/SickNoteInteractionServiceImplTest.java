@@ -296,6 +296,10 @@ class SickNoteInteractionServiceImplTest {
                 .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
                 .build();
 
+            final Application savedApplicationForLeave = new Application();
+            savedApplicationForLeave.setId(1L);
+            when(applicationInteractionService.createFromConvertedSickNote(applicationForLeave, creator)).thenReturn(savedApplicationForLeave);
+
             final SickNote convertedSickNote = sut.convert(sickNote, applicationForLeave, creator);
             assertThat(convertedSickNote).isNotNull();
             assertThat(convertedSickNote.getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
@@ -303,9 +307,6 @@ class SickNoteInteractionServiceImplTest {
             // assert sick note correctly updated
             verify(sickNoteService).save(sickNote);
             verify(commentService).create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, creator);
-
-            // assert application for leave correctly created
-            verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, creator);
 
             final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
             verify(sickNoteService).save(captor.capture());
@@ -315,7 +316,7 @@ class SickNoteInteractionServiceImplTest {
             verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
             final SickNoteToApplicationConvertedEvent sickNoteToApplicationConvertedEvent = eventCaptor.getValue();
             assertThat(sickNoteToApplicationConvertedEvent.sickNote()).isEqualTo(convertedSickNote);
-            assertThat(sickNoteToApplicationConvertedEvent.application()).isEqualTo(applicationForLeave);
+            assertThat(sickNoteToApplicationConvertedEvent.application()).isSameAs(savedApplicationForLeave);
             assertThat(sickNoteToApplicationConvertedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(sickNoteToApplicationConvertedEvent.id()).isNotNull();
         }

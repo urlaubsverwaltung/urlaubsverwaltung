@@ -70,7 +70,13 @@ class CalendarSyncService {
     @Async
     @EventListener
     public void consumeApplicationAllowedEvent(ApplicationAllowedEvent event) {
-        updateCalendarEntry(event.application());
+        final Application application = event.application();
+        // a directly allowed application has never been applied for, so it has no calendar entry yet
+        if (getAbsenceByIdAndType(application.getId(), VACATION).isPresent()) {
+            updateCalendarEntry(application);
+        } else {
+            addCalendarEntry(application);
+        }
     }
 
     @Async
