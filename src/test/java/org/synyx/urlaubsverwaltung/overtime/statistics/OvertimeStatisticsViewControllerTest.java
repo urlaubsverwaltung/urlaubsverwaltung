@@ -182,6 +182,20 @@ class OvertimeStatisticsViewControllerTest {
     }
 
     @Test
+    void ensureGraphRoundsDecimalHours() throws Exception {
+
+        overtimeFeature(true);
+        statisticsOf(Year.of(2026), months(Duration.ofMinutes(80)), months(Duration.ofMinutes(61)));
+
+        final MvcResult result = perform(get("/web/overtime/statistics")).andExpect(status().isOk()).andReturn();
+
+        final OvertimeStatisticsViewController.MonthlySeriesDto graph = selectedSeriesOf(result);
+
+        assertThat(graph.accrued().getFirst()).isEqualByComparingTo(new BigDecimal("1.333"));
+        assertThat(graph.reduction().getFirst()).isEqualByComparingTo(new BigDecimal("-1.017"));
+    }
+
+    @Test
     void ensureGraphCarriesFormattedValuesForTooltipAndTable() throws Exception {
 
         overtimeFeature(true);

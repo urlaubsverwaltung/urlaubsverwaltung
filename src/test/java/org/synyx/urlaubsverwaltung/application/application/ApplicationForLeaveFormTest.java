@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -26,6 +28,24 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form.getHours()).isNull();
         assertThat(form.getMinutes()).isNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "0, 0, 0",
+        "59, 0, 59",
+        "60, 1, 0",
+        "119, 1, 59",
+        "1500, 25, 0",
+        "-90, 1, 30",
+    })
+    void ensureBuilderSplitsHourDurationIntoHoursAndMinutes(long durationMinutes, String hours, int minutes) {
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
+            .hoursAndMinutes(Duration.ofMinutes(durationMinutes))
+            .build();
+
+        assertThat(form.getHours()).isEqualByComparingTo(hours);
+        assertThat(form.getMinutes()).isEqualTo(minutes);
     }
 
     @Test

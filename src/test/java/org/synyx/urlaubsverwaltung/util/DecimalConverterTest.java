@@ -22,4 +22,12 @@ class DecimalConverterTest {
         final BigDecimal bigDecimal = DecimalConverter.toFormattedDecimal(tenHoursTwoMinutes);
         assertThat(bigDecimal).isEqualByComparingTo(BigDecimal.valueOf(602));
     }
+
+    @Test
+    void toDecimalHours() {
+        assertThat(DecimalConverter.toDecimalHours(Duration.ofMinutes(80))).isEqualByComparingTo("1.333");
+        assertThat(DecimalConverter.toDecimalHours(Duration.ofMinutes(61))).isEqualByComparingTo("1.017");
+        assertThat(DecimalConverter.toDecimalHours(Duration.ofMinutes(-90))).isEqualByComparingTo("-1.5");
+        assertThat(DecimalConverter.toDecimalHours(Duration.ZERO)).isEqualByComparingTo("0");
+    }
 }

@@ -35,7 +35,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -331,16 +330,14 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
                 signedInUser.getId(), person.getId()));
         }
 
-        final BigDecimal overtimeHours = BigDecimal.valueOf((double) overtime.duration().toMinutes() / 60);
-
         final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
         overtimeFormDto.setId(overtime.id().value());
         overtimeFormDto.setPerson(person);
         overtimeFormDto.setStartDate(overtime.startDate());
         overtimeFormDto.setEndDate(overtime.endDate());
-        overtimeFormDto.setHours(overtimeHours.setScale(0, RoundingMode.DOWN).abs());
-        overtimeFormDto.setMinutes(overtimeHours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact());
-        overtimeFormDto.setReduce(overtimeHours.doubleValue() < 0);
+        overtimeFormDto.setHours(BigDecimal.valueOf(Math.abs(overtime.duration().toHours())));
+        overtimeFormDto.setMinutes(Math.abs(overtime.duration().toMinutesPart()));
+        overtimeFormDto.setReduce(overtime.duration().isNegative());
 
         prepareModelForEdit(model, signedInUser, person, overtimeFormDto);
 

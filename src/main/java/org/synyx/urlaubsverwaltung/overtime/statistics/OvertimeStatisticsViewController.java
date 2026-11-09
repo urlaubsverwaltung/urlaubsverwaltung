@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 
 import java.math.BigDecimal;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.math.RoundingMode.HALF_UP;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
@@ -41,9 +41,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @RequestMapping("/web/overtime/statistics")
 @PreAuthorize(IS_PRIVILEGED_USER)
 class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch {
-
-    private static final int MINUTES_PER_HOUR = 60;
-    private static final int DECIMAL_HOUR_SCALE = 2;
 
     private final OvertimeStatisticsService overtimeStatisticsService;
     private final PersonService personService;
@@ -137,7 +134,7 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
         final List<Duration> cumulative = statistics.cumulativeBalanceByMonth();
         return new BalanceSeriesDto(
             statistics.year().getValue(),
-            cumulative.stream().map(OvertimeStatisticsViewController::toDecimalHours).toList(),
+            cumulative.stream().map(DecimalConverter::toDecimalHours).toList(),
             toTexts(cumulative, locale)
         );
     }
@@ -174,9 +171,9 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
     private MonthlySeriesDto toMonthlySeriesDto(OvertimeStatistics statistics, Locale locale) {
         return new MonthlySeriesDto(
             statistics.year().getValue(),
-            statistics.accruedByMonth().stream().map(OvertimeStatisticsViewController::toDecimalHours).toList(),
+            statistics.accruedByMonth().stream().map(DecimalConverter::toDecimalHours).toList(),
             // negated, so that apexcharts renders the reduction below the zero line
-            statistics.reductionByMonth().stream().map(Duration::negated).map(OvertimeStatisticsViewController::toDecimalHours).toList(),
+            statistics.reductionByMonth().stream().map(Duration::negated).map(DecimalConverter::toDecimalHours).toList(),
             toTexts(statistics.accruedByMonth(), locale),
             toTexts(statistics.reductionByMonth(), locale),
             toTexts(statistics.balanceByMonth(), locale)
@@ -189,15 +186,6 @@ class OvertimeStatisticsViewController implements HasLaunchpad, HasPersonSearch 
 
     private String toText(Duration duration, Locale locale) {
         return DurationFormatter.toDurationString(duration, messageSource, locale);
-    }
-
-    /**
-     * Apexcharts needs plain numbers, therefore the chart axis works with decimal hours while every value shown to a
-     * user is formatted by the {@link DurationFormatter}.
-     */
-    private static BigDecimal toDecimalHours(Duration duration) {
-        return BigDecimal.valueOf(duration.toMinutes())
-            .divide(BigDecimal.valueOf(MINUTES_PER_HOUR), DECIMAL_HOUR_SCALE, HALF_UP);
     }
 
     /**

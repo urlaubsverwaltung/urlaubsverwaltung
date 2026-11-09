@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -784,6 +785,43 @@ class OvertimeViewControllerTest {
                 .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
                 .andExpect(model().attribute("person", is(overtimePerson)))
                 .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "-90, 1, 30, true",
+        "-30, 0, 30, true",
+        "0, 0, 0, false",
+        "59, 0, 59, false",
+        "119, 1, 59, false",
+        "1500, 25, 0, false",
+    })
+    void editOvertimeSplitsDurationIntoHoursAndMinutes(long durationMinutes, String hours, int minutes, boolean reduce) throws Exception {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(1L);
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, FEBRUARY, 5), LocalDate.of(2016, FEBRUARY, 5)),
+            ofMinutes(durationMinutes),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+
+        mockSettingsWithOvertimeActive();
+
+        final OvertimeFormDto overtimeFormDto = (OvertimeFormDto) perform(get("/web/overtime/2/edit"))
+            .andReturn().getModelAndView().getModel().get("overtime");
+
+        assertThat(overtimeFormDto.getHours()).isEqualByComparingTo(hours);
+        assertThat(overtimeFormDto.getMinutes()).isEqualTo(minutes);
+        assertThat(overtimeFormDto.isReduce()).isEqualTo(reduce);
     }
 
     @Test

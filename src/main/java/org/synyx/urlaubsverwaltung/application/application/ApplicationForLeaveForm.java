@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -305,9 +304,8 @@ public class ApplicationForLeaveForm {
         public ApplicationForLeaveForm.Builder hoursAndMinutes(Duration hours) {
 
             if (hours != null) {
-                final BigDecimal overtimeReduction = BigDecimal.valueOf((double) hours.toMinutes() / 60);
-                this.hours = overtimeReduction.setScale(0, RoundingMode.DOWN).abs();
-                this.minutes = overtimeReduction.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
+                this.hours = BigDecimal.valueOf(Math.abs(hours.toHours()));
+                this.minutes = Math.abs(hours.toMinutesPart());
             }
 
             return this;
