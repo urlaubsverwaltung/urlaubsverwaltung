@@ -177,14 +177,10 @@ public class VacationDaysService {
                 final BigDecimal vacationDays = account.getActualVacationDays();
                 final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
-                final BigDecimal remainingVacationDaysNotExpiring;
-                final LocalDate today = LocalDate.now(clock);
-                if (!account.doRemainingVacationDaysExpire() || today.isBefore(account.getExpiryDate())) {
-                    remainingVacationDaysNotExpiring =  remainingVacationDays;
-                } else {
-                    // it's after expiry day - only the left not expiring remaining vacation days must be used
-                    remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-                }
+                // independent of today: days after the expiry date can only use the not expiring remaining vacation days
+                final BigDecimal remainingVacationDaysNotExpiring = account.doRemainingVacationDaysExpire()
+                    ? account.getRemainingVacationDaysNotExpiring()
+                    : remainingVacationDays;
 
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
