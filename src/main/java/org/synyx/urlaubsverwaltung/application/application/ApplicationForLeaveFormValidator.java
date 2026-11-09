@@ -456,15 +456,17 @@ class ApplicationForLeaveFormValidator implements Validator {
             final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
             final boolean overtimeActive = overtimeSettings.isOvertimeActive();
 
-            if (overtimeActive && applicationForLeaveForm.getHours() != null) {
-                return checkOvertimeHours(applicationForLeaveForm, overtimeSettings);
+            // hours and minutes, the same duration that is saved as overtime reduction
+            final Duration overtimeReduction = applicationForLeaveForm.getOvertimeReduction();
+            if (overtimeActive && overtimeReduction != null) {
+                return checkOvertimeHours(applicationForLeaveForm, overtimeReduction, overtimeSettings);
             }
         }
 
         return true;
     }
 
-    private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, OvertimeSettings settings) {
+    private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, Duration overtimeReduction, OvertimeSettings settings) {
 
         final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
 
@@ -475,7 +477,7 @@ class ApplicationForLeaveFormValidator implements Validator {
             leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson());
         }
 
-        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(Duration.ofHours(applicationForLeaveForm.getHours().longValue()));
+        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(overtimeReduction);
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;
     }
