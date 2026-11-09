@@ -38,10 +38,6 @@ public final class PersonUpdate {
         return new PersonUpdate(null, null, notifications, null);
     }
 
-    public PersonUpdate withPersonalData(String username, String firstName, String lastName, String email) {
-        return new PersonUpdate(new PersonalData(username, firstName, lastName, email), permissions, notifications, emailVerification);
-    }
-
     public PersonUpdate withPermissions(Collection<Role> permissions) {
         return new PersonUpdate(personalData, permissions, notifications, emailVerification);
     }

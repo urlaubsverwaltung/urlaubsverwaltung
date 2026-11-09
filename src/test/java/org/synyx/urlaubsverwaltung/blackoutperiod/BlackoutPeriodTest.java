@@ -60,19 +60,6 @@ class BlackoutPeriodTest {
     }
 
     @Test
-    void ensureOverlapsIsInclusiveOnBothBoundaries() {
-
-        final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
-        blackoutPeriod.setStartDate(LocalDate.of(2026, DECEMBER, 20));
-        blackoutPeriod.setEndDate(LocalDate.of(2027, JANUARY, 5));
-
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 20))).isTrue();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, JANUARY, 5), LocalDate.of(2027, JANUARY, 31))).isTrue();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 19))).isFalse();
-        assertThat(blackoutPeriod.overlaps(LocalDate.of(2027, JANUARY, 6), LocalDate.of(2027, JANUARY, 31))).isFalse();
-    }
-
-    @Test
     void ensureToString() {
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();

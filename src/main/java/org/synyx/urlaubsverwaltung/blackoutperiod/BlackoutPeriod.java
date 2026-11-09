@@ -125,10 +125,6 @@ public class BlackoutPeriod {
         return !companyWide && departments.isEmpty();
     }
 
-    public boolean overlaps(LocalDate otherStartDate, LocalDate otherEndDate) {
-        return !startDate.isAfter(otherEndDate) && !endDate.isBefore(otherStartDate);
-    }
-
     @Override
     public String toString() {
         return "BlackoutPeriod{" +

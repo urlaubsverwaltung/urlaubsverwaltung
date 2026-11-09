@@ -62,10 +62,8 @@ class PersonUpdateTest {
         final PersonUpdate personUpdate = PersonUpdate.ofPermissions(List.of(USER));
 
         personUpdate.withNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        personUpdate.withPersonalData("muster", "Marlene", "Muster", "muster@example.org");
 
         assertThat(personUpdate.notifications()).isEmpty();
-        assertThat(personUpdate.personalData()).isEmpty();
     }
 
     @Test

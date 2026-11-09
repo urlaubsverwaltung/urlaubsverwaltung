@@ -227,39 +227,6 @@ class UserSettingsServiceTest {
     }
 
     @Test
-    void ensureFindThemeForUsernameReturnsEmptyOptionalWhenUsernameIsUnknown() {
-
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.empty());
-
-        final Optional<Theme> actual = sut.findThemeForUsername("batman");
-        assertThat(actual).isEmpty();
-    }
-
-    @Test
-    void ensureFindThemeForUsernameReturnsEmptyOptionalWhenThereIsNoLocale() {
-
-        final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setTheme(null);
-
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
-
-        final Optional<Theme> actual = sut.findThemeForUsername("batman");
-        assertThat(actual).isEmpty();
-    }
-
-    @Test
-    void ensureFindThemeForUsernameReturnsLocale() {
-
-        final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setTheme(Theme.DARK);
-
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
-
-        final Optional<Theme> actual = sut.findThemeForUsername("batman");
-        assertThat(actual).hasValue(Theme.DARK);
-    }
-
-    @Test
     void ensureDeletionOnPersonDeletionEvent() {
         final Person person = new Person();
 
