@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -289,50 +290,38 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     }
 
     private static String toDurationOfAbsenceDescription(Application application, MessageSource messageSource, Locale locale) {
-        final String timePattern = messageSource.getMessage("pattern.time", new Object[]{}, locale);
-        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
-        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(timePattern, locale);
-
         final LocalDate startDate = application.getStartDate();
-        final LocalDate endDate = application.getEndDate();
+        final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+        final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
-        final String dateStartString = startDate.format(dateFormatter);
-
-        if (startDate.isEqual(endDate)) {
-            final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
-            final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
-
-            if (startDateWithTime != null && endDateWithTime != null) {
-                final String startTime = startDateWithTime.format(timeFormatter);
-                final String endTime = endDateWithTime.format(timeFormatter);
-                return messageSource.getMessage("absence.period.singleDay.withStartAndEndTime", new Object[]{dateStartString, startTime, endTime}, locale);
-            }
-
-            final DayLength dayLength = application.getDayLength();
-            final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
-            return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
+        if (startDate.isEqual(application.getEndDate()) && startDateWithTime != null && endDateWithTime != null) {
+            final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(messageSource.getMessage("pattern.time", new Object[]{}, locale), locale);
+            final String startTime = startDateWithTime.format(timeFormatter);
+            final String endTime = endDateWithTime.format(timeFormatter);
+            return messageSource.getMessage("absence.period.singleDay.withStartAndEndTime", new Object[]{startDate.format(dateFormatter(locale)), startTime, endTime}, locale);
         }
 
-        final String dateEndString = endDate.format(dateFormatter);
-        return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
+        return toDurationOfAbsenceDescription(startDate, application.getEndDate(), application.getDayLength(), messageSource, locale);
     }
 
     private static String toDurationOfAbsenceDescription(SubmittedSickNote submittedSickNote, MessageSource messageSource, Locale locale) {
-        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
+        return toDurationOfAbsenceDescription(submittedSickNote.startDate(), submittedSickNote.nextEndDate(), submittedSickNote.sickNote().getDayLength(), messageSource, locale);
+    }
 
-        final LocalDate startDate = submittedSickNote.startDate();
-        final LocalDate endDate = submittedSickNote.nextEndDate();
-
+    private static String toDurationOfAbsenceDescription(LocalDate startDate, LocalDate endDate, @Nullable DayLength dayLength, MessageSource messageSource, Locale locale) {
+        final DateTimeFormatter dateFormatter = dateFormatter(locale);
         final String dateStartString = startDate.format(dateFormatter);
 
         if (startDate.isEqual(endDate)) {
-            final DayLength dayLength = submittedSickNote.sickNote().getDayLength();
             final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
             return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
         }
 
-        final String dateEndString = endDate.format(dateFormatter);
-        return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
+        return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, endDate.format(dateFormatter)}, locale);
+    }
+
+    private static DateTimeFormatter dateFormatter(Locale locale) {
+        return DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
     }
 
     private static ApplicationPersonDto toViewPerson(Person person, boolean allowedToAccessPersonData) {
