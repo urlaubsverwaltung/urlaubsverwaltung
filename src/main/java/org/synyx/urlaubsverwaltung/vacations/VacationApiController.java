@@ -22,7 +22,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -145,7 +147,15 @@ public class VacationApiController {
         final Person requestedPerson = getPerson(personId);
 
         final List<Application> applicationsOfColleagues = departmentService.getApplicationsFromColleaguesOf(requestedPerson, startDate, endDate);
-        return mapToVacationResponse(applicationsOfColleagues);
+
+        // same rule as the absence overview: the type of a colleague's absence is only shown when it is visible
+        // to everyone or the signed-in user may see the data of that colleague anyway
+        final Person signedInUser = personService.getSignedInUser();
+        final Map<Person, Boolean> signedInUserMayAccess = new HashMap<>();
+        return new VacationsDto(applicationsOfColleagues.stream()
+            .map(application -> new VacationDto(application, application.getVacationType().isVisibleToEveryone()
+                || signedInUserMayAccess.computeIfAbsent(application.getPerson(), colleague -> departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, colleague))))
+            .toList());
     }
 
     private Person getPerson(Long personId) {

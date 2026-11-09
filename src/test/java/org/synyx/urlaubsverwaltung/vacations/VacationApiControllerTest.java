@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.vacations;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.JUNE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
@@ -163,6 +167,33 @@ class VacationApiControllerTest {
     }
 
     @Test
+    void ensureColleagueVacationsHideTheTypeWhenItIsNotVisibleToEveryoneAndTheColleagueIsNotManaged() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person colleague = new Person("colleague", "Kollege", "Klaus", "kollege@example.org");
+        final Application specialLeave = createApplication(colleague, of(2016, MAY, 19), of(2016, MAY, 20), FULL, new StaticMessageSource());
+        specialLeave.setVacationType(ProvidedVacationType.builder(new StaticMessageSource()).id(2L).category(SPECIALLEAVE).visibleToEveryone(false).build());
+        final Application holiday = createApplication(colleague, of(2016, JUNE, 6), of(2016, JUNE, 7), FULL, new StaticMessageSource());
+        holiday.setVacationType(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).visibleToEveryone(true).build());
+
+        when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(List.of(specialLeave, holiday));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, colleague)).thenReturn(false);
+
+        perform(get("/api/persons/23/vacations")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31")
+            .param("ofDepartmentMembers", "true"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.vacations[0].type").doesNotExist())
+            .andExpect(jsonPath("$.vacations[0].from").value("2016-05-19"))
+            .andExpect(jsonPath("$.vacations[1].type").value("HOLIDAY"));
+    }
+
+    @Test
     void ensureToRetrieveApplicationsFromColleagues() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -181,6 +212,10 @@ class VacationApiControllerTest {
 
         when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(vacationAllowedCancelRequested, vacationAllowed));
+
+        final Person signedInUser = new Person("boss", "Boss", "Bettina", "boss@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, colleague)).thenReturn(true);
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
