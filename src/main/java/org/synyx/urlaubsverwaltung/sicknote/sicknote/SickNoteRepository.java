@@ -24,9 +24,6 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
     )
     List<SickNoteEntity> findByPersonAndPeriod(Person person, LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT COUNT(DISTINCT x.person) FROM SickNoteEntity x WHERE YEAR(x.startDate) = ?1 OR YEAR(x.endDate) = ?1 AND x.status = 'ACTIVE'")
-    Long findNumberOfPersonsWithMinimumOneSickNote(int year);
-
     // NOTE: Only needed to send email after certain duration of a sick note
     @Query(value = """
         SELECT *

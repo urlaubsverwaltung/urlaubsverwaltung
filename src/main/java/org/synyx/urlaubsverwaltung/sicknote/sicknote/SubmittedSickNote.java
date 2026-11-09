@@ -34,16 +34,6 @@ public record SubmittedSickNote(SickNote sickNote, Optional<SickNoteExtension> e
     }
 
     /**
-     * Calculates the next workdays the sickNote fills after extension is accepted by a privileged user.
-     *
-     * @return either next workdays including optional {@linkplain SickNoteExtension} or the current {@linkplain SickNote}.
-     */
-    public BigDecimal nextWorkdays() {
-        final BigDecimal workDays = sickNote.getWorkDays();
-        return additionalWorkdays().map(workDays::add).orElse(workDays);
-    }
-
-    /**
      * @return empty optional when there is no extension submitted, otherwise the additional workdays.
      */
     public Optional<BigDecimal> additionalWorkdays() {

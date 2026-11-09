@@ -43,10 +43,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
         userSettingsRepository.deleteByPerson(event.person());
     }
 
-    Optional<Theme> findThemeForUsername(String username) {
-        return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getTheme);
-    }
-
     @Override
     public Optional<Locale> getLocale(Person person) {
         return userSettingsRepository.findByPerson(person).map(UserSettingsEntity::getLocale);
