@@ -31,7 +31,7 @@ jobs:
           PATH="$PWD/node:$PATH" npx --yes @cyclonedx/cyclonedx-npm@6.0.1 --omit dev --output-file target/urlaubsverwaltung-${{ steps.vars.outputs.version }}-frontend.cdx.json
 
       - name: Create Release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
