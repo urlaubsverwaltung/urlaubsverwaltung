@@ -79,9 +79,9 @@ class BlackoutPeriodViewControllerTest {
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
-    private final BlackoutPeriodFormValidator validator = new BlackoutPeriodFormValidator();
     private final StaticMessageSource messageSource = new StaticMessageSource();
     private final Clock clock = Clock.fixed(Instant.parse("2026-06-15T00:00:00Z"), ZoneOffset.UTC);
+    private final BlackoutPeriodFormValidator validator = new BlackoutPeriodFormValidator(clock);
 
     @BeforeEach
     void setUp() {
