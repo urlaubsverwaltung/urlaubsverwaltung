@@ -1206,6 +1206,55 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     /**
+     * <p>0h overtime - 5h 30min (application) &lt; -5h overtime minimum</p>
+     */
+    @Test
+    void ensureErrorDueToMinimumOvertimeReachedByMinutes() {
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+
+        overtimeMinimumTest(Duration.ofMinutes(5 * 60 + 30));
+
+        verify(errors).reject("application.error.notEnoughOvertime");
+    }
+
+    /**
+     * <p>0h overtime - 30min (application, hours left empty) &lt; 0h overtime minimum</p>
+     */
+    @Test
+    void ensureErrorDueToMinimumOvertimeReachedWithOnlyMinutes() {
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setLabel("message_key");
+        vacationTypeDto.setCategory(OVERTIME);
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
+        appForm.setHours(null);
+        appForm.setMinutes(30);
+
+        setupOvertimeSettings().getOvertimeSettings().setMinimumOvertime(0);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
+
+        sut.validate(appForm, errors);
+
+        verify(errors).reject("application.error.notEnoughOvertime");
+    }
+
+    /**
      * User tries to make an application (overtime reduction) but has not enough overtime left and minimum overtime is
      * reached exactly -> application is valid.
      *
