@@ -17,7 +17,7 @@ class FormulaEscapingCsvWriter extends CSVWriter {
     private static final Pattern FORMULA_START = Pattern.compile("^[=+\\-@\\t\\r]");
     // numbers formatted by DecimalFormat like -1,5 or -1.234,5 (or with non-breaking spaces as grouping separator)
     // start with a sign as well, but must stay numbers
-    private static final Pattern NUMBER = Pattern.compile("^[+-]?\\d[\\d.,\\u00a0\\u202f]*$");
+    private static final Pattern NUMBER = Pattern.compile("[+-]?\\d[\\d.,\\u00a0\\u202f]*");
 
     FormulaEscapingCsvWriter(Writer writer, char separator) {
         super(writer, separator, DEFAULT_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_LINE_END);
@@ -25,11 +25,7 @@ class FormulaEscapingCsvWriter extends CSVWriter {
 
     @Override
     protected void writeNext(String[] nextLine, boolean applyQuotesToAll, Appendable appendable) throws IOException {
-        if (nextLine == null) {
-            super.writeNext(null, true, appendable);
-            return;
-        }
-        final String[] escaped = Arrays.stream(nextLine).map(FormulaEscapingCsvWriter::escape).toArray(String[]::new);
+        final String[] escaped = nextLine == null ? null : Arrays.stream(nextLine).map(FormulaEscapingCsvWriter::escape).toArray(String[]::new);
         super.writeNext(escaped, true, appendable);
     }
 
