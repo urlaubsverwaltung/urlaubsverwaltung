@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -26,6 +27,7 @@ public class CompanyCalendarService {
 
     private final CalendarAbsenceService calendarAbsenceService;
     private final CompanyCalendarRepository companyCalendarRepository;
+    private final CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
     private final ICalService iCalService;
     private final PersonService personService;
     private final MessageSource messageSource;
@@ -35,11 +37,13 @@ public class CompanyCalendarService {
     CompanyCalendarService(
         CalendarAbsenceService calendarAbsenceService,
         CompanyCalendarRepository companyCalendarRepository,
+        CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository,
         ICalService iCalService, PersonService personService,
         MessageSource messageSource, Clock clock
     ) {
         this.calendarAbsenceService = calendarAbsenceService;
         this.companyCalendarRepository = companyCalendarRepository;
+        this.companyCalendarAccessibleRepository = companyCalendarAccessibleRepository;
         this.iCalService = iCalService;
         this.personService = personService;
         this.messageSource = messageSource;
@@ -49,6 +53,9 @@ public class CompanyCalendarService {
     CompanyCalendar createCalendarForPerson(long personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
+        if (!mayUseCompanyCalendar(person)) {
+            throw new AccessDeniedException("company calendar is disabled for person=%s".formatted(personId));
+        }
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.orElseGet(CompanyCalendar::new);
@@ -78,6 +85,11 @@ public class CompanyCalendarService {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
+        // calendars are deleted when the company calendar is disabled, do not serve one created in the meantime
+        if (!mayUseCompanyCalendar(person)) {
+            throw new IllegalArgumentException("company calendar is disabled for person=" + personId);
+        }
+
         final String title = messageSource.getMessage("calendar.company.title", new Object[]{}, locale);
 
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
@@ -85,6 +97,15 @@ public class CompanyCalendarService {
         final List<CalendarAbsence> absences = calendarAbsenceService.getOpenAbsencesSince(sinceDate);
 
         return iCalService.getCalendar(title, absences, person);
+    }
+
+    /**
+     * Boss and office keep their company calendar when it is disabled for everyone else,
+     * see {@link CalendarAccessibleService#disableCompanyCalendar()}.
+     */
+    private boolean mayUseCompanyCalendar(Person person) {
+        return person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE)
+            || companyCalendarAccessibleRepository.findAll().stream().anyMatch(CompanyCalendarAccessible::isAccessible);
     }
 
     @Transactional

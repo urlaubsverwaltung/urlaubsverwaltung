@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,9 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.never;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static java.time.LocalDate.parse;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
@@ -190,6 +194,9 @@ class DepartmentCalendarServiceTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(departmentService.departmentExists(42L)).thenReturn(true);
+        final Department department = createDepartment("DepartmentName");
+        department.setId(42L);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         DepartmentCalendar receivedDepartmentCalendar = new DepartmentCalendar();
         when(departmentCalendarRepository.findByDepartmentIdAndPerson(42L, person)).thenReturn(Optional.of(receivedDepartmentCalendar));
@@ -231,6 +238,9 @@ class DepartmentCalendarServiceTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(departmentService.departmentExists(42L)).thenReturn(true);
+        final Department department = createDepartment("DepartmentName");
+        department.setId(42L);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         when(departmentCalendarRepository.findByDepartmentIdAndPerson(42L, person)).thenReturn(Optional.empty());
 
@@ -242,6 +252,44 @@ class DepartmentCalendarServiceTest {
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
 
         verify(departmentCalendarRepository).save(any(DepartmentCalendar.class));
+    }
+
+    @Test
+    void createCalendarForDepartmentAndPersonIsDeniedWhenPersonIsNotAMember() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.departmentExists(42L)).thenReturn(true);
+        final Department otherDepartment = createDepartment("Other");
+        otherDepartment.setId(7L);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(otherDepartment));
+
+        assertThatThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M")))
+            .isInstanceOf(AccessDeniedException.class);
+        verify(departmentCalendarRepository, never()).save(any());
+    }
+
+    @Test
+    void getCalendarForDepartmentFailsWhenPersonIsNotAMemberAnymore() {
+
+        final Department department = createDepartment("DepartmentName");
+        department.setId(1L);
+        department.setCreatedAt(LocalDate.of(2018, JANUARY, 1));
+        department.setMembers(List.of());
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(10L);
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        departmentCalendar.setDepartmentId(1L);
+        departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN));
+        verifyNoInteractions(iCalService);
     }
 
     @Test
