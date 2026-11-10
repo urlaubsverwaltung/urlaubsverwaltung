@@ -113,6 +113,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).build());
         LOG.info("Updated sick note: {}", updatedSickNote);
 
+        sicknoteExtensionService.supersedeSubmittedExtensions(updatedSickNote);
+
         commentService.create(updatedSickNote, EDITED, editor, comment);
 
         sickNoteMailService.sendEditedToSickPerson(updatedSickNote, editor);
@@ -128,7 +130,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         final SickNote convertedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
 
-        sicknoteExtensionService.updateExtensionsForConvertedSickNote(convertedSickNote);
+        sicknoteExtensionService.supersedeSubmittedExtensions(convertedSickNote);
 
         commentService.create(convertedSickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         final Application savedApplication = applicationInteractionService.createFromConvertedSickNote(application, converter);
@@ -145,7 +147,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
         LOG.info("Cancelled sick note: {}", cancelledSickNote);
 
-        sicknoteExtensionService.updateExtensionsForConvertedSickNote(cancelledSickNote);
+        sicknoteExtensionService.supersedeSubmittedExtensions(cancelledSickNote);
 
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 

@@ -46,12 +46,10 @@ public interface SickNoteExtensionService {
     SickNote acceptSubmittedExtension(Long sickNoteId);
 
     /**
-     * Update the status of all referenced {@link SickNoteExtension} to match the new {@link SickNote#getStatus() status}.
-     *
-     * <p>
-     * e.g. submitted extensions will be set to superseded if sickNote has been converted to vacation or has been cancelled.
+     * Sets all submitted {@link SickNoteExtension extensions} of the sick note to superseded. Used when the sick note
+     * has been edited, converted to vacation or cancelled, so a later accept cannot overwrite the new end date.
      *
      * @param sickNote {@link SickNote} to update referenced extensions
      */
-    void updateExtensionsForConvertedSickNote(SickNote sickNote);
+    void supersedeSubmittedExtensions(SickNote sickNote);
 }
