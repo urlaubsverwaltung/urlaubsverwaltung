@@ -187,12 +187,12 @@ class AccountInteractionServiceImplTest {
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.empty());
 
-        when(vacationDaysService.getTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
-        when(vacationDaysService.getTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
+        when(vacationDaysService.getTotalLeftVacationDaysAtEndOfYear(account2012)).thenReturn(BigDecimal.valueOf(6));
+        when(vacationDaysService.getTotalLeftVacationDaysAtEndOfYear(account2013)).thenReturn(BigDecimal.valueOf(2));
 
         sut.updateRemainingVacationDays(2012, person);
 
-        verify(vacationDaysService, never()).getTotalLeftVacationDays(account2014);
+        verify(vacationDaysService, never()).getTotalLeftVacationDaysAtEndOfYear(account2014);
         verify(accountService, never()).save(account2012);
 
         assertThat(account2012.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(5));
@@ -220,7 +220,7 @@ class AccountInteractionServiceImplTest {
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
 
-        when(vacationDaysService.getTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
+        when(vacationDaysService.getTotalLeftVacationDaysAtEndOfYear(account2012)).thenReturn(BigDecimal.valueOf(6));
 
         sut.updateRemainingVacationDays(2012, person);
         assertThat(account2013.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(6));
@@ -243,7 +243,7 @@ class AccountInteractionServiceImplTest {
         sut.updateRemainingVacationDays(2012, person);
         assertThat(nextYearAccount.getRemainingVacationDays()).isEqualTo(remainingVacationDays);
 
-        verify(vacationDaysService, never()).getTotalLeftVacationDays(any());
+        verify(vacationDaysService, never()).getTotalLeftVacationDaysAtEndOfYear(any());
         verify(accountService, never()).save(any());
     }
 
@@ -262,7 +262,7 @@ class AccountInteractionServiceImplTest {
             null, BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.empty());
-        when(vacationDaysService.getTotalLeftVacationDays(referenceHolidaysAccount)).thenReturn(leftDays);
+        when(vacationDaysService.getTotalLeftVacationDaysAtEndOfYear(referenceHolidaysAccount)).thenReturn(leftDays);
         when(accountService.save(any())).then(returnsFirstArg());
 
         final Account createdHolidaysAccount = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceHolidaysAccount);
@@ -277,7 +277,7 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.doRemainingVacationDaysExpire()).isFalse();
 
         verify(accountService).save(createdHolidaysAccount);
-        verify(vacationDaysService).getTotalLeftVacationDays(referenceHolidaysAccount);
+        verify(vacationDaysService).getTotalLeftVacationDaysAtEndOfYear(referenceHolidaysAccount);
         verify(accountService, times(2)).getHolidaysAccount(nextYear, person);
     }
 
@@ -301,7 +301,7 @@ class AccountInteractionServiceImplTest {
             nextYear, OCTOBER, 31), true, expiryDateOld, BigDecimal.valueOf(28), ZERO, ZERO, "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.of(nextYearAccount));
-        when(vacationDaysService.getTotalLeftVacationDays(referenceAccount)).thenReturn(leftDays);
+        when(vacationDaysService.getTotalLeftVacationDaysAtEndOfYear(referenceAccount)).thenReturn(leftDays);
 
         final Account account = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceAccount);
         assertThat(account).isNotNull();
@@ -316,7 +316,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.doRemainingVacationDaysExpire()).isTrue();
 
         verify(accountService).save(account);
-        verify(vacationDaysService).getTotalLeftVacationDays(referenceAccount);
+        verify(vacationDaysService).getTotalLeftVacationDaysAtEndOfYear(referenceAccount);
         verify(accountService).getHolidaysAccount(nextYear, person);
     }
 

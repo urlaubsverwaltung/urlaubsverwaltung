@@ -746,6 +746,30 @@ class VacationDaysServiceTest {
     }
 
     @Test
+    void ensureGetTotalLeftVacationDaysAtEndOfYearExcludesExpiringRemainingVacationDaysBeforeExpiry() {
+
+        final Person person = anyPerson();
+
+        final int year = LocalDate.now().getYear();
+        final Account account = anyAccount(person, Year.of(year));
+        account.setActualVacationDays(BigDecimal.valueOf(30));
+        account.setRemainingVacationDays(BigDecimal.valueOf(5));
+        account.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(2));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(year, JANUARY, 1), LocalDate.of(year, DECEMBER, 31)))
+            .thenReturn(List.of());
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year)))
+            .thenReturn(Map.of(person, new WorkingTimeCalendar(Map.of())));
+
+        // today before expiry (APRIL 1 from anyAccount), but the 3 expiring days do not carry over into the next year
+        final Clock beforeExpiryClock = Clock.fixed(Instant.parse(year + "-02-10T00:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysService sutBefore = new VacationDaysService(workingTimeCalendarService, applicationService, beforeExpiryClock);
+        assertThat(sutBefore.getTotalLeftVacationDaysAtEndOfYear(account)).isEqualByComparingTo(BigDecimal.valueOf(32));
+    }
+
+    @Test
     void ensureRemainingVacationDaysThatExpireAreNotUsedForDaysAfterExpiryDateBeforeTheExpiryDate() {
 
         final Person person = anyPerson();

@@ -65,11 +65,25 @@ public class VacationDaysService {
      * @return total number of left vacation days
      */
     BigDecimal getTotalLeftVacationDays(Account account) {
-        final LocalDate today = LocalDate.now(clock);
+        return getTotalLeftVacationDays(account, LocalDate.now(clock));
+    }
+
+    /**
+     * Calculates the total number of days that are left at the end of the year of the account, which is what carries
+     * over into the next year. Remaining vacation days that expire within the year are not part of it, independent of today.
+     *
+     * @param account {@link Account}
+     * @return total number of left vacation days on the last day of the year of the account
+     */
+    BigDecimal getTotalLeftVacationDaysAtEndOfYear(Account account) {
+        return getTotalLeftVacationDays(account, Year.of(account.getYear()).atDay(1).with(lastDayOfYear()));
+    }
+
+    private BigDecimal getTotalLeftVacationDays(Account account, LocalDate date) {
         return getVacationDaysLeft(List.of(account), Year.of(account.getYear()))
             .get(account)
             .vacationDaysYear()
-            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
+            .getLeftVacationDays(date, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
     }
 
     /**
