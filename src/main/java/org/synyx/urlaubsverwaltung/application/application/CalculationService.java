@@ -40,19 +40,16 @@ class CalculationService {
     private final AccountInteractionService accountInteractionService;
     private final AccountService accountService;
     private final WorkDaysCountService workDaysCountService;
-    private final ApplicationService applicationService;
 
     @Autowired
     CalculationService(
         VacationDaysService vacationDaysService, AccountService accountService,
-        AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService,
-        ApplicationService applicationService
+        AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService
     ) {
         this.vacationDaysService = vacationDaysService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.workDaysCountService = workDaysCountService;
-        this.applicationService = applicationService;
     }
 
     /**
@@ -72,30 +69,24 @@ class CalculationService {
         final int yearOfStartDate = startDate.getYear();
         final int yearOfEndDate = endDate.getYear();
 
-        final Optional<Application> maybeSavedApplication = getSavedApplicationForEditing(application);
-
         if (yearOfStartDate == yearOfEndDate) {
-            final BigDecimal oldWorkDays = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal newWorkDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
-            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, newWorkDays, oldWorkDays, application, maybeSavedApplication);
+            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            final BigDecimal oldWorkDaysInOldYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getStartDate().with(lastDayOfYear()), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal newWorkDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, startDate.with(lastDayOfYear()), person);
+            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, startDate.with(lastDayOfYear()), person);
 
             // ensure that applying for leave for the period in the new year is possible
-            final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), Year.of(savedApplication.getEndDate().getYear()).atDay(1), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal newWorkDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, Year.of(yearOfEndDate).atDay(1), endDate, person);
+            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, Year.of(yearOfEndDate).atDay(1), endDate, person);
 
-            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, newWorkDaysInOldYear, oldWorkDaysInOldYear, application, maybeSavedApplication)
-                && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, newWorkDaysInNewYear, oldWorkDaysInNewYear, application, maybeSavedApplication);
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
+                && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYear, application);
         }
     }
 
-    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal requestedVacationDays, BigDecimal oldRequestedVacationDays, Application application, Optional<Application> maybeOldApplication) {
+    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal requestedVacationDays, Application application) {
 
-        final BigDecimal requestedVacationDaysDifferenceAfterEditing = requestedVacationDays.subtract(oldRequestedVacationDays);
-        if (requestedVacationDaysDifferenceAfterEditing.signum() <= 0) {
+        if (requestedVacationDays.signum() <= 0) {
             return true;
         }
 
@@ -106,18 +97,18 @@ class CalculationService {
 
         final Account account = maybeAccount.get();
         final List<Account> holidayAccountsNextYear = accountService.getHolidaysAccount(year + 1, person).map(List::of).orElseGet(List::of);
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), holidayAccountsNextYear);
+        // an edited application is checked like a new one, so its saved version must not count as used
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeftIgnoring(application.getId(), List.of(account), Year.of(year), holidayAccountsNextYear);
 
         final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
         final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysLeft.getVacationDaysUsedNextYear();
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
         // now we calculate the vacation days left before and after the expiry date
-        final BigDecimal vacationDaysRequestedBeforeExpiryDateOld = maybeOldApplication.map(oldApplication -> getWorkdaysBeforeExpiryDate(account, oldApplication)).orElse(ZERO);
-        final BigDecimal vacationDaysRequestedBeforeExpiryDate = getWorkdaysBeforeExpiryDate(account, application).subtract(vacationDaysRequestedBeforeExpiryDateOld);
+        final BigDecimal vacationDaysRequestedBeforeExpiryDate = getWorkdaysBeforeExpiryDate(account, application);
         final BigDecimal vacationDaysLeftBeforeExpiryDate = getVacationDaysLeftBeforeExpiryDate(vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysAlreadyUsedNextYear);
 
-        final BigDecimal vacationDaysRequestedAfterExpiryDate = requestedVacationDaysDifferenceAfterEditing.subtract(vacationDaysRequestedBeforeExpiryDate);
+        final BigDecimal vacationDaysRequestedAfterExpiryDate = requestedVacationDays.subtract(vacationDaysRequestedBeforeExpiryDate);
         final BigDecimal vacationDaysLeftAfterExpiryDate = getVacationDaysLeftAfterExpiryDate(account, vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysRequestedAfterExpiryDate, vacationDaysAlreadyUsedNextYear);
 
         if (vacationDaysLeftBeforeExpiryDate.signum() < 0 || vacationDaysLeftAfterExpiryDate.signum() < 0) {
@@ -183,13 +174,5 @@ class CalculationService {
     private Supplier<Optional<? extends Account>> getHolidayAccountFromLastYear(int lastYear, Person person) {
         return () -> accountService.getHolidaysAccount(lastYear, person)
             .map(accountInteractionService::autoCreateOrUpdateNextYearsHolidaysAccount);
-    }
-
-    private Optional<Application> getSavedApplicationForEditing(Application application) {
-        if (application.getId() == null) {
-            return Optional.empty();
-        }
-
-        return applicationService.getApplicationById(application.getId());
     }
 }

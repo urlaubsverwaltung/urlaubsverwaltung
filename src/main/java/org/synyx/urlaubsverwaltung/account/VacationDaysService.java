@@ -17,6 +17,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -101,6 +102,24 @@ public class VacationDaysService {
     }
 
     /**
+     * Same as {@link #getVacationDaysLeft(List, Year, List)}, but the application with the given id does not count as used.
+     * Checking an edited application needs the vacation days left without its saved version.
+     *
+     * @param applicationId           id of the application that must not count as used, {@code null} counts every application
+     * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param year                    year to calculate left vacation days for.
+     * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeftIgnoring(Long applicationId, List<Account> holidayAccounts, Year year, List<Account> holidayAccountsNextYear) {
+
+        final LocalDate startDate = year.atDay(1);
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+
+        return getVacationDaysLeft(holidayAccounts, new DateRange(startDate, endDate), holidayAccountsNextYear, application -> !application.getId().equals(applicationId));
+    }
+
+    /**
      * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
      * @param dateRange       date range to calculate left vacation days for. must be within a year.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
@@ -126,12 +145,21 @@ public class VacationDaysService {
         DateRange dateRange,
         List<Account> holidayAccountsNextYear
     ) {
+        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, application -> true);
+    }
+
+    private Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        List<Account> holidayAccountsNextYear,
+        Predicate<Application> countsAsUsed
+    ) {
         final LocalDate from = dateRange.startDate();
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
         final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
         final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
 
-        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, workingTimeCalendars);
+        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, workingTimeCalendars, countsAsUsed);
     }
 
     /**
@@ -152,6 +180,16 @@ public class VacationDaysService {
         List<Account> holidayAccountsNextYear,
         Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
     ) {
+        return getVacationDaysLeft(holidayAccounts, dateRange, holidayAccountsNextYear, workingTimeCalendarsByPerson, application -> true);
+    }
+
+    private Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(
+        List<Account> holidayAccounts,
+        DateRange dateRange,
+        List<Account> holidayAccountsNextYear,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson,
+        Predicate<Application> countsAsUsed
+    ) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -161,7 +199,7 @@ public class VacationDaysService {
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
-        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson).entrySet().stream()
+        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson, countsAsUsed).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
 
@@ -239,14 +277,17 @@ public class VacationDaysService {
     private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(
         List<Account> holidayAccounts,
         DateRange dateRange,
-        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson,
+        Predicate<Application> countsAsUsed
     ) {
 
         final LocalDate firstDayOfYear = dateRange.startDate().with(firstDayOfYear());
         final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
 
         final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().toList();
-        final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(activeStatuses(), persons, firstDayOfYear, lastDayOfYear);
+        final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(activeStatuses(), persons, firstDayOfYear, lastDayOfYear).stream()
+            .filter(countsAsUsed)
+            .toList();
 
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
     }

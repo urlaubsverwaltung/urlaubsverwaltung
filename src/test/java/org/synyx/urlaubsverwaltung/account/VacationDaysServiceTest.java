@@ -40,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -774,6 +775,35 @@ class VacationDaysServiceTest {
         assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(20));
         assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(TEN);
         assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+    }
+
+    @Test
+    void ensureGetVacationDaysLeftIgnoringDoesNotCountTheGivenApplication() {
+
+        final Person person = anyPerson();
+
+        final Application application4Days = anyApplication(person);
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
+        application4Days.setStatus(ALLOWED);
+
+        final Application ignoredApplication = anyApplication(person);
+        ignoredApplication.setId(2L);
+        ignoredApplication.setStartDate(LocalDate.of(2022, MAY, 2));
+        ignoredApplication.setEndDate(LocalDate.of(2022, MAY, 2));
+        ignoredApplication.setStatus(WAITING);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
+            .thenReturn(List.of(application4Days, ignoredApplication));
+
+        final Year year = Year.of(2022);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(year.atDay(1), year.atDay(1).with(lastDayOfYear()));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
+
+        final Account account = anyAccount(person, year);
+
+        final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeftIgnoring(2L, List.of(account), year, List.of());
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(26));
     }
 
     private Person anyPerson() {
