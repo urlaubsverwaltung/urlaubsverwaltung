@@ -350,6 +350,17 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensureManagerMayNotEditOwnApplicationSomebodyDecidedAbout() {
+            assertThat(permissionsOnOwnApplicationAsManager(ALLOWED, DEPARTMENT_HEAD, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
+            assertThat(permissionsOnOwnApplicationAsManager(ALLOWED, SECOND_STAGE_AUTHORITY, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
+        }
+
+        @Test
+        void ensureManagerMayEditOwnWaitingApplication() {
+            assertThat(permissionsOnOwnApplicationAsManager(WAITING, DEPARTMENT_HEAD, APPLICATION_EDIT).isAllowedToEdit()).isTrue();
+        }
+
+        @Test
         void ensureBossMayNotEditWithoutApplicationEditRole() {
             assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS, APPLICATION_EDIT).isAllowedToEdit()).isFalse();
         }
@@ -380,6 +391,23 @@ class ApplicationForLeavePermissionEvaluatorTest {
         void ensureManagerNeedsApplicationCancelRoleToCancel() {
             assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_CANCEL).isAllowedToCancel()).isTrue();
             assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD).isAllowedToCancel()).isFalse();
+        }
+
+        @Test
+        void ensureManagerMayNotCancelOwnAllowedApplicationButMayRequestItsCancellation() {
+            final Person departmentHead = person(SIGNED_IN_USER_ID, USER, DEPARTMENT_HEAD, APPLICATION_CANCEL);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, departmentHead)).thenReturn(true);
+
+            final ApplicationForLeavePermissions permissions = sut.of(departmentHead, applicationRequiringApprovalToCancel(departmentHead, ALLOWED));
+
+            assertThat(permissions.isAllowedToCancel()).isFalse();
+            assertThat(permissions.isAllowedToStartCancellationRequest()).isTrue();
+        }
+
+        @Test
+        void ensureBossMayCancelOwnAllowedApplication() {
+            final Person boss = person(SIGNED_IN_USER_ID, USER, BOSS, APPLICATION_CANCEL);
+            assertThat(sut.of(boss, applicationRequiringApprovalToCancel(boss, ALLOWED)).isAllowedToCancel()).isTrue();
         }
 
         @Test
@@ -513,6 +541,12 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensureManagerMayNotDeclineCancellationRequestOfOwnApplication() {
+            assertThat(permissionsOnOwnApplicationAsManager(ALLOWED_CANCELLATION_REQUESTED, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED)
+                .isAllowedToDeclineCancellationRequest()).isFalse();
+        }
+
+        @Test
         void ensureOfficeMayDecline() {
             assertThat(permissionsOnUnmanagedPerson(ALLOWED_CANCELLATION_REQUESTED, OFFICE).isAllowedToDeclineCancellationRequest()).isTrue();
         }
@@ -642,6 +676,22 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         return sut.of(signedInUser, application(person, status));
+    }
+
+    private ApplicationForLeavePermissions permissionsOnOwnApplicationAsManager(ApplicationStatus status, Role... roles) {
+
+        final Person signedInUser = person(SIGNED_IN_USER_ID, roles);
+
+        // a department head or second stage authority is a member of their department, so they manage themselves
+        final List<Role> rolesOfUser = List.of(roles);
+        if (rolesOfUser.contains(DEPARTMENT_HEAD)) {
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, signedInUser)).thenReturn(true);
+        }
+        if (rolesOfUser.contains(SECOND_STAGE_AUTHORITY)) {
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, signedInUser)).thenReturn(true);
+        }
+
+        return sut.of(signedInUser, application(signedInUser, status));
     }
 
     private ApplicationForLeavePermissions permissionsOnUnmanagedPerson(ApplicationStatus status, Role... roles) {
