@@ -744,6 +744,38 @@ class VacationDaysServiceTest {
         assertThat(sutAfter.getTotalLeftVacationDays(account)).isEqualByComparingTo(BigDecimal.valueOf(32));
     }
 
+    @Test
+    void ensureRemainingVacationDaysThatExpireAreNotUsedForDaysAfterExpiryDateBeforeTheExpiryDate() {
+
+        final Person person = anyPerson();
+
+        final Application application10DaysAfterExpiryDate = anyApplication(person);
+        application10DaysAfterExpiryDate.setStartDate(LocalDate.of(2022, MAY, 2));
+        application10DaysAfterExpiryDate.setEndDate(LocalDate.of(2022, MAY, 11));
+        application10DaysAfterExpiryDate.setStatus(ALLOWED);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31)))
+            .thenReturn(List.of(application10DaysAfterExpiryDate));
+
+        final Year year = Year.of(2022);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(year.atDay(1), year.atDay(1).with(lastDayOfYear()));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
+
+        final Account account = anyAccount(person, year);
+        account.setRemainingVacationDays(TEN);
+        account.setRemainingVacationDaysNotExpiring(ZERO);
+        account.setDoRemainingVacationDaysExpireLocally(true);
+
+        // before the expiry date on April 1
+        final Clock clock = Clock.fixed(Instant.parse("2022-01-10T00:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysService sut = new VacationDaysService(workingTimeCalendarService, applicationService, clock);
+
+        final VacationDaysLeft vacationDaysLeft = sut.getVacationDaysLeft(List.of(account), year).get(account).vacationDaysYear();
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(20));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(TEN);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+    }
+
     private Person anyPerson() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
