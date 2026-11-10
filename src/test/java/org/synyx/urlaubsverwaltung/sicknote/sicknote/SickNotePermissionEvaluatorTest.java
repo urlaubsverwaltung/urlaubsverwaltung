@@ -473,6 +473,24 @@ class SickNotePermissionEvaluatorTest {
     }
 
     @Nested
+    class OwnSecondStageAuthority {
+
+        @Test
+        void ensureDepartmentHeadDoesNotManageSickNotesOfTheirOwnSecondStageAuthority() {
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD, SICK_NOTE_VIEW, SICK_NOTE_EDIT, SICK_NOTE_CANCEL);
+            final Person secondStageAuthority = person(OTHER_PERSON_ID, USER, SECOND_STAGE_AUTHORITY);
+
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(true);
+
+            final SickNotePermissions permissions = sut.of(departmentHead, secondStageAuthority);
+            assertThat(permissions.isAllowedToView()).isFalse();
+            assertThat(permissions.isAllowedToEdit(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
+            assertThat(permissions.isAllowedToCancel(sickNote(OTHER_PERSON_ID, ACTIVE))).isFalse();
+        }
+    }
+
+    @Nested
     class DepartmentLookups {
 
         @Test

@@ -144,6 +144,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             ? List.of()
             : getActiveManagedMembersOfPerson(signedInUser);
         final List<Person> membersOfSignedInUser = isSignedInUserBossOrOffice ? personService.getActivePersons() : managedMembersOfSignedInUser;
+        final List<Person> ownApprovers = departmentService.getOwnApproversOfDepartmentHead(signedInUser, managedMembersOfSignedInUser);
+        final List<Person> sickNoteMembersOfSignedInUser = managedMembersOfSignedInUser.stream().filter(member -> !ownApprovers.contains(member)).toList();
 
         final List<Person> overviewPersons;
         if (departmentService.getNumberOfDepartments() > 0) {
@@ -201,7 +203,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             && !membersOfSignedInUser.contains(recordInfo.getPerson()) && !recordInfo.isVisibleToEveryone();
 
         final Function<AbsencePeriod.RecordInfo, AbsenceBars.Detail> detail = recordInfo -> absenceDetail(recordInfo, signedInUser,
-            membersOfSignedInUser, managedMembersOfSignedInUser, isSignedInUserAllowedToViewAllSickNotes);
+            membersOfSignedInUser, sickNoteMembersOfSignedInUser, isSignedInUserAllowedToViewAllSickNotes);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
         final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, vacationTypesById::get, detail);
@@ -667,7 +669,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
      * @return the page, {@code null} if the signed-in user may not open the absence
      */
     private static AbsenceBars.Detail absenceDetail(AbsencePeriod.RecordInfo recordInfo, Person signedInUser, List<Person> membersOfSignedInUser,
-                                           List<Person> managedMembersOfSignedInUser, boolean isSignedInUserAllowedToViewAllSickNotes) {
+                                           List<Person> sickNoteMembersOfSignedInUser, boolean isSignedInUserAllowedToViewAllSickNotes) {
 
         final Person person = recordInfo.getPerson();
         final boolean ownAbsence = person.equals(signedInUser);
@@ -677,7 +679,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             case VACATION -> ownAbsence || membersOfSignedInUser.contains(person)
                 ? new AbsenceBars.Detail(AbsenceBars.DetailPage.APPLICATION, id)
                 : null;
-            case SICK -> ownAbsence || isSignedInUserAllowedToViewAllSickNotes || managedMembersOfSignedInUser.contains(person)
+            case SICK -> ownAbsence || isSignedInUserAllowedToViewAllSickNotes || sickNoteMembersOfSignedInUser.contains(person)
                 ? new AbsenceBars.Detail(AbsenceBars.DetailPage.SICK_NOTE, id)
                 : null;
             case PUBLIC_HOLIDAY, NO_WORKDAY -> null;

@@ -292,6 +292,18 @@ public interface DepartmentService {
     List<Person> getSecondStageAuthoritiesAllowedToManagePerson(List<Person> secondStageAuthorities, Person person);
 
     /**
+     * The given persons that are a second stage authority of the given department head, i.e. decide about the department
+     * head. A department head does not see the sick notes and the overtime of their own approver. Unless the department
+     * head manages them as second stage authority as well.
+     *
+     * @param departmentHead whose approvers are looked for
+     * @param persons        to be checked, typically the members the department head manages
+     * @return empty list when the given person is not a {@link org.synyx.urlaubsverwaltung.person.Role#DEPARTMENT_HEAD},
+     * otherwise the own approvers among the given persons
+     */
+    List<Person> getOwnApproversOfDepartmentHead(Person departmentHead, List<Person> persons);
+
+    /**
      * Get all distinct managed members of the second stage authority.
      * Managed members are all persons for which the second stage authority are responsible for and can
      * perform actions for this person.

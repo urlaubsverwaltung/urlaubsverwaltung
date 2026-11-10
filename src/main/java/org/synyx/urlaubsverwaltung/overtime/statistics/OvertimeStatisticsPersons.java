@@ -50,7 +50,7 @@ class OvertimeStatisticsPersons {
         }
 
         if (signedInUser.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            return departmentService.getManagedMembersOfPerson(signedInUser, year);
+            return withoutOwnApprovers(signedInUser, departmentService.getManagedMembersOfPerson(signedInUser, year));
         }
 
         return List.of();
@@ -71,9 +71,18 @@ class OvertimeStatisticsPersons {
         }
 
         if (signedInUser.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            return departmentService.getManagedActiveMembersOfPerson(signedInUser);
+            return withoutOwnApprovers(signedInUser, departmentService.getManagedActiveMembersOfPerson(signedInUser));
         }
 
         return List.of();
+    }
+
+    /**
+     * A department head does not see the overtime of their own second stage authority, see
+     * {@link DepartmentService#getOwnApproversOfDepartmentHead(Person, List)}.
+     */
+    private List<Person> withoutOwnApprovers(Person departmentHead, List<Person> persons) {
+        final List<Person> ownApprovers = departmentService.getOwnApproversOfDepartmentHead(departmentHead, persons);
+        return persons.stream().filter(person -> !ownApprovers.contains(person)).toList();
     }
 }
