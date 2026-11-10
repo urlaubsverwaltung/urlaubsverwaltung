@@ -131,9 +131,9 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
         assertThat(attachments.getFirst().getName()).isEqualTo("Resturlaub_2022_de.csv");
         // line endings of text attachments are CRLF after the transport
         assertThat(attachments.getFirst().readAllData(UTF_8).replaceAll("\\r", "")).isEqualTo("""
-            \uFEFFPersonalnummer;Vorname;Nachname;Abteilungen;Resturlaubstage;davon verfallen nicht;Verfallsdatum
-            42;Franka;Potente;Entwicklung, Marketing;10;0;01.04.2022
-            ;Michel;Schneider;;2;2;
+            \uFEFF"Personalnummer";"Vorname";"Nachname";"Abteilungen";"Resturlaubstage";"davon verfallen nicht";"Verfallsdatum"
+            "42";"Franka";"Potente";"Entwicklung, Marketing";"10";"0";"01.04.2022"
+            "";"Michel";"Schneider";"";"2";"2";""
             """);
     }
 }

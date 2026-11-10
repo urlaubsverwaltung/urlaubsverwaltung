@@ -104,9 +104,9 @@ class ExpiredRemainingVacationDaysManagementMailServiceIT extends SingleTenantTe
         assertThat(attachments.getFirst().getName()).isEqualTo("Verfallener-Resturlaub_%s_de.csv".formatted(LocalDate.now()));
         // line endings of text attachments are CRLF after the transport
         assertThat(attachments.getFirst().readAllData(UTF_8).replaceAll("\\r", "")).isEqualTo("""
-            ﻿Personalnummer;Vorname;Nachname;Abteilungen;Verfallsdatum;Verfallene Resturlaubstage;Nicht verfallener Resturlaub;Verbleibende Urlaubstage
-            42;Franka;Potente;Entwicklung, Marketing;01.04.2027;3;1;12
-            ;Michel;Schneider;;01.04.2027;1;0;0,5
+            ﻿"Personalnummer";"Vorname";"Nachname";"Abteilungen";"Verfallsdatum";"Verfallene Resturlaubstage";"Nicht verfallener Resturlaub";"Verbleibende Urlaubstage"
+            "42";"Franka";"Potente";"Entwicklung, Marketing";"01.04.2027";"3";"1";"12"
+            "";"Michel";"Schneider";"";"01.04.2027";"1";"0";"0,5"
             """);
     }
 
