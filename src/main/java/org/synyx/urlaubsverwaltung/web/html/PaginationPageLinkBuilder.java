@@ -3,8 +3,11 @@ package org.synyx.urlaubsverwaltung.web.html;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class PaginationPageLinkBuilder {
 
@@ -32,7 +35,7 @@ public final class PaginationPageLinkBuilder {
 
         final List<String> linkParameters = new ArrayList<>();
 
-        parameters.forEach(tuple -> linkParameters.add(tuple.name + "=" + tuple.value));
+        parameters.forEach(tuple -> linkParameters.add(tuple.name + "=" + URLEncoder.encode(tuple.value, UTF_8)));
 
         for (Sort.Order order : pageable.getSort()) {
             linkParameters.add("sort=" + order.getProperty() + "," + order.getDirection());
