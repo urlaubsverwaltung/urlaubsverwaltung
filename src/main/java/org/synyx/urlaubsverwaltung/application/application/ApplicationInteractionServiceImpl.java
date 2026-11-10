@@ -240,6 +240,8 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, privilegedUser);
         }
 
+        accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), savedApplication.getPerson());
+
         applicationEventPublisher.publishEvent(ApplicationRejectedEvent.of(savedApplication));
         return application;
     }
@@ -388,6 +390,8 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         commentService.create(savedApplication, ApplicationCommentAction.CONVERTED, Optional.empty(), creator);
         applicationMailService.sendSickNoteConvertedToVacationNotification(savedApplication);
 
+        accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), savedApplication.getPerson());
+
         applicationEventPublisher.publishEvent(ApplicationCreatedFromSickNoteEvent.of(savedApplication));
         return savedApplication;
     }
@@ -469,6 +473,10 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         for (final HolidayReplacementEntity replacement : deletedReplacements) {
             applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication, editor);
         }
+
+        // the edit may move the application into another year, update from the earlier one
+        final int firstChangedYear = Math.min(oldApplication.getStartDate().getYear(), savedEditedApplication.getStartDate().getYear());
+        accountInteractionService.updateRemainingVacationDays(firstChangedYear, savedEditedApplication.getPerson());
 
         applicationEventPublisher.publishEvent(ApplicationUpdatedEvent.of(savedEditedApplication));
         return savedEditedApplication;

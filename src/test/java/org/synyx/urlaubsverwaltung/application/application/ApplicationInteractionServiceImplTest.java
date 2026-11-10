@@ -766,6 +766,8 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, ApplicationCommentAction.REJECTED, comment, boss);
+        // a waiting application counted as used in the remaining vacation days of the next year
+        verify(accountInteractionService).updateRemainingVacationDays(applicationForLeave.getStartDate().getYear(), person);
 
         ArgumentCaptor<ApplicationRejectedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationRejectedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
@@ -1162,6 +1164,7 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, CONVERTED, Optional.empty(), creator);
         verify(applicationMailService).sendSickNoteConvertedToVacationNotification(applicationForLeave);
+        verify(accountInteractionService).updateRemainingVacationDays(2014, person);
 
         assertThat(applicationForLeave.getStatus()).isNotNull();
         assertThat(applicationForLeave.getApplier()).isNotNull();
@@ -1294,6 +1297,30 @@ class ApplicationInteractionServiceImplTest {
         assertThat(event.application()).isEqualTo(editedApplication);
         assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(event.id()).isNotNull();
+    }
+
+    @Test
+    void ensureEditUpdatesRemainingVacationDaysFromTheEarlierStartYear() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final VacationType<?> vacationType = createVacationType(1L, HOLIDAY, new StaticMessageSource());
+
+        final Application oldApplication = createApplication(person, vacationType);
+        oldApplication.setId(1L);
+        oldApplication.setStatus(WAITING);
+        oldApplication.setStartDate(LocalDate.of(2025, DECEMBER, 22));
+        oldApplication.setEndDate(LocalDate.of(2025, DECEMBER, 23));
+
+        final Application editedApplication = createApplication(person, vacationType);
+        editedApplication.setId(1L);
+        editedApplication.setStatus(WAITING);
+        editedApplication.setStartDate(LocalDate.of(2026, JANUARY, 12));
+        editedApplication.setEndDate(LocalDate.of(2026, JANUARY, 13));
+        when(applicationService.save(editedApplication)).thenReturn(editedApplication);
+
+        sut.edit(oldApplication, editedApplication, person, Optional.empty());
+
+        verify(accountInteractionService).updateRemainingVacationDays(2025, person);
     }
 
     @Test
