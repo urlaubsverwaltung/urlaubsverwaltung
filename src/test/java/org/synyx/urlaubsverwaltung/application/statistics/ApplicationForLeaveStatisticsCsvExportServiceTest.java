@@ -95,6 +95,43 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
     }
 
     @Test
+    void writeLeftOvertimeInDecimalHoursWithThreeDecimals() {
+
+        final Locale locale = JAPANESE;
+
+        final FilterPeriod period = new FilterPeriod(LocalDate.parse("2018-01-01"), LocalDate.parse("2018-12-31"));
+
+        final Person person = new Person();
+        person.setFirstName("personOneFirstName");
+        person.setLastName("personOneLastName");
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).messageKey("holiday").build();
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, List.of(vacationType));
+        applicationForLeaveStatistics.setPersonBasedata(new PersonBasedata(new PersonId(-1L), "42", "OneInformation"));
+        applicationForLeaveStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
+        applicationForLeaveStatistics.setLeftOvertimeForPeriod(Duration.ofMinutes(80));
+        applicationForLeaveStatistics.setLeftVacationDaysForYear(BigDecimal.valueOf(20));
+        applicationForLeaveStatistics.setLeftOvertimeForYear(Duration.ofMinutes(-90));
+
+        addMessageSource("person.data.firstName", locale);
+        addMessageSource("person.data.lastName", locale);
+        addMessageSource("applications.statistics.allowed", locale);
+        addMessageSource("applications.statistics.waiting", locale);
+        addMessageSource("applications.statistics.left", locale);
+        addMessageSource("duration.vacationDays", locale);
+        addMessageSource("duration.overtime", locale);
+        addMessageSource("applications.statistics.total", locale);
+        addMessageSource("person.account.basedata.personnelNumber", locale);
+        addMessageSource("person.account.basedata.additionalInformation", locale);
+        addMessageSource("holiday", locale);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        sut.write(period, locale, List.of(applicationForLeaveStatistics), csvWriter);
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "0", "10", "1.333", "20", "-1.5", "OneInformation"});
+    }
+
+    @Test
     void writeStatisticsForTwoPersonsFor2019() {
 
         final Locale locale = JAPANESE;

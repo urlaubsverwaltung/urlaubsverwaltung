@@ -11,12 +11,12 @@ import org.synyx.urlaubsverwaltung.csv.CsvExportService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
+import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toDecimalHours;
 import static java.text.NumberFormat.getInstance;
 import static java.time.format.DateTimeFormatter.ofLocalizedDate;
 import static java.time.format.FormatStyle.SHORT;
@@ -91,10 +91,10 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
 
             csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForPeriod());
-            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForPeriod().toMinutes() / 60));
+            csvRow[7] = decimalFormat.format(toDecimalHours(applicationForLeaveStatistics.getLeftOvertimeForPeriod()));
 
             csvRow[8] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForYear());
-            csvRow[9] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForYear().toMinutes() / 60));
+            csvRow[9] = decimalFormat.format(toDecimalHours(applicationForLeaveStatistics.getLeftOvertimeForYear()));
 
             csvRow[10] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::additionalInformation).orElse("");
             csvWriter.writeNext(csvRow);

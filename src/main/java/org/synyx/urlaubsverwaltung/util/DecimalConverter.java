@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.util;
 import java.math.BigDecimal;
 import java.time.Duration;
 
+import static java.math.RoundingMode.HALF_UP;
+
 public final class DecimalConverter {
 
     private static final char[] ZEROES = new char[]{'0', '0', '0', '0', '0', '0', '0', '0', '0'};
@@ -32,6 +34,17 @@ public final class DecimalConverter {
      */
     public static BigDecimal toFormattedDecimal(Duration duration) {
         return new BigDecimal(toFormattedDecimal(duration.getSeconds(), duration.getNano()));
+    }
+
+    /**
+     * Converts a {@link Duration} into decimal hours with three decimal places, e.g. 1 hour 20 minutes into 1.333.
+     * For numbers only, e.g. a csv column or a chart axis. Shown to a user, a duration is formatted by {@link DurationFormatter}.
+     *
+     * @param duration to convert into decimal hours
+     * @return the decimal hours of the duration
+     */
+    public static BigDecimal toDecimalHours(Duration duration) {
+        return BigDecimal.valueOf(duration.toMinutes()).divide(BigDecimal.valueOf(60), 3, HALF_UP);
     }
 
     private static String toFormattedDecimal(long seconds, int nanoseconds) {
