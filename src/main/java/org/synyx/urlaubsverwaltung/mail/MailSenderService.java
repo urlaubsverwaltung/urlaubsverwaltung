@@ -98,7 +98,7 @@ class MailSenderService {
             }
 
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailException e) {
             LOG.error("Sending email to {} failed", recipient, e);
         }
     }

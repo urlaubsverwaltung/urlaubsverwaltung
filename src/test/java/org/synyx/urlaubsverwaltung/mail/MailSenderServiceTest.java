@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.simplejavamail.converter.EmailConverter;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -22,6 +23,9 @@ import java.util.Properties;
 
 import static jakarta.mail.Session.getInstance;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -90,6 +94,17 @@ class MailSenderServiceTest {
         assertThat(mailMessage.getAllRecipients()).containsExactly(new InternetAddress(recipient));
         assertThat(mailMessage.getSubject()).isEqualTo(subject);
         assertThat(readPlainContent(mailMessage)).hasToString(body);
+    }
+
+    @Test
+    void ensuresRejectedMailWithAttachmentDoesNotThrowSoTheNextRecipientStillGetsIt() {
+        when(javaMailSender.createMimeMessage()).thenReturn(new MimeMessage(getInstance(new Properties(), null)));
+        doThrow(new MailSendException("550 mailbox unavailable")).when(javaMailSender).send(any(MimeMessage.class));
+
+        final List<MailAttachment> mailAttachments = List.of(new MailAttachment("name", new ByteArrayResource(new byte[]{})));
+
+        assertThatNoException().isThrownBy(() ->
+            sut.sendEmail("from@example.org", "replyTo@example.org", "hans@dampf.com", "subject", "text", mailAttachments));
     }
 
     @ParameterizedTest
