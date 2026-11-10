@@ -119,7 +119,7 @@ class PersonServiceImpl implements PersonService {
     private Person createPerson(String username, String firstName, String lastName, String email, Boolean emailVerified,
                                 List<MailNotification> notifications, List<Role> permissions) {
 
-        final Person person = new Person(username.strip(), lastName.strip(), firstName.strip(), email.strip());
+        final Person person = new Person(username.strip(), lastName.strip(), firstName.strip(), email == null ? null : email.strip());
         person.setEmailVerified(emailVerified);
         person.setCreatedAt(Instant.now(clock));
         person.setNotifications(notifications);

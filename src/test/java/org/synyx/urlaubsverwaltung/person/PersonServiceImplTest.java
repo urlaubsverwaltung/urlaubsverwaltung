@@ -176,6 +176,17 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureCreatesPersonWithoutEmail() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        // the oidc login passes null when the email claim is missing or invalid
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", null, null);
+        assertThat(createdPerson.getUsername()).isEqualTo("rick");
+        assertThat(createdPerson.getEmail()).isNull();
+    }
+
+    @Test
     void ensureCreatedPersonIsPersisted() {
 
         when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
