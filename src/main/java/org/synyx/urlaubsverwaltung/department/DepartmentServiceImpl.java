@@ -98,7 +98,7 @@ class DepartmentServiceImpl implements DepartmentService {
             // A manager can have no membership at all in the requested year - the year is a freely chosen request
             // parameter, so this is a normal case and not a broken state.
             final Set<Long> managedDepartmentIds = activeMembershipsOfYear.getOrDefault(person.getIdAsPersonId(), List.of()).stream()
-                .filter(DepartmentMembership::isManagementMembership)
+                .filter(isManagementMembershipHeldBy(person))
                 .filter(DepartmentMembership::isCurrent)
                 .map(DepartmentMembership::departmentId)
                 .collect(toSet());
@@ -126,21 +126,18 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Page<Person> getManagedActiveMembersOfPerson(Person person, PersonPageable pageable, String query) {
-        final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, pageable, query, Person::isActive);
+        return managedMembersOfPerson(person, pageable, query, Person::isActive);
     }
 
     @Override
     public List<Person> getManagedActiveMembersOfPerson(Person person) {
-        final PersonId personId = person.getIdAsPersonId();
-        final List<DepartmentMembership> members = getManagedMemberMembershipsOfPerson(personId);
+        final List<DepartmentMembership> members = getManagedMemberMembershipsOfPerson(person);
         return membershipsToPersons(members).stream().filter(Person::isActive).toList();
     }
 
     @Override
     public Page<Person> getManagedInactiveMembersOfPerson(Person person, PersonPageable pageable, String query) {
-        final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, pageable, query, Person::isInactive);
+        return managedMembersOfPerson(person, pageable, query, Person::isInactive);
     }
 
     @Override
@@ -554,12 +551,12 @@ class DepartmentServiceImpl implements DepartmentService {
         return personDepartmentIds.stream().anyMatch(otherPersonDepartmentIds::contains);
     }
 
-    private List<DepartmentMembership> getManagedMemberMembershipsOfPerson(PersonId personId) {
+    private List<DepartmentMembership> getManagedMemberMembershipsOfPerson(Person person) {
 
-        final List<DepartmentMembership> personsMemberships = departmentMembershipService.getActiveMemberships(personId);
+        final List<DepartmentMembership> personsMemberships = departmentMembershipService.getActiveMemberships(person.getIdAsPersonId());
 
         final Set<Long> managedDepartmentIds = personsMemberships.stream()
-            .filter(DepartmentMembership::isManagementMembership)
+            .filter(isManagementMembershipHeldBy(person))
             .map(DepartmentMembership::departmentId)
             .collect(toSet());
 
@@ -680,9 +677,9 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentEntity;
     }
 
-    private Page<Person> managedMembersOfPerson(PersonId personId, PersonPageable pageable, String query, Predicate<Person> predicate) {
+    private Page<Person> managedMembersOfPerson(Person person, PersonPageable pageable, String query, Predicate<Person> predicate) {
 
-        final List<DepartmentMembership> memberships = getManagedMemberMembershipsOfPerson(personId);
+        final List<DepartmentMembership> memberships = getManagedMemberMembershipsOfPerson(person);
 
         final List<Person> managedMembers = membershipsToPersons(memberships)
             .stream()
@@ -728,6 +725,18 @@ class DepartmentServiceImpl implements DepartmentService {
             .toList();
 
         return new PageImpl<>(content, pageable, sortedPersons.size());
+    }
+
+    /**
+     * A department head or second stage authority membership counts only as long as the person still has the matching
+     * role. Taking the role away does not end the membership, see {@link #doesPersonManageDepartment(Person, DepartmentStaff)}.
+     */
+    private static Predicate<DepartmentMembership> isManagementMembershipHeldBy(Person person) {
+        return membership -> switch (membership.membershipKind()) {
+            case DEPARTMENT_HEAD -> person.hasRole(DEPARTMENT_HEAD);
+            case SECOND_STAGE_AUTHORITY -> person.hasRole(SECOND_STAGE_AUTHORITY);
+            case MEMBER -> false;
+        };
     }
 
     private static boolean doesPersonManageDepartment(Person person, DepartmentStaff staff) {
