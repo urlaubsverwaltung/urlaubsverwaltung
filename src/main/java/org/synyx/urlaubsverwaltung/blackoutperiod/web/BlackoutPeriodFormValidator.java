@@ -5,15 +5,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.Clock;
 import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInThePast;
 
 @Component
 class BlackoutPeriodFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_TOO_FAR_IN_THE_PAST = "error.entry.tooFarInThePast";
+    private static final String ERROR_TOO_FAR_IN_THE_FUTURE = "error.entry.tooFarInTheFuture";
     private static final String ERROR_DEPARTMENTS_MANDATORY = "blackoutperiod.error.departments.mandatory";
     private static final String ERROR_VACATION_TYPES_MANDATORY = "blackoutperiod.error.vacationTypes.mandatory";
 
@@ -22,6 +27,12 @@ class BlackoutPeriodFormValidator implements Validator {
     private static final String ATTRIBUTE_END_DATE = "endDate";
     private static final String ATTRIBUTE_DEPARTMENT_IDS = "departmentIds";
     private static final String ATTRIBUTE_VACATION_TYPE_IDS = "vacationTypeIds";
+
+    private final Clock clock;
+
+    BlackoutPeriodFormValidator(Clock clock) {
+        this.clock = clock;
+    }
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
@@ -50,6 +61,13 @@ class BlackoutPeriodFormValidator implements Validator {
 
         if (!startDateMissing && !endDateMissing && form.getStartDate().isAfter(form.getEndDate())) {
             errors.reject(ERROR_PERIOD);
+        } else {
+            if (!startDateMissing && isTooFarInThePast(form.getStartDate(), clock)) {
+                errors.rejectValue(ATTRIBUTE_START_DATE, ERROR_TOO_FAR_IN_THE_PAST);
+            }
+            if (!endDateMissing && isTooFarInTheFuture(form.getEndDate(), clock)) {
+                errors.rejectValue(ATTRIBUTE_END_DATE, ERROR_TOO_FAR_IN_THE_FUTURE);
+            }
         }
 
         if (!form.isCompanyWide() && isEmpty(form.getDepartmentIds())) {

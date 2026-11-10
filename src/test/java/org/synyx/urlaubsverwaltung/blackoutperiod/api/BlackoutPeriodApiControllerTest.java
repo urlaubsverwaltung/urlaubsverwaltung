@@ -95,6 +95,16 @@ class BlackoutPeriodApiControllerTest {
     }
 
     @Test
+    void personsBlackoutPeriodsBadRequestWhenPeriodIsLongerThanThreeYears() throws Exception {
+
+        perform(get("/api/persons/42/blackout-periods")
+            .param("from", "2026-01-01")
+            .param("to", "9999-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+    }
+
+    @Test
     void personsBlackoutPeriodsBadRequestWhenStartAfterEnd() throws Exception {
 
         perform(get("/api/persons/42/blackout-periods")

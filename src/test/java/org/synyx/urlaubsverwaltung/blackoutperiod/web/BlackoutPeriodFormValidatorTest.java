@@ -4,16 +4,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlackoutPeriodFormValidatorTest {
 
-    private final BlackoutPeriodFormValidator sut = new BlackoutPeriodFormValidator();
+    private final BlackoutPeriodFormValidator sut = new BlackoutPeriodFormValidator(Clock.fixed(Instant.parse("2026-06-15T00:00:00Z"), ZoneOffset.UTC));
 
     @Test
     void ensureSupportsBlackoutPeriodFormClass() {
@@ -137,6 +141,43 @@ class BlackoutPeriodFormValidatorTest {
         form.setStartDate(LocalDate.of(2026, DECEMBER, 20));
         form.setEndDate(LocalDate.of(2027, JANUARY, 5));
         return form;
+    }
+
+    @Test
+    void ensureStartDateMustNotBeTooFarInThePast() {
+
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        form.setStartDate(LocalDate.of(2016, JUNE, 14));
+        form.setEndDate(LocalDate.of(2026, JUNE, 15));
+
+        final Errors errors = validate(form);
+
+        assertThat(errors.getFieldError("startDate").getCode()).isEqualTo("error.entry.tooFarInThePast");
+    }
+
+    @Test
+    void ensureEndDateMustNotBeTooFarInTheFuture() {
+
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        form.setStartDate(LocalDate.of(2026, JUNE, 15));
+        form.setEndDate(LocalDate.of(2028, JUNE, 16));
+
+        final Errors errors = validate(form);
+
+        assertThat(errors.getFieldError("endDate").getCode()).isEqualTo("error.entry.tooFarInTheFuture");
+    }
+
+    @Test
+    void ensureDatesAtTheLimitsAreValid() {
+
+        final BlackoutPeriodForm form = new BlackoutPeriodForm();
+        form.setStartDate(LocalDate.of(2016, JUNE, 15));
+        form.setEndDate(LocalDate.of(2028, JUNE, 15));
+
+        final Errors errors = validate(form);
+
+        assertThat(errors.getFieldError("startDate")).isNull();
+        assertThat(errors.getFieldError("endDate")).isNull();
     }
 
     private Errors validate(BlackoutPeriodForm form) {

@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.MAXIMUM_REQUESTED_DURATION;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -86,6 +88,10 @@ public class BlackoutPeriodApiController {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final Optional<Person> optionalPerson = personService.getPersonByID(personId);
