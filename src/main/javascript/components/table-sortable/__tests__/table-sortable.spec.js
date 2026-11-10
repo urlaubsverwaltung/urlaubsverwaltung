@@ -142,6 +142,36 @@ describe("table-sortable", () => {
     expect(text(document.querySelector("tbody tr:nth-child(4)"))).toEqual("04.10.2022");
   });
 
+  it("sorts date by the iso date of the sort value, not by the localized text", function () {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <table is="uv-table-sortable">
+        <thead>
+          <tr>
+            <th data-sortable data-sort-type="date">Letzte Änderung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-sort-value="2026-11-25">25.11.26</td>
+          </tr>
+          <tr>
+            <td data-sort-value="2026-02-03">03.02.26</td>
+          </tr>
+          <tr>
+            <td data-sort-value="2026-11-10">10.11.26</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+    document.body.append(div);
+
+    document.querySelector("thead th").click();
+    expect(text(document.querySelector("tbody tr:nth-child(1)"))).toEqual("03.02.26");
+    expect(text(document.querySelector("tbody tr:nth-child(2)"))).toEqual("10.11.26");
+    expect(text(document.querySelector("tbody tr:nth-child(3)"))).toEqual("25.11.26");
+  });
+
   it("sorts if th is available instead of td", function () {
     const div = document.createElement("div");
     div.innerHTML = `

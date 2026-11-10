@@ -131,7 +131,11 @@
                 <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
               </th:block>
             </td>
-            <td th:text="${{department.lastModification}}" class="hidden @3xl/main:table-cell"></td>
+            <td
+              th:text="${{department.lastModification}}"
+              th:data-sort-value="${department.lastModification}"
+              class="hidden @3xl/main:table-cell"
+            ></td>
             <td th:if="${canCreateAndModifyDepartment}" th:with="dialogId=|modal-cancel-${department.id}|">
               <dialog
                 th:id="${dialogId}"
