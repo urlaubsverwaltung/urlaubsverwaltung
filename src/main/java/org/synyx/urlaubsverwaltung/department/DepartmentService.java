@@ -13,7 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toUnmodifiableSet;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
  * Service for handling {@link Department}s.
@@ -309,6 +314,26 @@ public interface DepartmentService {
      * @return {@code true} if the given user may access the data of the given person, else {@code false}
      */
     boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person);
+
+    /**
+     * Same rule as {@link #isSignedInUserAllowedToAccessPersonData(Person, Person)}, answered from memberships that
+     * were read once for the request - asking the service would read them again for every checked person.
+     *
+     * @param membersAsDepartmentHead       {@link #getMembersForDepartmentHead(Person)} of the signed in user, empty if not a department head
+     * @param membersAsSecondStageAuthority {@link #getMembersForSecondStageAuthority(Person)} of the signed in user, empty if not a second stage authority
+     */
+    static Predicate<Person> allowedToAccessPersonData(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
+
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
+            return person -> true;
+        }
+
+        final Set<Person> managedPersons = Stream.of(membersAsDepartmentHead, membersAsSecondStageAuthority)
+            .flatMap(List::stream)
+            .collect(toUnmodifiableSet());
+
+        return person -> signedInUser.equals(person) || managedPersons.contains(person);
+    }
 
     /**
      * Check if the given {@link Person} is allowed to access the data of the {@link Department}.

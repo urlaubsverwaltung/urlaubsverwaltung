@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -39,7 +38,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -155,7 +153,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
             .flatMap(List::stream)
             .toList();
         final Function<Application, ApplicationForLeavePermissions> permissionsOf = permissionEvaluator.of(signedInUser, allApplications);
-        final Predicate<Person> allowedToAccessPersonData = allowedToAccessPersonData(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final Predicate<Person> allowedToAccessPersonData = DepartmentService.allowedToAccessPersonData(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
 
         model.addAttribute("userApplications", mapToApplicationForLeaveDtoList(userApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareUserHolidayReplacements(model, signedInUser, locale);
@@ -182,25 +180,6 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
     private boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
         return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()
             && sickNotePermissionEvaluator.isAllowedToAccessSickNoteSubmissions(signedInUser);
-    }
-
-    /**
-     * Whether the signed in user may see who the application belongs to, see
-     * {@link DepartmentService#isSignedInUserAllowedToAccessPersonData(Person, Person)}. Answered from the memberships
-     * that were read for this request already - asking the service would read them again for every listed
-     * application.
-     */
-    private static Predicate<Person> allowedToAccessPersonData(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
-
-        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
-            return person -> true;
-        }
-
-        final Set<Person> managedPersons = Stream.of(membersAsDepartmentHead, membersAsSecondStageAuthority)
-            .flatMap(List::stream)
-            .collect(toUnmodifiableSet());
-
-        return person -> signedInUser.equals(person) || managedPersons.contains(person);
     }
 
     private void prepareUserHolidayReplacements(Model model, Person signedInUser, Locale locale) {

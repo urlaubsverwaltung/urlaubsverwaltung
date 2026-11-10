@@ -45,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -181,7 +182,6 @@ class VacationApiControllerTest {
 
         when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(specialLeave, holiday));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, colleague)).thenReturn(false);
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
@@ -213,9 +213,10 @@ class VacationApiControllerTest {
         when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(List.of(vacationAllowedCancelRequested, vacationAllowed));
 
-        final Person signedInUser = new Person("boss", "Boss", "Bettina", "boss@example.org");
+        final Person signedInUser = new Person("head", "Head", "Hanna", "head@example.org");
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, colleague)).thenReturn(true);
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(colleague));
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
