@@ -459,14 +459,19 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad, HasPersonSe
             ? vacationTypeService.getActiveVacationTypes()
             : vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
 
-        final List<ApplicationForLeaveFormVacationTypeDto> activeVacationTypesDtos = activeVacationTypes.stream()
+        final VacationType<?> currentVacationType = appForm.getVacationType() == null
+            ? null
+            : findVacationType(activeVacationTypes, appForm.getVacationType().getId());
+
+        // an edited application keeps its type selectable after the type was deactivated, the select would switch it silently
+        final List<ApplicationForLeaveFormVacationTypeDto> vacationTypesDtos = Stream.concat(activeVacationTypes.stream(), Stream.ofNullable(currentVacationType))
+            .distinct()
             .map(vacationType -> toApplicationForLeaveFormVacationTypeDto(vacationType, locale))
             .toList();
-        model.addAttribute("vacationTypes", activeVacationTypesDtos);
+        model.addAttribute("vacationTypes", vacationTypesDtos);
 
-        if (appForm.getVacationType() != null) {
-            final VacationType<?> vacationType = findVacationType(activeVacationTypes, appForm.getVacationType().getId());
-            appForm.setVacationType(toApplicationForLeaveFormVacationTypeDto(vacationType, locale));
+        if (currentVacationType != null) {
+            appForm.setVacationType(toApplicationForLeaveFormVacationTypeDto(currentVacationType, locale));
         }
 
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()

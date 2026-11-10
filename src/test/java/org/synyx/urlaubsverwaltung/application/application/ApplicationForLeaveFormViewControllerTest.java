@@ -1395,6 +1395,50 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void editApplicationFormKeepsInactiveVacationTypeOfApplicationSelectable() throws Exception {
+
+        final Locale locale = GERMAN;
+        final VacationType<?> inactiveVacationType = ProvidedVacationType.builder(messageSourceForVacationType("inactive-key", "inactive", locale))
+            .id(1L)
+            .active(false)
+            .category(HOLIDAY)
+            .messageKey("inactive-key")
+            .build();
+        final VacationType<?> activeVacationType = ProvidedVacationType.builder(messageSourceForVacationType("active-key", "active", locale))
+            .id(2L)
+            .active(true)
+            .category(HOLIDAY)
+            .messageKey("active-key")
+            .build();
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final int year = Year.now(clock).getValue();
+        final Account account = new Account(person, LocalDate.of(2014, JANUARY, 1), LocalDate.of(2014, DECEMBER, 31), true, LocalDate.of(2014, APRIL, 1), TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(1L);
+        application.setStatus(WAITING);
+        application.setVacationType(inactiveVacationType);
+        when(applicationInteractionService.get(1L)).thenReturn(Optional.of(application));
+
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(activeVacationType));
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(inactiveVacationType));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(locale)
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("vacationTypes", contains(hasProperty("id", is(2L)), hasProperty("id", is(1L)))))
+            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("vacationType", hasProperty("id", is(1L)))));
+    }
+
+    @Test
     void editApplicationFormForOtherWithOfficePermission() throws Exception {
 
         final Locale locale = GERMAN;
