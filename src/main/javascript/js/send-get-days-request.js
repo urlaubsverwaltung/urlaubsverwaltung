@@ -1,9 +1,7 @@
-// disabling date-fns#format is ok since we're formatting dates for api requests
-// eslint-disable-next-line no-restricted-imports
-import { isAfter, format, getYear } from "date-fns";
+import { isAfter, getYear } from "date-fns";
 import formatNumber from "./format-number";
 import sendGetDaysRequestForTurnOfTheYear from "./send-get-days-request-for-turn-of-the-year";
-import { getJSON } from "./fetch";
+import { getWorkdays } from "./get-workdays";
 
 export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
   const element = document.querySelector(elementSelector);
@@ -13,7 +11,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
     return;
   }
 
-  const workDays = await getWorkdaysForDateRange(urlPrefix, dayLength, personId, startDate, toDate);
+  const workDays = await getWorkdays(urlPrefix, dayLength, personId, startDate, toDate);
 
   let text;
 
@@ -42,16 +40,4 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
       `${elementSelector} .days-turn-of-the-year`,
     );
   }
-}
-
-async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate, toDate) {
-  const startDate = format(fromDate, "yyyy-MM-dd");
-  const endDate = format(toDate, "yyyy-MM-dd");
-  let url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate;
-  if (dayLength) {
-    url = url + "&length=" + dayLength;
-  }
-
-  const json = await getJSON(url);
-  return json.workDays;
 }
