@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -25,7 +26,9 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteExtendValidatorTest {
@@ -34,6 +37,8 @@ class SickNoteExtendValidatorTest {
 
     @Mock
     private SickNoteService sickNoteService;
+    @Mock
+    private OverlapService overlapService;
     @Mock
     private DateFormatAware dateFormatAware;
 
@@ -44,7 +49,7 @@ class SickNoteExtendValidatorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock);
+        sut = new SickNoteExtendValidator(sickNoteService, overlapService, dateFormatAware, clock);
     }
 
     @Test
@@ -78,6 +83,26 @@ class SickNoteExtendValidatorTest {
         sut.validate(dto, errors);
 
         verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureEndDateOverlappingAnApplicationForLeaveIsRejected() {
+
+        final SickNote sickNote = SickNote.builder().id(1L).startDate(LocalDate.of(2024, AUGUST, 5)).endDate(LocalDate.of(2024, AUGUST, 6)).build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        final LocalDate extendedEndDate = LocalDate.of(2024, AUGUST, 9);
+        when(overlapService.checkOverlap(argThat((SickNote extended) -> extended.getId().equals(1L) && extended.getEndDate().equals(extendedEndDate))))
+            .thenReturn(PARTLY_OVERLAPPING);
+
+        final SickNoteExtendDto dto = new SickNoteExtendDto();
+        dto.setSickNoteId(1L);
+        dto.setEndDate(extendedEndDate);
+
+        sut.validate(dto, errors);
+
+        verify(errors).rejectValue("endDate", "application.error.overlap");
+        verify(errors).rejectValue("extendToDate", "application.error.overlap");
     }
 
     @Test

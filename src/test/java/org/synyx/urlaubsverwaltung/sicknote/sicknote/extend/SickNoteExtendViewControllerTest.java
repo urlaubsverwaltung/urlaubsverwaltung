@@ -17,10 +17,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.validation.Errors;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -82,6 +84,8 @@ class SickNoteExtendViewControllerTest {
     private SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     @Mock
     private SickNoteExtendValidator sickNoteExtendValidator;
+    @Mock
+    private OverlapService overlapService;
     @Mock
     private DateFormatAware dateFormatAware;
     @Mock
@@ -247,6 +251,30 @@ class SickNoteExtendViewControllerTest {
     }
 
     @Test
+    void ensureExtensionIsValidatedAgainstTheSickNoteOfTheSignedInUserNotTheOneNamedByTheForm() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final SickNote currentSickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .dayLength(FULL)
+            .build();
+        when(sickNoteService.getSickNoteToExtend(person)).thenReturn(Optional.of(currentSickNote));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "42")
+                .param("endDate", "2024-09-27")
+        );
+
+        verify(sickNoteExtendValidator).validate(argThat((SickNoteExtendDto dto) -> dto.getSickNoteId().equals(1L)), any(Errors.class));
+    }
+
+    @Test
     void ensureExtendViewOffersTheEndOfWeekAndTodayForASickNoteThatHasEnded() throws Exception {
 
         final Person person = new Person();
@@ -399,7 +427,7 @@ class SickNoteExtendViewControllerTest {
         final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
             workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
             new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
-            new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock), dateFormatAware,
+            new SickNoteExtendValidator(sickNoteService, overlapService, dateFormatAware, clock), dateFormatAware,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
 
         final Person person = new Person();
@@ -435,7 +463,7 @@ class SickNoteExtendViewControllerTest {
         final SickNoteExtendViewController sutWithValidator = new SickNoteExtendViewController(personService,
             workingTimeCalendarService, sickNoteService, sickNoteExtensionService, sickNoteExtensionInteractionService,
             new SickNotePermissionEvaluator(mock(DepartmentService.class), settingsServiceWith(settings)),
-            new SickNoteExtendValidator(sickNoteService, dateFormatAware, clock), dateFormatAware,
+            new SickNoteExtendValidator(sickNoteService, overlapService, dateFormatAware, clock), dateFormatAware,
             defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
 
         final Person person = new Person();
