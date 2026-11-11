@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -59,6 +60,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_TOO_FAR_IN_PAST = "application.error.tooFarInThePast";
     private static final String ERROR_TOO_FAR_IN_FUTURE = "application.error.tooFarInTheFuture";
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
+    private static final String ERROR_VACATION_TYPE_NOT_SELECTABLE = "application.error.vacationTypeNotSelectable";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_BLACKOUT_PERIOD = "application.error.blackoutPeriod";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
@@ -93,6 +95,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final BlackoutPeriodService blackoutPeriodService;
     private final PersonService personService;
     private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
+    private final ApplicationService applicationService;
     private final Clock clock;
 
     @Autowired
@@ -108,6 +111,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         BlackoutPeriodService blackoutPeriodService,
         PersonService personService,
         ApplicationForLeavePermissionEvaluator permissionEvaluator,
+        ApplicationService applicationService,
         Clock clock
     ) {
         this.workingTimeService = workingTimeService;
@@ -121,6 +125,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         this.blackoutPeriodService = blackoutPeriodService;
         this.personService = personService;
         this.permissionEvaluator = permissionEvaluator;
+        this.applicationService = applicationService;
         this.clock = clock;
     }
 
@@ -135,6 +140,8 @@ class ApplicationForLeaveFormValidator implements Validator {
         final ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
         final Settings settings = settingsService.getSettings();
         final VacationType<?> vacationType = getVacationType(applicationForm.getVacationType().getId());
+
+        validateVacationTypeSelectable(applicationForm, settings, vacationType, errors);
 
         // check if date fields are valid
         validateDateFields(applicationForm, settings, errors);
@@ -154,6 +161,25 @@ class ApplicationForLeaveFormValidator implements Validator {
             // (check overlapping applications for leave, vacation days of the person etc.)
             validateIfApplyingForLeaveIsPossible(applicationForm, settings, vacationType, errors);
         }
+    }
+
+    /**
+     * The form offers only active vacation types, and no overtime types when overtime is not active.
+     * An edited application may keep the type it already has.
+     */
+    private void validateVacationTypeSelectable(ApplicationForLeaveForm applicationForm, Settings settings, VacationType<?> vacationType, Errors errors) {
+        final boolean selectable = vacationType.isActive()
+            && (!OVERTIME.equals(vacationType.getCategory()) || settings.getOvertimeSettings().isOvertimeActive());
+
+        if (!selectable && !isVacationTypeOfSavedApplication(applicationForm.getId(), vacationType)) {
+            errors.reject(ERROR_VACATION_TYPE_NOT_SELECTABLE);
+        }
+    }
+
+    private boolean isVacationTypeOfSavedApplication(@Nullable Long applicationId, VacationType<?> vacationType) {
+        return applicationId != null && applicationService.getApplicationById(applicationId)
+            .map(application -> application.getVacationType().getId().equals(vacationType.getId()))
+            .orElse(false);
     }
 
     private VacationType<?> getVacationType(Long vacationTypeId) {
