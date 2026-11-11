@@ -102,6 +102,14 @@
             error feedback
           </p>
         </th:block>
+        <th:block
+          th:if="${acceptExtensionError != null}"
+          th:insert="~{fragments/feedback-box::feedback-box-error(~{::accept-extension-error-body})}"
+        >
+          <p th:ref="accept-extension-error-body" th:text="${#messages.msg(acceptExtensionError)}">
+            Die Verlängerung kann nicht angenommen werden.
+          </p>
+        </th:block>
 
         <div class="actions" th:with="redirectTo=${redirect}">
           <th:block th:if="${canAcceptSickNoteOrExtension}">
