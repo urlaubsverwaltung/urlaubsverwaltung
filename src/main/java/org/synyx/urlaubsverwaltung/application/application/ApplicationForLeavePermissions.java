@@ -219,7 +219,7 @@ public final class ApplicationForLeavePermissions {
         return isStillActive()
             && ((application.hasStatus(WAITING) && isOwnApplication())
             || signedInUser.hasRole(OFFICE)
-            || (isManagerOfPerson() && signedInUser.hasRole(APPLICATION_EDIT)));
+            || (isManagerOfPerson() && isNotOwnApplication() && signedInUser.hasRole(APPLICATION_EDIT)));
     }
 
     /**
@@ -233,9 +233,14 @@ public final class ApplicationForLeavePermissions {
             && !(signedInUser.hasRole(BOSS) || isManagerOfPerson());
     }
 
+    /**
+     * A department head or second stage authority is a member of their department and therefore manages themselves as
+     * well. Like allowing, administering their own application is left to somebody else - a boss decides about their
+     * own applications anyway.
+     */
     private boolean isAllowedToAdminister(Role role) {
         return signedInUser.hasRole(OFFICE)
-            || ((signedInUser.hasRole(BOSS) || isManagerOfPerson()) && signedInUser.hasRole(role));
+            || ((signedInUser.hasRole(BOSS) || (isManagerOfPerson() && isNotOwnApplication())) && signedInUser.hasRole(role));
     }
 
     /**
