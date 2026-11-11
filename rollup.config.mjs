@@ -34,10 +34,12 @@ export default {
         const packageName = id.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
 
         if (packageName === "date-fns") {
-          // build separate bundles for dateFn locales
-          // which can be included on demand in the view templates
-          // or used as dynamic import and handled by webpack
-          const dateFunctionLocaleMatch = id.match(/node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/);
+          // one bundle per locale, imported on demand by date-fns-localized.js:
+          // date-fns/locale/de.js, date-fns/locale/de-AT.js and their parts in date-fns/locale/de/_lib/
+          // en-US is the default locale of date-fns and stays in the main bundle
+          const dateFunctionLocaleMatch = id.match(
+            /[/\\]date-fns[/\\]locale[/\\](?!en-US\b)(?!_lib\b)([\w-]+?)(?:\.js$|[/\\])/,
+          );
           if (dateFunctionLocaleMatch) {
             const locale = dateFunctionLocaleMatch[1];
             return `npm.${packageName}.${locale}`;
@@ -100,5 +102,5 @@ function inputFiles() {
 
 function entryName(file) {
   const filename = file.slice(Math.max(0, file.lastIndexOf("/") + 1));
-  return filename.slice(0, Math.max(0, filename.lastIndexOf("."))).replaceAll('-', "_");
+  return filename.slice(0, Math.max(0, filename.lastIndexOf("."))).replaceAll("-", "_");
 }
