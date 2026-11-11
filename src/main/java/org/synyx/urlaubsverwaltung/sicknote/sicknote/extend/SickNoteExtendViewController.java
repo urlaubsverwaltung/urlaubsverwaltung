@@ -157,6 +157,9 @@ class SickNoteExtendViewController implements HasLaunchpad, HasPersonSearch {
             return "redirect:/web/sicknote/extend";
         }
 
+        // the extended sick note is the one of the signed-in user, never the one named by the form
+        sickNoteExtendDto.setSickNoteId(sickNote.getId());
+
         if (hasUserSelectedCustomDate || isCreateExtendSubmit) {
             SickNoteExtendDto mutationGuard = sickNoteExtendDto;
             if (hasUserSelectedCustomDate) {

@@ -7,6 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -219,7 +220,8 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
     public String acceptSickNoteExtension(
         @PathVariable("id") Long sickNoteId,
         @ModelAttribute("comment") SickNoteCommentFormDto comment,
-        @RequestParam(value = "redirect", required = false) String redirectUrl
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
+        RedirectAttributes redirectAttributes
     ) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -227,6 +229,18 @@ class SickNoteViewController implements HasLaunchpad, HasPersonSearch {
 
         if (!sickNotePermissionEvaluator.of(signedInUser, sickNote).isAllowedToAcceptExtension()) {
             throw new AccessDeniedException("User '%s' has not the correct permissions to accept a submitted sick note extension for %s".formatted(signedInUser.getId(), sickNote.getPerson()));
+        }
+
+        final Optional<SickNoteExtension> submittedExtension = sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote);
+        if (submittedExtension.isPresent()) {
+            // validated like an edit, an application for leave may have been made for the extended days since the extension was submitted
+            final SickNote extendedSickNote = SickNote.builder(sickNote).endDate(submittedExtension.get().nextEndDate()).build();
+            final Errors errors = new BeanPropertyBindingResult(extendedSickNote, "sickNote");
+            sickNoteValidator.validate(extendedSickNote, errors);
+            if (errors.hasErrors()) {
+                redirectAttributes.addFlashAttribute("acceptExtensionError", errors.getAllErrors().getFirst().getCode());
+                return "redirect:/web/sicknote/" + sickNoteId + "?redirect=%s".formatted(encode(safeRedirectUrlOrEmpty(redirectUrl), UTF_8));
+            }
         }
 
         sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId, comment.getText());

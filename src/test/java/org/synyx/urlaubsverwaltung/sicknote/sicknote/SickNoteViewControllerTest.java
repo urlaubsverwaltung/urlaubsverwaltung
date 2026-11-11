@@ -63,6 +63,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
@@ -1738,6 +1739,50 @@ class SickNoteViewControllerTest {
             .param("text", "comment"));
 
         verify(sickNoteInteractionService).accept(any(SickNote.class), eq(signedInPerson), eq("comment"));
+    }
+
+    @Test
+    void ensureAcceptSickNoteExtensionValidatesTheExtendedSickNote() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(personWithId(2)).status(ACTIVE)
+            .startDate(LocalDate.of(2025, FEBRUARY, 10)).endDate(LocalDate.of(2025, FEBRUARY, 20)).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)).thenReturn(Optional.of(
+            new SickNoteExtension(1L, 15L, LocalDate.of(2025, FEBRUARY, 25), SickNoteExtensionStatus.SUBMITTED, BigDecimal.valueOf(3))
+        ));
+
+        perform(post("/web/sicknote/15/extension/accept").param("text", "comment"))
+            .andExpect(view().name("redirect:/web/sicknote/15"));
+
+        verify(sickNoteValidator).validate(argThat((SickNote extended) -> extended.getId().equals(15L) && extended.getEndDate().equals(LocalDate.of(2025, FEBRUARY, 25))), any(Errors.class));
+        verify(sickNoteExtensionInteractionService).acceptSubmittedExtension(signedInPerson, 15L, "comment");
+    }
+
+    @Test
+    void ensureAcceptSickNoteExtensionIsRefusedWhenTheExtendedSickNoteOverlaps() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final SickNote sickNote = SickNote.builder().id(15L).person(personWithId(2)).status(ACTIVE)
+            .startDate(LocalDate.of(2025, FEBRUARY, 10)).endDate(LocalDate.of(2025, FEBRUARY, 20)).build();
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+        when(sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)).thenReturn(Optional.of(
+            new SickNoteExtension(1L, 15L, LocalDate.of(2025, FEBRUARY, 25), SickNoteExtensionStatus.SUBMITTED, BigDecimal.valueOf(3))
+        ));
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.reject("application.error.overlap");
+            return null;
+        }).when(sickNoteValidator).validate(any(), any());
+
+        perform(post("/web/sicknote/15/extension/accept").param("redirect", "/web/sicknote/submitted"))
+            .andExpect(flash().attribute("acceptExtensionError", "application.error.overlap"))
+            .andExpect(view().name("redirect:/web/sicknote/15?redirect=%2Fweb%2Fsicknote%2Fsubmitted"));
+
+        verifyNoInteractions(sickNoteExtensionInteractionService);
     }
 
     @ParameterizedTest
