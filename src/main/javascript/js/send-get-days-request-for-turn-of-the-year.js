@@ -24,9 +24,9 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
   }));
   const results = await Promise.all(promises);
 
-  const inYear = globalThis.uv?.i18n?.["application.applier.inYear"] ?? "in";
+  const inYear = globalThis.uv.i18n["application.applier.inYear"];
   const formattedResults = results.map((result) => `${formatNumber(result.workDays)} ${inYear} ${result.year}`);
-  const listFormat = new Intl.ListFormat(globalThis.uv?.language, { type: "conjunction" });
+  const listFormat = new Intl.ListFormat(globalThis.uv.language, { type: "conjunction" });
   element.innerHTML = `<br />(${listFormat.format(formattedResults)})`;
 }
 
