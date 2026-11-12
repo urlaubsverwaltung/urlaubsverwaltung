@@ -6,6 +6,10 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
     fetchMock.mockGlobal();
   });
 
+  beforeEach(function () {
+    globalThis.uv = { language: "de", i18n: { "application.applier.inYear": "in" } };
+  });
+
   afterEach(function () {
     while (document.body.firstChild) {
       document.body.firstChild.remove();
@@ -98,6 +102,52 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
     await sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
     expect(document.querySelector("#awesome-element").innerHTML).toEqual("<br>(1 in 2021, 2 in 2022 und 3 in 2023)");
+  });
+
+  it("includes the new year when the period ends on new year's day", async function () {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2025-12-29&to=2025-12-31&length=FULL", {
+      workDays: "3.0",
+    });
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2026-01-01&to=2026-01-01&length=FULL", {
+      workDays: "0.0",
+    });
+
+    document.body.innerHTML = `<div id="awesome-element"></div>`;
+
+    await sendGetDaysRequestForTurnOfTheYear(
+      "/url-prefix",
+      new Date(2025, 11, 29),
+      new Date(2026, 0, 1),
+      "FULL",
+      "1",
+      "#awesome-element",
+    );
+
+    expect(document.querySelector("#awesome-element").innerHTML).toEqual("<br>(3 in 2025 und 0 in 2026)");
+  });
+
+  it("uses the language and translation of the user", async function () {
+    globalThis.uv = { language: "en", i18n: { "application.applier.inYear": "in" } };
+
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31&length=FULL", {
+      workDays: "1.0",
+    });
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-01-07&length=FULL", {
+      workDays: "2.0",
+    });
+
+    document.body.innerHTML = `<div id="awesome-element"></div>`;
+
+    await sendGetDaysRequestForTurnOfTheYear(
+      "/url-prefix",
+      new Date(2021, 11, 20),
+      new Date(2022, 0, 7),
+      "FULL",
+      "1",
+      "#awesome-element",
+    );
+
+    expect(document.querySelector("#awesome-element").innerHTML).toEqual("<br>(1 in 2021 and 2 in 2022)");
   });
 
   it("does not add 'length' to requested url when dayLength is unknown", async function () {

@@ -24,9 +24,10 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
   }));
   const results = await Promise.all(promises);
 
-  const lastResult = results.pop();
-  const formattedResults = results.map((result) => `${formatNumber(result.workDays)} in ${result.year}`);
-  element.innerHTML = `<br />(${formattedResults.join(", ")} und ${formatNumber(lastResult.workDays)} in ${lastResult.year})`;
+  const inYear = globalThis.uv?.i18n?.["application.applier.inYear"] ?? "in";
+  const formattedResults = results.map((result) => `${formatNumber(result.workDays)} ${inYear} ${result.year}`);
+  const listFormat = new Intl.ListFormat(globalThis.uv?.language, { type: "conjunction" });
+  element.innerHTML = `<br />(${listFormat.format(formattedResults)})`;
 }
 
 function getYearlyDateRanges(startDate, endDate) {
@@ -35,7 +36,7 @@ function getYearlyDateRanges(startDate, endDate) {
   let currentYear = getYear(startDate);
   let currentStart = startDate;
 
-  while (currentStart < endDate) {
+  while (currentStart <= endDate) {
     let currentEnd = new Date(currentYear + 1, 0, 1);
     currentEnd.setDate(currentEnd.getDate() - 1);
 
