@@ -41,16 +41,31 @@ jobs:
             ./target/urlaubsverwaltung-*.jar
             ./target/urlaubsverwaltung-*.cdx.json
 
+  # The image is built once and pushed to GitHub Container Registry, Docker Hub gets a copy of it
   container-upload-github:
-    needs:
-      - create-github-release
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    outputs:
+      digest: ${{ steps.image.outputs.digest }}
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}/urlaubsverwaltung
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78
         with:
           java-version-file: ".tool-versions"
           cache: 'maven'
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw spring-boot:build-image
@@ -61,30 +76,56 @@ jobs:
           -Ddocker-publish-registry-path=${{ github.repository }}
           -Ddocker-publish-registry-username=${{ github.actor }}
           -Ddocker-publish-registry-password=${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve image digest
+        id: image
+        run: echo "digest=$(docker buildx imagetools inspect "$IMAGE:${GITHUB_REF#refs/*/urlaubsverwaltung-}" --format '{{.Manifest.Digest}}')" >> "$GITHUB_OUTPUT"
+      - name: Attest build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.image.outputs.digest }}
+          push-to-registry: true
+      - name: Sign image
+        run: cosign sign --yes "$IMAGE@${{ steps.image.outputs.digest }}"
 
   container-upload-docker-hub-urlaubsverwaltung:
     needs:
-      - create-github-release
+      - container-upload-github
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      SOURCE: ghcr.io/${{ github.repository }}/urlaubsverwaltung@${{ needs.container-upload-github.outputs.digest }}
+      IMAGE: docker.io/urlaubsverwaltung/urlaubsverwaltung
+      DIGEST: ${{ needs.container-upload-github.outputs.digest }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
         with:
-          java-version-file: ".tool-versions"
-          cache: 'maven'
-      - name: Publish docker image to Docker Hub urlaubsverwaltung
-        run: >
-          ./mvnw spring-boot:build-image
-          -Dmaven.test.skip=true
-          -DskipTests
-          -Dspring-boot.build-image.publish=true
-          -Ddocker-publish-registry=registry.hub.docker.com
-          -Ddocker-publish-registry-path=urlaubsverwaltung
-          -Ddocker-publish-registry-username=${{ secrets.DOCKER_UV_USERNAME }}
-          -Ddocker-publish-registry-password=${{ secrets.DOCKER_UV_TOKEN }}
+          username: ${{ secrets.DOCKER_UV_USERNAME }}
+          password: ${{ secrets.DOCKER_UV_TOKEN }}
+      - name: Copy docker image to Docker Hub urlaubsverwaltung
+        run: |
+          TARGET="$IMAGE:${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+          # without --prefer-index=false the image is wrapped in an index and gets a different digest
+          docker buildx imagetools create --prefer-index=false --tag "$TARGET" "$SOURCE"
+          COPIED=$(docker buildx imagetools inspect "$TARGET" --format '{{.Manifest.Digest}}')
+          [ "$COPIED" = "$DIGEST" ] || { echo "digest changed while copying: $DIGEST -> $COPIED"; exit 1; }
+      - name: Attest build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ env.DIGEST }}
+          push-to-registry: true
+      - name: Sign image
+        run: cosign sign --yes "$IMAGE@$DIGEST"
 
   helm-chart-release:
     needs:
+      - create-github-release
       - container-upload-github
       - container-upload-docker-hub-urlaubsverwaltung
     uses: ./.github/workflows/helm-chart-release.yml
