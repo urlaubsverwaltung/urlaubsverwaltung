@@ -369,6 +369,44 @@ class DepartmentServiceImplTest {
         }
 
         @Test
+        void ensureGetManagedMembersOfPersonYearIgnoresManagementMembershipWhoseRoleWasTakenAway() {
+
+            final PersonId departmentHeadId = new PersonId(1L);
+            final Person departmentHead = new Person();
+            departmentHead.setId(departmentHeadId.value());
+            // still department head of department 1, the second stage authority role for department 2 has been taken away
+            departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final PersonId managedId = new PersonId(2L);
+            final Person managed = new Person();
+            managed.setId(managedId.value());
+
+            final PersonId notManagedId = new PersonId(3L);
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            when(departmentMembershipService.getActiveMembershipsOfYear(lastYear))
+                .thenReturn(Map.of(
+                    departmentHeadId, List.of(
+                        new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, joinedLastYear),
+                        new DepartmentMembership(departmentHeadId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, joinedLastYear)
+                    ),
+                    managedId, List.of(
+                        new DepartmentMembership(managedId, 1L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    ),
+                    notManagedId, List.of(
+                        new DepartmentMembership(notManagedId, 2L, DepartmentMembershipKind.MEMBER, joinedLastYear)
+                    )
+                ));
+
+            when(personService.getAllPersonsByIds(Set.of(managedId))).thenReturn(List.of(managed));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(departmentHead, lastYear);
+            assertThat(actual).containsExactly(managed);
+        }
+
+        @Test
         void ensureGetManagedMembersOfPersonYearExcludesMembersThatHaveLeftTheDepartment() {
 
             final PersonId departmentHeadId = new PersonId(1L);
@@ -863,6 +901,36 @@ class DepartmentServiceImplTest {
 
         final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
         assertThat(actual).containsExactlyInAnyOrder(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonIgnoresManagementMembershipWhoseRoleWasTakenAway() {
+
+        final PersonId personId = new PersonId(1L);
+        final Person person = new Person();
+        person.setId(personId.value());
+        // still department head of department 1, the second stage authority role for department 2 has been taken away
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final PersonId maxId = new PersonId(2L);
+        final Person max = new Person();
+        max.setPermissions(List.of(USER));
+        max.setId(maxId.value());
+
+        final DepartmentMembership personMembership1 = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentMembership maxMembership1 = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership personMembership2 = new DepartmentMembership(personId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
+
+        when(departmentMembershipService.getActiveMemberships(personId))
+            .thenReturn(List.of(personMembership1, personMembership2));
+
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1), List.of(personMembership1), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff1));
+
+        when(personService.getAllPersonsByIds(Set.of(maxId))).thenReturn(List.of(max));
+
+        final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
+        assertThat(actual).containsExactly(max);
     }
 
     @Test
