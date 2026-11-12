@@ -675,14 +675,13 @@ class CalculationServiceTest {
         account2013.setActualVacationDays(account2013.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        // this year still has all ten days (but 3 of them used up next year, see above)
+        // this year still has all ten days, but all of them are already used up next year, see above
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
             .withRemainingVacation(ZERO)
             .notExpiring(ZERO)
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
-            .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
             .withVacationDaysUsedNextYear(TEN)
             .build();
         when(vacationDaysService.getVacationDaysLeftIgnoring(null, List.of(account), year, List.of(account2013)))
