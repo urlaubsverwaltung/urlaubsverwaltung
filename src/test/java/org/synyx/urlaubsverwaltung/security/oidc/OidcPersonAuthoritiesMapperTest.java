@@ -31,6 +31,7 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -44,7 +45,7 @@ class OidcPersonAuthoritiesMapperTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OidcPersonAuthoritiesMapper(personService);
+        sut = new OidcPersonAuthoritiesMapper(personService, false);
     }
 
 
@@ -304,6 +305,31 @@ class OidcPersonAuthoritiesMapperTest {
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).contains(USER.name(), OFFICE.name());
+    }
+
+    @Test
+    void ensureToIgnoreStoredRolesBesidesUserWhenClaimMappersGrantTheRoles() {
+        sut = new OidcPersonAuthoritiesMapper(personService, true);
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(SUB, "uniqueID"));
+
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.of(personForLogin));
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority, new SimpleGrantedAuthority("BOSS")));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsExactlyInAnyOrder(USER.name(), "OIDC_USER", BOSS.name());
+    }
+
+    @Test
+    void ensureNotToGrantOfficeToTheFirstPersonWhenClaimMappersGrantTheRoles() {
+        sut = new OidcPersonAuthoritiesMapper(personService, true);
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(SUB, "uniqueID"));
+        when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.empty());
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsExactlyInAnyOrder(USER.name(), "OIDC_USER");
     }
 
     @Test

@@ -40,6 +40,9 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.E
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL_VERIFIED;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +55,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService);
+        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService, false);
     }
 
     @Nested
@@ -150,6 +153,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
                 new PersonUpdate.PersonalData(uniqueID, givenName, familyName, email));
             assertThat(personUpdateArgumentCaptor.getValue().emailVerification()).hasValue(
                 new PersonUpdate.EmailVerification(null));
+            assertThat(personUpdateArgumentCaptor.getValue().permissions()).isEmpty();
         }
 
         @Test
@@ -417,6 +421,53 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             assertThatThrownBy(() -> sut.handle(event))
                 .isInstanceOf(OidcPersonMappingException.class)
                 .hasMessage("Can not retrieve the given name for oidc person mapping");
+        }
+    }
+
+    @Nested
+    class PermissionsFromClaims {
+
+        private final Map<String, Object> claims = Map.of(
+            SUB, "uniqueID",
+            GIVEN_NAME, "given name",
+            FAMILY_NAME, "family name",
+            EMAIL, "test.me@example.com"
+        );
+
+        @BeforeEach
+        void setUp() {
+            sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService, true);
+        }
+
+        @Test
+        void overwritesThePermissionsOfAnExistingPersonWithTheRolesOfTheClaims() {
+
+            final Person existingPerson = new Person("uniqueID", "family name", "given name", "test.me@example.com");
+            existingPerson.setId(1L);
+            existingPerson.setPermissions(List.of(USER, OFFICE));
+            when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.of(existingPerson));
+
+            sut.handle(getOidcUserAuthority(List.of(new SimpleGrantedAuthority("OIDC_USER"), new SimpleGrantedAuthority("BOSS")), claims));
+
+            final ArgumentCaptor<PersonUpdate> personUpdateArgumentCaptor = ArgumentCaptor.forClass(PersonUpdate.class);
+            verify(personService).update(eq(new PersonId(1L)), personUpdateArgumentCaptor.capture());
+            assertThat(personUpdateArgumentCaptor.getValue().personalData()).isPresent();
+            assertThat(personUpdateArgumentCaptor.getValue().permissions()).hasValue(List.of(USER, BOSS));
+        }
+
+        @Test
+        void createsANewPersonWithTheRolesOfTheClaimsAndWithoutAppointingAnOfficeUser() {
+
+            when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.empty());
+            when(personService.getPersonByMailAddress("test.me@example.com")).thenReturn(Optional.empty());
+            final Person createdPerson = new Person("uniqueID", "family name", "given name", "test.me@example.com");
+            createdPerson.setId(1L);
+            when(personService.create("uniqueID", "given name", "family name", "test.me@example.com", null)).thenReturn(createdPerson);
+
+            sut.handle(getOidcUserAuthority(List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")), claims));
+
+            verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, DEPARTMENT_HEAD)));
+            verify(personService, never()).appointAsOfficeUserIfNoOfficeUserPresent(new PersonId(1L));
         }
     }
 
