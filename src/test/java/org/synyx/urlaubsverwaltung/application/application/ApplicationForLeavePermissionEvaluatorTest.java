@@ -476,6 +476,17 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensurePersonMayNotRequestCancellationAgainWhileItIsRequested() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, ALLOWED_CANCELLATION_REQUESTED));
+
+            // every request sends a comment and mails to the management again
+            assertThat(permissions.isAllowedToStartCancellationRequest()).isFalse();
+            assertThat(permissions.isAllowedToCancelInAnyWay()).isFalse();
+        }
+
+        @Test
         void ensureManagerMayNotRequestCancellationOfTemporarilyAllowedApplication() {
 
             final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);

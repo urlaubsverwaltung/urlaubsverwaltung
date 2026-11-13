@@ -169,11 +169,12 @@ public final class ApplicationForLeavePermissions {
      * Whether the user may ask for the cancellation of an already allowed application. Only the person itself and the
      * management of that person may ask for it, and only if they may not cancel it right away. A temporarily allowed
      * application is revoked instead: declining the request would allow it finally, without the second stage authority.
+     * A requested cancellation is not requested again.
      *
      * @return {@code true} if the user may request the cancellation of the application, {@code false} otherwise
      */
     public boolean isAllowedToStartCancellationRequest() {
-        return (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+        return application.hasStatus(ALLOWED)
             && requiresApprovalToCancel()
             && (isOwnApplication() || signedInUser.hasRole(BOSS) || isManagerOfPerson())
             && !isAllowedToCancel();
