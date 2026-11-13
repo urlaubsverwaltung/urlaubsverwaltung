@@ -45,7 +45,7 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
     @Override
     public Optional<SickNoteExtension> findSubmittedExtensionOfSickNote(SickNote sickNote) {
         return findMostRecentSubmittedExtensionEntity(sickNote)
-            .map(entity -> toSickNoteExtension(entity, getAdditionalWorkingDays(sickNote, entity)));
+            .map(entity -> toSickNoteExtension(entity, getAdditionalWorkingDays(sickNote, entity.getNewEndDate())));
     }
 
     @Override
@@ -89,8 +89,7 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
         final SickNoteExtensionEntity saved = repository.save(extensionEntity);
 
-        final BigDecimal additionalWorkdays = getWorkdays(sickNote.getPerson(), sickNote.getEndDate(), newEndDate);
-        return toSickNoteExtension(saved, additionalWorkdays);
+        return toSickNoteExtension(saved, getAdditionalWorkingDays(sickNote, newEndDate));
     }
 
     @Override
@@ -141,12 +140,11 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
         return Optional.of(extensionEntity);
     }
 
-    private BigDecimal getAdditionalWorkingDays(SickNote sickNote, SickNoteExtensionEntity extensionEntity) {
-        final DateRange dateRange = new DateRange(sickNote.getStartDate(), extensionEntity.getNewEndDate());
+    private BigDecimal getAdditionalWorkingDays(SickNote sickNote, LocalDate newEndDate) {
+        final DateRange dateRange = new DateRange(sickNote.getStartDate(), newEndDate);
         final WorkingTimeCalendar workingTimeCalendar = getWorkingTimeCalendar(sickNote.getPerson(), dateRange);
-        return workingTimeCalendar.workingTime(sickNote.getEndDate(), extensionEntity.getNewEndDate())
-            // workingTime for the same date is 1. therefore we have to subtract 1 for "additional" days
-            .subtract(BigDecimal.ONE);
+        // the days after the current end date, which can be a day off
+        return workingTimeCalendar.workingTime(sickNote.getEndDate().plusDays(1), newEndDate);
     }
 
     private WorkingTimeCalendar getWorkingTimeCalendar(Person person, DateRange dateRange) {
@@ -155,11 +153,6 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
             throw new IllegalStateException("expected workingTimeCalender of person=%s to exist for dateRange=%s".formatted(person.getId(), dateRange));
         }
         return workingTimeCalendar;
-    }
-
-    private BigDecimal getWorkdays(Person person, LocalDate start, LocalDate end) {
-        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(start, end)).get(person);
-        return workingTimeCalendar.workingTime(start, end);
     }
 
     private SickNote getSickNote(Long id) {

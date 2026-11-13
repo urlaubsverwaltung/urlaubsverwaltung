@@ -27,6 +27,7 @@ import static java.time.Month.AUGUST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -188,6 +189,46 @@ class SubmittedSickNoteServiceImplTest {
         }
 
         @Test
+        void ensureAdditionalWorkingDaysAfterASickNoteEndingOnADayOff() {
+
+            final Person person = new Person();
+            person.setId(1L);
+
+            // monday to sunday, extended to the next monday
+            final LocalDate startDate = LocalDate.of(2024, AUGUST, 19);
+            final LocalDate endDate = LocalDate.of(2024, AUGUST, 25);
+            final LocalDate nextEndDate = LocalDate.of(2024, AUGUST, 26);
+
+            when(sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), List.of(person)))
+                .thenReturn(List.of());
+
+            final SickNoteEntity sickNoteEntity = mock(SickNoteEntity.class);
+            when(sickNoteEntity.getPerson()).thenReturn(person);
+            when(sickNoteEntity.getStartDate()).thenReturn(startDate);
+            when(sickNoteEntity.getEndDate()).thenReturn(endDate);
+
+            final SickNoteExtensionEntity extensionEntity = new SickNoteExtensionEntity();
+            extensionEntity.setId(1L);
+            extensionEntity.setSickNoteId(1L);
+            extensionEntity.setStatus(SickNoteExtensionStatus.SUBMITTED);
+            extensionEntity.setNewEndDate(nextEndDate);
+
+            when(extensionRepository.findAllByStatusAndPersonIsIn(SickNoteExtensionStatus.SUBMITTED, List.of(1L)))
+                .thenReturn(List.of(projection(sickNoteEntity, extensionEntity)));
+
+            final WorkingTimeCalendar workingTimeCalendar = mondayToFridayFrom(startDate, nextEndDate);
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, nextEndDate)))
+                .thenReturn(Map.of(person, workingTimeCalendar));
+
+            final SickNote sickNote = SickNote.builder().id(1L).startDate(startDate).endDate(endDate).build();
+            when(sickNoteMapper.toSickNote(sickNoteEntity, workingTimeCalendar)).thenReturn(sickNote);
+
+            final List<SubmittedSickNote> actual = sut.findSubmittedSickNotes(List.of(person));
+            assertThat(actual.getFirst().extension()).hasValueSatisfying(extension ->
+                assertThat(extension.additionalWorkdays()).isEqualByComparingTo(BigDecimal.ONE));
+        }
+
+        @Test
         void ensureDistinctWhenSickNoteAndExtension() {
             // this actually cannot happen when everythings correct.
             // a sickNote with status SUBMITTED cannot have extensions.
@@ -248,5 +289,15 @@ class SubmittedSickNoteServiceImplTest {
             }
         };
     }
-}
 
+    private static WorkingTimeCalendar mondayToFridayFrom(LocalDate from, LocalDate to) {
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> days = new java.util.HashMap<>();
+        for (LocalDate date : new DateRange(from, to)) {
+            final boolean weekend = date.getDayOfWeek().getValue() > 5;
+            days.put(date, weekend
+                ? new WorkingTimeCalendar.WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY)
+                : new WorkingTimeCalendar.WorkingDayInformation(DayLength.FULL, WORKDAY, WORKDAY));
+        }
+        return new WorkingTimeCalendar(days);
+    }
+}
