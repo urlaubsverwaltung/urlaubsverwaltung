@@ -388,6 +388,16 @@ class ApplicationForLeavePermissionEvaluatorTest {
         }
 
         @Test
+        void ensurePersonMayRevokeOwnTemporarilyAllowedApplicationInsteadOfRequestingItsCancellation() {
+            final Person person = person(SIGNED_IN_USER_ID, USER);
+
+            final ApplicationForLeavePermissions permissions = sut.of(person, applicationRequiringApprovalToCancel(person, TEMPORARY_ALLOWED));
+
+            assertThat(permissions.isAllowedToRevoke()).isTrue();
+            assertThat(permissions.isAllowedToStartCancellationRequest()).isFalse();
+        }
+
+        @Test
         void ensureManagerNeedsApplicationCancelRoleToCancel() {
             assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD, APPLICATION_CANCEL).isAllowedToCancel()).isTrue();
             assertThat(permissionsOnManagedPerson(ALLOWED, DEPARTMENT_HEAD).isAllowedToCancel()).isFalse();
@@ -463,6 +473,17 @@ class ApplicationForLeavePermissionEvaluatorTest {
             when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
 
             assertThat(sut.of(departmentHead, applicationRequiringApprovalToCancel(member, ALLOWED)).isAllowedToStartCancellationRequest()).isTrue();
+        }
+
+        @Test
+        void ensureManagerMayNotRequestCancellationOfTemporarilyAllowedApplication() {
+
+            final Person departmentHead = person(SIGNED_IN_USER_ID, DEPARTMENT_HEAD);
+            final Person member = person(OTHER_PERSON_ID, USER);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
+
+            // declining the request would allow the application finally, without the second stage authority
+            assertThat(sut.of(departmentHead, applicationRequiringApprovalToCancel(member, TEMPORARY_ALLOWED)).isAllowedToStartCancellationRequest()).isFalse();
         }
 
         @Test

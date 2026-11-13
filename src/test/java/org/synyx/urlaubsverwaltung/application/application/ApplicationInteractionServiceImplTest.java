@@ -831,6 +831,50 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
+    void ensureCancellingTemporarilyAllowedApplicationByOwnerRevokesIt() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.REVOKED, person, "");
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, person)).thenReturn(applicationComment);
+
+        sut.cancel(applicationForLeave, person, comment);
+
+        // a cancellation request would turn into a final allowance when declined, skipping the second stage authority
+        assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
+        verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
+        verify(applicationEventPublisher).publishEvent(any(ApplicationRevokedEvent.class));
+    }
+
+    @Test
+    void ensureCancellingTemporarilyAllowedApplicationByOfficeCancelsIt() {
+
+        final Person office = new Person("office", "Office", "Olaf", "office@example.org");
+        office.setPermissions(asList(USER, OFFICE));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, CANCELLED, office, "");
+        when(commentService.create(applicationForLeave, CANCELLED, comment, office)).thenReturn(applicationComment);
+
+        sut.cancel(applicationForLeave, office, comment);
+
+        assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
+        verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
+    }
+
+    @Test
     void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");

@@ -127,12 +127,12 @@ public final class ApplicationForLeavePermissions {
     }
 
     /**
-     * Revoking is withdrawing an application nobody decided about yet.
+     * Revoking is withdrawing an application nobody decided about finally yet - a temporarily allowed one included.
      *
      * @return {@code true} if the user may revoke the application, {@code false} otherwise
      */
     public boolean isAllowedToRevoke() {
-        return application.hasStatus(WAITING)
+        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
             && requiresApprovalToCancel()
             && (isOwnApplication() || signedInUser.hasRole(OFFICE));
     }
@@ -167,12 +167,13 @@ public final class ApplicationForLeavePermissions {
 
     /**
      * Whether the user may ask for the cancellation of an already allowed application. Only the person itself and the
-     * management of that person may ask for it, and only if they may not cancel it right away.
+     * management of that person may ask for it, and only if they may not cancel it right away. A temporarily allowed
+     * application is revoked instead: declining the request would allow it finally, without the second stage authority.
      *
      * @return {@code true} if the user may request the cancellation of the application, {@code false} otherwise
      */
     public boolean isAllowedToStartCancellationRequest() {
-        return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+        return (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
             && requiresApprovalToCancel()
             && (isOwnApplication() || signedInUser.hasRole(BOSS) || isManagerOfPerson())
             && !isAllowedToCancel();
