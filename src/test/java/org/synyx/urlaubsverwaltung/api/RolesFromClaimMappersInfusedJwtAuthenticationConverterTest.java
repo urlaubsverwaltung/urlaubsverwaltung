@@ -26,6 +26,7 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +59,22 @@ class RolesFromClaimMappersInfusedJwtAuthenticationConverterTest {
             "groups", List.of("urlaubsverwaltung_user")
         );
 
+        when(rolesFromClaimMapper.mapClaimToRoles(claims)).thenReturn(List.of(new SimpleGrantedAuthority("OFFICE")));
+        final Jwt jwt = new Jwt("tokenValue", Instant.now(), Instant.MAX, Map.of("header", "some"), claims);
+
+        final AbstractAuthenticationToken authenticationToken = sut.convert(jwt);
+        assertThat(authenticationToken.getAuthorities().stream().map(GrantedAuthority::getAuthority))
+            .containsExactly("USER", "OFFICE");
+    }
+
+    @Test
+    void ensuresToIgnoreStoredRolesBesidesUserWhenClaimMappersGrantTheRoles() {
+
+        final Person person = new Person("seppl", "Hans", "Seppl", "seppl@example.org");
+        person.setPermissions(List.of(USER, BOSS));
+        when(personService.getPersonByUsername("uniqueID")).thenReturn(Optional.of(person));
+
+        final Map<String, Object> claims = Map.of(SUB, "uniqueID");
         when(rolesFromClaimMapper.mapClaimToRoles(claims)).thenReturn(List.of(new SimpleGrantedAuthority("OFFICE")));
         final Jwt jwt = new Jwt("tokenValue", Instant.now(), Instant.MAX, Map.of("header", "some"), claims);
 

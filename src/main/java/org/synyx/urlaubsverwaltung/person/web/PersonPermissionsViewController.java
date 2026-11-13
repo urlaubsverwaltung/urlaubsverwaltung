@@ -24,9 +24,11 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -47,6 +49,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     private final SessionService sessionService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final PersonProperties personProperties;
+    private final boolean permissionsFromClaims;
 
     @Autowired
     PersonPermissionsViewController(
@@ -56,7 +59,8 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         PersonPermissionsDtoValidator validator,
         SessionService sessionService,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
-        PersonProperties personProperties
+        PersonProperties personProperties,
+        List<RolesFromClaimMapper> rolesFromClaimMappers
     ) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -65,6 +69,8 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         this.sessionService = sessionService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.personProperties = personProperties;
+        // the identity provider grants the roles, every login overwrites them
+        this.permissionsFromClaims = !rolesFromClaimMappers.isEmpty();
     }
 
     @Override
@@ -100,6 +106,12 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
+        final Collection<Role> permissions = permissionsToSave(person, mapPermissionsDtoToRole(personPermissionsDto.getPermissions()));
+        if (permissionsFromClaims && !personPermissionsDto.getPermissions().contains(INACTIVE)) {
+            // the role checkboxes are disabled and not submitted, validate the roles that are saved
+            personPermissionsDto.setPermissions(mapRoleToPermissionsDto(List.copyOf(permissions)));
+        }
+
         validator.validate(personPermissionsDto, errors);
         if (personPermissionsDto.getPermissions().contains(INACTIVE) && !canDeactivate(person)) {
             errors.rejectValue("permissions", "person.form.permissions.error.inactive.disabled");
@@ -111,8 +123,7 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         }
 
         final Collection<Role> oldRoles = List.copyOf(person.getPermissions());
-        final Person updatedPerson = personService.update(person.getIdAsPersonId(),
-            PersonUpdate.ofPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions())));
+        final Person updatedPerson = personService.update(person.getIdAsPersonId(), PersonUpdate.ofPermissions(permissions));
 
         final List<Role> addedPermissions = calculateAddedPermissions(oldRoles, updatedPerson);
         if (!addedPermissions.isEmpty()) {
@@ -128,6 +139,18 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     private void addDeactivationAttributes(Model model, Person person) {
         model.addAttribute("canDeactivatePerson", canDeactivate(person));
         model.addAttribute("customerPortalUrl", personProperties.getCustomerPortalUrl());
+        model.addAttribute("permissionsFromClaims", permissionsFromClaims);
+    }
+
+    /**
+     * With roles from the identity provider only the activation is changed here: a deactivated person loses every role
+     * and cannot log in, a (re)activated person keeps the roles of the last login.
+     */
+    private Collection<Role> permissionsToSave(Person person, Collection<Role> submittedPermissions) {
+        if (!permissionsFromClaims || !submittedPermissions.contains(USER)) {
+            return submittedPermissions;
+        }
+        return Stream.concat(Stream.of(USER), person.getPermissions().stream()).distinct().toList();
     }
 
     /**

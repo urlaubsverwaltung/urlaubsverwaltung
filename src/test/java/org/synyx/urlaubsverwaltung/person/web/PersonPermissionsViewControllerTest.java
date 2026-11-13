@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.DEPARTMENT_HEAD;
@@ -75,7 +79,7 @@ class PersonPermissionsViewControllerTest {
     void setUp() {
         personProperties = new PersonProperties();
         sut = new PersonPermissionsViewController(personService, departmentService, personMailService, validator,
-            sessionService, personSearchUiFragmentSupplier, personProperties);
+            sessionService, personSearchUiFragmentSupplier, personProperties, List.of());
     }
 
     @Nested
@@ -209,6 +213,99 @@ class PersonPermissionsViewControllerTest {
 
         verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
         verify(sessionService).markSessionToReloadAuthorities("username");
+    }
+
+    @Nested
+    class PermissionsFromClaims {
+
+        @BeforeEach
+        void setUp() {
+            sut = new PersonPermissionsViewController(personService, departmentService, personMailService, validator,
+                sessionService, personSearchUiFragmentSupplier, personProperties, List.of(mock(RolesFromClaimMapper.class)));
+        }
+
+        @Test
+        void showsThatTheIdentityProviderGrantsThePermissions() throws Exception {
+
+            final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+            person.setId(1L);
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+            perform(get("/web/person/1/permissions"))
+                .andExpect(model().attribute("permissionsFromClaims", true));
+        }
+
+        @Test
+        void keepsTheRolesOfTheIdentityProviderOfAnActivePerson() throws Exception {
+
+            final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+            person.setId(1L);
+            person.setPermissions(List.of(USER, BOSS));
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(personService.update(any(), any())).thenReturn(person);
+
+            perform(post("/web/person/1/permissions")
+                .param("id", "1")
+                .param("permissions[0]", "USER")
+                .param("permissions[1]", "OFFICE")
+            );
+
+            verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, BOSS)));
+        }
+
+        @Test
+        void validatesTheKeptRolesOfTheIdentityProvider() throws Exception {
+
+            final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+            person.setId(1L);
+            person.setPermissions(List.of(USER, OFFICE));
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(personService.update(any(), any())).thenReturn(person);
+
+            perform(post("/web/person/1/permissions")
+                .param("id", "1")
+                .param("permissions[0]", "USER")
+            );
+
+            final PersonPermissionsDto validated = new PersonPermissionsDto();
+            validated.setId(1L);
+            validated.setPermissions(List.of(PersonPermissionsRoleDto.USER, PersonPermissionsRoleDto.OFFICE));
+            verify(validator).validate(eq(validated), any());
+        }
+
+        @Test
+        void activatesAnInactivePerson() throws Exception {
+
+            final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+            person.setId(1L);
+            person.setPermissions(List.of());
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(personService.update(any(), any())).thenReturn(person);
+
+            perform(post("/web/person/1/permissions")
+                .param("id", "1")
+                .param("permissions[0]", "USER")
+            );
+
+            verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER)));
+        }
+
+        @Test
+        void deactivatesAnActivePerson() throws Exception {
+
+            final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+            person.setId(1L);
+            person.setPermissions(List.of(USER, BOSS));
+            when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+            when(personService.update(any(), any())).thenReturn(person);
+
+            perform(post("/web/person/1/permissions")
+                .param("id", "1")
+                .param("permissions[0]", "INACTIVE")
+            );
+
+            verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
+        }
     }
 
     @Test

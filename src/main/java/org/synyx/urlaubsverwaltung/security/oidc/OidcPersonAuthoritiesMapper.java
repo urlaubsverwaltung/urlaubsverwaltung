@@ -30,9 +30,15 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
+    private final boolean permissionsFromClaims;
 
-    OidcPersonAuthoritiesMapper(PersonService personService) {
+    /**
+     * @param permissionsFromClaims whether a claim mapper is enabled - then the identity provider grants the roles,
+     *                              they are part of the given authorities already
+     */
+    OidcPersonAuthoritiesMapper(PersonService personService, boolean permissionsFromClaims) {
         this.personService = personService;
+        this.permissionsFromClaims = permissionsFromClaims;
     }
 
     @Override
@@ -46,7 +52,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             .map(this::mapAuthorities)
             .orElseThrow(() -> new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped."));
 
-        return Stream.concat(applicationAuthorities.stream(), authorities.stream()).toList();
+        return Stream.concat(applicationAuthorities.stream(), authorities.stream()).distinct().toList();
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
@@ -60,7 +66,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
 
     private List<Role> generateListOfRoles() {
-        if (personService.getActivePersonsByRole(OFFICE).isEmpty()) {
+        if (!permissionsFromClaims && personService.getActivePersonsByRole(OFFICE).isEmpty()) {
             return List.of(OFFICE, USER);
         }
         return List.of(USER);
@@ -70,7 +76,8 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
         if (person.isInactive()) {
             throw new DisabledException("User '%s' has been deactivated".formatted(person.getId()));
         }
-        return person.getPermissions();
+        // the stored permissions could be outdated, the login stores the roles of the claims afterwards
+        return permissionsFromClaims ? List.of(USER) : person.getPermissions();
     }
 
     private Optional<Person> resolvePerson(OidcUserAuthority oidcUserAuthority) {

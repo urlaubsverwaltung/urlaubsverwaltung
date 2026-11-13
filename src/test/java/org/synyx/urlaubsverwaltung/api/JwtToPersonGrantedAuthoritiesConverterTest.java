@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,6 +25,7 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.E
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,12 +35,10 @@ class JwtToPersonGrantedAuthoritiesConverterTest {
 
     @Mock
     private PersonService personService;
-    @Mock
-    private RolesFromClaimMapper claimMapper;
 
     @BeforeEach
     void setUp() {
-        sut = new RolesFromClaimMappersInfusedJwtAuthenticationConverter(personService, List.of(claimMapper));
+        sut = new RolesFromClaimMappersInfusedJwtAuthenticationConverter(personService, List.of());
     }
 
     @Test
@@ -60,11 +58,11 @@ class JwtToPersonGrantedAuthoritiesConverterTest {
         final Jwt jwt = new Jwt("token", Instant.now(), Instant.now().plus(5, MINUTES), Map.of("header", "value"), claims);
 
         final Person person = new Person("username", "lastName", "firstName", "email");
-        person.setPermissions(List.of(USER));
+        person.setPermissions(List.of(USER, BOSS));
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(person));
 
         final AbstractAuthenticationToken token = sut.convert(jwt);
-        assertThat(token.getAuthorities().stream().map(GrantedAuthority::getAuthority)).containsExactly(USER.name());
+        assertThat(token.getAuthorities().stream().map(GrantedAuthority::getAuthority)).containsExactly(USER.name(), BOSS.name());
     }
 
     @Test

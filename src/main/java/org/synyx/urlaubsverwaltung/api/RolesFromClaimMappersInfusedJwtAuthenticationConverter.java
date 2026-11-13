@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+
 
 class RolesFromClaimMappersInfusedJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
@@ -54,7 +56,9 @@ class RolesFromClaimMappersInfusedJwtAuthenticationConverter implements Converte
                 throw new DisabledException("User '" + person.getId() + "' cannot access api, because account has been deactivated");
             }
 
-            return person.getPermissions()
+            // with claim mappers the identity provider grants the roles, the stored ones could be outdated
+            final Collection<Role> permissions = claimMappers.isEmpty() ? person.getPermissions() : List.of(USER);
+            return permissions
                 .stream()
                 .map(Role::name)
                 .map(SimpleGrantedAuthority::new)
