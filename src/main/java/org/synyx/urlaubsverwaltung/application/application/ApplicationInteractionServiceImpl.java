@@ -448,6 +448,12 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             throw new EditApplicationForLeaveNotAllowedException("Cannot change person of exiting application during edit.");
         }
 
+        if (!oldApplication.getStartDate().equals(editedApplication.getStartDate())) {
+            // the reminders announce the start date, the moved application has to be reminded again
+            editedApplication.setUpcomingApplicationsReminderSend(null);
+            editedApplication.setUpcomingHolidayReplacementNotificationSend(null);
+        }
+
         editedApplication.setEditedDate(LocalDate.now(clock));
         final Application savedEditedApplication = applicationService.save(editedApplication);
 

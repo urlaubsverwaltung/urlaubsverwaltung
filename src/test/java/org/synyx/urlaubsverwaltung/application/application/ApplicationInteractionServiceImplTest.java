@@ -30,10 +30,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
+import static java.time.Month.SEPTEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -1656,6 +1658,55 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveWithAnotherStartDateRemindsAgain() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        oldApplication.setStartDate(LocalDate.of(2020, AUGUST, 10));
+        oldApplication.setEndDate(LocalDate.of(2020, AUGUST, 14));
+
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        newApplication.setId(1L);
+        newApplication.setStatus(WAITING);
+        newApplication.setStartDate(LocalDate.of(2020, SEPTEMBER, 7));
+        newApplication.setEndDate(LocalDate.of(2020, SEPTEMBER, 11));
+        // copied from the saved application by the form
+        newApplication.setUpcomingApplicationsReminderSend(LocalDate.of(2020, AUGUST, 3));
+        newApplication.setUpcomingHolidayReplacementNotificationSend(LocalDate.of(2020, AUGUST, 3));
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        sut.edit(oldApplication, newApplication, person, of("Comment"));
+
+        assertThat(newApplication.getUpcomingApplicationsReminderSend()).isNull();
+        assertThat(newApplication.getUpcomingHolidayReplacementNotificationSend()).isNull();
+    }
+
+    @Test
+    void editApplicationForLeaveWithTheSameStartDateDoesNotRemindAgain() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        oldApplication.setStartDate(LocalDate.of(2020, AUGUST, 10));
+        oldApplication.setEndDate(LocalDate.of(2020, AUGUST, 14));
+
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        newApplication.setId(1L);
+        newApplication.setStatus(WAITING);
+        newApplication.setStartDate(LocalDate.of(2020, AUGUST, 10));
+        newApplication.setEndDate(LocalDate.of(2020, AUGUST, 21));
+        newApplication.setUpcomingApplicationsReminderSend(LocalDate.of(2020, AUGUST, 3));
+        newApplication.setUpcomingHolidayReplacementNotificationSend(LocalDate.of(2020, AUGUST, 3));
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        sut.edit(oldApplication, newApplication, person, of("Comment"));
+
+        assertThat(newApplication.getUpcomingApplicationsReminderSend()).isEqualTo(LocalDate.of(2020, AUGUST, 3));
+        assertThat(newApplication.getUpcomingHolidayReplacementNotificationSend()).isEqualTo(LocalDate.of(2020, AUGUST, 3));
     }
 
     @Test
