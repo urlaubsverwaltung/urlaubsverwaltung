@@ -255,10 +255,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         application.setCanceller(canceller);
         application.setCancelDate(LocalDate.now(clock));
 
-        if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED) || application.hasStatus(TEMPORARY_ALLOWED)) {
-            cancelApplication(application, canceller, comment);
-        } else if (application.hasStatus(WAITING)) {
+        final boolean revokable = application.hasStatus(WAITING)
+            || (application.hasStatus(TEMPORARY_ALLOWED) && !permissionEvaluator.of(canceller, application).isAllowedToCancel());
+
+        if (revokable) {
+            // a temporarily allowed application is not finally allowed yet, a cancellation request would turn into a final allowance when declined
             revokeApplication(application, canceller, comment);
+        } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED) || application.hasStatus(TEMPORARY_ALLOWED)) {
+            cancelApplication(application, canceller, comment);
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
