@@ -82,6 +82,17 @@ zu konfigurieren, damit erhält man mehr Informationen über den Fehlerzustand.
 
 Alle Informationen zum Betrieb mit unserem [Docker Image](https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung) sind im Ordner [.example](.examples) zu finden.
 
+Die Images werden signiert und mit einer Build Provenance Attestation veröffentlicht. So lässt sich prüfen,
+dass ein Image vom Release Workflow dieses Repositories gebaut wurde:
+
+```bash
+gh attestation verify oci://docker.io/urlaubsverwaltung/urlaubsverwaltung:<version> --owner urlaubsverwaltung
+
+cosign verify docker.io/urlaubsverwaltung/urlaubsverwaltung:<version> \
+  --certificate-identity-regexp '^https://github\.com/urlaubsverwaltung/urlaubsverwaltung/\.github/workflows/release\.yml@refs/tags/urlaubsverwaltung-' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
 ### Konfiguration
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application.yaml).
