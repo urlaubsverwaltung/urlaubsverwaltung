@@ -283,6 +283,8 @@ class AccountViewControllerTest {
             .flashAttr("account", accountForm));
 
         verify(accountInteractionService).editHolidaysAccount(account, validFrom, validTo, null, expiryDate, ZERO, ZERO, ZERO, BigDecimal.valueOf(5L), "comment");
+        // the next years carry over the left vacation days of the corrected one
+        verify(accountInteractionService).updateRemainingVacationDays(validFrom.getYear(), signedInPerson);
     }
 
     @Test
@@ -336,6 +338,7 @@ class AccountViewControllerTest {
             .flashAttr("account", mockedAccountForm));
 
         verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), isNull(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).updateRemainingVacationDays(Year.now(clock).getValue(), person);
     }
 
     @Test
