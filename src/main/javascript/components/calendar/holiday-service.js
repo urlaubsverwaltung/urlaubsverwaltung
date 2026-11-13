@@ -617,6 +617,16 @@ export const HolidayService = (function () {
       );
     },
 
+    /**
+     * Loads everything the calendar shows of the year.
+     *
+     * @param {number} year
+     * @returns {Promise}
+     */
+    fetchYear: function (year) {
+      return Promise.all([this.fetchPublicHolidays(year), this.fetchAbsences(year), this.fetchBlackoutPeriods(year)]);
+    },
+
     fetchBlackoutPeriods: function (year) {
       return this.fetchAndCache(
         "/persons/" + personId + "/blackout-periods",

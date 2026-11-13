@@ -30,11 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const fetchPromises = [];
     for (let year = yearOfStartDate; year <= yearOfEndDate; year++) {
-      fetchPromises.push(
-        holidayService.fetchPublicHolidays(year),
-        holidayService.fetchAbsences(year),
-        holidayService.fetchBlackoutPeriods(year),
-      );
+      fetchPromises.push(holidayService.fetchYear(year));
     }
 
     await Promise.all(fetchPromises);

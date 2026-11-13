@@ -25,9 +25,7 @@ describe("person/overview", function () {
 
   function fakeHolidayService() {
     return {
-      fetchPublicHolidays: vi.fn(() => Promise.resolve()),
-      fetchAbsences: vi.fn(() => Promise.resolve()),
-      fetchBlackoutPeriods: vi.fn(() => Promise.resolve()),
+      fetchYear: vi.fn(() => Promise.resolve()),
     };
   }
 
@@ -72,15 +70,11 @@ describe("person/overview", function () {
     expect(date).toEqual(new Date(2024, 5, 15));
   });
 
-  it("fetches public holidays and absences for the single year around today by default", async function () {
+  it("fetches the single year around today by default", async function () {
     const holidayServiceInstance = await renderAndLoad();
 
-    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledTimes(1);
-    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2024);
-    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledTimes(1);
-    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2024);
-    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledTimes(1);
-    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2024);
+    expect(holidayServiceInstance.fetchYear).toHaveBeenCalledTimes(1);
+    expect(holidayServiceInstance.fetchYear).toHaveBeenCalledWith(2024);
   });
 
   it("fetches the year after the last month shown, so an absence bar continuing there is not drawn as ending", async function () {
@@ -89,8 +83,7 @@ describe("person/overview", function () {
 
     const holidayServiceInstance = await renderAndLoad();
 
-    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2025);
-    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2025);
+    expect(holidayServiceInstance.fetchYear).toHaveBeenCalledWith(2025);
   });
 
   it("snaps to January 1st of the requested year and fetches every spanned year", async function () {
@@ -99,12 +92,8 @@ describe("person/overview", function () {
     const holidayServiceInstance = await renderAndLoad();
 
     // subMonths(2020-01-01, 5) -> 2019, addMonths(2020-01-01, 5) -> 2020
-    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2019);
-    expect(holidayServiceInstance.fetchPublicHolidays).toHaveBeenCalledWith(2020);
-    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2019);
-    expect(holidayServiceInstance.fetchAbsences).toHaveBeenCalledWith(2020);
-    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2019);
-    expect(holidayServiceInstance.fetchBlackoutPeriods).toHaveBeenCalledWith(2020);
+    expect(holidayServiceInstance.fetchYear).toHaveBeenCalledWith(2019);
+    expect(holidayServiceInstance.fetchYear).toHaveBeenCalledWith(2020);
 
     const date = globalThis.Urlaubsverwaltung.Calendar.init.mock.calls[0][2];
     expect(date).toEqual(new Date(2020, 0, 1));
