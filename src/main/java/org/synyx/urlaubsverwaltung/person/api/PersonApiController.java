@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,12 +71,9 @@ public class PersonApiController {
     )
     @GetMapping(path = "/me", produces = HAL_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<PersonDto> me(@AuthenticationPrincipal OidcUser oidcUser) {
-        if (oidcUser == null) {
-            return new ResponseEntity<>(NOT_FOUND);
-        }
-
-        return personService.getPersonByUsername(oidcUser.getSubject())
+    public ResponseEntity<PersonDto> me(Authentication authentication) {
+        // the subject for a browser login (OidcUser) as well as for a bearer token (Jwt)
+        return personService.getPersonByUsername(authentication.getName())
             .map(person -> new ResponseEntity<>(mapToDto(person), OK))
             .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
@@ -150,16 +146,11 @@ public class PersonApiController {
     @PatchMapping(path = "/me/settings", consumes = APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<Void> updateSettings(
-        @AuthenticationPrincipal OidcUser oidcUser,
+        Authentication authentication,
         @RequestBody PersonSettingsDto personSettingsDto
     ) {
 
-        if (oidcUser == null) {
-            LOG.info("cannot update logged in person settings without OidcUser.");
-            return ResponseEntity.status(NOT_FOUND).build();
-        }
-
-        final String username = oidcUser.getSubject();
+        final String username = authentication.getName();
 
         final HttpStatus status = personService.getPersonByUsername(username)
             .map(person -> {
