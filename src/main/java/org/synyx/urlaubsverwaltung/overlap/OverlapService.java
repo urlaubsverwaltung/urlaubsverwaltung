@@ -60,7 +60,7 @@ public class OverlapService {
                 .toList();
         }
 
-        final List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+        final List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate, application.getDayLength());
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
     }
@@ -79,7 +79,7 @@ public class OverlapService {
 
         final List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, sickNote.getDayLength());
 
-        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate, sickNote.getDayLength());
         if (sickNote.getId() != null) {
             sickNotes = sickNotes.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(sickNote.getId()))
@@ -192,13 +192,15 @@ public class OverlapService {
      * @param person    to get overlapping sick notes for
      * @param startDate defines the start of the period
      * @param endDate   defines the end of the period
+     * @param dayLength defines the time of day of the period
      * @return {@link List} of {@link SickNote}s overlapping with the period of the given {@link Application}
      */
-    private List<SickNote> getRelevantSickNotes(Person person, LocalDate startDate, LocalDate endDate) {
-        // only active sick notes are relevant
+    private List<SickNote> getRelevantSickNotes(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+        // only active sick notes are relevant, a half day one only for the same half or a full day
         return sickNoteService.getByPersonAndPeriod(person, startDate, endDate)
             .stream()
             .filter(SickNote::isActive)
+            .filter(sickNote -> sickNote.getDayLength().isFull() || dayLength.isFull() || sickNote.getDayLength().equals(dayLength))
             .toList();
     }
 
