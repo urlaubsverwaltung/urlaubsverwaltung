@@ -38,6 +38,7 @@ import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.JANUARY;
+import static java.time.Month.NOVEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,6 +179,29 @@ class CompanyControllerTest {
             .andExpect(model().attribute("dateRangeStart", equalTo(monthStart)))
             .andExpect(model().attribute("dateRangeEnd", equalTo(berlinToday)))
             .andExpect(model().attribute("overtimeStatistic", equalTo(emptyOvertimeStatisticsDto())));
+    }
+
+    @Test
+    void ensureQuarterReachingIntoLastYearAsksForVacationDaysOfTheCurrentYearOnly() throws Exception {
+
+        final Clock januaryClock = Clock.fixed(Instant.parse("2027-01-13T10:00:00Z"), UTC);
+        final CompanyController sutInJanuary = sutWithClock(januaryClock);
+
+        final Person signedInUser = anyPerson(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate quarterStart = LocalDate.of(2026, NOVEMBER, 1);
+        final LocalDate januaryToday = LocalDate.of(2027, JANUARY, 13);
+        final LocalDate[] previousRange = toPreviousRange(quarterStart, januaryToday);
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(quarterStart), toInstant(januaryToday))).thenReturn(OvertimeStatistic.empty());
+        when(overtimeStatisticService.getOvertimeStatistics(signedInUser, toInstant(previousRange[0]), toInstant(previousRange[1]))).thenReturn(OvertimeStatistic.empty());
+        when(sickDaysStatisticService.getSickDaysStatistics(signedInUser, quarterStart, januaryToday)).thenReturn(emptySickDaysStatistic());
+        when(vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, LocalDate.of(2027, JANUARY, 1), januaryToday)).thenReturn(emptyVacationDaysStatistic());
+
+        perform(get("/web/company/overview").param("view", "quarter"), sutInJanuary)
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("dateRangeStart", equalTo(quarterStart)))
+            .andExpect(model().attribute("dateRangeEnd", equalTo(januaryToday)));
     }
 
     @Test
