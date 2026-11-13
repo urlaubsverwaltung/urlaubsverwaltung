@@ -1561,6 +1561,72 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
+    void editApplicationForLeaveHolidayReplacementNoteChanged() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacementPerson.setId(2L);
+
+        final HolidayReplacementEntity oldReplacementEntity = new HolidayReplacementEntity();
+        oldReplacementEntity.setPerson(holidayReplacementPerson);
+        oldReplacementEntity.setNote("old note");
+
+        final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
+        newReplacementEntity.setPerson(holidayReplacementPerson);
+        newReplacementEntity.setNote("new note");
+
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(1L);
+        newApplication.setHolidayReplacements(List.of(newReplacementEntity));
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        oldApplication.setHolidayReplacements(List.of(oldReplacementEntity));
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+
+        // still the replacement: neither added nor withdrawn, but told about the new note
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(newReplacementEntity, newApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveHolidayReplacementUnchangedSendsNoReplacementMail() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacementPerson.setId(2L);
+
+        final HolidayReplacementEntity oldReplacementEntity = new HolidayReplacementEntity();
+        oldReplacementEntity.setPerson(holidayReplacementPerson);
+        oldReplacementEntity.setNote("note");
+
+        final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
+        newReplacementEntity.setPerson(holidayReplacementPerson);
+        newReplacementEntity.setNote("note");
+
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(1L);
+        newApplication.setHolidayReplacements(List.of(newReplacementEntity));
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        oldApplication.setHolidayReplacements(List.of(oldReplacementEntity));
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, of("Comment"));
+
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
     void editApplicationForLeaveHolidayRelevantEntriesChangedFromTo() {
 
         final Long applicationId = 1L;

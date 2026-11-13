@@ -360,6 +360,38 @@ class ApplicationForLeavePermissionEvaluatorTest {
             assertThat(permissionsOnOwnApplicationAsManager(WAITING, DEPARTMENT_HEAD, APPLICATION_EDIT).isAllowedToEdit()).isTrue();
         }
 
+        @ParameterizedTest
+        @EnumSource(value = ApplicationStatus.class, names = {"ALLOWED", "ALLOWED_CANCELLATION_REQUESTED"})
+        void ensureDepartmentHeadMayNotEditATwoStageApplicationTheSecondStageAllowed(ApplicationStatus status) {
+            // the edit keeps the status, a department head could extend the allowed application without the second stage
+            assertThat(twoStagePermissionsOfManager(status, DEPARTMENT_HEAD).isAllowedToEdit()).isFalse();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = ApplicationStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
+        void ensureDepartmentHeadMayEditATwoStageApplicationTheSecondStageDidNotAllowYet(ApplicationStatus status) {
+            assertThat(twoStagePermissionsOfManager(status, DEPARTMENT_HEAD).isAllowedToEdit()).isTrue();
+        }
+
+        @Test
+        void ensureSecondStageAuthorityMayEditATwoStageApplicationItAllowed() {
+            assertThat(twoStagePermissionsOfManager(ALLOWED, SECOND_STAGE_AUTHORITY).isAllowedToEdit()).isTrue();
+        }
+
+        private ApplicationForLeavePermissions twoStagePermissionsOfManager(ApplicationStatus status, Role managerRole) {
+            final Person manager = person(SIGNED_IN_USER_ID, managerRole, APPLICATION_EDIT);
+            final Person member = person(OTHER_PERSON_ID, USER);
+            if (managerRole == DEPARTMENT_HEAD) {
+                when(departmentService.isDepartmentHeadAllowedToManagePerson(manager, member)).thenReturn(true);
+            } else {
+                when(departmentService.isSecondStageAuthorityAllowedToManagePerson(manager, member)).thenReturn(true);
+            }
+
+            final Application application = application(member, status);
+            application.setTwoStageApproval(true);
+            return sut.of(manager, application);
+        }
+
         @Test
         void ensureBossMayNotEditWithoutApplicationEditRole() {
             assertThat(permissionsOnUnmanagedPerson(ALLOWED, BOSS, APPLICATION_EDIT).isAllowedToEdit()).isFalse();

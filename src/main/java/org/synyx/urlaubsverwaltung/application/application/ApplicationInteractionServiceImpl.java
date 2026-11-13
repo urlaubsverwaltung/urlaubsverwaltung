@@ -18,11 +18,11 @@ import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.function.Predicate.not;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -458,16 +458,11 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         final List<HolidayReplacementEntity> addedReplacements = replacementAdded(oldApplication, savedEditedApplication);
         final List<HolidayReplacementEntity> deletedReplacements = replacementDeleted(oldApplication, savedEditedApplication);
 
-        if (relevantEntriesChanged(oldApplication, savedEditedApplication)) {
-            final List<HolidayReplacementEntity> oldReplacements = oldApplication.getHolidayReplacements();
-            final List<HolidayReplacementEntity> stillExistingReplacements = savedEditedApplication.getHolidayReplacements()
-                .stream()
-                .filter(oldReplacements::contains)
-                .toList();
-
-            for (final HolidayReplacementEntity replacement : stillExistingReplacements) {
-                applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication, editor);
-            }
+        final boolean relevantEntriesChanged = relevantEntriesChanged(oldApplication, savedEditedApplication);
+        for (final HolidayReplacementEntity replacement : savedEditedApplication.getHolidayReplacements()) {
+            replacementOf(replacement.getPerson(), oldApplication.getHolidayReplacements())
+                .filter(oldReplacement -> relevantEntriesChanged || !Objects.equals(oldReplacement.getNote(), replacement.getNote()))
+                .ifPresent(_ -> applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication, editor));
         }
 
         for (final HolidayReplacementEntity replacement : addedReplacements) {
@@ -507,20 +502,23 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             .forEach(applicationEventPublisher::publishEvent);
     }
 
+    // by person: the equality of a replacement includes its note, a changed note is no other replacement
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {
-        final List<HolidayReplacementEntity> oldReplacements = oldApplication.getHolidayReplacements();
         return savedEditedApplication.getHolidayReplacements()
             .stream()
-            .filter(not(oldReplacements::contains))
+            .filter(replacement -> replacementOf(replacement.getPerson(), oldApplication.getHolidayReplacements()).isEmpty())
             .toList();
     }
 
     private List<HolidayReplacementEntity> replacementDeleted(Application oldApplication, Application savedEditedApplication) {
-        final List<HolidayReplacementEntity> newReplacements = savedEditedApplication.getHolidayReplacements();
         return oldApplication.getHolidayReplacements()
             .stream()
-            .filter(not(newReplacements::contains))
+            .filter(replacement -> replacementOf(replacement.getPerson(), savedEditedApplication.getHolidayReplacements()).isEmpty())
             .toList();
+    }
+
+    private static Optional<HolidayReplacementEntity> replacementOf(Person person, List<HolidayReplacementEntity> replacements) {
+        return replacements.stream().filter(replacement -> replacement.getPerson().equals(person)).findFirst();
     }
 
     private boolean relevantEntriesChanged(Application oldApplication, Application savedEditedApplication) {
