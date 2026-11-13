@@ -12,6 +12,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.max;
+import static java.util.Collections.min;
+import static java.util.Comparator.naturalOrder;
+
 @Component
 public class SickNoteMapper {
 
@@ -55,7 +59,13 @@ public class SickNoteMapper {
         }
 
         final List<Person> personsWithSickNotes = entities.stream().map(SickNoteEntity::getPerson).distinct().toList();
-        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(personsWithSickNotes, dateRange);
+
+        // the work days of a sick note are its whole ones, also of a sick note reaching out of the requested range
+        final LocalDate firstStartDate = entities.stream().map(SickNoteEntity::getStartDate).min(naturalOrder()).orElseThrow();
+        final LocalDate lastEndDate = entities.stream().map(SickNoteEntity::getEndDate).max(naturalOrder()).orElseThrow();
+        final DateRange calendarRange = new DateRange(min(List.of(dateRange.startDate(), firstStartDate)), max(List.of(dateRange.endDate(), lastEndDate)));
+
+        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(personsWithSickNotes, calendarRange);
 
         return entities
             .stream()

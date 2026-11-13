@@ -15,10 +15,12 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -251,6 +253,40 @@ class SickNoteMapperTest {
                     assertThat(sickNote.getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
                 }
             );
+        }
+
+        @Test
+        void ensureWorkDaysOfTheWholeSickNoteAlthoughItStartsBeforeTheRequestedRange() {
+
+            final Person person = new Person();
+            person.setId(1L);
+
+            // monday to friday of the next week, across the turn of the year
+            final LocalDate startDate = LocalDate.of(2025, DECEMBER, 29);
+            final LocalDate endDate = LocalDate.of(2026, JANUARY, 9);
+
+            final SickNoteEntity entity = new SickNoteEntity();
+            entity.setId(1L);
+            entity.setPerson(person);
+            entity.setStartDate(startDate);
+            entity.setEndDate(endDate);
+            entity.setDayLength(DayLength.FULL);
+            entity.setStatus(SickNoteStatus.ACTIVE);
+
+            final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> days = new HashMap<>();
+            for (LocalDate date : new DateRange(startDate, endDate)) {
+                if (date.getDayOfWeek().getValue() <= 5) {
+                    days.put(date, new WorkingTimeCalendar.WorkingDayInformation(DayLength.FULL, WORKDAY, WORKDAY));
+                }
+            }
+
+            final DateRange year2026 = new DateRange(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, year2026.endDate())))
+                .thenReturn(Map.of(person, new WorkingTimeCalendar(days)));
+
+            final List<SickNote> actual = sut.toSickNoteWithWorkDays(List.of(entity), year2026);
+            assertThat(actual.getFirst().getWorkDays()).isEqualByComparingTo(BigDecimal.valueOf(10));
+            assertThat(actual.getFirst().getWorkDays(year2026.startDate(), year2026.endDate())).isEqualByComparingTo(BigDecimal.valueOf(7));
         }
 
         @Test
