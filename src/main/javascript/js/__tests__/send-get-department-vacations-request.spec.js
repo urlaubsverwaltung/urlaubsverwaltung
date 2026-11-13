@@ -44,19 +44,24 @@ describe("send-get-department-vacations-request", () => {
     vi.clearAllMocks();
   });
 
-  it("does nothing when startDate end endDate are not defined", async () => {
-    await sendGetDepartmentVacationsRequest("", undefined, undefined, "", "");
+  it("clears the list of a previous period and fetches nothing when startDate end endDate are not defined", async () => {
+    document.body.innerHTML = `<div id="vacations"><p>colleague of a previous period</p></div>`;
+
+    await sendGetDepartmentVacationsRequest("", undefined, undefined, "", "#vacations");
 
     expect(fetchMock.callHistory.calls()).toHaveLength(0);
+    expect(document.querySelector("#vacations").innerHTML).toBe("");
   });
 
-  it("does nothing when startDate is after endDate", async () => {
+  it("clears the list of a previous period and fetches nothing when startDate is after endDate", async () => {
+    document.body.innerHTML = `<div id="vacations"><p>colleague of a previous period</p></div>`;
     const startDate = new Date(2020, 7, 31);
     const endDate = new Date(2020, 7, 19);
 
-    await sendGetDepartmentVacationsRequest("", startDate, endDate, "", "");
+    await sendGetDepartmentVacationsRequest("", startDate, endDate, "", "#vacations");
 
     expect(fetchMock.callHistory.calls()).toHaveLength(0);
+    expect(document.querySelector("#vacations").innerHTML).toBe("");
   });
 
   it("renders response", async () => {

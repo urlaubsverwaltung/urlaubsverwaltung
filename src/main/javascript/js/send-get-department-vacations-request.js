@@ -15,6 +15,10 @@ export default async function sendGetDepartmentVacationsRequest(
   personId,
   elementSelector,
 ) {
+  const element = document.querySelector(elementSelector);
+  // the colleagues of a previous period must not stay next to an invalid one
+  element.replaceChildren();
+
   if (!startDate && !endDate) {
     return;
   }
@@ -31,7 +35,6 @@ export default async function sendGetDepartmentVacationsRequest(
   const data = await getJSON(url);
   const vacations = data.vacations;
 
-  const element = document.querySelector(elementSelector);
   element.innerHTML = `<p>${vacations.length} ${globalThis.uv.i18n["application.applier.applicationsOfColleagues"]}</p>`;
 
   if (vacations.length > 0) {
