@@ -192,7 +192,9 @@ public class PersonApiController {
     public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
 
         final String predictedUsername = personProvisionDto.getEmail();
-        if (personService.getPersonByUsername(predictedUsername).isPresent()) {
+        // a person who signed in already has the subject of the identity provider as username, not the email
+        if (personService.getPersonByUsername(predictedUsername).isPresent()
+            || personService.getPersonByMailAddress(personProvisionDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(CONFLICT);
         }
 
