@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -162,12 +161,10 @@ public final class SickNote {
         for (LocalDate localDate : dateRange) {
             final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
             final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(dateRange.startDate());
-            if (dayLength.isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
-                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
-            } else if (dayLength.isHalfDay() && workingDayInformation != null) {
-                // a half day public holiday (christmas eve, new year's eve): only the half that is worked counts
+            if (dayLength.isHalfDay() && workingDayInformation != null) {
+                // only a worked half counts, e.g. not the free afternoon of christmas eve
                 if (isWorkingHalf(workingDayInformation, dayLength)) {
-                    workingTimeSum = workingTimeSum.add(workingTime);
+                    workingTimeSum = workingTimeSum.add(dayLength.getDuration());
                 }
             } else {
                 workingTimeSum = workingTimeSum.add(workingTime);
