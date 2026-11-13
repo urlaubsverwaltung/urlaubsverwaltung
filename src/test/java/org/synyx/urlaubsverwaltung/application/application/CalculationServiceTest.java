@@ -948,6 +948,50 @@ class CalculationServiceTest {
     }
 
     @Test
+    void ensureApplicationAcrossExpiryDateMayUseExpiringRemainingVacationDaysBeforeExpiryDate() {
+        // 2 days before the expiry date use the 2 expiring remaining days, 2 days after use the 2 annual days
+        assertThat(checkApplicationAcrossExpiryDate(LocalDate.of(2026, APRIL, 2))).isTrue();
+    }
+
+    @Test
+    void ensureApplicationAcrossExpiryDateIsInvalidWithOneDayTooManyAfterExpiryDate() {
+        // 3 days after the expiry date (April 1, 2 and 7, Easter is in between), but only 2 annual days left
+        assertThat(checkApplicationAcrossExpiryDate(LocalDate.of(2026, APRIL, 7))).isFalse();
+    }
+
+    private boolean checkApplicationAcrossExpiryDate(LocalDate applicationEnd) {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate applicationStart = LocalDate.of(2026, MARCH, 30);
+
+        final WorkingTime workingTime = new WorkingTime(person, applicationStart, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(applicationStart, applicationEnd), workingTime));
+
+        final Application applicationForLeaveToCheck = createApplicationStub(person);
+        applicationForLeaveToCheck.setStartDate(applicationStart);
+        applicationForLeaveToCheck.setEndDate(applicationEnd);
+
+        final Year year = Year.of(2026);
+        final Account account = new Account(person, year.atDay(1), year.atDay(1).with(lastDayOfYear()), true, LocalDate.of(2026, APRIL, 1), BigDecimal.valueOf(30), BigDecimal.valueOf(5), ZERO, "");
+        when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
+
+        // 2 annual days and 2 expiring remaining days left, no remaining days that do not expire
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(2))
+            .withRemainingVacation(BigDecimal.valueOf(2))
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeftIgnoring(null, List.of(account), year, List.of()))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
+
+        return sut.checkApplication(applicationForLeaveToCheck);
+    }
+
+    @Test
     void ensureApplicationBeforeAndAfterAprilNotInvalidWithVacationLeftBeforeExpiryDateAndNoVacationLeftAfterApril() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");

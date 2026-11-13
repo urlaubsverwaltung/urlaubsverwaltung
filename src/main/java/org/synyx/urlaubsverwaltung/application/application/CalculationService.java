@@ -134,9 +134,13 @@ class CalculationService {
             return ZERO;
         }
 
+        // the days before the expiry date use the expiring remaining vacation days first, only the rest counts here
+        final BigDecimal expiringRemainingVacationDaysLeft = vacationDaysLeft.getRemainingVacationDays().subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        final BigDecimal vacationDaysRequestedBeforeExpiryDateNotUsingExpiringDays = vacationDaysRequestedBeforeExpiryDate.subtract(expiringRemainingVacationDaysLeft).max(ZERO);
+
         return vacationDaysLeft.getVacationDays()
             .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring())
-            .subtract(vacationDaysRequestedBeforeExpiryDate)
+            .subtract(vacationDaysRequestedBeforeExpiryDateNotUsingExpiringDays)
             .subtract(vacationDaysRequestedAfterExpiryDate);
     }
 
