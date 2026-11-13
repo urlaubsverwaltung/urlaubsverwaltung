@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
@@ -971,6 +972,37 @@ class OvertimeViewControllerTest {
                 .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
+    @Test
+    void createOvertimeRecordValidatesANewRecordEvenIfTheFormSendsAnId() throws Exception {
+
+        final PersonId overtimePersonId = new PersonId(4L);
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(overtimePersonId.value());
+
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2019, JULY, 2), LocalDate.of(2019, JULY, 2));
+        final Overtime overtime = new Overtime(new OvertimeId(2L), overtimePersonId, dateRange, ofHours(8), OvertimeType.UV_INTERNAL, Instant.now(clock));
+        when(overtimeService.createOvertime(overtimePersonId, dateRange, ofHours(8), overtimePersonId, "To much work")).thenReturn(overtime);
+
+        mockSettingsWithOvertimeActive();
+
+        perform(
+                post("/web/overtime")
+                        .param("id", "7")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
+        ).andExpect(status().is3xxRedirection());
+
+        // with the id of an existing record the maximum overtime check would subtract that record
+        final ArgumentCaptor<OvertimeFormDto> validated = ArgumentCaptor.forClass(OvertimeFormDto.class);
+        verify(validator).validate(validated.capture(), any(Errors.class));
+        assertThat(validated.getValue().getId()).isNull();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void ensureCreateOvertimeRecordSucceedsWithDateFormat(String givenDate) throws Exception {
@@ -1462,6 +1494,47 @@ class OvertimeViewControllerTest {
             signedInPerson.getIdAsPersonId(),
             "To much work"
         );
+    }
+
+    @Test
+    void updateOvertimeRecordValidatesTheSavedRecordOfItsOwner() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(OFFICE));
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4L);
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, JULY, 2), LocalDate.of(2021, JULY, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
+
+        mockSettingsWithOvertimeActive();
+
+        perform(
+                post("/web/overtime/2")
+                        .param("id", "7")
+                        .param("person.id", "5")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
+        ).andExpect(status().is3xxRedirection());
+
+        final ArgumentCaptor<OvertimeFormDto> validated = ArgumentCaptor.forClass(OvertimeFormDto.class);
+        verify(validator).validate(validated.capture(), any(Errors.class));
+        assertThat(validated.getValue().getId()).isEqualTo(2L);
+        assertThat(validated.getValue().getPerson()).isSameAs(overtimePerson);
     }
 
     @Test
