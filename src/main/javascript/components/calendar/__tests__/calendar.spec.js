@@ -38,6 +38,8 @@ describe("calendar", () => {
   });
 
   beforeEach(() => {
+    // default fallback, tests concerned with company closures add a more specific route
+    fetchMock.route(/\/company-closures/, { companyClosures: [] }, { name: "company-closures-fallback" });
     globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn() });
     // jsdom does not implement the popover api
     HTMLElement.prototype.showPopover = vi.fn();
@@ -1726,6 +1728,54 @@ describe("calendar", () => {
     await holidayService.fetchAbsences(2017);
 
     expect(fetchMock.callHistory.calls(url)).toHaveLength(2);
+  });
+
+  it("mergesCompanyClosuresIntoPublicHolidayMarkers", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+    mockEmptyYear(42, 2017);
+    fetchMock.removeRoutes({ names: ["company-closures-fallback"] });
+    fetchMock.route("/company-closures?from=2017-01-01&to=2017-12-31", {
+      companyClosures: [{ date: "2017-12-24", description: "Heiligabend", dayLength: 0.5, absencePeriodName: "NOON" }],
+    });
+
+    await calendarTestSetup();
+    const holidayService = createHolidayService({ personId: 42 });
+    await holidayService.fetchPublicHolidays(2017);
+
+    expect(holidayService.isPublicHolidayNoon(parseISO("2017-12-24"))).toBe(true);
+    expect(holidayService.isPublicHolidayFull(parseISO("2017-12-24"))).toBe(false);
+
+    renderCalendar(holidayService);
+    expect(document.querySelector('[data-datepicker-date="2017-12-24"]').classList).toContain(
+      "datepicker-day-public-holiday-noon",
+    );
+  });
+
+  it("keeps public holidays when the company closures request fails and retries it on the next fetch", async () => {
+    mockDate(1_512_130_448_379);
+    fetchMock.removeRoutes({ names: ["company-closures-fallback"] });
+    fetchMock.route("/persons/42/public-holidays?from=2017-01-01&to=2017-12-31", {
+      publicHolidays: [{ date: "2017-12-25", description: "Christmas", dayLength: "1", absencePeriodName: "FULL" }],
+    });
+    fetchMock.route("/company-closures?from=2017-01-01&to=2017-12-31", 500, { name: "closures" });
+
+    await calendarTestSetup();
+    const holidayService = createHolidayService({ personId: 42 });
+    await holidayService.fetchPublicHolidays(2017);
+
+    expect(holidayService.isPublicHolidayFull(parseISO("2017-12-25"))).toBe(true);
+    expect(holidayService.isPublicHolidayNoon(parseISO("2017-12-24"))).toBe(false);
+
+    fetchMock.removeRoutes({ names: ["closures"] });
+    fetchMock.route("/company-closures?from=2017-01-01&to=2017-12-31", {
+      companyClosures: [{ date: "2017-12-24", description: "Heiligabend", dayLength: 0.5, absencePeriodName: "NOON" }],
+    });
+    await holidayService.fetchPublicHolidays(2017);
+
+    expect(holidayService.isPublicHolidayNoon(parseISO("2017-12-24"))).toBe(true);
+    expect(holidayService.isPublicHolidayFull(parseISO("2017-12-25"))).toBe(true);
+    expect(fetchMock.callHistory.calls("/persons/42/public-holidays?from=2017-01-01&to=2017-12-31")).toHaveLength(1);
   });
 
   it("caches blackout periods of a year and does not fetch them twice", async () => {

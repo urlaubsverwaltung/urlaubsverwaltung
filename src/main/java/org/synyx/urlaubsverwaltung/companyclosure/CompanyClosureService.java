@@ -25,4 +25,28 @@ public interface CompanyClosureService {
      * @throws IllegalArgumentException if there is no closure for the month day or validFrom lies before the current year
      */
     void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom);
+
+    /**
+     * @return all company closure days with their versions, sorted by month day
+     */
+    List<CompanyClosureEntry> getCompanyClosureEntries();
+
+    /**
+     * Creates a new yearly company closure day.
+     *
+     * @param monthDay  day of the closure, not 29.02. since it does not exist every year
+     * @param name      name of the closure
+     * @param dayLength closed portion of the day
+     * @param validFrom first date the closure applies to, not before the start of the current year
+     * @throws IllegalArgumentException if there is a closure for the month day already, the month day is 29.02. or
+     *                                  validFrom lies before the current year
+     */
+    void createCompanyClosure(MonthDay monthDay, String name, DayLength dayLength, LocalDate validFrom);
+
+    /**
+     * Renames a company closure day. Names are not versioned, the new name applies to all years.
+     *
+     * @throws IllegalArgumentException if there is no closure for the month day
+     */
+    void renameCompanyClosure(MonthDay monthDay, String name);
 }

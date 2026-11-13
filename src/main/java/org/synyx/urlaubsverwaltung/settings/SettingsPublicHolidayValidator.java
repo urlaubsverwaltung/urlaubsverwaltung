@@ -11,8 +11,6 @@ import static org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettingsVa
 @Component
 public class SettingsPublicHolidayValidator implements Validator {
 
-    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.equals(SettingsPublicHolidayDto.class);
@@ -22,13 +20,5 @@ public class SettingsPublicHolidayValidator implements Validator {
     public void validate(Object o, @NonNull Errors errors) {
         final SettingsPublicHolidayDto settings = (SettingsPublicHolidayDto) o;
         validatePublicHolidaysSettings(settings.getPublicHolidaysSettings(), errors);
-
-        if (settings.getWorkingDurationForChristmasEve() == null) {
-            errors.rejectValue("workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
-        }
-
-        if (settings.getWorkingDurationForNewYearsEve() == null) {
-            errors.rejectValue("workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
-        }
     }
 }

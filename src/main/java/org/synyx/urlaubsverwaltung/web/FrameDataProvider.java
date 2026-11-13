@@ -184,6 +184,12 @@ public class FrameDataProvider implements DataProviderInterface {
             elements.add(new NavigationItemDto("company-blackoutperiod-link", blackoutPeriod, "nav.company.blackoutperiods", "lock", url.equals(blackoutPeriod)));
         }
 
+        final boolean canViewCompanyClosures = user.hasRole(OFFICE) || user.hasRole(BOSS);
+        if (canViewCompanyClosures) {
+            final String companyClosure = "/web/company-closure";
+            elements.add(new NavigationItemDto("company-companyclosure-link", companyClosure, "nav.company.company-closures", "calendar", url.equals(companyClosure)));
+        }
+
         final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewApplications) {
 

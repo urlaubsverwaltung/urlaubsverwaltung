@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DateLimits;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -64,6 +67,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final Clock clock;
+    private final CompanyClosureService companyClosureService;
 
     BlackoutPeriodViewController(
         BlackoutPeriodService blackoutPeriodService,
@@ -74,7 +78,8 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         MessageSource messageSource,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
-        Clock clock
+        Clock clock,
+        CompanyClosureService companyClosureService
     ) {
         this.blackoutPeriodService = blackoutPeriodService;
         this.departmentService = departmentService;
@@ -85,6 +90,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.clock = clock;
+        this.companyClosureService = companyClosureService;
     }
 
     @Override
@@ -149,11 +155,21 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate endDate = form.getEndDate();
 
         List<BlackoutPeriodConflictDto> conflicts = List.of();
+        List<BlackoutPeriodCompanyClosureDto> companyClosures = List.of();
         if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
             final BlackoutPeriod blackoutPeriod = mapToBlackoutPeriod(form, departmentService.getAllDepartments(), vacationTypeService.getAllVacationTypes());
             conflicts = mapToConflictDtos(blackoutPeriodService.findConflictingApplications(blackoutPeriod), locale);
+            // company closures apply to everybody, independent of the scope of the blackout period
+            // the closure calculation rejects ranges beyond the calculable duration
+            companyClosures = DateLimits.isCalculableDuration(new DateRange(startDate, endDate))
+                ? companyClosureService.getCompanyClosures(startDate, endDate).stream()
+                    .map(closure -> new BlackoutPeriodCompanyClosureDto(closure.date(), closure.name(),
+                        messageSource.getMessage("company-closure.dayLength." + closure.dayLength().name(), null, locale)))
+                    .toList()
+                : List.of();
         }
         model.addAttribute("conflictingApplications", conflicts);
+        model.addAttribute("conflictingCompanyClosures", companyClosures);
 
         return "blackoutperiod/blackout_period_form::conflicts";
     }
