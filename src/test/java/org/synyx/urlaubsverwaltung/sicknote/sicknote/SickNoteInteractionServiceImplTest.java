@@ -175,6 +175,8 @@ class SickNoteInteractionServiceImplTest {
         sut.update(sickNote, editor, comment);
 
         verify(sickNoteService).save(sickNote);
+        // a pending extension must not overwrite the edited end date when accepted later
+        verify(sickNoteExtensionService).supersedeSubmittedExtensions(sickNote);
         verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, editor, comment);
 
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
@@ -334,7 +336,7 @@ class SickNoteInteractionServiceImplTest {
             sut.convert(sickNote, application, person);
 
             final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
-            verify(sickNoteExtensionService).updateExtensionsForConvertedSickNote(captor.capture());
+            verify(sickNoteExtensionService).supersedeSubmittedExtensions(captor.capture());
 
             assertThat(captor.getValue()).isSameAs(savedSickNote);
         }

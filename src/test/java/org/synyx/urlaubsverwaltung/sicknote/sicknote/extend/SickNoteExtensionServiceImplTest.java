@@ -32,7 +32,6 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.ACCEPTED;
@@ -160,22 +159,10 @@ class SickNoteExtensionServiceImplTest {
     }
 
     @Nested
-    class UpdateExtensionsForConvertedSickNote {
+    class SupersedeSubmittedExtensions {
 
         @ParameterizedTest
-        @EnumSource(value = SickNoteStatus.class, names = {"CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.EXCLUDE)
-        void ensureUpdateForStatusDoesNothing(SickNoteStatus sickNoteStatus) {
-
-            final SickNote sickNote = SickNote.builder()
-                .status(sickNoteStatus)
-                .build();
-
-            sut.updateExtensionsForConvertedSickNote(sickNote);
-            verifyNoInteractions(repository);
-        }
-
-        @ParameterizedTest
-        @EnumSource(value = SickNoteStatus.class, names = {"CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
+        @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
         void ensureUpdateForStatusDoesNothingBecauseNotExtensionAvailable(SickNoteStatus sickNoteStatus) {
 
             final Person person = new Person();
@@ -189,12 +176,12 @@ class SickNoteExtensionServiceImplTest {
 
             when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of());
 
-            sut.updateExtensionsForConvertedSickNote(sickNote);
+            sut.supersedeSubmittedExtensions(sickNote);
             verifyNoMoreInteractions(repository);
         }
 
         @ParameterizedTest
-        @EnumSource(value = SickNoteStatus.class, names = {"CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
+        @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
         void ensureUpdateForStatusDoesNothingBecauseNotExtensionSUBMITTED(SickNoteStatus sickNoteStatus) {
 
             final Person person = new Person();
@@ -212,12 +199,12 @@ class SickNoteExtensionServiceImplTest {
 
             when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(extensionEntity));
 
-            sut.updateExtensionsForConvertedSickNote(sickNote);
+            sut.supersedeSubmittedExtensions(sickNote);
             verifyNoMoreInteractions(repository);
         }
 
         @ParameterizedTest
-        @EnumSource(value = SickNoteStatus.class, names = {"CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
+        @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "CONVERTED_TO_VACATION", "CANCELLED"}, mode = EnumSource.Mode.INCLUDE)
         void ensureUpdateForStatus(SickNoteStatus sickNoteStatus) {
 
             final Person person = new Person();
@@ -235,7 +222,7 @@ class SickNoteExtensionServiceImplTest {
 
             when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(extensionEntity));
 
-            sut.updateExtensionsForConvertedSickNote(sickNote);
+            sut.supersedeSubmittedExtensions(sickNote);
 
             final ArgumentCaptor<List<SickNoteExtensionEntity>> captor = ArgumentCaptor.forClass(List.class);
             verify(repository).saveAll(captor.capture());
