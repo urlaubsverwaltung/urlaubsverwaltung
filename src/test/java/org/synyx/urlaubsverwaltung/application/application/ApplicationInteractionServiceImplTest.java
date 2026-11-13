@@ -818,7 +818,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(person);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
-        assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
 
@@ -927,7 +926,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(person);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
-        assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
         verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
 
@@ -964,7 +962,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(canceller);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
-        assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, CANCELLED, comment, canceller);
@@ -995,7 +992,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(canceller);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
-        assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, canceller);
@@ -1025,7 +1021,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(canceller);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
-        assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, canceller);

@@ -78,10 +78,6 @@ public class FrameDataProvider implements DataProviderInterface {
 
             final Settings settings = settingsService.getSettings();
             modelAndView.addObject("navigation", createNavigation(request, settings, user));
-            // TODO not used anymore -> check in favGroup
-            modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
-            // TODO not used anymore -> check in favGroup
-            modelAndView.addObject("navigationOvertimeAddAccess", overtimePermissionEvaluator.isAllowedToCreateOvertimeForAnyPerson(user));
             modelAndView.addObject("gravatarEnabled", settings.getAvatarSettings().isGravatarEnabled());
         }
     }

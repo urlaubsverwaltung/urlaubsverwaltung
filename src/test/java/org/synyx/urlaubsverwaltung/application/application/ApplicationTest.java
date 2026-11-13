@@ -68,25 +68,6 @@ class ApplicationTest {
         assertThat(application.hasStatus(ApplicationStatus.ALLOWED)).isFalse();
     }
 
-    // Formerly allowed ------------------------------------------------------------------------------------------------
-    @Test
-    void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
-
-        Application application = new Application();
-        application.setStatus(ApplicationStatus.REVOKED);
-
-        assertThat(application.isFormerlyAllowed()).isFalse();
-    }
-
-    @Test
-    void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
-
-        Application application = new Application();
-        application.setStatus(ApplicationStatus.CANCELLED);
-
-        assertThat(application.isFormerlyAllowed()).isTrue();
-    }
-
     // Period ----------------------------------------------------------------------------------------------------------
     @Test
     void ensureGetPeriodReturnsCorrectPeriod() {
