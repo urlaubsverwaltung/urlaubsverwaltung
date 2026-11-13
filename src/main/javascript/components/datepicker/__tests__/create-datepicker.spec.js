@@ -593,6 +593,45 @@ describe("create-datepicker", () => {
         expect(getElement("23. Dezember").querySelector("[data-uv-blackout-description]")).toBeNull();
       });
 
+      test("february 29th of a leap year while today is in another year", async () => {
+        // the day labels have no year, they are parsed relative to a date - today is not in a leap year
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(new Date(2026, 10, 13));
+
+        fetchMock.removeRoutes();
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2028-01-31&to=2028-03-05`, {
+          publicHolidays: [{ date: "2028-02-29", absencePeriodName: "FULL" }],
+        });
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2028-01-31&to=2028-03-05&absence-types=vacation,sick_note,no_workday`,
+          { absences: [{ date: "2028-03-01", absent: "FULL", absenceType: "VACATION", status: "ALLOWED" }] },
+        );
+        fetchMock.route(`my-url-prefix/persons/42/blackout-periods?from=2028-01-31&to=2028-03-05`, {
+          blackoutPeriods: [],
+        });
+
+        document.body.innerHTML = `
+          <input value="29.02.2028" data-iso-value="2028-02-29" />
+        `;
+
+        try {
+          await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => 42 });
+          document.querySelector("button.duet-date__toggle").click();
+
+          const getElement = (dateString) =>
+            [...document.querySelectorAll(".duet-date__vhidden")].find((span) => span.textContent === dateString)
+              ?.parentNode;
+
+          await vi.waitFor(() =>
+            expect(getElement("29. Februar").classList).toContain("datepicker-day-public-holiday-full"),
+          );
+          // the days after february 29th are marked as well
+          expect(getElement("1. März").classList).toContain("datepicker-day-absence-full");
+        } finally {
+          vi.useRealTimers();
+        }
+      });
+
       test("public holidays and absences when blackout periods cannot be fetched", async () => {
         // the default fallback route of the outer beforeEach would win over a more specific one,
         // therefore all routes of this test are (re)defined here.
