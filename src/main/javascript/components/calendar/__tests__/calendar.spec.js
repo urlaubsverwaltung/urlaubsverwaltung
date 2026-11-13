@@ -931,6 +931,8 @@ describe("calendar", () => {
           ],
         });
 
+        fetchMock.route(`/persons/42/blackout-periods?from=2017-01-01&to=2017-12-31`, { blackoutPeriods: [] });
+
         mockEmptyYear(42, 2018);
 
         await calendarTestSetup();
