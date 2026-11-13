@@ -14,6 +14,8 @@ import java.util.Locale;
  */
 public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 
+    private static final int MAX_SCALE = 100;
+
     private final Locale locale;
 
     public DecimalNumberPropertyEditor(Locale locale) {
@@ -45,11 +47,20 @@ public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 
         if (!StringUtils.hasText(text)) {
             this.setValue(null);
+        } else if (text.length() > MAX_SCALE) {
+            // parsing takes quadratic time in the number of digits, two million digits take about a minute
+            throw new IllegalArgumentException("The provided number has too many digits");
         } else {
             // Don't worry: if dot is used instead of comma, nothing will happen
             String normalizedNumberToParse = text.replace(',', '.');
 
-            this.setValue(new BigDecimal(normalizedNumberToParse).setScale(2, RoundingMode.HALF_UP));
+            final BigDecimal number = new BigDecimal(normalizedNumberToParse);
+            // setScale on an exponent like 1e100000000 or 1e-100000000 computes a hundred million digits
+            if (Math.abs(number.scale()) > MAX_SCALE) {
+                throw new IllegalArgumentException("The provided number has too many digits");
+            }
+
+            this.setValue(number.setScale(2, RoundingMode.HALF_UP));
         }
     }
 }
