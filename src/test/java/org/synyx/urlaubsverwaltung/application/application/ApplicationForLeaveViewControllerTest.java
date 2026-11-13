@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -1489,6 +1491,49 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(view().name("application/application-overview"));
+    }
+
+    @Test
+    void ensureHolidayReplacementsAreListedWithoutAQueryPerApplication() throws Exception {
+        stubWorkDaysCountByYear();
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("");
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1337L);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(signedInUser);
+
+        final List<Application> applications = new ArrayList<>();
+        for (long id = 1; id <= 2; id++) {
+            final Person colleague = new Person();
+            colleague.setId(id);
+            colleague.setFirstName("colleague" + id);
+            colleague.setPermissions(List.of(USER));
+
+            final Application application = new Application();
+            application.setId(id);
+            application.setPerson(colleague);
+            application.setStartDate(LocalDate.now(clock).plusDays(id));
+            application.setEndDate(LocalDate.now(clock).plusDays(id));
+            application.setHolidayReplacements(List.of(holidayReplacement));
+            applications.add(application);
+        }
+        when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock))).thenReturn(applications);
+        when(workDaysCountService.getWorkDaysCountForApplications(applications))
+            .thenReturn(Map.of(applications.get(0), BigDecimal.ONE, applications.get(1), BigDecimal.TWO));
+
+        perform(get("/web/application/replacement"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("applications_holiday_replacements", contains(
+                allOf(hasProperty("workDays", is(BigDecimal.ONE)), hasProperty("person", hasProperty("id", nullValue()))),
+                allOf(hasProperty("workDays", is(BigDecimal.TWO)), hasProperty("person", hasProperty("id", nullValue())))
+            )));
+
+        verify(workDaysCountService, never()).getWorkDaysCount(any(), any(), any(), any());
+        verify(departmentService, never()).isSignedInUserAllowedToAccessPersonData(any(), any());
     }
 
     @Test
