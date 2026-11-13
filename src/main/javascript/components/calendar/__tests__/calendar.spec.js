@@ -1414,6 +1414,7 @@ describe("calendar", () => {
           { absences: year === 2018 ? [vacation("2018-12-31")] : [vacation("2019-01-01")] },
         );
         fetchMock.route(`/persons/42/public-holidays?from=${year}-01-01&to=${year}-12-31`, { publicHolidays: [] });
+        fetchMock.route(`/persons/42/blackout-periods?from=${year}-01-01&to=${year}-12-31`, { blackoutPeriods: [] });
       }
 
       await calendarTestSetup();
@@ -1439,6 +1440,7 @@ describe("calendar", () => {
           { absences: year === 2018 ? [vacation("2018-12-31")] : [vacation("2019-01-01")] },
         );
         fetchMock.route(`/persons/42/public-holidays?from=${year}-01-01&to=${year}-12-31`, { publicHolidays: [] });
+        fetchMock.route(`/persons/42/blackout-periods?from=${year}-01-01&to=${year}-12-31`, { blackoutPeriods: [] });
       }
 
       await calendarTestSetup();
@@ -1631,8 +1633,7 @@ describe("calendar", () => {
     // today is 2017-12-01
     mockDate(1_512_130_448_379);
 
-    mockEmptyYear(42, 2017);
-
+    // before mockEmptyYear, the first matching route answers
     fetchMock.route(`/persons/42/blackout-periods?from=2017-01-01&to=2017-12-31`, {
       blackoutPeriods: [
         {
@@ -1652,6 +1653,8 @@ describe("calendar", () => {
         },
       ],
     });
+
+    mockEmptyYear(42, 2017);
 
     await calendarTestSetup();
 
@@ -1681,6 +1684,32 @@ describe("calendar", () => {
     // the office-entered title is text, never markup
     expect(day.querySelector("b")).toBeNull();
     expect(day.closest("li").querySelector(".sr-only").textContent).toContain("Urlaubssperre: Jahresabschluss");
+  });
+
+  it("marks days of a blackout period in a year loaded by clicking next", async () => {
+    // today is 2017-12-01, the calendar shows 2017-08 to 2018-05, next adds 2018-06
+    mockDate(1_512_130_448_379);
+
+    mockEmptyYear(42, 2017);
+    fetchMock.route(
+      "/persons/42/absences?from=2018-01-01&to=2018-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      { absences: [] },
+    );
+    fetchMock.route("/persons/42/public-holidays?from=2018-01-01&to=2018-12-31", { publicHolidays: [] });
+    fetchMock.route("/persons/42/blackout-periods?from=2018-01-01&to=2018-12-31", {
+      blackoutPeriods: [{ date: "2018-06-15", title: "Inventur", description: "Urlaubssperre: Inventur" }],
+    });
+
+    await calendarTestSetup();
+    renderCalendar(createHolidayService({ webPrefix: "", apiPrefix: "", personId: 42 }));
+
+    document.querySelector(".datepicker-next").click();
+
+    await vi.waitFor(() =>
+      expect(document.querySelector('[data-datepicker-date="2018-06-15"]')?.classList).toContain(
+        "datepicker-day-blackout",
+      ),
+    );
   });
 
   it("fetches the absences of a year asked for again meanwhile only once", async () => {
@@ -1761,6 +1790,10 @@ describe("calendar", () => {
 
     fetchMock.route(`/persons/${personId}/public-holidays?from=${year}-01-01&to=${year}-12-31`, {
       publicHolidays: [],
+    });
+
+    fetchMock.route(`/persons/${personId}/blackout-periods?from=${year}-01-01&to=${year}-12-31`, {
+      blackoutPeriods: [],
     });
   }
 

@@ -835,7 +835,11 @@ const Controller = (function () {
   function fetchYearsOf(...dates) {
     const years = new Set(dates.map((date) => getYear(date)));
     return Promise.all(
-      [...years].flatMap((year) => [holidayService.fetchPublicHolidays(year), holidayService.fetchAbsences(year)]),
+      [...years].flatMap((year) => [
+        holidayService.fetchPublicHolidays(year),
+        holidayService.fetchAbsences(year),
+        holidayService.fetchBlackoutPeriods(year),
+      ]),
     );
   }
 
