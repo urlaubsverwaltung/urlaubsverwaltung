@@ -123,46 +123,6 @@ class DateRangeTest {
         assertThat(maybeOverlap.get().endDate()).isEqualTo(overlapEndDate);
     }
 
-    static Stream<Arguments> gapDateRanges() {
-        return Stream.of(
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-07", "2020-10-08", "2020-10-09", "2020-10-09"),
-            Arguments.of("2020-10-07", "2020-10-08", "2020-10-10", "2020-10-15", "2020-10-09", "2020-10-09"),
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-07", "2020-10-07", "2020-10-08", "2020-10-09"),
-            Arguments.of("2020-10-07", "2020-10-07", "2020-10-10", "2020-10-15", "2020-10-08", "2020-10-09")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("gapDateRanges")
-    void gap(LocalDate startDateOne, LocalDate endDateOne, LocalDate startDateTwo, LocalDate endDateTwo, LocalDate gapStartDate, LocalDate gapEndDate) {
-        final DateRange rangeOne = new DateRange(startDateOne, endDateOne);
-        final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
-
-        final Optional<DateRange> maybeGap = rangeOne.gap(rangeTwo);
-        assertThat(maybeGap)
-            .hasValueSatisfying(localDates -> assertThat(localDates.startDate()).isEqualTo(gapStartDate))
-            .hasValueSatisfying(localDates -> assertThat(localDates.endDate()).isEqualTo(gapEndDate));
-    }
-
-    static Stream<Arguments> gapDateRangesEmpty() {
-        return Stream.of(
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-08", "2020-10-09"),
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-16", "2020-10-17"),
-            Arguments.of("2020-10-08", "2020-10-09", "2020-10-10", "2020-10-15"),
-            Arguments.of("2020-10-16", "2020-10-17", "2020-10-10", "2020-10-15")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("gapDateRangesEmpty")
-    void gapEmpty(LocalDate startDateOne, LocalDate endDateOne, LocalDate startDateTwo, LocalDate endDateTwo) {
-        final DateRange rangeOne = new DateRange(startDateOne, endDateOne);
-        final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
-
-        final Optional<DateRange> maybeGap = rangeOne.gap(rangeTwo);
-        assertThat(maybeGap).isEmpty();
-    }
-
     @Test
     void dateRangeisEmpty() {
         final boolean isEmpty = new DateRange(null, null).isEmpty();

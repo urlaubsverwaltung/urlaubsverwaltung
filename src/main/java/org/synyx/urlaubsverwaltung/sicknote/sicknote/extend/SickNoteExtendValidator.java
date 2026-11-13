@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -12,8 +11,6 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
 
 @Component
@@ -69,8 +66,7 @@ class SickNoteExtendValidator implements Validator {
     }
 
     private boolean isOverlapping(SickNote extendedSickNote) {
-        final OverlapCase overlap = overlapService.checkOverlap(extendedSickNote);
-        return overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
+        return overlapService.isOverlapping(extendedSickNote);
     }
 
     private SickNote getSickNote(Long sickNoteId) {

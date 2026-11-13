@@ -30,9 +30,6 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -81,8 +78,8 @@ class OverlapServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person))
             .thenReturn(asList(cancelledApplication, rejectedApplication));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToBeChecked);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToBeChecked);
+        assertThat(overlapping).isFalse();
     }
 
     @Test
@@ -103,8 +100,8 @@ class OverlapServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person))
             .thenReturn(new ArrayList<>());
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isFalse();
     }
 
     @Test
@@ -134,8 +131,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isTrue();
     }
 
     @Test
@@ -158,8 +155,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isTrue();
     }
 
     @Test
@@ -182,8 +179,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 20));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isTrue();
     }
 
 
@@ -212,8 +209,8 @@ class OverlapServiceTest {
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(inactiveSickNote));
 
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isFalse();
     }
 
     @Test
@@ -233,8 +230,8 @@ class OverlapServiceTest {
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(List.of());
 
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isFalse();
     }
 
 
@@ -258,8 +255,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 18));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 19));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isTrue();
     }
 
 
@@ -283,8 +280,8 @@ class OverlapServiceTest {
         applicationToCheck.setStartDate(LocalDate.of(2012, JANUARY, 14));
         applicationToCheck.setEndDate(LocalDate.of(2012, JANUARY, 16));
 
-        final OverlapCase overlapCase = sut.checkOverlap(applicationToCheck);
-        assertThat(overlapCase).isEqualTo(PARTLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(applicationToCheck);
+        assertThat(overlapping).isTrue();
     }
 
 
@@ -320,8 +317,8 @@ class OverlapServiceTest {
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(existentSickNote));
 
         // edit sick note to: 16.03. - 17.03.
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isFalse();
     }
 
 
@@ -346,8 +343,8 @@ class OverlapServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(vacationDate, vacationDate, person))
             .thenReturn(singletonList(morningVacation));
 
-        final OverlapCase overlapCase = sut.checkOverlap(noonVacation);
-        assertThat(overlapCase).isEqualTo(NO_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(noonVacation);
+        assertThat(overlapping).isFalse();
     }
 
 
@@ -370,8 +367,8 @@ class OverlapServiceTest {
         otherMorningVacation.setStartDate(vacationDate);
         otherMorningVacation.setEndDate(vacationDate);
 
-        final OverlapCase overlapCase = sut.checkOverlap(otherMorningVacation);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(otherMorningVacation);
+        assertThat(overlapping).isTrue();
     }
 
 
@@ -394,8 +391,8 @@ class OverlapServiceTest {
         fullDayVacation.setStartDate(vacationDate);
         fullDayVacation.setEndDate(vacationDate);
 
-        final OverlapCase overlapCase = sut.checkOverlap(fullDayVacation);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(fullDayVacation);
+        assertThat(overlapping).isTrue();
     }
 
     @Test
@@ -417,8 +414,8 @@ class OverlapServiceTest {
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
 
-        final OverlapCase overlapCase = sut.checkOverlap(morningVacation);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(morningVacation);
+        assertThat(overlapping).isTrue();
     }
 
 
@@ -447,8 +444,8 @@ class OverlapServiceTest {
             .status(ACTIVE)
             .build();
 
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isTrue();
     }
 
     @Test
@@ -466,7 +463,7 @@ class OverlapServiceTest {
         noonVacation.setStartDate(date);
         noonVacation.setEndDate(date);
 
-        assertThat(sut.checkOverlap(noonVacation)).isEqualTo(NO_OVERLAPPING);
+        assertThat(sut.isOverlapping(noonVacation)).isFalse();
     }
 
     @Test
@@ -480,7 +477,7 @@ class OverlapServiceTest {
 
         final SickNote noonSickNote = SickNote.builder().person(person).dayLength(DayLength.NOON).startDate(date).endDate(date).status(ACTIVE).build();
 
-        assertThat(sut.checkOverlap(noonSickNote)).isEqualTo(NO_OVERLAPPING);
+        assertThat(sut.isOverlapping(noonSickNote)).isFalse();
     }
 
     @Test
@@ -498,7 +495,7 @@ class OverlapServiceTest {
         morningVacation.setStartDate(date);
         morningVacation.setEndDate(date);
 
-        assertThat(sut.checkOverlap(morningVacation)).isEqualTo(FULLY_OVERLAPPING);
+        assertThat(sut.isOverlapping(morningVacation)).isTrue();
     }
 
     @Test
@@ -526,8 +523,8 @@ class OverlapServiceTest {
             .status(ACTIVE)
             .build();
 
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isTrue();
     }
 
     @Test
@@ -555,7 +552,7 @@ class OverlapServiceTest {
             .status(ACTIVE)
             .build();
 
-        final OverlapCase overlapCase = sut.checkOverlap(sickNote);
-        assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
+        final boolean overlapping = sut.isOverlapping(sickNote);
+        assertThat(overlapping).isTrue();
     }
 }

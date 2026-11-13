@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteExtendValidatorTest {
@@ -92,8 +91,8 @@ class SickNoteExtendValidatorTest {
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
         final LocalDate extendedEndDate = LocalDate.of(2024, AUGUST, 9);
-        when(overlapService.checkOverlap(argThat((SickNote extended) -> extended.getId().equals(1L) && extended.getEndDate().equals(extendedEndDate))))
-            .thenReturn(PARTLY_OVERLAPPING);
+        when(overlapService.isOverlapping(argThat((SickNote extended) -> extended.getId().equals(1L) && extended.getEndDate().equals(extendedEndDate))))
+            .thenReturn(true);
 
         final SickNoteExtendDto dto = new SickNoteExtendDto();
         dto.setSickNoteId(1L);

@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
-import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -39,8 +38,6 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -457,9 +454,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private boolean vacationIsOverlapping(ApplicationForLeaveForm applicationForLeaveForm) {
 
         final Application application = applicationMapper.mapToApplication(applicationForLeaveForm);
-        final OverlapCase overlap = overlapService.checkOverlap(application);
-
-        return overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
+        return overlapService.isOverlapping(application);
     }
 
     private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm, VacationType<?> vacationType) {

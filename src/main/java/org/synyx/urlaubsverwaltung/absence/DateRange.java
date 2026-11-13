@@ -92,41 +92,6 @@ public record DateRange(LocalDate startDate, LocalDate endDate) implements Itera
     }
 
     /**
-     * Gets the gap between this date range and another date range.
-     * The other date range can be either before or after this date range.
-     * <p>
-     * Date ranges are inclusive of the start and the end.
-     * A date range has a gap to another date range if there are non-zero
-     * dates between them. This method returns the amount of the gap only
-     * if the date range do actually have a gap between them.
-     * If the date range overlap or abut, then null is returned.
-     * <p>
-     * When two date ranges are compared the result is one of three states:
-     * (a) they abut
-     * (b) there is a gap between them
-     * (c) they overlap.
-     * The abuts state takes precedence over the other two, thus a zero duration
-     * date range at the start of a larger date range abuts and does not overlap.
-     *
-     * @param dateRange date range containing the gap
-     * @return the date rage with the gap if given, else empty optional
-     */
-    public Optional<DateRange> gap(final DateRange dateRange) {
-        if (isOverlapping(dateRange)) {
-            return Optional.empty();
-        }
-
-        Optional<DateRange> maybeDateRange = Optional.empty();
-        if (startDate.isAfter(dateRange.endDate) && dateRange.endDate.until(startDate, DAYS) > 1) {
-            maybeDateRange = Optional.of(new DateRange(dateRange.endDate.plusDays(1), startDate.minusDays(1)));
-        } else if (dateRange.startDate.isAfter(endDate) && endDate.until(dateRange.startDate, DAYS) > 1) {
-            maybeDateRange = Optional.of(new DateRange(endDate.plusDays(1), dateRange.startDate.minusDays(1)));
-        }
-
-        return maybeDateRange;
-    }
-
-    /**
      * An date range is empty if the start date or the end date are not represented
      *
      * @return true if empty date range, false otherwise

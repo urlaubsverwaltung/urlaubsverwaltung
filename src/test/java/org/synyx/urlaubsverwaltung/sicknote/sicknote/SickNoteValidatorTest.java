@@ -28,8 +28,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -88,7 +86,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUEndDateTooFarInTheFutureIsRejected() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -109,7 +107,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUStartDateTooFarInThePastIsRejected() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -146,7 +144,7 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureSickNoteOfSamePersonIsAllowedIfSettingForSubmissionIsActive() {
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
                 any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -187,7 +185,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureValidDatesHaveNoErrors() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -364,7 +362,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -389,7 +387,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureValidAUPeriodHasNoErrors() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -414,7 +412,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -439,7 +437,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -464,7 +462,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -489,7 +487,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -528,7 +526,7 @@ class SickNoteValidatorTest {
             .dayLength(FULL)
             .build();
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(FULLY_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(true);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -583,7 +581,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
 
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(SickNote.class))).thenReturn(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 

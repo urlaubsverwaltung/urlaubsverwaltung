@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
-import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -64,7 +63,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -324,7 +322,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -349,7 +347,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -374,7 +372,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -400,7 +398,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -422,7 +420,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -444,7 +442,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -466,7 +464,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -493,7 +491,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -543,7 +541,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(HOLIDAY).build();
@@ -573,7 +571,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(UNPAIDLEAVE).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -602,7 +600,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -631,7 +629,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(SPECIALLEAVE).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -697,7 +695,7 @@ class ApplicationForLeaveFormValidatorTest {
             .build();
 
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(FALSE);
 
         sut.validate(appForm, errors);
@@ -731,7 +729,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(appForm.getDayLength(), appForm.getStartDate(), appForm.getEndDate(), appForm.getPerson()))
             .thenReturn(ONE);
 
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(FALSE);
 
         sut.validate(appForm, errors);
@@ -749,7 +747,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(true);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
@@ -826,7 +824,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
         final BlackoutPeriod blackoutPeriod = new BlackoutPeriod();
@@ -844,7 +842,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -872,7 +870,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         when(vacationTypeService.getById(1L))
@@ -919,7 +917,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(false);
@@ -951,7 +949,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -981,7 +979,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -1013,7 +1011,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -1093,7 +1091,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -1121,7 +1119,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -1149,7 +1147,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(10));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
@@ -1179,7 +1177,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         setupOvertimeSettings();
 
@@ -1269,7 +1267,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final ApplicationForLeaveForm appForm = overtimeMinimumTest(Duration.ofHours(6));
 
@@ -1286,7 +1284,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         overtimeMinimumTest(Duration.ofMinutes(5 * 60 + 30));
 
@@ -1302,7 +1300,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).active(true).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -1338,7 +1336,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
         final ApplicationForLeaveForm appForm = overtimeMinimumTest(Duration.ofHours(5));
@@ -1386,7 +1384,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(MORNING));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
@@ -1412,7 +1410,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
@@ -1435,7 +1433,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
@@ -1460,7 +1458,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(FULL));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
@@ -1485,7 +1483,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(MORNING));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
@@ -1509,7 +1507,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
@@ -1532,7 +1530,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureAlreadyAbsentOnNewYearsEveNoon() {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(NOON));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -1558,7 +1556,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(overlapService.isOverlapping(any(Application.class))).thenReturn(false);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));

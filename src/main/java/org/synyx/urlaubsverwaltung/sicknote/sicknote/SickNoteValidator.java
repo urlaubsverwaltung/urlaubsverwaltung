@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -15,8 +14,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInTheFuture;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarInThePast;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -145,10 +142,7 @@ public class SickNoteValidator implements Validator {
         /*
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        final OverlapCase overlap = overlapService.checkOverlap(sickNote);
-        final boolean isOverlapping = overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
-
-        if (isOverlapping) {
+        if (overlapService.isOverlapping(sickNote)) {
             errors.reject(ERROR_OVERLAP);
         }
     }
