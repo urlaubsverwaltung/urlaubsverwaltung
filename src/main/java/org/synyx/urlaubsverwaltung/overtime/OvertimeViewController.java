@@ -303,6 +303,8 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
                 signedInUser.getId(), person.getId()));
         }
 
+        // the maximum overtime check must not subtract an existing record named by the form
+        overtimeFormDto.setId(null);
         validator.validate(overtimeFormDto, errors);
         if (errors.hasErrors()) {
             prepareModelForCreation(model, signedInUser, person, overtimeFormDto);
@@ -360,6 +362,9 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
                 signedInUser.getId(), person.getId()));
         }
 
+        // validate the record that is saved, not the one the form names
+        overtimeFormDto.setId(id);
+        overtimeFormDto.setPerson(person);
         validator.validate(overtimeFormDto, errors);
         if (errors.hasErrors()) {
             prepareModelForEdit(model, signedInUser, person, overtimeFormDto);
