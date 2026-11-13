@@ -84,6 +84,13 @@ class OvertimeFormDtoTest {
     }
 
     @Test
+    void ensureDurationOfHoursWithAFractionOfAMinuteIsRoundedToMinutes() {
+        assertThat(overtimeForm(new BigDecimal("1.01"), null).getDuration()).isEqualTo(Duration.ofMinutes(61));
+        assertThat(overtimeForm(new BigDecimal("0.33"), null).getDuration()).isEqualTo(Duration.ofMinutes(20));
+        assertThat(overtimeForm(new BigDecimal("0.32"), 1).getDuration()).isEqualTo(Duration.ofMinutes(20));
+    }
+
+    @Test
     void ensureThatLongOverflowWillBeCappedByMax() {
         final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
         overtimeFormDto.setHours(new BigDecimal("2562047788015216"));
