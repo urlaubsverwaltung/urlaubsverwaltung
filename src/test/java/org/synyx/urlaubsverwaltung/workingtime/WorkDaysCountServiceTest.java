@@ -10,15 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -41,6 +42,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -53,23 +55,64 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYER
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {
 
+    private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
+    private static final MonthDay NEW_YEARS_EVE = MonthDay.of(DECEMBER, 31);
+
     private WorkDaysCountService sut;
 
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
-    private SettingsService settingsService;
+    private CompanyClosureService companyClosureService;
 
     @BeforeEach
     void setUp() {
-        final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
+        final var publicHolidaysService = new PublicHolidaysServiceImpl(Map.of("de", getHolidayManager()));
+        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService, companyClosureService);
+    }
+
+    /**
+     * The default company closures of a tenant: 24.12. and 31.12. closed in the afternoon.
+     */
+    private void withDefaultCompanyClosures() {
+        when(companyClosureService.getCompanyClosures(any(LocalDate.class), any(LocalDate.class))).thenAnswer(invocation -> {
+            final LocalDate from = invocation.getArgument(0);
+            final LocalDate to = invocation.getArgument(1);
+            return new DateRange(from, to).stream()
+                .filter(date -> MonthDay.from(date).equals(CHRISTMAS_EVE) || MonthDay.from(date).equals(NEW_YEARS_EVE))
+                .map(date -> new CompanyClosure(date, NOON, MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester"))
+                .toList();
+        });
+    }
+
+    @Test
+    void companyClosureNoonCountsHalfDay() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 24);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Heiligabend")));
+
+        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(new BigDecimal("0.5"));
+    }
+
+    @Test
+    void holidayAndClosureOnSameDayCountOnce() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 25);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Closure")));
+
+        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
     void getWorkDaysWithPublicHolidaysAndBothOnWeekend() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2010, DECEMBER, 17);
@@ -91,7 +134,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysAndOneOnWeekend() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2009, DECEMBER, 17);
@@ -154,7 +197,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithMultipleWorkingTimesAndDifferentFederalStates() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // Period: Dec 20, 2023 (Wednesday) - Jan 5, 2024 (Friday)
@@ -295,7 +338,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysOverYears() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         // start date and end date are not in the same year
@@ -312,7 +355,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForTeilzeitPersons() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -329,7 +372,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForVollzeitPersons() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -392,7 +435,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEve() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
@@ -407,7 +450,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
@@ -422,7 +465,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForNewYearsEve() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
@@ -437,7 +480,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForNewYearsEveDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
@@ -452,7 +495,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
@@ -468,7 +511,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
@@ -485,7 +528,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountForApplicationsBatchesWorkingTimeLoadingWithASingleQuery() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person marlene = new Person("marlene", "Muster", "Marlene", "marlene@example.org");
         marlene.setId(1L);
@@ -510,12 +553,14 @@ class WorkDaysCountServiceTest {
         // the whole point: working times are loaded once, not once per application
         verify(workingTimeService).getByPersons(List.of(marlene, peter));
         verify(workingTimeService, never()).getWorkingTimesByPersonAndDateRange(any(), any());
+        // company closures are loaded once for all applications as well
+        verify(companyClosureService, times(1)).getCompanyClosures(startDate, endDate);
     }
 
     @Test
     void getWorkDaysCountForApplicationsLimitsPeriodToGivenDateRange() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
@@ -542,7 +587,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountByYearForApplicationsBatchesWorkingTimeLoadingWithASingleQuery() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
@@ -580,7 +625,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountByYearForPeriodWithinOneYear() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2010, DECEMBER, 17);
@@ -596,7 +641,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountByYearForPeriodSpanningTwoYears() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
@@ -615,7 +660,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountByYearForPeriodSpanningTwoYearsDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
@@ -631,7 +676,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysCountByYearContainsYearWithoutWorkDays() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        withDefaultCompanyClosures();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2021, DECEMBER, 25);

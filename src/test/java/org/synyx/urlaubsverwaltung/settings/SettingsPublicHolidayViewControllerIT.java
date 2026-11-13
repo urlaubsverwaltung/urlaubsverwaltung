@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -24,9 +25,12 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
+import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -60,6 +64,8 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
     private SettingsService settingsService;
     @MockitoBean
     private SettingsPublicHolidayValidator settingsValidator;
+    @MockitoBean
+    private CompanyClosureService companyClosureService;
 
     // application stuff not of interest in this test
     @MockitoBean
@@ -93,6 +99,9 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
         final SettingsPublicHolidayDto expectedSettingsDto = new SettingsPublicHolidayDto();
         expectedSettingsDto.setId(1L);
         expectedSettingsDto.setPublicHolidaysSettings(publicHolidaysSettings);
+        // no company closure: working all day
+        expectedSettingsDto.setWorkingDurationForChristmasEve(DayLength.FULL);
+        expectedSettingsDto.setWorkingDurationForNewYearsEve(DayLength.FULL);
 
         mockMvc.perform(get("/web/settings/public-holidays").with(csrf()).with(oidcLogin))
             .andExpect(status().isOk())
@@ -123,12 +132,12 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
 
         final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
         publicHolidaysSettings.setFederalState(GERMANY_BADEN_WUERTTEMBERG);
-        publicHolidaysSettings.setWorkingDurationForChristmasEve(DayLength.MORNING);
-        publicHolidaysSettings.setWorkingDurationForNewYearsEve(DayLength.MORNING);
 
         final SettingsPublicHolidayDto settingsDto = new SettingsPublicHolidayDto();
         settingsDto.setId(1L);
         settingsDto.setPublicHolidaysSettings(publicHolidaysSettings);
+        settingsDto.setWorkingDurationForChristmasEve(DayLength.MORNING);
+        settingsDto.setWorkingDurationForNewYearsEve(DayLength.MORNING);
 
         doAnswer(args -> {
             final Errors errors = args.getArgument(1);
@@ -138,8 +147,8 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
 
         mockMvc.perform(post("/web/settings/public-holidays").with(csrf()).with(oidcLogin)
                 .param("id", "1")
-                .param("publicHolidaysSettings.workingDurationForChristmasEve", "MORNING")
-                .param("publicHolidaysSettings.workingDurationForNewYearsEve", "MORNING")
+                .param("workingDurationForChristmasEve", "MORNING")
+                .param("workingDurationForNewYearsEve", "MORNING")
                 .param("publicHolidaysSettings.federalState", "GERMANY_BADEN_WUERTTEMBERG")
             )
             .andExpect(status().isOk())
@@ -160,8 +169,6 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
 
         final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
         publicHolidaysSettings.setFederalState(GERMANY_BADEN_WUERTTEMBERG);
-        publicHolidaysSettings.setWorkingDurationForChristmasEve(DayLength.MORNING);
-        publicHolidaysSettings.setWorkingDurationForNewYearsEve(DayLength.NOON);
 
         final SettingsPublicHolidayDto settingsDto = new SettingsPublicHolidayDto();
         settingsDto.setId(1L);
@@ -172,8 +179,8 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
 
         mockMvc.perform(post("/web/settings/public-holidays").with(csrf()).with(oidcLogin)
                 .param("id", "1")
-                .param("publicHolidaysSettings.workingDurationForChristmasEve", "MORNING")
-                .param("publicHolidaysSettings.workingDurationForNewYearsEve", "NOON")
+                .param("workingDurationForChristmasEve", "MORNING")
+                .param("workingDurationForNewYearsEve", "NOON")
                 .param("publicHolidaysSettings.federalState", "GERMANY_BADEN_WUERTTEMBERG")
             )
             .andExpect(status().is3xxRedirection())
@@ -186,9 +193,10 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
         assertThat(captor.getValue()).satisfies(savedSettings -> {
             final PublicHolidaysSettings actual = savedSettings.getPublicHolidaysSettings();
             assertThat(actual.getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
-            assertThat(actual.getWorkingDurationForChristmasEve()).isEqualTo(DayLength.MORNING);
-            assertThat(actual.getWorkingDurationForNewYearsEve()).isEqualTo(DayLength.NOON);
         });
+
+        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 24)), eq(DayLength.NOON), any(LocalDate.class));
+        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 31)), eq(DayLength.MORNING), any(LocalDate.class));
     }
 
     private Person mockPerson(String username) {

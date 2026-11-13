@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 class PublicHolidaysSettingsTest {
 
@@ -11,7 +11,6 @@ class PublicHolidaysSettingsTest {
     void ensureDefaultValues() {
 
         final PublicHolidaysSettings settings = new PublicHolidaysSettings();
-        assertThat(settings.getWorkingDurationForChristmasEve()).isEqualTo(MORNING);
-        assertThat(settings.getWorkingDurationForNewYearsEve()).isEqualTo(MORNING);
+        assertThat(settings.getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
     }
 }

@@ -11,8 +11,8 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 /**
- * Describes a public holiday with the UV specific setting if it is a half public holiday or not.
- * (e.g. christmas eve can be configured to be a NOON public holiday for instance.)
+ * Describes a public holiday. Public holidays are always full days, closed half or full days like christmas eve
+ * and new year's eve are company closures.
  */
 public record PublicHoliday(LocalDate date, DayLength dayLength, String description) {
 
