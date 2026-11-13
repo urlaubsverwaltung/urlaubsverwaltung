@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Long.MIN_VALUE;
 import static java.math.BigInteger.valueOf;
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Objects.requireNonNullElse;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
@@ -145,7 +146,8 @@ public class OvertimeFormDto {
 
     private static @NonNull BigInteger getTotalSeconds(final BigDecimal originalHours, final int originalMinutes) {
         final BigInteger totalMinutes = originalHours.multiply(BigDecimal.valueOf(60))
-            .toBigIntegerExact()
+            .setScale(0, HALF_UP)
+            .toBigInteger()
             .add(valueOf(originalMinutes));
 
         return totalMinutes.multiply(valueOf(60))
