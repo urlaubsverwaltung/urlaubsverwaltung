@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.SearchContext;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,8 +64,6 @@ class PersonPermissionsViewControllerTest {
     @Mock
     private PersonPermissionsDtoValidator validator;
     @Mock
-    private SessionService sessionService;
-    @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
 
     private PersonProperties personProperties;
@@ -75,7 +72,7 @@ class PersonPermissionsViewControllerTest {
     void setUp() {
         personProperties = new PersonProperties();
         sut = new PersonPermissionsViewController(personService, departmentService, personMailService, validator,
-            sessionService, personSearchUiFragmentSupplier, personProperties);
+            personSearchUiFragmentSupplier, personProperties);
     }
 
     @Nested
@@ -193,7 +190,7 @@ class PersonPermissionsViewControllerTest {
     }
 
     @Test
-    void editPersonPermissionsAndMarkSessionToReloadAuthorities() throws Exception {
+    void editPersonPermissions() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setId(1L);
@@ -208,7 +205,6 @@ class PersonPermissionsViewControllerTest {
         );
 
         verify(personService).update(new PersonId(1L), PersonUpdate.ofPermissions(List.of(USER, OFFICE)));
-        verify(sessionService).markSessionToReloadAuthorities("username");
     }
 
     @Test
