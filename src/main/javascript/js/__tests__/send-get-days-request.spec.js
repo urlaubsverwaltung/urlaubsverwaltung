@@ -14,9 +14,12 @@ describe("send-get-days-request", function () {
       // just reset keys set explicitly in the tests below
       i18n: {},
     };
+    // the texts of the tests are english, so are the numbers
+    document.documentElement.lang = "en";
   });
 
   afterEach(function () {
+    document.documentElement.removeAttribute("lang");
     while (document.body.firstChild) {
       document.body.firstChild.remove();
     }

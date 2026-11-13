@@ -38,12 +38,15 @@ describe("calendar", () => {
   });
 
   beforeEach(() => {
+    // the expected numbers are english ones
+    document.documentElement.lang = "en";
     globalThis.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn() });
     // jsdom does not implement the popover api
     HTMLElement.prototype.showPopover = vi.fn();
   });
 
   afterEach(() => {
+    document.documentElement.removeAttribute("lang");
     fetchMock.removeRoutes();
     fetchMock.clearHistory();
     globalThis.Date = RealDate;
