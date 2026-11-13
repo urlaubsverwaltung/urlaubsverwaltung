@@ -219,7 +219,18 @@ public final class ApplicationForLeavePermissions {
         return isStillActive()
             && ((application.hasStatus(WAITING) && isOwnApplication())
             || signedInUser.hasRole(OFFICE)
-            || (isManagerOfPerson() && isNotOwnApplication() && signedInUser.hasRole(APPLICATION_EDIT)));
+            || (isManagerOfPerson() && isNotOwnApplication() && signedInUser.hasRole(APPLICATION_EDIT) && mayChangeTheFinalDecision()));
+    }
+
+    /**
+     * An allowed application of a two-stage department is the decision of the second stage authority. The edit keeps the
+     * status, so a department head editing it would allow e.g. a longer period without the second stage.
+     */
+    private boolean mayChangeTheFinalDecision() {
+        return !application.isTwoStageApproval()
+            || secondStageAuthorityOfPerson
+            || signedInUser.hasRole(BOSS)
+            || !(application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED));
     }
 
     /**
