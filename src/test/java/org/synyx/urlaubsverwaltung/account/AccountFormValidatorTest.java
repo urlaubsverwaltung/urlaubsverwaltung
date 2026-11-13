@@ -184,6 +184,16 @@ class AccountFormValidatorTest {
         verify(errors).rejectValue("actualVacationDays", "error.entry.max", new Object[]{BigDecimal.valueOf(30)}, "");
     }
 
+    @Test
+    void ensureActualVacationIsValidWhenAnnualVacationIsNull() {
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(null);
+        form.setActualVacationDays(new BigDecimal("31"));
+
+        sut.validateActualVacation(form, errors);
+        verifyNoInteractions(errors);
+    }
+
     private static Stream<Arguments> wrongAnnualAndActualVacationDays() {
         return Stream.of(
             Arguments.of("11", "10.1"),
