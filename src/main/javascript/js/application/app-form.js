@@ -19,9 +19,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     return document.querySelector("[name='person']").value;
   }
 
+  function getDayLength() {
+    // radios with the half day option, a hidden input without
+    return document.querySelector("input[name='dayLength']:checked, input[type='hidden'][name='dayLength']").value;
+  }
+
   function updateSelectionHints() {
     if (fromDateElement.value && toDateElement.value) {
-      const dayLength = document.querySelector("input[name='dayLength']").value;
+      const dayLength = getDayLength();
       const startDate = parseISO(fromDateElement.value);
       const toDate = parseISO(toDateElement.value);
 
@@ -56,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
 
-    const dayLength = document.querySelector("input[name='dayLength']").value;
+    const dayLength = getDayLength();
     const personId = getPersonId();
 
     sendGetDaysRequest(apiPrefix, startDate, endDate, dayLength, personId, ".days");

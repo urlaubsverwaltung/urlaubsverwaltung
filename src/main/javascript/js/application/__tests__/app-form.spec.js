@@ -25,14 +25,14 @@ describe("app-form", function () {
     return new Promise((resolve) => setTimeout(resolve, 0));
   }
 
-  function render() {
+  function render(dayLengthMarkup = `<input type="hidden" name="dayLength" value="FULL" />`) {
     document.body.innerHTML = `
       <select id="person-select">
         <option value="1">Person 1</option>
         <option value="2" selected>Person 2</option>
       </select>
       <input name="person" value="2" />
-      <input name="dayLength" value="FULL" />
+      ${dayLengthMarkup}
       <input id="from" />
       <input id="to" />
       <input id="at" />
@@ -44,8 +44,8 @@ describe("app-form", function () {
     `;
   }
 
-  async function renderAndLoad() {
-    render();
+  async function renderAndLoad(dayLengthMarkup) {
+    render(dayLengthMarkup);
     globalThis.uv = { apiPrefix: "/api" };
     document.dispatchEvent(new Event("DOMContentLoaded", { bubbles: true, cancelable: true }));
     await flushMicrotasks();
@@ -215,6 +215,47 @@ describe("app-form", function () {
       await renderAndLoad();
 
       expect(sendGetDaysRequest).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("with the half day option", function () {
+    const dayLengthRadios = `
+      <input type="radio" name="dayLength" value="FULL" />
+      <input type="radio" name="dayLength" value="MORNING" checked />
+      <input type="radio" name="dayLength" value="NOON" />
+    `;
+
+    it("fetches the days of the checked day length for the dates of the URL", async function () {
+      globalThis.history.pushState({}, "", "/web/application/new?from=2024-05-10&to=2024-05-10");
+
+      await renderAndLoad(dayLengthRadios);
+
+      expect(sendGetDaysRequest).toHaveBeenCalledWith(
+        "/api",
+        parseISOLocal("2024-05-10"),
+        parseISOLocal("2024-05-10"),
+        "MORNING",
+        "2",
+        ".days",
+      );
+    });
+
+    it("fetches the days of the checked day length when selecting a date", async function () {
+      await renderAndLoad(dayLengthRadios);
+      const [, toArguments] = createDatepicker.mock.calls;
+      document.querySelector("#from").value = "2024-05-10";
+      document.querySelector("#to").value = "2024-05-10";
+
+      toArguments[1].onSelect();
+
+      expect(sendGetDaysRequest).toHaveBeenCalledWith(
+        "/api",
+        parseISOLocal("2024-05-10"),
+        parseISOLocal("2024-05-10"),
+        "MORNING",
+        "2",
+        ".days",
+      );
     });
   });
 
