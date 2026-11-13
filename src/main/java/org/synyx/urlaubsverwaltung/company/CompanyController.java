@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Collections.max;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Controller
@@ -186,8 +187,9 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
 
     private VacationDaysStatDto vacationDaysStatistic(Person signedInUser, DateRange dateRange) {
 
-        final LocalDate from = toLocalDate(dateRange.start);
         final LocalDate to = toLocalDate(dateRange.end);
+        // remaining vacation days are per year, and a quarter in January or February starts in the last one
+        final LocalDate from = max(List.of(toLocalDate(dateRange.start), to.withDayOfYear(1)));
 
         final VacationDaysStatistic stats = vacationDaysStatisticService.getVacationDaysStatistic(signedInUser, from, to);
 
