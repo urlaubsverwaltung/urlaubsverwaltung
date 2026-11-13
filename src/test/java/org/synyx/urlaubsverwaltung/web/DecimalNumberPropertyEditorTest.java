@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
@@ -104,42 +105,13 @@ class DecimalNumberPropertyEditorTest {
     }
 
 
-    @Test
-    void ensureNumberParsingWorksWithCommaSeparatedNumberForGermanLocale() {
+    @ParameterizedTest
+    @CsvSource({"de, '6,75'", "de, 6.75", "en, '6,75'", "en, 6.75"})
+    void ensureNumberParsingWorksWithCommaAndDotSeparatedNumber(Locale locale, String text) {
 
-        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(locale);
 
-        propertyEditor.setAsText("6,75");
-        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
-    }
-
-
-    @Test
-    void ensureNumberParsingWorksWithDotSeparatedNumberForGermanLocale() {
-
-        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
-
-        propertyEditor.setAsText("6.75");
-        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
-    }
-
-
-    @Test
-    void ensureNumberParsingWorksWithCommaSeparatedNumberForEnglishLocale() {
-
-        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
-
-        propertyEditor.setAsText("6,75");
-        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
-    }
-
-
-    @Test
-    void ensureNumberParsingWorksWithDotSeparatedNumberForEnglishLocale() {
-
-        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
-
-        propertyEditor.setAsText("6.75");
+        propertyEditor.setAsText(text);
         assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
     }
 
