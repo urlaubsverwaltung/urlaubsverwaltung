@@ -70,9 +70,8 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
 
                 final SickNote sickNote = sickNoteMapper.toSickNote(sickNoteEntity, workingTimeCalendar);
 
-                final BigDecimal additionalWorkdays = workingTimeCalendar.workingTime(sickNote.getEndDate(), extensionEntity.getNewEndDate())
-                    // workingTime for the same date is 1. therefore we have to subtract 1 for "additional" days
-                    .subtract(BigDecimal.ONE);
+                // the days after the current end date, which can be a day off
+                final BigDecimal additionalWorkdays = workingTimeCalendar.workingTime(sickNote.getEndDate().plusDays(1), extensionEntity.getNewEndDate());
 
                 final SickNoteExtension extension = toSickNoteExtension(extensionEntity, additionalWorkdays);
 

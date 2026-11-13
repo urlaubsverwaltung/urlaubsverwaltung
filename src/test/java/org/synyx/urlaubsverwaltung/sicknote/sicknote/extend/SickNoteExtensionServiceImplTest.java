@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.ACCEPTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUPERSEDED;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -156,6 +157,37 @@ class SickNoteExtensionServiceImplTest {
                 assertThat(extension.additionalWorkdays()).isEqualTo(BigDecimal.ONE);
             });
         }
+
+        @Test
+        void ensureRecentSickNoteExtensionOfASickNoteEndingOnADayOff() {
+
+            final Person person = new Person();
+            person.setId(1L);
+
+            // monday to sunday, extended to the next monday
+            final SickNoteExtensionEntity entity = new SickNoteExtensionEntity();
+            entity.setId(1L);
+            entity.setSickNoteId(1L);
+            entity.setNewEndDate(LocalDate.of(2024, AUGUST, 26));
+            entity.setStatus(SUBMITTED);
+
+            when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(entity));
+
+            final SickNote sickNote = SickNote.builder()
+                .id(1L)
+                .person(person)
+                .startDate(LocalDate.of(2024, AUGUST, 19))
+                .endDate(LocalDate.of(2024, AUGUST, 25))
+                .build();
+
+            final DateRange dateRange = new DateRange(sickNote.getStartDate(), entity.getNewEndDate());
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange))
+                .thenReturn(Map.of(person, mondayToFridayFrom(dateRange)));
+
+            final Optional<SickNoteExtension> actual = sut.findSubmittedExtensionOfSickNote(sickNote);
+            assertThat(actual).hasValueSatisfying(extension ->
+                assertThat(extension.additionalWorkdays()).isEqualByComparingTo(BigDecimal.ONE));
+        }
     }
 
     @Nested
@@ -257,9 +289,9 @@ class SickNoteExtensionServiceImplTest {
             when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(existingEntity));
 
             final WorkingTimeCalendar workingTimeCalendar = mock(WorkingTimeCalendar.class);
-            when(workingTimeCalendar.workingTime(endDate, nextEndDate)).thenReturn(BigDecimal.valueOf(3));
+            when(workingTimeCalendar.workingTime(endDate.plusDays(1), nextEndDate)).thenReturn(BigDecimal.ONE);
 
-            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, nextEndDate)))
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, nextEndDate)))
                 .thenReturn(Map.of(person, workingTimeCalendar));
 
             when(repository.save(any(SickNoteExtensionEntity.class))).thenAnswer(returnsFirstArg());
@@ -276,7 +308,7 @@ class SickNoteExtensionServiceImplTest {
             assertThat(actual.sickNoteId()).isEqualTo(1L);
             assertThat(actual.nextEndDate()).isEqualTo(nextEndDate);
             assertThat(actual.status()).isEqualTo(SUBMITTED);
-            assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(3));
+            assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.ONE);
         }
 
         @Test
@@ -297,9 +329,9 @@ class SickNoteExtensionServiceImplTest {
             when(repository.findAllBySickNoteIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(existingEntity));
 
             final WorkingTimeCalendar workingTimeCalendar = mock(WorkingTimeCalendar.class);
-            when(workingTimeCalendar.workingTime(endDate, nextEndDate)).thenReturn(BigDecimal.valueOf(3));
+            when(workingTimeCalendar.workingTime(endDate.plusDays(1), nextEndDate)).thenReturn(BigDecimal.ONE);
 
-            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, nextEndDate)))
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, nextEndDate)))
                 .thenReturn(Map.of(person, workingTimeCalendar));
 
             when(repository.save(any(SickNoteExtensionEntity.class))).thenAnswer(returnsFirstArg());
@@ -338,9 +370,9 @@ class SickNoteExtensionServiceImplTest {
             when(repository.save(any(SickNoteExtensionEntity.class))).thenAnswer(returnsFirstArg());
 
             final WorkingTimeCalendar workingTimeCalendar = mock(WorkingTimeCalendar.class);
-            when(workingTimeCalendar.workingTime(endDate, nextEndDate)).thenReturn(BigDecimal.valueOf(3));
+            when(workingTimeCalendar.workingTime(endDate.plusDays(1), nextEndDate)).thenReturn(BigDecimal.ONE);
 
-            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(submitter), new DateRange(endDate, nextEndDate)))
+            when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(submitter), new DateRange(startDate, nextEndDate)))
                 .thenReturn(Map.of(submitter, workingTimeCalendar));
 
             final SickNoteExtension actual = sut.createSickNoteExtension(sickNote, nextEndDate);
@@ -349,7 +381,7 @@ class SickNoteExtensionServiceImplTest {
             assertThat(actual.sickNoteId()).isEqualTo(1L);
             assertThat(actual.nextEndDate()).isEqualTo(nextEndDate);
             assertThat(actual.status()).isEqualTo(SUBMITTED);
-            assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(3));
+            assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.ONE);
         }
     }
 
@@ -437,5 +469,16 @@ class SickNoteExtensionServiceImplTest {
                 }
             );
         }
+    }
+
+    private static WorkingTimeCalendar mondayToFridayFrom(DateRange dateRange) {
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> days = new java.util.HashMap<>();
+        for (LocalDate date : dateRange) {
+            final boolean weekend = date.getDayOfWeek().getValue() > 5;
+            days.put(date, weekend
+                ? new WorkingTimeCalendar.WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY)
+                : new WorkingTimeCalendar.WorkingDayInformation(DayLength.FULL, WORKDAY, WORKDAY));
+        }
+        return new WorkingTimeCalendar(days);
     }
 }
