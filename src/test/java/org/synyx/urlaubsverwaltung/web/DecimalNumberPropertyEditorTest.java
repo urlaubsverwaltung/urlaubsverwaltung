@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -181,6 +183,32 @@ class DecimalNumberPropertyEditorTest {
         assertThat(propertyEditor.getValue()).isNull();
     }
 
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1e10000", "1e-10000", "1E+10000"})
+    void ensureSettingTextWithAHugeExponentThrows(String text) {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
+        assertThatIllegalArgumentException().isThrownBy(() -> propertyEditor.setAsText(text));
+    }
+
+    @Test
+    void ensureSettingTextWithTooManyDigitsThrows() {
+
+        final String text = "9".repeat(101);
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
+        assertThatIllegalArgumentException().isThrownBy(() -> propertyEditor.setAsText(text));
+    }
+
+    @Test
+    void ensureSettingTextWithASmallExponentWorks() {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
+
+        propertyEditor.setAsText("1e2");
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("100.00"));
+    }
 
     @Test
     void ensureSettingTextNotRepresentingANumberThrows() {
