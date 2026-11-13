@@ -834,13 +834,7 @@ const Controller = (function () {
   // the month beyond the new one as well: an absence bar continuing there must not be drawn as ending
   function fetchYearsOf(...dates) {
     const years = new Set(dates.map((date) => getYear(date)));
-    return Promise.all(
-      [...years].flatMap((year) => [
-        holidayService.fetchPublicHolidays(year),
-        holidayService.fetchAbsences(year),
-        holidayService.fetchBlackoutPeriods(year),
-      ]),
-    );
+    return Promise.all([...years].map((year) => holidayService.fetchYear(year)));
   }
 
   function selectionFrom(date) {
