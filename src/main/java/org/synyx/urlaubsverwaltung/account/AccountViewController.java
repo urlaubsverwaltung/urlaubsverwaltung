@@ -149,6 +149,9 @@ public class AccountViewController implements HasLaunchpad, HasPersonSearch {
                 expiryDateLocally, annualVacationDays, actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
+        // the next years carry over the left vacation days of this one, like on every change of an application
+        accountInteractionService.updateRemainingVacationDays(validFrom.getYear(), person);
+
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
         return "redirect:/web/person/" + personId;
