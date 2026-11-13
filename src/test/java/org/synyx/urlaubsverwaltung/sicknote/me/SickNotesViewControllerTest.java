@@ -34,9 +34,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import static java.math.BigDecimal.ONE;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
@@ -74,8 +72,6 @@ class SickNotesViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private SickNoteService sickNoteService;
     @Mock
     private DepartmentService departmentService;
@@ -88,7 +84,7 @@ class SickNotesViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNotesViewController(personService, workDaysCountService, sickNoteService, departmentService,
+        sut = new SickNotesViewController(personService, sickNoteService, departmentService,
             new SickNotePermissionEvaluator(departmentService, settingsService),
             settingsService, personSearchUiFragmentSupplier, clock);
 
@@ -212,7 +208,6 @@ class SickNotesViewControllerTest {
             .build();
 
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "6")))
             .andExpect(status().isOk())
@@ -513,7 +508,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "30")))
@@ -548,7 +542,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "31")))
@@ -626,7 +619,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "32")))
@@ -665,7 +657,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "34")))
@@ -704,7 +695,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "36")))
@@ -743,7 +733,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "38")))
@@ -779,7 +768,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "40")))
@@ -824,7 +812,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote2, sickNote1));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "42")))
@@ -863,7 +850,6 @@ class SickNotesViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote));
-        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get(MY_SICKNOTES_PATH.replace("{personId}", "43")))

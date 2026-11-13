@@ -1,224 +1,181 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.person.Person;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static java.math.BigDecimal.ONE;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MAY;
 import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 class SickDaysOverviewTest {
 
     @Test
     void ensureGeneratesCorrectSickDaysOverviewWithSickNoteSpanningMultipleYears() {
 
-        final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1L);
-
-        final SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setCategory(SICK_NOTE);
-        sickNoteType.setMessageKey("Krankmeldung");
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
-        final LocalDate aubStartDate = LocalDate.of(2016, MAY, 5);
-        final LocalDate aubEndDate = LocalDate.of(2016, JUNE, 6);
-
-        final SickNote sickNote = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteType)
-            .status(ACTIVE)
-            .startDate(startDate)
-            .endDate(endDate)
-            .aubStartDate(aubStartDate)
-            .aubEndDate(aubEndDate)
-            .build();
-
-        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
-
-        final BigDecimal workingDays = BigDecimal.valueOf(209);
-        when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(workingDays);
-
-        final BigDecimal workingDaysAub = BigDecimal.valueOf(100);
-        when(workDaysCountService.getWorkDaysCount(FULL, aubStartDate, aubEndDate, person)).thenReturn(workingDaysAub);
-
         final LocalDate from = LocalDate.of(2015, JANUARY, 1);
         final LocalDate to = LocalDate.of(2017, DECEMBER, 31);
-        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
-        final SickDaysDto sickDays = sickDaysOverview.getSickDays();
-        assertThat(sickDays.getDays())
-            .containsEntry("TOTAL", workingDays)
-            .containsEntry("WITH_AUB", workingDaysAub);
+
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType(SICK_NOTE))
+            .status(ACTIVE)
+            .startDate(LocalDate.of(2016, JANUARY, 1))
+            .endDate(LocalDate.of(2016, DECEMBER, 31))
+            .aubStartDate(LocalDate.of(2016, MAY, 5))
+            .aubEndDate(LocalDate.of(2016, JUNE, 6))
+            .workingTimeCalendar(workingEveryDay(from, to))
+            .build();
+
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote), from, to);
+
+        assertThat(sut.getSickDays().getDays().get("TOTAL")).isEqualByComparingTo("366");
+        assertThat(sut.getSickDays().getDays().get("WITH_AUB")).isEqualByComparingTo("33");
     }
 
     @Test
     void ensureGeneratesCorrectSickDaysOverviewWithSickNoteSpanningMultipleYearsButAubEndsInLastYear() {
 
-        final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1L);
-
-        final SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setCategory(SICK_NOTE);
-        sickNoteType.setMessageKey("Krankmeldung");
-
-        final LocalDate intervalStart = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
 
         final LocalDate sickNoteStartDate = LocalDate.of(2025, DECEMBER, 29);
-        final LocalDate sickNoteEndDate = LocalDate.of(2026, JANUARY, 9);
-
         final SickNote sickNote = SickNote.builder()
-            .person(person)
             .dayLength(FULL)
-            .sickNoteType(sickNoteType)
+            .sickNoteType(sickNoteType(SICK_NOTE))
             .status(ACTIVE)
             // extend beyond turn of the year (actually it just has to extend the requested interval below)
             .startDate(sickNoteStartDate)
-            .endDate(sickNoteEndDate)
+            .endDate(LocalDate.of(2026, JANUARY, 9))
             // aub must end before the start of the requested interval below
             .aubStartDate(sickNoteStartDate)
             .aubEndDate(LocalDate.of(2025, DECEMBER, 31))
+            .workingTimeCalendar(workingEveryDay(from, to))
             .build();
 
-        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote), from, to);
 
-        final BigDecimal sickNoteWorkingDays = BigDecimal.valueOf(42);
-        when(workDaysCountService.getWorkDaysCount(FULL, intervalStart, sickNoteEndDate, person)).thenReturn(sickNoteWorkingDays);
-
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, DECEMBER, 31);
-        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote), workDaysCountService, from, to);
-
-        final SickDaysDto actual = sut.getSickDays();
-
-        assertThat(actual.getDays())
-            .containsEntry("TOTAL", sickNoteWorkingDays)
-            .containsEntry("WITH_AUB", BigDecimal.ZERO);
+        assertThat(sut.getSickDays().getDays().get("TOTAL")).isEqualByComparingTo("9");
+        assertThat(sut.getSickDays().getDays().get("WITH_AUB")).isEqualByComparingTo("0");
     }
 
     @Test
     void ensureGeneratesCorrectSickDaysOverview() {
 
-        final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1L);
+        final LocalDate from = LocalDate.of(2014, OCTOBER, 10);
+        final LocalDate to = LocalDate.of(2014, OCTOBER, 18);
+        final WorkingTimeCalendar workingTimeCalendar = workingEveryDay(from, to);
 
-        final SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setCategory(SICK_NOTE);
-        sickNoteType.setMessageKey("Krankmeldung");
-
-        final SickNoteType sickNoteTypeChild = new SickNoteType();
-        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
-        sickNoteTypeChild.setMessageKey("Kind-Krankmeldung");
-
-        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
-
-        final SickNote sickNoteWithoutAUB = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteType)
-            .status(ACTIVE)
-            .startDate(LocalDate.of(2014, OCTOBER, 13))
-            .endDate(LocalDate.of(2014, OCTOBER, 13))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 13), LocalDate.of(2014, OCTOBER, 13), person))
-            .thenReturn(ONE);
-
-        final SickNote sickNoteWithAUB = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteType)
-            .status(ACTIVE)
-            .startDate(LocalDate.of(2014, OCTOBER, 14))
-            .endDate(LocalDate.of(2014, OCTOBER, 16))
-            .aubStartDate(LocalDate.of(2014, OCTOBER, 15))
-            .aubEndDate(LocalDate.of(2014, OCTOBER, 15))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 14), LocalDate.of(2014, OCTOBER, 16), person))
-            .thenReturn(BigDecimal.valueOf(3));
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 15), LocalDate.of(2014, OCTOBER, 15), person))
-            .thenReturn(ONE);
-
-        final SickNote childSickNoteWithoutAUB = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteTypeChild)
-            .status(ACTIVE)
-            .startDate(LocalDate.of(2014, OCTOBER, 15))
-            .endDate(LocalDate.of(2014, OCTOBER, 15))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 15), LocalDate.of(2014, OCTOBER, 15), person))
-            .thenReturn(ONE);
-
-        final SickNote childSickNoteWithAUB = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteTypeChild)
-            .status(ACTIVE)
-            .startDate(LocalDate.of(2014, OCTOBER, 16))
-            .endDate(LocalDate.of(2014, OCTOBER, 18))
-            .aubStartDate(LocalDate.of(2014, OCTOBER, 16))
-            .aubEndDate(LocalDate.of(2014, OCTOBER, 17))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 16), LocalDate.of(2014, OCTOBER, 18), person))
-            .thenReturn(BigDecimal.valueOf(3));
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 16), LocalDate.of(2014, OCTOBER, 17), person))
-            .thenReturn(BigDecimal.valueOf(2));
-
-        final SickNote inactiveSickNote = SickNote.builder()
-            .person(person)
-            .dayLength(FULL)
-            .sickNoteType(sickNoteTypeChild)
-            .status(CANCELLED)
-            .startDate(LocalDate.of(2014, OCTOBER, 17))
-            .endDate(LocalDate.of(2014, OCTOBER, 17))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 17), LocalDate.of(2014, OCTOBER, 17), person))
-            .thenReturn(ONE);
-
-        final SickNote inactiveChildSickNote = SickNote.builder()
-            .person(person)
-            .sickNoteType(sickNoteTypeChild)
-            .status(CANCELLED)
-            .startDate(LocalDate.of(2014, OCTOBER, 18))
-            .endDate(LocalDate.of(2014, OCTOBER, 18))
-            .build();
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2014, OCTOBER, 18), LocalDate.of(2014, OCTOBER, 18), person))
-            .thenReturn(ONE);
+        final SickNote sickNoteWithoutAUB = sickNote(SICK_NOTE, ACTIVE, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 13), LocalDate.of(2014, OCTOBER, 13), null, null);
+        final SickNote sickNoteWithAUB = sickNote(SICK_NOTE, ACTIVE, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 14), LocalDate.of(2014, OCTOBER, 16),
+            LocalDate.of(2014, OCTOBER, 15), LocalDate.of(2014, OCTOBER, 15));
+        final SickNote childSickNoteWithoutAUB = sickNote(SICK_NOTE_CHILD, ACTIVE, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 15), LocalDate.of(2014, OCTOBER, 15), null, null);
+        final SickNote childSickNoteWithAUB = sickNote(SICK_NOTE_CHILD, ACTIVE, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 16), LocalDate.of(2014, OCTOBER, 18),
+            LocalDate.of(2014, OCTOBER, 16), LocalDate.of(2014, OCTOBER, 17));
+        final SickNote inactiveSickNote = sickNote(SICK_NOTE, CANCELLED, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 17), LocalDate.of(2014, OCTOBER, 17), null, null);
+        final SickNote inactiveChildSickNote = sickNote(SICK_NOTE_CHILD, CANCELLED, workingTimeCalendar,
+            LocalDate.of(2014, OCTOBER, 18), LocalDate.of(2014, OCTOBER, 18), null, null);
 
         final List<SickNote> sickNotes = List.of(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
-        final SickDaysSummaryDto sickDaysOverview = new SickDaysSummaryDto(sickNotes, workDaysCountService,
-            LocalDate.of(2014, OCTOBER, 10), LocalDate.of(2014, OCTOBER, 18));
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(sickNotes, from, to);
 
-        final SickDaysDto sickDays = sickDaysOverview.getSickDays();
-        assertThat(sickDays.getDays())
-            .isNotNull()
-            .containsEntry("TOTAL", new BigDecimal("4"))
-            .containsEntry("WITH_AUB", ONE);
+        final SickDaysDto sickDays = sut.getSickDays();
+        assertThat(sickDays.getDays().get("TOTAL")).isEqualByComparingTo("4");
+        assertThat(sickDays.getDays().get("WITH_AUB")).isEqualByComparingTo("1");
 
-        final SickDaysDto childSickDays = sickDaysOverview.getChildSickDays();
-        assertThat(childSickDays.getDays())
-            .isNotNull()
-            .containsEntry("TOTAL", new BigDecimal("4"))
-            .containsEntry("WITH_AUB", new BigDecimal("2"));
+        final SickDaysDto childSickDays = sut.getChildSickDays();
+        assertThat(childSickDays.getDays().get("TOTAL")).isEqualByComparingTo("4");
+        assertThat(childSickDays.getDays().get("WITH_AUB")).isEqualByComparingTo("2");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"MORNING, 0.5", "NOON, 0"})
+    void ensureCountsOnlyTheWorkedHalfOfChristmasEve(DayLength sickNoteDayLength, String expectedDays) {
+
+        final LocalDate christmasEve = LocalDate.of(2026, DECEMBER, 24);
+        // christmas eve with a working morning and a free afternoon
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(
+            Map.of(christmasEve, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY)));
+
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(sickNoteDayLength)
+            .sickNoteType(sickNoteType(SICK_NOTE))
+            .status(ACTIVE)
+            .startDate(christmasEve)
+            .endDate(christmasEve)
+            .aubStartDate(christmasEve)
+            .aubEndDate(christmasEve)
+            .workingTimeCalendar(workingTimeCalendar)
+            .build();
+
+        final SickDaysSummaryDto sut = new SickDaysSummaryDto(List.of(sickNote),
+            LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31));
+
+        assertThat(sut.getSickDays().getDays().get("TOTAL")).isEqualByComparingTo(expectedDays);
+        assertThat(sut.getSickDays().getDays().get("WITH_AUB")).isEqualByComparingTo(expectedDays);
+    }
+
+    private static SickNote sickNote(
+        SickNoteCategory category,
+        SickNoteStatus status,
+        WorkingTimeCalendar workingTimeCalendar,
+        LocalDate startDate, LocalDate endDate, LocalDate aubStartDate, LocalDate aubEndDate
+    ) {
+        return SickNote.builder()
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType(category))
+            .status(status)
+            .startDate(startDate)
+            .endDate(endDate)
+            .aubStartDate(aubStartDate)
+            .aubEndDate(aubEndDate)
+            .workingTimeCalendar(workingTimeCalendar)
+            .build();
+    }
+
+    private static SickNoteType sickNoteType(SickNoteCategory category) {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(category);
+        sickNoteType.setMessageKey(category.name());
+        return sickNoteType;
+    }
+
+    private static WorkingTimeCalendar workingEveryDay(LocalDate from, LocalDate to) {
+        final Map<LocalDate, WorkingDayInformation> workingDays = new HashMap<>();
+        for (LocalDate date : new DateRange(from, to)) {
+            workingDays.put(date, new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        }
+        return new WorkingTimeCalendar(workingDays);
     }
 }
