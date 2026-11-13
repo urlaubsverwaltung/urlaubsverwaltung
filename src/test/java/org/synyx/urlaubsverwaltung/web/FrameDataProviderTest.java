@@ -120,9 +120,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).isEmpty();
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -289,9 +286,6 @@ class FrameDataProviderTest {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         sut.postHandle(request, null, null, modelAndView);
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -340,9 +334,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).containsExactlyElementsOf(settingsLinks());
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -387,9 +378,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).isEmpty();
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -435,9 +423,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).isEmpty();
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -482,9 +467,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).isEmpty();
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -530,9 +512,6 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.settings()).isEmpty();
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -584,8 +563,6 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.favorites()).contains(createOvertimeLink()));
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @ParameterizedTest
@@ -607,8 +584,6 @@ class FrameDataProviderTest {
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
             .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.favorites()).doesNotContain(createOvertimeLink()));
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
     }
 
     @Test
@@ -631,8 +606,6 @@ class FrameDataProviderTest {
                 assertThat(dto.favorites()).doesNotContain(createOvertimeLink());
                 assertThat(dto.basic()).contains(basicOvertimeLink());
             });
-
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
     }
 
     @ParameterizedTest

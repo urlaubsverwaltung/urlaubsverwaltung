@@ -24,7 +24,6 @@ import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.ZoneOffset.UTC;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 
 /**
@@ -291,10 +290,6 @@ public class Application {
 
     public void setVacationType(VacationType<?> vacationType) {
         this.vacationType = vacationType;
-    }
-
-    public boolean isFormerlyAllowed() {
-        return hasStatus(CANCELLED);
     }
 
     public LocalDate getRemindDate() {
