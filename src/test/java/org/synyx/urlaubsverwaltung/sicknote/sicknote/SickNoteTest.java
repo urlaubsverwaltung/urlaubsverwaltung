@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -81,21 +82,31 @@ class SickNoteTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-    void ensureWorkingTimeForHalfDaySickNoteAtHalfPublicHoliday(DayLength givenDayLength) {
-
+    @CsvSource({
+        // christmas eve with a working morning and a free afternoon
+        "WORKDAY, PUBLIC_HOLIDAY, MORNING, 0.5",
+        "WORKDAY, PUBLIC_HOLIDAY, NOON, 0",
+        // christmas eve with a free morning and a working afternoon
+        "PUBLIC_HOLIDAY, WORKDAY, NOON, 0.5",
+        "PUBLIC_HOLIDAY, WORKDAY, MORNING, 0",
+    })
+    void ensureWorkingTimeForHalfDaySickNoteAtHalfPublicHolidayCountsTheWorkingHalfOnly(
+        WorkingDayInformation.WorkingTimeCalendarEntryType morning, WorkingDayInformation.WorkingTimeCalendarEntryType noon,
+        DayLength sickNoteDayLength, BigDecimal expectedWorkDays
+    ) {
         final LocalDate christmas = LocalDate.of(2022, DECEMBER, 24);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY)));
+        final DayLength workingDayLength = morning == WORKDAY ? MORNING : DayLength.NOON;
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(christmas, new WorkingDayInformation(workingDayLength, morning, noon)));
 
         final SickNote sickNote = SickNote.builder()
-            .dayLength(givenDayLength)
+            .dayLength(sickNoteDayLength)
             .startDate(christmas)
             .endDate(christmas)
             .workingTimeCalendar(workingTimeCalendar)
             .build();
 
-        final BigDecimal actual = sickNote.getWorkDays(christmas, christmas);
-        assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
+        assertThat(sickNote.getWorkDays(christmas, christmas)).isEqualByComparingTo(expectedWorkDays);
+        assertThat(sickNote.getWorkDays()).isEqualByComparingTo(expectedWorkDays);
     }
 
     @Test

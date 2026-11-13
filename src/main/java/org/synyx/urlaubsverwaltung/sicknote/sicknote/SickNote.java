@@ -164,11 +164,22 @@ public final class SickNote {
             final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(dateRange.startDate());
             if (dayLength.isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
                 workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
+            } else if (dayLength.isHalfDay() && workingDayInformation != null) {
+                // a half day public holiday (christmas eve, new year's eve): only the half that is worked counts
+                if (isWorkingHalf(workingDayInformation, dayLength)) {
+                    workingTimeSum = workingTimeSum.add(workingTime);
+                }
             } else {
                 workingTimeSum = workingTimeSum.add(workingTime);
             }
         }
         return workingTimeSum;
+    }
+
+    private static boolean isWorkingHalf(WorkingTimeCalendar.WorkingDayInformation workingDayInformation, DayLength half) {
+        final WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType entryType =
+            half == DayLength.MORNING ? workingDayInformation.morning() : workingDayInformation.noon();
+        return entryType == WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {
