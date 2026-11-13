@@ -146,9 +146,10 @@ function hydrateDatepicker(duetDateElement, options) {
       const selectedYear = Number(yearElement.value);
       for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
         const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
-        const date = parse(dayAndMonthString, dateFormatShort, new Date());
+        // parsed within the selected year: february 29th does not exist in the current year of a non leap year
+        const date = parse(dayAndMonthString, dateFormatShort, new Date(selectedYear, 0, 1));
         // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.
-        // therefore the parsed date will always be assigned to the current year and we have to adjust it when:
+        // therefore the parsed date is assigned to the selected year and we have to adjust it when:
         if (selectedMonth === 0 && date.getMonth() === 11) {
           // datepicker selected month is january, but the rendered day item is december of the previous year
           // (e.g. december 31) to fill the week row.
