@@ -675,14 +675,13 @@ class CalculationServiceTest {
         account2013.setActualVacationDays(account2013.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        // this year still has all ten days (but 3 of them used up next year, see above)
+        // this year still has all ten days, but all of them are already used up next year, see above
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
             .withRemainingVacation(ZERO)
             .notExpiring(ZERO)
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
-            .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
             .withVacationDaysUsedNextYear(TEN)
             .build();
         when(vacationDaysService.getVacationDaysLeftIgnoring(null, List.of(account), year, List.of(account2013)))
@@ -690,6 +689,44 @@ class CalculationServiceTest {
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
+    }
+
+    @Test
+    void ensureApplicationMayUseTheDaysLeftAfterRemainingVacationDaysUsedNextYear() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate applicationStartDate = LocalDate.of(2012, AUGUST, 20);
+        final LocalDate applicationEndDate = LocalDate.of(2012, AUGUST, 21);
+
+        final WorkingTime workingTime = new WorkingTime(person, applicationStartDate, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(applicationStartDate, applicationEndDate), workingTime));
+
+        // two days
+        final Application applicationForLeaveToCheck = createApplicationStub(person);
+        applicationForLeaveToCheck.setStartDate(applicationStartDate);
+        applicationForLeaveToCheck.setEndDate(applicationEndDate);
+
+        final Year year = Year.of(2012);
+        final Account account = new Account(person, year.atDay(1), year.atDay(1).with(lastDayOfYear()), true, LocalDate.of(2012, APRIL, 1), BigDecimal.valueOf(30), ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+
+        final Account account2013 = new Account(person, Year.of(2013).atDay(1), Year.of(2013).atDay(1).with(lastDayOfYear()), true, LocalDate.of(2013, APRIL, 1), BigDecimal.valueOf(30), BigDecimal.valueOf(5), ZERO, "");
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
+
+        // 5 of 30 days are left, 3 of them are already used as remaining vacation days in 2013, so 2 days are left
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(5))
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
+            .build();
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo("2");
+        when(vacationDaysService.getVacationDaysLeftIgnoring(null, List.of(account), year, List.of(account2013)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
+
+        assertThat(sut.checkApplication(applicationForLeaveToCheck)).isTrue();
     }
 
     @Test

@@ -106,10 +106,10 @@ class CalculationService {
 
         // now we calculate the vacation days left before and after the expiry date
         final BigDecimal vacationDaysRequestedBeforeExpiryDate = getWorkdaysBeforeExpiryDate(account, application);
-        final BigDecimal vacationDaysLeftBeforeExpiryDate = getVacationDaysLeftBeforeExpiryDate(vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysAlreadyUsedNextYear);
+        final BigDecimal vacationDaysLeftBeforeExpiryDate = getVacationDaysLeftBeforeExpiryDate(vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate);
 
         final BigDecimal vacationDaysRequestedAfterExpiryDate = requestedVacationDays.subtract(vacationDaysRequestedBeforeExpiryDate);
-        final BigDecimal vacationDaysLeftAfterExpiryDate = getVacationDaysLeftAfterExpiryDate(account, vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysRequestedAfterExpiryDate, vacationDaysAlreadyUsedNextYear);
+        final BigDecimal vacationDaysLeftAfterExpiryDate = getVacationDaysLeftAfterExpiryDate(account, vacationDaysLeft, vacationDaysRequestedBeforeExpiryDate, vacationDaysRequestedAfterExpiryDate);
 
         if (vacationDaysLeftBeforeExpiryDate.signum() < 0 || vacationDaysLeftAfterExpiryDate.signum() < 0) {
             LOG.info("Person with id {} does not have enough vacation days left to add/edit application with id {} from {} to {} because vacationDaysLeftBeforeExpiryDate {} is negative or vacationDaysLeftAfterExpiryDate {} is negative", person.getId(), application.getId(), application.getStartDate(), application.getEndDate(), vacationDaysLeftBeforeExpiryDate, vacationDaysLeftAfterExpiryDate);
@@ -122,14 +122,14 @@ class CalculationService {
         return true;
     }
 
-    private static BigDecimal getVacationDaysLeftBeforeExpiryDate(VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysRequestedBeforeExpiryDate, BigDecimal vacationDaysAlreadyUsedNextYear) {
+    // vacationDaysLeft.getVacationDays() already excludes the remaining vacation days used next year
+    private static BigDecimal getVacationDaysLeftBeforeExpiryDate(VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysRequestedBeforeExpiryDate) {
         return vacationDaysLeft.getVacationDays()
             .add(vacationDaysLeft.getRemainingVacationDays())
-            .subtract(vacationDaysRequestedBeforeExpiryDate)
-            .subtract(vacationDaysAlreadyUsedNextYear);
+            .subtract(vacationDaysRequestedBeforeExpiryDate);
     }
 
-    private static BigDecimal getVacationDaysLeftAfterExpiryDate(Account account, VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysRequestedBeforeExpiryDate, BigDecimal vacationDaysRequestedAfterExpiryDate, BigDecimal vacationDaysAlreadyUsedNextYear) {
+    private static BigDecimal getVacationDaysLeftAfterExpiryDate(Account account, VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysRequestedBeforeExpiryDate, BigDecimal vacationDaysRequestedAfterExpiryDate) {
         if (!account.doRemainingVacationDaysExpire() || vacationDaysRequestedAfterExpiryDate.signum() <= 0) {
             return ZERO;
         }
@@ -137,8 +137,7 @@ class CalculationService {
         return vacationDaysLeft.getVacationDays()
             .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring())
             .subtract(vacationDaysRequestedBeforeExpiryDate)
-            .subtract(vacationDaysRequestedAfterExpiryDate)
-            .subtract(vacationDaysAlreadyUsedNextYear);
+            .subtract(vacationDaysRequestedAfterExpiryDate);
     }
 
     private BigDecimal getWorkdaysBeforeExpiryDate(Account account, Application application) {
