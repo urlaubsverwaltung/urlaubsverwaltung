@@ -19,8 +19,13 @@ class RolesFromClaimMapperConverter implements Converter<String, GrantedAuthorit
 
     @Override
     public @Nullable GrantedAuthority convert(@NonNull String source) {
+        final String rolePrefix = properties.getRolePrefix();
+        if (!source.startsWith(rolePrefix)) {
+            return null;
+        }
+
         try {
-            final String authority = source.replace(properties.getRolePrefix(), "").toUpperCase();
+            final String authority = source.substring(rolePrefix.length()).toUpperCase();
             return new SimpleGrantedAuthority(Role.valueOf(authority).name());
         } catch (IllegalArgumentException _) {
             return null;
