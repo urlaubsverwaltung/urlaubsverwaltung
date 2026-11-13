@@ -975,7 +975,6 @@ class CalculationServiceTest {
         final Year year = Year.of(2026);
         final Account account = new Account(person, year.atDay(1), year.atDay(1).with(lastDayOfYear()), true, LocalDate.of(2026, APRIL, 1), BigDecimal.valueOf(30), BigDecimal.valueOf(5), ZERO, "");
         when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
-        when(accountService.getHolidaysAccount(2027, person)).thenReturn(Optional.empty());
 
         // 2 annual days and 2 expiring remaining days left, no remaining days that do not expire
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
