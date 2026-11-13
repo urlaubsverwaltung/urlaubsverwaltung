@@ -23,6 +23,8 @@ import tools.jackson.databind.json.JsonMapper;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -361,6 +363,25 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isConflict());
+    }
+
+    @Test
+    void ensureToReturnConflictIfAPersonWithTheEmailAlreadyExists() throws Exception {
+
+        // signed in before, the username is the subject of the identity provider, not the email
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.empty());
+        when(personService.getPersonByMailAddress("shane@example.org")).thenReturn(Optional.of(new Person()));
+
+        perform(
+            post("/api/persons")
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(AUTH_USER, new SimpleGrantedAuthority("PERSON_ADD")))
+                .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+                .contentType(APPLICATION_JSON)
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isConflict());
+
+        verify(personService, never()).create(anyString(), anyString(), anyString(), anyString());
     }
 
     @Nested
