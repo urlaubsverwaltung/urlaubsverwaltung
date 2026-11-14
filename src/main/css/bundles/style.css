@@ -24,7 +24,6 @@
 @import "../components/modal.css" layer(components);
 @import "../components/select.css" layer(components);
 @import "../components/table.css" layer(components);
-@import "../components/tab-list.css" layer(components);
 @import "../components/topbar.css" layer(components);
 @import "../components/section-heading.css" layer(components);
 @import "../components/statistic-summary.css" layer(components);
