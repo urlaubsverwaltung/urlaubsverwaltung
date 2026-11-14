@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -105,7 +107,25 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureToReturn404IfOidcIsNull() throws Exception {
+    void ensureToReturnCurrentPersonOfABearerToken() throws Exception {
+
+        final Person person = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        person.setPermissions(List.of(USER));
+        person.setId(1L);
+
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(person));
+
+        perform(
+            get("/api/persons/me")
+                .with(jwt().jwt(token -> token.subject("shane@example.org")).authorities(AUTH_USER))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    void ensureToReturn404IfPersonOfAuthenticationIsUnknown() throws Exception {
         perform(
             get("/api/persons/me")
                 .with(oauth2Login().authorities(AUTH_USER))
@@ -429,7 +449,26 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         }
 
         @Test
-        void ensureToUpdateSettingsReturnsNotFoundWhenOidcUserIsNull() throws Exception {
+        void ensureToUpdateSettingsOfABearerToken() throws Exception {
+
+            final String username = "user@example.org";
+            final Person user = new Person(username, "last", "first", username);
+            user.setId(1L);
+            when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
+
+            perform(
+                patch("/api/persons/me/settings")
+                    .with(jwt().jwt(token -> token.subject(username)).authorities(AUTH_USER))
+                    .content(asJsonString(new PersonSettingsDto(true)))
+                    .contentType(APPLICATION_JSON)
+            )
+                .andExpect(status().isNoContent());
+
+            verify(userSettingsService).updateNavigationState(user, true);
+        }
+
+        @Test
+        void ensureToUpdateSettingsReturnsNotFoundWhenPersonOfAuthenticationIsUnknown() throws Exception {
 
             perform(
                 patch("/api/persons/me/settings")
