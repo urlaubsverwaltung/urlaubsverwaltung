@@ -335,7 +335,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
             mapToSickNoteDtos(shownSickNotes, permissions),
-            new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
+            new SickDaysSummaryDto(sickNotes, from, to),
             permissions.isAllowedToAdd() || permissions.isAllowedToSubmit(),
             permissions.isAllowedToView(),
             shownSickNotes.size(),

@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -162,13 +161,22 @@ public final class SickNote {
         for (LocalDate localDate : dateRange) {
             final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
             final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(dateRange.startDate());
-            if (dayLength.isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
-                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
+            if (dayLength.isHalfDay() && workingDayInformation != null) {
+                // only a worked half counts, e.g. not the free afternoon of christmas eve
+                if (isWorkingHalf(workingDayInformation, dayLength)) {
+                    workingTimeSum = workingTimeSum.add(dayLength.getDuration());
+                }
             } else {
                 workingTimeSum = workingTimeSum.add(workingTime);
             }
         }
         return workingTimeSum;
+    }
+
+    private static boolean isWorkingHalf(WorkingTimeCalendar.WorkingDayInformation workingDayInformation, DayLength half) {
+        final WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType entryType =
+            half == DayLength.MORNING ? workingDayInformation.morning() : workingDayInformation.noon();
+        return entryType == WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {

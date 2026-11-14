@@ -148,11 +148,6 @@ class OverviewViewControllerTest {
         lenient().when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
-    private void stubSickNoteWorkDaysCount(BigDecimal daysPerSickNote) {
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any(Person.class)))
-            .thenReturn(daysPerSickNote);
-    }
-
     private void stubWorkDaysCountForApplications(BigDecimal daysPerApplication) {
         when(workDaysCountService.getWorkDaysCountByYearForApplications(anyCollection()))
             .thenAnswer(invocation -> mapEachApplicationToWorkDaysByYear(invocation, daysPerApplication));
@@ -702,7 +697,6 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        stubSickNoteWorkDaysCount(ONE);
         stubWorkDaysCountForApplicationsWithUsedDaysSummary(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
@@ -1149,7 +1143,6 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
 
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
@@ -1195,7 +1188,6 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(office);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(office));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, office)).thenReturn(true);
-        stubSickNoteWorkDaysCount(BigDecimal.valueOf(2));
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
         final SickNoteType sickNoteType = new SickNoteType();
