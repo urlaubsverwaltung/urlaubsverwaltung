@@ -159,7 +159,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         final Predicate<Person> allowedToAccessPersonData = allowedToAccessPersonData(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
 
         model.addAttribute("userApplications", mapToApplicationForLeaveDtoList(userApplications, permissionsOf, allowedToAccessPersonData, locale));
-        prepareUserHolidayReplacements(model, signedInUser, locale);
+        prepareUserHolidayReplacements(model, signedInUser, allowedToAccessPersonData, locale);
         model.addAttribute("otherApplications", mapToApplicationForLeaveDtoList(otherApplications, permissionsOf, allowedToAccessPersonData, locale));
         prepareOtherSubmittedSickNotes(model, signedInUser, locale);
 
@@ -204,9 +204,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         return person -> signedInUser.equals(person) || managedPersons.contains(person);
     }
 
-    private void prepareUserHolidayReplacements(Model model, Person signedInUser, Locale locale) {
+    private void prepareUserHolidayReplacements(Model model, Person signedInUser, Predicate<Person> allowedToAccessPersonData, Locale locale) {
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
-        final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
+        final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, allowedToAccessPersonData, locale);
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
@@ -333,14 +333,14 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         return new ApplicationForLeaveDto.VacationTypeDto(vacationType.getCategory().name(), vacationType.getLabel(locale), vacationType.getColor());
     }
 
-    private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {
-        return applicationService.getForHolidayReplacement(signedInUser, holidayReplacementForDate)
-            .stream()
+    private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Predicate<Person> allowedToAccessPersonData, Locale locale) {
+        final List<Application> applications = applicationService.getForHolidayReplacement(signedInUser, holidayReplacementForDate);
+        // one query for the working times of all listed applications, not one per application
+        final Map<Application, BigDecimal> workDaysByApplication = workDaysCountService.getWorkDaysCountForApplications(applications);
+        return applications.stream()
             .sorted(comparing(Application::getStartDate))
-            .map(application -> {
-                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, application.getPerson());
-                return toApplicationReplacementDto(application, signedInUser, locale, allowedToAccessPersonData);
-            })
+            .map(application -> toApplicationReplacementDto(application, signedInUser, locale,
+                allowedToAccessPersonData.test(application.getPerson()), workDaysByApplication.get(application)))
             .toList();
     }
 
@@ -447,12 +447,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad, HasPersonSearch
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
-    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson, Locale locale, boolean allowedToAccessPersonData) {
+    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson, Locale locale, boolean allowedToAccessPersonData, BigDecimal workDays) {
         final DayLength dayLength = application.getDayLength();
-        final LocalDate startDate = application.getStartDate();
-        final LocalDate endDate = application.getEndDate();
         final Person applicationPerson = application.getPerson();
-        final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, applicationPerson);
 
         final String note = application.getHolidayReplacements().stream()
             .filter(holidayReplacementEntity -> holidayReplacementEntity.getPerson().equals(holidayReplacementPerson))
