@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -18,7 +19,6 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -43,8 +43,6 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 
 /**
  * This class validate if an {@link ApplicationForLeaveForm} is filled
@@ -64,12 +62,9 @@ class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_BLACKOUT_PERIOD = "application.error.blackoutPeriod";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
-    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING = "application.error.alreadyAbsentOn.christmasEve.morning";
-    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON = "application.error.alreadyAbsentOn.christmasEve.noon";
-    private static final String ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL = "application.error.alreadyAbsentOn.christmasEve.full";
-    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING = "application.error.alreadyAbsentOn.newYearsEve.morning";
-    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON = "application.error.alreadyAbsentOn.newYearsEve.noon";
-    private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL = "application.error.alreadyAbsentOn.newYearsEve.full";
+    private static final String ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_MORNING = "application.error.alreadyAbsentOn.companyClosure.morning";
+    private static final String ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_NOON = "application.error.alreadyAbsentOn.companyClosure.noon";
+    private static final String ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_FULL = "application.error.alreadyAbsentOn.companyClosure.full";
     private static final String ERROR_HALF_DAYS_NOT_ALLOWED = "application.error.halfDayPeriod.notAllowed";
 
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
@@ -94,6 +89,7 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final ApplicationMapper applicationMapper;
     private final BlackoutPeriodService blackoutPeriodService;
     private final PersonService personService;
+    private final CompanyClosureService companyClosureService;
     private final ApplicationForLeavePermissionEvaluator permissionEvaluator;
     private final ApplicationService applicationService;
     private final Clock clock;
@@ -110,6 +106,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         ApplicationMapper applicationMapper,
         BlackoutPeriodService blackoutPeriodService,
         PersonService personService,
+        CompanyClosureService companyClosureService,
         ApplicationForLeavePermissionEvaluator permissionEvaluator,
         ApplicationService applicationService,
         Clock clock
@@ -124,6 +121,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         this.applicationMapper = applicationMapper;
         this.blackoutPeriodService = blackoutPeriodService;
         this.personService = personService;
+        this.companyClosureService = companyClosureService;
         this.permissionEvaluator = permissionEvaluator;
         this.applicationService = applicationService;
         this.clock = clock;
@@ -187,7 +185,7 @@ class ApplicationForLeaveFormValidator implements Validator {
             .orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + vacationTypeId));
     }
 
-    private static void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
+    private void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
 
         final LocalDate startDate = applicationForm.getStartDate();
         final LocalDate endDate = applicationForm.getEndDate();
@@ -198,11 +196,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
 
         if (endDate == null || startDate.isEqual(endDate)) {
-            if (isChristmasEve(startDate)) {
-                validateChristmasEve(dayLength, settings.getPublicHolidaysSettings(), errors);
-            } else if (isNewYearsEve(startDate)) {
-                validateNewYearsEve(dayLength, settings.getPublicHolidaysSettings(), errors);
-            }
+            validateCompanyClosure(startDate, dayLength, errors);
         }
 
         if (applicationForm.getDayLength() != DayLength.FULL && !settings.getApplicationSettings().isAllowHalfDays()) {
@@ -210,52 +204,19 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateChristmasEve(DayLength applicationDayLength, PublicHolidaysSettings publicHolidaysSettings, Errors errors) {
-        final DayLength workingDurationForChristmasEve = publicHolidaysSettings.getWorkingDurationForChristmasEve();
-        switch (workingDurationForChristmasEve) {
-            case ZERO -> {
-                if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
-                }
+    private void validateCompanyClosure(LocalDate date, DayLength applicationDayLength, Errors errors) {
+        companyClosureService.getCompanyClosures(date, date).stream().findFirst().ifPresent(closure -> {
+            final String key = switch (closure.dayLength()) {
+                case FULL -> ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_FULL;
+                case MORNING -> applicationDayLength == MORNING ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_MORNING : null;
+                case NOON -> applicationDayLength == NOON ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_NOON : null;
+                case ZERO -> null;
+            };
+            if (key != null) {
+                errors.rejectValue(DAY_LENGTH, key, new Object[]{closure.name()}, null);
+                errors.reject(key, new Object[]{closure.name()}, null);
             }
-            case MORNING -> {
-                if (applicationDayLength == NOON) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
-                }
-            }
-            case NOON -> {
-                if (applicationDayLength == MORNING) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
-                }
-            }
-        }
-    }
-
-    private static void validateNewYearsEve(DayLength applicationDayLength, PublicHolidaysSettings publicHolidaysSettings, Errors errors) {
-        final DayLength workingDurationForNewYearsEve = publicHolidaysSettings.getWorkingDurationForNewYearsEve();
-        switch (workingDurationForNewYearsEve) {
-            case ZERO -> {
-                if (applicationDayLength != DayLength.ZERO) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
-                }
-            }
-            case MORNING -> {
-                if (applicationDayLength == NOON) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
-                }
-            }
-            case NOON -> {
-                if (applicationDayLength == MORNING) {
-                    errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
-                    errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
-                }
-            }
-        }
+        });
     }
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {

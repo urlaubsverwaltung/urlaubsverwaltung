@@ -15,13 +15,5 @@ public final class PublicHolidaysSettingsValidator {
         if (publicHolidaysSettings.getFederalState() == null) {
             errors.rejectValue("publicHolidaysSettings.federalState", ERROR_MANDATORY_FIELD);
         }
-
-        if (publicHolidaysSettings.getWorkingDurationForChristmasEve() == null) {
-            errors.rejectValue("publicHolidaysSettings.workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
-        }
-
-        if (publicHolidaysSettings.getWorkingDurationForNewYearsEve() == null) {
-            errors.rejectValue("publicHolidaysSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
-        }
     }
 }

@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType;
@@ -35,6 +36,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
@@ -47,11 +49,13 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     private final WorkingTimeRepository workingTimeRepository;
     private final PublicHolidaysService publicHolidaysService;
     private final SettingsService settingsService;
+    private final CompanyClosureService companyClosureService;
 
-    WorkingTimeCalendarServiceImpl(WorkingTimeRepository workingTimeRepository, PublicHolidaysService publicHolidaysService, SettingsService settingsService) {
+    WorkingTimeCalendarServiceImpl(WorkingTimeRepository workingTimeRepository, PublicHolidaysService publicHolidaysService, SettingsService settingsService, CompanyClosureService companyClosureService) {
         this.workingTimeRepository = workingTimeRepository;
         this.publicHolidaysService = publicHolidaysService;
         this.settingsService = settingsService;
+        this.companyClosureService = companyClosureService;
     }
 
     @Override
@@ -120,7 +124,6 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         requireCalculableDuration(dateRange);
 
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        final CachedSupplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier = new CachedSupplier<>(this::getPublicHolidaysSettings);
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -144,6 +147,9 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
             .filter(validFrom -> validFrom.isAfter(start))
             .orElse(start);
 
+        final Map<LocalDate, DayLength> companyClosuresByDate = companyClosureService.getCompanyClosures(publicHolidaysStart, end).stream()
+            .collect(toMap(CompanyClosure::date, CompanyClosure::dayLength));
+
         return persons.stream().map(person -> {
 
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
@@ -165,10 +171,10 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByFederalState.computeIfAbsent(
-                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(publicHolidaysStart, end, federalState, publicHolidaysSettingsSupplier));
+                    workingTime.getFederalState(), federalState -> getPublicHolidaysByDate(publicHolidaysStart, end, federalState));
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysByDate));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysByDate, companyClosuresByDate));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -182,93 +188,50 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState, Supplier<PublicHolidaysSettings> publicHolidaysSettingsSupplier) {
-        // two public holidays can fall on the same date. their day length only depends on the date, so keep the first
-        // one - just like PublicHolidaysService#getPublicHoliday does.
-        return publicHolidaysService.getPublicHolidays(start, end, federalState, publicHolidaysSettingsSupplier).stream()
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysByDate(LocalDate start, LocalDate end, FederalState federalState) {
+        // two public holidays can fall on the same date. public holidays are always full days, so which one is kept
+        // does not change the day length.
+        return publicHolidaysService.getPublicHolidays(start, end, federalState).stream()
             .collect(toMap(PublicHoliday::date, identity(), (first, _) -> first));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, Map<LocalDate, PublicHoliday> publicHolidaysByDate) {
-        final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, Map<LocalDate, PublicHoliday> publicHolidaysByDate, Map<LocalDate, DayLength> companyClosuresByDate) {
+        final DayLength configured = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+        final PublicHoliday publicHoliday = publicHolidaysByDate.get(date);
+        final DayLength publicHolidayLength = publicHoliday == null ? ZERO : publicHoliday.dayLength();
+        final DayLength closureLength = companyClosuresByDate.getOrDefault(date, ZERO);
 
-        DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? MORNING : ZERO;
-        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WORKDAY : NO_WORKDAY;
+        final WorkingTimeCalendarEntryType morningType = halfType(configured.isFull() || configured.isMorning(), covers(publicHolidayLength, MORNING), covers(closureLength, MORNING));
+        final WorkingTimeCalendarEntryType noonType = halfType(configured.isFull() || configured.isNoon(), covers(publicHolidayLength, DayLength.NOON), covers(closureLength, DayLength.NOON));
 
-        DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : ZERO;
-        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
-
-        if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = Optional.ofNullable(publicHolidaysByDate.get(date));
-
-            if (maybePublicHoliday.isPresent()) {
-
-                final PublicHoliday publicHoliday = maybePublicHoliday.get();
-
-                if (configuredWorkingTimeForDayOfWeek.isFull()) {
-                    if (publicHoliday.dayLength().isFull()) {
-                        morning = ZERO;
-                        morningType = PUBLIC_HOLIDAY;
-                        noon = ZERO;
-                        noonType = PUBLIC_HOLIDAY;
-                    } else if (publicHoliday.dayLength().isMorning()) {
-                        morning = ZERO;
-                        morningType = PUBLIC_HOLIDAY;
-                        noon = DayLength.NOON;
-                        noonType = WORKDAY;
-                    } else if (publicHoliday.dayLength().isNoon()) {
-                        morning = MORNING;
-                        morningType = WORKDAY;
-                        noon = ZERO;
-                        noonType = PUBLIC_HOLIDAY;
-                    } else {
-                        morning = MORNING;
-                        morningType = WORKDAY;
-                        noon = DayLength.NOON;
-                        noonType = WORKDAY;
-                    }
-                } else {
-                    if (configuredWorkingTimeForDayOfWeek.isMorning()) {
-
-                        noon = ZERO;
-                        noonType = NO_WORKDAY;
-
-                        if (publicHoliday.isFull() || publicHoliday.isMorning()) {
-                            morning = ZERO;
-                            morningType = PUBLIC_HOLIDAY;
-                        } else {
-                            morning = MORNING;
-                            morningType = WORKDAY;
-                        }
-                    } else {
-
-                        morning = ZERO;
-                        morningType = NO_WORKDAY;
-
-                        if (publicHoliday.isFull() || publicHoliday.isNoon()) {
-                            noon = ZERO;
-                            noonType = PUBLIC_HOLIDAY;
-                        } else {
-                            noon = DayLength.NOON;
-                            noonType = WORKDAY;
-                        }
-                    }
-                }
-            }
+        final boolean morningWork = morningType == WORKDAY;
+        final boolean noonWork = noonType == WORKDAY;
+        final DayLength dayLength;
+        if (morningWork && noonWork) {
+            dayLength = DayLength.FULL;
+        } else if (morningWork) {
+            dayLength = MORNING;
+        } else if (noonWork) {
+            dayLength = DayLength.NOON;
+        } else {
+            dayLength = ZERO;
         }
 
-        DayLength calculatedDayLength = configuredWorkingTimeForDayOfWeek;
-        if (morning.isMorning() && noon.isNoon()) {
-            calculatedDayLength = DayLength.FULL;
-        } else if (morning == ZERO && noon == ZERO) {
-            calculatedDayLength = ZERO;
-        } else if (morning == ZERO && noon.isNoon()) {
-            calculatedDayLength = DayLength.NOON;
-        } else if (morning.isMorning() && noon == ZERO) {
-            calculatedDayLength = MORNING;
-        }
+        return new WorkingDayInformation(dayLength, morningType, noonType);
+    }
 
-        return new WorkingDayInformation(calculatedDayLength, morningType, noonType);
+    private static boolean covers(DayLength closedOrHoliday, DayLength half) {
+        return closedOrHoliday == DayLength.FULL || closedOrHoliday == half;
+    }
+
+    private static WorkingTimeCalendarEntryType halfType(boolean configuredWorkingHalf, boolean publicHoliday, boolean companyClosure) {
+        if (!configuredWorkingHalf) {
+            return NO_WORKDAY;
+        }
+        if (publicHoliday) {
+            return PUBLIC_HOLIDAY;
+        }
+        return companyClosure ? COMPANY_CLOSURE : WORKDAY;
     }
 
     private static WorkingTime toWorkingTime(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
@@ -300,14 +263,5 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
     private FederalState getSystemDefaultFederalState() {
         return settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
-    }
-
-    /**
-     * Retrieves the public holiday settings from the system configuration.
-     *
-     * @return the current {@link PublicHolidaysSettings} from the system settings
-     */
-    private PublicHolidaysSettings getPublicHolidaysSettings() {
-        return settingsService.getSettings().getPublicHolidaysSettings();
     }
 }
