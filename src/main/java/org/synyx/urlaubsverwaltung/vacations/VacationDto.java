@@ -24,6 +24,13 @@ public class VacationDto extends RepresentationModel<VacationDto> {
     private final String status;
 
     VacationDto(Application application) {
+        this(application, true);
+    }
+
+    /**
+     * @param typeVisible {@code false} leaves the type out, e.g. for a colleague's absence of a type not visible to everyone
+     */
+    VacationDto(Application application, boolean typeVisible) {
 
         this.from = application.getStartDate().format(formatter);
         this.to = application.getEndDate().format(formatter);
@@ -31,8 +38,8 @@ public class VacationDto extends RepresentationModel<VacationDto> {
         this.person = PersonMapper.mapToDto(application.getPerson());
         this.status = application.getStatus().name();
 
-        VacationType<?> vacationType = application.getVacationType();
-        this.type = vacationType.getCategory().toString();
+        final VacationType<?> vacationType = application.getVacationType();
+        this.type = typeVisible ? vacationType.getCategory().toString() : null;
     }
 
     public String getFrom() {
