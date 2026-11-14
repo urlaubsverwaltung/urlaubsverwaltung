@@ -11,6 +11,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
+
 @Service
 class HealthSickDaysStatisticService {
 
@@ -32,18 +35,21 @@ class HealthSickDaysStatisticService {
 
         final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer);
 
-        final HealthRate healthRate = HealthRate.of(ONE_HUNDRED.subtract(statistics.getSickRate()));
-        final BigDecimal totalNrOfSickDays = statistics.getTotalNumberOfSickDaysAllCategories();
+        // the requested range only: the sick rate and the sick days of the statistics cover the whole year
+        final Map<Person, BigDecimal> sickDaysByPerson = statistics.getSickDaysByPersonForDateRange(from, to);
+        final BigDecimal sickDays = sickDaysByPerson.values().stream().reduce(ZERO, BigDecimal::add);
         final BigDecimal shouldWorkDays = statistics.getShouldWorkDaysForDateRange(from, to);
 
-        final SickDaysStatistic.Distribution distribution = calculateDistribution(statistics, from, to);
+        final BigDecimal sickRate = shouldWorkDays.signum() == 0 ? ZERO : sickDays.divide(shouldWorkDays, 3, HALF_UP).multiply(ONE_HUNDRED);
+        final HealthRate healthRate = HealthRate.of(ONE_HUNDRED.subtract(sickRate));
 
-        return new SickDaysStatistic(healthRate, totalNrOfSickDays, shouldWorkDays, distribution);
+        final SickDaysStatistic.Distribution distribution = calculateDistribution(statistics, sickDaysByPerson);
+
+        return new SickDaysStatistic(healthRate, sickDays, shouldWorkDays, distribution);
     }
 
-    private SickDaysStatistic.Distribution calculateDistribution(SickNoteStatistics statistics, LocalDate from, LocalDate to) {
+    private SickDaysStatistic.Distribution calculateDistribution(SickNoteStatistics statistics, Map<Person, BigDecimal> sickDaysByPerson) {
 
-        final Map<Person, BigDecimal> sickDaysByPerson = statistics.getSickDaysByPersonForDateRange(from, to);
         final int numberOfPersons = statistics.getNumberOfPersonsToConsider();
 
         int zero = numberOfPersons - sickDaysByPerson.size();
