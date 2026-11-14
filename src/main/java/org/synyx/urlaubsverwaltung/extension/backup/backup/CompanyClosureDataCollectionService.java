@@ -27,7 +27,7 @@ class CompanyClosureDataCollectionService {
         final List<CompanyClosureVersionEntity> versions = companyClosureImportService.findAllVersions();
         return companyClosureImportService.findAllClosures().stream()
             .sorted(Comparator.comparing(CompanyClosureEntity::getId))
-            .map(closure -> new CompanyClosureDTO(closure.getMonth(), closure.getDayOfMonth(), closure.getName(),
+            .map(closure -> new CompanyClosureDTO(closure.getMonth(), closure.getDayOfMonth(), closure.getMessageKey(),
                 versions.stream()
                     .filter(version -> closure.getId().equals(version.getCompanyClosureId()))
                     .sorted(Comparator.comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(Comparator.naturalOrder())))

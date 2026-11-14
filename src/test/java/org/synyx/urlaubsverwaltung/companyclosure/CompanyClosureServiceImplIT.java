@@ -9,9 +9,11 @@ import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
+import java.util.Locale;
 
 import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
@@ -25,9 +27,10 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
     @Test
     void defaultsExistAfterStartup() {
         assertThat(sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 31)))
+            .extracting(CompanyClosure::date, CompanyClosure::dayLength, closure -> closure.name(Locale.GERMAN), closure -> closure.name(Locale.ENGLISH))
             .containsExactly(
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), NOON, "Heiligabend"),
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), NOON, "Silvester"));
+                tuple(LocalDate.of(2026, DECEMBER, 24), NOON, "Heiligabend", "Christmas Eve"),
+                tuple(LocalDate.of(2026, DECEMBER, 31), NOON, "Silvester", "New Year's Eve"));
     }
 
     @Test

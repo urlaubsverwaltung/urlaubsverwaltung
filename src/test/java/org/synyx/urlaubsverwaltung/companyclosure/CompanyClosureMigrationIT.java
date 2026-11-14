@@ -27,11 +27,11 @@ class CompanyClosureMigrationIT extends SingleTenantTestContainersBase {
 
     // kept in sync with the "add-company-closure--migrate-settings" changeset
     private static final String MIGRATION_SQL = """
-          INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
-          SELECT tenant_id, nextval('company_closure_id_seq'), 12, 24, 'Heiligabend' FROM settings;
+          INSERT INTO company_closure (tenant_id, id, month, day_of_month, message_key)
+          SELECT tenant_id, nextval('company_closure_id_seq'), 12, 24, 'companyclosure.name.christmasEve' FROM settings;
 
-          INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
-          SELECT tenant_id, nextval('company_closure_id_seq'), 12, 31, 'Silvester' FROM settings;
+          INSERT INTO company_closure (tenant_id, id, month, day_of_month, message_key)
+          SELECT tenant_id, nextval('company_closure_id_seq'), 12, 31, 'companyclosure.name.newYearsEve' FROM settings;
 
           INSERT INTO company_closure_version (tenant_id, id, company_closure_id, day_length, valid_from)
           SELECT
@@ -89,10 +89,10 @@ class CompanyClosureMigrationIT extends SingleTenantTestContainersBase {
 
     private void assertMigrated(DayLength christmasEve, DayLength newYearsEve) {
         assertThat(companyClosureRepository.findAll())
-            .extracting(CompanyClosureEntity::getMonth, CompanyClosureEntity::getDayOfMonth, CompanyClosureEntity::getName)
+            .extracting(CompanyClosureEntity::getMonth, CompanyClosureEntity::getDayOfMonth, CompanyClosureEntity::getMessageKey)
             .containsExactlyInAnyOrder(
-                tuple(12, 24, "Heiligabend"),
-                tuple(12, 31, "Silvester"));
+                tuple(12, 24, "companyclosure.name.christmasEve"),
+                tuple(12, 31, "companyclosure.name.newYearsEve"));
 
         assertThat(versionOf(24)).isEqualTo(christmasEve);
         assertThat(versionOf(31)).isEqualTo(newYearsEve);

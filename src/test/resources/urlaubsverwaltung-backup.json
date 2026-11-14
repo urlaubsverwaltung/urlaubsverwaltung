@@ -2966,7 +2966,7 @@
     {
       "month": 12,
       "dayOfMonth": 24,
-      "name": "Heiligabend",
+      "messageKey": "companyclosure.name.christmasEve",
       "versions": [
         {"dayLength": "NOON", "validFrom": null},
         {"dayLength": "FULL", "validFrom": "2027-01-01"}
@@ -2975,7 +2975,7 @@
     {
       "month": 12,
       "dayOfMonth": 31,
-      "name": "Silvester",
+      "messageKey": "companyclosure.name.newYearsEve",
       "versions": [
         {"dayLength": "NOON", "validFrom": null}
       ]

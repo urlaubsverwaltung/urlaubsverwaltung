@@ -103,7 +103,7 @@ class PublicHolidayApiControllerTest {
         final LocalDate from = LocalDate.of(2026, DECEMBER, 24);
         final LocalDate to = LocalDate.of(2026, DECEMBER, 26);
         when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of());
-        when(companyClosureService.getCompanyClosures(from, to)).thenReturn(List.of(new CompanyClosure(from, NOON, "Heiligabend")));
+        when(companyClosureService.getCompanyClosures(from, to)).thenReturn(List.of(new CompanyClosure(from, NOON, locale -> "Heiligabend")));
 
         perform(get("/api/public-holidays")
             .param("from", "2026-12-24")

@@ -75,7 +75,7 @@ class SettingsPublicHolidayViewControllerTest {
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24)))
-            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.NOON, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.NOON, locale -> "Heiligabend")));
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 31), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of());
 
@@ -93,7 +93,7 @@ class SettingsPublicHolidayViewControllerTest {
             Clock.fixed(Instant.parse("2026-12-28T10:00:00Z"), UTC), defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(companyClosureService.getCompanyClosures(LocalDate.of(2027, DECEMBER, 24), LocalDate.of(2027, DECEMBER, 24)))
-            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2027, DECEMBER, 24), DayLength.FULL, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2027, DECEMBER, 24), DayLength.FULL, locale -> "Heiligabend")));
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 31), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of());
 

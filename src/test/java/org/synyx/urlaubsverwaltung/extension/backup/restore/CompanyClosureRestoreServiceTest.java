@@ -52,10 +52,10 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresCompanyClosures() {
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "Heiligabend", List.of(
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.NOON, null),
             new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1))));
-        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "Silvester", List.of(
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null)));
 
         sut.restore(List.of(christmasEve, newYearsEve), null);
@@ -64,7 +64,7 @@ class CompanyClosureRestoreServiceTest {
         inOrder.verify(companyClosureImportService).deleteAll();
         inOrder.verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
 
-        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getName).containsExactly("Heiligabend", "Silvester");
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMessageKey).containsExactly("companyclosure.name.christmasEve", "companyclosure.name.newYearsEve");
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getDayOfMonth).containsExactly(24, 31);
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMonth).containsExactly(12, 12);
         assertThat(versionsCaptor.getAllValues().get(0))
@@ -85,7 +85,7 @@ class CompanyClosureRestoreServiceTest {
 
         verify(companyClosureImportService).deleteAll();
         verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
-        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getName).containsExactly("Heiligabend", "Silvester");
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMessageKey).containsExactly("companyclosure.name.christmasEve", "companyclosure.name.newYearsEve");
         assertThat(versionsCaptor.getAllValues().get(0))
             .extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
             .containsExactly(tuple(DayLength.ZERO, null));
@@ -108,7 +108,7 @@ class CompanyClosureRestoreServiceTest {
 
         verify(companyClosureImportService).deleteAll();
         verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
-        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getName).containsExactly("Heiligabend", "Silvester");
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMessageKey).containsExactly("companyclosure.name.christmasEve", "companyclosure.name.newYearsEve");
         assertThat(versionsCaptor.getAllValues()).allSatisfy(versions ->
             assertThat(versions).extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
                 .containsExactly(tuple(DayLength.NOON, null)));

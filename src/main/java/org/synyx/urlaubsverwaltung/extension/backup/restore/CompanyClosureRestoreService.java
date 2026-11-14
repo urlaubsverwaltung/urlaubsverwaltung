@@ -50,16 +50,16 @@ class CompanyClosureRestoreService {
 
     private static List<CompanyClosureDTO> legacyClosures(@Nullable PublicHolidaysSettingsDTO settings) {
         return List.of(
-            legacyClosure(24, "Heiligabend", settings == null ? null : settings.workingDurationForChristmasEve()),
-            legacyClosure(31, "Silvester", settings == null ? null : settings.workingDurationForNewYearsEve())
+            legacyClosure(24, "companyclosure.name.christmasEve", settings == null ? null : settings.workingDurationForChristmasEve()),
+            legacyClosure(31, "companyclosure.name.newYearsEve", settings == null ? null : settings.workingDurationForNewYearsEve())
         );
     }
 
     // the old setting stored the working duration, a company closure stores the closed portion
-    private static CompanyClosureDTO legacyClosure(int dayOfMonth, String name, @Nullable DayLengthDTO workingDuration) {
+    private static CompanyClosureDTO legacyClosure(int dayOfMonth, String messageKey, @Nullable DayLengthDTO workingDuration) {
         final DayLengthDTO closed = workingDuration == null
             ? DayLengthDTO.NOON
             : DayLengthDTO.valueOf(workingDuration.toDayLength().getInverse().name());
-        return new CompanyClosureDTO(DECEMBER.getValue(), dayOfMonth, name, List.of(new CompanyClosureVersionDTO(closed, null)));
+        return new CompanyClosureDTO(DECEMBER.getValue(), dayOfMonth, messageKey, List.of(new CompanyClosureVersionDTO(closed, null)));
     }
 }

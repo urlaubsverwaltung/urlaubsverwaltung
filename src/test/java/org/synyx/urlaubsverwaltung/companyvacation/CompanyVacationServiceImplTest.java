@@ -47,7 +47,7 @@ class CompanyVacationServiceImplTest {
     @Test
     void publishesFromCompanyClosuresOnChange() {
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE))
-            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, locale -> "Heiligabend")));
 
         sut.handleCompanyClosureChangedEvent(new CompanyClosureChangedEvent(MonthDay.of(DECEMBER, 24)));
 
@@ -85,7 +85,7 @@ class CompanyVacationServiceImplTest {
     @Test
     void publishCompanyEventsPublishesBothDays() {
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE))
-            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, locale -> "Heiligabend")));
         when(companyClosureService.getCompanyClosures(NEW_YEARS_EVE, NEW_YEARS_EVE)).thenReturn(List.of());
 
         sut.publishCompanyEvents();

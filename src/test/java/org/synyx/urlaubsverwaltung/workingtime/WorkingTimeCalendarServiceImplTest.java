@@ -590,7 +590,7 @@ class WorkingTimeCalendarServiceImplTest {
                 .thenReturn(List.of(new PublicHoliday(date, publicHoliday, "")));
         }
         when(companyClosureService.getCompanyClosures(any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(List.of(new CompanyClosure(date, closure, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(date, closure, locale -> "Heiligabend")));
 
         return sut.getWorkingTimesByPersons(persons, Year.of(2026)).get(person).workingDays().get(date);
     }

@@ -31,8 +31,8 @@ class CompanyClosureDataCollectionServiceTest {
 
     @Test
     void collectsAllVersions() {
-        final CompanyClosureEntity christmasEve = closure(1L, 24, "Heiligabend");
-        final CompanyClosureEntity newYearsEve = closure(2L, 31, "Silvester");
+        final CompanyClosureEntity christmasEve = closure(1L, 24, "companyclosure.name.christmasEve");
+        final CompanyClosureEntity newYearsEve = closure(2L, 31, "companyclosure.name.newYearsEve");
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
         when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
             version(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
@@ -42,19 +42,19 @@ class CompanyClosureDataCollectionServiceTest {
         final List<CompanyClosureDTO> actual = sut.collectCompanyClosures();
 
         assertThat(actual).containsExactly(
-            new CompanyClosureDTO(12, 24, "Heiligabend", List.of(
+            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.NOON, null),
                 new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1)))),
-            new CompanyClosureDTO(12, 31, "Silvester", List.of(
+            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null))));
     }
 
-    private static CompanyClosureEntity closure(Long id, int dayOfMonth, String name) {
+    private static CompanyClosureEntity closure(Long id, int dayOfMonth, String messageKey) {
         final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setId(id);
         entity.setMonth(12);
         entity.setDayOfMonth(dayOfMonth);
-        entity.setName(name);
+        entity.setMessageKey(messageKey);
         return entity;
     }
 

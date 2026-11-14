@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -213,8 +214,9 @@ class ApplicationForLeaveFormValidator implements Validator {
                 case ZERO -> null;
             };
             if (key != null) {
-                errors.rejectValue(DAY_LENGTH, key, new Object[]{closure.name()}, null);
-                errors.reject(key, new Object[]{closure.name()}, null);
+                final String closureName = closure.name(LocaleContextHolder.getLocale());
+                errors.rejectValue(DAY_LENGTH, key, new Object[]{closureName}, null);
+                errors.reject(key, new Object[]{closureName}, null);
             }
         });
     }

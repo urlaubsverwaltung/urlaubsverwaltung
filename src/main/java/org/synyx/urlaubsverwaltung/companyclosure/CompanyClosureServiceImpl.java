@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.companyclosure;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +17,10 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.time.Month.DECEMBER;
 import static java.util.Comparator.nullsFirst;
@@ -27,6 +30,8 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 @Service
 class CompanyClosureServiceImpl implements CompanyClosureService {
 
+    private static final String NAME_FALLBACK_MESSAGE_KEY = "absences.overview.company-closure";
+
     private static final Comparator<CompanyClosureVersionEntity> BY_VALID_FROM =
         Comparator.comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(Comparator.naturalOrder()));
 
@@ -34,14 +39,17 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private final CompanyClosureVersionRepository companyClosureVersionRepository;
     private final Clock clock;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final MessageSource messageSource;
 
     CompanyClosureServiceImpl(CompanyClosureRepository companyClosureRepository,
                               CompanyClosureVersionRepository companyClosureVersionRepository,
-                              Clock clock, ApplicationEventPublisher applicationEventPublisher) {
+                              Clock clock, ApplicationEventPublisher applicationEventPublisher,
+                              MessageSource messageSource) {
         this.companyClosureRepository = companyClosureRepository;
         this.companyClosureVersionRepository = companyClosureVersionRepository;
         this.clock = clock;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -72,10 +80,11 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         for (Map.Entry<CompanyClosureEntity, LocalDate> candidate : candidates) {
             final CompanyClosureEntity entity = candidate.getKey();
             final LocalDate date = candidate.getValue();
+            final Function<Locale, String> nameByLocale = nameByLocale(entity.getMessageKey());
             versionValidAt(versions, entity.getId(), date)
                 .map(CompanyClosureVersionEntity::getDayLength)
                 .filter(dayLength -> dayLength != ZERO)
-                .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, entity.getName())));
+                .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, nameByLocale)));
         }
         closures.sort(Comparator.comparing(CompanyClosure::date));
         return closures;
@@ -121,16 +130,16 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     @Transactional
     void createDefaults() {
         if (companyClosureRepository.findAll().isEmpty()) {
-            createDefault(MonthDay.of(DECEMBER, 24), "Heiligabend");
-            createDefault(MonthDay.of(DECEMBER, 31), "Silvester");
+            createDefault(MonthDay.of(DECEMBER, 24), "companyclosure.name.christmasEve");
+            createDefault(MonthDay.of(DECEMBER, 31), "companyclosure.name.newYearsEve");
         }
     }
 
-    private void createDefault(MonthDay monthDay, String name) {
+    private void createDefault(MonthDay monthDay, String messageKey) {
         final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setMonth(monthDay.getMonthValue());
         entity.setDayOfMonth(monthDay.getDayOfMonth());
-        entity.setName(name);
+        entity.setMessageKey(messageKey);
         final CompanyClosureEntity saved = companyClosureRepository.save(entity);
 
         final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
@@ -139,6 +148,14 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         companyClosureVersionRepository.save(version);
 
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
+    }
+
+    private Function<Locale, String> nameByLocale(String messageKey) {
+        return locale -> {
+            // an unknown message key, e.g. from a restored backup, must not break every page showing the closure
+            final String name = messageSource.getMessage(messageKey, new Object[]{}, null, locale);
+            return name != null ? name : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
+        };
     }
 
     private static Optional<CompanyClosureVersionEntity> versionValidAt(List<CompanyClosureVersionEntity> versions, Long closureId, LocalDate date) {

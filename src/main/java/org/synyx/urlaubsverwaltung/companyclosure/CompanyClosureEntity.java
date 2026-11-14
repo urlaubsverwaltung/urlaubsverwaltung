@@ -35,8 +35,8 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     @Column(name = "day_of_month", nullable = false)
     private int dayOfMonth;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "message_key", nullable = false)
+    private String messageKey;
 
     /**
      * The last change by a person, {@code null} for rows nobody changed yet, e.g. the defaults or the ones migrated
@@ -75,12 +75,12 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
         this.dayOfMonth = dayOfMonth;
     }
 
-    public String getName() {
-        return name;
+    public String getMessageKey() {
+        return messageKey;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
     }
 
     @Nullable
@@ -107,7 +107,7 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
             "id=" + id +
             ", month=" + month +
             ", dayOfMonth=" + dayOfMonth +
-            ", name='" + name + '\'' +
+            ", messageKey='" + messageKey + '\'' +
             '}';
     }
 

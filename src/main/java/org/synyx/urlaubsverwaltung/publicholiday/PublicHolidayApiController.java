@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -147,8 +149,9 @@ public class PublicHolidayApiController {
 
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
         // shortcut: keeps calendar and datepicker unchanged until they call the company closure API (PR 2), remove then
+        final Locale locale = LocaleContextHolder.getLocale();
         final Stream<PublicHoliday> companyClosures = companyClosureService.getCompanyClosures(startDate, endDate).stream()
-            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name()));
+            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name(locale)));
 
         return Stream.concat(publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream(), companyClosures)
             .map(this::mapPublicHolidayToDto)

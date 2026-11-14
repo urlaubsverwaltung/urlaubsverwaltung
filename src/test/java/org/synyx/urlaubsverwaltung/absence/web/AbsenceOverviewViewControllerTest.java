@@ -4128,7 +4128,7 @@ class AbsenceOverviewViewControllerTest {
             .thenReturn(Map.of(person, Map.of(dateRange, new WorkingTime(person, firstOfMonth, GERMANY_BADEN_WUERTTEMBERG, false))));
 
         when(companyClosureService.getCompanyClosures(firstOfMonth, lastOfMonth))
-            .thenReturn(List.of(new CompanyClosure(december24, FULL, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(december24, FULL, locale -> "Heiligabend")));
 
         final AbsencePeriod.Record closureRecord = new AbsencePeriod.Record(december24, person,
             new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person));
@@ -4189,7 +4189,7 @@ class AbsenceOverviewViewControllerTest {
             .thenReturn(List.of(new PublicHoliday(december24, FULL, "Weihnachten")));
 
         when(companyClosureService.getCompanyClosures(firstOfMonth, lastOfMonth))
-            .thenReturn(List.of(new CompanyClosure(december24, FULL, "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(december24, FULL, locale -> "Heiligabend")));
 
         final AbsencePeriod.Record closureRecord = new AbsencePeriod.Record(december24, person,
             new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person));
@@ -5608,7 +5608,7 @@ class AbsenceOverviewViewControllerTest {
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))
             .thenReturn(Map.of(person, Map.of(january, new WorkingTime(person, january.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
         when(companyClosureService.getCompanyClosures(january.startDate(), january.endDate()))
-            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2025, JANUARY, 8), FULL, "Betriebsausflug")));
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2025, JANUARY, 8), FULL, locale -> "Betriebsausflug")));
 
         final AbsencePeriod closure = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, 8), person,
             new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person))));

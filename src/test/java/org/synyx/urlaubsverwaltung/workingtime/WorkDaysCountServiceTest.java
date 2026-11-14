@@ -80,7 +80,7 @@ class WorkDaysCountServiceTest {
             final LocalDate to = invocation.getArgument(1);
             return new DateRange(from, to).stream()
                 .filter(date -> MonthDay.from(date).equals(CHRISTMAS_EVE) || MonthDay.from(date).equals(NEW_YEARS_EVE))
-                .map(date -> new CompanyClosure(date, NOON, MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester"))
+                .map(date -> new CompanyClosure(date, NOON, locale -> MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester"))
                 .toList();
         });
     }
@@ -92,7 +92,7 @@ class WorkDaysCountServiceTest {
         final LocalDate day = LocalDate.of(2026, DECEMBER, 24);
         final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
-        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Heiligabend")));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, locale -> "Heiligabend")));
 
         assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(new BigDecimal("0.5"));
     }
@@ -104,7 +104,7 @@ class WorkDaysCountServiceTest {
         final LocalDate day = LocalDate.of(2026, DECEMBER, 25);
         final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
-        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, "Closure")));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, locale -> "Closure")));
 
         assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(BigDecimal.ZERO);
     }

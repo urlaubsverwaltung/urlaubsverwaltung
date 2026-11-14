@@ -298,7 +298,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         // a company closure shows up like a public holiday - for every person
         final List<PublicHoliday> companyClosures = companyClosureService.getCompanyClosures(dateRange.startDate(), dateRange.endDate()).stream()
-            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name()))
+            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name(locale)))
             .toList();
 
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();

@@ -1491,7 +1491,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
-        when(companyClosureService.getCompanyClosures(date, date)).thenReturn(List.of(new CompanyClosure(date, closedDayLength, name)));
+        when(companyClosureService.getCompanyClosures(date, date)).thenReturn(List.of(new CompanyClosure(date, closedDayLength, locale -> name)));
 
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(applicationDayLength)

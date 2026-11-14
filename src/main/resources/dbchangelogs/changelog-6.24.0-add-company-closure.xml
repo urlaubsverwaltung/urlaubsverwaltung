@@ -21,7 +21,7 @@
       <column name="day_of_month" type="integer">
         <constraints nullable="false"/>
       </column>
-      <column name="name" type="text">
+      <column name="message_key" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="last_modified_at" type="timestamptz"/>
@@ -75,11 +75,11 @@
     </preConditions>
 
     <sql>
-      INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
-      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 24, 'Heiligabend' FROM settings;
+      INSERT INTO company_closure (tenant_id, id, month, day_of_month, message_key)
+      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 24, 'companyclosure.name.christmasEve' FROM settings;
 
-      INSERT INTO company_closure (tenant_id, id, month, day_of_month, name)
-      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 31, 'Silvester' FROM settings;
+      INSERT INTO company_closure (tenant_id, id, month, day_of_month, message_key)
+      SELECT tenant_id, nextval('company_closure_id_seq'), 12, 31, 'companyclosure.name.newYearsEve' FROM settings;
 
       INSERT INTO company_closure_version (tenant_id, id, company_closure_id, day_length, valid_from)
       SELECT
