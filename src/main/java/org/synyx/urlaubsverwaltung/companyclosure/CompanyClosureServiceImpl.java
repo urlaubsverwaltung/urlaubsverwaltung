@@ -120,11 +120,10 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     @EventListener(InitialDefaultSettingsSavedEvent.class)
     @Transactional
     void createDefaults() {
-        if (!companyClosureRepository.findAll().isEmpty()) {
-            return;
+        if (companyClosureRepository.findAll().isEmpty()) {
+            createDefault(MonthDay.of(DECEMBER, 24), "Heiligabend");
+            createDefault(MonthDay.of(DECEMBER, 31), "Silvester");
         }
-        createDefault(MonthDay.of(DECEMBER, 24), "Heiligabend");
-        createDefault(MonthDay.of(DECEMBER, 31), "Silvester");
     }
 
     private void createDefault(MonthDay monthDay, String name) {
