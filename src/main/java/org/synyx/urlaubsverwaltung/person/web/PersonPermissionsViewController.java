@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
-import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +43,6 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
     private final DepartmentService departmentService;
     private final PersonMailService personMailService;
     private final PersonPermissionsDtoValidator validator;
-    private final SessionService sessionService;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final PersonProperties personProperties;
 
@@ -54,7 +52,6 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         DepartmentService departmentService,
         PersonMailService personMailService,
         PersonPermissionsDtoValidator validator,
-        SessionService sessionService,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
         PersonProperties personProperties
     ) {
@@ -62,7 +59,6 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         this.departmentService = departmentService;
         this.personMailService = personMailService;
         this.validator = validator;
-        this.sessionService = sessionService;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.personProperties = personProperties;
     }
@@ -118,8 +114,6 @@ public class PersonPermissionsViewController implements HasLaunchpad, HasPersonS
         if (!addedPermissions.isEmpty()) {
             personMailService.sendPersonGainedMorePermissionsNotification(updatedPerson, mapRoleToPermissionsDto(addedPermissions));
         }
-
-        sessionService.markSessionToReloadAuthorities(updatedPerson.getUsername());
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + updatedPerson.getId();
