@@ -412,6 +412,23 @@ class DepartmentServiceImpl implements DepartmentService {
         return managersAllowedToManagePerson(secondStageAuthorities, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, person);
     }
 
+    @Override
+    public List<Person> getOwnApproversOfDepartmentHead(Person departmentHead, List<Person> persons) {
+
+        if (!departmentHead.hasRole(DEPARTMENT_HEAD)) {
+            return List.of();
+        }
+
+        final List<Person> secondStageAuthorities = persons.stream().filter(person -> person.hasRole(SECOND_STAGE_AUTHORITY)).toList();
+        final List<Person> ownApprovers = getSecondStageAuthoritiesAllowedToManagePerson(secondStageAuthorities, departmentHead);
+        if (ownApprovers.isEmpty() || !departmentHead.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return ownApprovers;
+        }
+
+        final List<Person> membersAsSecondStageAuthority = getMembersForSecondStageAuthority(departmentHead);
+        return ownApprovers.stream().filter(approver -> !membersAsSecondStageAuthority.contains(approver)).toList();
+    }
+
     /**
      * Returns the given managers that manage a department the given person is a {@link DepartmentMembershipKind#MEMBER}
      * of, i.e. that have a membership of {@code managerKind} in one of the person's member departments.

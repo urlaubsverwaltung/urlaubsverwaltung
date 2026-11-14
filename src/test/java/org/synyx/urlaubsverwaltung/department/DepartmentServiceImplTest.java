@@ -2790,6 +2790,43 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureManagedMembersOfDepartmentHeadDoNotContainTheSecondStageAuthorityOfTheDepartment() {
+
+        final PersonId departmentHeadId = new PersonId(1L);
+        final Person departmentHead = new Person();
+        departmentHead.setId(departmentHeadId.value());
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final PersonId memberId = new PersonId(2L);
+        final Person member = new Person();
+        member.setId(memberId.value());
+        member.setPermissions(List.of(USER));
+
+        final PersonId secondStageAuthorityId = new PersonId(3L);
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(secondStageAuthorityId.value());
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1L);
+        departmentEntity.setName("Department");
+
+        final DepartmentMembership headMembership = new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentMembership memberMembership = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership secondStageMemberMembership = new DepartmentMembership(secondStageAuthorityId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership secondStageMembership = new DepartmentMembership(secondStageAuthorityId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
+
+        when(departmentMembershipService.getActiveMemberships(departmentHeadId)).thenReturn(List.of(headMembership));
+        when(departmentRepository.findAllById(Set.of(1L))).thenReturn(List.of(departmentEntity));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L)))
+            .thenReturn(Map.of(1L, new DepartmentStaff(1L, List.of(memberMembership, secondStageMemberMembership), List.of(headMembership), List.of(secondStageMembership))));
+        when(personService.getAllPersonsByIds(Set.of(departmentHeadId, memberId, secondStageAuthorityId)))
+            .thenReturn(List.of(departmentHead, member, secondStageAuthority));
+
+        assertThat(sut.getManagedMembersOfDepartmentHead(departmentHead)).containsExactly(member);
+    }
+
+    @Test
     void getMembersForSecondStageAuthority() {
 
         final PersonId personId = new PersonId(1L);
@@ -2962,6 +2999,75 @@ class DepartmentServiceImplTest {
 
         assertThat(allowed).containsExactly(ssa1);
         verify(departmentMembershipService).getActiveMembershipsOfPersons(List.of(ssa1Id, ssa2Id, personId));
+    }
+
+    @Nested
+    class GetOwnApproversOfDepartmentHead {
+
+        private final PersonId departmentHeadId = new PersonId(1L);
+        private final PersonId memberId = new PersonId(2L);
+        private final PersonId secondStageAuthorityId = new PersonId(3L);
+
+        private final Person member = person(memberId, USER);
+        private final Person secondStageAuthority = person(secondStageAuthorityId, USER, SECOND_STAGE_AUTHORITY);
+
+        @Test
+        void ensureReturnsTheSecondStageAuthorityOfTheDepartmentHead() {
+
+            final Person departmentHead = person(departmentHeadId, USER, DEPARTMENT_HEAD);
+
+            // the second stage authority decides about department 1, which the department head is a member of
+            when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(secondStageAuthorityId, departmentHeadId)))
+                .thenReturn(Map.of(
+                    secondStageAuthorityId, List.of(new DepartmentMembership(secondStageAuthorityId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock))),
+                    departmentHeadId, List.of(new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock)))
+                ));
+
+            assertThat(sut.getOwnApproversOfDepartmentHead(departmentHead, List.of(member, secondStageAuthority))).containsExactly(secondStageAuthority);
+        }
+
+        @Test
+        void ensureKeepsTheSecondStageAuthorityTheDepartmentHeadManagesAsSecondStageAuthorityAsWell() {
+
+            final Person departmentHead = person(departmentHeadId, USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+
+            final DepartmentMembership departmentHeadSecondStageMembership = new DepartmentMembership(departmentHeadId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
+            final DepartmentMembership secondStageAuthorityMembership = new DepartmentMembership(secondStageAuthorityId, 2L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+
+            // the second stage authority decides about department 1, the department head decides about department 2
+            when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(secondStageAuthorityId, departmentHeadId)))
+                .thenReturn(Map.of(
+                    secondStageAuthorityId, List.of(new DepartmentMembership(secondStageAuthorityId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock)), secondStageAuthorityMembership),
+                    departmentHeadId, List.of(new DepartmentMembership(departmentHeadId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock)), departmentHeadSecondStageMembership)
+                ));
+
+            final DepartmentEntity departmentEntity = new DepartmentEntity();
+            departmentEntity.setId(2L);
+            departmentEntity.setName("Department");
+            when(departmentMembershipService.getActiveMemberships(departmentHeadId)).thenReturn(List.of(departmentHeadSecondStageMembership));
+            when(departmentRepository.findAllById(Set.of(2L))).thenReturn(List.of(departmentEntity));
+            when(departmentMembershipService.getDepartmentStaff(Set.of(2L)))
+                .thenReturn(Map.of(2L, new DepartmentStaff(2L, List.of(secondStageAuthorityMembership), List.of(), List.of(departmentHeadSecondStageMembership))));
+            when(personService.getAllPersonsByIds(Set.of(departmentHeadId, secondStageAuthorityId))).thenReturn(List.of(departmentHead, secondStageAuthority));
+
+            assertThat(sut.getOwnApproversOfDepartmentHead(departmentHead, List.of(member, secondStageAuthority))).isEmpty();
+        }
+
+        @Test
+        void ensureReturnsNothingForAPersonWhoIsNoDepartmentHead() {
+
+            final Person user = person(departmentHeadId, USER);
+
+            assertThat(sut.getOwnApproversOfDepartmentHead(user, List.of(member, secondStageAuthority))).isEmpty();
+            verifyNoInteractions(departmentMembershipService);
+        }
+
+        private static Person person(PersonId personId, Role... roles) {
+            final Person person = new Person();
+            person.setId(personId.value());
+            person.setPermissions(List.of(roles));
+            return person;
+        }
     }
 
     @Test

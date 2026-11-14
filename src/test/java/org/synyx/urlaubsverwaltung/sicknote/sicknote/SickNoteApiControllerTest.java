@@ -152,6 +152,33 @@ class SickNoteApiControllerTest {
     }
 
     @Test
+    void getSickNotesWithDepartmentHeadLeavesOutTheirOwnSecondStageAuthority() throws Exception {
+
+        final Person signedInUser = new Person("requester", "requester", "requester", "requester@example.org");
+        signedInUser.setId(1L);
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2L);
+        person.setPermissions(List.of(USER));
+        final Person secondStageAuthority = new Person("ssa", "Second", "Stage", "ssa@example.org");
+        secondStageAuthority.setId(3L);
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person, secondStageAuthority));
+        when(departmentService.getOwnApproversOfDepartmentHead(signedInUser, List.of(person, secondStageAuthority))).thenReturn(List.of(secondStageAuthority));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(List.of(createSickNote(person)));
+
+        perform(get("/api/sicknotes")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sickNotes", hasSize(1)));
+    }
+
+    @Test
     void getSickNotesWithSecondStageAuthority() throws Exception {
 
         final Person signedInUser = new Person("requester", "requester", "requester", "requester@example.org");

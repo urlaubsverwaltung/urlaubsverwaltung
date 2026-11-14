@@ -93,6 +93,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_RHEINLAND_PFALZ;
@@ -5578,6 +5579,26 @@ class AbsenceOverviewViewControllerTest {
 
         assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
         assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isEqualTo(3L);
+    }
+
+    @Test
+    void ensureDepartmentHeadGetsNoLinkToSickNotesOfTheirOwnSecondStageAuthority() throws Exception {
+
+        final Person departmentHead = viewer(Role.USER, Role.DEPARTMENT_HEAD);
+        final Person secondStageAuthority = otherPerson();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getActivePersons()).thenReturn(List.of(departmentHead, secondStageAuthority));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(secondStageAuthority));
+        when(departmentService.getOwnApproversOfDepartmentHead(departmentHead, List.of(secondStageAuthority))).thenReturn(List.of(secondStageAuthority));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        when(absenceService.getOpenAbsences(List.of(departmentHead, secondStageAuthority), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation(secondStageAuthority, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, 9), sickNote(secondStageAuthority, 3L, 13)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(1);
+
+        assertThat(days.get(8).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getApplicationId).isEqualTo(7L);
+        assertThat(days.get(12).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::getSickNoteId).isNull();
     }
 
     @Test

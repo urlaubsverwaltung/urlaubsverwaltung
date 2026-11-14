@@ -124,6 +124,28 @@ class SickNoteRelevantPersonsServiceTest {
     }
 
     @Test
+    void ensureGetStatisticRelevantPersonsForDepartmentHeadLeavesOutTheirOwnSecondStageAuthority() {
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(1L);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
+
+        final Person member = new Person();
+        member.setId(2L);
+        member.setPermissions(List.of(USER));
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(3L);
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        when(departmentService.getManagedMembersOfPerson(departmentHead, Year.of(2026))).thenReturn(List.of(member, secondStageAuthority));
+        when(departmentService.getOwnApproversOfDepartmentHead(departmentHead, List.of(member, secondStageAuthority))).thenReturn(List.of(secondStageAuthority));
+
+        final List<Person> actual = sut.getStatisticRelevantPersons(LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31), departmentHead);
+        assertThat(actual).containsExactly(member);
+    }
+
+    @Test
     void ensureGetStatisticRelevantPersonsForSecondStageAuthorityReturnsOnlyActiveMembersInCurrentYear() {
 
         final Person secondStageAuthority = new Person();
