@@ -13,6 +13,7 @@ import java.time.MonthDay;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,6 +80,20 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
             .satisfies(version -> {
                 assertThat(version.getLastModifiedBy()).isNull();
                 assertThat(version.getLastModifiedAt()).isNotNull();
+            });
+    }
+
+    @Test
+    void renamePersistsNamesPerLanguage() {
+        sut.renameCompanyClosure(MonthDay.of(DECEMBER, 24), Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.forLanguageTag("el"), "Χριστούγεννα"));
+
+        assertThat(sut.getCompanyClosureEntries())
+            .filteredOn(entry -> entry.monthDay().equals(MonthDay.of(DECEMBER, 24)))
+            .singleElement()
+            .satisfies(entry -> {
+                assertThat(entry.names()).isEqualTo(Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.forLanguageTag("el"), "Χριστούγεννα"));
+                assertThat(entry.name(Locale.forLanguageTag("de-AT"))).isEqualTo("Weihnachtsruhe");
+                assertThat(entry.name(Locale.ENGLISH)).isEqualTo("Company closure");
             });
     }
 }

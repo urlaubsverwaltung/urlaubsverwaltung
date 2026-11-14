@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.companyclosure;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -12,6 +13,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -57,10 +60,12 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     private Person lastModifiedBy;
 
     /**
-     * name can be {@code null} and is only defined for closures created or renamed by a user. It takes
-     * precedence over the messageKey.
+     * nameByLocale can be {@code null} and is only defined for closures created or renamed by a user. It takes
+     * precedence over the messageKey. Languages without a name are missing.
      */
-    private String name;
+    @Column(name = "name_by_locale")
+    @Convert(converter = CompanyClosureNameJpaConverter.class)
+    private Map<Locale, String> nameByLocale;
 
     public Long getId() {
         return id;
@@ -112,12 +117,12 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public String getName() {
-        return name;
+    public Map<Locale, String> getNameByLocale() {
+        return nameByLocale;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameByLocale(Map<Locale, String> nameByLocale) {
+        this.nameByLocale = nameByLocale;
     }
 
     @Override
@@ -127,7 +132,7 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
             ", month=" + month +
             ", dayOfMonth=" + dayOfMonth +
             ", messageKey='" + messageKey + '\'' +
-            ", name='" + name + '\'' +
+            ", nameByLocale=" + nameByLocale +
             '}';
     }
 

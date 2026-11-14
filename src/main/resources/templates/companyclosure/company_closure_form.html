@@ -98,23 +98,63 @@
             </div>
 
             <div class="uv-form__input-row">
-              <label for="name" th:text="|#{company-closure.data.name}:|">Name</label>
-              <input
-                id="name"
-                required
-                type="text"
-                maxlength="100"
-                th:field="*{name}"
-                th:errorclass="error"
-                th:aria-invalid="${#fields.hasErrors('name')} ? 'true'"
-                th:aria-describedby="${#fields.hasErrors('name')} ? 'name-error'"
-              />
-              <p id="name-error" class="uv-form__input-error" th:if="${#fields.hasErrors('name')}">
-                <th:block th:errors="*{name}">name Error</th:block>
+              <p
+                id="names-label"
+                class="uv-form__label uv-form__label--required"
+                th:text="|#{company-closure.data.name}:|"
+              >
+                Name
               </p>
+              <div role="group" aria-labelledby="names-label" class="flex flex-col gap-4 w-full">
+                <p
+                  id="names-description"
+                  class="text-sm"
+                  th:text="#{company-closure.data.names.description(#{absences.overview.company-closure})}"
+                >
+                  Gib den Namen in mindestens einer Sprache an.
+                </p>
+                <p id="names-error" class="uv-form__input-error" th:if="${#fields.hasErrors('names')}">
+                  <th:block th:errors="*{names}">names Error</th:block>
+                </p>
+                <div
+                  th:each="name, nameStat : *{names}"
+                  th:with="
+                    nameField=|names[${nameStat.index}].name|,
+                    nameId=|names${nameStat.index}.name|,
+                    hasNameErrors=${#fields.hasErrors(nameField)}
+                  "
+                  class="flex flex-col gap-1"
+                >
+                  <input type="hidden" th:field="*{names[__${nameStat.index}__].locale}" />
+                  <label th:for="${nameId}" class="flex items-center gap-2 font-normal">
+                    <img th:src="@{/images/flags/{locale}.svg (locale=${name.locale})}" alt="" width="16" height="16" />
+                    <span th:text="${#messages.msg('locale.' + name.locale)}">Deutsch</span>
+                  </label>
+                  <input
+                    type="text"
+                    maxlength="100"
+                    th:placeholder="${namePlaceholders[name.locale]}"
+                    th:lang="${name.locale.toLanguageTag()}"
+                    th:field="*{names[__${nameStat.index}__].name}"
+                    th:errorclass="error"
+                    th:classappend="${#fields.hasErrors('names')} ? 'error'"
+                    th:aria-invalid="${hasNameErrors or #fields.hasErrors('names')} ? 'true'"
+                    th:aria-describedby="|names-description${#fields.hasErrors('names') ? ' names-error' : ''} ${nameId}-placeholder${hasNameErrors ? ' ' + nameId + '-error' : ''}|"
+                    th:data-test-id="|company-closure-name-${name.locale}|"
+                  />
+                  <span
+                    th:id="|${nameId}-placeholder|"
+                    th:text="${namePlaceholders[name.locale]}"
+                    class="sr-only"
+                  ></span>
+                  <p th:id="|${nameId}-error|" class="uv-form__input-error" th:if="${hasNameErrors}">
+                    <th:block th:errors="*{__${nameField}__}">name Error</th:block>
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div class="uv-form__input-row">
+            <div class="uv-form__input-row pt-4">
               <label for="dayLength" th:text="|#{company-closure.data.dayLength}:|">Betriebsruhe</label>
               <span
                 th:replace="~{fragments/select::one(id='dayLength', name='dayLength', options=~{::companyclosure-daylength-options}, required=true)}"

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.MonthDay;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -13,9 +14,12 @@ import java.util.function.Function;
  *
  * @param monthDay     day of the closure
  * @param nameByLocale resolves the name of the closure for a locale, e.g. "Heiligabend" for german
+ * @param names        names given by a user per language, without the languages left empty; empty for a closure
+ *                     provided by the application that has not been renamed
  * @param versions     sorted by {@code validFrom}, {@code null} first
  */
-public record CompanyClosureEntry(MonthDay monthDay, Function<Locale, String> nameByLocale, List<CompanyClosureVersion> versions) {
+public record CompanyClosureEntry(MonthDay monthDay, Function<Locale, String> nameByLocale, Map<Locale, String> names,
+                                  List<CompanyClosureVersion> versions) {
 
     /**
      * @param locale language of the reader

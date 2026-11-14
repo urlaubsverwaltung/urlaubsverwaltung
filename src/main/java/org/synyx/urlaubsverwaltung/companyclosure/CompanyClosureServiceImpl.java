@@ -19,6 +19,7 @@ import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -137,7 +138,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         final Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId = companyClosureVersionRepository.findAll().stream()
             .collect(groupingBy(CompanyClosureVersionEntity::getCompanyClosureId));
         return companyClosureRepository.findAll().stream()
-            .map(entity -> new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity),
+            .map(entity -> new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity), namesOf(entity),
                 versionsByClosureId.getOrDefault(entity.getId(), List.of()).stream()
                     .sorted(BY_VALID_FROM)
                     .map(version -> new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()))
@@ -148,8 +149,9 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void createCompanyClosure(MonthDay monthDay, String name, DayLength dayLength, LocalDate validFrom) {
+    public void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom) {
         requireNotBeforeCurrentYear(validFrom);
+        final Map<Locale, String> nameByLocale = requireName(names);
         if (LEAP_DAY.equals(monthDay)) {
             throw new IllegalArgumentException("A company closure on " + monthDay + " does not exist every year.");
         }
@@ -157,13 +159,13 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             throw new IllegalArgumentException("Company closure for " + monthDay + " exists already.");
         }
 
-        final var entity = new CompanyClosureEntity();
+        final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setMonth(monthDay.getMonthValue());
         entity.setDayOfMonth(monthDay.getDayOfMonth());
-        entity.setName(name);
-        final var saved = companyClosureRepository.save(entity);
+        entity.setNameByLocale(nameByLocale);
+        final CompanyClosureEntity saved = companyClosureRepository.save(entity);
 
-        final var version = new CompanyClosureVersionEntity();
+        final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
         version.setCompanyClosureId(saved.getId());
         version.setDayLength(dayLength);
         version.setValidFrom(validFrom);
@@ -174,10 +176,11 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void renameCompanyClosure(MonthDay monthDay, String name) {
+    public void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names) {
+        final Map<Locale, String> nameByLocale = requireName(names);
         final CompanyClosureEntity entity = findEntity(monthDay)
             .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
-        entity.setName(name);
+        entity.setNameByLocale(nameByLocale);
         companyClosureRepository.save(entity);
     }
 
@@ -221,11 +224,16 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
     }
 
+    /**
+     * The name given by a user for the locale or its language (e.g. "de" for "de_DE"), the translation of the
+     * message key if the closure has no names given by a user, a generic name otherwise.
+     */
     private Function<Locale, String> nameByLocale(CompanyClosureEntity entity) {
-        final String name = entity.getName();
-        if (name != null) {
-            // a name given by a user is not translated
-            return locale -> name;
+        final Map<Locale, String> names = namesOf(entity);
+        if (!names.isEmpty()) {
+            return locale -> Optional.ofNullable(names.get(locale))
+                .or(() -> Optional.ofNullable(names.get(Locale.forLanguageTag(locale.getLanguage()))))
+                .orElseGet(() -> messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale));
         }
 
         final String messageKey = entity.getMessageKey();
@@ -234,6 +242,32 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             final String message = messageKey == null ? null : messageSource.getMessage(messageKey, new Object[]{}, null, locale);
             return message != null ? message : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
         };
+    }
+
+    /**
+     * @return the names given by a user without blank ones, e.g. from a restored backup
+     */
+    private static Map<Locale, String> namesOf(CompanyClosureEntity entity) {
+        final Map<Locale, String> nameByLocale = entity.getNameByLocale();
+        return nameByLocale == null ? Map.of() : withoutBlankNames(nameByLocale);
+    }
+
+    private static Map<Locale, String> requireName(Map<Locale, String> names) {
+        final Map<Locale, String> nameByLocale = withoutBlankNames(names);
+        if (nameByLocale.isEmpty()) {
+            throw new IllegalArgumentException("At least one name must not be blank.");
+        }
+        return nameByLocale;
+    }
+
+    private static Map<Locale, String> withoutBlankNames(Map<Locale, String> names) {
+        final Map<Locale, String> nonBlankNames = new HashMap<>();
+        names.forEach((locale, name) -> {
+            if (name != null && !name.isBlank()) {
+                nonBlankNames.put(locale, name.strip());
+            }
+        });
+        return Map.copyOf(nonBlankNames);
     }
 
     private void requireNotBeforeCurrentYear(LocalDate validFrom) {

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -20,6 +21,8 @@ import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -27,7 +30,6 @@ import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -49,6 +51,10 @@ class CompanyClosureViewControllerTest {
 
     private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
     private static final LocalDate TODAY = LocalDate.of(2026, NOVEMBER, 6);
+    private static final Locale GERMAN = Locale.GERMAN;
+    private static final Locale GERMAN_AUSTRIA = Locale.forLanguageTag("de-AT");
+    private static final Locale ENGLISH = Locale.ENGLISH;
+    private static final Locale GREEK = Locale.forLanguageTag("el");
 
     private CompanyClosureViewController sut;
 
@@ -65,7 +71,7 @@ class CompanyClosureViewControllerTest {
     void setUp() {
         final Clock clock = Clock.fixed(TODAY.atStartOfDay(ZoneId.of("UTC")).toInstant(), ZoneId.of("UTC"));
         sut = new CompanyClosureViewController(companyClosureService, new CompanyClosureFormValidator(companyClosureService, blackoutPeriodService, clock),
-            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, clock);
+            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource(), clock);
     }
 
     @Test
@@ -82,8 +88,8 @@ class CompanyClosureViewControllerTest {
             new CompanyClosureVersion(ZERO, LocalDate.of(2027, JANUARY, 1)));
         final List<CompanyClosureVersion> newYearsEveVersions = List.of(new CompanyClosureVersion(NOON, null));
         when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
-            new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Heiligabend", christmasEveVersions),
-            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", newYearsEveVersions)));
+            new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Heiligabend", Map.of(), christmasEveVersions),
+            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), newYearsEveVersions)));
 
         final MvcResult result = perform(get("/web/company-closure"))
             .andExpect(view().name("companyclosure/company_closure_list"))
@@ -96,12 +102,22 @@ class CompanyClosureViewControllerTest {
 
     @Test
     void newFormPrefillsFullDayAndToday() throws Exception {
-        final MvcResult result = perform(get("/web/company-closure/new"))
+        final MvcResult result = perform(get("/web/company-closure/new").locale(GERMAN))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
             .andReturn();
 
         final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        assertThat(form.getNames()).containsExactly(
+            new CompanyClosureNameForm(GERMAN, ""),
+            new CompanyClosureNameForm(GERMAN_AUSTRIA, ""),
+            new CompanyClosureNameForm(ENGLISH, ""),
+            new CompanyClosureNameForm(GREEK, ""));
+        assertThat(result.getModelAndView().getModel()).containsEntry("namePlaceholders", Map.of(
+            GERMAN, "Leer: „Betriebsruhe“",
+            GERMAN_AUSTRIA, "Leer: „Betriebsruhe“",
+            ENGLISH, "Leer: „Company closure“",
+            GREEK, "Leer: „Αργία επιχείρησης“"));
         assertThat(form.getDayLength()).isEqualTo(FULL);
         assertThat(form.getValidFrom()).isEqualTo(TODAY);
         assertThat(result.getModelAndView().getModel().get("monthDay")).isNull();
@@ -115,87 +131,106 @@ class CompanyClosureViewControllerTest {
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attribute("monthDay", CHRISTMAS_EVE))
             .andExpect(model().attribute("monthDayPath", "12-24"))
-            .andExpect(model().attribute("companyClosureName", "Heiligabend"))
+            .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
             .andReturn();
 
         final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
-        assertThat(form.getName()).isEqualTo("Heiligabend");
+        assertThat(form.getNames()).containsExactly(
+            new CompanyClosureNameForm(GERMAN, "Heiligabend"),
+            new CompanyClosureNameForm(GERMAN_AUSTRIA, "Heiligabend"),
+            new CompanyClosureNameForm(ENGLISH, "Christmas Eve"),
+            new CompanyClosureNameForm(GREEK, "Παραμονή Χριστουγέννων"));
         assertThat(form.getDayLength()).isEqualTo(FULL);
         assertThat(form.getValidFrom()).isEqualTo(TODAY);
+    }
+
+    @Test
+    void editPrefillsNamesGivenByUserAndLeavesOtherLanguagesEmpty() throws Exception {
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
+            new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Weihnachtsruhe", Map.of(GERMAN, "Weihnachtsruhe", ENGLISH, "Christmas break"),
+                List.of(new CompanyClosureVersion(NOON, null)))));
+
+        final MvcResult result = perform(get("/web/company-closure/12-24/edit")).andReturn();
+
+        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        assertThat(form.getNames()).containsExactly(
+            new CompanyClosureNameForm(GERMAN, "Weihnachtsruhe"),
+            new CompanyClosureNameForm(GERMAN_AUSTRIA, ""),
+            new CompanyClosureNameForm(ENGLISH, "Christmas break"),
+            new CompanyClosureNameForm(GREEK, ""));
     }
 
     @Test
     void savesWithChosenValidFrom() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure/12-24")
-            .param("name", "Weihnachten")
+        perform(withNames(post("/web/company-closure/12-24"), "Weihnachten", "", "Christmas", "")
             .param("dayLength", "FULL")
             .param("validFrom", "01.01.2026"))
             .andExpect(redirectedUrl("/web/company-closure"))
-            .andExpect(flash().attribute("updatedCompanyClosureName", "Weihnachten"));
+            .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas"));
 
         verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, JANUARY, 1));
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, "Weihnachten");
+        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
     }
 
     @Test
     void savesWithoutRenamingWhenNameIsUnchanged() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure/12-24")
-            .param("name", "Heiligabend")
+        perform(withNames(post("/web/company-closure/12-24"), "Heiligabend", "Heiligabend", "Christmas Eve", "Παραμονή Χριστουγέννων")
             .param("dayLength", "ZERO")
             .param("validFrom", "2026-11-06"))
-            .andExpect(redirectedUrl("/web/company-closure"));
+            .andExpect(redirectedUrl("/web/company-closure"))
+            .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas Eve"));
 
         verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, TODAY);
-        verify(companyClosureService, never()).renameCompanyClosure(any(), anyString());
+        verify(companyClosureService, never()).renameCompanyClosure(any(), any());
     }
 
     @Test
     void trimsNameBeforeSaving() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure/12-24")
-            .param("name", "  Weihnachten ")
+        perform(withNames(post("/web/company-closure/12-24"), "  Weihnachten ", " ", "", "")
             .param("dayLength", "FULL")
             .param("validFrom", "2026-11-06"))
-            .andExpect(redirectedUrl("/web/company-closure"));
+            .andExpect(redirectedUrl("/web/company-closure"))
+            .andExpect(flash().attribute("updatedCompanyClosureName", "Weihnachten"));
 
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, "Weihnachten");
+        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten"));
     }
 
     @Test
     void createsNewDay() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure")
+        perform(withNames(post("/web/company-closure"), "Brückentag", "Fenstertag", "Bridge day", "")
             .param("day", "15")
             .param("month", "5")
-            .param("name", "Brückentag")
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
             .andExpect(redirectedUrl("/web/company-closure"))
-            .andExpect(flash().attribute("createdCompanyClosureName", "Brückentag"));
+            .andExpect(flash().attribute("createdCompanyClosureName", "Bridge day"));
 
-        verify(companyClosureService).createCompanyClosure(MonthDay.of(MAY, 15), "Brückentag", FULL, TODAY);
+        verify(companyClosureService).createCompanyClosure(MonthDay.of(MAY, 15),
+            Map.of(GERMAN, "Brückentag", GERMAN_AUSTRIA, "Fenstertag", ENGLISH, "Bridge day"), FULL, TODAY);
     }
 
     @Test
     void showsFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure/12-24")
-            .param("name", "")
+        perform(withNames(post("/web/company-closure/12-24"), "", " ", "", "")
             .param("dayLength", "FULL")
             .param("validFrom", "31.12.2025"))
             .andExpect(view().name("companyclosure/company_closure_form"))
-            .andExpect(model().attributeHasFieldErrors("companyClosure", "name", "validFrom"))
+            .andExpect(model().attributeHasFieldErrors("companyClosure", "names", "validFrom"))
             .andExpect(model().attribute("monthDay", CHRISTMAS_EVE))
-            .andExpect(model().attribute("companyClosureName", "Heiligabend"))
-            .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)));
+            .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
+            .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
+            .andExpect(model().attributeExists("namePlaceholders"));
 
         verify(companyClosureService).getCompanyClosureEntries();
         verifyNoMoreInteractions(companyClosureService);
@@ -205,10 +240,9 @@ class CompanyClosureViewControllerTest {
     void showsCreateFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        perform(post("/web/company-closure")
+        perform(withNames(post("/web/company-closure"), "Heiligabend", "", "", "")
             .param("day", "24")
             .param("month", "12")
-            .param("name", "Heiligabend")
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
             .andExpect(view().name("companyclosure/company_closure_form"))
@@ -224,8 +258,7 @@ class CompanyClosureViewControllerTest {
 
         perform(get("/web/company-closure/05-15/edit")).andExpect(status().isNotFound());
         perform(get("/web/company-closure/13-45/edit")).andExpect(status().isNotFound());
-        perform(post("/web/company-closure/05-15")
-            .param("name", "Brückentag")
+        perform(withNames(post("/web/company-closure/05-15"), "Brückentag", "", "", "")
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
             .andExpect(status().isNotFound());
@@ -235,9 +268,44 @@ class CompanyClosureViewControllerTest {
 
     private void givenChristmasEve() {
         when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
-            new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Heiligabend", List.of(
+            new CompanyClosureEntry(CHRISTMAS_EVE, CompanyClosureViewControllerTest::christmasEveName, Map.of(), List.of(
                 new CompanyClosureVersion(NOON, null),
                 new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1))))));
+    }
+
+    private static StaticMessageSource messageSource() {
+        final StaticMessageSource messageSource = new StaticMessageSource();
+        for (Locale locale : List.of(GERMAN, GERMAN_AUSTRIA)) {
+            messageSource.addMessage("absences.overview.company-closure", locale, "Betriebsruhe");
+            messageSource.addMessage("company-closure.data.names.placeholder", locale, "Leer: „{0}“");
+        }
+        messageSource.addMessage("absences.overview.company-closure", ENGLISH, "Company closure");
+        messageSource.addMessage("company-closure.data.names.placeholder", ENGLISH, "Empty: “{0}”");
+        messageSource.addMessage("absences.overview.company-closure", GREEK, "Αργία επιχείρησης");
+        messageSource.addMessage("company-closure.data.names.placeholder", GREEK, "Κενό: «{0}»");
+        return messageSource;
+    }
+
+    private static String christmasEveName(Locale locale) {
+        return switch (locale.getLanguage()) {
+            case "en" -> "Christmas Eve";
+            case "el" -> "Παραμονή Χριστουγέννων";
+            default -> "Heiligabend";
+        };
+    }
+
+    /**
+     * adds the names in the order of the form: german, german (austria), english and greek
+     */
+    private static MockHttpServletRequestBuilder withNames(MockHttpServletRequestBuilder builder, String german,
+                                                           String germanAustria, String english, String greek) {
+        final List<Locale> locales = List.of(GERMAN, GERMAN_AUSTRIA, ENGLISH, GREEK);
+        final List<String> names = List.of(german, germanAustria, english, greek);
+        for (int index = 0; index < locales.size(); index++) {
+            builder.param("names[%d].locale".formatted(index), locales.get(index).toLanguageTag())
+                .param("names[%d].name".formatted(index), names.get(index));
+        }
+        return builder;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

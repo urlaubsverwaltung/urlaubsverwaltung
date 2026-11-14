@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.time.Month.FEBRUARY;
@@ -36,6 +37,7 @@ class CompanyClosureFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_TOO_MANY_CHARS = "error.entry.tooManyChars";
+    private static final String ERROR_NAMES_MANDATORY = "company-closure.error.names.mandatory";
     private static final String ERROR_VALID_FROM_PREVIOUS_YEAR = "company-closure.error.validFrom.previousYear";
     private static final String ERROR_MONTH_DAY_INVALID = "company-closure.error.monthDay.invalid";
     private static final String ERROR_MONTH_DAY_LEAP_DAY = "company-closure.error.monthDay.leapDay";
@@ -45,7 +47,7 @@ class CompanyClosureFormValidator implements Validator {
 
     private static final String ATTRIBUTE_DAY = "day";
     private static final String ATTRIBUTE_MONTH = "month";
-    private static final String ATTRIBUTE_NAME = "name";
+    private static final String ATTRIBUTE_NAMES = "names";
     private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_VALID_FROM = "validFrom";
 
@@ -65,18 +67,14 @@ class CompanyClosureFormValidator implements Validator {
     }
 
     /**
-     * Validates the fields of an existing closure day: name, day length and valid from.
+     * Validates the fields of an existing closure day: names, day length and valid from.
      */
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         final CompanyClosureForm form = (CompanyClosureForm) target;
 
-        if (!hasText(form.getName())) {
-            errors.rejectValue(ATTRIBUTE_NAME, ERROR_MANDATORY_FIELD);
-        } else if (form.getName().length() > MAX_NAME_LENGTH) {
-            errors.rejectValue(ATTRIBUTE_NAME, ERROR_TOO_MANY_CHARS);
-        }
+        validateNames(form, errors);
 
         if (form.getDayLength() == null) {
             errors.rejectValue(ATTRIBUTE_DAY_LENGTH, ERROR_MANDATORY_FIELD);
@@ -86,6 +84,21 @@ class CompanyClosureFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_VALID_FROM, ERROR_MANDATORY_FIELD);
         } else if (form.getValidFrom().isBefore(Year.now(clock).atDay(1))) {
             errors.rejectValue(ATTRIBUTE_VALID_FROM, ERROR_VALID_FROM_PREVIOUS_YEAR);
+        }
+    }
+
+    private static void validateNames(CompanyClosureForm form, Errors errors) {
+        final List<CompanyClosureNameForm> names = form.getNames();
+        if (names == null || names.stream().noneMatch(name -> hasText(name.getName()))) {
+            errors.rejectValue(ATTRIBUTE_NAMES, ERROR_NAMES_MANDATORY);
+            return;
+        }
+
+        for (int index = 0; index < names.size(); index++) {
+            final String name = names.get(index).getName();
+            if (name != null && name.length() > MAX_NAME_LENGTH) {
+                errors.rejectValue("%s[%d].name".formatted(ATTRIBUTE_NAMES, index), ERROR_TOO_MANY_CHARS);
+            }
         }
     }
 

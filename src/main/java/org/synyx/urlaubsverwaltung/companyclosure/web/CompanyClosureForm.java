@@ -1,11 +1,19 @@
 package org.synyx.urlaubsverwaltung.companyclosure.web;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
@@ -18,7 +26,10 @@ public class CompanyClosureForm {
 
     private Integer day;
     private Integer month;
-    private String name;
+    /**
+     * one name per supported language in the order of {@link org.synyx.urlaubsverwaltung.settings.SupportedLanguages}
+     */
+    private List<CompanyClosureNameForm> names = new ArrayList<>();
     private DayLength dayLength;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate validFrom;
@@ -39,12 +50,36 @@ public class CompanyClosureForm {
         this.month = month;
     }
 
-    public String getName() {
-        return name;
+    public List<CompanyClosureNameForm> getNames() {
+        return names;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.strip();
+    public void setNames(List<CompanyClosureNameForm> names) {
+        this.names = names;
+    }
+
+    /**
+     * @return the names by language, without the blank ones
+     */
+    public Map<Locale, String> getNameByLocale() {
+        final Map<Locale, String> nameByLocale = new HashMap<>();
+        for (CompanyClosureNameForm name : names) {
+            if (name.getLocale() != null && hasText(name.getName())) {
+                nameByLocale.put(name.getLocale(), name.getName());
+            }
+        }
+        return nameByLocale;
+    }
+
+    /**
+     * @return the name for the locale or its language (e.g. "de" for "de_DE"), the first given name otherwise
+     */
+    public String nameFor(Locale locale) {
+        final Map<Locale, String> nameByLocale = getNameByLocale();
+        return Optional.ofNullable(nameByLocale.get(locale))
+            .or(() -> Optional.ofNullable(nameByLocale.get(Locale.forLanguageTag(locale.getLanguage()))))
+            .or(() -> names.stream().map(CompanyClosureNameForm::getName).filter(StringUtils::hasText).findFirst())
+            .orElse("");
     }
 
     public DayLength getDayLength() {

@@ -6,6 +6,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public interface CompanyClosureService {
 
@@ -37,19 +39,22 @@ public interface CompanyClosureService {
      * Creates a new yearly company closure day.
      *
      * @param monthDay  day of the closure, not 29.02. since it does not exist every year
-     * @param name      name of the closure
+     * @param names     name of the closure per language, at least one of them not blank. Blank names are not stored,
+     *                  these languages show a generic name.
      * @param dayLength closed portion of the day
      * @param validFrom first date the closure applies to, not before the start of the current year
-     * @throws IllegalArgumentException if there is a closure for the month day already, the month day is 29.02. or
-     *                                  validFrom lies before the current year
+     * @throws IllegalArgumentException if there is a closure for the month day already, the month day is 29.02.,
+     *                                  validFrom lies before the current year or all names are blank
      */
-    void createCompanyClosure(MonthDay monthDay, String name, DayLength dayLength, LocalDate validFrom);
+    void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom);
 
     /**
-     * Renames a company closure day. Names are not versioned, the new name applies to all years. The given name
-     * is shown in every language, also for a closure whose name has been translated before.
+     * Renames a company closure day. Names are not versioned, the new names apply to all years. They replace all
+     * names of the closure, also the translations of a closure provided by the application.
      *
-     * @throws IllegalArgumentException if there is no closure for the month day
+     * @param names name of the closure per language, at least one of them not blank. Blank names are not stored,
+     *              these languages show a generic name.
+     * @throws IllegalArgumentException if there is no closure for the month day or all names are blank
      */
-    void renameCompanyClosure(MonthDay monthDay, String name);
+    void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names);
 }

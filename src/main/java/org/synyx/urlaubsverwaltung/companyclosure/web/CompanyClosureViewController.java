@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.companyclosure.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +18,20 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
+import org.synyx.urlaubsverwaltung.settings.SupportedLanguages;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
@@ -45,15 +52,18 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     private final CompanyClosureFormValidator validator;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
+    private final MessageSource messageSource;
     private final Clock clock;
 
     CompanyClosureViewController(CompanyClosureService companyClosureService, CompanyClosureFormValidator validator,
                                  PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
-                                 PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier, Clock clock) {
+                                 PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
+                                 MessageSource messageSource, Clock clock) {
         this.companyClosureService = companyClosureService;
         this.validator = validator;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
+        this.messageSource = messageSource;
         this.clock = clock;
     }
 
@@ -82,13 +92,16 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @GetMapping("/new")
-    public String newCompanyClosureForm(Model model) {
+    public String newCompanyClosureForm(Model model, Locale locale) {
 
         final CompanyClosureForm form = new CompanyClosureForm();
+        form.setNames(Arrays.stream(SupportedLanguages.values())
+            .map(language -> new CompanyClosureNameForm(language.getLocale(), ""))
+            .toList());
         form.setDayLength(FULL);
         form.setValidFrom(LocalDate.now(clock));
         model.addAttribute("companyClosure", form);
-        model.addAttribute(MIN_VALID_FROM, minValidFrom());
+        addFormModel(model, locale);
 
         return FORM_VIEW;
     }
@@ -96,17 +109,17 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @PostMapping
     public String createCompanyClosure(@ModelAttribute("companyClosure") CompanyClosureForm form, Errors errors,
-                                       Model model, RedirectAttributes redirectAttributes) {
+                                       Model model, RedirectAttributes redirectAttributes, Locale locale) {
 
         validator.validateNew(form, errors);
         if (errors.hasErrors()) {
-            model.addAttribute(MIN_VALID_FROM, minValidFrom());
+            addFormModel(model, locale);
             return FORM_VIEW;
         }
 
-        companyClosureService.createCompanyClosure(MonthDay.of(form.getMonth(), form.getDay()), form.getName(),
+        companyClosureService.createCompanyClosure(MonthDay.of(form.getMonth(), form.getDay()), form.getNameByLocale(),
             form.getDayLength(), form.getValidFrom());
-        redirectAttributes.addFlashAttribute("createdCompanyClosureName", form.getName());
+        redirectAttributes.addFlashAttribute("createdCompanyClosureName", form.nameFor(locale));
 
         return REDIRECT_TO_LIST;
     }
@@ -119,7 +132,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate today = LocalDate.now(clock);
 
         final CompanyClosureForm form = new CompanyClosureForm();
-        form.setName(entry.name(locale));
+        form.setNames(namesOf(entry));
         form.setDayLength(entry.dayLengthAt(today));
         form.setValidFrom(today);
         model.addAttribute("companyClosure", form);
@@ -143,11 +156,11 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         }
 
         companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom());
-        // an unchanged name keeps a translated name translated
-        if (!entry.name(locale).equals(form.getName())) {
-            companyClosureService.renameCompanyClosure(entry.monthDay(), form.getName());
+        // unchanged names keep the translations of a closure provided by the application
+        if (!form.getNameByLocale().equals(nameByLocaleOf(entry))) {
+            companyClosureService.renameCompanyClosure(entry.monthDay(), form.getNameByLocale());
         }
-        redirectAttributes.addFlashAttribute("updatedCompanyClosureName", form.getName());
+        redirectAttributes.addFlashAttribute("updatedCompanyClosureName", form.nameFor(locale));
 
         return REDIRECT_TO_LIST;
     }
@@ -156,7 +169,45 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("monthDay", entry.monthDay());
         model.addAttribute("monthDayPath", toPath(entry.monthDay()));
         model.addAttribute("companyClosureName", entry.name(locale));
+        addFormModel(model, locale);
+    }
+
+    private void addFormModel(Model model, Locale locale) {
         model.addAttribute(MIN_VALID_FROM, minValidFrom());
+        model.addAttribute("namePlaceholders", namePlaceholders(locale));
+    }
+
+    /**
+     * The hint is addressed to the person maintaining the names, so it is in their language. The name it shows is
+     * the one readers of the field's language see, so it is in the field's language, e.g. "Leer: „Company closure“".
+     *
+     * @return per supported language the hint which name is shown if the name is left empty
+     */
+    private Map<Locale, String> namePlaceholders(Locale locale) {
+        return Arrays.stream(SupportedLanguages.values())
+            .map(SupportedLanguages::getLocale)
+            .collect(toMap(identity(), language -> messageSource.getMessage("company-closure.data.names.placeholder",
+                new Object[]{messageSource.getMessage("absences.overview.company-closure", new Object[]{}, language)}, locale)));
+    }
+
+    /**
+     * @return one name per supported language: the names given by a user, the translations of a closure provided
+     * by the application that has not been renamed
+     */
+    private static List<CompanyClosureNameForm> namesOf(CompanyClosureEntry entry) {
+        final Map<Locale, String> nameByLocale = nameByLocaleOf(entry);
+        return Arrays.stream(SupportedLanguages.values())
+            .map(language -> new CompanyClosureNameForm(language.getLocale(), nameByLocale.getOrDefault(language.getLocale(), "")))
+            .toList();
+    }
+
+    private static Map<Locale, String> nameByLocaleOf(CompanyClosureEntry entry) {
+        if (!entry.names().isEmpty()) {
+            return entry.names();
+        }
+        return Arrays.stream(SupportedLanguages.values())
+            .map(SupportedLanguages::getLocale)
+            .collect(toMap(identity(), entry::name));
     }
 
     private LocalDate minValidFrom() {
