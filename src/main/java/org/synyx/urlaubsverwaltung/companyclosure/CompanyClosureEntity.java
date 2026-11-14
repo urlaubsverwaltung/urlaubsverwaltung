@@ -19,6 +19,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 /**
  * A company closure ("Betriebsruhe") on a yearly recurring day, e.g. 24.12. The closed portion of the day
  * is stored in {@link CompanyClosureVersionEntity}.
+ * <p>
+ * A closure on 29.02. exists in leap years only, other years have no closure for it.
  */
 @Entity(name = "company_closure")
 public class CompanyClosureEntity extends AbstractTenantAwareEntity {

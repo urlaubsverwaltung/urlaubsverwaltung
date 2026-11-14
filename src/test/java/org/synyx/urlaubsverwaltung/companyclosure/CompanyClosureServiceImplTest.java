@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
@@ -92,6 +93,21 @@ class CompanyClosureServiceImplTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Company closure");
+    }
+
+    @Test
+    void closureOnLeapDayExistsOnlyInLeapYears() {
+        final CompanyClosureEntity leapDay = new CompanyClosureEntity();
+        leapDay.setId(1L);
+        leapDay.setMonth(2);
+        leapDay.setDayOfMonth(29);
+        leapDay.setMessageKey("companyclosure.name.leapDay");
+        when(companyClosureRepository.findAll()).thenReturn(List.of(leapDay));
+        when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(FULL, null)));
+
+        assertThat(sut.getCompanyClosures(LocalDate.of(2027, JANUARY, 1), LocalDate.of(2029, DECEMBER, 31)))
+            .extracting(CompanyClosure::date)
+            .containsExactly(LocalDate.of(2028, FEBRUARY, 29));
     }
 
     @Test
