@@ -117,8 +117,9 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public List<SickNote> getForStatesSince(List<SickNoteStatus> sickNoteStatuses, LocalDate since) {
-        final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(sickNoteStatuses, since);
-        return sickNoteMapper.toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
+        return sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(sickNoteStatuses, since).stream()
+            .map(sickNoteMapper::toSickNote)
+            .toList();
     }
 
     @Override
@@ -136,8 +137,9 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since) {
-        final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(sickNoteStatuses, persons, since);
-        return sickNoteMapper.toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
+        return sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(sickNoteStatuses, persons, since).stream()
+            .map(sickNoteMapper::toSickNote)
+            .toList();
     }
 
     @Override

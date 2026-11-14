@@ -481,8 +481,7 @@ class SickNoteServiceImplTest {
             .thenReturn(List.of(entity));
 
         final SickNote sickNote = SickNote.builder().build();
-        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity), new DateRange(since, now)))
-            .thenReturn(List.of(sickNote));
+        when(sickNoteMapper.toSickNote(entity)).thenReturn(sickNote);
 
         final List<SickNote> actual = sut.getForStatesSince(List.of(ACTIVE), since);
         assertThat(actual).hasSize(1).first().isSameAs(sickNote);
@@ -552,8 +551,7 @@ class SickNoteServiceImplTest {
             .thenReturn(List.of(entity));
 
         final SickNote sickNote = SickNote.builder().build();
-        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity), new DateRange(since, now)))
-            .thenReturn(List.of(sickNote));
+        when(sickNoteMapper.toSickNote(entity)).thenReturn(sickNote);
 
         final List<SickNote> sickNotes = sut.getForStatesAndPersonSince(openSickNoteStatuses, persons, since);
         assertThat(sickNotes).hasSize(1).first().isSameAs(sickNote);

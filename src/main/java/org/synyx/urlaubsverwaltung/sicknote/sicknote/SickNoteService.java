@@ -60,7 +60,7 @@ public interface SickNoteService {
     /**
      * Get all {@link SickNote} with specific states since
      *
-     * @return all {@link SickNote} with specific states since
+     * @return all {@link SickNote} with specific states since, without work days
      */
     List<SickNote> getForStatesSince(List<SickNoteStatus> sickNoteStatuses, LocalDate since);
 
@@ -72,9 +72,9 @@ public interface SickNoteService {
     List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
 
     /**
-     * Get all {@link SickNote} with specific states and persons
+     * Get all {@link SickNote} with specific states and persons since
      *
-     * @return all {@link SickNote} with specific states and persons
+     * @return all {@link SickNote} with specific states and persons since, without work days
      */
     List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since);
 
