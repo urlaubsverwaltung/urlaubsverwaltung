@@ -69,13 +69,14 @@ class ApplicationForLeaveExportService {
      * @param person to ask for the export
      * @param from   a specific date
      * @param to     a specific date
+     * @param departmentIds optional departments to restrict the exported persons to, empty for all accessible persons
      * @return list of all {@link ApplicationForLeaveExport} that the person can access
      */
-    Page<ApplicationForLeaveExport> getAll(Person person, LocalDate from, LocalDate to, PageableSearchQuery pageableSearchQuery) {
+    Page<ApplicationForLeaveExport> getAll(Person person, LocalDate from, LocalDate to, PageableSearchQuery pageableSearchQuery, List<Long> departmentIds) {
 
         final Pageable pageable = pageableSearchQuery.getPageable();
 
-        final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
+        final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery, departmentIds);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
         final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
 
@@ -135,7 +136,7 @@ class ApplicationForLeaveExportService {
         return List.of();
     }
 
-    private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
+    private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery, List<Long> departmentIds) {
 
         PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
 
@@ -145,6 +146,10 @@ class ApplicationForLeaveExportService {
             LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
             final Pageable pageable = pageableSearchQuery.getPageable();
             pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
+
+        if (!departmentIds.isEmpty()) {
+            return departmentService.getManagedActiveMembersOfPersonAndDepartments(person, departmentIds, pageRequest, pageableSearchQuery.getQuery());
         }
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {

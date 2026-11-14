@@ -23,6 +23,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
@@ -62,6 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
@@ -87,6 +91,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     private DataWebProperties dataWebProperties;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private DepartmentService departmentService;
 
     final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
 
@@ -100,7 +106,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
             applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, personSearchUiFragmentSupplier,
-            dataWebProperties,  messageSource, clock);
+            dataWebProperties, messageSource, departmentService, clock);
     }
 
     @Nested
@@ -190,7 +196,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of()));
 
         final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").id(1L).build());
@@ -251,7 +257,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addAllowedVacationDays(vacationType, BigDecimal.valueOf(4));
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, JANUARY, 1)));
@@ -306,7 +312,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("max")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("max"), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)
@@ -317,6 +323,135 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(statistics).hasSize(1);
         assertThat(statistics.getFirst()).isInstanceOf(ApplicationForLeaveStatisticsDto.class);
         assertThat(statistics.getFirst().getFirstName()).isEqualTo("Max");
+    }
+
+    @Nested
+    class DepartmentPicker {
+
+        private Person signedInUser;
+        private Department managed;
+        private Department alsoManaged;
+        private Department onlyMember;
+
+        @BeforeEach
+        void setUp() {
+            signedInUser = new Person();
+            signedInUser.setId(1L);
+            when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+            final Person active = new Person();
+            active.setId(2L);
+            active.setPermissions(List.of(USER));
+            final Person inactive = new Person();
+            inactive.setId(3L);
+            inactive.setPermissions(List.of());
+
+            managed = department(10L, "Sales, North", List.of(active, inactive));
+            alsoManaged = department(11L, "Marketing", List.of(active));
+            onlyMember = department(12L, "Development", List.of(active));
+        }
+
+        private void givenManagedDepartments() {
+            when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(onlyMember, alsoManaged, managed));
+            when(departmentService.isPersonAllowedToManageDepartment(signedInUser, onlyMember)).thenReturn(false);
+            when(departmentService.isPersonAllowedToManageDepartment(signedInUser, alsoManaged)).thenReturn(true);
+            when(departmentService.isPersonAllowedToManageDepartment(signedInUser, managed)).thenReturn(true);
+            when(applicationForLeaveStatisticsService.countRelevantPersons(signedInUser)).thenReturn(7L);
+        }
+
+        @Test
+        void showsAllPersonsTheSignedInUserIsResponsibleForByDefault() throws Exception {
+
+            givenManagedDepartments();
+            when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq(""), eq(List.of())))
+                .thenReturn(new PageImpl<>(List.of()));
+
+            perform(get(ALL_STATS_URL))
+                .andExpect(model().attribute("selectedDepartments", List.of()))
+                .andExpect(model().attribute("departmentPicker", new DepartmentPickerDto(List.of(
+                    new DepartmentPickerDto.Option("Marketing", 1, false),
+                    new DepartmentPickerDto.Option("Sales, North", 1, false)
+                ), true, 7)));
+        }
+
+        @Test
+        void showsMembersOfTheSelectedManagedDepartmentsOnly() throws Exception {
+
+            givenManagedDepartments();
+            when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq(""), eq(List.of(10L))))
+                .thenReturn(new PageImpl<>(List.of()));
+
+            final ResultActions resultActions = perform(get(ALL_STATS_URL)
+                .param("department", "Sales, North")
+                .param("department", "Development"));
+
+            resultActions
+                .andExpect(model().attribute("selectedDepartments", List.of("Sales, North")))
+                .andExpect(model().attribute("departmentPicker", new DepartmentPickerDto(List.of(
+                    new DepartmentPickerDto.Option("Marketing", 1, false),
+                    new DepartmentPickerDto.Option("Sales, North", 1, true)
+                ), false, 7)));
+
+            final PaginationDto<?> statisticsPagination = (PaginationDto<?>) resultActions.andReturn().getModelAndView().getModel().get("statisticsPagination");
+            assertThat(statisticsPagination.hrefForPage(0)).contains("department=Sales%2C+North");
+        }
+
+        @Test
+        void selectsTheSingleGivenDepartmentEvenWithACommaInItsName() throws Exception {
+
+            givenManagedDepartments();
+            when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq(""), eq(List.of(10L))))
+                .thenReturn(new PageImpl<>(List.of()));
+
+            perform(get(ALL_STATS_URL).param("department", "Sales, North"))
+                .andExpect(model().attribute("selectedDepartments", List.of("Sales, North")));
+        }
+
+        @Test
+        void downloadsStatisticsOfTheSelectedDepartments() throws Exception {
+
+            when(departmentService.getDepartmentByName("Sales, North")).thenReturn(Optional.of(managed));
+            when(departmentService.getDepartmentByName("unknown")).thenReturn(Optional.empty());
+
+            final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of());
+            when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq(""), eq(List.of(10L))))
+                .thenReturn(new PageImpl<>(List.of(statistics)));
+
+            final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+            when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), any(Locale.class), eq(List.of(statistics)))).thenReturn(csvFile);
+
+            perform(get(ALL_STATS_URL + "/download")
+                .param("department", "Sales, North")
+                .param("department", "unknown"))
+                .andExpect(status().isOk());
+        }
+
+        private static Department department(Long id, String name, List<Person> members) {
+            final Department department = new Department();
+            department.setId(id);
+            department.setName(name);
+            department.setMembers(members);
+            return department;
+        }
+    }
+
+    @Test
+    void hidesTheDepartmentPickerWhenTheSignedInUserManagesNoDepartment() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Department department = new Department();
+        department.setName("Development");
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(false);
+
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq(""), eq(List.of())))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        perform(get(ALL_STATS_URL).param("department", "Development"))
+            .andExpect(model().attributeDoesNotExist("departmentPicker"));
     }
 
     @ParameterizedTest
@@ -336,7 +471,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(ALL_STATS_URL)
@@ -368,7 +503,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(ALL_STATS_URL)
@@ -398,7 +533,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(ALL_STATS_URL)
@@ -430,7 +565,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(ALL_STATS_URL)
@@ -457,7 +592,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)
@@ -498,7 +633,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of()));
 
         perform(get("/web/application/statistics/download")
@@ -527,7 +662,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -562,7 +697,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PersonPageRequest pageRequest = PersonPageRequest.of(2, 50, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -599,7 +734,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, Integer.MAX_VALUE, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -635,7 +770,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, Integer.MAX_VALUE, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, "", List.of()))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -670,7 +805,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl));
@@ -698,7 +833,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl));
@@ -742,7 +877,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl));
@@ -802,7 +937,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)
@@ -834,7 +969,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)
@@ -866,7 +1001,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by("totalAllowedVacationDays"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)
@@ -898,7 +1033,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "leftVacationDaysForYear"));
-        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq(""), eq(List.of())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get(givenRequestUrl)

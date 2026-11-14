@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.MessageSource;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentPickerDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -43,6 +47,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -73,6 +78,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
     private final PersonSearchUiFragmentSupplier personSearchTemplateSupplier;
     private final DataWebProperties dataWebProperties;
     private final MessageSource messageSource;
+    private final DepartmentService departmentService;
     private final Clock clock;
 
     ApplicationForLeaveStatisticsViewController(
@@ -80,7 +86,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware,
         PersonSearchUiFragmentSupplier personSearchTemplateSupplier,
-        DataWebProperties dataWebProperties, MessageSource messageSource, Clock clock
+        DataWebProperties dataWebProperties, MessageSource messageSource, DepartmentService departmentService, Clock clock
     ) {
         this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
@@ -90,6 +96,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         this.personSearchTemplateSupplier = personSearchTemplateSupplier;
         this.dataWebProperties = dataWebProperties;
         this.messageSource = messageSource;
+        this.departmentService = departmentService;
         this.clock = clock;
     }
 
@@ -111,13 +118,34 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
-        Model model, Locale locale
+        Model model, Locale locale, HttpServletRequest request
     ) {
+        final List<String> rawSelectedDepartments = departmentNames(request);
+        final Person signedInUser = personService.getSignedInUser();
+
+        // departments the signed-in user is merely a member of are not offered - their members are not managed
+        final List<Department> managedDepartments = departmentService.getDepartmentsPersonHasAccessTo(signedInUser).stream()
+            .filter(department -> departmentService.isPersonAllowedToManageDepartment(signedInUser, department))
+            .toList();
+        final List<Department> selectedDepartments = managedDepartments.stream()
+            .filter(department -> rawSelectedDepartments.contains(department.getName()))
+            .toList();
+        final List<String> selectedDepartmentNames = selectedDepartments.stream().map(Department::getName).toList();
+        final List<Long> selectedDepartmentIds = selectedDepartments.stream().map(Department::getId).toList();
+        model.addAttribute("selectedDepartments", selectedDepartmentNames);
+        if (!managedDepartments.isEmpty()) {
+            final int allPersonsCount = (int) applicationForLeaveStatisticsService.countRelevantPersons(signedInUser);
+            model.addAttribute("departmentPicker",
+                DepartmentPickerDto.of(managedDepartments, selectedDepartmentNames, selectedDepartmentNames.isEmpty(), allPersonsCount));
+        }
+
         final FilterPeriod period = toFilterPeriod(from, to, locale);
-        final String pageLinkPrefix = buildPageLinkPrefix(pageable, List.of(
+        final List<QueryParam> pageLinkParameters = new ArrayList<>(List.of(
             new QueryParam("from", period.getStartDateIsoValue()),
             new QueryParam("to", period.getEndDateIsoValue())
         ));
+        selectedDepartmentNames.forEach(name -> pageLinkParameters.add(new QueryParam("department", encode(name, UTF_8))));
+        final String pageLinkPrefix = buildPageLinkPrefix(pageable, pageLinkParameters);
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
         model.addAttribute("sortSelect", sortSelectDto);
@@ -137,10 +165,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
             return "application/application-statistics";
         }
 
-        final Person signedInUser = personService.getSignedInUser();
-
         final Page<ApplicationForLeaveStatistics> personsPage =
-            getStatisticsForPageable(pageable, query, signedInUser, period, false);
+            getStatisticsForPageable(pageable, query, selectedDepartmentIds, signedInUser, period, false);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).toList();
@@ -184,7 +210,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
         @RequestParam(value = SEARCH_PARAM, required = false, defaultValue = "") String query,
-        Locale locale, HttpServletResponse response
+        Locale locale, HttpServletRequest request, HttpServletResponse response
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
@@ -195,7 +221,14 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Page<ApplicationForLeaveStatistics> statisticsPage = getStatisticsForPageable(pageable, query, signedInUser, period, allElements);
+        // the statistics service skips departments the signed-in user is not allowed to manage
+        final List<Long> departmentIds = departmentNames(request).stream()
+            .map(departmentService::getDepartmentByName)
+            .flatMap(Optional::stream)
+            .map(Department::getId)
+            .toList();
+
+        final Page<ApplicationForLeaveStatistics> statisticsPage = getStatisticsForPageable(pageable, query, departmentIds, signedInUser, period, allElements);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
 
         final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, locale, statistics);
@@ -207,7 +240,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         return ResponseEntity.status(OK).headers(headers).body(csvFile.resource());
     }
 
-    private Page<ApplicationForLeaveStatistics> getStatisticsForPageable(Pageable pageable, String query, Person signedInUser, FilterPeriod period, boolean allElements) {
+    private Page<ApplicationForLeaveStatistics> getStatisticsForPageable(Pageable pageable, String query, List<Long> departmentIds, Person signedInUser, FilterPeriod period, boolean allElements) {
 
         final String adaptedQuery = allElements ? "" : query;
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
@@ -215,14 +248,20 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         // sorting by persons AND statistics is not supported by the UI. either person OR statistics.
         if (personPageRequest.getSort().isSorted()) {
             final PersonPageRequest request = allElements ? PersonPageRequest.of(0, MAX_VALUE, personPageRequest.getSort()) : personPageRequest;
-            return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery);
+            return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery, departmentIds);
         }
 
         final ApplicationForLeaveStatisticsPageRequest request = allElements
             ? ApplicationForLeaveStatisticsPageRequest.of(0, MAX_VALUE, pageable.getSort())
             : ApplicationForLeaveStatisticsPageRequest.of(pageable);
 
-        return applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(signedInUser, period, request, adaptedQuery);
+        return applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(signedInUser, period, request, adaptedQuery, departmentIds);
+    }
+
+    private static List<String> departmentNames(HttpServletRequest request) {
+        // not bound with @RequestParam List<String>: a single value would be split at its commas, like "Sales, North"
+        final String[] values = request.getParameterValues("department");
+        return values == null ? List.of() : List.of(values);
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {
