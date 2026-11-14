@@ -2838,8 +2838,6 @@
       "sunday": "ZERO"
     },
     "publicHolidaysSettings": {
-      "workingDurationForChristmasEve": null,
-      "workingDurationForNewYearsEve": null,
       "federalState": "GERMANY_BADEN_WUERTTEMBERG"
     },
     "overTimeSettings": {

@@ -15,12 +15,12 @@ class PublicHolidaysSettingsDTOTest {
         publicHolidaysSettings.setFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final PublicHolidaysSettingsDTO dto = PublicHolidaysSettingsDTO.of(publicHolidaysSettings);
-        assertThat(dto).isEqualTo(new PublicHolidaysSettingsDTO(null, null, GERMANY_BADEN_WUERTTEMBERG));
+        assertThat(dto).isEqualTo(new PublicHolidaysSettingsDTO(GERMANY_BADEN_WUERTTEMBERG));
     }
 
     @Test
     void happyPathDTOToPublicHolidaysSettings() {
-        PublicHolidaysSettingsDTO dto = new PublicHolidaysSettingsDTO(null, null, FederalStateDTO.GERMANY_RHEINLAND_PFALZ);
+        PublicHolidaysSettingsDTO dto = new PublicHolidaysSettingsDTO(FederalStateDTO.GERMANY_RHEINLAND_PFALZ);
 
         final PublicHolidaysSettings publicHolidaysSettings = dto.toPublicHolidaysSettings();
         assertThat(publicHolidaysSettings.getFederalState()).isEqualTo(FederalState.GERMANY_RHEINLAND_PFALZ);
