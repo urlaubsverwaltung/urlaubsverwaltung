@@ -52,10 +52,10 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresCompanyClosures() {
-        final var christmasEve = new CompanyClosureDTO(12, 24, "Heiligabend", List.of(
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "Heiligabend", List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.NOON, null),
             new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1))));
-        final var newYearsEve = new CompanyClosureDTO(12, 31, "Silvester", List.of(
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "Silvester", List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null)));
 
         sut.restore(List.of(christmasEve, newYearsEve), null);
@@ -79,7 +79,7 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresFromLegacyPublicHolidaySettings() {
-        final var settings = new PublicHolidaysSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
+        final PublicHolidaysSettingsDTO settings = new PublicHolidaysSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
 
         sut.restore(null, settings);
 
@@ -116,7 +116,7 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresDefaultsWhenNothingIsKnown() {
-        final var settings = new PublicHolidaysSettingsDTO(null, null, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
+        final PublicHolidaysSettingsDTO settings = new PublicHolidaysSettingsDTO(null, null, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
 
         sut.restore(null, settings);
 

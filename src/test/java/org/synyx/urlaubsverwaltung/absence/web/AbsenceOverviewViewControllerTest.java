@@ -4110,7 +4110,7 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate lastOfMonth = LocalDate.of(2026, DECEMBER, 31);
         final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
 
-        final var person = new Person();
+        final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
         person.setFirstName("Bruce");
@@ -4118,7 +4118,7 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
+        final Department department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
@@ -4168,7 +4168,7 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate lastOfMonth = LocalDate.of(2026, DECEMBER, 31);
         final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
 
-        final var person = new Person();
+        final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
         person.setFirstName("Bruce");
@@ -4176,7 +4176,7 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
+        final Department department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 

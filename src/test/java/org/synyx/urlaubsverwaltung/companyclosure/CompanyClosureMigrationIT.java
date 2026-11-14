@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -100,7 +102,7 @@ class CompanyClosureMigrationIT extends SingleTenantTestContainersBase {
         final Long closureId = companyClosureRepository.findAll().stream()
             .filter(closure -> closure.getDayOfMonth() == dayOfMonth)
             .findFirst().orElseThrow().getId();
-        final var versions = companyClosureVersionRepository.findAll().stream()
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll().stream()
             .filter(version -> version.getCompanyClosureId().equals(closureId))
             .toList();
         assertThat(versions).hasSize(1);

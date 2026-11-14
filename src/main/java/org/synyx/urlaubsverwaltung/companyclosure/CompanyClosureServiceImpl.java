@@ -50,9 +50,9 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         DateLimits.requireCalculableDuration(new DateRange(from, to));
 
         // only closure days within the range need their versions, most ranges contain none
-        final var candidates = new ArrayList<Map.Entry<CompanyClosureEntity, LocalDate>>();
+        final List<Map.Entry<CompanyClosureEntity, LocalDate>> candidates = new ArrayList<>();
         for (CompanyClosureEntity entity : companyClosureRepository.findAll()) {
-            final var monthDay = MonthDay.of(entity.getMonth(), entity.getDayOfMonth());
+            final MonthDay monthDay = MonthDay.of(entity.getMonth(), entity.getDayOfMonth());
             for (int year = from.getYear(); year <= to.getYear(); year++) {
                 if (!monthDay.isValidYear(year)) {
                     continue;
@@ -67,9 +67,9 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             return List.of();
         }
 
-        final var versions = companyClosureVersionRepository.findAll();
-        final var closures = new ArrayList<CompanyClosure>();
-        for (var candidate : candidates) {
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll();
+        final List<CompanyClosure> closures = new ArrayList<>();
+        for (Map.Entry<CompanyClosureEntity, LocalDate> candidate : candidates) {
             final CompanyClosureEntity entity = candidate.getKey();
             final LocalDate date = candidate.getValue();
             versionValidAt(versions, entity.getId(), date)
@@ -93,7 +93,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
 
-        final var versions = companyClosureVersionRepository.findAll();
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll();
         final Optional<CompanyClosureVersionEntity> sameValidFrom = versions.stream()
             .filter(version -> version.getCompanyClosureId().equals(entity.getId()) && validFrom.equals(version.getValidFrom()))
             .findFirst();
@@ -127,13 +127,13 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     }
 
     private void createDefault(MonthDay monthDay, String name) {
-        final var entity = new CompanyClosureEntity();
+        final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setMonth(monthDay.getMonthValue());
         entity.setDayOfMonth(monthDay.getDayOfMonth());
         entity.setName(name);
-        final var saved = companyClosureRepository.save(entity);
+        final CompanyClosureEntity saved = companyClosureRepository.save(entity);
 
-        final var version = new CompanyClosureVersionEntity();
+        final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
         version.setCompanyClosureId(saved.getId());
         version.setDayLength(NOON);
         companyClosureVersionRepository.save(version);

@@ -31,8 +31,8 @@ class CompanyClosureDataCollectionServiceTest {
 
     @Test
     void collectsAllVersions() {
-        final var christmasEve = closure(1L, 24, "Heiligabend");
-        final var newYearsEve = closure(2L, 31, "Silvester");
+        final CompanyClosureEntity christmasEve = closure(1L, 24, "Heiligabend");
+        final CompanyClosureEntity newYearsEve = closure(2L, 31, "Silvester");
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
         when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
             version(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
@@ -50,7 +50,7 @@ class CompanyClosureDataCollectionServiceTest {
     }
 
     private static CompanyClosureEntity closure(Long id, int dayOfMonth, String name) {
-        final var entity = new CompanyClosureEntity();
+        final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setId(id);
         entity.setMonth(12);
         entity.setDayOfMonth(dayOfMonth);
@@ -59,7 +59,7 @@ class CompanyClosureDataCollectionServiceTest {
     }
 
     private static CompanyClosureVersionEntity version(Long closureId, DayLength dayLength, LocalDate validFrom) {
-        final var entity = new CompanyClosureVersionEntity();
+        final CompanyClosureVersionEntity entity = new CompanyClosureVersionEntity();
         entity.setCompanyClosureId(closureId);
         entity.setDayLength(dayLength);
         entity.setValidFrom(validFrom);

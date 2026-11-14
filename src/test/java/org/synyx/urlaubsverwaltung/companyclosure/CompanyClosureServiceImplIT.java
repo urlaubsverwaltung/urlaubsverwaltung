@@ -36,8 +36,8 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
 
         sut.changeCompanyClosure(MonthDay.of(DECEMBER, 24), FULL, year.atDay(1));
 
-        final var christmasEve = year.atMonthDay(MonthDay.of(DECEMBER, 24));
-        final var lastYearsChristmasEve = year.minusYears(1).atMonthDay(MonthDay.of(DECEMBER, 24));
+        final LocalDate christmasEve = year.atMonthDay(MonthDay.of(DECEMBER, 24));
+        final LocalDate lastYearsChristmasEve = year.minusYears(1).atMonthDay(MonthDay.of(DECEMBER, 24));
         assertThat(sut.getCompanyClosures(christmasEve, christmasEve)).extracting(CompanyClosure::dayLength).containsExactly(FULL);
         assertThat(sut.getCompanyClosures(lastYearsChristmasEve, lastYearsChristmasEve)).extracting(CompanyClosure::dayLength).containsExactly(NOON);
     }

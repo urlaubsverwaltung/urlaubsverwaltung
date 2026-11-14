@@ -91,14 +91,14 @@ class CompanyClosureServiceImplTest {
 
     @Test
     void rejectsTooLongRange() {
-        final var from = LocalDate.of(1000, JANUARY, 1);
-        final var to = LocalDate.of(2026, JANUARY, 1);
+        final LocalDate from = LocalDate.of(1000, JANUARY, 1);
+        final LocalDate to = LocalDate.of(2026, JANUARY, 1);
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getCompanyClosures(from, to));
     }
 
     @Test
     void rejectsValidFromBeforeCurrentYear() {
-        final var validFrom = LocalDate.of(2025, DECEMBER, 31);
+        final LocalDate validFrom = LocalDate.of(2025, DECEMBER, 31);
         assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom));
         verifyNoInteractions(companyClosureVersionRepository, applicationEventPublisher);
     }
@@ -115,8 +115,8 @@ class CompanyClosureServiceImplTest {
 
     @Test
     void replacesVersionWithSameValidFrom() {
-        final var validFrom = LocalDate.of(2026, NOVEMBER, 6);
-        final var existing = version(NOON, validFrom);
+        final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
+        final CompanyClosureVersionEntity existing = version(NOON, validFrom);
         givenChristmasEve(version(NOON, null), existing);
 
         sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom);
@@ -139,8 +139,8 @@ class CompanyClosureServiceImplTest {
     @Test
     void rejectsUnknownMonthDay() {
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
-        final var labourDay = MonthDay.of(MAY, 1);
-        final var validFrom = LocalDate.of(2026, NOVEMBER, 6);
+        final MonthDay labourDay = MonthDay.of(MAY, 1);
+        final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(labourDay, FULL, validFrom));
         verify(companyClosureVersionRepository, never()).save(any());
@@ -175,7 +175,7 @@ class CompanyClosureServiceImplTest {
     }
 
     private static CompanyClosureEntity christmasEveEntity() {
-        final var entity = new CompanyClosureEntity();
+        final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setId(1L);
         entity.setMonth(12);
         entity.setDayOfMonth(24);
@@ -184,7 +184,7 @@ class CompanyClosureServiceImplTest {
     }
 
     private static CompanyClosureVersionEntity version(DayLength dayLength, LocalDate validFrom) {
-        final var version = new CompanyClosureVersionEntity();
+        final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
         version.setCompanyClosureId(1L);
         version.setDayLength(dayLength);
         version.setValidFrom(validFrom);

@@ -597,7 +597,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void companyClosureFullMakesBothHalvesCompanyClosure() {
-        final var actual = christmasEve(FULL, ZERO, FULL);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(FULL, ZERO, FULL);
         assertThat(actual.dayLength()).isEqualTo(ZERO);
         assertThat(actual.morning()).isEqualTo(COMPANY_CLOSURE);
         assertThat(actual.noon()).isEqualTo(COMPANY_CLOSURE);
@@ -605,7 +605,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void companyClosureNoonKeepsMorningWorkday() {
-        final var actual = christmasEve(FULL, ZERO, DayLength.NOON);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(FULL, ZERO, DayLength.NOON);
         assertThat(actual.dayLength()).isEqualTo(MORNING);
         assertThat(actual.morning()).isEqualTo(WORKDAY);
         assertThat(actual.noon()).isEqualTo(COMPANY_CLOSURE);
@@ -613,7 +613,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void closureOnNonWorkingHalfChangesNothing() {
-        final var actual = christmasEve(MORNING, ZERO, DayLength.NOON);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(MORNING, ZERO, DayLength.NOON);
         assertThat(actual.dayLength()).isEqualTo(MORNING);
         assertThat(actual.morning()).isEqualTo(WORKDAY);
         assertThat(actual.noon()).isEqualTo(NO_WORKDAY);
@@ -621,7 +621,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void bothOnSameDayPublicHolidayWinsPerHalf() {
-        final var actual = christmasEve(FULL, MORNING, FULL);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(FULL, MORNING, FULL);
         assertThat(actual.dayLength()).isEqualTo(ZERO);
         assertThat(actual.morning()).isEqualTo(PUBLIC_HOLIDAY);
         assertThat(actual.noon()).isEqualTo(COMPANY_CLOSURE);
