@@ -142,7 +142,7 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
 
         final List<SickNoteDto> sortedSickNotes = sickNotes.stream()
             .sorted(comparing(SickNote::getStartDate).reversed())
-            .map(sickNote -> mapToSickNoteDtos(sickNote, permissions))
+            .map(sickNote -> mapToSickNoteDtos(sickNote, permissions, from, to))
             .toList();
         model.addAttribute("sickNotes", sortedSickNotes);
 
@@ -150,15 +150,16 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("sickDaysOverview", yearlySickDaysSummary);
     }
 
-    private @NonNull SickNoteDto mapToSickNoteDtos(SickNote sickNote, SickNotePermissions permissions) {
+    // only the work days within the shown year, a sick note may reach into the year before or after
+    private @NonNull SickNoteDto mapToSickNoteDtos(SickNote sickNote, SickNotePermissions permissions, LocalDate from, LocalDate to) {
         return new SickNoteDto(
             sickNote.getId(),
             sickNote.getStartDate(),
             sickNote.getEndDate(),
             sickNote.getDayLength(),
             sickNote.isAubPresent(),
-            sickNote.getWorkDays(),
-            sickNote.getWorkDaysWithAub(),
+            sickNote.getWorkDays(from, to),
+            sickNote.getWorkDaysWithAub(from, to),
             sickNote.getStatus(),
             sickNote.getSickNoteType(),
             permissions.isAllowedToEdit(sickNote),

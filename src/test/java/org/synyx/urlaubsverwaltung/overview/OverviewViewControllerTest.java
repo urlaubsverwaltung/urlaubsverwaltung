@@ -44,6 +44,7 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimePermissionEvaluator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -104,6 +105,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
 
 @ExtendWith(MockitoExtension.class)
 class OverviewViewControllerTest {
@@ -1230,6 +1232,48 @@ class OverviewViewControllerTest {
                 tuple(SickNoteStatus.ACTIVE, true, true),
                 tuple(SickNoteStatus.CANCELLED, false, false)
             );
+    }
+
+    @Test
+    void ensureSickNotesOverviewShowsOnlyTheWorkDaysWithinTheYearOfASickNoteReachingOutOfIt() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        person.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        stubSickNoteWorkDaysCount(BigDecimal.valueOf(7));
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+
+        // monday to friday of the next week, 10 work days, 7 of them in 2026
+        final LocalDate startDate = LocalDate.parse("2025-12-29");
+        final LocalDate endDate = LocalDate.parse("2026-01-09");
+        final SickNote sickNote = SickNote.builder()
+            .startDate(startDate)
+            .endDate(endDate)
+            .aubStartDate(startDate)
+            .aubEndDate(endDate)
+            .dayLength(DayLength.FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(startDate, endDate))
+            .status(SickNoteStatus.ACTIVE)
+            .sickNoteType(sickNoteType)
+            .person(person)
+            .build();
+
+        when(sickNoteService.getByPersonAndPeriod(person, LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"))).thenReturn(List.of(sickNote));
+
+        final ResultActions actions = perform(get("/web/person/1/overview").param("year", "2026"));
+        final ModelAndView mav = actions.andReturn().getModelAndView();
+        assertThat(mav).isNotNull();
+
+        final SickNotesOverviewDTO sickNotesOverview = (SickNotesOverviewDTO) mav.getModel().get("sickNotesOverview");
+        assertThat(sickNotesOverview.sickNotes()).singleElement().satisfies(sickNoteDto -> {
+            assertThat(sickNoteDto.workDays()).isEqualByComparingTo("7");
+            assertThat(sickNoteDto.workDaysWithAub()).isEqualByComparingTo("7");
+        });
     }
 
     // APPLICATION OVERVIEW COUNT TESTS

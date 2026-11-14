@@ -69,12 +69,12 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
                 sickNoteCsvRow[4] = sickNote.getStartDate().format(dateTimeFormatter);
                 sickNoteCsvRow[5] = sickNote.getEndDate().format(dateTimeFormatter);
                 sickNoteCsvRow[6] = getTranslation(locale, sickNote.getDayLength().name());
-                sickNoteCsvRow[7] = decimalFormat.format(sickNote.getWorkDays());
+                sickNoteCsvRow[7] = decimalFormat.format(sickNote.getWorkDays(period.startDate(), period.endDate()));
                 sickNoteCsvRow[8] = getTranslation(locale, sickNote.getSickNoteType().getMessageKey());
                 if (sickNote.isAubPresent()) {
                     sickNoteCsvRow[9] = sickNote.getAubStartDate().format(dateTimeFormatter);
                     sickNoteCsvRow[10] = sickNote.getAubEndDate().format(dateTimeFormatter);
-                    sickNoteCsvRow[11] = decimalFormat.format(sickNote.getWorkDaysWithAub());
+                    sickNoteCsvRow[11] = decimalFormat.format(sickNote.getWorkDaysWithAub(period.startDate(), period.endDate()));
                 }
                 csvWriter.writeNext(sickNoteCsvRow);
             })

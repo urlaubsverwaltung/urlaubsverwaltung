@@ -334,7 +334,7 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         final SickNotePermissions permissions = sickNotePermissionEvaluator.of(signedInUser, person);
 
         model.addAttribute("sickNotesOverview", new SickNotesOverviewDTO(
-            mapToSickNoteDtos(shownSickNotes, permissions),
+            mapToSickNoteDtos(shownSickNotes, permissions, from, to),
             new SickDaysSummaryDto(sickNotes, workDaysCountService, from, to),
             permissions.isAllowedToAdd() || permissions.isAllowedToSubmit(),
             permissions.isAllowedToView(),
@@ -343,7 +343,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
         ));
     }
 
-    private @NonNull List<SickNoteDto> mapToSickNoteDtos(List<SickNote> shownSickNotes, SickNotePermissions permissions) {
+    // only the work days within the shown year, a sick note may reach into the year before or after
+    private @NonNull List<SickNoteDto> mapToSickNoteDtos(List<SickNote> shownSickNotes, SickNotePermissions permissions, LocalDate from, LocalDate to) {
         return shownSickNotes.stream()
             .map(sickNote -> new SickNoteDto(
                 sickNote.getId(),
@@ -351,8 +352,8 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
                 sickNote.getEndDate(),
                 sickNote.getDayLength(),
                 sickNote.isAubPresent(),
-                sickNote.getWorkDays(),
-                sickNote.getWorkDaysWithAub(),
+                sickNote.getWorkDays(from, to),
+                sickNote.getWorkDaysWithAub(from, to),
                 sickNote.getStatus(),
                 sickNote.getSickNoteType(),
                 permissions.isAllowedToEdit(sickNote),

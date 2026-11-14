@@ -181,6 +181,43 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "2022/01/01", "2022/01/01", "{NOON}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
     }
 
+    @Test
+    void writeOnlyTheWorkDaysWithinThePeriodOfASickNoteReachingOutOfIt() {
+
+        final Locale locale = JAPANESE;
+        final FilterPeriod period = new FilterPeriod(LocalDate.parse("2026-01-01"), LocalDate.parse("2026-12-31"));
+
+        final Person person = new Person();
+        person.setFirstName("personOneFirstName");
+        person.setLastName("personOneLastName");
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("application.data.sicknotetype.sicknote");
+
+        // monday to friday of the next week, 10 work days, 7 of them in 2026
+        final LocalDate startDate = LocalDate.parse("2025-12-29");
+        final LocalDate endDate = LocalDate.parse("2026-01-09");
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(startDate)
+            .endDate(endDate)
+            .aubStartDate(startDate)
+            .aubEndDate(endDate)
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(startDate, endDate))
+            .sickNoteType(sickNoteType)
+            .build();
+
+        final SickDaysDetailedStatistics statistics = new SickDaysDetailedStatistics("42", person, List.of(sickNote), List.of("Here"));
+
+        when(messageSource.getMessage(any(String.class), any(), eq(locale))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        final CSVWriter csvWriter = mock(CSVWriter.class);
+        sut.write(period, locale, List.of(statistics), csvWriter);
+
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here", "2025/12/29", "2026/01/09", "FULL", "7", "application.data.sicknotetype.sicknote", "2025/12/29", "2026/01/09", "7"});
+    }
+
     private void addMessageSource(String key, Locale locale) {
         when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn("{%s}".formatted(key));
     }

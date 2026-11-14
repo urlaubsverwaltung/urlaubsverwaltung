@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.me;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,6 +38,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import static java.math.BigDecimal.ONE;
+import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
@@ -45,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
@@ -65,6 +68,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.me.SickNotesViewController.MY
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
 
 @ExtendWith(MockitoExtension.class)
 class SickNotesViewControllerTest {
@@ -221,6 +225,47 @@ class SickNotesViewControllerTest {
             .andExpect(model().attributeExists("sickDaysOverview"))
             .andExpect(model().attribute("sickNotes",
                 hasItem(hasProperty("id", is(42L)))));
+    }
+
+    @Test
+    void showMySickNotesWithOnlyTheWorkDaysWithinTheYearOfASickNoteReachingOutOfIt() throws Exception {
+        final Person person = new Person();
+        person.setId(6L);
+
+        when(personService.getPersonByID(6L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("key");
+
+        // monday to friday of the next week, 10 work days, 7 of them in 2026
+        final LocalDate startDate = LocalDate.of(2025, DECEMBER, 29);
+        final LocalDate endDate = LocalDate.of(2026, JANUARY, 9);
+        final SickNote sickNote = SickNote.builder()
+            .id(42L)
+            .person(person)
+            .startDate(startDate)
+            .endDate(endDate)
+            .aubStartDate(startDate)
+            .aubEndDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToFriday(startDate, endDate))
+            .sickNoteType(sickNoteType)
+            .status(ACTIVE)
+            .build();
+
+        when(sickNoteService.getByPersonAndPeriod(person, LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, DECEMBER, 31))).thenReturn(List.of(sickNote));
+        when(workDaysCountService.getWorkDaysCount(any(), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ONE);
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "6")).param("year", "2026"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNotes", hasItem(allOf(
+                hasProperty("workDays", comparesEqualTo(BigDecimal.valueOf(7))),
+                hasProperty("workDaysWithAub", comparesEqualTo(BigDecimal.valueOf(7)))
+            ))));
     }
 
     @Test
