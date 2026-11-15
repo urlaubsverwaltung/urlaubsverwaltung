@@ -175,7 +175,7 @@ class CompanyClosureViewControllerTest {
     void savesWithChosenValidFrom() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure/12-24"), "Weihnachten", "", "Christmas", "")
+        perform(withNames(post("/web/company-closure/12-24/edit"), "Weihnachten", "", "Christmas", "")
             .param("dayLength", "FULL")
             .param("validFrom", "01.01.2026"))
             .andExpect(redirectedUrl("/web/company-closure"))
@@ -189,7 +189,7 @@ class CompanyClosureViewControllerTest {
     void savesWithoutRenamingWhenNameIsUnchanged() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure/12-24"), "Heiligabend", "Heiligabend", "Christmas Eve", "Παραμονή Χριστουγέννων")
+        perform(withNames(post("/web/company-closure/12-24/edit"), "Heiligabend", "Heiligabend", "Christmas Eve", "Παραμονή Χριστουγέννων")
             .param("dayLength", "ZERO")
             .param("validFrom", "2026-11-06"))
             .andExpect(redirectedUrl("/web/company-closure"))
@@ -203,7 +203,7 @@ class CompanyClosureViewControllerTest {
     void trimsNameBeforeSaving() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure/12-24"), "  Weihnachten ", " ", "", "")
+        perform(withNames(post("/web/company-closure/12-24/edit"), "  Weihnachten ", " ", "", "")
             .param("dayLength", "FULL")
             .param("validFrom", "2026-11-06"))
             .andExpect(redirectedUrl("/web/company-closure"))
@@ -216,7 +216,7 @@ class CompanyClosureViewControllerTest {
     void createsNewDay() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure"), "Brückentag", "Fenstertag", "Bridge day", "")
+        perform(withNames(post("/web/company-closure/new"), "Brückentag", "Fenstertag", "Bridge day", "")
             .param("day", "15")
             .param("month", "5")
             .param("dayLength", "FULL")
@@ -232,7 +232,7 @@ class CompanyClosureViewControllerTest {
     void showsFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        final MvcResult rejected = perform(withNames(post("/web/company-closure/12-24"), "", " ", "", "")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure/12-24/edit"), "", " ", "", "")
             .param("dayLength", "NOON")
             .param("validFrom", "31.12.2025"))
             .andExpect(redirectedUrl("/web/company-closure/12-24/edit"))
@@ -260,7 +260,7 @@ class CompanyClosureViewControllerTest {
     void showsCreateFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        final MvcResult rejected = perform(withNames(post("/web/company-closure"), "Heiligabend", "", "", "")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure/new"), "Heiligabend", "", "", "")
             .param("day", "24")
             .param("month", "12")
             .param("dayLength", "NOON")
@@ -288,7 +288,7 @@ class CompanyClosureViewControllerTest {
     @Test
     void showsCreateFormAgainWhenDayAndMonthAreNotNumbers() throws Exception {
 
-        final MvcResult rejected = perform(withNames(post("/web/company-closure"), "Brückentag", "", "", "")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure/new"), "Brückentag", "", "", "")
             .param("day", "x")
             .param("month", "Mai")
             .param("dayLength", "FULL")
@@ -311,7 +311,7 @@ class CompanyClosureViewControllerTest {
 
         perform(get("/web/company-closure/05-15/edit")).andExpect(status().isNotFound());
         perform(get("/web/company-closure/13-45/edit")).andExpect(status().isNotFound());
-        perform(withNames(post("/web/company-closure/05-15"), "Brückentag", "", "", "")
+        perform(withNames(post("/web/company-closure/05-15/edit"), "Brückentag", "", "", "")
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
             .andExpect(status().isNotFound());

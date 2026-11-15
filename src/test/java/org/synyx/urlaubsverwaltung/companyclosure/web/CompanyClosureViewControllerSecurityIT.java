@@ -68,10 +68,10 @@ class CompanyClosureViewControllerSecurityIT extends SingleTenantTestContainersB
         perform(get("/web/company-closure/12-24/edit")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"))))
             .andExpect(status().isForbidden());
-        perform(post("/web/company-closure").with(csrf())
+        perform(post("/web/company-closure/new").with(csrf())
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"))))
             .andExpect(status().isForbidden());
-        perform(post("/web/company-closure/12-24").with(csrf())
+        perform(post("/web/company-closure/12-24/edit").with(csrf())
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"))))
             .andExpect(status().isForbidden());
     }

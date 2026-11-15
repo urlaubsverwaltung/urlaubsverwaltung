@@ -30,7 +30,7 @@
     <main th:fragment="main" class="content-container content--max-w">
       <form
         method="post"
-        th:action="${monthDay == null} ? @{/web/company-closure} : @{/web/company-closure/{monthDay}(monthDay=${monthDayPath})}"
+        th:action="${monthDay == null} ? @{/web/company-closure/new} : @{/web/company-closure/{monthDay}/edit(monthDay=${monthDayPath})}"
         th:object="${companyClosure}"
         class="uv-form uv-form-grid"
         novalidate

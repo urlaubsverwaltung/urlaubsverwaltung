@@ -115,7 +115,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
-    @PostMapping
+    @PostMapping("/new")
     public String createCompanyClosure(@ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
                                        RedirectAttributes redirectAttributes, Locale locale) {
 
@@ -153,7 +153,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
-    @PostMapping("/{monthDay}")
+    @PostMapping("/{monthDay}/edit")
     public String updateCompanyClosure(@PathVariable("monthDay") String monthDayPath,
                                        @ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
                                        RedirectAttributes redirectAttributes, Locale locale) {
