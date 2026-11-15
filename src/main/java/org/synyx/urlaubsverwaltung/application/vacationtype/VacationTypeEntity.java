@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.BatchSize;
+import org.synyx.urlaubsverwaltung.LocaleStringMapJpaConverter;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Locale;
@@ -68,7 +69,7 @@ public class VacationTypeEntity extends AbstractTenantAwareEntity {
      * labelByLocale can be {@code null} and is only defined for CustomVacationType.
      */
     @Column(name = "label_by_locale")
-    @Convert(converter = VacationTypeLabelJpaConverter.class)
+    @Convert(converter = LocaleStringMapJpaConverter.class)
     private Map<Locale, String> labelByLocale;
 
     public boolean isActive() {

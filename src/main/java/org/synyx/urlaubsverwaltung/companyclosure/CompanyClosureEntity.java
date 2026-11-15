@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.LocaleStringMapJpaConverter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
@@ -64,7 +65,7 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
      * precedence over the messageKey. Languages without a name are missing.
      */
     @Column(name = "name_by_locale")
-    @Convert(converter = CompanyClosureNameJpaConverter.class)
+    @Convert(converter = LocaleStringMapJpaConverter.class)
     private Map<Locale, String> nameByLocale;
 
     public Long getId() {
