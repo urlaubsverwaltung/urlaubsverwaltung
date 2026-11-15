@@ -31,7 +31,9 @@ public interface CompanyClosureService {
     void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom, Person modifier);
 
     /**
-     * @return all company closure days with their versions, sorted by month day
+     * @return all company closure days sorted by month day, from 01.01. to 31.12. The versions of each day are
+     * sorted by {@code validFrom} ascending: the initial version without {@code validFrom} first, the latest
+     * version last. See {@link CompanyClosureEntry#versions()}.
      */
     List<CompanyClosureEntry> getCompanyClosureEntries();
 

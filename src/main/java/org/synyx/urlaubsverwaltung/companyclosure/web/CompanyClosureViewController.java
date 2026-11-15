@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -30,6 +31,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
+import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -84,7 +88,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         final LocalDate today = LocalDate.now(clock);
         model.addAttribute("companyClosures", companyClosureService.getCompanyClosureEntries().stream()
             .map(entry -> new CompanyClosureListDto(toPath(entry.monthDay()), entry.monthDay(), entry.name(locale),
-                entry.dayLengthAt(today), entry.versions()))
+                entry.dayLengthAt(today), latestFirst(entry.versions())))
             .toList());
 
         return "companyclosure/company_closure_list";
@@ -188,6 +192,16 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
             .map(SupportedLanguages::getLocale)
             .collect(toMap(identity(), language -> messageSource.getMessage("company-closure.data.names.placeholder",
                 new Object[]{messageSource.getMessage("absences.overview.company-closure", new Object[]{}, language)}, locale)));
+    }
+
+    /**
+     * @return the versions sorted by {@code validFrom}, the latest first and the initial version without
+     * {@code validFrom} last
+     */
+    private static List<CompanyClosureVersion> latestFirst(List<CompanyClosureVersion> versions) {
+        return versions.stream()
+            .sorted(comparing(CompanyClosureVersion::validFrom, nullsLast(reverseOrder())))
+            .toList();
     }
 
     /**

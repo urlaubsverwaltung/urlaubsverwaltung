@@ -96,7 +96,10 @@ class CompanyClosureViewControllerTest {
             .andReturn();
 
         assertThat(result.getModelAndView().getModel()).containsEntry("companyClosures", List.of(
-            new CompanyClosureListDto("12-24", CHRISTMAS_EVE, "Heiligabend", FULL, christmasEveVersions),
+            new CompanyClosureListDto("12-24", CHRISTMAS_EVE, "Heiligabend", FULL, List.of(
+                new CompanyClosureVersion(ZERO, LocalDate.of(2027, JANUARY, 1)),
+                new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)),
+                new CompanyClosureVersion(NOON, null))),
             new CompanyClosureListDto("12-31", MonthDay.of(DECEMBER, 31), "Silvester", NOON, newYearsEveVersions)));
     }
 

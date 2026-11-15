@@ -16,7 +16,8 @@ import java.util.function.Function;
  * @param nameByLocale resolves the name of the closure for a locale, e.g. "Heiligabend" for german
  * @param names        names given by a user per language, without the languages left empty; empty for a closure
  *                     provided by the application that has not been renamed
- * @param versions     sorted by {@code validFrom}, {@code null} first
+ * @param versions     sorted by {@code validFrom} ascending: the initial version without {@code validFrom} first,
+ *                     the latest version last. {@link #dayLengthAt(LocalDate)} relies on this order.
  */
 public record CompanyClosureEntry(MonthDay monthDay, Function<Locale, String> nameByLocale, Map<Locale, String> names,
                                   List<CompanyClosureVersion> versions) {
