@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -318,6 +319,7 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
         final Person requester = new Person();
         requester.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
+        when(personService.getSignedInUser()).thenReturn(requester);
 
         final Person requestedPerson = new Person();
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
@@ -342,6 +344,7 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
         final Person requester = new Person();
         requester.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
+        when(personService.getSignedInUser()).thenReturn(requester);
 
         final Person requestedPerson = new Person();
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
@@ -366,6 +369,10 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, Role.valueOf(role)));
+        when(personService.getSignedInUser()).thenReturn(requester);
+
         final LocalDateTime now = LocalDateTime.now();
 
         perform(
@@ -384,6 +391,7 @@ class VacationApiControllerSecurityIT extends SingleTenantTestContainersBase {
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
 

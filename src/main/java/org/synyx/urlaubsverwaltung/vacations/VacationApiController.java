@@ -23,10 +23,13 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -145,7 +148,16 @@ public class VacationApiController {
         final Person requestedPerson = getPerson(personId);
 
         final List<Application> applicationsOfColleagues = departmentService.getApplicationsFromColleaguesOf(requestedPerson, startDate, endDate);
-        return mapToVacationResponse(applicationsOfColleagues);
+
+        // same rule as the absence overview: the type of a colleague's absence is only shown when it is visible
+        // to everyone or the signed-in user may see the data of that colleague anyway
+        final Person signedInUser = personService.getSignedInUser();
+        final Predicate<Person> signedInUserMayAccess = DepartmentService.allowedToAccessPersonData(signedInUser,
+            signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of(),
+            signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of());
+        return new VacationsDto(applicationsOfColleagues.stream()
+            .map(application -> new VacationDto(application, application.getVacationType().isVisibleToEveryone() || signedInUserMayAccess.test(application.getPerson())))
+            .toList());
     }
 
     private Person getPerson(Long personId) {
