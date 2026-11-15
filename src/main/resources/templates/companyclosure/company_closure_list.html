@@ -7,8 +7,13 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:asset="http://www.w3.org/1999/xhtml"
 >
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:replace="~{fragments/page-title::page-title(#{company-closure.title})}"></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/company-closure.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('frame.js')}" />
     </th:block>
@@ -53,41 +58,33 @@
 
       <p th:text="#{company-closure.description}"></p>
 
-      <!-- cards below the md viewport breakpoint, rows sharing the columns of this grid from md on. -->
-      <!-- the history gets twice the space of the name, so long names wrap before the history does -->
-      <div class="mt-8 text-sm md:grid md:grid-cols-[auto_1fr_auto_2fr_auto] md:gap-x-12">
+      <div class="company-closure-list">
         <!-- column titles for sighted users, every list item names its values itself for screen readers -->
-        <div aria-hidden="true" class="hidden md:grid grid-cols-subgrid col-span-full px-3 pb-2 font-bold">
+        <div aria-hidden="true" class="company-closure-list__head">
           <span th:text="#{company-closure.data.date}">Datum</span>
           <span th:text="#{company-closure.data.name}">Name</span>
           <span th:text="#{company-closure.data.current}">Aktuell</span>
           <span th:text="#{company-closure.data.history}">Verlauf</span>
           <span></span>
         </div>
-        <ol
-          id="companyclosure-list"
-          role="list"
-          class="flex flex-col gap-y-4 md:grid md:grid-cols-subgrid md:col-span-full md:gap-y-0"
-        >
-          <!-- column-gap normal: the rows use the column gap of the surrounding grid -->
+        <ol id="companyclosure-list" role="list" class="company-closure-list__items">
           <li
             th:each="companyClosure : ${companyClosures}"
             th:with="date=${#temporals.format(#temporals.create(2000, companyClosure.monthDay.monthValue, companyClosure.monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
-            class="grid grid-cols-[1fr_auto] gap-x-4 p-4 rounded-sm border border-gray-200 dark:border-gray-700 md:grid-cols-subgrid md:col-span-full md:gap-x-[normal] md:items-baseline md:p-3 md:rounded-none md:border-x-0 md:border-b-0 md:last:border-b md:transition-colors md:hover:bg-zinc-50 md:dark:hover:bg-zinc-800"
+            class="company-closure-list__item"
           >
-            <h2
-              class="col-start-1 row-start-1 whitespace-nowrap text-sm font-bold md:col-auto md:row-auto"
-              th:text="${date}"
-            >
-              24. Dezember
-            </h2>
-            <span class="col-start-1 row-start-2 md:col-auto md:row-auto" th:text="${companyClosure.name}"></span>
-            <span class="col-span-2 row-start-3 mt-4 md:col-auto md:row-auto md:mt-0">
-              <span class="font-bold md:sr-only" th:text="|#{company-closure.data.current}:|">Aktuell:</span>
+            <h2 class="company-closure-list__date" th:text="${date}">24. Dezember</h2>
+            <span class="company-closure-list__name" th:text="${companyClosure.name}"></span>
+            <span class="company-closure-list__current">
+              <span class="company-closure-list__label md:sr-only" th:text="|#{company-closure.data.current}:|"
+                >Aktuell:</span
+              >
               <th:block th:text="#{|company-closure.dayLength.${companyClosure.currentDayLength}|}" />
             </span>
-            <div class="col-span-2 row-start-4 mt-2 md:col-auto md:row-auto md:mt-0">
-              <span class="font-bold md:sr-only" th:text="|#{company-closure.data.history}:|">Verlauf:</span>
+            <div class="company-closure-list__history">
+              <span class="company-closure-list__label md:sr-only" th:text="|#{company-closure.data.history}:|"
+                >Verlauf:</span
+              >
               <ul role="list">
                 <li
                   th:each="version : ${companyClosure.versions}"
@@ -96,9 +93,7 @@
                 ></li>
               </ul>
             </div>
-            <div
-              class="col-start-2 row-start-1 row-span-2 self-start flex justify-end md:col-auto md:row-auto md:self-auto"
-            >
+            <div class="company-closure-list__actions">
               <a class="button" th:href="@{/web/company-closure/{monthDay}/edit(monthDay=${companyClosure.monthDayPath})}">
                 <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1 md:mr-0 lg:mr-1')}"></svg>
                 <!-- icon only between md and lg, the rows have no space for the text there -->

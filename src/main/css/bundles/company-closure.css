@@ -1,0 +1,143 @@
+@reference "../config.css";
+
+/* cards below the md viewport breakpoint, rows sharing the columns of this grid from md on */
+.company-closure-list {
+  margin-top: --spacing(8);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+
+  @variant md {
+    display: grid;
+    /* the history gets twice the space of the name, so long names wrap before the history does */
+    grid-template-columns: auto 1fr auto 2fr auto;
+    column-gap: --spacing(12);
+  }
+}
+
+/* column titles, only shown with the rows */
+.company-closure-list__head {
+  display: none;
+
+  @variant md {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    padding: 0 --spacing(3) --spacing(2);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.company-closure-list__items {
+  display: flex;
+  flex-direction: column;
+  row-gap: --spacing(4);
+
+  @variant md {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    row-gap: 0;
+  }
+}
+
+/* the areas place the children in a card. in a row they take the columns in source order (grid-area: auto) */
+.company-closure-list__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "date actions"
+    "name actions"
+    "current current"
+    "history history";
+  column-gap: --spacing(4);
+  padding: --spacing(4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+
+  @variant dark {
+    border-color: var(--color-gray-700);
+  }
+
+  @variant md {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    grid-template-areas: none;
+    /* the rows use the column gap of the surrounding grid */
+    column-gap: normal;
+    /* aligned to the first line of the history */
+    align-items: baseline;
+    padding: --spacing(3);
+    border-width: 1px 0 0;
+    border-radius: 0;
+    transition: background-color 150ms ease-in-out;
+
+    &:last-child {
+      border-bottom-width: 1px;
+    }
+
+    @variant hover {
+      background-color: var(--color-zinc-50);
+
+      @variant dark {
+        background-color: var(--color-zinc-800);
+      }
+    }
+  }
+}
+
+.company-closure-list__date {
+  grid-area: date;
+  white-space: nowrap;
+  /* the line height stays the one of the heading */
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+
+  @variant md {
+    grid-area: auto;
+  }
+}
+
+.company-closure-list__name {
+  grid-area: name;
+
+  @variant md {
+    grid-area: auto;
+  }
+}
+
+.company-closure-list__current {
+  grid-area: current;
+  margin-top: --spacing(4);
+
+  @variant md {
+    grid-area: auto;
+    margin-top: 0;
+  }
+}
+
+.company-closure-list__history {
+  grid-area: history;
+  margin-top: --spacing(2);
+
+  @variant md {
+    grid-area: auto;
+    margin-top: 0;
+  }
+}
+
+/* names the value in a card. in a row the column titles do it for sighted users, so the template hides it visually */
+.company-closure-list__label {
+  font-weight: var(--font-weight-bold);
+}
+
+.company-closure-list__actions {
+  grid-area: actions;
+  align-self: start;
+  display: flex;
+  justify-content: flex-end;
+
+  @variant md {
+    grid-area: auto;
+    align-self: auto;
+  }
+}
