@@ -51,55 +51,64 @@
         </th:block>
       </th:block>
 
-      <p class="mb-4" th:text="#{company-closure.description}"></p>
+      <p th:text="#{company-closure.description}"></p>
 
-      <table id="companyclosure-table" class="list-table text-sm">
-        <caption class="sr-only" th:text="#{company-closure.title}">
-          Company closure
-        </caption>
-        <thead class="hidden @5xl/main:table-header-group">
-          <tr>
-            <th th:text="#{company-closure.data.date}" scope="col"></th>
-            <th th:text="#{company-closure.data.name}" scope="col"></th>
-            <th th:text="#{company-closure.data.current}" scope="col"></th>
-            <th th:text="#{company-closure.data.history}" scope="col"></th>
-            <th scope="col">
-              <!--placeholder to ensure correct number of th-->
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="companyClosure : ${companyClosures}">
-            <td
-              class="whitespace-nowrap font-bold"
-              th:text="${#temporals.format(#temporals.create(2000, companyClosure.monthDay.monthValue, companyClosure.monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
-            ></td>
-            <td th:text="${companyClosure.name}"></td>
-            <td th:text="#{|company-closure.dayLength.${companyClosure.currentDayLength}|}"></td>
-            <td>
-              <ul>
+      <!-- cards below the md viewport breakpoint, rows sharing the columns of this grid from md on. -->
+      <!-- the history gets twice the space of the name, so long names wrap before the history does -->
+      <div class="mt-8 text-sm md:grid md:grid-cols-[auto_1fr_auto_2fr_auto] md:gap-x-12">
+        <!-- column titles for sighted users, every list item names its values itself for screen readers -->
+        <div aria-hidden="true" class="hidden md:grid grid-cols-subgrid col-span-full px-3 pb-2 font-bold">
+          <span th:text="#{company-closure.data.date}">Datum</span>
+          <span th:text="#{company-closure.data.name}">Name</span>
+          <span th:text="#{company-closure.data.current}">Aktuell</span>
+          <span th:text="#{company-closure.data.history}">Verlauf</span>
+          <span></span>
+        </div>
+        <ol
+          id="companyclosure-list"
+          role="list"
+          class="flex flex-col gap-y-4 md:grid md:grid-cols-subgrid md:col-span-full md:gap-y-0"
+        >
+          <!-- column-gap normal: the rows use the column gap of the surrounding grid -->
+          <li
+            th:each="companyClosure : ${companyClosures}"
+            th:with="date=${#temporals.format(#temporals.create(2000, companyClosure.monthDay.monthValue, companyClosure.monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
+            class="grid grid-cols-[1fr_auto] gap-x-4 p-4 rounded-sm border border-gray-200 dark:border-gray-700 md:grid-cols-subgrid md:col-span-full md:gap-x-[normal] md:items-baseline md:p-3 md:rounded-none md:border-x-0 md:border-b-0 md:last:border-b md:transition-colors md:hover:bg-zinc-50 md:dark:hover:bg-zinc-800"
+          >
+            <h2
+              class="col-start-1 row-start-1 whitespace-nowrap text-sm font-bold md:col-auto md:row-auto"
+              th:text="${date}"
+            >
+              24. Dezember
+            </h2>
+            <span class="col-start-1 row-start-2 md:col-auto md:row-auto" th:text="${companyClosure.name}"></span>
+            <span class="col-span-2 row-start-3 mt-4 md:col-auto md:row-auto md:mt-0">
+              <span class="font-bold md:sr-only" th:text="|#{company-closure.data.current}:|">Aktuell:</span>
+              <th:block th:text="#{|company-closure.dayLength.${companyClosure.currentDayLength}|}" />
+            </span>
+            <div class="col-span-2 row-start-4 mt-2 md:col-auto md:row-auto md:mt-0">
+              <span class="font-bold md:sr-only" th:text="|#{company-closure.data.history}:|">Verlauf:</span>
+              <ul role="list">
                 <li
                   th:each="version : ${companyClosure.versions}"
                   th:with="dayLengthLabel=#{|company-closure.dayLength.${version.dayLength}|}"
                   th:text="${version.validFrom == null} ? #{company-closure.data.version.initial(${dayLengthLabel})} : #{company-closure.data.version(${{version.validFrom}}, ${dayLengthLabel})}"
                 ></li>
               </ul>
-            </td>
-            <td>
-              <div class="flex justify-end">
-                <a
-                  class="button"
-                  th:href="@{/web/company-closure/{monthDay}/edit(monthDay=${companyClosure.monthDayPath})}"
-                >
-                  <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
-                  <th:block th:text="#{action.edit}" />
-                  <span class="sr-only" th:text="${companyClosure.name}"></span>
-                </a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div
+              class="col-start-2 row-start-1 row-span-2 self-start flex justify-end md:col-auto md:row-auto md:self-auto"
+            >
+              <a class="button" th:href="@{/web/company-closure/{monthDay}/edit(monthDay=${companyClosure.monthDayPath})}">
+                <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1 md:mr-0 lg:mr-1')}"></svg>
+                <!-- icon only between md and lg, the rows have no space for the text there -->
+                <span class="md:sr-only lg:not-sr-only" th:text="#{action.edit}">Bearbeiten</span>
+                <span class="sr-only" th:text="|${date} ${companyClosure.name}|"></span>
+              </a>
+            </div>
+          </li>
+        </ol>
+      </div>
     </main>
   </body>
 </html>
