@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 
-IS_AMEND=$(ps -ocommand= -p $PPID | grep -e '--amend');
+COMMIT_MSG_FILE=$1
+# source of the message, "commit" for --amend, -c and -C. the message of an existing commit is kept as it is
+COMMIT_SOURCE=$2
 
-if [ -n "$IS_AMEND" ]; then
-  exit 0;
+if [ "$COMMIT_SOURCE" = "commit" ]; then
+  exit 0
 fi
 
 # Extract the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
 # Identify the issue number from the branch name
-ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+')
+ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+' | head -n 1)
 
-# Prepend the issue number to the commit message if found
-if [ -n "$ISSUE_NUMBER" ]; then
-    COMMIT_MSG=$(cat "$1")
-    echo -e "$COMMIT_MSG\n\ncloses #$ISSUE_NUMBER" > "$1"
+if [ -z "$ISSUE_NUMBER" ]; then
+  exit 0
+fi
+
+# Append the issue reference unless the message references the issue already
+if ! grep -qiE "^closes #$ISSUE_NUMBER\$" "$COMMIT_MSG_FILE"; then
+  COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+  printf '%s\n\ncloses #%s\n' "$COMMIT_MSG" "$ISSUE_NUMBER" > "$COMMIT_MSG_FILE"
 fi
