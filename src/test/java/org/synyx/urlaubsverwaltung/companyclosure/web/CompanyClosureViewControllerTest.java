@@ -249,8 +249,24 @@ class CompanyClosureViewControllerTest {
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
             .andExpect(view().name("companyclosure/company_closure_form"))
-            .andExpect(model().attributeHasFieldErrors("companyClosure", "day"))
+            .andExpect(model().attributeHasFieldErrors("companyClosure", "monthDay"))
             .andExpect(model().attributeDoesNotExist("monthDay"));
+
+        verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any());
+    }
+
+    @Test
+    void showsCreateFormAgainWhenDayAndMonthAreNotNumbers() throws Exception {
+
+        perform(withNames(post("/web/company-closure"), "Brückentag", "", "", "")
+            .param("day", "x")
+            .param("month", "Mai")
+            .param("dayLength", "FULL")
+            .param("validFrom", "06.11.2026"))
+            .andExpect(view().name("companyclosure/company_closure_form"))
+            .andExpect(model().attributeHasFieldErrorCode("companyClosure", "day", "typeMismatch"))
+            .andExpect(model().attributeHasFieldErrorCode("companyClosure", "month", "typeMismatch"))
+            .andExpect(model().attributeErrorCount("companyClosure", 2));
 
         verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any());
     }

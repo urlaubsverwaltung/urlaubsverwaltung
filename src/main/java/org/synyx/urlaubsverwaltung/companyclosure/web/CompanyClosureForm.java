@@ -4,7 +4,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +50,22 @@ public class CompanyClosureForm {
 
     public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    /**
+     * Errors that concern day and month together are attached to this property.
+     *
+     * @return the day of the year, {@code null} while day or month are missing or do not form an existing day
+     */
+    public MonthDay getMonthDay() {
+        if (day == null || month == null) {
+            return null;
+        }
+        try {
+            return MonthDay.of(month, day);
+        } catch (DateTimeException _) {
+            return null;
+        }
     }
 
     public List<CompanyClosureNameForm> getNames() {

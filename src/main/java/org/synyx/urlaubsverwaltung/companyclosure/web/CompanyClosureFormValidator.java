@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.Clock;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
@@ -39,14 +38,21 @@ class CompanyClosureFormValidator implements Validator {
     private static final String ERROR_TOO_MANY_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_NAMES_MANDATORY = "company-closure.error.names.mandatory";
     private static final String ERROR_VALID_FROM_PREVIOUS_YEAR = "company-closure.error.validFrom.previousYear";
+    private static final String ERROR_DAY_RANGE = "company-closure.error.day.range";
+    private static final String ERROR_MONTH_RANGE = "company-closure.error.month.range";
     private static final String ERROR_MONTH_DAY_INVALID = "company-closure.error.monthDay.invalid";
     private static final String ERROR_MONTH_DAY_LEAP_DAY = "company-closure.error.monthDay.leapDay";
     private static final String ERROR_MONTH_DAY_EXISTS = "company-closure.error.monthDay.exists";
 
     private static final String ERROR_BLACKOUT_PERIOD = "company-closure.error.blackout-period";
 
+    private static final int MAX_DAY = 31;
+    private static final int MAX_MONTH = 12;
+
     private static final String ATTRIBUTE_DAY = "day";
     private static final String ATTRIBUTE_MONTH = "month";
+    // errors that concern day and month together
+    private static final String ATTRIBUTE_MONTH_DAY = "monthDay";
     private static final String ATTRIBUTE_NAMES = "names";
     private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_VALID_FROM = "validFrom";
@@ -137,30 +143,36 @@ class CompanyClosureFormValidator implements Validator {
 
         validate(form, errors);
 
-        if (form.getDay() == null) {
-            errors.rejectValue(ATTRIBUTE_DAY, ERROR_MANDATORY_FIELD);
-        }
-        if (form.getMonth() == null) {
-            errors.rejectValue(ATTRIBUTE_MONTH, ERROR_MANDATORY_FIELD);
-        }
-        if (form.getDay() == null || form.getMonth() == null) {
+        validateNumber(ATTRIBUTE_DAY, form.getDay(), MAX_DAY, ERROR_DAY_RANGE, errors);
+        validateNumber(ATTRIBUTE_MONTH, form.getMonth(), MAX_MONTH, ERROR_MONTH_RANGE, errors);
+        if (errors.hasFieldErrors(ATTRIBUTE_DAY) || errors.hasFieldErrors(ATTRIBUTE_MONTH)) {
             return;
         }
 
-        final MonthDay monthDay;
-        try {
-            monthDay = MonthDay.of(form.getMonth(), form.getDay());
-        } catch (DateTimeException _) {
-            errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_INVALID);
-            return;
-        }
-
-        if (monthDay.equals(MonthDay.of(FEBRUARY, 29))) {
-            errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_LEAP_DAY);
+        final MonthDay monthDay = form.getMonthDay();
+        if (monthDay == null) {
+            errors.rejectValue(ATTRIBUTE_MONTH_DAY, ERROR_MONTH_DAY_INVALID);
+        } else if (monthDay.equals(MonthDay.of(FEBRUARY, 29))) {
+            errors.rejectValue(ATTRIBUTE_MONTH_DAY, ERROR_MONTH_DAY_LEAP_DAY);
         } else if (companyClosureService.getCompanyClosureEntries().stream().map(CompanyClosureEntry::monthDay).anyMatch(monthDay::equals)) {
-            errors.rejectValue(ATTRIBUTE_DAY, ERROR_MONTH_DAY_EXISTS);
+            errors.rejectValue(ATTRIBUTE_MONTH_DAY, ERROR_MONTH_DAY_EXISTS);
         } else {
             validateNoCompanyWideBlackoutPeriod(monthDay, null, form, errors);
+        }
+    }
+
+    /**
+     * Validates that the number is given and between 1 and {@code max}. A field with an error already, i.e. an input
+     * that is not a number, is left as it is: its value is {@code null} without being missing.
+     */
+    private static void validateNumber(String field, @Nullable Integer value, int max, String rangeError, Errors errors) {
+        if (errors.hasFieldErrors(field)) {
+            return;
+        }
+        if (value == null) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
+        } else if (value < 1 || value > max) {
+            errors.rejectValue(field, rangeError);
         }
     }
 

@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.companyclosure.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -153,13 +155,50 @@ class CompanyClosureFormValidatorTest {
         assertThat(errors.getFieldError("month").getCode()).isEqualTo("error.entry.mandatory");
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 0, 32})
+    void rejectsDayOutOfRange(int day) {
+        final CompanyClosureForm form = validForm();
+        form.setDay(day);
+
+        final Errors errors = validateNew(form);
+
+        assertThat(errors.getFieldError("day").getCode()).isEqualTo("company-closure.error.day.range");
+        assertThat(errors.hasFieldErrors("month")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 0, 13})
+    void rejectsMonthOutOfRange(int month) {
+        final CompanyClosureForm form = validForm();
+        form.setMonth(month);
+
+        final Errors errors = validateNew(form);
+
+        assertThat(errors.getFieldError("month").getCode()).isEqualTo("company-closure.error.month.range");
+        assertThat(errors.hasFieldErrors("day")).isFalse();
+    }
+
+    @Test
+    void keepsErrorOfDayThatIsNotANumber() {
+        final CompanyClosureForm form = validForm();
+        form.setDay(null);
+        final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
+        errors.rejectValue("day", "typeMismatch");
+
+        sut.validateNew(form, errors);
+
+        assertThat(errors.getFieldErrors("day")).hasSize(1);
+        assertThat(errors.getFieldError("day").getCode()).isEqualTo("typeMismatch");
+    }
+
     @Test
     void rejectsInvalidDate() {
         final CompanyClosureForm form = validForm();
         form.setDay(31);
         form.setMonth(4);
 
-        assertThat(validateNew(form).getFieldError("day").getCode()).isEqualTo("company-closure.error.monthDay.invalid");
+        assertThat(validateNew(form).getFieldError("monthDay").getCode()).isEqualTo("company-closure.error.monthDay.invalid");
     }
 
     @Test
@@ -168,7 +207,7 @@ class CompanyClosureFormValidatorTest {
         form.setDay(29);
         form.setMonth(2);
 
-        assertThat(validateNew(form).getFieldError("day").getCode()).isEqualTo("company-closure.error.monthDay.leapDay");
+        assertThat(validateNew(form).getFieldError("monthDay").getCode()).isEqualTo("company-closure.error.monthDay.leapDay");
     }
 
     @Test
@@ -179,7 +218,7 @@ class CompanyClosureFormValidatorTest {
         form.setDay(24);
         form.setMonth(12);
 
-        assertThat(validateNew(form).getFieldError("day").getCode()).isEqualTo("company-closure.error.monthDay.exists");
+        assertThat(validateNew(form).getFieldError("monthDay").getCode()).isEqualTo("company-closure.error.monthDay.exists");
     }
 
     @Test

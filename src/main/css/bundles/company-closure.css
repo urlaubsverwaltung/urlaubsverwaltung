@@ -141,3 +141,40 @@
     align-self: auto;
   }
 }
+
+/* day and month of a closure day: one group with two fields */
+.company-closure-month-day {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+}
+
+.company-closure-month-day__fields {
+  display: flex;
+  gap: --spacing(4);
+}
+
+/* both fields share the width of the input column equally */
+.company-closure-month-day__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
+/* the group label carries the asterisk for both fields */
+.company-closure-month-day__label {
+  font-weight: var(--font-weight-normal);
+
+  &::after {
+    content: none;
+  }
+}
+
+/* side note of a row whose inputs have their label on top. beside the row it starts at the input, not at the label */
+.company-closure-form__info {
+  @variant lg {
+    /* line of the label (font size * line height) and the gap to its input */
+    margin-top: calc(0.875rem * 1.375 + --spacing(1));
+  }
+}
