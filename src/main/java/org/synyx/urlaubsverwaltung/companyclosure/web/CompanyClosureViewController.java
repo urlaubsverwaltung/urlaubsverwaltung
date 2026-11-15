@@ -5,7 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +50,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     private static final String FORM_VIEW = "companyclosure/company_closure_form";
     private static final String REDIRECT_TO_LIST = "redirect:/web/company-closure";
+    private static final String COMPANY_CLOSURE = "companyClosure";
     private static final String MIN_VALID_FROM = "minValidFrom";
 
     private final CompanyClosureService companyClosureService;
@@ -98,13 +99,16 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     @GetMapping("/new")
     public String newCompanyClosureForm(Model model, Locale locale) {
 
-        final CompanyClosureForm form = new CompanyClosureForm();
-        form.setNames(Arrays.stream(SupportedLanguages.values())
-            .map(language -> new CompanyClosureNameForm(language.getLocale(), ""))
-            .toList());
-        form.setDayLength(FULL);
-        form.setValidFrom(LocalDate.now(clock));
-        model.addAttribute("companyClosure", form);
+        // a rejected form comes back with its errors by the redirect
+        if (!model.containsAttribute(COMPANY_CLOSURE)) {
+            final CompanyClosureForm form = new CompanyClosureForm();
+            form.setNames(Arrays.stream(SupportedLanguages.values())
+                .map(language -> new CompanyClosureNameForm(language.getLocale(), ""))
+                .toList());
+            form.setDayLength(FULL);
+            form.setValidFrom(LocalDate.now(clock));
+            model.addAttribute(COMPANY_CLOSURE, form);
+        }
         addFormModel(model, locale);
 
         return FORM_VIEW;
@@ -112,13 +116,13 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @PostMapping
-    public String createCompanyClosure(@ModelAttribute("companyClosure") CompanyClosureForm form, Errors errors,
-                                       Model model, RedirectAttributes redirectAttributes, Locale locale) {
+    public String createCompanyClosure(@ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
+                                       RedirectAttributes redirectAttributes, Locale locale) {
 
         validator.validateNew(form, errors);
         if (errors.hasErrors()) {
-            addFormModel(model, locale);
-            return FORM_VIEW;
+            keepFormWithErrors(form, errors, redirectAttributes);
+            return "redirect:/web/company-closure/new";
         }
 
         companyClosureService.createCompanyClosure(MonthDay.of(form.getMonth(), form.getDay()), form.getNameByLocale(),
@@ -133,13 +137,16 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     public String editCompanyClosureForm(@PathVariable("monthDay") String monthDayPath, Model model, Locale locale) {
 
         final CompanyClosureEntry entry = getEntry(monthDayPath);
-        final LocalDate today = LocalDate.now(clock);
 
-        final CompanyClosureForm form = new CompanyClosureForm();
-        form.setNames(namesOf(entry));
-        form.setDayLength(entry.dayLengthAt(today));
-        form.setValidFrom(today);
-        model.addAttribute("companyClosure", form);
+        // a rejected form comes back with its errors by the redirect
+        if (!model.containsAttribute(COMPANY_CLOSURE)) {
+            final LocalDate today = LocalDate.now(clock);
+            final CompanyClosureForm form = new CompanyClosureForm();
+            form.setNames(namesOf(entry));
+            form.setDayLength(entry.dayLengthAt(today));
+            form.setValidFrom(today);
+            model.addAttribute(COMPANY_CLOSURE, form);
+        }
         addEditModel(model, entry, locale);
 
         return FORM_VIEW;
@@ -148,15 +155,15 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @PostMapping("/{monthDay}")
     public String updateCompanyClosure(@PathVariable("monthDay") String monthDayPath,
-                                       @ModelAttribute("companyClosure") CompanyClosureForm form, Errors errors,
-                                       Model model, RedirectAttributes redirectAttributes, Locale locale) {
+                                       @ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
+                                       RedirectAttributes redirectAttributes, Locale locale) {
 
         final CompanyClosureEntry entry = getEntry(monthDayPath);
 
         validator.validateEdit(entry, form, errors);
         if (errors.hasErrors()) {
-            addEditModel(model, entry, locale);
-            return FORM_VIEW;
+            keepFormWithErrors(form, errors, redirectAttributes);
+            return "redirect:/web/company-closure/%s/edit".formatted(toPath(entry.monthDay()));
         }
 
         companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom());
@@ -167,6 +174,15 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         redirectAttributes.addFlashAttribute("updatedCompanyClosureName", form.nameFor(locale));
 
         return REDIRECT_TO_LIST;
+    }
+
+    /**
+     * The form is shown again by a redirect to its own url, so reloading the page neither submits the form again
+     * nor leads to the url the form was sent to. Form and errors are handed over as flash attributes.
+     */
+    private static void keepFormWithErrors(CompanyClosureForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute(COMPANY_CLOSURE, form);
+        redirectAttributes.addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + COMPANY_CLOSURE, errors);
     }
 
     private void addEditModel(Model model, CompanyClosureEntry entry, Locale locale) {

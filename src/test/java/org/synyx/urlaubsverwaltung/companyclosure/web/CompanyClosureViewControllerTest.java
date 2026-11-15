@@ -9,6 +9,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.servlet.FlashMap;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
@@ -16,6 +17,11 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -31,6 +37,7 @@ import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -225,17 +232,27 @@ class CompanyClosureViewControllerTest {
     void showsFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure/12-24"), "", " ", "", "")
-            .param("dayLength", "FULL")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure/12-24"), "", " ", "", "")
+            .param("dayLength", "NOON")
             .param("validFrom", "31.12.2025"))
+            .andExpect(redirectedUrl("/web/company-closure/12-24/edit"))
+            .andReturn();
+
+        final MvcResult result = perform(get("/web/company-closure/12-24/edit").flashAttrs(storedInSession(rejected.getFlashMap())))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attributeHasFieldErrors("companyClosure", "names", "validFrom"))
             .andExpect(model().attribute("monthDay", CHRISTMAS_EVE))
             .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
-            .andExpect(model().attributeExists("namePlaceholders"));
+            .andExpect(model().attributeExists("namePlaceholders"))
+            .andReturn();
 
-        verify(companyClosureService).getCompanyClosureEntries();
+        // the form keeps the rejected input instead of the values of the closure day
+        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        assertThat(form.getDayLength()).isEqualTo(NOON);
+        assertThat(form.getValidFrom()).isEqualTo(LocalDate.of(2025, DECEMBER, 31));
+
+        verify(companyClosureService, times(2)).getCompanyClosureEntries();
         verifyNoMoreInteractions(companyClosureService);
     }
 
@@ -243,14 +260,27 @@ class CompanyClosureViewControllerTest {
     void showsCreateFormAgainOnErrors() throws Exception {
         givenChristmasEve();
 
-        perform(withNames(post("/web/company-closure"), "Heiligabend", "", "", "")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure"), "Heiligabend", "", "", "")
             .param("day", "24")
             .param("month", "12")
-            .param("dayLength", "FULL")
+            .param("dayLength", "NOON")
             .param("validFrom", "06.11.2026"))
+            .andExpect(redirectedUrl("/web/company-closure/new"))
+            .andReturn();
+
+        final MvcResult result = perform(get("/web/company-closure/new").flashAttrs(storedInSession(rejected.getFlashMap())))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attributeHasFieldErrors("companyClosure", "monthDay"))
-            .andExpect(model().attributeDoesNotExist("monthDay"));
+            .andExpect(model().attributeDoesNotExist("monthDay"))
+            .andExpect(model().attributeExists("minValidFrom", "namePlaceholders"))
+            .andReturn();
+
+        // the form keeps the rejected input instead of the defaults of a new closure day
+        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        assertThat(form.getDay()).isEqualTo(24);
+        assertThat(form.getMonth()).isEqualTo(12);
+        assertThat(form.getDayLength()).isEqualTo(NOON);
+        assertThat(form.nameFor(GERMAN)).isEqualTo("Heiligabend");
 
         verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any());
     }
@@ -258,11 +288,15 @@ class CompanyClosureViewControllerTest {
     @Test
     void showsCreateFormAgainWhenDayAndMonthAreNotNumbers() throws Exception {
 
-        perform(withNames(post("/web/company-closure"), "Brückentag", "", "", "")
+        final MvcResult rejected = perform(withNames(post("/web/company-closure"), "Brückentag", "", "", "")
             .param("day", "x")
             .param("month", "Mai")
             .param("dayLength", "FULL")
             .param("validFrom", "06.11.2026"))
+            .andExpect(redirectedUrl("/web/company-closure/new"))
+            .andReturn();
+
+        perform(get("/web/company-closure/new").flashAttrs(storedInSession(rejected.getFlashMap())))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attributeHasFieldErrorCode("companyClosure", "day", "typeMismatch"))
             .andExpect(model().attributeHasFieldErrorCode("companyClosure", "month", "typeMismatch"))
@@ -283,6 +317,20 @@ class CompanyClosureViewControllerTest {
             .andExpect(status().isNotFound());
 
         verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
+    }
+
+    /**
+     * The session is stored in the database, so the flash attributes of a redirect are serialized.
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> storedInSession(FlashMap flashMap) throws IOException, ClassNotFoundException {
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(flashMap);
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return (Map<String, Object>) in.readObject();
+        }
     }
 
     private void givenChristmasEve() {

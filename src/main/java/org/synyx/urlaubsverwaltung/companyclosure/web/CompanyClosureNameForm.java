@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung.companyclosure.web;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Objects;
 
 /**
  * Name of a company closure in one of the supported languages, blank if the language has no name.
  */
-public class CompanyClosureNameForm {
+public class CompanyClosureNameForm implements Serializable {
 
     private Locale locale;
     private String name;

@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -23,8 +24,10 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 /**
  * Day and month are only used to create a closure day, an existing one is identified by the url.
+ * <p>
+ * Serializable, as a rejected form is kept in the session for the redirect back to the form.
  */
-public class CompanyClosureForm {
+public class CompanyClosureForm implements Serializable {
 
     private Integer day;
     private Integer month;
