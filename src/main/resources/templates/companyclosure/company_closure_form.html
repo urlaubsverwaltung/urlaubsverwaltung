@@ -33,6 +33,7 @@
         th:action="${monthDay == null} ? @{/web/company-closure/new} : @{/web/company-closure/{monthDay}/edit(monthDay=${monthDayPath})}"
         th:object="${companyClosure}"
         class="uv-form uv-form-grid"
+        data-turbo="true"
         novalidate
       >
         <button type="submit" class="hidden"></button>
