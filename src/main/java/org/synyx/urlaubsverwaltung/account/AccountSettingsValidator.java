@@ -16,6 +16,8 @@ public final class AccountSettingsValidator {
     private static final String ERROR_DEFAULT_DAYS_SMALLER_OR_EQUAL_THAN_MAX_DAYS = "settings.account.error.defaultMustBeSmallerOrEqualThanMax";
 
     private static final int DAYS_PER_YEAR = 366;
+    // 29 February is allowed, AccountSettings.getExpiryDateForYear falls back to the 28th in other years
+    private static final Year LEAP_YEAR = Year.of(2000);
 
     private AccountSettingsValidator() {
         // private
@@ -49,7 +51,7 @@ public final class AccountSettingsValidator {
         if (dayOfMonth < 1
             || dayOfMonth > 31
             || FEBRUARY.equals(month) && dayOfMonth > 29
-            || !validDate(Year.now(), month, dayOfMonth)
+            || !validDate(LEAP_YEAR, month, dayOfMonth)
         ) {
             errors.rejectValue("accountSettings.expiryDateDayOfMonth", ERROR_INVALID_ENTRY);
         }
