@@ -88,6 +88,11 @@ public class PersonCalendarService {
             throw new IllegalArgumentException("Secret=%s does not match the given personId=%s".formatted(secret, personId));
         }
 
+        // the calendar is deleted asynchronously when the person is deactivated, do not serve it until then
+        if (person.isInactive()) {
+            throw new IllegalArgumentException("person=%s is inactive".formatted(personId));
+        }
+
         final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);
 
         final LocalDate sinceDate = LocalDate.now(clock).minus(personCalendar.getCalendarPeriod());

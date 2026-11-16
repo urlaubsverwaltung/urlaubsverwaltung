@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -105,6 +106,7 @@ class DepartmentCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(10L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         department.setMembers(List.of(person));
@@ -293,6 +295,29 @@ class DepartmentCalendarServiceTest {
     }
 
     @Test
+    void getCalendarForDepartmentFailsWhenPersonIsInactive() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(10L);
+        person.setPermissions(List.of()); // inactive: without the role USER
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
+
+        final Department department = createDepartment("DepartmentName");
+        department.setId(1L);
+        department.setCreatedAt(LocalDate.of(2018, JANUARY, 1));
+        department.setMembers(List.of(person));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        departmentCalendar.setDepartmentId(1L);
+        departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN));
+        verifyNoInteractions(iCalService);
+    }
+
+    @Test
     void deleteDepartmentsCalendarsForPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -329,6 +354,7 @@ class DepartmentCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(10L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         department.setMembers(List.of(person));
@@ -361,6 +387,7 @@ class DepartmentCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(10L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         department.setMembers(List.of(person));

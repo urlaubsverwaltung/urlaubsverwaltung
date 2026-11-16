@@ -85,6 +85,11 @@ public class CompanyCalendarService {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
+        // the calendar is deleted asynchronously when the person is deactivated, do not serve it until then
+        if (person.isInactive()) {
+            throw new IllegalArgumentException("person=%s is inactive".formatted(personId));
+        }
+
         // calendars are deleted when the company calendar is disabled, do not serve one created in the meantime
         if (!mayUseCompanyCalendar(person)) {
             throw new IllegalArgumentException("company calendar is disabled for person=" + personId);
