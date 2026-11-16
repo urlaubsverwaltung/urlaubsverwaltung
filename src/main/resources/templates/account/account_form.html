@@ -53,8 +53,13 @@
           ></p>
 
           <div role="group" aria-labelledby="group-timespan-label">
-            <div class="uv-form-legend">
-              <h1 id="group-timespan-label" th:text="#{person.form.annualVacation.title(${person.niceName})}">
+            <!-- inline, so the year selector continues the sentence of the heading instead of sitting at the end of the line -->
+            <div class="uv-form-legend block">
+              <h1
+                id="group-timespan-label"
+                class="inline"
+                th:text="#{person.form.annualVacation.title(${person.niceName})}"
+              >
                 Urlaubsanspruch
               </h1>
               <div
