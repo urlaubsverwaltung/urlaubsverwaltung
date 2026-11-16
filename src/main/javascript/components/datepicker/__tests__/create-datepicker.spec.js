@@ -675,6 +675,45 @@ describe("create-datepicker", () => {
         expect(document.querySelector(".datepicker-day-blackout")).toBeNull();
       });
 
+      test("public holidays when absences cannot be fetched", async () => {
+        fetchMock.removeRoutes();
+
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
+          publicHolidays: [{ date: "2020-12-25", absencePeriodName: "FULL" }],
+        });
+
+        fetchMock.route(
+          `my-url-prefix/persons/42/absences?from=2020-11-30&to=2021-01-03&absence-types=vacation,sick_note,no_workday`,
+          500,
+        );
+
+        fetchMock.route(`my-url-prefix/persons/42/blackout-periods?from=2020-11-30&to=2021-01-03`, {
+          blackoutPeriods: [],
+        });
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => 42 });
+
+        // fetch public holidays, absences and blackout periods and update view
+        document.querySelector("button.duet-date__toggle").click();
+
+        const getElement = (dateString) => {
+          for (let span of document.querySelectorAll(".duet-date__vhidden")) {
+            if (span.textContent === dateString) {
+              return span.parentNode;
+            }
+          }
+          throw new Error("could not find date element for dateString=" + dateString);
+        };
+
+        await vi.waitFor(() =>
+          expect(getElement("25. Dezember").classList).toContain("datepicker-day-public-holiday-full"),
+        );
+      });
+
       test("weekend", async () => {
         fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
           publicHolidays: [],
