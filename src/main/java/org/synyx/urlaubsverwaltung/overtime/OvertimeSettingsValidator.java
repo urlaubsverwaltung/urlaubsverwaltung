@@ -13,17 +13,18 @@ public final class OvertimeSettingsValidator {
 
     public static void validateOvertimeSettings(OvertimeSettings overtimeSettings, Errors errors) {
 
+        // checked also when overtime is off, applications for leave of the category overtime use it anyway
+        final Integer minimumOvertimeReduction = overtimeSettings.getMinimumOvertimeReduction();
+        if (minimumOvertimeReduction == null || minimumOvertimeReduction < 0) {
+            errors.rejectValue("overtimeSettings.minimumOvertimeReduction", "settings.overtime.minimumOvertimeReduction.error");
+        }
+
         if (!overtimeSettings.isOvertimeActive()) {
             return;
         }
 
         validateOvertimeLimit(overtimeSettings.getMaximumOvertime(), "overtimeSettings.maximumOvertime", errors);
         validateOvertimeLimit(overtimeSettings.getMinimumOvertime(), "overtimeSettings.minimumOvertime", errors);
-
-        final Integer minimumOvertimeReduction = overtimeSettings.getMinimumOvertimeReduction();
-        if (minimumOvertimeReduction == null || minimumOvertimeReduction < 0) {
-            errors.rejectValue("overtimeSettings.minimumOvertimeReduction", "settings.overtime.minimumOvertimeReduction.error");
-        }
     }
 
     private static void validateOvertimeLimit(Integer limit, String field, Errors errors) {
