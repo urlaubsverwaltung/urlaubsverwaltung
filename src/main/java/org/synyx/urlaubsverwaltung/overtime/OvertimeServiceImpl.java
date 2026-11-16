@@ -144,7 +144,7 @@ class OvertimeServiceImpl implements OvertimeService {
         entity.setEndDate(dateRange.endDate());
         entity.setDuration(duration);
         entity.setExternal(type == EXTERNAL);
-        entity.onUpdate();
+        entity.setLastModificationDate(LocalDate.now(clock));
 
         final OvertimeEntity saved = overtimeRepository.save(entity);
 
@@ -186,6 +186,7 @@ class OvertimeServiceImpl implements OvertimeService {
         existingEntity.setStartDate(dateRange.startDate());
         existingEntity.setEndDate(dateRange.endDate());
         existingEntity.setDuration(duration);
+        existingEntity.setLastModificationDate(LocalDate.now(clock));
 
         final OvertimeEntity updated = overtimeRepository.save(existingEntity);
 
