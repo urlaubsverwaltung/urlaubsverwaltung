@@ -13,15 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -48,11 +51,13 @@ public class AbsenceApiController {
 
     private final PersonService personService;
     private final AbsenceService absenceService;
+    private final SickNotePermissionEvaluator sickNotePermissionEvaluator;
 
     @Autowired
-    public AbsenceApiController(PersonService personService, AbsenceService absenceService) {
+    public AbsenceApiController(PersonService personService, AbsenceService absenceService, SickNotePermissionEvaluator sickNotePermissionEvaluator) {
         this.personService = personService;
         this.absenceService = absenceService;
+        this.sickNotePermissionEvaluator = sickNotePermissionEvaluator;
     }
 
     @Operation(
@@ -68,6 +73,9 @@ public class AbsenceApiController {
             * department_head        - if the requested absences of the person id is a managed person of the department head and not of the authenticated user
             * second_stage_authority - if the requested absences of the person id is a managed person of the second stage authority and not of the authenticated user
             * boss or office         - if the requested absences of the person id is any id but not of the authenticated user
+
+            Sick notes of other persons come without id, category, typeId, from and to, unless the authenticated user may
+            view them (office, boss with sick_note_view, department_head or second_stage_authority of the person).
             """
     )
     @GetMapping(value = ABSENCES, produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
@@ -120,9 +128,13 @@ public class AbsenceApiController {
         final Predicate<AbsenceDto> isNoWorkDay = dto -> dto.getAbsenceType().equals(NO_WORKDAY);
         final Predicate<AbsenceDto> isPublicHoliday = dto -> dto.getAbsenceType().equals(PUBLIC_HOLIDAY);
 
+        // asked only when there is a sick note
+        final Supplier<Boolean> mayViewSickNotes =
+            new CachedSupplier<>(() -> sickNotePermissionEvaluator.of(personService.getSignedInUser(), person).isAllowedToView());
+
         return absenceService.getOpenAbsences(person, start, end)
             .stream()
-            .flatMap(this::toAbsenceDto)
+            .flatMap(absence -> toAbsenceDto(absence, mayViewSickNotes))
             .filter(
                 vacationAsked.and(isVacation)
                     .or(sickAsked.and(isSick))
@@ -132,13 +144,13 @@ public class AbsenceApiController {
             .toList();
     }
 
-    private Stream<AbsenceDto> toAbsenceDto(AbsencePeriod absence) {
+    private Stream<AbsenceDto> toAbsenceDto(AbsencePeriod absence, Supplier<Boolean> mayViewSickNotes) {
         return absence.absenceRecords().stream()
-            .map(this::toAbsenceDto)
+            .map(absenceRecord -> toAbsenceDto(absenceRecord, mayViewSickNotes))
             .flatMap(List::stream);
     }
 
-    private List<AbsenceDto> toAbsenceDto(AbsencePeriod.Record absenceRecord) {
+    private List<AbsenceDto> toAbsenceDto(AbsencePeriod.Record absenceRecord, Supplier<Boolean> mayViewSickNotes) {
 
         final LocalDate date = absenceRecord.getDate();
 
@@ -150,21 +162,22 @@ public class AbsenceApiController {
 
         if (maybeMorningType.isPresent() && maybeNoonType.isPresent()) {
             if (maybeMorningType.equals(maybeNoonType)) {
-                return List.of(toAbsenceDto(date, DayLength.FULL, maybeMorning.orElseThrow()));
+                return List.of(toAbsenceDto(date, DayLength.FULL, maybeMorning.orElseThrow(), mayViewSickNotes));
             } else {
-                return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow()), toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow()));
+                return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow(), mayViewSickNotes), toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow(), mayViewSickNotes));
             }
         } else if (maybeMorningType.isPresent()) {
-            return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow()));
+            return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow(), mayViewSickNotes));
         } else if (maybeNoonType.isPresent()) {
-            return List.of(toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow()));
+            return List.of(toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow(), mayViewSickNotes));
         }
 
         return List.of();
     }
 
-    private AbsenceDto toAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
-        return new AbsenceDto(date, dayLength, recordInfo);
+    private AbsenceDto toAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo, Supplier<Boolean> mayViewSickNotes) {
+        final boolean withDetails = recordInfo.getAbsenceType() != AbsencePeriod.AbsenceType.SICK || mayViewSickNotes.get();
+        return new AbsenceDto(date, dayLength, recordInfo, withDetails);
     }
 
     private List<AbsenceDto.AbsenceType> toAbsenceTypes(List<String> dayAbsenceTypes) {
