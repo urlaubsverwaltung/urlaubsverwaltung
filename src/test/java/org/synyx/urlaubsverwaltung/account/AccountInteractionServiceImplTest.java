@@ -28,6 +28,8 @@ import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static java.time.Month.OCTOBER;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -163,6 +165,57 @@ class AccountInteractionServiceImplTest {
 
         final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, true, null, TEN, ONE, ZERO, TEN, "comment");
         assertThat(editedAccount.getExpiryDate()).isNull();
+    }
+
+    @Test
+    void ensureEditHolidayAccountResetsExpiryNotificationWhenExpiryDateMoves() {
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setDoRemainingVacationDaysExpireGlobally(true);
+        account.setExpiryDateGlobally(LocalDate.of(2022, MARCH, 31));
+        account.setExpiryNotificationSentDate(LocalDate.of(2022, MARCH, 31));
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, null, LocalDate.of(2022, JUNE, 30), TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getExpiryNotificationSentDate()).isNull();
+    }
+
+    @Test
+    void ensureEditHolidayAccountResetsExpiryNotificationWhenExpiryIsSwitchedOff() {
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setDoRemainingVacationDaysExpireGlobally(true);
+        account.setExpiryDateGlobally(LocalDate.of(2022, MARCH, 31));
+        account.setExpiryNotificationSentDate(LocalDate.of(2022, MARCH, 31));
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, false, null, TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getExpiryNotificationSentDate()).isNull();
+    }
+
+    @Test
+    void ensureEditHolidayAccountKeepsExpiryNotificationWhenExpiryIsUnchanged() {
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setDoRemainingVacationDaysExpireGlobally(true);
+        account.setExpiryDateGlobally(LocalDate.of(2022, MARCH, 31));
+        account.setExpiryNotificationSentDate(LocalDate.of(2022, MARCH, 31));
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, true, LocalDate.of(2022, MARCH, 31), TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getExpiryNotificationSentDate()).isEqualTo(LocalDate.of(2022, MARCH, 31));
     }
 
     @Test
