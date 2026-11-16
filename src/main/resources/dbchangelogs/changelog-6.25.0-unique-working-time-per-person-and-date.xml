@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <!--
+    Two concurrent saves of the same working time could both insert a row. Single result lookups by person and
+    valid_from then fail. Keep the latest row (highest id) of each duplicate. No table references working_time.
+  -->
+  <changeSet author="schneider" id="unique-working-time-per-person-and-date">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <uniqueConstraintExists tableName="working_time" constraintName="unique_working_time_by_person_and_valid_from"/>
+      </not>
+    </preConditions>
+
+    <sql>
+      DELETE FROM working_time duplicate
+        USING working_time newer
+        WHERE duplicate.person_id = newer.person_id
+          AND duplicate.valid_from = newer.valid_from
+          AND duplicate.id &lt; newer.id;
+    </sql>
+
+    <addUniqueConstraint columnNames="person_id, valid_from"
+                         constraintName="unique_working_time_by_person_and_valid_from"
+                         tableName="working_time"/>
+  </changeSet>
+</databaseChangeLog>
