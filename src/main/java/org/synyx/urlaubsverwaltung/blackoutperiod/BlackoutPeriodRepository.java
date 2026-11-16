@@ -14,6 +14,15 @@ import java.util.List;
 interface BlackoutPeriodRepository extends JpaRepository<BlackoutPeriodEntity, Long> {
 
     /**
+     * Finds all blackout periods together with their department and vacation type ids in the same statement.
+     *
+     * @return all blackout periods, in no particular order
+     */
+    @Override
+    @EntityGraph(attributePaths = {"departmentIds", "vacationTypeIds"})
+    List<BlackoutPeriodEntity> findAll();
+
+    /**
      * Finds all blackout periods overlapping the given date range, together with their department and vacation type
      * ids in the same statement.
      *

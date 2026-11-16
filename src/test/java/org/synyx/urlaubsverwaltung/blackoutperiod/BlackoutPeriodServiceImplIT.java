@@ -129,6 +129,22 @@ class BlackoutPeriodServiceImplIT extends SingleTenantTestContainersBase {
         assertThat(blocking).map(BlackoutPeriod::getTitle).hasValue("Vertriebssperre");
     }
 
+    @Test
+    void getAllBlackoutPeriodsDoesNotQueryPerStoredBlackoutPeriod() {
+
+        final Department department = createDepartment("Vertrieb", createPersons("user", 1));
+        createCompanyWideAndScopedBlackoutPeriods(department);
+
+        createPastBlackoutPeriod(department, 2020);
+        final long statementsWithOnePastBlackoutPeriod = countStatements(() -> sut.getAllBlackoutPeriods());
+
+        IntStream.rangeClosed(2021, 2024).forEach(year -> createPastBlackoutPeriod(department, year));
+        final long statementsWithFivePastBlackoutPeriods = countStatements(() -> sut.getAllBlackoutPeriods());
+
+        assertThat(statementsWithFivePastBlackoutPeriods).isEqualTo(statementsWithOnePastBlackoutPeriod);
+        assertThat(sut.getAllBlackoutPeriods()).hasSize(7);
+    }
+
     private List<Person> createPersons(String prefix, int count) {
         return IntStream.rangeClosed(1, count)
             .mapToObj(i -> personService.create(prefix + i, "First" + i, "Last" + i, prefix + i + "@example.org", List.of(), List.of(USER)))
