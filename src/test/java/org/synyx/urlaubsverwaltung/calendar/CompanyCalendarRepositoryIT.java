@@ -10,9 +10,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Period;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
@@ -54,5 +58,23 @@ class CompanyCalendarRepositoryIT extends SingleTenantTestContainersBase {
 
         final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.saveAndFlush(secondCompanyCalendar));
         assertThat(exception.getMessage()).contains("constraint [company_calendar_person_id_key]");
+    }
+
+    @Test
+    void ensureDeleteByPersonWithoutOneOfRolesDeletesCalendarsOfUsersAndInactivePersons() {
+
+        final Person user = personService.create("user", "user", "user", "user@example.org", List.of(), List.of(USER));
+        final Person inactive = personService.create("inactive", "inactive", "inactive", "inactive@example.org", List.of(), List.of());
+        final Person boss = personService.create("boss", "boss", "boss", "boss@example.org", List.of(), List.of(USER, BOSS));
+        final Person office = personService.create("office", "office", "office", "office@example.org", List.of(), List.of(USER, OFFICE));
+        for (Person person : List.of(user, inactive, boss, office)) {
+            final CompanyCalendar companyCalendar = new CompanyCalendar(person);
+            companyCalendar.setCalendarPeriod(Period.ofDays(1));
+            sut.save(companyCalendar);
+        }
+
+        sut.deleteByPersonWithoutOneOfRoles(List.of(BOSS, OFFICE));
+
+        assertThat(sut.findAll()).extracting(CompanyCalendar::getPerson).containsExactlyInAnyOrder(boss, office);
     }
 }

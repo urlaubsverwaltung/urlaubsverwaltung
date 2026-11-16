@@ -130,13 +130,7 @@ public class CompanyCalendarService {
     @Transactional
     public void deleteCalendarsForPersonsWithoutOneOfRole(Role... roles) {
 
-        final List<Role> roleList = Arrays.asList(roles);
-
-        for (final Person person : personService.getActivePersons()) {
-            if (roleList.stream().noneMatch(person::hasRole)) {
-                companyCalendarRepository.deleteByPerson(person);
-            }
-        }
+        companyCalendarRepository.deleteByPersonWithoutOneOfRoles(Arrays.asList(roles));
     }
 
     private Person getPersonOrThrow(Long personId) {
