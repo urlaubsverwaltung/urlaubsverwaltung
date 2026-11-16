@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -29,7 +30,9 @@ import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
 
 
 @Controller
@@ -115,6 +118,9 @@ public class SickNotesViewController implements HasLaunchpad, HasPersonSearch {
 
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
+        if (isTooFarFromTheCurrentYear(yearToShow, clock)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid year " + yearToShow);
+        }
 
         prepareSickNoteList(person, permissions, yearToShow, model);
 

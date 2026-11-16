@@ -205,6 +205,19 @@ class ApplicationsViewControllerTest {
     }
 
     @Test
+    void showMyApplicationsForPersonRejectsYearOutOfRange() throws Exception {
+        final Person person = new Person();
+        person.setId(13L);
+
+        when(personService.getPersonByID(13L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        perform(get(MY_APPLICATIONS_PATH.replace("{personId}", "13")).param("year", "1000000000"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void showMyApplicationsForPersonWithApplicationsMapsToDto() throws Exception {
         final Person person = new Person();
         person.setId(21L);

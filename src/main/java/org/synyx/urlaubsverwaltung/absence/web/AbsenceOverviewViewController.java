@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -36,6 +37,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.TextStyle;
@@ -61,7 +63,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -795,22 +799,30 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     private LocalDate getStartOrEndDate(Integer year, String month, Supplier<TemporalAdjuster> firstOrLastOfYearSupplier,
                                         Supplier<TemporalAdjuster> firstOrLastOfMonthSupplier) {
 
+        if (year != null && isTooFarFromTheCurrentYear(year, clock)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid year " + year);
+        }
+
         final LocalDate now = LocalDate.now(clock);
 
-        if (year != null) {
-            if (hasText(month)) {
-                return now.withYear(year).withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
+        try {
+            if (year != null) {
+                if (hasText(month)) {
+                    return now.withYear(year).withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
+                }
+                if ("".equals(month)) {
+                    return now.withYear(year).with(firstOrLastOfYearSupplier.get());
+                }
+                return now.withYear(year).with(firstOrLastOfMonthSupplier.get());
             }
-            if ("".equals(month)) {
-                return now.withYear(year).with(firstOrLastOfYearSupplier.get());
-            }
-            return now.withYear(year).with(firstOrLastOfMonthSupplier.get());
-        }
 
-        if (hasText(month)) {
-            return now.withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
+            if (hasText(month)) {
+                return now.withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
+            }
+            return now.with(firstOrLastOfMonthSupplier.get());
+        } catch (NumberFormatException | DateTimeException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid month " + month, e);
         }
-        return now.with(firstOrLastOfMonthSupplier.get());
     }
 
     private List<Person> getActiveManagedMembersOfPerson(final Person person) {

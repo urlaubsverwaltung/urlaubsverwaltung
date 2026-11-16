@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -56,8 +57,10 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -175,6 +178,9 @@ public class OverviewViewController implements HasLaunchpad, HasPersonSearch {
 
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
+        if (isTooFarFromTheCurrentYear(yearToShow, clock)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid year " + yearToShow);
+        }
 
         // for calendar.js
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();

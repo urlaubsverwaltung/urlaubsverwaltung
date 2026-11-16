@@ -128,6 +128,15 @@ class AbsenceStatisticsViewControllerTest {
     }
 
     @Test
+    void absenceStatisticsWithYearOutOfRange() throws Exception {
+
+        perform(get("/web/absence/statistics")
+            .param("year", "999999999")
+        )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void ensureAsOfDateIsTodayForTheCurrentYear() throws Exception {
 
         final Year year = Year.now(clock);

@@ -724,6 +724,19 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("selectedMonth", "1"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"month=0", "month=13", "month=abc", "year=2025&month=13", "year=1000000000", "year=999999999&month=1"})
+    void ensureBadRequestForInvalidMonthOrYear(String query) throws Exception {
+
+        final var person = new Person();
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        perform(get("/web/absences?" + query))
+            .andExpect(status().isBadRequest());
+    }
+
     @Test
     void ensureMonthDayTextIsPadded() throws Exception {
 
