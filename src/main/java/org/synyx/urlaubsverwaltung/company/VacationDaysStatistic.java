@@ -14,27 +14,27 @@ record VacationDaysStatistic(Map<Person, ApplicationForLeaveStatistics> statisti
     /**
      *
      * @param from start of the range
-     * @param to end of the range, inclusive
+     * @param to end of the range, exclusive
      * @return person count
      */
     int numberOfPersonsWithRemainingVacationDaysBetween(double from, double to) {
         return (int) statisticByPerson.values().stream()
             .map(ApplicationForLeaveStatistics::getLeftVacationDaysForYear)
             .mapToDouble(java.math.BigDecimal::doubleValue)
-            .filter(remaining -> remaining >= from && remaining <= to)
+            .filter(remaining -> remaining >= from && remaining < to)
             .count();
     }
 
     /**
      *
-     * @param value start of the range, exclusive
+     * @param value start of the range, inclusive
      * @return person count
      */
-    int numberOfPersonsWithRemainingVacationDaysGreaterThan(double value) {
+    int numberOfPersonsWithRemainingVacationDaysGreaterOrEqual(double value) {
         return (int) statisticByPerson.values().stream()
             .map(ApplicationForLeaveStatistics::getLeftVacationDaysForYear)
             .mapToDouble(java.math.BigDecimal::doubleValue)
-            .filter(remaining -> remaining > value)
+            .filter(remaining -> remaining >= value)
             .count();
     }
 }

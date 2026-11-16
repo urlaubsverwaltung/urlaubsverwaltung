@@ -45,7 +45,7 @@ class VacationDaysStatisticTest {
     class NumberOfPersonsWithRemainingVacationDaysBetween {
 
         @Test
-        void ensureCountsPersonsWithinRangeInclusive() {
+        void ensureCountsPersonsWithinRangeEndExclusive() {
 
             final Person personA = createPerson(1L);
             final ApplicationForLeaveStatistics statisticsA = mock(ApplicationForLeaveStatistics.class);
@@ -65,7 +65,20 @@ class VacationDaysStatisticTest {
                 personC, statisticsC
             ));
 
-            assertThat(sut.numberOfPersonsWithRemainingVacationDaysBetween(5, 10)).isEqualTo(2);
+            assertThat(sut.numberOfPersonsWithRemainingVacationDaysBetween(5, 10)).isEqualTo(1);
+        }
+
+        @Test
+        void ensureCountsPersonOnRangeBoundaryInOneRangeOnly() {
+
+            final Person person = createPerson(1L);
+            final ApplicationForLeaveStatistics statistics = mock(ApplicationForLeaveStatistics.class);
+            when(statistics.getLeftVacationDaysForYear()).thenReturn(BigDecimal.valueOf(10.0));
+
+            final VacationDaysStatistic sut = new VacationDaysStatistic(Map.of(person, statistics));
+
+            assertThat(sut.numberOfPersonsWithRemainingVacationDaysBetween(0, 10)).isZero();
+            assertThat(sut.numberOfPersonsWithRemainingVacationDaysBetween(10, 18)).isEqualTo(1);
         }
 
         @Test
@@ -89,10 +102,10 @@ class VacationDaysStatisticTest {
     }
 
     @Nested
-    class NumberOfPersonsWithRemainingVacationDaysGreaterThan {
+    class NumberOfPersonsWithRemainingVacationDaysGreaterOrEqual {
 
         @Test
-        void ensureCountsPersonsStrictlyGreaterThanValue() {
+        void ensureCountsPersonsGreaterOrEqualValue() {
 
             final Person personA = createPerson(1L);
             final ApplicationForLeaveStatistics statisticsA = mock(ApplicationForLeaveStatistics.class);
@@ -112,7 +125,7 @@ class VacationDaysStatisticTest {
                 personC, statisticsC
             ));
 
-            assertThat(sut.numberOfPersonsWithRemainingVacationDaysGreaterThan(10)).isEqualTo(1);
+            assertThat(sut.numberOfPersonsWithRemainingVacationDaysGreaterOrEqual(10)).isEqualTo(2);
         }
     }
 }
