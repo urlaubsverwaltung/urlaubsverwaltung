@@ -171,7 +171,7 @@ final class PersonNotificationsMapper {
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             final boolean departmentRelated = mailNotificationToCheck.isDepartmentRelated();
             final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions()) && (!mailNotificationToCheck.isSickNoteSubmissionRelated() || userIsAllowedToSubmitSickNotes);
-            final boolean isActive = activePersonMailNotifications.contains(mailNotificationToCheck);
+            final boolean isActive = mailNotificationToCheck.isValidWith(person.getPermissions()) && activePersonMailNotifications.contains(mailNotificationToCheck);
             setterByNotification.get(mailNotificationToCheck).accept(new PersonNotificationDtoDepartmentAware(departmentRelated, isVisible, isActive));
         }
 
