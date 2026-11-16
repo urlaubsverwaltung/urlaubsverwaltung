@@ -286,6 +286,7 @@ class CompanyCalendarServiceTest {
         person.setPermissions(List.of()); // inactive: without the role USER
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(new CompanyCalendar(person)));
+        companyCalendarIsAccessible(true);
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForAll(10L, "secret", GERMAN));
         verifyNoInteractions(iCalService);
