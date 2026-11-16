@@ -309,6 +309,16 @@ class ApplicationServiceImplTest {
             assertThat(totalHours).isEqualTo(Duration.ofHours(1));
             verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
         }
+
+        @Test
+        void ensureRoundsTotalOvertimeReductionForPersonToMinutes() {
+
+            final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+            // 80 minutes stored as hours: 1.3333333333333333 * 60 = 79.99999999999999
+            when(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.valueOf(80.0 / 60));
+
+            assertThat(sut.getTotalOvertimeReductionOfPerson(person)).isEqualTo(Duration.ofMinutes(80));
+        }
     }
 
     @Nested
@@ -324,6 +334,18 @@ class ApplicationServiceImplTest {
             when(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).thenReturn(BigDecimal.valueOf(7.5));
 
             assertThat(sut.getTotalOvertimeReductionOfPersons(persons)).isEqualTo(Duration.ofHours(7).plusMinutes(30));
+        }
+
+        @Test
+        void ensureRoundsTotalOvertimeReductionOfPersonsToMinutes() {
+
+            final Person marie = new Person("marie", "Reichenbach", "Marie", "marie@example.org");
+            final List<Person> persons = List.of(marie);
+
+            // 20 minutes stored as hours: 0.3333333333333333 * 60 = 19.99999999999999
+            when(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).thenReturn(BigDecimal.valueOf(20.0 / 60));
+
+            assertThat(sut.getTotalOvertimeReductionOfPersons(persons)).isEqualTo(Duration.ofMinutes(20));
         }
 
         @Test
