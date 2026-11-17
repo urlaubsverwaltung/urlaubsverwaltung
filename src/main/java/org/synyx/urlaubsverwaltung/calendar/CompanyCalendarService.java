@@ -90,6 +90,11 @@ public class CompanyCalendarService {
             throw new IllegalArgumentException("company calendar is disabled for person=" + personId);
         }
 
+        // the calendar is deleted asynchronously when the person is deactivated, do not serve it until then
+        if (person.isInactive()) {
+            throw new IllegalArgumentException("person=%s is inactive".formatted(personId));
+        }
+
         final String title = messageSource.getMessage("calendar.company.title", new Object[]{}, locale);
 
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();

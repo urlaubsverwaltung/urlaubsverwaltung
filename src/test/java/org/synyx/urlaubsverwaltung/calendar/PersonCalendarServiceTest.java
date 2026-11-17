@@ -27,10 +27,12 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +68,7 @@ class PersonCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
@@ -89,6 +92,7 @@ class PersonCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
@@ -112,6 +116,7 @@ class PersonCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
@@ -135,6 +140,7 @@ class PersonCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
@@ -206,6 +212,22 @@ class PersonCalendarServiceTest {
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForPerson(1L, "secret", GERMAN));
+    }
+
+    @Test
+    void getCalendarForPersonFailsWhenPersonIsInactive() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of()); // inactive: without the role USER
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setPerson(person);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForPerson(1L, "secret", GERMAN));
+        verifyNoInteractions(iCalService);
     }
 
     @Test

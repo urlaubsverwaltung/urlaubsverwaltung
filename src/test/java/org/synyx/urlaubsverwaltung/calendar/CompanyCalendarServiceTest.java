@@ -73,6 +73,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person();
         person.setId(10L);
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         CompanyCalendar companyCalendar = new CompanyCalendar(person);
@@ -273,6 +274,19 @@ class CompanyCalendarServiceTest {
         when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(new CompanyCalendar(person)));
         companyCalendarIsAccessible(false);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForAll(10L, "secret", GERMAN));
+        verifyNoInteractions(iCalService);
+    }
+
+    @Test
+    void getCalendarForAllFailsWhenPersonIsInactive() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of()); // inactive: without the role USER
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(new CompanyCalendar(person)));
+        companyCalendarIsAccessible(true);
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getCalendarForAll(10L, "secret", GERMAN));
         verifyNoInteractions(iCalService);
