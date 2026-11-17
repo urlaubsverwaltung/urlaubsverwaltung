@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
@@ -136,7 +137,7 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
-        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+        return hoursToMinutes(overtimeReduction);
     }
 
     @Override
@@ -149,7 +150,11 @@ class ApplicationServiceImpl implements ApplicationService {
         final BigDecimal overtimeReduction =
             Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersons(persons)).orElse(BigDecimal.ZERO);
 
-        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+        return hoursToMinutes(overtimeReduction);
+    }
+
+    private static Duration hoursToMinutes(BigDecimal hours) {
+        return Duration.ofMinutes(hours.multiply(BigDecimal.valueOf(60)).setScale(0, HALF_UP).longValue());
     }
 
     @Override
