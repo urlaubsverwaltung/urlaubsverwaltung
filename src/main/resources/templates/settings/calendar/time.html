@@ -22,6 +22,9 @@
               ></option>
             </th:block>
           </select>
+          <p class="uv-form__input-error" th:if="${#fields.hasErrors('timeSettings.timeZoneId')}">
+            <th:block th:errors="*{timeSettings.timeZoneId}">timeZoneId Error</th:block>
+          </p>
         </div>
 
         <!-- Start of working hours settings for a work day -->

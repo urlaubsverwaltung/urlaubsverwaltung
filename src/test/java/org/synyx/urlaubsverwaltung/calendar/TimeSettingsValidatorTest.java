@@ -128,4 +128,54 @@ class TimeSettingsValidatorTest {
         assertThat(errors.getFieldErrors("timeSettings.workDayEndHour")).extracting(DefaultMessageSourceResolvable::getCode).contains("error.entry.mandatory");
         assertThat(errors.getFieldErrors("timeSettings.workDayEndMinute")).extracting(DefaultMessageSourceResolvable::getCode).contains("error.entry.mandatory");
     }
+
+    @ParameterizedTest
+    @CsvSource({"Europe/Berlin", "IST", "UTC"})
+    void ensureTimeZoneOfTheTimeZoneListIsValid(final String timeZoneId) {
+
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId(timeZoneId);
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(timeSettings);
+
+        final Errors errors = new BeanPropertyBindingResult(settings, "settings");
+
+        validateTimeSettings(timeSettings, errors);
+
+        assertThat(errors.getFieldErrors("timeSettings.timeZoneId")).isEmpty();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Europe/Nowhere", "''"})
+    void ensureTimeZoneMustBeOfTheTimeZoneList(final String timeZoneId) {
+
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId(timeZoneId);
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(timeSettings);
+
+        final Errors errors = new BeanPropertyBindingResult(settings, "settings");
+
+        validateTimeSettings(timeSettings, errors);
+
+        assertThat(errors.getFieldErrors("timeSettings.timeZoneId")).extracting(DefaultMessageSourceResolvable::getCode).contains("error.entry.invalid");
+    }
+
+    @Test
+    void ensureTimeZoneCanNotBeNull() {
+
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId(null);
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(timeSettings);
+
+        final Errors errors = new BeanPropertyBindingResult(settings, "settings");
+
+        validateTimeSettings(timeSettings, errors);
+
+        assertThat(errors.getFieldErrors("timeSettings.timeZoneId")).extracting(DefaultMessageSourceResolvable::getCode).contains("error.entry.mandatory");
+    }
 }

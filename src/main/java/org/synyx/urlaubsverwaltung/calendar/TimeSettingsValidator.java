@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.springframework.validation.Errors;
 
 import java.time.LocalTime;
+import java.util.List;
+import java.util.TimeZone;
 
 public final class TimeSettingsValidator {
 
@@ -17,6 +19,13 @@ public final class TimeSettingsValidator {
     }
 
     public static void validateTimeSettings(final TimeSettings timeSettings, final Errors errors) {
+
+        final String timeZoneId = timeSettings.getTimeZoneId();
+        if (timeZoneId == null) {
+            errors.rejectValue("timeSettings.timeZoneId", ERROR_MANDATORY_FIELD);
+        } else if (!List.of(TimeZone.getAvailableIDs()).contains(timeZoneId)) {
+            errors.rejectValue("timeSettings.timeZoneId", ERROR_INVALID_ENTRY);
+        }
 
         // validate begin time
         final Integer workDayBeginHour = timeSettings.getWorkDayBeginHour();

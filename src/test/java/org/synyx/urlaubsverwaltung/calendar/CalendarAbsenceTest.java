@@ -57,6 +57,17 @@ class CalendarAbsenceTest {
     }
 
     @Test
+    void ensureCanBeInstantiatedWithAShortTimeZoneIdOfTheTimeZoneList() {
+
+        final LocalDate start = LocalDate.of(2015, SEPTEMBER, 21);
+        final Period period = new Period(start, start, DayLength.FULL);
+
+        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration("IST"));
+
+        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(ZoneId.of("Asia/Kolkata")));
+    }
+
+    @Test
     void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
 
         // Date where daylight saving time is relevant
