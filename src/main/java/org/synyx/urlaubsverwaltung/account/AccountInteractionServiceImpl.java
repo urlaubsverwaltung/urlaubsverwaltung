@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -115,6 +116,9 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         remainingVacationDaysNotExpiring = requireNonNullElseGet(remainingVacationDaysNotExpiring, account::getRemainingVacationDaysNotExpiring);
 
+        final boolean previousDoExpire = account.doRemainingVacationDaysExpire();
+        final LocalDate previousExpiryDate = account.getExpiryDate();
+
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpireLocally);
@@ -124,6 +128,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setRemainingVacationDays(remainingVacationDays);
         account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
+
+        // a moved expiry is a new expiry, the reminder job has to notify again
+        if (previousDoExpire != account.doRemainingVacationDaysExpire() || !Objects.equals(previousExpiryDate, account.getExpiryDate())) {
+            account.setExpiryNotificationSentDate(null);
+        }
 
         final Account savedAccount = accountService.save(account);
         LOG.info("Updated holidays account: {}", savedAccount);
