@@ -36,6 +36,7 @@ public class SickNoteValidator implements Validator {
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "sicknote.error.noValidWorkingTime";
 
+    private static final String ATTRIBUTE_SICK_NOTE_TYPE = "sickNoteType";
     private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
@@ -77,6 +78,10 @@ public class SickNoteValidator implements Validator {
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
+
+        if (sickNote.getSickNoteType() == null) {
+            errors.rejectValue(ATTRIBUTE_SICK_NOTE_TYPE, ERROR_MANDATORY_FIELD);
+        }
 
         if (dayLength == null) {
             errors.rejectValue(ATTRIBUTE_DAY_LENGTH, ERROR_MANDATORY_FIELD);
