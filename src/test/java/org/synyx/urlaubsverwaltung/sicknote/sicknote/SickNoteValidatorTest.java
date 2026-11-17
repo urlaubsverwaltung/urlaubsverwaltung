@@ -9,6 +9,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -57,6 +58,8 @@ class SickNoteValidatorTest {
     void ensureEndDateTooFarInTheFutureIsRejected() {
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .startDate(LocalDate.of(2014, JANUARY, 1))
             .endDate(LocalDate.of(2016, JANUARY, 2))
@@ -73,6 +76,8 @@ class SickNoteValidatorTest {
     void ensureStartDateTooFarInThePastIsRejected() {
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .startDate(LocalDate.of(2003, DECEMBER, 31))
             .endDate(LocalDate.of(2014, JANUARY, 1))
@@ -93,6 +98,8 @@ class SickNoteValidatorTest {
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
             .endDate(LocalDate.of(2013, NOVEMBER, 30))
@@ -114,6 +121,8 @@ class SickNoteValidatorTest {
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
             .endDate(LocalDate.of(2013, NOVEMBER, 30))
@@ -133,6 +142,8 @@ class SickNoteValidatorTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(person)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
             .endDate(LocalDate.of(2013, NOVEMBER, 20))
@@ -154,6 +165,8 @@ class SickNoteValidatorTest {
         person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
                 .person(person)
                 .applier(person)
                 .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -172,6 +185,8 @@ class SickNoteValidatorTest {
         person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
                 .person(person)
                 .applier(person)
                 .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -195,6 +210,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -214,6 +231,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -227,12 +246,30 @@ class SickNoteValidatorTest {
     }
 
     @Test
+    void ensureSickNoteTypeMayNotBeNull() {
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .sickNoteType(null)
+            .startDate(LocalDate.of(2013, NOVEMBER, 19))
+            .endDate(LocalDate.of(2013, NOVEMBER, 20))
+            .dayLength(FULL)
+            .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getFieldErrors("sickNoteType").getFirst().getCode()).isEqualTo("error.entry.mandatory");
+    }
+
+    @Test
     void ensureStartDateMayNotBeNull() {
 
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(null)
@@ -252,6 +289,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -271,6 +310,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, DECEMBER, 10))
@@ -292,6 +333,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -311,6 +354,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 19))
@@ -330,6 +375,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 21))
@@ -349,6 +396,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 21))
@@ -372,6 +421,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -397,6 +448,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -422,6 +475,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -447,6 +502,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -472,6 +529,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -497,6 +556,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))
@@ -521,6 +582,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, MARCH, 1))
@@ -544,6 +607,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(startDate)
@@ -566,6 +631,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 10))
@@ -591,6 +658,8 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
+
+            .sickNoteType(new SickNoteType())
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .applier(applier)
             .startDate(LocalDate.of(2013, NOVEMBER, 1))

@@ -112,6 +112,9 @@
                   />
                 </th:block>
               </select>
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('sickNoteType')}">
+                <th:block th:errors="*{sickNoteType}">sickNoteType Error</th:block>
+              </p>
             </div>
 
             <!-- Day Length -->
