@@ -810,7 +810,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                 if (hasText(month)) {
                     return now.withYear(year).withMonth(parseInt(month)).with(firstOrLastOfMonthSupplier.get());
                 }
-                if ("".equals(month)) {
+                if (month != null && month.isEmpty()) {
                     return now.withYear(year).with(firstOrLastOfYearSupplier.get());
                 }
                 return now.withYear(year).with(firstOrLastOfMonthSupplier.get());
