@@ -201,6 +201,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT), List.of(USER));
 
         final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person editor = new Person("office", "Office", "Olaf", "olaf@example.org");
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -209,14 +210,14 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .applier(person)
+            .applier(management)
             .startDate(LocalDate.of(2022, FEBRUARY, 1))
             .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendEditedToSickPerson(sickNote, management);
+        sut.sendEditedToSickPerson(sickNote, editor);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -224,12 +225,12 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
-        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(management.getEmail()));
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(editor.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich bearbeitet");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
 
-            Lieschen Müller hat die folgende Krankmeldung für dich bearbeitet:
+            Olaf Office hat die folgende Krankmeldung für dich bearbeitet:
 
                 https://localhost:8080/web/sicknote/1
 
@@ -403,6 +404,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
 
         final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person canceller = new Person("office", "Office", "Olaf", "olaf@example.org");
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -411,14 +413,14 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final SickNote sickNote = SickNote.builder()
             .id(1L)
             .person(person)
-            .applier(person)
+            .applier(management)
             .startDate(LocalDate.of(2022, FEBRUARY, 1))
             .endDate(LocalDate.of(2022, APRIL, 1))
             .dayLength(DayLength.FULL)
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendCancelledToSickPerson(sickNote, management);
+        sut.sendCancelledToSickPerson(sickNote, canceller);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -426,12 +428,12 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
-        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(management.getEmail()));
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(canceller.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich storniert");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
 
-            Lieschen Müller hat die folgende Krankmeldung für dich storniert:
+            Olaf Office hat die folgende Krankmeldung für dich storniert:
 
                 https://localhost:8080/web/sicknote/1
 
