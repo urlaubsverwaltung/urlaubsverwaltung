@@ -141,13 +141,6 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         this.lastModificationDate = lastModificationDate;
     }
 
-    /**
-     * Should be called whenever an overtime entity is updated.
-     */
-    public void onUpdate() {
-        this.lastModificationDate = LocalDate.now(UTC);
-    }
-
     @Override
     public String toString() {
         return "OvertimeEntity{" +

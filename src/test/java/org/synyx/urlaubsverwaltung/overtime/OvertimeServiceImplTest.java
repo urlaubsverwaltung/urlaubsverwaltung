@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
+import static java.time.Month.NOVEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -465,6 +467,42 @@ class OvertimeServiceImplTest {
                 assertThat(actualEntity.getEndDate()).isEqualTo(endDate);
                 assertThat(actualEntity.getDuration()).isEqualTo(duration);
             });
+        }
+
+        @Test
+        void ensureUpdateSetsLastModificationDateToToday() throws Exception {
+
+            final Clock fixedClock = Clock.fixed(Instant.parse("2026-11-16T10:00:00Z"), UTC);
+            sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, personService,
+                workingTimeCalendarService, overtimeMailService, applicationEventPublisher, fixedClock);
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+            savedOvertimeEntity.setLastModificationDate(LocalDate.of(2026, JANUARY, 1));
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(fixedClock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.findById(1L)).thenReturn(Optional.of(savedOvertimeEntity));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final DateRange dateRange = new DateRange(LocalDate.of(2026, NOVEMBER, 2), LocalDate.of(2026, NOVEMBER, 2));
+            sut.updateOvertime(new OvertimeId(1L), dateRange, Duration.ofHours(8), authorId, "Foo Bar");
+
+            verify(overtimeRepository).save(overtimeEntityCaptor.capture());
+            assertThat(overtimeEntityCaptor.getValue().getLastModificationDate()).isEqualTo(LocalDate.of(2026, NOVEMBER, 16));
         }
 
         @Test
