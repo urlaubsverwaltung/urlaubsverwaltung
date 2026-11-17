@@ -471,8 +471,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
                 .ifPresent(_ -> applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication, editor));
         }
 
+        // an allowed application is not allowed again, so its new replacements get the confirmation right away
+        final boolean allowed = savedEditedApplication.hasStatus(ALLOWED) || savedEditedApplication.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         for (final HolidayReplacementEntity replacement : addedReplacements) {
-            applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication, editor);
+            if (allowed) {
+                applicationMailService.notifyHolidayReplacementAllow(replacement, savedEditedApplication);
+            } else {
+                applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication, editor);
+            }
         }
 
         for (final HolidayReplacementEntity replacement : deletedReplacements) {
