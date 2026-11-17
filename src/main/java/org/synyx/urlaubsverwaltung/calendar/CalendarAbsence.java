@@ -26,8 +26,10 @@ public class CalendarAbsence {
         this.person = person;
         this.calendarAbsenceType = calendarAbsenceType;
 
-        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
-        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
+        // the time zone list of the settings (java.util.TimeZone) contains short ids like "IST", which ZoneId only knows by SHORT_IDS
+        final ZoneId zoneId = ZoneId.of(absenceTimeConfiguration.timeZoneId(), ZoneId.SHORT_IDS);
+        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(zoneId);
+        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(zoneId);
 
         switch (period.dayLength()) {
             case FULL -> {
