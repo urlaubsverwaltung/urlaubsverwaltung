@@ -452,6 +452,56 @@ class OverlapServiceTest {
     }
 
     @Test
+    void ensureNoOverlappingIfApplyingForTheAfternoonOfAMorningSickNote() {
+
+        final LocalDate date = LocalDate.of(2012, JANUARY, 16);
+        final Person person = new Person();
+
+        final SickNote morningSickNote = SickNote.builder().person(person).dayLength(MORNING).startDate(date).endDate(date).status(ACTIVE).build();
+        when(sickNoteService.getByPersonAndPeriod(person, date, date)).thenReturn(List.of(morningSickNote));
+
+        final Application noonVacation = new Application();
+        noonVacation.setPerson(person);
+        noonVacation.setDayLength(DayLength.NOON);
+        noonVacation.setStartDate(date);
+        noonVacation.setEndDate(date);
+
+        assertThat(sut.checkOverlap(noonVacation)).isEqualTo(NO_OVERLAPPING);
+    }
+
+    @Test
+    void ensureNoOverlappingIfCreatingAnAfternoonSickNoteNextToAMorningSickNote() {
+
+        final LocalDate date = LocalDate.of(2012, JANUARY, 16);
+        final Person person = new Person();
+
+        final SickNote morningSickNote = SickNote.builder().id(1L).person(person).dayLength(MORNING).startDate(date).endDate(date).status(ACTIVE).build();
+        when(sickNoteService.getByPersonAndPeriod(person, date, date)).thenReturn(List.of(morningSickNote));
+
+        final SickNote noonSickNote = SickNote.builder().person(person).dayLength(DayLength.NOON).startDate(date).endDate(date).status(ACTIVE).build();
+
+        assertThat(sut.checkOverlap(noonSickNote)).isEqualTo(NO_OVERLAPPING);
+    }
+
+    @Test
+    void ensureFullyOverlappingIfApplyingForTheMorningOfAMorningSickNote() {
+
+        final LocalDate date = LocalDate.of(2012, JANUARY, 16);
+        final Person person = new Person();
+
+        final SickNote morningSickNote = SickNote.builder().person(person).dayLength(MORNING).startDate(date).endDate(date).status(ACTIVE).build();
+        when(sickNoteService.getByPersonAndPeriod(person, date, date)).thenReturn(List.of(morningSickNote));
+
+        final Application morningVacation = new Application();
+        morningVacation.setPerson(person);
+        morningVacation.setDayLength(MORNING);
+        morningVacation.setStartDate(date);
+        morningVacation.setEndDate(date);
+
+        assertThat(sut.checkOverlap(morningVacation)).isEqualTo(FULLY_OVERLAPPING);
+    }
+
+    @Test
     void ensureOverlappingForTEMPORARY_ALLOWEDApplications() {
 
         final LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
