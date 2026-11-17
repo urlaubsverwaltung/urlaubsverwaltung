@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -27,6 +28,8 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Comparator.comparing;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isZero;
 
 /**
@@ -74,6 +77,9 @@ class AbsenceStatisticsViewController implements HasLaunchpad, HasPersonSearch {
                                      Locale locale, Model model) {
 
         final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
+        if (isTooFarFromTheCurrentYear(selectedYear.getValue(), clock)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid year " + selectedYear);
+        }
         final Person signedInUser = personService.getSignedInUser();
 
         final AbsenceStatistics selectedYearStatistics = absenceStatisticsService.createStatistics(selectedYear, signedInUser);

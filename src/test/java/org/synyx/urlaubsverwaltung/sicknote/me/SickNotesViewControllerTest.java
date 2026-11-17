@@ -183,6 +183,18 @@ class SickNotesViewControllerTest {
     }
 
     @Test
+    void showMySickNotesForPersonRejectsYearOutOfRange() throws Exception {
+        final Person person = new Person();
+        person.setId(5L);
+
+        when(personService.getPersonByID(5L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get(MY_SICKNOTES_PATH.replace("{personId}", "5")).param("year", "1000000000"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void showMySickNotesForPersonWithSickNotesProvidesSummary() throws Exception {
         final Person person = new Person();
         person.setId(6L);

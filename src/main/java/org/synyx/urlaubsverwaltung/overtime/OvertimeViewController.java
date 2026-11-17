@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -52,10 +53,12 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.COMMENTED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeListMapper.mapToDto;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -164,6 +167,9 @@ public class OvertimeViewController implements HasLaunchpad, HasPersonSearch {
 
         final int currentYear = Year.now(clock).getValue();
         final int selectedYear = requestedYear != null ? requestedYear : currentYear;
+        if (isTooFarFromTheCurrentYear(selectedYear, clock)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Invalid year " + selectedYear);
+        }
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
 

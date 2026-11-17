@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * Limits for date ranges and dates.
@@ -38,6 +39,11 @@ public final class DateLimits {
      */
     public static final java.time.Period MAXIMUM_PERIOD_INTO_THE_PAST = java.time.Period.ofYears(10);
 
+    /**
+     * Maximum number of years a year requested by a client may lie before or after the current year.
+     */
+    public static final int MAXIMUM_YEARS_FROM_THE_CURRENT_YEAR = 100;
+
     private DateLimits() {
     }
 
@@ -57,6 +63,15 @@ public final class DateLimits {
      */
     public static boolean isTooFarInThePast(LocalDate date, Clock clock) {
         return date.isBefore(LocalDate.now(clock).minus(MAXIMUM_PERIOD_INTO_THE_PAST));
+    }
+
+    /**
+     * @param year requested by a client
+     * @param clock to get the current year from
+     * @return true if the year lies more than {@link #MAXIMUM_YEARS_FROM_THE_CURRENT_YEAR} from the current year, false otherwise
+     */
+    public static boolean isTooFarFromTheCurrentYear(long year, Clock clock) {
+        return Math.abs(year - Year.now(clock).getValue()) > MAXIMUM_YEARS_FROM_THE_CURRENT_YEAR;
     }
 
     /**

@@ -346,6 +346,21 @@ class OvertimeViewControllerTest {
     }
 
     @Test
+    void showUsersOvertimeListRejectsYearOutOfRange() throws Exception {
+
+        final long personId = 5;
+        final Person person = new Person();
+        person.setId(personId);
+        when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        mockSettingsWithOvertimeActive();
+
+        perform(get("/web/overtime").param("person", "5").param("year", "1000000000"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void showUsersOvertimeListAndIsNotAllowedToAddOvertime() throws Exception {
 
         final long personId = 5;

@@ -286,6 +286,21 @@ class OverviewViewControllerTest {
         verify(accountService).getHolidaysAccount(currentYear, person);
     }
 
+    @Test
+    void showOverviewRejectsYearOutOfRange() throws Exception {
+
+        final Person person = somePerson();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+
+        final Person signedInUser = somePerson();
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview").param("year", "1000000000"))
+            .andExpect(status().isBadRequest());
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void showOverviewAddsAllowHalfDaysForTheCalendar(boolean allowHalfDays) throws Exception {

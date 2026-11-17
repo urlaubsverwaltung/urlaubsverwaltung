@@ -77,6 +77,19 @@ class DateLimitsTest {
     }
 
     @Test
+    void ensureHundredYearsFromTheCurrentYearAreNotTooFar() {
+        assertThat(DateLimits.isTooFarFromTheCurrentYear(1926, clock)).isFalse();
+        assertThat(DateLimits.isTooFarFromTheCurrentYear(2126, clock)).isFalse();
+    }
+
+    @Test
+    void ensureMoreThanHundredYearsFromTheCurrentYearAreTooFar() {
+        assertThat(DateLimits.isTooFarFromTheCurrentYear(1925, clock)).isTrue();
+        assertThat(DateLimits.isTooFarFromTheCurrentYear(2127, clock)).isTrue();
+        assertThat(DateLimits.isTooFarFromTheCurrentYear(Integer.MIN_VALUE, clock)).isTrue();
+    }
+
+    @Test
     void ensureHundredYearsAreCalculable() {
         final DateRange dateRange = new DateRange(LocalDate.of(1926, OCTOBER, 12), LocalDate.of(2026, OCTOBER, 12));
         assertThatCode(() -> DateLimits.requireCalculableDuration(dateRange)).doesNotThrowAnyException();
