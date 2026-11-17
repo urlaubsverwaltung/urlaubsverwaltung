@@ -268,7 +268,7 @@ class ApplicationForLeaveFormValidator implements Validator {
 
         if (startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), settings, errors);
-            validateTime(applicationForLeave.getStartTime(), applicationForLeave.getEndTime(), errors);
+            validateTime(startDate, applicationForLeave.getStartTime(), endDate, applicationForLeave.getEndTime(), errors);
         }
     }
 
@@ -323,7 +323,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateTime(LocalTime startTime, LocalTime endTime, Errors errors) {
+    private void validateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Errors errors) {
 
         final boolean startTimeIsProvided = startTime != null;
         final boolean endTimeIsProvided = endTime != null;
@@ -335,8 +335,8 @@ class ApplicationForLeaveFormValidator implements Validator {
             errors.reject(ERROR_PERIOD);
         }
 
-        if ((startTimeIsProvided && endTimeIsProvided) &&
-            (endTime.isBefore(startTime) || endTime.equals(startTime))) {
+        if (startTimeIsProvided && endTimeIsProvided
+            && !startDate.atTime(startTime).isBefore(endDate.atTime(endTime))) {
             errors.reject(ERROR_PERIOD);
         }
     }

@@ -514,6 +514,33 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
+    void ensureEndTimeMayBeEarlierInTheDayThanStartTimeOnALaterDay() {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final LocalDate date = LocalDate.now(UTC);
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(FULL)
+            .startDate(date)
+            .endDate(date.plusDays(2))
+            .startTime(LocalTime.of(13, 0))
+            .endTime(LocalTime.of(10, 0))
+            .build();
+
+        sut.validate(appForm, errors);
+
+        verify(errors, never()).reject("error.entry.invalidPeriod");
+    }
+
+    @Test
     void ensureHalfDayIsRejectedWhenDisabled() {
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
