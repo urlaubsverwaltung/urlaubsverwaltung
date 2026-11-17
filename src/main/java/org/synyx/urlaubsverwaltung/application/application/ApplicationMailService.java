@@ -711,17 +711,6 @@ class ApplicationMailService {
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToApplicant);
-
-        // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
-        final Mail mailToRelevantColleagues = Mail.builder()
-            .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.application.cancelled.to_colleagues", application.getPerson().getNiceName())
-            .withTemplate("application_cancellation_to_colleagues", modelColleaguesSupplier)
-            .withAttachment(CALENDAR_ICS, calendarFile)
-            .build();
-        mailService.send(mailToRelevantColleagues);
     }
 
     /**
@@ -746,16 +735,6 @@ class ApplicationMailService {
             .withReplyToFrom(application.getCanceller())
             .build();
         mailService.send(mailToApplicant);
-
-        // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
-        final Mail mailToRelevantColleagues = Mail.builder()
-            .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.application.cancelled.to_colleagues", application.getPerson().getNiceName())
-            .withTemplate("application_cancellation_to_colleagues", modelColleaguesSupplier)
-            .build();
-        mailService.send(mailToRelevantColleagues);
     }
 
     /**
@@ -794,8 +773,18 @@ class ApplicationMailService {
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantPersons);
+    }
 
-        // Inform colleagues of applicant which are in same department
+    /**
+     * Sends an email to the colleagues of the applicant that an application for leave got cancelled.
+     *
+     * @param application the application which got cancelled
+     */
+    @Async
+    void sendCancelledToColleagues(Application application) {
+
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
+
         final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()

@@ -874,6 +874,7 @@ class ApplicationInteractionServiceImplTest {
 
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
         verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
+        verify(applicationMailService, never()).sendCancelledToColleagues(any());
     }
 
     @Test
@@ -931,6 +932,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendCancelledToColleagues(applicationForLeave);
 
         ArgumentCaptor<ApplicationCancelledEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancelledEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
@@ -969,6 +971,7 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, CANCELLED, comment, canceller);
         verify(applicationMailService).sendCancelledConfirmationByManagement(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendCancelledToColleagues(applicationForLeave);
     }
 
     @Test
@@ -1081,6 +1084,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService).sendCancelledDirectlyConfirmationByApplicant(savedApplication, applicationComment);
         verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
+        verify(applicationMailService, never()).sendCancelledToColleagues(any());
 
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, person);
 
@@ -1125,10 +1129,47 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService).sendCancelledDirectlyConfirmationByManagement(savedApplication, applicationComment);
         verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
+        verify(applicationMailService, never()).sendCancelledToColleagues(any());
 
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, office);
 
         verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+    }
+
+    @Test
+    void ensureDirectCancelByApplicantOfAnAllowedApplicationInformsColleagues() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final Application savedApplication = sut.directCancel(applicationForLeave, person, comment);
+
+        verify(applicationMailService).sendCancelledToColleagues(savedApplication);
+    }
+
+    @Test
+    void ensureDirectCancelByOfficeOfAnApplicationWithRequestedCancellationInformsColleagues() {
+
+        final Person office = new Person("office", "office", "orlanda", "office@example.org");
+        office.setId(1L);
+        office.setPermissions(List.of(USER, OFFICE));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2L);
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final Application savedApplication = sut.directCancel(applicationForLeave, office, comment);
+
+        verify(applicationMailService).sendCancelledToColleagues(savedApplication);
     }
 
     // decline cancellation request -------------------------------------------------------------------------------------
