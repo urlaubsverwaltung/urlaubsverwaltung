@@ -152,7 +152,10 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 
         sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote, canceller);
-        sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
+        // colleagues are told about a sick note only once it is active, a declined submitted one is none of their business
+        if (sickNote.getStatus() == ACTIVE) {
+            sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
+        }
         sickNoteMailService.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(cancelledSickNote, comment, canceller);
 
         applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(cancelledSickNote));

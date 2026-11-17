@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -264,12 +265,37 @@ class SickNoteInteractionServiceImplTest {
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .status(SickNoteStatus.ACTIVE)
             .build();
 
         sut.cancel(sickNote, canceller, "comment");
 
         verify(sickNoteMailService).sendCancelledToSickPerson(sickNote, canceller);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
+        verify(sickNoteMailService).sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "comment", canceller);
+    }
+
+    @Test
+    void ensureCancellingSubmittedSickNoteDoesNotNotifyColleagues() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final Person canceller = new Person("canceller", "Senior", "Canceller", "canceller@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(42L)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .status(SickNoteStatus.SUBMITTED)
+            .build();
+
+        sut.cancel(sickNote, canceller, "comment");
+
+        // colleagues are told about a sick note only once it is accepted
+        verify(sickNoteMailService, never()).sendCancelToColleagues(any());
+        verify(sickNoteMailService).sendCancelledToSickPerson(sickNote, canceller);
         verify(sickNoteMailService).sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "comment", canceller);
     }
 
