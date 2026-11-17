@@ -1,6 +1,6 @@
 [(#{greeting(${recipient.niceName})})],
 
-[(#{sick_note.cancelled.by_management_to_applicant(${sickNote.applier.niceName})})]
+[(#{sick_note.cancelled.by_management_to_applicant(${canceller.niceName})})]
 
     [(${baseLinkURL})]web/sicknote/[(${sickNote.id})]
 

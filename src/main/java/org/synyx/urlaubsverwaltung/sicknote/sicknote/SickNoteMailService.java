@@ -164,7 +164,7 @@ public class SickNoteMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.edited.to_applicant_by_management")
-            .withTemplate("sick_note_edited_by_management_to_applicant", _ -> Map.of("sickNote", sickNote))
+            .withTemplate("sick_note_edited_by_management_to_applicant", _ -> Map.of("sickNote", sickNote, "editor", editor))
             .withReplyToFrom(editor)
             .build();
         mailService.send(mailToApplicant);
@@ -197,7 +197,7 @@ public class SickNoteMailService {
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.cancelled.to_applicant_by_management")
-            .withTemplate("sick_note_cancelled_by_management_to_applicant", _ -> Map.of("sickNote", sickNote))
+            .withTemplate("sick_note_cancelled_by_management_to_applicant", _ -> Map.of("sickNote", sickNote, "canceller", canceller))
             .withReplyToFrom(canceller)
             .build();
         mailService.send(mailToRelevantColleagues);
