@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -1527,6 +1528,39 @@ class ApplicationInteractionServiceImplTest {
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).notifyHolidayReplacementForApply(newReplacementEntity, newApplication, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ApplicationStatus.class, names = {"ALLOWED", "ALLOWED_CANCELLATION_REQUESTED"})
+    void editAllowedApplicationForLeaveHolidayReplacementAddedIsConfirmed(ApplicationStatus status) {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person office = new Person("office", "Office", "Olaf", "office@example.org");
+        office.setId(2L);
+        office.setPermissions(List.of(USER, OFFICE));
+
+        final Person newHolidayReplacement = new Person("replacement", "Replacement", "Rita", "replacement@example.org");
+        newHolidayReplacement.setId(1L);
+
+        final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
+        newReplacementEntity.setPerson(newHolidayReplacement);
+
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        newApplication.setStatus(status);
+        newApplication.setId(1L);
+        newApplication.setHolidayReplacements(List.of(newReplacementEntity));
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        oldApplication.setStatus(status);
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, office, of("Comment"));
+
+        // the application stays allowed, so allowing it does not confirm the replacement later
+        verify(applicationMailService).notifyHolidayReplacementAllow(newReplacementEntity, newApplication);
+        verify(applicationMailService).sendEditedNotification(editedApplication, office);
         verifyNoMoreInteractions(applicationMailService);
     }
 
