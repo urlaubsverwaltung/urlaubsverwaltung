@@ -31,8 +31,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -152,15 +152,9 @@ class CompanyCalendarServiceTest {
     @Test
     void deleteCalendarsForPersonsWithoutOneOfRole() {
 
-        final Person office = createPerson("office", OFFICE);
-        final Person user = createPerson("user", USER);
+        sut.deleteCalendarsForPersonsWithoutOneOfRole(BOSS, OFFICE);
 
-        when(personService.getActivePersons()).thenReturn(List.of(office, user));
-
-        sut.deleteCalendarsForPersonsWithoutOneOfRole(OFFICE);
-
-        verify(companyCalendarRepository).deleteByPerson(user);
-        verify(companyCalendarRepository, never()).deleteByPerson(office);
+        verify(companyCalendarRepository).deleteByPersonWithoutOneOfRoles(List.of(BOSS, OFFICE));
     }
 
     @Test
