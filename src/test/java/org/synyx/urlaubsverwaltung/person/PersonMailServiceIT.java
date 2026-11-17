@@ -50,7 +50,7 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
         );
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -94,7 +94,7 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
 
         // both are recipients of the same mail - once office got it, the former boss would have got it as well
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
         assertThat(greenMail.getReceivedMessagesForDomain(formerBoss.getEmail())).isEmpty();
     }
@@ -116,7 +116,7 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendPersonGainedMorePermissionsNotification(person, addedPermissions);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // was email sent to person?

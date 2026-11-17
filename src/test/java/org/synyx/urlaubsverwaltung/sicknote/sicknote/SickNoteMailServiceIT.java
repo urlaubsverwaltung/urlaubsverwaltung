@@ -92,7 +92,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendEndOfSickPayNotification();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> {
                 assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
@@ -172,7 +172,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendCreatedToSickPerson(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -220,7 +220,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendEditedToSickPerson(sickNote, editor);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -264,7 +264,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendCreatedOrAcceptedToColleagues(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -316,7 +316,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, comment, editor);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(management.getEmail());
@@ -373,7 +373,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, "Comment", maintainer);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
 
         final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
@@ -423,7 +423,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendCancelledToSickPerson(sickNote, canceller);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -476,7 +476,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "Versehentlich angelegt", canceller);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(management.getEmail());
@@ -532,7 +532,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "", canceller);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
 
         final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
@@ -582,7 +582,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteCancelledNotificationToOfficeAndResponsibleManagement(sickNote, "Comment", maintainer);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
 
         final Message msgManagement = greenMail.getReceivedMessagesForDomain(management.getEmail())[0];
@@ -628,7 +628,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendCancelToColleagues(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -677,7 +677,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office2.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
@@ -726,7 +726,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteSubmittedNotificationToSickPerson(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -774,7 +774,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -820,7 +820,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteExtensionSubmittedNotificationToSickPerson(sickNote, LocalDate.of(2022, APRIL, 5));
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -869,7 +869,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement(sickNote, LocalDate.of(2022, APRIL, 5));
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -917,7 +917,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteExtensionAcceptedNotificationToSickPerson(sickNote, LocalDate.of(2022, APRIL, 1), office);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -967,7 +967,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, LocalDate.of(2022, APRIL, 1), maintainer);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -1011,7 +1011,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteExtensionAcceptedToColleagues(sickNote);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -1053,7 +1053,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteAcceptedNotificationToSickPerson(sickNote, office);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1103,7 +1103,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office1);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office2.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());

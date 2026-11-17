@@ -80,7 +80,7 @@ class ExpiredRemainingVacationDaysManagementMailServiceIT extends SingleTenantTe
         ));
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];

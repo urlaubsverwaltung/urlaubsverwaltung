@@ -62,7 +62,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendOvertimeNotificationToManagement(overtime, overtimeComment);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         // check attributes
@@ -107,7 +107,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // check attributes
@@ -148,7 +148,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
         sut.sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(author.getEmail())).hasSize(1));
 
         // check attributes

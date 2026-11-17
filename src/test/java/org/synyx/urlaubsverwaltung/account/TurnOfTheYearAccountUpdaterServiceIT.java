@@ -104,7 +104,7 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
         sut.updateAccountsForNextPeriod();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());

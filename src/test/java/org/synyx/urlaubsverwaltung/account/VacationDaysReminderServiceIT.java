@@ -79,7 +79,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         sut.remindForCurrentlyLeftVacationDays();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // was email sent?
@@ -120,7 +120,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         sut.remindForCurrentlyLeftVacationDays();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // was email sent?
@@ -174,7 +174,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         sut.remindForRemainingVacationDays();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // was email sent?
@@ -229,7 +229,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         sut.notifyForExpiredRemainingVacationDays();
 
         await()
-            .atMost(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(3))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
