@@ -2030,6 +2030,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
+        sut.sendCancelledToColleagues(application);
 
         greenMail.waitForIncomingEmail(2);
 
@@ -2118,6 +2119,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
+        sut.sendCancelledToColleagues(application);
 
         greenMail.waitForIncomingEmail(2);
 
@@ -2172,7 +2174,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.""");
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.
+            """);
+
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -2206,6 +2212,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
+        sut.sendCancelledToColleagues(application);
 
         greenMail.waitForIncomingEmail(3);
 

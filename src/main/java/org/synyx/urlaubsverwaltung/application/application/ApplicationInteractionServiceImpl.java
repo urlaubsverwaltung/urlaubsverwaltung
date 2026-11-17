@@ -273,6 +273,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application directCancel(Application application, Person canceller, Optional<String> comment) {
 
+        final boolean colleaguesKnowAboutIt = isKnownToColleagues(application);
         application.setStatus(ApplicationStatus.CANCELLED);
         application.setCanceller(canceller);
         application.setCancelDate(LocalDate.now(clock));
@@ -295,6 +296,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         applicationMailService.sendCancelledDirectlyToManagement(savedApplication, createdComment);
+        if (colleaguesKnowAboutIt) {
+            applicationMailService.sendCancelledToColleagues(savedApplication);
+        }
 
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
             applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, canceller);
@@ -331,6 +335,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
              * Only management with the role application_cancel can cancel allowed applications for leave directly,
              * users have to request cancellation
              */
+            final boolean colleaguesKnowAboutIt = isKnownToColleagues(application);
             application.setStatus(ApplicationStatus.CANCELLED);
             final Application savedApplication = applicationService.save(application);
 
@@ -338,6 +343,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
             final ApplicationComment savedComment = commentService.create(savedApplication, CANCELLED, comment, canceller);
             applicationMailService.sendCancelledConfirmationByManagement(savedApplication, savedComment);
+            if (colleaguesKnowAboutIt) {
+                applicationMailService.sendCancelledToColleagues(savedApplication);
+            }
 
             for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
                 applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, canceller);
@@ -359,6 +367,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.sendCancellationRequest(savedApplication, createdComment);
             applicationEventPublisher.publishEvent(ApplicationCancellationRequestedEvent.of(savedApplication));
         }
+    }
+
+    /**
+     * Colleagues are told about an application only once it is allowed, so they must not learn about the
+     * cancellation of one that never was.
+     */
+    private static boolean isKnownToColleagues(Application application) {
+        return application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
     }
 
     @Override
