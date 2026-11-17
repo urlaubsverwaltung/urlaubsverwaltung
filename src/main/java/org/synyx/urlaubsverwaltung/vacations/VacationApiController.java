@@ -27,6 +27,8 @@ import java.util.List;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.MAXIMUM_REQUESTED_DURATION;
+import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -81,7 +83,7 @@ public class VacationApiController {
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate startDate,
-        @Parameter(description = "end of interval to get vacations from (inclusive)")
+        @Parameter(description = "end of interval to get vacations from (inclusive), at most 1098 days after the start")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
@@ -91,6 +93,10 @@ public class VacationApiController {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final List<ApplicationStatus> requestedApplicationStatus = toApplicationStatus(applicationStatus);
@@ -130,7 +136,7 @@ public class VacationApiController {
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate startDate,
-        @Parameter(description = "End date with pattern yyyy-MM-dd")
+        @Parameter(description = "End date with pattern yyyy-MM-dd, at most 1098 days after the start")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
@@ -140,6 +146,10 @@ public class VacationApiController {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
+        }
+
+        if (exceedsMaximumRequestedDuration(startDate, endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
         final Person requestedPerson = getPerson(personId);

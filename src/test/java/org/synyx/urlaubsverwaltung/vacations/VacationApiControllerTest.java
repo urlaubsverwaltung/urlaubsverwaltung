@@ -30,6 +30,7 @@ import static java.time.Month.MAY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -112,6 +113,18 @@ class VacationApiControllerTest {
             .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+    }
+
+    @Test
+    void getVacationsPeriodLongerThanThreeYears() throws Exception {
+
+        perform(get("/api/persons/23/vacations")
+            .param("from", "1900-01-01")
+            .param("to", "2100-12-31"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(personService, applicationService, departmentService);
     }
 
     @Test
@@ -295,6 +308,19 @@ class VacationApiControllerTest {
             .param("ofDepartmentMembers", "true"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+    }
+
+    @Test
+    void getVacationsOfOthersOrDepartmentColleaguesPeriodLongerThanThreeYears() throws Exception {
+
+        perform(get("/api/persons/23/vacations")
+            .param("from", "1900-01-01")
+            .param("to", "2100-12-31")
+            .param("ofDepartmentMembers", "true"))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertInstanceOf(ResponseStatusException.class, result.getResolvedException()));
+
+        verifyNoInteractions(personService, applicationService, departmentService);
     }
 
     @Test
