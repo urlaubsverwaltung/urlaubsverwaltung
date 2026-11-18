@@ -434,6 +434,9 @@ class SickNoteMailServiceTest {
         colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED));
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED)).thenReturn(List.of(colleague));
 
+        final ByteArrayResource dateBasedCancellation = new ByteArrayResource("date based".getBytes());
+        when(iCalService.getCancellationOfDateBasedInvite(any(), eq(person))).thenReturn(dateBasedCancellation);
+
         sut.sendCancelToColleagues(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
@@ -445,6 +448,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
         assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
         assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).content()).isEqualTo(dateBasedCancellation);
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).name()).isEqualTo("calendar-earlier-invite.ics");
     }
 
     @Test
