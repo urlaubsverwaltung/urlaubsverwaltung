@@ -78,6 +78,9 @@ as it is.
   parameter as it is, e.g. `entry -> entry.monthDay().equals(monthDay)`, `entry -> publish(entry.monthDay())` or
   `closure -> new CompanyClosureDto(closure, locale)`. Keep it inline as well in tests for the lambda of `satisfies`,
   `isInstanceOfSatisfying` or `thenAnswer`.
+- In tests, capture an argument with `ArgumentCaptor` and assert it instead of combining conditions in `argThat`. A
+  failing assertion names the field with expected and actual value, a failing `argThat` only reports a different
+  argument.
 
 ### Maintaining the conventions
 
