@@ -306,6 +306,39 @@ class ICalServiceTest {
     }
 
     @Test
+    void ensureCancellationOfDateBasedInviteCarriesTheUidOfInvitesSentBeforeTheStableUid() {
+
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
+
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
+
+        final ByteArrayResource calendar = sut.getCancellationOfDateBasedInvite(noonAbsence, recipient);
+        // the uid the invite of this absence carried before the uid became the id of the absence
+        assertThat(convertCalendar(calendar))
+            .isEqualToIgnoringNewLines("""
+                BEGIN:VCALENDAR
+                VERSION:2.0
+                PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
+                CALSCALE:GREGORIAN
+                X-MICROSOFT-CALSCALE:GREGORIAN
+                METHOD:CANCEL
+                BEGIN:VEVENT
+                DTSTAMP:<removedByConversionMethod>
+                DTSTART:20190526T120000Z
+                DTEND:20190526T160000Z
+                SUMMARY:Marlene Muster abwesend
+                UID:497ED5D042F718878138A3E2F8C3C35C
+                ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
+                ORGANIZER:mailto:no-reply@example.org
+                END:VEVENT
+                END:VCALENDAR
+                """);
+    }
+
+    @Test
     void singleAppointment() {
 
         final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");

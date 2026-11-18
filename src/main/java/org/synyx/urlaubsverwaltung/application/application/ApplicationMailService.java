@@ -68,6 +68,7 @@ class ApplicationMailService {
     private static final String VACATION_TYPE = "vacationTypeLabel";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
+    private static final String DATE_BASED_CALENDAR_ICS = "calendar-earlier-invite.ics";
     private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
     private static final String HOLIDAY_REPLACEMENT_NOTE = "holidayReplacementNote";
 
@@ -526,6 +527,7 @@ class ApplicationMailService {
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application, Person canceller) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
+        final ByteArrayResource dateBasedCancellation = cancellationOfDateBasedInvite(application, holidayReplacement.getPerson());
 
         final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
@@ -537,6 +539,7 @@ class ApplicationMailService {
             .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
             .withTemplate("application_cancelled_to_holiday_replacement", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .withReplyToFrom(canceller)
             .build();
 
@@ -706,6 +709,7 @@ class ApplicationMailService {
 
         final Person recipient = application.getPerson();
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, recipient);
+        final ByteArrayResource dateBasedCancellation = cancellationOfDateBasedInvite(application, recipient);
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -718,6 +722,7 @@ class ApplicationMailService {
             .withSubject("subject.application.cancelledDirectly.user")
             .withTemplate("application_cancelled_directly_confirmation_by_applicant_to_applicant", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .build();
         mailService.send(mailToApplicant);
     }
@@ -756,6 +761,7 @@ class ApplicationMailService {
     void sendCancelledConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
+        final ByteArrayResource dateBasedCancellation = cancellationOfDateBasedInvite(application, application.getPerson());
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -769,6 +775,7 @@ class ApplicationMailService {
             .withSubject("subject.application.cancelled.user")
             .withTemplate("application_cancelled_by_management_to_applicant", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .withReplyToFrom(application.getCanceller())
             .build();
         mailService.send(mailToApplicant);
@@ -780,6 +787,7 @@ class ApplicationMailService {
             .withSubject("subject.application.cancelled.management", application.getCanceller().getNiceName())
             .withTemplate("application_cancelled_by_management_to_management", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .build();
         mailService.send(mailToRelevantPersons);
     }
@@ -793,6 +801,7 @@ class ApplicationMailService {
     void sendCancelledToColleagues(Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
+        final ByteArrayResource dateBasedCancellation = cancellationOfDateBasedInvite(application, application.getPerson());
 
         final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
@@ -801,6 +810,7 @@ class ApplicationMailService {
             .withSubject("subject.application.cancelled.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_to_colleagues", modelColleaguesSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
@@ -1021,6 +1031,11 @@ class ApplicationMailService {
     private ByteArrayResource generateCalendar(Application application, CalendarAbsenceType absenceType, ICalType iCalType, Person recipient) {
         final CalendarAbsence absence = new CalendarAbsence("application-" + application.getId(), application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType, recipient);
+    }
+
+    private ByteArrayResource cancellationOfDateBasedInvite(Application application, Person recipient) {
+        final CalendarAbsence absence = new CalendarAbsence("application-" + application.getId(), application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+        return iCalService.getCancellationOfDateBasedInvite(absence, recipient);
     }
 
     private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {

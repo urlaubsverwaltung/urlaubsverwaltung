@@ -1136,6 +1136,9 @@ class ApplicationMailServiceTest {
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
+        final ByteArrayResource dateBasedCancellation = new ByteArrayResource("date based".getBytes());
+        when(iCalService.getCancellationOfDateBasedInvite(any(), eq(person))).thenReturn(dateBasedCancellation);
+
         sut.sendCancelledToColleagues(application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
@@ -1147,6 +1150,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application));
         assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
         assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).content()).isEqualTo(dateBasedCancellation);
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).name()).isEqualTo("calendar-earlier-invite.ics");
     }
 
     @Test

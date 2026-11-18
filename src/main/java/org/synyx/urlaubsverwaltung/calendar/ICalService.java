@@ -13,6 +13,7 @@ import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -29,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.immutable.ImmutableCalScale.GREGORIAN;
@@ -73,18 +75,33 @@ public class ICalService {
         return writeCalendarIntoResource(calendar);
     }
 
+    /**
+     * Cancels the invite of the absence that was sent before its uid became the id of the absence.
+     *
+     * <p>shortcut: matches only while start, end and time settings are the same as when the invite was sent,
+     * remove once all invites sent before the stable uid lie in the past (after 2028-06)
+     */
+    public ByteArrayResource getCancellationOfDateBasedInvite(CalendarAbsence absence, Person recipient) {
+        final Calendar calendar = prepareCalendar(List.of(absence), CANCELLED, recipient, ICalService::dateBasedUid);
+        return writeCalendarIntoResource(calendar);
+    }
+
+    private static String dateBasedUid(CalendarAbsence absence) {
+        return DigestUtils.md5Hex(absence.getStartDate() + "" + absence.getEndDate() + absence.getPerson()).toUpperCase();
+    }
+
     private Calendar generateCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
-        final Calendar calendar = prepareCalendar(absences, PUBLISHED, recipient);
+        final Calendar calendar = prepareCalendar(absences, PUBLISHED, recipient, CalendarAbsence::getUid);
         calendar.add(new XProperty("X-WR-CALNAME", title));
         calendar.add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
         return calendar;
     }
 
     private Calendar generateForSingleAppointment(CalendarAbsence absence, ICalType method, Person recipient) {
-        return prepareCalendar(List.of(absence), method, recipient);
+        return prepareCalendar(List.of(absence), method, recipient, CalendarAbsence::getUid);
     }
 
-    private Calendar prepareCalendar(List<CalendarAbsence> absences, ICalType method, Person recipient) {
+    private Calendar prepareCalendar(List<CalendarAbsence> absences, ICalType method, Person recipient, Function<CalendarAbsence, String> uid) {
 
         final Locale locale = userSettingsService.getEffectiveLocale(List.of(recipient)).get(recipient);
 
@@ -99,14 +116,14 @@ public class ICalService {
         }
 
         absences.stream()
-            .map(absence -> this.toVEvent(absence, absence.getPerson().equals(recipient), locale))
+            .map(absence -> this.toVEvent(absence, uid.apply(absence), absence.getPerson().equals(recipient), locale))
             .flatMap(Optional::stream)
             .forEach(calendar::add);
 
         return calendar;
     }
 
-    private Optional<VEvent> toVEvent(CalendarAbsence absence, boolean isOwn, Locale locale) {
+    private Optional<VEvent> toVEvent(CalendarAbsence absence, String uid, boolean isOwn, Locale locale) {
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
@@ -124,7 +141,7 @@ public class ICalService {
             event = new VEvent(startDateTime.toInstant(), endDateTime.toInstant(), summary);
         }
 
-        event.add(new Uid(absence.getUid()));
+        event.add(new Uid(uid));
         if (absence.getPerson().getEmail() != null) {
             event.add(generateAttendee(absence));
         }
