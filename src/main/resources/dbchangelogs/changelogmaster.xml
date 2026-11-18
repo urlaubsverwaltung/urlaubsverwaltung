@@ -36,5 +36,6 @@
   <include relativeToChangelogFile="true" file="changelog-6.20.0-add-blackout-period.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.24.0-add-company-closure.xml"/>
   <include relativeToChangelogFile="true" file="changelog-6.25.1-unique-working-time-per-person-and-date.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-6.25.1-replace-alderney-with-guernsey.xml"/>
 
 </databaseChangeLog>
