@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
 
@@ -103,6 +105,30 @@ public class TurnOfTheYearAccountUpdaterService {
             activePersons.size() - updatedAccounts.size());
         sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
         vacationDaysReminderService.remindForRemainingVacationDays();
+    }
+
+    /**
+     * Catches up a missed turn of the year: creates this year's holidays account of every active person who has none
+     * yet. Existing accounts stay untouched and no mails are sent.
+     */
+    public void createMissingAccountsOfThisYear() {
+
+        final int year = Year.now(clock).getValue();
+        final List<Person> activePersons = personService.getActivePersons();
+
+        final Set<Person> personsWithAccount = accountService.getHolidaysAccount(year, activePersons).stream()
+            .map(Account::getPerson)
+            .collect(toSet());
+
+        accountService.getHolidaysAccount(year - 1, activePersons).stream()
+            .collect(toMap(Account::getPerson, identity(), (first, second) -> first))
+            .values().stream()
+            .filter(accountLastYear -> accountLastYear.getAnnualVacationDays() != null)
+            .filter(accountLastYear -> !personsWithAccount.contains(accountLastYear.getPerson()))
+            .forEach(accountLastYear -> {
+                LOG.info("Creating missing holidays account {} of person with id {}", year, accountLastYear.getPerson().getId());
+                accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear);
+            });
     }
 
     /**
