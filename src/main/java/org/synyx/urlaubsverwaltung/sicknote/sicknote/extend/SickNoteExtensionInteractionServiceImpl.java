@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -21,6 +22,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_SUBMITTED;
 
 @Service
+@Transactional
 class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
