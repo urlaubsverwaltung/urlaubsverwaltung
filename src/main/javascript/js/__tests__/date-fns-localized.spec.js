@@ -32,11 +32,8 @@ describe("date-fns-localized", () => {
 
     const { setLocale } = await import("../../lib/date-fns/locale-resolver");
 
-    await import("../date-fns-localized");
-
-    // wait for resolved promise in implementation
-    // which then calls `setLocale`
-    await wait();
+    const { localeLoaded } = await import("../date-fns-localized");
+    await localeLoaded;
 
     expect(setLocale).toHaveBeenCalledWith(expect.objectContaining({ code: expectedLocaleStuff.code }));
   });
@@ -46,18 +43,9 @@ describe("date-fns-localized", () => {
 
     const { setLocale } = await import("../../lib/date-fns/locale-resolver");
 
-    await import("../date-fns-localized");
-
-    // wait for resolved promise in implementation
-    // which then calls `setLocale`
-    await wait();
+    const { localeLoaded } = await import("../date-fns-localized");
+    await localeLoaded;
 
     expect(setLocale).not.toHaveBeenCalled();
   });
-
-  function wait(delay = 0) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, delay);
-    });
-  }
 });

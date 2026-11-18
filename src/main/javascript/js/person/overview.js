@@ -1,5 +1,6 @@
 import { addMonths, getYear, isValid, parseISO, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
+import { localeLoaded } from "../date-fns-localized";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const { personId, webPrefix, apiPrefix, canApplyForLeave, allowHalfDays, i18n: i18nMessages } = globalThis.uv;
@@ -28,7 +29,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const yearOfStartDate = getYear(startDate);
     const yearOfEndDate = getYear(endDate);
 
-    const fetchPromises = [];
+    // the calendar formats weekday names, without the locale they come out in english
+    const fetchPromises = [localeLoaded];
     for (let year = yearOfStartDate; year <= yearOfEndDate; year++) {
       fetchPromises.push(holidayService.fetchYear(year));
     }
