@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -87,7 +89,7 @@ class PersonSearchSuggestionsProvider {
     private static String withQuery(String url, String query) {
         final UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(url);
         if (hasText(query)) {
-            uriComponentsBuilder.queryParam(PERSON_SEARCH_QUERY_PARAM, query);
+            uriComponentsBuilder.queryParam(PERSON_SEARCH_QUERY_PARAM, encode(query, UTF_8));
         }
         return uriComponentsBuilder.build().toUriString();
     }

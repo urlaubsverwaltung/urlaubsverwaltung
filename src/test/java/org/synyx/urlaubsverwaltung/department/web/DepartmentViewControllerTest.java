@@ -184,14 +184,14 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/new")
-            .header("Turbo-Frame", "awesome-turbo-frame")
+            .header("Turbo-Frame", "frame-department-members")
             .param("do-member-search", "")
             .param("memberQuery", givenQuery)
             .param("name", "fight club")
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#frame-department-members"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -199,6 +199,23 @@ class DepartmentViewControllerTest {
             .andExpect(model().attribute("persons", hasItem(batman)));
 
         verifyNoMoreInteractions(departmentService);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"x}", "__${1+1}__", "awesome-turbo-frame"})
+    void ensureNewDepartmentMemberSearchRendersWholePageForUnknownTurboFrame(String givenTurboFrame) throws Exception {
+
+        when(personService.getActivePersons()).thenReturn(List.of());
+
+        perform(post("/web/department/new")
+            .header("Turbo-Frame", givenTurboFrame)
+            .param("do-member-search", "")
+            .param("memberQuery", "")
+            .param("name", "fight club")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("department/department_form"))
+            .andExpect(model().attribute("turboFrameRequested", is(false)));
     }
 
     @Test
@@ -288,7 +305,7 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
 
         perform(post("/web/department/new")
-            .header("Turbo-Frame", "awesome-turbo-frame")
+            .header("Turbo-Frame", "frame-department-members")
             .param("do-member-search", "")
             .param("memberQuery", "bruce")
             .param("name", "fight club")
@@ -298,7 +315,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#frame-department-members"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -458,14 +475,14 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
-            .header("Turbo-Frame", "awesome-turbo-frame")
+            .header("Turbo-Frame", "frame-department-members")
             .param("do-member-search", "")
             .param("memberQuery", givenQuery)
             .param("name", "fight club")
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#frame-department-members"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -507,7 +524,7 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
 
         perform(post("/web/department/1/edit")
-            .header("Turbo-Frame", "awesome-turbo-frame")
+            .header("Turbo-Frame", "frame-department-members")
             .param("do-member-search", "")
             .param("memberQuery", "bruce")
             .param("name", "fight club")
@@ -517,7 +534,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#frame-department-members"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -550,14 +567,14 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
-            .header("Turbo-Frame", "awesome-turbo-frame")
+            .header("Turbo-Frame", "frame-department-members")
             .param("do-member-search", "")
             .param("memberQuery", "")
             .param("name", "fight club")
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#frame-department-members"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", emptyString()))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))

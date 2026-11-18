@@ -916,6 +916,35 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         assertThat(selectedOption.selected()).isTrue();
     }
 
+    @Test
+    void applicationForLeaveStatisticsRendersTurboFrame() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq("")))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        perform(get(ALL_STATS_URL).header("Turbo-Frame", "frame-statistics"))
+            .andExpect(view().name("application/application-statistics::#frame-statistics"))
+            .andExpect(model().attribute("turboFrameRequested", true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"x}", "__${1+1}__", "frame-unknown"})
+    void applicationForLeaveStatisticsRendersWholePageForUnknownTurboFrame(String givenTurboFrame) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), any(PersonPageRequest.class), eq("")))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        perform(get(ALL_STATS_URL).header("Turbo-Frame", givenTurboFrame))
+            .andExpect(view().name("application/application-statistics"))
+            .andExpect(model().attribute("turboFrameRequested", false));
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())

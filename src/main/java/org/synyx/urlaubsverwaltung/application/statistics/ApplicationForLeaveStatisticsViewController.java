@@ -161,11 +161,11 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad, HasPe
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeDtos(locale));
 
-        final boolean turboFrameRequested = hasText(turboFrame);
+        final boolean turboFrameRequested = "frame-statistics".equals(turboFrame);
         model.addAttribute("turboFrameRequested", turboFrameRequested);
 
         if (turboFrameRequested) {
-            return "application/application-statistics::#" + turboFrame;
+            return "application/application-statistics::#frame-statistics";
         } else {
             return "application/application-statistics";
         }

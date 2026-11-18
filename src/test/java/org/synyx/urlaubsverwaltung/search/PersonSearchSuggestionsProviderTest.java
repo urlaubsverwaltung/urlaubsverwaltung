@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.search;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -151,6 +153,25 @@ class PersonSearchSuggestionsProviderTest {
         final List<PersonSuggestion> suggestions = sut.personSuggestions(office, "mar", MAIN_LINK);
 
         assertThat(suggestions.getFirst().href()).isEqualTo("/web/person/2/overview?q=mar");
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+        "Mäx Müller|/web/person/2/overview?q=M%C3%A4x+M%C3%BCller",
+        "x(a=${7*7})|/web/person/2/overview?q=x%28a%3D%24%7B7*7%7D%29",
+        "a&b=c#d|/web/person/2/overview?q=a%26b%3Dc%23d",
+    })
+    void ensureMainLinkEncodesQueryParam(String givenQuery, String expectedHref) {
+
+        final Person office = person(1L, "Office", "Manager", OFFICE);
+        final Person hit = person(2L, "Marlene", "Muster");
+
+        when(personService.getActivePersons(any(PersonPageable.class), eq(givenQuery)))
+            .thenReturn(new PageImpl<>(List.of(hit)));
+
+        final List<PersonSuggestion> suggestions = sut.personSuggestions(office, givenQuery, MAIN_LINK);
+
+        assertThat(suggestions.getFirst().href()).isEqualTo(expectedHref);
     }
 
     @Test
