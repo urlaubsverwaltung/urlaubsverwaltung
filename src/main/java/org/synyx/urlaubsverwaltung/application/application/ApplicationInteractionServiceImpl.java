@@ -505,7 +505,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         final int firstChangedYear = Math.min(oldApplication.getStartDate().getYear(), savedEditedApplication.getStartDate().getYear());
         accountInteractionService.updateRemainingVacationDays(firstChangedYear, savedEditedApplication.getPerson());
 
-        applicationEventPublisher.publishEvent(ApplicationUpdatedEvent.of(savedEditedApplication));
+        applicationEventPublisher.publishEvent(ApplicationUpdatedEvent.of(savedEditedApplication, editor));
         return savedEditedApplication;
     }
 

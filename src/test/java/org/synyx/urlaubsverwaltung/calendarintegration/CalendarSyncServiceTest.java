@@ -104,7 +104,7 @@ class CalendarSyncServiceTest {
         person.setLastName("last");
         application.setPerson(person);
 
-        final ApplicationUpdatedEvent event = new ApplicationUpdatedEvent(UUID.randomUUID(), Instant.now(), application);
+        final ApplicationUpdatedEvent event = new ApplicationUpdatedEvent(UUID.randomUUID(), Instant.now(), application, person);
 
         when(absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceMappingType(1L, VACATION)).thenReturn(Optional.of(new AbsenceMapping(1L, VACATION, "eventId")));
         final GoogleCalendarSyncProvider googleCalendarSyncProvider = mock(GoogleCalendarSyncProvider.class);

@@ -177,7 +177,6 @@ public class ApplicationEventHandlerExtension {
         final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
         final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
         final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
-        final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
         final ApplicationPeriodDTO period = toPeriod(event.application());
         final String status = toStatus(event.application());
 
@@ -188,7 +187,7 @@ public class ApplicationEventHandlerExtension {
             .tenantId(tenantId)
             .person(person)
             .appliedBy(appliedBy)
-            .updatedBy(allowedBy)
+            .updatedBy(toApplicationPersonDTO(event.editor()))
             .twoStageApproval(event.application().isTwoStageApproval())
             .period(period)
             .vacationType(vacationType)
