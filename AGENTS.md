@@ -52,8 +52,32 @@ as it is.
       .toList());
   ```
 
-- This does not apply to lambdas and builder chains that an API expects inline, e.g. the lambda of `map`, `satisfies`
-  or `thenAnswer`, a MockMvc request builder or the Spring Security configuration.
+- This does not apply to builder chains that an API expects inline, e.g. a MockMvc request builder or the Spring
+  Security configuration, nor to lambdas, see the next rule.
+- Extract the body of a lambda into a private method when it is a block, combines conditions (`&&`, `||`, `?:`),
+  builds an object from parts of its parameter or uses its parameter more than once. Name the method after what it
+  returns, make it `static` when it uses no instance state and pass it as method reference:
+
+  ```java
+  // do
+  .map(this::publicHolidaysOf)
+
+  private List<PublicHoliday> publicHolidaysOf(Map.Entry<DateRange, WorkingTime> workingTimeByDateRange) {
+      final DateRange dateRange = workingTimeByDateRange.getKey();
+      final FederalState federalState = workingTimeByDateRange.getValue().getFederalState();
+      return publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), federalState);
+  }
+
+  // don't
+  .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
+  ```
+
+- When the extracted method needs a local variable, pass it in a lambda that only calls the method, e.g.
+  `closure -> toDto(closure, locale)`.
+- Keep a lambda inline when its body is a single call, which may read one getter of the parameter or pass the
+  parameter as it is, e.g. `entry -> entry.monthDay().equals(monthDay)`, `entry -> publish(entry.monthDay())` or
+  `closure -> new CompanyClosureDto(closure, locale)`. Keep it inline as well in tests for the lambda of `satisfies`,
+  `isInstanceOfSatisfying` or `thenAnswer`.
 
 ### Maintaining the conventions
 
