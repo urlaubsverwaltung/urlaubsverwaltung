@@ -1432,6 +1432,7 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationUpdatedEvent event = argumentCaptor.getValue();
         assertThat(event.application()).isEqualTo(editedApplication);
+        assertThat(event.editor()).isSameAs(office);
         assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(event.id()).isNotNull();
     }

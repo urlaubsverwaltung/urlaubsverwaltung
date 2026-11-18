@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.extension.application;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCreatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPersonDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationUpdatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.VacationTypeDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
@@ -18,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAppliedEvent;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
@@ -129,6 +132,55 @@ class ApplicationEventHandlerExtensionTest {
 
             verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
             assertThat(argumentCaptor.getValue().appliedBy()).isNull();
+        }
+    }
+
+    @Nested
+    class ApplicationUpdatedEventTest {
+
+        @Captor
+        private ArgumentCaptor<ApplicationUpdatedEventDTO> argumentCaptor;
+
+        @Test
+        void ensureUpdatedByIsTheEditorAndNotTheBoss() {
+
+            final Person person = createPerson("muster");
+            person.setId(1L);
+            final Person boss = createPerson("boss");
+            boss.setId(2L);
+            final Person office = createPerson("office");
+            office.setId(3L);
+
+            final VacationType<?> vacationType = createVacationType(10L, HOLIDAY, new StaticMessageSource());
+            final Application application = createApplication(person, vacationType, LocalDate.of(2026, OCTOBER, 19), LocalDate.of(2026, OCTOBER, 23), FULL);
+            application.setId(42L);
+            application.setStatus(ALLOWED);
+            application.setBoss(boss);
+
+            when(tenantSupplier.get()).thenReturn("default");
+
+            sut.on(ApplicationUpdatedEvent.of(application, office));
+
+            verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+            assertThat(argumentCaptor.getValue().updatedBy()).isEqualTo(ApplicationPersonDTO.builder().personId(3L).username("office").build());
+        }
+
+        @Test
+        void ensureUpdatedByIsTheEditorWithoutBoss() {
+
+            final Person person = createPerson("muster");
+            person.setId(1L);
+
+            final VacationType<?> vacationType = createVacationType(10L, HOLIDAY, new StaticMessageSource());
+            final Application application = createApplication(person, vacationType, LocalDate.of(2026, OCTOBER, 19), LocalDate.of(2026, OCTOBER, 19), FULL);
+            application.setId(42L);
+
+            when(tenantSupplier.get()).thenReturn("default");
+
+            sut.on(ApplicationUpdatedEvent.of(application, person));
+
+            verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+            assertThat(argumentCaptor.getValue().updatedBy()).isEqualTo(ApplicationPersonDTO.builder().personId(1L).username("muster").build());
         }
     }
 }
