@@ -159,6 +159,40 @@ class SortComparatorTest {
     }
 
     @Test
+    void ensureRobustHandlingForSortPropertyThatIsNotComparable() {
+        final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, Sort.by("class"));
+        final List<SomeClassToSort> list = List.of(
+            new SomeClassToSort(2, "aaa"),
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
+        );
+
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
+        assertThat(sorted).containsExactly(
+            new SomeClassToSort(2, "aaa"),
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
+        );
+    }
+
+    @Test
+    void ensureRobustHandlingForNestedSortPropertyBehindNull() {
+        final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, Sort.by("innerClass.bigDecimal"));
+        final List<SomeClassToSort> list = List.of(
+            new SomeClassToSort(2, "aaa"),
+            new SomeClassToSort(1, "bbb", new InnerClass(BigDecimal.valueOf(2))),
+            new SomeClassToSort(3, "AAA", new InnerClass(BigDecimal.valueOf(1)))
+        );
+
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
+        assertThat(sorted).containsExactly(
+            new SomeClassToSort(3, "AAA", new InnerClass(BigDecimal.valueOf(1))),
+            new SomeClassToSort(1, "bbb", new InnerClass(BigDecimal.valueOf(2))),
+            new SomeClassToSort(2, "aaa")
+        );
+    }
+
+    @Test
     void ensureNullValuesAreBasedAtTheEnd() {
         final Sort sort = Sort.by(Sort.Direction.DESC, "string");
         final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, sort);
