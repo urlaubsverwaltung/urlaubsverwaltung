@@ -613,13 +613,25 @@ class PersonServiceImplTest {
     @Test
     void ensurePersonDisabledEventIsFiredAfterPersonUpdate() {
 
+        final Person activePerson = createPerson("active person", USER);
+        activePerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(activePerson));
+        when(personRepository.save(activePerson)).thenReturn(activePerson);
+
+        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
+        verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
+    }
+
+    @Test
+    void ensurePersonDisabledEventIsNotFiredAfterUpdateOfAlreadyInactivePerson() {
+
         final Person inactivePerson = createPerson("inactive person");
         inactivePerson.setId(1L);
         when(personRepository.findById(1L)).thenReturn(Optional.of(inactivePerson));
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        sut.update(new PersonId(1L), PersonUpdate.ofPermissions(List.of()));
-        verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
+        sut.update(new PersonId(1L), PersonUpdate.ofPersonalData("inactive person", "Marlene", "Muster", "muster@example.org"));
+        verify(applicationEventPublisher, never()).publishEvent(any(PersonDisabledEvent.class));
     }
 
     @Test
