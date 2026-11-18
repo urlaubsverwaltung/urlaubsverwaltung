@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -163,8 +164,7 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
             // the closure calculation rejects ranges beyond the calculable duration
             companyClosures = DateLimits.isCalculableDuration(new DateRange(startDate, endDate))
                 ? companyClosureService.getCompanyClosures(startDate, endDate).stream()
-                    .map(closure -> new BlackoutPeriodCompanyClosureDto(closure.date(), closure.name(locale),
-                        messageSource.getMessage("company-closure.dayLength." + closure.dayLength().name(), null, locale)))
+                    .map(closure -> toCompanyClosureDto(closure, locale))
                     .toList()
                 : List.of();
         }
@@ -172,6 +172,11 @@ class BlackoutPeriodViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("conflictingCompanyClosures", companyClosures);
 
         return "blackoutperiod/blackout_period_form::conflicts";
+    }
+
+    private BlackoutPeriodCompanyClosureDto toCompanyClosureDto(CompanyClosure closure, Locale locale) {
+        final String dayLength = messageSource.getMessage("company-closure.dayLength." + closure.dayLength().name(), null, locale);
+        return new BlackoutPeriodCompanyClosureDto(closure.date(), closure.name(locale), dayLength);
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)

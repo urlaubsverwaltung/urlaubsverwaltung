@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
+import de.focus_shift.jollyday.core.Holiday;
 import de.focus_shift.jollyday.core.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -37,7 +38,11 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         }
 
         return holidayManager.getHolidays(from, to, PUBLIC_HOLIDAY, federalState.getCodes()).stream()
-            .map(holiday -> new PublicHoliday(holiday.getDate(), FULL, holiday.getDescription(locale)))
+            .map(holiday -> toPublicHoliday(holiday, locale))
             .toList();
+    }
+
+    private static PublicHoliday toPublicHoliday(Holiday holiday, Locale locale) {
+        return new PublicHoliday(holiday.getDate(), FULL, holiday.getDescription(locale));
     }
 }

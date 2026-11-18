@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.companyclosure;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
@@ -19,7 +20,6 @@ import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +34,8 @@ import static java.util.Comparator.nullsFirst;
 import static java.util.Locale.forLanguageTag;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -112,7 +114,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
         final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll();
         final Optional<CompanyClosureVersionEntity> sameValidFrom = versions.stream()
-            .filter(version -> version.getCompanyClosureId().equals(entity.getId()) && validFrom.equals(version.getValidFrom()))
+            .filter(version -> isVersionValidFrom(version, entity.getId(), validFrom))
             .findFirst();
 
         final CompanyClosureVersionEntity version;
@@ -142,17 +144,29 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         final Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId = companyClosureVersionRepository.findAll().stream()
             .collect(groupingBy(CompanyClosureVersionEntity::getCompanyClosureId));
         return companyClosureRepository.findAll().stream()
-            .map(entity -> new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity), namesOf(entity),
-                versionsOf(versionsByClosureId.getOrDefault(entity.getId(), List.of()))))
+            .map(entity -> entryOf(entity, versionsByClosureId))
             .sorted(comparing(CompanyClosureEntry::monthDay))
             .toList();
+    }
+
+    private CompanyClosureEntry entryOf(CompanyClosureEntity entity, Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId) {
+        final List<CompanyClosureVersion> versions = versionsOf(versionsByClosureId.getOrDefault(entity.getId(), List.of()));
+        return new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity), namesOf(entity), versions);
     }
 
     private static List<CompanyClosureVersion> versionsOf(List<CompanyClosureVersionEntity> versionEntities) {
         return versionEntities.stream()
             .sorted(BY_VALID_FROM)
-            .map(version -> new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()))
+            .map(CompanyClosureServiceImpl::toVersion)
             .toList();
+    }
+
+    private static CompanyClosureVersion toVersion(CompanyClosureVersionEntity version) {
+        return new CompanyClosureVersion(version.getDayLength(), version.getValidFrom());
+    }
+
+    private static boolean isVersionValidFrom(CompanyClosureVersionEntity version, Long closureId, LocalDate validFrom) {
+        return version.getCompanyClosureId().equals(closureId) && validFrom.equals(version.getValidFrom());
     }
 
     @Override
@@ -239,17 +253,23 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private Function<Locale, String> nameByLocale(CompanyClosureEntity entity) {
         final Map<Locale, String> names = namesOf(entity);
         if (!names.isEmpty()) {
-            return locale -> ofNullable(names.get(locale))
-                .or(() -> ofNullable(names.get(forLanguageTag(locale.getLanguage()))))
-                .orElseGet(() -> messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale));
+            return locale -> givenName(names, locale);
         }
 
         final String messageKey = entity.getMessageKey();
-        return locale -> {
-            // an unknown message key, e.g. from a restored backup, must not break every page showing the closure
-            final String message = messageKey == null ? null : messageSource.getMessage(messageKey, new Object[]{}, null, locale);
-            return message != null ? message : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
-        };
+        return locale -> translatedName(messageKey, locale);
+    }
+
+    private String givenName(Map<Locale, String> names, Locale locale) {
+        return ofNullable(names.get(locale))
+            .or(() -> ofNullable(names.get(forLanguageTag(locale.getLanguage()))))
+            .orElseGet(() -> messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale));
+    }
+
+    private String translatedName(@Nullable String messageKey, Locale locale) {
+        // an unknown message key, e.g. from a restored backup, must not break every page showing the closure
+        final String message = messageKey == null ? null : messageSource.getMessage(messageKey, new Object[]{}, null, locale);
+        return message != null ? message : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
     }
 
     /**
@@ -269,12 +289,9 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     }
 
     private static Map<Locale, String> withoutBlankNames(Map<Locale, String> names) {
-        final Map<Locale, String> nonBlankNames = new HashMap<>();
-        names.forEach((locale, name) -> {
-            if (name != null && !name.isBlank()) {
-                nonBlankNames.put(locale, name.strip());
-            }
-        });
+        final Map<Locale, String> nonBlankNames = names.entrySet().stream()
+            .filter(entry -> hasText(entry.getValue()))
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().strip()));
         return Map.copyOf(nonBlankNames);
     }
 
@@ -297,7 +314,11 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private static Optional<CompanyClosureVersionEntity> versionValidAt(List<CompanyClosureVersionEntity> versions, Long closureId, LocalDate date) {
         return versions.stream()
             .filter(version -> version.getCompanyClosureId().equals(closureId))
-            .filter(version -> version.getValidFrom() == null || !version.getValidFrom().isAfter(date))
+            .filter(version -> isValidAt(version, date))
             .max(BY_VALID_FROM);
+    }
+
+    private static boolean isValidAt(CompanyClosureVersionEntity version, LocalDate date) {
+        return version.getValidFrom() == null || !version.getValidFrom().isAfter(date);
     }
 }

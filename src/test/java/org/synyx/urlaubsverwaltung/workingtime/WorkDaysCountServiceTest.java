@@ -80,10 +80,20 @@ class WorkDaysCountServiceTest {
             final LocalDate from = invocation.getArgument(0);
             final LocalDate to = invocation.getArgument(1);
             return new DateRange(from, to).stream()
-                .filter(date -> MonthDay.from(date).equals(CHRISTMAS_EVE) || MonthDay.from(date).equals(NEW_YEARS_EVE))
-                .map(date -> new CompanyClosure(date, NOON, locale -> MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester"))
+                .filter(WorkDaysCountServiceTest::isDefaultCompanyClosure)
+                .map(WorkDaysCountServiceTest::defaultCompanyClosure)
                 .toList();
         });
+    }
+
+    private static boolean isDefaultCompanyClosure(LocalDate date) {
+        final MonthDay monthDay = MonthDay.from(date);
+        return monthDay.equals(CHRISTMAS_EVE) || monthDay.equals(NEW_YEARS_EVE);
+    }
+
+    private static CompanyClosure defaultCompanyClosure(LocalDate date) {
+        final String name = MonthDay.from(date).equals(CHRISTMAS_EVE) ? "Heiligabend" : "Silvester";
+        return new CompanyClosure(date, NOON, locale -> name);
     }
 
     @Test

@@ -89,8 +89,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         final LocalDate today = LocalDate.now(clock);
         final List<CompanyClosureListDto> companyClosures = companyClosureService.getCompanyClosureEntries().stream()
-            .map(entry -> new CompanyClosureListDto(toPath(entry.monthDay()), entry.monthDay(), entry.name(locale),
-                entry.dayLengthAt(today), latestFirst(entry.versions())))
+            .map(entry -> toListDto(entry, locale, today))
             .toList();
         model.addAttribute("companyClosures", companyClosures);
 
@@ -104,7 +103,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         // a rejected form comes back with its errors by the redirect
         if (!model.containsAttribute(COMPANY_CLOSURE)) {
             final List<CompanyClosureNameForm> emptyNames = Arrays.stream(SupportedLanguages.values())
-                .map(language -> new CompanyClosureNameForm(language.getLocale(), ""))
+                .map(CompanyClosureViewController::emptyNameForm)
                 .toList();
             final CompanyClosureForm form = new CompanyClosureForm();
             form.setNames(emptyNames);
@@ -234,8 +233,22 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     private static List<CompanyClosureNameForm> namesOf(CompanyClosureEntry entry) {
         final Map<Locale, String> nameByLocale = nameByLocaleOf(entry);
         return Arrays.stream(SupportedLanguages.values())
-            .map(language -> new CompanyClosureNameForm(language.getLocale(), nameByLocale.getOrDefault(language.getLocale(), "")))
+            .map(language -> nameForm(language, nameByLocale))
             .toList();
+    }
+
+    private static CompanyClosureNameForm nameForm(SupportedLanguages language, Map<Locale, String> nameByLocale) {
+        final Locale locale = language.getLocale();
+        return new CompanyClosureNameForm(locale, nameByLocale.getOrDefault(locale, ""));
+    }
+
+    private static CompanyClosureNameForm emptyNameForm(SupportedLanguages language) {
+        return new CompanyClosureNameForm(language.getLocale(), "");
+    }
+
+    private static CompanyClosureListDto toListDto(CompanyClosureEntry entry, Locale locale, LocalDate today) {
+        final MonthDay monthDay = entry.monthDay();
+        return new CompanyClosureListDto(toPath(monthDay), monthDay, entry.name(locale), entry.dayLengthAt(today), latestFirst(entry.versions()));
     }
 
     private static Map<Locale, String> nameByLocaleOf(CompanyClosureEntry entry) {

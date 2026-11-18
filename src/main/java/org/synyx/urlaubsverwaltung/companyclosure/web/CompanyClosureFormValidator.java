@@ -125,11 +125,15 @@ class CompanyClosureFormValidator implements Validator {
             // the changed version only applies until the next one starts
             final LocalDate nextVersionStart = entry.versions().stream()
                 .map(CompanyClosureVersion::validFrom)
-                .filter(validFrom -> validFrom != null && validFrom.isAfter(form.getValidFrom()))
+                .filter(validFrom -> isAfter(validFrom, form.getValidFrom()))
                 .min(naturalOrder())
                 .orElse(null);
             validateNoCompanyWideBlackoutPeriod(entry.monthDay(), nextVersionStart, form, errors);
         }
+    }
+
+    private static boolean isAfter(@Nullable LocalDate validFrom, LocalDate date) {
+        return validFrom != null && validFrom.isAfter(date);
     }
 
     private static boolean covers(DayLength dayLength, DayLength half) {
@@ -190,11 +194,26 @@ class CompanyClosureFormValidator implements Validator {
         blackoutPeriodService.getAllBlackoutPeriods().stream()
             .filter(BlackoutPeriod::isCompanyWide)
             .sorted(comparing(BlackoutPeriod::getStartDate))
-            .filter(period -> rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
-                .mapToObj(monthDay::atYear)
-                .filter(date -> !date.isBefore(form.getValidFrom()) && (nextVersionStart == null || date.isBefore(nextVersionStart)))
-                .anyMatch(date -> !date.isBefore(period.getStartDate()) && !date.isAfter(period.getEndDate())))
+            .filter(period -> containsClosureDay(period, monthDay, form.getValidFrom(), nextVersionStart))
             .findFirst()
             .ifPresent(period -> errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{period.getTitle()}, null));
+    }
+
+    /**
+     * @return whether the period contains the closure day of a year the version applies to
+     */
+    private static boolean containsClosureDay(BlackoutPeriod period, MonthDay monthDay, LocalDate validFrom, @Nullable LocalDate nextVersionStart) {
+        return rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
+            .mapToObj(monthDay::atYear)
+            .filter(date -> isInVersion(date, validFrom, nextVersionStart))
+            .anyMatch(date -> isInPeriod(date, period));
+    }
+
+    private static boolean isInVersion(LocalDate date, LocalDate validFrom, @Nullable LocalDate nextVersionStart) {
+        return !date.isBefore(validFrom) && (nextVersionStart == null || date.isBefore(nextVersionStart));
+    }
+
+    private static boolean isInPeriod(LocalDate date, BlackoutPeriod period) {
+        return !date.isBefore(period.getStartDate()) && !date.isAfter(period.getEndDate());
     }
 }

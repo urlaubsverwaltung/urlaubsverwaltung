@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
@@ -206,19 +207,22 @@ class ApplicationForLeaveFormValidator implements Validator {
     }
 
     private void validateCompanyClosure(LocalDate date, DayLength applicationDayLength, Errors errors) {
-        companyClosureService.getCompanyClosures(date, date).stream().findFirst().ifPresent(closure -> {
-            final String key = switch (closure.dayLength()) {
-                case FULL -> ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_FULL;
-                case MORNING -> applicationDayLength == MORNING ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_MORNING : null;
-                case NOON -> applicationDayLength == NOON ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_NOON : null;
-                case ZERO -> null;
-            };
-            if (key != null) {
-                final String closureName = closure.name(LocaleContextHolder.getLocale());
-                errors.rejectValue(DAY_LENGTH, key, new Object[]{closureName}, null);
-                errors.reject(key, new Object[]{closureName}, null);
-            }
-        });
+        companyClosureService.getCompanyClosures(date, date).stream().findFirst()
+            .ifPresent(closure -> rejectOverlapWithCompanyClosure(closure, applicationDayLength, errors));
+    }
+
+    private static void rejectOverlapWithCompanyClosure(CompanyClosure closure, DayLength applicationDayLength, Errors errors) {
+        final String key = switch (closure.dayLength()) {
+            case FULL -> ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_FULL;
+            case MORNING -> applicationDayLength == MORNING ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_MORNING : null;
+            case NOON -> applicationDayLength == NOON ? ERROR_ALREADY_ABSENT_ON_COMPANY_CLOSURE_NOON : null;
+            case ZERO -> null;
+        };
+        if (key != null) {
+            final String closureName = closure.name(LocaleContextHolder.getLocale());
+            errors.rejectValue(DAY_LENGTH, key, new Object[]{closureName}, null);
+            errors.reject(key, new Object[]{closureName}, null);
+        }
     }
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
