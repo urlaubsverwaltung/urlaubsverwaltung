@@ -83,7 +83,11 @@ public class SortComparator<T> implements Comparator<T> {
             if (value instanceof String string) {
                 value = string.toLowerCase();
             }
-            return (Comparable<? super Comparable>) value;
+            return value instanceof Comparable ? (Comparable<? super Comparable>) value : null;
+        }
+
+        if (value == null) {
+            return null;
         }
 
         return extractComparableValue((Class<T>) readMethod.getReturnType(), (T) value, properties.subList(1, properties.size()));
