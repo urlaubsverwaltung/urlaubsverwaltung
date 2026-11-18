@@ -13,7 +13,6 @@ import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,6 +24,7 @@ import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -46,18 +46,21 @@ public class ICalService {
     private final BrandingProperties brandingProperties;
     private final MessageSource messageSource;
     private final UserSettingsService userSettingsService;
+    private final Clock clock;
 
     @Autowired
     ICalService(
         CalendarProperties calendarProperties,
         BrandingProperties brandingProperties,
         MessageSource messageSource,
-        UserSettingsService userSettingsService
+        UserSettingsService userSettingsService,
+        Clock clock
     ) {
         this.calendarProperties = calendarProperties;
         this.brandingProperties = brandingProperties;
         this.messageSource = messageSource;
         this.userSettingsService = userSettingsService;
+        this.clock = clock;
     }
 
     public ByteArrayResource getCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
@@ -96,14 +99,14 @@ public class ICalService {
         }
 
         absences.stream()
-            .map(absence -> this.toVEvent(absence, method, absence.getPerson().equals(recipient), locale))
+            .map(absence -> this.toVEvent(absence, absence.getPerson().equals(recipient), locale))
             .flatMap(Optional::stream)
             .forEach(calendar::add);
 
         return calendar;
     }
 
-    private Optional<VEvent> toVEvent(CalendarAbsence absence, ICalType method, boolean isOwn, Locale locale) {
+    private Optional<VEvent> toVEvent(CalendarAbsence absence, boolean isOwn, Locale locale) {
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
@@ -121,7 +124,7 @@ public class ICalService {
             event = new VEvent(startDateTime.toInstant(), endDateTime.toInstant(), summary);
         }
 
-        event.add(new Uid(generateUid(absence)));
+        event.add(new Uid(absence.getUid()));
         if (absence.getPerson().getEmail() != null) {
             event.add(generateAttendee(absence));
         }
@@ -131,9 +134,9 @@ public class ICalService {
             event.add(new XProperty("X-MICROSOFT-CDO-BUSYSTATUS", "FREE"));
         }
 
-        if (method == CANCELLED) {
-            event.add(new Sequence(1));
-        }
+        // a later invite of the same uid moves or cancels the appointment only with a higher sequence,
+        // the minutes since the epoch grow with every change without a stored counter
+        event.add(new Sequence(Math.toIntExact(clock.instant().getEpochSecond() / 60)));
 
         event.add(new Organizer(URI.create("mailto:" + calendarProperties.getOrganizer())));
 
@@ -150,11 +153,6 @@ public class ICalService {
 
     private boolean isSameDay(ZonedDateTime startDateTime, ZonedDateTime endDate) {
         return startDateTime.toLocalDate().isEqual(endDate.toLocalDate().minusDays(1));
-    }
-
-    private String generateUid(CalendarAbsence absence) {
-        final String data = absence.getStartDate() + "" + absence.getEndDate() + absence.getPerson();
-        return DigestUtils.md5Hex(data).toUpperCase();
     }
 
     private ByteArrayResource writeCalendarIntoResource(Calendar calendar) {

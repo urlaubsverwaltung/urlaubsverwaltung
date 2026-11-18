@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -43,6 +44,8 @@ import static java.util.Locale.GERMAN;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,6 +53,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
@@ -290,7 +294,7 @@ class ApplicationMailServiceTest {
         application.setPerson(editor);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 1));
         application.setEndDate(LocalDate.of(2020, DECEMBER, 2));
-        application.setStatus(ALLOWED);
+        application.setStatus(WAITING);
 
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
@@ -311,6 +315,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
+        assertThat(mail.getFirst().getMailAttachments(GERMAN)).isEmpty();
+        assertThat(mail.get(1).getMailAttachments(GERMAN)).isEmpty();
     }
 
     @Test
@@ -334,6 +340,13 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, DECEMBER, 2));
         application.setStatus(ALLOWED);
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), eq(PUBLISHED), eq(applicant))).thenReturn(attachment);
+
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
@@ -353,6 +366,10 @@ class ApplicationMailServiceTest {
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
+        assertThat(mail.getFirst().getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getFirst().getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
+        assertThat(mail.get(1).getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.get(1).getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -553,6 +570,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.edit");
         assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getMailAttachments(GERMAN)).isEmpty();
     }
 
     @Test
@@ -578,6 +596,15 @@ class ApplicationMailServiceTest {
         application.setPerson(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
+        application.setStartDate(LocalDate.of(2020, MARCH, 5));
+        application.setEndDate(LocalDate.of(2020, MARCH, 6));
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(argThat(CalendarAbsence::isHolidayReplacement), eq(PUBLISHED), eq(holidayReplacement))).thenReturn(attachment);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -594,6 +621,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow.edit");
         assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test

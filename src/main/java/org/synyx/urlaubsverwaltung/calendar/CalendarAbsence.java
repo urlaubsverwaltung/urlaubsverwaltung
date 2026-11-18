@@ -11,18 +11,24 @@ import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.HOLIDAY_R
 
 public class CalendarAbsence {
 
+    private final String uid;
     private final ZonedDateTime startDate;
     private final ZonedDateTime endDate;
     private final Person person;
     private final boolean isAllDay;
     private final CalendarAbsenceType calendarAbsenceType;
 
-    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration) {
-        this(person, period, absenceTimeConfiguration, DEFAULT);
+    public CalendarAbsence(String uid, Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration) {
+        this(uid, person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
+    /**
+     * @param uid identifies the absence across all of its changes, e.g. "application-42",
+     *            calendars move or remove the appointment of an earlier invite by it
+     */
+    public CalendarAbsence(String uid, Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
 
+        this.uid = uid;
         this.person = person;
         this.calendarAbsenceType = calendarAbsenceType;
 
@@ -49,6 +55,10 @@ public class CalendarAbsence {
             }
             default -> throw new IllegalArgumentException("Invalid day length!");
         }
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public ZonedDateTime getStartDate() {

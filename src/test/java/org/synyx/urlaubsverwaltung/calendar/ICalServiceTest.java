@@ -13,12 +13,16 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.time.Month.AUGUST;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +45,7 @@ class ICalServiceTest {
     @Mock
     private UserSettingsService userSettingsService;
 
+    private final Clock clock = Clock.fixed(Instant.parse("2026-11-18T10:00:00Z"), UTC);
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -50,7 +55,7 @@ class ICalServiceTest {
     void setUp() {
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        sut = new ICalService(calendarProperties, new BrandingProperties("Urlaubsverwaltung"), messageSource, userSettingsService);
+        sut = new ICalService(calendarProperties, new BrandingProperties("Urlaubsverwaltung"), messageSource, userSettingsService, clock);
     }
 
     @Test
@@ -58,7 +63,7 @@ class ICalServiceTest {
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Abwesenheiten"), messageSource, userSettingsService);
+        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Abwesenheiten"), messageSource, userSettingsService, clock);
 
         final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -71,7 +76,7 @@ class ICalServiceTest {
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Ürlaub; a,b\\c"), messageSource, userSettingsService);
+        final ICalService sutWithBranding = new ICalService(calendarProperties, new BrandingProperties("Ürlaub; a,b\\c"), messageSource, userSettingsService, clock);
 
         final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -125,8 +130,9 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190326
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:806735982DE050F90FAEE972F010854E
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -157,8 +163,9 @@ class ICalServiceTest {
                 DTSTART:20190426T080000Z
                 DTEND:20190426T120000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:4F2F28B08279622C1D317D8D5F11D44D
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -191,8 +198,9 @@ class ICalServiceTest {
                 DTEND;VALUE=DATE:20190402
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:322D5F265624AA63A4C508E8C363B29A
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -223,8 +231,9 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:497ED5D042F718878138A3E2F8C3C35C
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -255,8 +264,9 @@ class ICalServiceTest {
                 DTSTART:20190526T100000Z
                 DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:791CAD0EA0808D42C4D2BED7D0A7CAC7
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -286,9 +296,9 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:497ED5D042F718878138A3E2F8C3C35C
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                SEQUENCE:1
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -317,8 +327,9 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:497ED5D042F718878138A3E2F8C3C35C
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -349,10 +360,11 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D2A4772AEB3FD20D5F6997FCD8F28719
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 TRANSP:TRANSPARENT
                 X-MICROSOFT-CDO-BUSYSTATUS:FREE
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -382,9 +394,10 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D2A4772AEB3FD20D5F6997FCD8F28719
+                UID:application-42
                 TRANSP:TRANSPARENT
                 X-MICROSOFT-CDO-BUSYSTATUS:FREE
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -413,14 +426,37 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Vertretung für Marlene Muster
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D2A4772AEB3FD20D5F6997FCD8F28719
+                UID:application-42
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 TRANSP:TRANSPARENT
                 X-MICROSOFT-CDO-BUSYSTATUS:FREE
+                SEQUENCE:29916600
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
                 """);
+    }
+
+    @Test
+    void ensureUidIsTheIdOfTheAbsenceAndNotItsDates() {
+
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
+        when(messageSource.getMessage(any(), any(), eq(GERMAN))).thenReturn("Marlene Muster abwesend");
+
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
+        final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(timeSettings);
+        final Period period = new Period(LocalDate.of(2026, AUGUST, 3), LocalDate.of(2026, AUGUST, 7), FULL);
+        final Period movedPeriod = new Period(LocalDate.of(2026, AUGUST, 10), LocalDate.of(2026, AUGUST, 14), FULL);
+
+        final ByteArrayResource allowed = sut.getSingleAppointment(new CalendarAbsence("application-42", recipient, period, timeConfig), PUBLISHED, recipient);
+        final ByteArrayResource cancelledAfterMove = sut.getSingleAppointment(new CalendarAbsence("application-42", recipient, movedPeriod, timeConfig), CANCELLED, recipient);
+        final ByteArrayResource sickNoteOnSameDates = sut.getSingleAppointment(new CalendarAbsence("sicknote-42", recipient, period, timeConfig), PUBLISHED, recipient);
+
+        assertThat(convertCalendar(allowed)).contains("UID:application-42");
+        assertThat(convertCalendar(cancelledAfterMove)).contains("UID:application-42");
+        assertThat(convertCalendar(sickNoteOnSameDates)).contains("UID:sicknote-42");
     }
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
@@ -443,7 +479,7 @@ class ICalServiceTest {
         final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(timeSettings);
 
         final Period period = new Period(start, end, length);
-        return new CalendarAbsence(person, period, timeConfig, absenceType);
+        return new CalendarAbsence("application-42", person, period, timeConfig, absenceType);
     }
 
     /**
