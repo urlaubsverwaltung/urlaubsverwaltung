@@ -1,4 +1,5 @@
 vi.mock("../../../components/calendar", () => ({}));
+vi.mock("../../date-fns-localized", () => ({ localeLoaded: Promise.resolve() }));
 
 describe("person/overview", function () {
   beforeAll(async function () {
