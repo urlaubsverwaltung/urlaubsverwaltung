@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
@@ -33,7 +36,10 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
+import static java.time.Month.NOVEMBER;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,6 +52,12 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYER
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LATVIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_BARCELONA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_LA_RIOJA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ENGLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_NORTHERN_IRELAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_SCOTLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_WALES;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceImplTest {
@@ -62,7 +74,9 @@ class PublicHolidaysServiceImplTest {
             "hr", getHolidayManager(HolidayCalendar.CROATIA),
             "pt", getHolidayManager(HolidayCalendar.PORTUGAL),
             "bg", getHolidayManager(HolidayCalendar.BULGARIA),
-            "lv", getHolidayManager(HolidayCalendar.LATVIA)
+            "lv", getHolidayManager(HolidayCalendar.LATVIA),
+            "gb", getHolidayManager(HolidayCalendar.UNITED_KINGDOM),
+            "es", getHolidayManager(HolidayCalendar.SPAIN)
         ));
     }
 
@@ -236,6 +250,24 @@ class PublicHolidaysServiceImplTest {
     void ensureNationalPublicHolidaysOfPortugalApplyToAllRegions(FederalState federalState) {
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2026, APRIL, 25), federalState);
         assertThat(maybePublicHoliday).isPresent();
+    }
+
+    private static Stream<Arguments> regionalPublicHolidays() {
+        return Stream.of(
+            Arguments.of(UNITED_KINGDOM_ENGLAND, of(2026, APRIL, 6)), // Easter Monday
+            Arguments.of(UNITED_KINGDOM_WALES, of(2026, APRIL, 6)), // Easter Monday
+            Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, of(2026, MARCH, 17)), // St Patrick's Day
+            Arguments.of(UNITED_KINGDOM_SCOTLAND, of(2026, NOVEMBER, 30)), // St Andrew's Day
+            Arguments.of(SPAIN_LA_RIOJA, of(2026, JUNE, 9)), // Day of La Rioja
+            Arguments.of(SPAIN_BARCELONA, of(2026, MAY, 25)), // Whit Monday
+            Arguments.of(SPAIN_BARCELONA, of(2026, JUNE, 24)) // St John's Day of Catalonia
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("regionalPublicHolidays")
+    void ensureRegionalPublicHolidayIsFound(FederalState federalState, LocalDate date) {
+        assertThat(sut.getPublicHoliday(date, federalState)).isPresent();
     }
 
     @Test
