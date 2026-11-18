@@ -46,7 +46,8 @@ public final class AccountSettingsValidator {
         final int dayOfMonth = accountSettings.getExpiryDateDayOfMonth();
         final Month month = accountSettings.getExpiryDateMonth();
 
-        if (dayOfMonth < 1
+        if (month == null
+            || dayOfMonth < 1
             || dayOfMonth > 31
             || FEBRUARY.equals(month) && dayOfMonth > 29
             || !validDate(Year.now(), month, dayOfMonth)

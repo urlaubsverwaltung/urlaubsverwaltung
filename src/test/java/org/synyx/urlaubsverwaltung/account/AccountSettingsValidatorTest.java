@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
 
 import java.time.Month;
@@ -62,6 +64,21 @@ class AccountSettingsValidatorTest {
         AccountSettingsValidator.validateAccountSettings(accountSettings, errors);
 
         assertThat(errors.hasFieldErrors("accountSettings.expiryDateDayOfMonth")).isTrue();
+    }
+
+    @Test
+    void ensureMissingExpiryDateMonthIsInvalid() {
+
+        final BindingResult errors = new MapBindingResult(new HashMap<>(), "");
+
+        final AccountSettings accountSettings = new AccountSettings();
+        accountSettings.setExpiryDateMonth(null);
+
+        AccountSettingsValidator.validateAccountSettings(accountSettings, errors);
+
+        assertThat(errors.getFieldError("accountSettings.expiryDateDayOfMonth"))
+            .extracting(FieldError::getCode)
+            .isEqualTo("error.entry.invalid");
     }
 
     static Stream<Arguments> validDayOfMonthValues() {
