@@ -28,7 +28,11 @@ import java.util.function.Function;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
+import static java.util.Locale.forLanguageTag;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -39,7 +43,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private static final String NAME_FALLBACK_MESSAGE_KEY = "absences.overview.company-closure";
 
     private static final Comparator<CompanyClosureVersionEntity> BY_VALID_FROM =
-        Comparator.comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(Comparator.naturalOrder()));
+        comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(naturalOrder()));
 
     private static final MonthDay LEAP_DAY = MonthDay.of(FEBRUARY, 29);
 
@@ -94,7 +98,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
                 .filter(dayLength -> dayLength != ZERO)
                 .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, nameByLocale)));
         }
-        closures.sort(Comparator.comparing(CompanyClosure::date));
+        closures.sort(comparing(CompanyClosure::date));
         return closures;
     }
 
@@ -143,7 +147,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
                     .sorted(BY_VALID_FROM)
                     .map(version -> new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()))
                     .toList()))
-            .sorted(Comparator.comparing(CompanyClosureEntry::monthDay))
+            .sorted(comparing(CompanyClosureEntry::monthDay))
             .toList();
     }
 
@@ -231,8 +235,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private Function<Locale, String> nameByLocale(CompanyClosureEntity entity) {
         final Map<Locale, String> names = namesOf(entity);
         if (!names.isEmpty()) {
-            return locale -> Optional.ofNullable(names.get(locale))
-                .or(() -> Optional.ofNullable(names.get(Locale.forLanguageTag(locale.getLanguage()))))
+            return locale -> ofNullable(names.get(locale))
+                .or(() -> ofNullable(names.get(forLanguageTag(locale.getLanguage()))))
                 .orElseGet(() -> messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale));
         }
 

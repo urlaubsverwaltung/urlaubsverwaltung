@@ -34,6 +34,9 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import static java.util.Locale.forLanguageTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -58,10 +61,8 @@ class CompanyClosureViewControllerTest {
 
     private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
     private static final LocalDate TODAY = LocalDate.of(2026, NOVEMBER, 6);
-    private static final Locale GERMAN = Locale.GERMAN;
-    private static final Locale GERMAN_AUSTRIA = Locale.forLanguageTag("de-AT");
-    private static final Locale ENGLISH = Locale.ENGLISH;
-    private static final Locale GREEK = Locale.forLanguageTag("el");
+    private static final Locale GERMAN_AUSTRIA = forLanguageTag("de-AT");
+    private static final Locale GREEK = forLanguageTag("el");
 
     private CompanyClosureViewController sut;
 

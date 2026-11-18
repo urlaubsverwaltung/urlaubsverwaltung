@@ -17,10 +17,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.time.Month.JANUARY;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +39,7 @@ class CompanyClosureDataCollectionServiceTest {
     void collectsAllVersions() {
         final CompanyClosureEntity christmasEve = closure(1L, 24, "companyclosure.name.christmasEve");
         final CompanyClosureEntity newYearsEve = closure(2L, 31, "companyclosure.name.newYearsEve");
-        newYearsEve.setNameByLocale(Map.of(Locale.GERMAN, "Jahresabschluss"));
+        newYearsEve.setNameByLocale(Map.of(GERMAN, "Jahresabschluss"));
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
         when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
             changedVersion(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
@@ -52,7 +52,7 @@ class CompanyClosureDataCollectionServiceTest {
             new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
                 new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), LAST_MODIFIED_AT, "office"))),
-            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(Locale.GERMAN, "Jahresabschluss"), null, null, List.of(
+            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, List.of(
                 new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null))));
     }
 

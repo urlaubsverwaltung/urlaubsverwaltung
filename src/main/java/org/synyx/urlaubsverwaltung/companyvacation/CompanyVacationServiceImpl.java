@@ -19,6 +19,7 @@ import java.util.UUID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Month.DECEMBER;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 @Service
 class CompanyVacationServiceImpl implements CompanyVacationService {
@@ -74,7 +75,7 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
         final DayLength companyVacationLength = companyClosureService.getCompanyClosures(date, date).stream()
             .findFirst()
             .map(CompanyClosure::dayLength)
-            .orElse(DayLength.ZERO);
+            .orElse(ZERO);
 
         if (!companyVacationLength.isZero()) {
             final CompanyVacationPublishedEvent companyVacationPublishedEvent = new CompanyVacationPublishedEvent(sourceId, UUID.randomUUID(), Instant.now(), companyVacationLength, date, date);

@@ -40,6 +40,7 @@ import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -232,7 +233,7 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(testHoliday));
 
         mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
-                .locale(Locale.GERMAN)
+                .locale(GERMAN)
                 .with(csrf())
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())

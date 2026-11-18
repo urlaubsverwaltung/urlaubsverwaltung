@@ -61,6 +61,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
 import static java.util.Collections.emptyList;
+import static java.util.Locale.GERMANY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -4138,7 +4139,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(
-            get("/web/absences").locale(Locale.GERMANY)
+            get("/web/absences").locale(GERMANY)
                 .param("year", "2026")
                 .param("month", "12")
         )
@@ -4199,7 +4200,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(
-            get("/web/absences").locale(Locale.GERMANY)
+            get("/web/absences").locale(GERMANY)
                 .param("year", "2026")
                 .param("month", "12")
         )
@@ -5602,7 +5603,7 @@ class AbsenceOverviewViewControllerTest {
 
         final Person person = privilegedPerson();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
-        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, GERMANY)).thenReturn("Erholungsurlaub");
 
         final DateRange january = new DateRange(LocalDate.of(2025, JANUARY, 1), LocalDate.of(2025, JANUARY, 31));
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(january)))

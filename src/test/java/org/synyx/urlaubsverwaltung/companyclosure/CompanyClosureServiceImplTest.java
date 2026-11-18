@@ -26,6 +26,9 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import static java.util.Locale.forLanguageTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -78,69 +81,69 @@ class CompanyClosureServiceImplTest {
     @Test
     void resolvesNameForTheRequestedLocale() {
         givenChristmasEve(version(NOON, null));
-        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, Locale.GERMAN)).thenReturn("Heiligabend");
-        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, Locale.ENGLISH)).thenReturn("Christmas Eve");
+        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, GERMAN)).thenReturn("Heiligabend");
+        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, ENGLISH)).thenReturn("Christmas Eve");
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.GERMAN)).isEqualTo("Heiligabend");
-        assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Christmas Eve");
+        assertThat(actual.getFirst().name(GERMAN)).isEqualTo("Heiligabend");
+        assertThat(actual.getFirst().name(ENGLISH)).isEqualTo("Christmas Eve");
     }
 
     @Test
     void fallsBackToGenericNameForUnknownMessageKey() {
         givenChristmasEve(version(NOON, null));
-        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, Locale.ENGLISH)).thenReturn(null);
-        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, Locale.ENGLISH)).thenReturn("Company closure");
+        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, ENGLISH)).thenReturn(null);
+        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, ENGLISH)).thenReturn("Company closure");
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Company closure");
+        assertThat(actual.getFirst().name(ENGLISH)).isEqualTo("Company closure");
     }
 
     @Test
     void namesGivenByUserAreUsedPerLocale() {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
-        christmasEve.setNameByLocale(Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.ENGLISH, "Christmas break"));
+        christmasEve.setNameByLocale(Map.of(GERMAN, "Weihnachtsruhe", ENGLISH, "Christmas break"));
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
         when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null)));
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.GERMAN)).isEqualTo("Weihnachtsruhe");
-        assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Christmas break");
+        assertThat(actual.getFirst().name(GERMAN)).isEqualTo("Weihnachtsruhe");
+        assertThat(actual.getFirst().name(ENGLISH)).isEqualTo("Christmas break");
         verifyNoInteractions(messageSource);
     }
 
     @Test
     void nameGivenByUserFallsBackToLanguageOfLocale() {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
-        christmasEve.setNameByLocale(Map.of(Locale.GERMAN, "Weihnachtsruhe"));
+        christmasEve.setNameByLocale(Map.of(GERMAN, "Weihnachtsruhe"));
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
         when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null)));
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.forLanguageTag("de-AT"))).isEqualTo("Weihnachtsruhe");
+        assertThat(actual.getFirst().name(forLanguageTag("de-AT"))).isEqualTo("Weihnachtsruhe");
         verifyNoInteractions(messageSource);
     }
 
     @Test
     void languageWithoutNameGivenByUserShowsGenericName() {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
-        christmasEve.setNameByLocale(Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.ENGLISH, " "));
+        christmasEve.setNameByLocale(Map.of(GERMAN, "Weihnachtsruhe", ENGLISH, " "));
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
         when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null)));
-        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, Locale.ENGLISH)).thenReturn("Company closure");
+        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, ENGLISH)).thenReturn("Company closure");
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Company closure");
+        assertThat(actual.getFirst().name(ENGLISH)).isEqualTo("Company closure");
     }
 
     @Test
@@ -149,12 +152,12 @@ class CompanyClosureServiceImplTest {
         christmasEve.setMessageKey(null);
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
         when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null)));
-        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, Locale.ENGLISH)).thenReturn("Company closure");
+        when(messageSource.getMessage("absences.overview.company-closure", new Object[]{}, ENGLISH)).thenReturn("Company closure");
 
         final List<CompanyClosure> actual = sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().name(Locale.ENGLISH)).isEqualTo("Company closure");
+        assertThat(actual.getFirst().name(ENGLISH)).isEqualTo("Company closure");
     }
 
     @Test
@@ -321,10 +324,10 @@ class CompanyClosureServiceImplTest {
         final MonthDay bridgeDay = MonthDay.of(MAY, 15);
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
 
-        sut.createCompanyClosure(bridgeDay, Map.of(Locale.GERMAN, " Brückentag ", Locale.ENGLISH, ""), FULL, validFrom);
+        sut.createCompanyClosure(bridgeDay, Map.of(GERMAN, " Brückentag ", ENGLISH, ""), FULL, validFrom);
 
         verify(companyClosureRepository).save(argThat(entity -> entity.getMonth() == 5 && entity.getDayOfMonth() == 15
-            && Map.of(Locale.GERMAN, "Brückentag").equals(entity.getNameByLocale()) && entity.getMessageKey() == null));
+            && Map.of(GERMAN, "Brückentag").equals(entity.getNameByLocale()) && entity.getMessageKey() == null));
         verify(companyClosureVersionRepository).save(argThat(version -> version.getCompanyClosureId().equals(2L)
             && version.getDayLength() == FULL && validFrom.equals(version.getValidFrom())));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(bridgeDay));
@@ -334,7 +337,7 @@ class CompanyClosureServiceImplTest {
     void rejectsExistingDay() {
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, "Heiligabend");
+        final Map<Locale, String> names = Map.of(GERMAN, "Heiligabend");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(CHRISTMAS_EVE, names, FULL, validFrom));
         verify(companyClosureRepository, never()).save(any());
@@ -345,7 +348,7 @@ class CompanyClosureServiceImplTest {
     void rejectsLeapDay() {
         final MonthDay leapDay = MonthDay.of(FEBRUARY, 29);
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, "Schalttag");
+        final Map<Locale, String> names = Map.of(GERMAN, "Schalttag");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(leapDay, names, FULL, validFrom));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
@@ -355,7 +358,7 @@ class CompanyClosureServiceImplTest {
     void rejectsCreationWithValidFromBeforeCurrentYear() {
         final MonthDay bridgeDay = MonthDay.of(MAY, 15);
         final LocalDate validFrom = LocalDate.of(2025, DECEMBER, 31);
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, "Brückentag");
+        final Map<Locale, String> names = Map.of(GERMAN, "Brückentag");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
@@ -365,7 +368,7 @@ class CompanyClosureServiceImplTest {
     void rejectsCreationWithoutName() {
         final MonthDay bridgeDay = MonthDay.of(MAY, 15);
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, " ");
+        final Map<Locale, String> names = Map.of(GERMAN, " ");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
@@ -376,9 +379,9 @@ class CompanyClosureServiceImplTest {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
 
-        sut.renameCompanyClosure(CHRISTMAS_EVE, Map.of(Locale.GERMAN, "Weihnachten", Locale.ENGLISH, "Christmas"));
+        sut.renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
 
-        assertThat(christmasEve.getNameByLocale()).isEqualTo(Map.of(Locale.GERMAN, "Weihnachten", Locale.ENGLISH, "Christmas"));
+        assertThat(christmasEve.getNameByLocale()).isEqualTo(Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
         assertThat(christmasEve.getMessageKey()).isEqualTo("companyclosure.name.christmasEve");
         verify(companyClosureRepository).save(christmasEve);
     }
@@ -387,7 +390,7 @@ class CompanyClosureServiceImplTest {
     void renameRejectsUnknownMonthDay() {
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEveEntity()));
         final MonthDay labourDay = MonthDay.of(MAY, 1);
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, "Tag der Arbeit");
+        final Map<Locale, String> names = Map.of(GERMAN, "Tag der Arbeit");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(labourDay, names));
         verify(companyClosureRepository, never()).save(any());
@@ -395,7 +398,7 @@ class CompanyClosureServiceImplTest {
 
     @Test
     void renameRejectsMissingName() {
-        final Map<Locale, String> names = Map.of(Locale.GERMAN, "");
+        final Map<Locale, String> names = Map.of(GERMAN, "");
 
         assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(CHRISTMAS_EVE, names));
         verify(companyClosureRepository, never()).save(any());
@@ -407,7 +410,7 @@ class CompanyClosureServiceImplTest {
         newYearsEve.setId(3L);
         newYearsEve.setMonth(12);
         newYearsEve.setDayOfMonth(31);
-        newYearsEve.setNameByLocale(Map.of(Locale.GERMAN, "Silvester"));
+        newYearsEve.setNameByLocale(Map.of(GERMAN, "Silvester"));
         when(companyClosureRepository.findAll()).thenReturn(List.of(newYearsEve, christmasEveEntity()));
 
         final CompanyClosureVersionEntity newYearsEveVersion = version(NOON, null);
@@ -418,16 +421,16 @@ class CompanyClosureServiceImplTest {
             version(ZERO, LocalDate.of(2026, JANUARY, 1)),
             version(NOON, null)));
 
-        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, Locale.GERMAN)).thenReturn("Heiligabend");
+        when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, GERMAN)).thenReturn("Heiligabend");
 
         assertThat(sut.getCompanyClosureEntries())
-            .extracting(CompanyClosureEntry::monthDay, entry -> entry.name(Locale.GERMAN), CompanyClosureEntry::names, CompanyClosureEntry::versions)
+            .extracting(CompanyClosureEntry::monthDay, entry -> entry.name(GERMAN), CompanyClosureEntry::names, CompanyClosureEntry::versions)
             .containsExactly(
                 tuple(CHRISTMAS_EVE, "Heiligabend", Map.of(), List.of(
                     new CompanyClosureVersion(NOON, null),
                     new CompanyClosureVersion(ZERO, LocalDate.of(2026, JANUARY, 1)),
                     new CompanyClosureVersion(FULL, LocalDate.of(2026, NOVEMBER, 6)))),
-                tuple(MonthDay.of(DECEMBER, 31), "Silvester", Map.of(Locale.GERMAN, "Silvester"), List.of(
+                tuple(MonthDay.of(DECEMBER, 31), "Silvester", Map.of(GERMAN, "Silvester"), List.of(
                     new CompanyClosureVersion(NOON, null))));
     }
 

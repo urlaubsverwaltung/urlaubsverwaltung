@@ -16,12 +16,12 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static java.time.Month.FEBRUARY;
+import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
+import static java.util.stream.IntStream.rangeClosed;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -189,8 +189,8 @@ class CompanyClosureFormValidator implements Validator {
 
         blackoutPeriodService.getAllBlackoutPeriods().stream()
             .filter(BlackoutPeriod::isCompanyWide)
-            .sorted(Comparator.comparing(BlackoutPeriod::getStartDate))
-            .filter(period -> IntStream.rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
+            .sorted(comparing(BlackoutPeriod::getStartDate))
+            .filter(period -> rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
                 .mapToObj(monthDay::atYear)
                 .filter(date -> !date.isBefore(form.getValidFrom()) && (nextVersionStart == null || date.isBefore(nextVersionStart)))
                 .anyMatch(date -> !date.isBefore(period.getStartDate()) && !date.isAfter(period.getEndDate())))

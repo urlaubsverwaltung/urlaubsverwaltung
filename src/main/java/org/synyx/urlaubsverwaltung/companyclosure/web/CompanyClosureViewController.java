@@ -37,6 +37,7 @@ import static java.util.Comparator.reverseOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.validation.BindingResult.MODEL_KEY_PREFIX;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
@@ -182,7 +183,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
      */
     private static void keepFormWithErrors(CompanyClosureForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(COMPANY_CLOSURE, form);
-        redirectAttributes.addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + COMPANY_CLOSURE, errors);
+        redirectAttributes.addFlashAttribute(MODEL_KEY_PREFIX + COMPANY_CLOSURE, errors);
     }
 
     private void addEditModel(Model model, CompanyClosureEntry entry, Locale locale) {

@@ -21,11 +21,11 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Month.JANUARY;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.inOrder;
@@ -58,7 +58,7 @@ class CompanyClosureRestoreServiceTest {
         final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
             new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null)));
-        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(Locale.GERMAN, "Jahresabschluss"), null, null, List.of(
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null)));
 
         sut.restore(List.of(christmasEve, newYearsEve));
@@ -68,7 +68,7 @@ class CompanyClosureRestoreServiceTest {
         inOrder.verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
 
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMessageKey).containsExactly("companyclosure.name.christmasEve", "companyclosure.name.newYearsEve");
-        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getNameByLocale).containsExactly(null, Map.of(Locale.GERMAN, "Jahresabschluss"));
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getNameByLocale).containsExactly(null, Map.of(GERMAN, "Jahresabschluss"));
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getDayOfMonth).containsExactly(24, 31);
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMonth).containsExactly(12, 12);
         assertThat(versionsCaptor.getAllValues().get(0))

@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureChangedEvent;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -27,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 @ExtendWith(MockitoExtension.class)
 class CompanyVacationServiceImplTest {
@@ -49,7 +50,7 @@ class CompanyVacationServiceImplTest {
     @Test
     void publishesFromCompanyClosuresOnChange() {
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE))
-            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, locale -> "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, NOON, locale -> "Heiligabend")));
 
         sut.handleCompanyClosureChangedEvent(new CompanyClosureChangedEvent(MonthDay.of(DECEMBER, 24)));
 
@@ -57,7 +58,7 @@ class CompanyVacationServiceImplTest {
         verify(applicationEventPublisher).publishEvent(captor.capture());
 
         assertThat(captor.getValue()).isInstanceOfSatisfying(CompanyVacationPublishedEvent.class, event -> {
-            assertThat(event.dayLength()).isEqualTo(DayLength.NOON);
+            assertThat(event.dayLength()).isEqualTo(NOON);
             assertThat(event.startDate()).isEqualTo(CHRISTMAS_EVE);
             assertThat(event.endDate()).isEqualTo(CHRISTMAS_EVE);
             assertThat(event.sourceId()).isEqualTo("settings-christmas-eve");
@@ -81,7 +82,7 @@ class CompanyVacationServiceImplTest {
     void publishesForNewClosureDay() {
         final LocalDate day = LocalDate.of(2026, MAY, 15);
         when(companyClosureService.getCompanyClosures(day, day))
-            .thenReturn(List.of(new CompanyClosure(day, DayLength.FULL, locale -> "Brueckentag")));
+            .thenReturn(List.of(new CompanyClosure(day, FULL, locale -> "Brueckentag")));
 
         sut.handleCompanyClosureChangedEvent(new CompanyClosureChangedEvent(MonthDay.of(MAY, 15)));
 
@@ -90,7 +91,7 @@ class CompanyVacationServiceImplTest {
 
         assertThat(captor.getValue()).isInstanceOfSatisfying(CompanyVacationPublishedEvent.class, event -> {
             assertThat(event.sourceId()).isEqualTo("company-closure-05-15");
-            assertThat(event.dayLength()).isEqualTo(DayLength.FULL);
+            assertThat(event.dayLength()).isEqualTo(FULL);
             assertThat(event.startDate()).isEqualTo(day);
             assertThat(event.endDate()).isEqualTo(day);
         });
@@ -121,7 +122,7 @@ class CompanyVacationServiceImplTest {
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), List.of()),
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), List.of())));
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE))
-            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, DayLength.NOON, locale -> "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, NOON, locale -> "Heiligabend")));
         when(companyClosureService.getCompanyClosures(NEW_YEARS_EVE, NEW_YEARS_EVE)).thenReturn(List.of());
 
         sut.publishCompanyEvents();

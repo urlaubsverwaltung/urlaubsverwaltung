@@ -33,6 +33,7 @@ import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BULGARIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -40,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYER
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LATVIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.PORTUGAL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_BARCELONA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_LA_RIOJA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ENGLAND;
@@ -176,7 +178,7 @@ class PublicHolidaysServiceImplTest {
     @Test
     void ensureCarnivalIsNoPublicHolidayInPortugal() {
         // carnival tuesday is only an observance in portugal
-        final Optional<PublicHoliday> maybePublicHoliday = publicHoliday(of(2026, FEBRUARY, 17), FederalState.PORTUGAL);
+        final Optional<PublicHoliday> maybePublicHoliday = publicHoliday(of(2026, FEBRUARY, 17), PORTUGAL);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -199,7 +201,7 @@ class PublicHolidaysServiceImplTest {
         assertThat(publicHolidays)
             .extracting(PublicHoliday::date)
             .containsExactlyInAnyOrder(of(2026, DECEMBER, 25), of(2026, DECEMBER, 26));
-        assertThat(publicHolidays).extracting(PublicHoliday::dayLength).containsOnly(DayLength.FULL);
+        assertThat(publicHolidays).extracting(PublicHoliday::dayLength).containsOnly(FULL);
     }
 
     @Test

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SATURDAY;
@@ -106,7 +107,7 @@ class WorkDaysCountServiceTest {
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
         when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, locale -> "Closure")));
 
-        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(sut.getWorkDaysCount(FULL, day, day, person)).isEqualByComparingTo(ZERO);
     }
 
     @Test

@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -63,6 +62,8 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 @ExtendWith(MockitoExtension.class)
 class BlackoutPeriodViewControllerTest {
@@ -312,8 +313,8 @@ class BlackoutPeriodViewControllerTest {
         when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2026, DECEMBER, 31)))
             .thenReturn(List.of(
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.NOON, locale -> "Heiligabend"),
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), DayLength.NOON, locale -> "Silvester")));
+                new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), NOON, locale -> "Heiligabend"),
+                new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), NOON, locale -> "Silvester")));
 
         perform(get("/web/blackoutperiod/conflicts")
             .param("startDate", "2026-12-20")
@@ -335,7 +336,7 @@ class BlackoutPeriodViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
         when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 24), LocalDate.of(2026, DECEMBER, 24)))
-            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), DayLength.FULL, locale -> "Heiligabend")));
+            .thenReturn(List.of(new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), FULL, locale -> "Heiligabend")));
 
         perform(get("/web/blackoutperiod/conflicts")
             .param("startDate", "2026-12-24")

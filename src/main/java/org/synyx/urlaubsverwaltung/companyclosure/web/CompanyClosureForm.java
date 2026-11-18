@@ -14,8 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
+import static java.util.Locale.forLanguageTag;
+import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
@@ -97,8 +98,8 @@ public class CompanyClosureForm implements Serializable {
      */
     public String nameFor(Locale locale) {
         final Map<Locale, String> nameByLocale = getNameByLocale();
-        return Optional.ofNullable(nameByLocale.get(locale))
-            .or(() -> Optional.ofNullable(nameByLocale.get(Locale.forLanguageTag(locale.getLanguage()))))
+        return ofNullable(nameByLocale.get(locale))
+            .or(() -> ofNullable(nameByLocale.get(forLanguageTag(locale.getLanguage()))))
             .or(() -> names.stream().map(CompanyClosureNameForm::getName).filter(StringUtils::hasText).findFirst())
             .orElse("");
     }

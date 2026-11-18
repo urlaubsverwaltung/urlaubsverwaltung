@@ -61,9 +61,11 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.concat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
@@ -329,8 +331,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
             absenceRecordsByPersonAndDate.getOrDefault(person, Map.of()).forEach((date, records) -> {
                 final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> switch (gapType) {
-                    case PUBLIC_HOLIDAY -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"));
-                    case COMPANY_CLOSURE -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.company-closure"));
+                    case PUBLIC_HOLIDAY -> ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"));
+                    case COMPANY_CLOSURE -> ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.company-closure"));
                     default -> message.apply("absences.overview.no-workday");
                 };
                 barDays.put(date, new AbsenceBars.Day(
@@ -405,7 +407,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange, List<PublicHoliday> companyClosures) {
-        return Stream.concat(
+        return concat(
                 workingTimesByDateRange.entrySet().stream()
                     .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
                     .flatMap(List::stream),

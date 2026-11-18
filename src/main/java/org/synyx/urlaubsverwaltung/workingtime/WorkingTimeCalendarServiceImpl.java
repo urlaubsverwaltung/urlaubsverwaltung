@@ -34,7 +34,9 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
@@ -202,17 +204,17 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         final DayLength closureLength = companyClosuresByDate.getOrDefault(date, ZERO);
 
         final WorkingTimeCalendarEntryType morningType = halfType(configured.isFull() || configured.isMorning(), covers(publicHolidayLength, MORNING), covers(closureLength, MORNING));
-        final WorkingTimeCalendarEntryType noonType = halfType(configured.isFull() || configured.isNoon(), covers(publicHolidayLength, DayLength.NOON), covers(closureLength, DayLength.NOON));
+        final WorkingTimeCalendarEntryType noonType = halfType(configured.isFull() || configured.isNoon(), covers(publicHolidayLength, NOON), covers(closureLength, NOON));
 
         final boolean morningWork = morningType == WORKDAY;
         final boolean noonWork = noonType == WORKDAY;
         final DayLength dayLength;
         if (morningWork && noonWork) {
-            dayLength = DayLength.FULL;
+            dayLength = FULL;
         } else if (morningWork) {
             dayLength = MORNING;
         } else if (noonWork) {
-            dayLength = DayLength.NOON;
+            dayLength = NOON;
         } else {
             dayLength = ZERO;
         }
@@ -221,7 +223,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     }
 
     private static boolean covers(DayLength closedOrHoliday, DayLength half) {
-        return closedOrHoliday == DayLength.FULL || closedOrHoliday == half;
+        return closedOrHoliday == FULL || closedOrHoliday == half;
     }
 
     private static WorkingTimeCalendarEntryType halfType(boolean configuredWorkingHalf, boolean publicHoliday, boolean companyClosure) {

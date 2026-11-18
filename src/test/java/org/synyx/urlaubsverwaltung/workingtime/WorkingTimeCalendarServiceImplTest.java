@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
@@ -605,7 +606,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void companyClosureNoonKeepsMorningWorkday() {
-        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(FULL, ZERO, DayLength.NOON);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(FULL, ZERO, NOON);
         assertThat(actual.dayLength()).isEqualTo(MORNING);
         assertThat(actual.morning()).isEqualTo(WORKDAY);
         assertThat(actual.noon()).isEqualTo(COMPANY_CLOSURE);
@@ -613,7 +614,7 @@ class WorkingTimeCalendarServiceImplTest {
 
     @Test
     void closureOnNonWorkingHalfChangesNothing() {
-        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(MORNING, ZERO, DayLength.NOON);
+        final WorkingTimeCalendar.WorkingDayInformation actual = christmasEve(MORNING, ZERO, NOON);
         assertThat(actual.dayLength()).isEqualTo(MORNING);
         assertThat(actual.morning()).isEqualTo(WORKDAY);
         assertThat(actual.noon()).isEqualTo(NO_WORKDAY);

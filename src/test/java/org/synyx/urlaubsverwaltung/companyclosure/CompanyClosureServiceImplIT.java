@@ -12,10 +12,12 @@ import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.time.Month.DECEMBER;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import static java.util.Locale.forLanguageTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -37,7 +39,7 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
     @Test
     void defaultsExistAfterStartup() {
         assertThat(sut.getCompanyClosures(LocalDate.of(2026, DECEMBER, 1), LocalDate.of(2026, DECEMBER, 31)))
-            .extracting(CompanyClosure::date, CompanyClosure::dayLength, closure -> closure.name(Locale.GERMAN), closure -> closure.name(Locale.ENGLISH))
+            .extracting(CompanyClosure::date, CompanyClosure::dayLength, closure -> closure.name(GERMAN), closure -> closure.name(ENGLISH))
             .containsExactly(
                 tuple(LocalDate.of(2026, DECEMBER, 24), NOON, "Heiligabend", "Christmas Eve"),
                 tuple(LocalDate.of(2026, DECEMBER, 31), NOON, "Silvester", "New Year's Eve"));
@@ -85,15 +87,15 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
 
     @Test
     void renamePersistsNamesPerLanguage() {
-        sut.renameCompanyClosure(MonthDay.of(DECEMBER, 24), Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.forLanguageTag("el"), "Χριστούγεννα"));
+        sut.renameCompanyClosure(MonthDay.of(DECEMBER, 24), Map.of(GERMAN, "Weihnachtsruhe", forLanguageTag("el"), "Χριστούγεννα"));
 
         assertThat(sut.getCompanyClosureEntries())
             .filteredOn(entry -> entry.monthDay().equals(MonthDay.of(DECEMBER, 24)))
             .singleElement()
             .satisfies(entry -> {
-                assertThat(entry.names()).isEqualTo(Map.of(Locale.GERMAN, "Weihnachtsruhe", Locale.forLanguageTag("el"), "Χριστούγεννα"));
-                assertThat(entry.name(Locale.forLanguageTag("de-AT"))).isEqualTo("Weihnachtsruhe");
-                assertThat(entry.name(Locale.ENGLISH)).isEqualTo("Company closure");
+                assertThat(entry.names()).isEqualTo(Map.of(GERMAN, "Weihnachtsruhe", forLanguageTag("el"), "Χριστούγεννα"));
+                assertThat(entry.name(forLanguageTag("de-AT"))).isEqualTo("Weihnachtsruhe");
+                assertThat(entry.name(ENGLISH)).isEqualTo("Company closure");
             });
     }
 }

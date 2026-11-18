@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+
 /**
  * A yearly company closure day with all its versions.
  *
@@ -34,7 +36,7 @@ public record CompanyClosureEntry(MonthDay monthDay, Function<Locale, String> na
      * @return closed portion of the day of the version valid at the given date (the last one starting at or before it), {@link DayLength#ZERO} without one
      */
     public DayLength dayLengthAt(LocalDate date) {
-        DayLength dayLength = DayLength.ZERO;
+        DayLength dayLength = ZERO;
         for (CompanyClosureVersion version : versions) {
             if (version.validFrom() == null || !version.validFrom().isAfter(date)) {
                 dayLength = version.dayLength();

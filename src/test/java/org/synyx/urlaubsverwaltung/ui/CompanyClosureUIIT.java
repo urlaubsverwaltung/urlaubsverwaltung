@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -37,6 +36,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static java.time.Month.JUNE;
 import static java.util.Locale.GERMAN;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.scheduling.annotation.Scheduled.CRON_DISABLED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -71,7 +71,7 @@ class CompanyClosureUIIT {
         @Bean
         public SessionRepositoryCustomizer<JdbcIndexedSessionRepository> disableCleanupCustomizer() {
             // Force-set the cleanup cron to the official disabled macro programmatically
-            return sessionRepository -> sessionRepository.setCleanupCron(Scheduled.CRON_DISABLED);
+            return sessionRepository -> sessionRepository.setCleanupCron(CRON_DISABLED);
         }
     }
 

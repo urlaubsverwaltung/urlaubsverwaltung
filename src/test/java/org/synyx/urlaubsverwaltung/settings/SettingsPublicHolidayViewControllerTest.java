@@ -15,12 +15,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class SettingsPublicHolidayViewControllerTest {
@@ -73,7 +73,7 @@ class SettingsPublicHolidayViewControllerTest {
     @Test
     void savesFederalState() {
         final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
-        publicHolidaysSettings.setFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
+        publicHolidaysSettings.setFederalState(GERMANY_BADEN_WUERTTEMBERG);
 
         final SettingsPublicHolidayDto dto = new SettingsPublicHolidayDto();
         dto.setId(42L);
@@ -91,7 +91,7 @@ class SettingsPublicHolidayViewControllerTest {
         assertThat(redirectAttributes.getFlashAttributes().get("success")).isEqualTo(Boolean.TRUE);
 
         verify(settingsService).save(existing);
-        assertThat(existing.getPublicHolidaysSettings().getFederalState()).isEqualTo(FederalState.GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(existing.getPublicHolidaysSettings().getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
 
     }
 
