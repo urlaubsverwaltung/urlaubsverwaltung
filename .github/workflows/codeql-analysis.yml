@@ -27,7 +27,7 @@ jobs:
 
       # Autobuild does not work so we build it by our own
       - name: Set up JDK from .tool-versions
-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
         with:
           java-version-file: ".tool-versions"
           cache: 'maven'
