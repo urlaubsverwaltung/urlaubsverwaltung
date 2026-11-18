@@ -55,7 +55,7 @@ public class WorkDaysCountApiController {
      *
      * @param startDate start date as String (e.g. 2013-3-21)
      * @param endDate   end date as String (e.g. 2013-3-21)
-     * @param length    day length as String (FULL, MORNING or NOON)
+     * @param length    day length as String (FULL, MORNING or NOON), MORNING and NOON only for a single day
      * @param personId  id of the person to number of work days for
      * @return number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
@@ -91,7 +91,7 @@ public class WorkDaysCountApiController {
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
-        @Parameter(description = "Day Length")
+        @Parameter(description = "Day length FULL, MORNING or NOON, defaults to FULL. MORNING and NOON require the start date to equal the end date")
         @RequestParam(value = "length", required = false)
         DayLength length) {
 
@@ -101,6 +101,10 @@ public class WorkDaysCountApiController {
 
         if (exceedsMaximumRequestedDuration(startDate, endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
+        }
+
+        if (length != null && length.isHalfDay() && !startDate.isEqual(endDate)) {
+            throw new ResponseStatusException(BAD_REQUEST, "Parameter 'length' MORNING or NOON requires 'from' to equal 'to'");
         }
 
         final Optional<Person> person = personService.getPersonByID(personId);
