@@ -167,6 +167,27 @@ class CustomAbsenceTypeUIIT {
         navigationPage.logout();
     }
 
+    @Test
+    void ensureEnterInAbsenceTypeLabelShowsValidationErrors(Page page) {
+
+        final Person person = createPerson("fHolt", "Frida", List.of(USER, OFFICE));
+
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
+
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+
+        navigationPage.settingsMenu.clickAbsenceTypes();
+        settingsAbsenceTypesPage.addNewVacationType();
+
+        // Enter submits the form with its hidden default button, which must not go through Turbo
+        settingsAbsenceTypesPage.pressEnterInVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN);
+        assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).isVisible();
+
+        navigationPage.logout();
+    }
+
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
 
         final String email = "%s.%s@example.org".formatted(trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();

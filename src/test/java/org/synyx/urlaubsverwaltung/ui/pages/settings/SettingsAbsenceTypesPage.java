@@ -49,6 +49,11 @@ public class SettingsAbsenceTypesPage {
         absenceTypeLocator.locator(selector).fill(value);
     }
 
+    public void pressEnterInVacationTypeLabel(Locator absenceTypeLocator, Locale locale) {
+        final String selector = "[data-test-id=vacation-type-label-translation-%s]".formatted(locale.toString());
+        absenceTypeLocator.locator(selector).press("Enter");
+    }
+
     public Locator vacationTypeMissingTranslationError(Locator absencetypeLocator) {
         return absencetypeLocator.locator("[data-test-id=vacation-type-missing-translation-error]");
     }
