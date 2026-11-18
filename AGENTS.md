@@ -36,6 +36,24 @@ as it is.
 
 - Keep the early return in every other case: the guard returns a value, its condition is not negated, the remaining
   body contains nested blocks, or the method checks several preconditions one after the other.
+- Do not pass a multi-line expression as an argument, e.g. a stream pipeline or a constructor call whose arguments
+  span several lines. Assign it to a variable whose name says what it holds and pass the variable:
+
+  ```java
+  // do
+  final List<PersonDto> persons = personService.getActivePersons().stream()
+      .map(PersonDto::from)
+      .toList();
+  model.addAttribute("persons", persons);
+
+  // don't
+  model.addAttribute("persons", personService.getActivePersons().stream()
+      .map(PersonDto::from)
+      .toList());
+  ```
+
+- This does not apply to lambdas and builder chains that an API expects inline, e.g. the lambda of `map`, `satisfies`
+  or `thenAnswer`, a MockMvc request builder or the Spring Security configuration.
 
 ### Maintaining the conventions
 
