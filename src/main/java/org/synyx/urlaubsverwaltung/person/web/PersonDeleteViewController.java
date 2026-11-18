@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -54,7 +53,6 @@ public class PersonDeleteViewController implements HasLaunchpad {
     public String deletePersonAjax(
         @PathVariable("personId") Long personId,
         @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
-        @RequestHeader(name = "Turbo-Frame") String turboFrame,
         Model model) throws UnknownPersonException {
 
         final Person personToDelete = getPerson(personId);
@@ -74,7 +72,7 @@ public class PersonDeleteViewController implements HasLaunchpad {
         model.addAttribute("lastOfficeUserCannotBeDeleted", lastOfficeUserCannotBeDeleted);
         model.addAttribute("firstDeleteActionConfirmed", firstDeleteActionConfirmed);
 
-        return "person/detail-section/action-delete-person :: #" + turboFrame;
+        return "person/detail-section/action-delete-person :: #frame-delete-person";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -102,7 +100,6 @@ public class PersonDeleteViewController implements HasLaunchpad {
     public String deletePersonConfirmedAjax(
         @PathVariable("personId") Long personId,
         @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
-        @RequestHeader("Turbo-Frame") String turboFrame,
         RedirectAttributes redirectAttributes, Model model) throws UnknownPersonException {
 
         final Person personToDelete = getPerson(personId);
@@ -112,14 +109,14 @@ public class PersonDeleteViewController implements HasLaunchpad {
             model.addAttribute("lastOfficeUserCannotBeDeleted", true);
             model.addAttribute("firstDeleteActionConfirmed", true);
             model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office");
-            return "person/detail-section/action-delete-person :: #" + turboFrame;
+            return "person/detail-section/action-delete-person :: #frame-delete-person";
         }
 
         if (!deleteConfirmationMatch(personToDelete, personDeleteForm)) {
             model.addAttribute("person", personToDelete);
             model.addAttribute("firstDeleteActionConfirmed", true);
             model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
-            return "person/detail-section/action-delete-person :: #" + turboFrame;
+            return "person/detail-section/action-delete-person :: #frame-delete-person";
         }
 
         return deletePerson(personToDelete, redirectAttributes);

@@ -62,7 +62,7 @@
                 <a
                   data-turbo="false"
                   data-person-search-suggestion
-                  th:href="@{__${suggestion.href}__}"
+                  th:href="@{${suggestion.href}}"
                   class="flex-1 flex items-center gap-2 no-underline text-inherit"
                 >
                   <span class="text-blue-300 dark:text-sky-800">
@@ -87,7 +87,7 @@
                     <a
                       href="#"
                       data-turbo="false"
-                      th:href="@{__${link.href}__}"
+                      th:href="@{${link.href}}"
                       class="flex items-center gap-2 rounded-full p-2 transition-colors text-gray-800 bg-transparent hover:bg-blue-200 hover:text-blue-800 focus-visible:bg-blue-200 focus-visible:text-blue-800 focus-visible:outline-none dark:text-zinc-300 dark:hover:bg-sky-700 dark:hover:text-sky-100 dark:focus-visible:bg-sky-700 dark:focus-visible:text-sky-100"
                     >
                       <th:block th:if="${link.icon().name() == 'ACCOUNT'}">

@@ -72,6 +72,35 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
+    void deletePersonAjaxKeepsTurboFrameHeaderOutOfViewName() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("delete", "true")
+                .header("Turbo-Frame", "__${1+1}__")
+        )
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
+    }
+
+    @Test
+    void deletePersonConfirmedAjaxKeepsTurboFrameHeaderOutOfViewName() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("niceNameConfirmation", "wrong")
+                .header("Turbo-Frame", "x}")
+        )
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
+    }
+
+    @Test
     void deletePersonLastOfficeUser() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");

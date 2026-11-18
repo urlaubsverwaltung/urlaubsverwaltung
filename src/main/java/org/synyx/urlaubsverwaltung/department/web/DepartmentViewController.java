@@ -208,11 +208,11 @@ public class DepartmentViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("hiddenDepartmentSecondStageAuthorities", filter(departmentForm.getSecondStageAuthorities(), not(persons::contains)));
         model.addAttribute("memberQuery", memberQuery);
 
-        final boolean turboFrameRequested = hasText(turboFrame);
+        final boolean turboFrameRequested = "frame-department-members".equals(turboFrame);
         model.addAttribute("turboFrameRequested", turboFrameRequested);
 
         if (turboFrameRequested) {
-            return "department/department_form::#" + turboFrame;
+            return "department/department_form::#frame-department-members";
         } else {
             return "department/department_form";
         }
