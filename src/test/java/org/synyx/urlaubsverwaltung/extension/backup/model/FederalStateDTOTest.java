@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
@@ -20,5 +21,10 @@ class FederalStateDTOTest {
     void happyPathDTOToFederalState(FederalStateDTO dto) {
         FederalState federalState = dto.toFederalState();
         assertThat(federalState).isNotNull();
+    }
+
+    @Test
+    void ensureAlderneyFromOldBackupsIsRestoredAsGuernsey() {
+        assertThat(FederalStateDTO.UNITED_KINGDOM_ALDERNEY.toFederalState()).isEqualTo(FederalState.UNITED_KINGDOM_GUERNSEY);
     }
 }

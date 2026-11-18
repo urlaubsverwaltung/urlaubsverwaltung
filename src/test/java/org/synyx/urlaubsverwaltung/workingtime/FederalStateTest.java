@@ -105,7 +105,6 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_W
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WALLIS;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUERICH;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ALDERNEY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ENGLAND;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_GUERNSEY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ISLE_OF_MAN;
@@ -147,7 +146,7 @@ class FederalStateTest {
             Arguments.of(GERMANY_SCHLESWIG_HOLSTEIN, "sh", null),
             Arguments.of(GERMANY_THUERINGEN, "th", null),
 
-            Arguments.of(GREECE_GREECE, "gr", null),
+            Arguments.of(GREECE_GREECE, null, null),
 
             Arguments.of(AUSTRIA_BURGENLAND, "1", null),
             Arguments.of(AUSTRIA_KAERNTEN, "2", null),
@@ -186,20 +185,19 @@ class FederalStateTest {
             Arguments.of(SWITZERLAND_ZUG, "zg", null),
             Arguments.of(SWITZERLAND_ZUERICH, "zh", null),
 
-            Arguments.of(UNITED_KINGDOM_ALDERNEY, "al", null),
             Arguments.of(UNITED_KINGDOM_ENGLAND, "eng", null),
-            Arguments.of(UNITED_KINGDOM_GUERNSEY, "gu", null),
-            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, "im", null),
-            Arguments.of(UNITED_KINGDOM_JERSEY, "je", null),
+            Arguments.of(UNITED_KINGDOM_GUERNSEY, null, null),
+            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, null, null),
+            Arguments.of(UNITED_KINGDOM_JERSEY, null, null),
             Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "nir", null),
             Arguments.of(UNITED_KINGDOM_SCOTLAND, "sct", null),
             Arguments.of(UNITED_KINGDOM_WALES, "wls", null),
 
-            Arguments.of(MALTA, "mt", null),
+            Arguments.of(MALTA, null, null),
 
-            Arguments.of(ITALY, "it", null),
+            Arguments.of(ITALY, null, null),
 
-            Arguments.of(CROATIA, "hr", null),
+            Arguments.of(CROATIA, null, null),
 
             Arguments.of(SPAIN_ANDALUCIA, "an", null),
             Arguments.of(SPAIN_ARAGON, "ar", null),
@@ -222,26 +220,26 @@ class FederalStateTest {
             Arguments.of(SPAIN_CANTABRIA, "cb", null),
             Arguments.of(SPAIN_VALENCIA, "vc", null),
 
-            Arguments.of(NETHERLANDS, "nl", null),
+            Arguments.of(NETHERLANDS, null, null),
 
-            Arguments.of(LITHUANIA, "lt", null),
+            Arguments.of(LITHUANIA, null, null),
 
-            Arguments.of(BELGIUM, "be", null),
+            Arguments.of(BELGIUM, null, null),
 
-            Arguments.of(POLAND, "pl", null),
+            Arguments.of(POLAND, null, null),
 
-            Arguments.of(FINLAND, "fi", null),
+            Arguments.of(FINLAND, null, null),
             Arguments.of(FINLAND_ALAND, "01", null),
 
-            Arguments.of(ROMANIA, "ro", null),
+            Arguments.of(ROMANIA, null, null),
 
-            Arguments.of(PORTUGAL, "pt", null),
+            Arguments.of(PORTUGAL, null, null),
             Arguments.of(PORTUGAL_AZORES, "20", null),
             Arguments.of(PORTUGAL_MADEIRA, "30", null),
 
-            Arguments.of(BULGARIA, "bg", null),
+            Arguments.of(BULGARIA, null, null),
 
-            Arguments.of(LATVIA, "lv", null),
+            Arguments.of(LATVIA, null, null),
 
             Arguments.of(USA_MARYLAND, "md", null),
             Arguments.of(USA_VIRGINIA, "va", null),
@@ -253,7 +251,7 @@ class FederalStateTest {
     @MethodSource("provideFederalStateCode")
     void ensureCorrectCode(FederalState federalState, String region, String subregion) {
         final String[] codes = federalState.getCodes();
-        if (federalState == NONE) {
+        if (federalState == NONE || region == null) {
             assertThat(codes)
                 .isEmpty();
         } else if (subregion == null) {
@@ -331,11 +329,10 @@ class FederalStateTest {
             Arguments.of(SWITZERLAND_ZUG, "ch"),
             Arguments.of(SWITZERLAND_ZUERICH, "ch"),
 
-            Arguments.of(UNITED_KINGDOM_ALDERNEY, "gb"),
             Arguments.of(UNITED_KINGDOM_ENGLAND, "gb"),
-            Arguments.of(UNITED_KINGDOM_GUERNSEY, "gb"),
-            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, "gb"),
-            Arguments.of(UNITED_KINGDOM_JERSEY, "gb"),
+            Arguments.of(UNITED_KINGDOM_GUERNSEY, "gg"),
+            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, "im"),
+            Arguments.of(UNITED_KINGDOM_JERSEY, "je"),
             Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "gb"),
             Arguments.of(UNITED_KINGDOM_SCOTLAND, "gb"),
             Arguments.of(UNITED_KINGDOM_WALES, "gb"),
@@ -409,8 +406,11 @@ class FederalStateTest {
         final List<FederalState> bgFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "bg".equals(federalState.getCountry())).toList();
         final List<FederalState> lvFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "lv".equals(federalState.getCountry())).toList();
         final List<FederalState> usFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "us".equals(federalState.getCountry())).toList();
+        final List<FederalState> ggFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gg".equals(federalState.getCountry())).toList();
+        final List<FederalState> jeFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "je".equals(federalState.getCountry())).toList();
+        final List<FederalState> imFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "im".equals(federalState.getCountry())).toList();
 
-        assertThat(federalStatesTypesByCountry).hasSize(19)
+        assertThat(federalStatesTypesByCountry).hasSize(22)
             .contains(entry("de", deFederalStates))
             .contains(entry("at", atFederalStates))
             .contains(entry("ch", chFederalStates))
@@ -429,6 +429,9 @@ class FederalStateTest {
             .contains(entry("pt", ptFederalStates))
             .contains(entry("bg", bgFederalStates))
             .contains(entry("lv", lvFederalStates))
-            .contains(entry("us", usFederalStates));
+            .contains(entry("us", usFederalStates))
+            .contains(entry("gg", ggFederalStates))
+            .contains(entry("je", jeFederalStates))
+            .contains(entry("im", imFederalStates));
     }
 }
