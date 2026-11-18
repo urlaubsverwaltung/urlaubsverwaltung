@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.companyclosure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -34,7 +35,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -297,8 +297,13 @@ class CompanyClosureServiceImplTest {
 
         sut.createDefaults();
 
-        verify(companyClosureRepository).save(entity(12, 24, "companyclosure.name.christmasEve"));
-        verify(companyClosureRepository).save(entity(12, 31, "companyclosure.name.newYearsEve"));
+        final ArgumentCaptor<CompanyClosureEntity> entityCaptor = ArgumentCaptor.forClass(CompanyClosureEntity.class);
+        verify(companyClosureRepository, times(2)).save(entityCaptor.capture());
+        assertThat(entityCaptor.getAllValues())
+            .extracting(CompanyClosureEntity::getMonth, CompanyClosureEntity::getDayOfMonth, CompanyClosureEntity::getMessageKey)
+            .containsExactlyInAnyOrder(
+                tuple(12, 24, "companyclosure.name.christmasEve"),
+                tuple(12, 31, "companyclosure.name.newYearsEve"));
         verify(companyClosureVersionRepository, times(2)).save(any(CompanyClosureVersionEntity.class));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(CHRISTMAS_EVE));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(MonthDay.of(DECEMBER, 31)));
@@ -326,10 +331,18 @@ class CompanyClosureServiceImplTest {
 
         sut.createCompanyClosure(bridgeDay, Map.of(GERMAN, " Brückentag ", ENGLISH, ""), FULL, validFrom);
 
-        verify(companyClosureRepository).save(argThat(entity -> entity.getMonth() == 5 && entity.getDayOfMonth() == 15
-            && Map.of(GERMAN, "Brückentag").equals(entity.getNameByLocale()) && entity.getMessageKey() == null));
-        verify(companyClosureVersionRepository).save(argThat(version -> version.getCompanyClosureId().equals(2L)
-            && version.getDayLength() == FULL && validFrom.equals(version.getValidFrom())));
+        final ArgumentCaptor<CompanyClosureEntity> entityCaptor = ArgumentCaptor.forClass(CompanyClosureEntity.class);
+        verify(companyClosureRepository).save(entityCaptor.capture());
+        assertThat(entityCaptor.getValue())
+            .extracting(CompanyClosureEntity::getMonth, CompanyClosureEntity::getDayOfMonth, CompanyClosureEntity::getNameByLocale, CompanyClosureEntity::getMessageKey)
+            .containsExactly(5, 15, Map.of(GERMAN, "Brückentag"), null);
+
+        final ArgumentCaptor<CompanyClosureVersionEntity> versionCaptor = ArgumentCaptor.forClass(CompanyClosureVersionEntity.class);
+        verify(companyClosureVersionRepository).save(versionCaptor.capture());
+        assertThat(versionCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getCompanyClosureId, CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
+            .containsExactly(2L, FULL, validFrom);
+
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(bridgeDay));
     }
 
@@ -456,9 +469,5 @@ class CompanyClosureServiceImplTest {
         version.setDayLength(dayLength);
         version.setValidFrom(validFrom);
         return version;
-    }
-
-    private static CompanyClosureEntity entity(int month, int day, String messageKey) {
-        return argThat(e -> e.getMonth() == month && e.getDayOfMonth() == day && messageKey.equals(e.getMessageKey()));
     }
 }
