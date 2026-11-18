@@ -632,7 +632,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        final Message msgColleague = inboxColleague[0];
+        final MimeMessage msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(readPlainContent(msgColleague)).isEqualTo("""
             Hallo Marlene Muster,
@@ -644,7 +644,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.
+            """.formatted(colleague.getId()));
+
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test

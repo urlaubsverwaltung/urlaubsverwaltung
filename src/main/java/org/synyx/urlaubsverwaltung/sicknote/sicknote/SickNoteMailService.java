@@ -28,6 +28,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
@@ -228,6 +229,8 @@ public class SickNoteMailService {
     @Async
     void sendCancelToColleagues(SickNote sickNote) {
 
+        final ByteArrayResource calendarFile = generateCalendar(sickNote, DEFAULT, CANCELLED, sickNote.getPerson());
+
         // Inform colleagues of applicant which are in same department
         final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
@@ -235,6 +238,7 @@ public class SickNoteMailService {
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.sicknote.cancelled.to_colleagues", sickNote.getPerson().getNiceName())
             .withTemplate("sick_note_cancel_to_colleagues", modelColleaguesSupplier)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
