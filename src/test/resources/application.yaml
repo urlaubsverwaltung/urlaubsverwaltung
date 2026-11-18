@@ -33,6 +33,10 @@ spring:
             jwk-set-uri: https://auth.example.org/realms/urlaubsverwaltung/protocol/openid-connect/certs
   mail:
     host: localhost
+    # JavaMail otherwise looks up the machine's own name (EHLO, Message-ID) before the first mail
+    properties:
+      "[mail.smtp.localhost]": localhost
+      "[mail.host]": localhost
   main:
     banner-mode: off
   data:
