@@ -27,6 +27,8 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
@@ -384,6 +386,34 @@ class ApplicationTest {
             middleDate, ofHours(0),
             endDate, ofHours(6))
         );
+    }
+
+    @Test
+    void ensureOvertimeReductionSharesAddUpToHoursWhenNotEvenlyDivisible() {
+        final LocalDate startDate = LocalDate.of(2025, DECEMBER, 29);
+        final LocalDate endDate = LocalDate.of(2026, JANUARY, 4);
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(FULL);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        application.setHours(Duration.ofHours(20));
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(
+            startDate.datesUntil(endDate.plusDays(1)).collect(toMap(identity(), _ -> fullWorkday()))
+        );
+
+        final Map<LocalDate, Duration> shares = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
+        assertThat(shares.values().stream().reduce(Duration.ZERO, Duration::plus)).isEqualTo(ofHours(20));
+
+        final Map<Integer, Duration> hoursByYear = application.getHoursByYear((_, _) -> workingTimeCalendar);
+        assertThat(hoursByYear.get(2025).plus(hoursByYear.get(2026))).isEqualTo(ofHours(20));
     }
 
     @Test

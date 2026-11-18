@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Comparator.naturalOrder;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -345,7 +347,7 @@ public class Application {
 
         // date 1 | FULL_DAY --> 8 hours
         // date 2 | MORNING  --> 4 hours
-        return dateRange.stream().collect(toMap(identity(), date -> {
+        final Map<LocalDate, Duration> shares = new HashMap<>(dateRange.stream().collect(toMap(identity(), date -> {
             final DayLength dayLengthAtDate = workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO);
             return switch (dayLengthAtDate) {
                 case ZERO -> Duration.ZERO;
@@ -355,7 +357,18 @@ public class Application {
                 case NOON ->
                     dayLength.isFull() || (dayLength.isNoon() && dayLengthAtDate.isNoon()) ? halfDayReduction : Duration.ZERO;
             };
-        }));
+        })));
+
+        // dividedBy truncates to the nanosecond, the last day takes the rest so the shares add up to the hours
+        final Duration remainder = overtimeReduction.minus(shares.values().stream().reduce(Duration.ZERO, Duration::plus));
+        if (!remainder.isZero()) {
+            shares.keySet().stream()
+                .filter(date -> !shares.get(date).isZero())
+                .max(naturalOrder())
+                .ifPresent(lastDate -> shares.merge(lastDate, remainder, Duration::plus));
+        }
+
+        return shares;
     }
 
     /**
