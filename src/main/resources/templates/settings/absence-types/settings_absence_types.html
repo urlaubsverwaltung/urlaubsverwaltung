@@ -29,7 +29,7 @@
           data-turbo="true"
         >
           <input type="hidden" th:field="*{id}" />
-          <button type="submit" hidden></button>
+          <button type="submit" hidden data-turbo="false"></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
