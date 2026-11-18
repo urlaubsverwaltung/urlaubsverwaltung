@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.extension.backup.restore;
 
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntity;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureImportService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersionEntity;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureDTO;
@@ -35,10 +36,9 @@ class CompanyClosureRestoreService {
         companyClosureImportService.deleteAll();
 
         for (CompanyClosureDTO dto : companyClosures) {
-            companyClosureImportService.importCompanyClosure(
-                dto.toEntity(findLastModifier(dto.externalIdOfLastModifier())),
-                dto.versions().stream().map(this::toEntity).toList()
-            );
+            final CompanyClosureEntity closure = dto.toEntity(findLastModifier(dto.externalIdOfLastModifier()));
+            final List<CompanyClosureVersionEntity> versions = dto.versions().stream().map(this::toEntity).toList();
+            companyClosureImportService.importCompanyClosure(closure, versions);
         }
 
         LOG.info("Restored {} companyClosures.", companyClosures.size());

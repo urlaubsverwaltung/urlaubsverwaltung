@@ -346,9 +346,10 @@ class CompanyClosureFormValidatorTest {
     }
 
     private static CompanyClosureEntry christmasEveWithMorningFrom2028() {
-        return new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), List.of(
+        final List<CompanyClosureVersion> versions = List.of(
             new CompanyClosureVersion(NOON, null),
-            new CompanyClosureVersion(MORNING, LocalDate.of(2028, JANUARY, 1))));
+            new CompanyClosureVersion(MORNING, LocalDate.of(2028, JANUARY, 1)));
+        return new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), versions);
     }
 
     private Errors validateEdit(CompanyClosureEntry entry, CompanyClosureForm form) {

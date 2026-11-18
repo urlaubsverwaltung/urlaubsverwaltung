@@ -100,10 +100,11 @@ class CompanyVacationServiceImplTest {
     @Test
     void publishCompanyEventsCoversAllEntries() {
         final LocalDate day = LocalDate.of(2026, MAY, 15);
-        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
+        final List<CompanyClosureEntry> entries = List.of(
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), List.of()),
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), List.of()),
-            new CompanyClosureEntry(MonthDay.of(MAY, 15), locale -> "Brueckentag", Map.of(), List.of())));
+            new CompanyClosureEntry(MonthDay.of(MAY, 15), locale -> "Brueckentag", Map.of(), List.of()));
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(entries);
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE)).thenReturn(List.of());
         when(companyClosureService.getCompanyClosures(NEW_YEARS_EVE, NEW_YEARS_EVE)).thenReturn(List.of());
         when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of());
@@ -118,9 +119,10 @@ class CompanyVacationServiceImplTest {
 
     @Test
     void publishCompanyEventsPublishesBothDays() {
-        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
+        final List<CompanyClosureEntry> entries = List.of(
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), List.of()),
-            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), List.of())));
+            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), List.of()));
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(entries);
         when(companyClosureService.getCompanyClosures(CHRISTMAS_EVE, CHRISTMAS_EVE))
             .thenReturn(List.of(new CompanyClosure(CHRISTMAS_EVE, NOON, locale -> "Heiligabend")));
         when(companyClosureService.getCompanyClosures(NEW_YEARS_EVE, NEW_YEARS_EVE)).thenReturn(List.of());

@@ -55,7 +55,7 @@ class PublicHolidaysServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidaysServiceImpl(Map.of(
+        final Map<String, HolidayManager> holidayManagers = Map.of(
             "de", getHolidayManager(HolidayCalendar.GERMANY),
             "hr", getHolidayManager(HolidayCalendar.CROATIA),
             "pt", getHolidayManager(HolidayCalendar.PORTUGAL),
@@ -63,7 +63,8 @@ class PublicHolidaysServiceImplTest {
             "lv", getHolidayManager(HolidayCalendar.LATVIA),
             "gb", getHolidayManager(HolidayCalendar.UNITED_KINGDOM),
             "es", getHolidayManager(HolidayCalendar.SPAIN)
-        ));
+        );
+        sut = new PublicHolidaysServiceImpl(holidayManagers);
     }
 
     @Test

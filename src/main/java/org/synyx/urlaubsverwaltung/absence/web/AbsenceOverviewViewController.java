@@ -407,11 +407,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange, List<PublicHoliday> companyClosures) {
-        return concat(
-                workingTimesByDateRange.entrySet().stream()
-                    .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
-                    .flatMap(List::stream),
-                companyClosures.stream())
+        final Stream<PublicHoliday> publicHolidays = workingTimesByDateRange.entrySet().stream()
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
+            .flatMap(List::stream);
+        return concat(publicHolidays, companyClosures.stream())
             .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 
     }

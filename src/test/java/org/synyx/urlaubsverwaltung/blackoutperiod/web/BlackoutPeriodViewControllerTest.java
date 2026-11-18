@@ -311,20 +311,22 @@ class BlackoutPeriodViewControllerTest {
         final VacationType<?> vacationType = activeVacationType(1L, messageSource);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
         when(blackoutPeriodService.findConflictingApplications(any(BlackoutPeriod.class))).thenReturn(List.of());
+        final List<CompanyClosure> companyClosures = List.of(
+            new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), NOON, locale -> "Heiligabend"),
+            new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), NOON, locale -> "Silvester"));
         when(companyClosureService.getCompanyClosures(LocalDate.of(2026, DECEMBER, 20), LocalDate.of(2026, DECEMBER, 31)))
-            .thenReturn(List.of(
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 24), NOON, locale -> "Heiligabend"),
-                new CompanyClosure(LocalDate.of(2026, DECEMBER, 31), NOON, locale -> "Silvester")));
+            .thenReturn(companyClosures);
 
+        final List<BlackoutPeriodCompanyClosureDto> expectedCompanyClosures = List.of(
+            new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 24), "Heiligabend", "company-closure.dayLength.NOON"),
+            new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 31), "Silvester", "company-closure.dayLength.NOON"));
         perform(get("/web/blackoutperiod/conflicts")
             .param("startDate", "2026-12-20")
             .param("endDate", "2026-12-31")
             .param("companyWide", "true")
             .param("allVacationTypes", "false")
             .param("vacationTypeIds", "1"))
-            .andExpect(model().attribute("conflictingCompanyClosures", List.of(
-                new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 24), "Heiligabend", "company-closure.dayLength.NOON"),
-                new BlackoutPeriodCompanyClosureDto(LocalDate.of(2026, DECEMBER, 31), "Silvester", "company-closure.dayLength.NOON"))));
+            .andExpect(model().attribute("conflictingCompanyClosures", expectedCompanyClosures));
     }
 
     @Test

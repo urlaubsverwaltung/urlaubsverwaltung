@@ -415,23 +415,25 @@ class CompanyClosureServiceImplTest {
 
         final CompanyClosureVersionEntity newYearsEveVersion = version(NOON, null);
         newYearsEveVersion.setCompanyClosureId(3L);
-        when(companyClosureVersionRepository.findAll()).thenReturn(List.of(
+        final List<CompanyClosureVersionEntity> versions = List.of(
             version(FULL, LocalDate.of(2026, NOVEMBER, 6)),
             newYearsEveVersion,
             version(ZERO, LocalDate.of(2026, JANUARY, 1)),
-            version(NOON, null)));
+            version(NOON, null));
+        when(companyClosureVersionRepository.findAll()).thenReturn(versions);
 
         when(messageSource.getMessage("companyclosure.name.christmasEve", new Object[]{}, null, GERMAN)).thenReturn("Heiligabend");
 
+        final List<CompanyClosureVersion> christmasEveVersions = List.of(
+            new CompanyClosureVersion(NOON, null),
+            new CompanyClosureVersion(ZERO, LocalDate.of(2026, JANUARY, 1)),
+            new CompanyClosureVersion(FULL, LocalDate.of(2026, NOVEMBER, 6)));
+        final List<CompanyClosureVersion> newYearsEveVersions = List.of(new CompanyClosureVersion(NOON, null));
         assertThat(sut.getCompanyClosureEntries())
             .extracting(CompanyClosureEntry::monthDay, entry -> entry.name(GERMAN), CompanyClosureEntry::names, CompanyClosureEntry::versions)
             .containsExactly(
-                tuple(CHRISTMAS_EVE, "Heiligabend", Map.of(), List.of(
-                    new CompanyClosureVersion(NOON, null),
-                    new CompanyClosureVersion(ZERO, LocalDate.of(2026, JANUARY, 1)),
-                    new CompanyClosureVersion(FULL, LocalDate.of(2026, NOVEMBER, 6)))),
-                tuple(MonthDay.of(DECEMBER, 31), "Silvester", Map.of(GERMAN, "Silvester"), List.of(
-                    new CompanyClosureVersion(NOON, null))));
+                tuple(CHRISTMAS_EVE, "Heiligabend", Map.of(), christmasEveVersions),
+                tuple(MonthDay.of(DECEMBER, 31), "Silvester", Map.of(GERMAN, "Silvester"), newYearsEveVersions));
     }
 
     private void givenChristmasEve(CompanyClosureVersionEntity... versions) {

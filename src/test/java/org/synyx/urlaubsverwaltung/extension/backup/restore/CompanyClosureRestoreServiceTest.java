@@ -55,11 +55,12 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresCompanyClosures() {
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
+        final List<CompanyClosureVersionDTO> christmasEveVersions = List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
-            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null)));
-        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, List.of(
-            new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null)));
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null));
+        final List<CompanyClosureVersionDTO> newYearsEveVersions = List.of(new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null));
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, christmasEveVersions);
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, newYearsEveVersions);
 
         sut.restore(List.of(christmasEve, newYearsEve));
 

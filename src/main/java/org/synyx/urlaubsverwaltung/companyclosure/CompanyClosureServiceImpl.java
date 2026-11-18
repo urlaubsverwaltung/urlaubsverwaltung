@@ -143,11 +143,15 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             .collect(groupingBy(CompanyClosureVersionEntity::getCompanyClosureId));
         return companyClosureRepository.findAll().stream()
             .map(entity -> new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity), namesOf(entity),
-                versionsByClosureId.getOrDefault(entity.getId(), List.of()).stream()
-                    .sorted(BY_VALID_FROM)
-                    .map(version -> new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()))
-                    .toList()))
+                versionsOf(versionsByClosureId.getOrDefault(entity.getId(), List.of()))))
             .sorted(comparing(CompanyClosureEntry::monthDay))
+            .toList();
+    }
+
+    private static List<CompanyClosureVersion> versionsOf(List<CompanyClosureVersionEntity> versionEntities) {
+        return versionEntities.stream()
+            .sorted(BY_VALID_FROM)
+            .map(version -> new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()))
             .toList();
     }
 

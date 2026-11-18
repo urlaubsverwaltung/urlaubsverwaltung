@@ -95,20 +95,23 @@ class CompanyClosureViewControllerTest {
             new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)),
             new CompanyClosureVersion(ZERO, LocalDate.of(2027, JANUARY, 1)));
         final List<CompanyClosureVersion> newYearsEveVersions = List.of(new CompanyClosureVersion(NOON, null));
-        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
+        final List<CompanyClosureEntry> entries = List.of(
             new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Heiligabend", Map.of(), christmasEveVersions),
-            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), newYearsEveVersions)));
+            new CompanyClosureEntry(MonthDay.of(DECEMBER, 31), locale -> "Silvester", Map.of(), newYearsEveVersions));
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(entries);
 
         final MvcResult result = perform(get("/web/company-closure"))
             .andExpect(view().name("companyclosure/company_closure_list"))
             .andReturn();
 
-        assertThat(result.getModelAndView().getModel()).containsEntry("companyClosures", List.of(
-            new CompanyClosureListDto("12-24", CHRISTMAS_EVE, "Heiligabend", FULL, List.of(
-                new CompanyClosureVersion(ZERO, LocalDate.of(2027, JANUARY, 1)),
-                new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)),
-                new CompanyClosureVersion(NOON, null))),
-            new CompanyClosureListDto("12-31", MonthDay.of(DECEMBER, 31), "Silvester", NOON, newYearsEveVersions)));
+        final List<CompanyClosureVersion> christmasEveVersionsLatestFirst = List.of(
+            new CompanyClosureVersion(ZERO, LocalDate.of(2027, JANUARY, 1)),
+            new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)),
+            new CompanyClosureVersion(NOON, null));
+        final List<CompanyClosureListDto> expectedCompanyClosures = List.of(
+            new CompanyClosureListDto("12-24", CHRISTMAS_EVE, "Heiligabend", FULL, christmasEveVersionsLatestFirst),
+            new CompanyClosureListDto("12-31", MonthDay.of(DECEMBER, 31), "Silvester", NOON, newYearsEveVersions));
+        assertThat(result.getModelAndView().getModel()).containsEntry("companyClosures", expectedCompanyClosures);
     }
 
     @Test
@@ -124,11 +127,12 @@ class CompanyClosureViewControllerTest {
             new CompanyClosureNameForm(GERMAN_AUSTRIA, ""),
             new CompanyClosureNameForm(ENGLISH, ""),
             new CompanyClosureNameForm(GREEK, ""));
-        assertThat(result.getModelAndView().getModel()).containsEntry("namePlaceholders", Map.of(
+        final Map<Locale, String> expectedNamePlaceholders = Map.of(
             GERMAN, "Leer: „Betriebsruhe“",
             GERMAN_AUSTRIA, "Leer: „Betriebsruhe“",
             ENGLISH, "Leer: „Company closure“",
-            GREEK, "Leer: „Αργία επιχείρησης“"));
+            GREEK, "Leer: „Αργία επιχείρησης“");
+        assertThat(result.getModelAndView().getModel()).containsEntry("namePlaceholders", expectedNamePlaceholders);
         assertThat(form.getDayLength()).isEqualTo(FULL);
         assertThat(form.getValidFrom()).isEqualTo(TODAY);
         assertThat(result.getModelAndView().getModel().get("monthDay")).isNull();
@@ -158,9 +162,10 @@ class CompanyClosureViewControllerTest {
 
     @Test
     void editPrefillsNamesGivenByUserAndLeavesOtherLanguagesEmpty() throws Exception {
-        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
-            new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Weihnachtsruhe", Map.of(GERMAN, "Weihnachtsruhe", ENGLISH, "Christmas break"),
-                List.of(new CompanyClosureVersion(NOON, null)))));
+        final Map<Locale, String> names = Map.of(GERMAN, "Weihnachtsruhe", ENGLISH, "Christmas break");
+        final List<CompanyClosureVersion> versions = List.of(new CompanyClosureVersion(NOON, null));
+        final CompanyClosureEntry christmasEve = new CompanyClosureEntry(CHRISTMAS_EVE, locale -> "Weihnachtsruhe", names, versions);
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(christmasEve));
 
         final MvcResult result = perform(get("/web/company-closure/12-24/edit")).andReturn();
 
@@ -335,10 +340,11 @@ class CompanyClosureViewControllerTest {
     }
 
     private void givenChristmasEve() {
-        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
-            new CompanyClosureEntry(CHRISTMAS_EVE, CompanyClosureViewControllerTest::christmasEveName, Map.of(), List.of(
-                new CompanyClosureVersion(NOON, null),
-                new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1))))));
+        final List<CompanyClosureVersion> versions = List.of(
+            new CompanyClosureVersion(NOON, null),
+            new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)));
+        final CompanyClosureEntry christmasEve = new CompanyClosureEntry(CHRISTMAS_EVE, CompanyClosureViewControllerTest::christmasEveName, Map.of(), versions);
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(christmasEve));
     }
 
     private static StaticMessageSource messageSource() {

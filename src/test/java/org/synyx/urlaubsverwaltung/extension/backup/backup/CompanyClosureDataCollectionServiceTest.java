@@ -41,19 +41,21 @@ class CompanyClosureDataCollectionServiceTest {
         final CompanyClosureEntity newYearsEve = closure(2L, 31, "companyclosure.name.newYearsEve");
         newYearsEve.setNameByLocale(Map.of(GERMAN, "Jahresabschluss"));
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
-        when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
+        final List<CompanyClosureVersionEntity> versions = List.of(
             changedVersion(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
             version(2L, DayLength.MORNING, null),
-            version(1L, DayLength.NOON, null)));
+            version(1L, DayLength.NOON, null));
+        when(companyClosureImportService.findAllVersions()).thenReturn(versions);
 
         final List<CompanyClosureDTO> actual = sut.collectCompanyClosures();
 
+        final List<CompanyClosureVersionDTO> christmasEveVersions = List.of(
+            new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), LAST_MODIFIED_AT, "office"));
+        final List<CompanyClosureVersionDTO> newYearsEveVersions = List.of(new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null));
         assertThat(actual).containsExactly(
-            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
-                new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
-                new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), LAST_MODIFIED_AT, "office"))),
-            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, List.of(
-                new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null))));
+            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, christmasEveVersions),
+            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, newYearsEveVersions));
     }
 
     private static CompanyClosureEntity closure(Long id, int dayOfMonth, String messageKey) {

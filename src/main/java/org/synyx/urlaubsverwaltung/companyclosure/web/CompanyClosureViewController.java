@@ -88,10 +88,11 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     public String showCompanyClosures(Model model, Locale locale) {
 
         final LocalDate today = LocalDate.now(clock);
-        model.addAttribute("companyClosures", companyClosureService.getCompanyClosureEntries().stream()
+        final List<CompanyClosureListDto> companyClosures = companyClosureService.getCompanyClosureEntries().stream()
             .map(entry -> new CompanyClosureListDto(toPath(entry.monthDay()), entry.monthDay(), entry.name(locale),
                 entry.dayLengthAt(today), latestFirst(entry.versions())))
-            .toList());
+            .toList();
+        model.addAttribute("companyClosures", companyClosures);
 
         return "companyclosure/company_closure_list";
     }
@@ -102,10 +103,11 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         // a rejected form comes back with its errors by the redirect
         if (!model.containsAttribute(COMPANY_CLOSURE)) {
-            final CompanyClosureForm form = new CompanyClosureForm();
-            form.setNames(Arrays.stream(SupportedLanguages.values())
+            final List<CompanyClosureNameForm> emptyNames = Arrays.stream(SupportedLanguages.values())
                 .map(language -> new CompanyClosureNameForm(language.getLocale(), ""))
-                .toList());
+                .toList();
+            final CompanyClosureForm form = new CompanyClosureForm();
+            form.setNames(emptyNames);
             form.setDayLength(FULL);
             form.setValidFrom(LocalDate.now(clock));
             model.addAttribute(COMPANY_CLOSURE, form);
@@ -207,8 +209,12 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     private Map<Locale, String> namePlaceholders(Locale locale) {
         return Arrays.stream(SupportedLanguages.values())
             .map(SupportedLanguages::getLocale)
-            .collect(toMap(identity(), language -> messageSource.getMessage("company-closure.data.names.placeholder",
-                new Object[]{messageSource.getMessage("absences.overview.company-closure", new Object[]{}, language)}, locale)));
+            .collect(toMap(identity(), language -> namePlaceholder(language, locale)));
+    }
+
+    private String namePlaceholder(Locale language, Locale locale) {
+        final String defaultName = messageSource.getMessage("absences.overview.company-closure", new Object[]{}, language);
+        return messageSource.getMessage("company-closure.data.names.placeholder", new Object[]{defaultName}, locale);
     }
 
     /**

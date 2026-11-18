@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -70,8 +71,9 @@ public class CompanyClosureApiController {
         }
 
         final Locale locale = LocaleContextHolder.getLocale();
-        return new CompanyClosuresDto(companyClosureService.getCompanyClosures(startDate, endDate).stream()
+        final List<CompanyClosureDto> companyClosures = companyClosureService.getCompanyClosures(startDate, endDate).stream()
             .map(companyClosure -> new CompanyClosureDto(companyClosure, locale))
-            .toList());
+            .toList();
+        return new CompanyClosuresDto(companyClosures);
     }
 }

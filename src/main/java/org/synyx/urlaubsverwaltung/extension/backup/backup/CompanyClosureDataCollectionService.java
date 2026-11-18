@@ -31,12 +31,16 @@ class CompanyClosureDataCollectionService {
             .sorted(comparing(CompanyClosureEntity::getId))
             .map(closure -> new CompanyClosureDTO(closure.getMonth(), closure.getDayOfMonth(), closure.getMessageKey(), closure.getNameByLocale(),
                 closure.getLastModifiedAt(), optionalExternalUserId(closure.getLastModifiedBy()),
-                versions.stream()
-                    .filter(version -> closure.getId().equals(version.getCompanyClosureId()))
-                    .sorted(comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(naturalOrder())))
-                    .map(version -> new CompanyClosureVersionDTO(DayLengthDTO.valueOf(version.getDayLength().name()), version.getValidFrom(),
-                        version.getLastModifiedAt(), optionalExternalUserId(version.getLastModifiedBy())))
-                    .toList()))
+                versionsOf(closure, versions)))
+            .toList();
+    }
+
+    private static List<CompanyClosureVersionDTO> versionsOf(CompanyClosureEntity closure, List<CompanyClosureVersionEntity> versions) {
+        return versions.stream()
+            .filter(version -> closure.getId().equals(version.getCompanyClosureId()))
+            .sorted(comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(naturalOrder())))
+            .map(version -> new CompanyClosureVersionDTO(DayLengthDTO.valueOf(version.getDayLength().name()), version.getValidFrom(),
+                version.getLastModifiedAt(), optionalExternalUserId(version.getLastModifiedBy())))
             .toList();
     }
 }
