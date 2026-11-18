@@ -47,8 +47,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureManagerWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
-        final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
-        person.setId(1L);
+        final Person person = personService.create("user", "Lieschen", "Müller", "lieschen12@example.org", List.of(), List.of(USER));
 
         final LocalDate startDate = LocalDate.of(2020, APRIL, 16);
         final LocalDate endDate = LocalDate.of(2020, APRIL, 23);
