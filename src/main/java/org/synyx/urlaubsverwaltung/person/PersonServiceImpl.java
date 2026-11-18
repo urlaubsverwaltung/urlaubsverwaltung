@@ -145,6 +145,7 @@ class PersonServiceImpl implements PersonService {
     private Person updatePerson(Person person, PersonUpdate personUpdate) {
 
         final Collection<Role> previousPermissions = List.copyOf(person.getPermissions());
+        final boolean wasActive = person.isActive();
 
         personUpdate.personalData().ifPresent(personalData -> {
             if (!Objects.equals(person.getEmail(), personalData.email())) {
@@ -163,7 +164,7 @@ class PersonServiceImpl implements PersonService {
         final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
 
-        if (updatedPerson.isInactive()) {
+        if (wasActive && updatedPerson.isInactive()) {
             applicationEventPublisher.publishEvent(toPersonDisabledEvent(updatedPerson));
         }
 
