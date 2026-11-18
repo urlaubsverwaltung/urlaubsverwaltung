@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
@@ -202,6 +205,37 @@ class WorkingTimeCalendarApiControllerTest {
             .param("length", "FOO"))
             .andExpect(status().isBadRequest())
             .andExpect(result -> assertInstanceOf(MethodArgumentTypeMismatchException.class, result.getResolvedException()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
+    void ensureBadRequestForHalfDayOverSeveralDays(DayLength halfDay) throws Exception {
+
+        perform(get("/api/persons/23/workdays")
+            .param("from", "2026-12-23")
+            .param("to", "2026-12-24")
+            .param("length", halfDay.name()))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(personService, workDaysCountService);
+    }
+
+    @Test
+    void ensureReturnsWorkDaysForHalfDayOnOneDay() throws Exception {
+
+        final Person person = new Person();
+        person.setId(23L);
+
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
+        when(workDaysCountService.getWorkDaysCount(MORNING, LocalDate.of(2026, DECEMBER, 23), LocalDate.of(2026, DECEMBER, 23), person))
+            .thenReturn(new BigDecimal("0.5"));
+
+        perform(get("/api/persons/23/workdays")
+            .param("from", "2026-12-23")
+            .param("to", "2026-12-23")
+            .param("length", "MORNING"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.workDays", is("0.5")));
     }
 
     @Test
