@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.companyclosure.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,7 +59,8 @@ public class CompanyClosureApiController {
         @Parameter(description = "End date with pattern yyyy-MM-dd, at most 1098 days after the start date")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-        LocalDate endDate) {
+        LocalDate endDate,
+        Locale locale) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
@@ -70,7 +70,6 @@ public class CompanyClosureApiController {
             throw new ResponseStatusException(BAD_REQUEST, "Period must not be longer than " + MAXIMUM_REQUESTED_DURATION.toDays() + " days");
         }
 
-        final Locale locale = LocaleContextHolder.getLocale();
         final List<CompanyClosureDto> companyClosures = companyClosureService.getCompanyClosures(startDate, endDate).stream()
             .map(companyClosure -> new CompanyClosureDto(companyClosure, locale))
             .toList();

@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.companyclosure.api;
 
+import java.util.Locale;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +17,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -51,6 +56,20 @@ class CompanyClosureApiControllerTest {
             .andExpect(content().json("""
                 {"companyClosures":[{"date":"2026-12-24","description":"Heiligabend","dayLength":0.5,"absencePeriodName":"NOON"}]}
                 """, true));
+    }
+
+    @Test
+    void namesCompanyClosuresInTheLocaleOfTheRequest() throws Exception {
+        final LocalDate date = LocalDate.of(2026, DECEMBER, 24);
+        final Map<Locale, String> nameByLocale = Map.of(GERMAN, "Heiligabend", ENGLISH, "Christmas Eve");
+        when(companyClosureService.getCompanyClosures(date, date)).thenReturn(List.of(new CompanyClosure(date, NOON, nameByLocale::get)));
+
+        perform(get("/api/company-closures")
+            .param("from", "2026-12-24")
+            .param("to", "2026-12-24")
+            .locale(ENGLISH))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.companyClosures[0].description").value("Christmas Eve"));
     }
 
     @Test
