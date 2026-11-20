@@ -63,7 +63,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     /**
      * The options of the form in the order they are shown: in two columns the half days share the first one.
      */
-    private static final List<DayLength> DAY_LENGTHS = List.of(MORNING, NOON, FULL, ZERO);
+    private static final List<DayLength> DAY_LENGTHS = List.of(FULL, MORNING, NOON, ZERO);
 
     private final CompanyClosureService companyClosureService;
     private final CompanyClosureFormValidator validator;

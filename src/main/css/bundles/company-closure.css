@@ -316,13 +316,18 @@
   column-gap: --spacing(6);
 }
 
-/* two columns, filled column by column: the half days on the left, full day and none on the right */
+/* two columns, filled column by column: full day and none on the left, the half days on the right.
+   the options come in the order full day, morning, noon, none, so none is placed below full day */
 @container day-length (width >= 22rem) {
   .company-closure-day-length__options {
     display: grid;
     grid-template-columns: repeat(2, max-content);
     grid-template-rows: repeat(2, auto);
     grid-auto-flow: column;
+
+    & > :nth-child(4) {
+      grid-area: 2 / 1;
+    }
   }
 }
 

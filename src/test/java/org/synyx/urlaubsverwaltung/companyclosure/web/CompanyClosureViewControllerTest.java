@@ -127,7 +127,7 @@ class CompanyClosureViewControllerTest {
         final MvcResult result = perform(get("/web/company-closure/new").locale(GERMAN))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
-            .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
+            .andExpect(model().attribute("dayLengths", List.of(FULL, MORNING, NOON, ZERO)))
             .andReturn();
 
         final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
@@ -164,7 +164,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
             .andExpect(model().attribute("today", TODAY))
-            .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
+            .andExpect(model().attribute("dayLengths", List.of(FULL, MORNING, NOON, ZERO)))
             .andReturn();
 
         // only the versions before the current year are shown read only
