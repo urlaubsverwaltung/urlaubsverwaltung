@@ -122,7 +122,7 @@ jobs:
       - name: Sign image
         env:
           DIGEST: ${{ steps.manifest.outputs.digest }}
-        run: cosign sign --yes "$IMAGE@$DIGEST"
+        run: cosign sign --yes --recursive "$IMAGE@$DIGEST"
 
   container-upload-docker-hub-urlaubsverwaltung:
     needs:
@@ -166,7 +166,7 @@ jobs:
       - name: Sign image
         env:
           DIGEST: ${{ steps.manifest.outputs.digest }}
-        run: cosign sign --yes "$IMAGE@$DIGEST"
+        run: cosign sign --yes --recursive "$IMAGE@$DIGEST"
 
   helm-chart-release:
     needs:
