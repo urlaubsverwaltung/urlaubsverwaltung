@@ -1308,6 +1308,50 @@ describe("calendar", () => {
       expect(classesOf("2017-12-16")).not.toContain("absence-full--bridge");
     });
 
+    test("bridging the days off at the start of its period", async () => {
+      const period = { from: "2017-12-15", to: "2017-12-19" };
+      await renderWithAbsences([
+        noWorkday("2017-12-15"),
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        { ...vacation("2017-12-18"), ...period },
+        { ...vacation("2017-12-19"), ...period },
+      ]);
+
+      expect(classesOf("2017-12-14")).not.toContain("absence-full--bridge");
+      expect(classesOf("2017-12-15")).toEqual(
+        expect.arrayContaining(["absence-full--bridge", "absence-full--continues-after"]),
+      );
+      expect(classesOf("2017-12-15")).not.toContain("absence-full--continues-before");
+      expect(classesOf("2017-12-16")).toContain("absence-full--bridge");
+      expect(classesOf("2017-12-18")).toContain("absence-full--continues-before");
+    });
+
+    test("bridging the days off at the end of its period", async () => {
+      const period = { from: "2017-12-14", to: "2017-12-17" };
+      await renderWithAbsences([
+        { ...vacation("2017-12-14"), ...period },
+        { ...vacation("2017-12-15"), ...period },
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+      ]);
+
+      expect(classesOf("2017-12-15")).toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-17")).toEqual(
+        expect.arrayContaining(["absence-full--bridge", "absence-full--continues-before"]),
+      );
+      expect(classesOf("2017-12-17")).not.toContain("absence-full--continues-after");
+    });
+
+    test("without the free half of a single day", async () => {
+      await renderWithAbsences([
+        { ...vacation("2017-12-15", "MORNING"), from: "2017-12-15", to: "2017-12-15" },
+        { date: "2017-12-15", absent: "NOON", absenceType: "NO_WORKDAY", status: "ACTIVE" },
+      ]);
+
+      expect(classesOf("2017-12-15")).not.toContain("absence-noon--bridge");
+    });
+
     test("keeping the outline of a waiting absence on its bridge", async () => {
       await renderWithAbsences([
         vacation("2017-12-15", "FULL", { status: "WAITING" }),

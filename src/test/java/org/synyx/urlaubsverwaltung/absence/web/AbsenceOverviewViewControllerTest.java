@@ -5276,6 +5276,37 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
+    void ensureVacationBarStartsOnTheDayOffItsPeriodStartsWith() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        // friday 10th to tuesday 14th, the person does not work on fridays
+        final DateRange period = new DateRange(LocalDate.of(2025, JANUARY, 10), LocalDate.of(2025, JANUARY, 14));
+        final AbsencePeriod vacation = new AbsencePeriod(IntStream.of(13, 14)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
+                new AbsencePeriod.RecordMorningVacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period),
+                new AbsencePeriod.RecordNoonVacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period)))
+            .toList());
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation, noWorkdays(person, 10, 11, 12)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.getTitle()).isEqualTo("Kein Arbeitstag");
+        });
+        assertThat(days.get(12).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.SOLID);
+            assertThat(bar.isRoundedStart()).isFalse();
+        });
+    }
+
+    @Test
     void ensureTitleNamesHalfDayAndStatusOfAWaitingVacation() throws Exception {
 
         final Person person = privilegedPerson();
