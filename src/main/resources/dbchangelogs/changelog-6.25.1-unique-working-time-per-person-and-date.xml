@@ -26,4 +26,14 @@
                          constraintName="unique_working_time_by_person_and_valid_from"
                          tableName="working_time"/>
   </changeSet>
+
+  <!-- the index of the unique constraint starts with person_id and serves the lookups by person -->
+  <changeSet author="schneider" id="drop-working-time-person-index">
+    <preConditions onFail="MARK_RAN">
+      <uniqueConstraintExists tableName="working_time" constraintName="unique_working_time_by_person_and_valid_from"/>
+      <indexExists tableName="working_time" indexName="working_time_person"/>
+    </preConditions>
+
+    <dropIndex tableName="working_time" indexName="working_time_person"/>
+  </changeSet>
 </databaseChangeLog>

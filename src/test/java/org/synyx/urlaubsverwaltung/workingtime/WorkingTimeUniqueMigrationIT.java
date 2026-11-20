@@ -71,6 +71,15 @@ class WorkingTimeUniqueMigrationIT extends SingleTenantTestContainersBase {
             .doesNotContain(oldest, older);
     }
 
+    @Test
+    void ensureIndexOnPersonIsDroppedInFavourOfTheUniqueConstraint() {
+        final List<String> indexNames = jdbcTemplate.queryForList(
+            "SELECT indexname FROM pg_indexes WHERE tablename = 'working_time'", String.class);
+        assertThat(indexNames)
+            .contains("unique_working_time_by_person_and_valid_from")
+            .doesNotContain("working_time_person");
+    }
+
     private Long save(Person person, LocalDate validFrom) {
         final WorkingTimeEntity workingTime = new WorkingTimeEntity();
         workingTime.setPerson(person);
