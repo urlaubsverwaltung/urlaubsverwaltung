@@ -195,6 +195,17 @@
   }
 }
 
+/* entries of the history in the edit form: the new change, the editable versions and the older ones. a line between
+   two entries, with the row gap of the form on both sides */
+.company-closure-history__entry + .company-closure-history__entry {
+  padding-top: var(--uv-form-row-gap);
+  border-top: 1px solid var(--color-gray-200);
+
+  @variant dark {
+    border-color: var(--color-gray-700);
+  }
+}
+
 /* day and month of a closure day: one group with two fields */
 .company-closure-month-day {
   display: flex;

@@ -247,7 +247,7 @@
               </div>
             </div>
 
-            <div class="uv-form__input-row">
+            <div class="uv-form__input-row company-closure-history__entry">
               <p id="newVersion-label" class="uv-form__label" th:text="|#{company-closure.data.newVersion}:|">
                 Neue Änderung
               </p>
@@ -280,7 +280,7 @@
                 idPrefix=|versions${versionStat.index}|,
                 labelId=|versions${versionStat.index}-label|
               "
-              class="uv-form__input-row"
+              class="uv-form__input-row company-closure-history__entry"
             >
               <p
                 th:id="${labelId}"
@@ -314,7 +314,7 @@
               </div>
             </div>
 
-            <div th:if="${not #lists.isEmpty(olderVersions)}" class="uv-form__input-row">
+            <div th:if="${not #lists.isEmpty(olderVersions)}" class="uv-form__input-row company-closure-history__entry">
               <p id="olderVersions-label" class="uv-form__label" th:text="|#{company-closure.data.olderVersions}:|">
                 Vor diesem Jahr
               </p>
