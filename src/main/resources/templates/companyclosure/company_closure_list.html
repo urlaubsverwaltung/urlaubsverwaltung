@@ -62,8 +62,8 @@
         <!-- column titles for sighted users, every list item names its values itself for screen readers -->
         <div aria-hidden="true" class="company-closure-list__head">
           <span th:text="#{company-closure.data.date}">Datum</span>
-          <span th:text="#{company-closure.data.name}">Name</span>
           <span th:text="#{company-closure.data.current}">Aktuell</span>
+          <span th:text="#{company-closure.data.name}">Name</span>
           <span></span>
         </div>
         <ol id="companyclosure-list" role="list" class="company-closure-list__items">
@@ -90,11 +90,14 @@
               <div class="company-closure-list__history">
                 <span class="company-closure-list__label" th:text="|#{company-closure.data.history}:|">Verlauf:</span>
                 <ul role="list" class="company-closure-list__versions">
-                  <li
-                    th:each="version : ${companyClosure.versions}"
-                    th:with="dayLengthLabel=#{|company-closure.dayLength.${version.dayLength}|}"
-                    th:text="${version.validFrom == null} ? #{company-closure.data.version.initial(${dayLengthLabel})} : #{company-closure.data.version(${{version.validFrom}}, ${dayLengthLabel})}"
-                  ></li>
+                  <!-- start and day length in the columns of date and current value of the row, the colon only visible in the card -->
+                  <li th:each="version : ${companyClosure.versions}" class="company-closure-list__version">
+                    <span
+                      th:text="${version.validFrom == null} ? #{company-closure.data.version.start.initial} : #{company-closure.data.version.start(${{version.validFrom}})}"
+                    ></span
+                    ><span class="md:sr-only">: </span
+                    ><span th:text="#{|company-closure.dayLength.${version.dayLength}|}"></span>
+                  </li>
                 </ul>
               </div>
             </details>

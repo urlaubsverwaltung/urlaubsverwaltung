@@ -8,7 +8,8 @@
 
   @variant md {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    /* date, current day length, name and actions */
+    grid-template-columns: auto auto 1fr auto;
     column-gap: --spacing(12);
   }
 }
@@ -91,10 +92,13 @@
     grid-template-columns: subgrid;
     grid-template-rows: subgrid;
 
-    /* wraps the content of the details in browsers that support it, the history spans the row below the summary */
+    /* wraps the content of the details in browsers that support it, the history spans the row below the summary
+       and its entries share the columns of the row */
     &::details-content {
       grid-column: 1 / -1;
       grid-row: 2;
+      display: grid;
+      grid-template-columns: subgrid;
     }
   }
 }
@@ -151,11 +155,21 @@
   }
 }
 
+/* the card shows the name before the current day length, the row in the column after it */
+.company-closure-list__name {
+  @variant md {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
 .company-closure-list__current {
   margin-top: --spacing(4);
   padding-left: --spacing(5);
 
   @variant md {
+    grid-column: 2;
+    grid-row: 1;
     margin-top: 0;
     padding-left: 0;
   }
@@ -167,8 +181,17 @@
 
   @variant md {
     grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
     margin-top: --spacing(3);
+    /* the start of an entry below the text of the date, next to the chevron */
     padding-left: --spacing(5);
+  }
+}
+
+.company-closure-list__history > .company-closure-list__label {
+  @variant md {
+    grid-column: 1 / -1;
   }
 }
 
@@ -177,6 +200,23 @@
   flex-direction: column;
   gap: --spacing(1);
   margin-top: --spacing(1);
+
+  @variant md {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    /* the entries use the column gap of the surrounding grid */
+    column-gap: normal;
+  }
+}
+
+/* start in the column of the date, day length in the one of the current day length */
+.company-closure-list__version {
+  @variant md {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
 }
 
 /* names a value. in a row the column titles do it for sighted users, so the template hides it visually there */
