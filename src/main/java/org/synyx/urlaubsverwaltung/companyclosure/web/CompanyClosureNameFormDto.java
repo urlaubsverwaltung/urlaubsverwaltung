@@ -7,16 +7,16 @@ import java.util.Objects;
 /**
  * Name of a company closure in one of the supported languages, blank if the language has no name.
  */
-public class CompanyClosureNameForm implements Serializable {
+public class CompanyClosureNameFormDto implements Serializable {
 
     private Locale locale;
     private String name;
 
-    public CompanyClosureNameForm() {
+    public CompanyClosureNameFormDto() {
         // used by data binding
     }
 
-    public CompanyClosureNameForm(Locale locale, String name) {
+    public CompanyClosureNameFormDto(Locale locale, String name) {
         this.locale = locale;
         setName(name);
     }
@@ -45,7 +45,7 @@ public class CompanyClosureNameForm implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final CompanyClosureNameForm that = (CompanyClosureNameForm) o;
+        final CompanyClosureNameFormDto that = (CompanyClosureNameFormDto) o;
         return Objects.equals(locale, that.locale) && Objects.equals(name, that.name);
     }
 
@@ -56,7 +56,7 @@ public class CompanyClosureNameForm implements Serializable {
 
     @Override
     public String toString() {
-        return "CompanyClosureNameForm{" +
+        return "CompanyClosureNameFormDto{" +
             "locale=" + locale +
             ", name='" + name + '\'' +
             '}';

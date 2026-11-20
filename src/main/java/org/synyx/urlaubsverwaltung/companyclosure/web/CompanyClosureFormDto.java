@@ -28,14 +28,14 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
  * <p>
  * Serializable, as a rejected form is kept in the session for the redirect back to the form.
  */
-public class CompanyClosureForm implements Serializable {
+public class CompanyClosureFormDto implements Serializable {
 
     private Integer day;
     private Integer month;
     /**
      * one name per supported language in the order of {@link org.synyx.urlaubsverwaltung.settings.SupportedLanguages}
      */
-    private List<CompanyClosureNameForm> names = new ArrayList<>();
+    private List<CompanyClosureNameFormDto> names = new ArrayList<>();
     private DayLength dayLength;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate validFrom;
@@ -72,11 +72,11 @@ public class CompanyClosureForm implements Serializable {
         }
     }
 
-    public List<CompanyClosureNameForm> getNames() {
+    public List<CompanyClosureNameFormDto> getNames() {
         return names;
     }
 
-    public void setNames(List<CompanyClosureNameForm> names) {
+    public void setNames(List<CompanyClosureNameFormDto> names) {
         this.names = names;
     }
 
@@ -85,7 +85,7 @@ public class CompanyClosureForm implements Serializable {
      */
     public Map<Locale, String> getNameByLocale() {
         final Map<Locale, String> nameByLocale = new HashMap<>();
-        for (CompanyClosureNameForm name : names) {
+        for (CompanyClosureNameFormDto name : names) {
             if (name.getLocale() != null && hasText(name.getName())) {
                 nameByLocale.put(name.getLocale(), name.getName());
             }
@@ -100,7 +100,7 @@ public class CompanyClosureForm implements Serializable {
         final Map<Locale, String> nameByLocale = getNameByLocale();
         return ofNullable(nameByLocale.get(locale))
             .or(() -> ofNullable(nameByLocale.get(forLanguageTag(locale.getLanguage()))))
-            .or(() -> names.stream().map(CompanyClosureNameForm::getName).filter(StringUtils::hasText).findFirst())
+            .or(() -> names.stream().map(CompanyClosureNameFormDto::getName).filter(StringUtils::hasText).findFirst())
             .orElse("");
     }
 

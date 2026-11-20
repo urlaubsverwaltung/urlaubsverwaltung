@@ -123,12 +123,12 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
             .andReturn();
 
-        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getNames()).containsExactly(
-            new CompanyClosureNameForm(GERMAN, ""),
-            new CompanyClosureNameForm(GERMAN_AUSTRIA, ""),
-            new CompanyClosureNameForm(ENGLISH, ""),
-            new CompanyClosureNameForm(GREEK, ""));
+            new CompanyClosureNameFormDto(GERMAN, ""),
+            new CompanyClosureNameFormDto(GERMAN_AUSTRIA, ""),
+            new CompanyClosureNameFormDto(ENGLISH, ""),
+            new CompanyClosureNameFormDto(GREEK, ""));
         final Map<Locale, String> expectedNamePlaceholders = Map.of(
             GERMAN, "Leer: „Betriebsruhe“",
             GERMAN_AUSTRIA, "Leer: „Betriebsruhe“",
@@ -153,12 +153,12 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
             .andReturn();
 
-        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getNames()).containsExactly(
-            new CompanyClosureNameForm(GERMAN, "Heiligabend"),
-            new CompanyClosureNameForm(GERMAN_AUSTRIA, "Heiligabend"),
-            new CompanyClosureNameForm(ENGLISH, "Christmas Eve"),
-            new CompanyClosureNameForm(GREEK, "Παραμονή Χριστουγέννων"));
+            new CompanyClosureNameFormDto(GERMAN, "Heiligabend"),
+            new CompanyClosureNameFormDto(GERMAN_AUSTRIA, "Heiligabend"),
+            new CompanyClosureNameFormDto(ENGLISH, "Christmas Eve"),
+            new CompanyClosureNameFormDto(GREEK, "Παραμονή Χριστουγέννων"));
         assertThat(form.getDayLength()).isEqualTo(FULL);
         assertThat(form.getValidFrom()).isEqualTo(TODAY);
     }
@@ -172,12 +172,12 @@ class CompanyClosureViewControllerTest {
 
         final MvcResult result = perform(get("/web/company-closure/12-24/edit")).andReturn();
 
-        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getNames()).containsExactly(
-            new CompanyClosureNameForm(GERMAN, "Weihnachtsruhe"),
-            new CompanyClosureNameForm(GERMAN_AUSTRIA, ""),
-            new CompanyClosureNameForm(ENGLISH, "Christmas break"),
-            new CompanyClosureNameForm(GREEK, ""));
+            new CompanyClosureNameFormDto(GERMAN, "Weihnachtsruhe"),
+            new CompanyClosureNameFormDto(GERMAN_AUSTRIA, ""),
+            new CompanyClosureNameFormDto(ENGLISH, "Christmas break"),
+            new CompanyClosureNameFormDto(GREEK, ""));
     }
 
     @Test
@@ -257,7 +257,7 @@ class CompanyClosureViewControllerTest {
             .andReturn();
 
         // the form keeps the rejected input instead of the values of the closure day
-        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getDayLength()).isEqualTo(NOON);
         assertThat(form.getValidFrom()).isEqualTo(LocalDate.of(2025, DECEMBER, 31));
 
@@ -285,7 +285,7 @@ class CompanyClosureViewControllerTest {
             .andReturn();
 
         // the form keeps the rejected input instead of the defaults of a new closure day
-        final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getDay()).isEqualTo(24);
         assertThat(form.getMonth()).isEqualTo(12);
         assertThat(form.getDayLength()).isEqualTo(NOON);

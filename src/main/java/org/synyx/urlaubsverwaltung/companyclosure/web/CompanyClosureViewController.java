@@ -110,10 +110,10 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         // a rejected form comes back with its errors by the redirect
         if (!model.containsAttribute(COMPANY_CLOSURE)) {
-            final List<CompanyClosureNameForm> emptyNames = Arrays.stream(SupportedLanguages.values())
+            final List<CompanyClosureNameFormDto> emptyNames = Arrays.stream(SupportedLanguages.values())
                 .map(CompanyClosureViewController::emptyNameForm)
                 .toList();
-            final CompanyClosureForm form = new CompanyClosureForm();
+            final CompanyClosureFormDto form = new CompanyClosureFormDto();
             form.setNames(emptyNames);
             form.setDayLength(FULL);
             form.setValidFrom(LocalDate.now(clock));
@@ -126,7 +126,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @PostMapping("/new")
-    public String createCompanyClosure(@ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
+    public String createCompanyClosure(@ModelAttribute(COMPANY_CLOSURE) CompanyClosureFormDto form, BindingResult errors,
                                        RedirectAttributes redirectAttributes, Locale locale) {
 
         validator.validateNew(form, errors);
@@ -151,7 +151,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         // a rejected form comes back with its errors by the redirect
         if (!model.containsAttribute(COMPANY_CLOSURE)) {
             final LocalDate today = LocalDate.now(clock);
-            final CompanyClosureForm form = new CompanyClosureForm();
+            final CompanyClosureFormDto form = new CompanyClosureFormDto();
             form.setNames(namesOf(entry));
             form.setDayLength(entry.dayLengthAt(today));
             form.setValidFrom(today);
@@ -165,7 +165,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     @PostMapping("/{monthDay}/edit")
     public String updateCompanyClosure(@PathVariable("monthDay") String monthDayPath,
-                                       @ModelAttribute(COMPANY_CLOSURE) CompanyClosureForm form, BindingResult errors,
+                                       @ModelAttribute(COMPANY_CLOSURE) CompanyClosureFormDto form, BindingResult errors,
                                        RedirectAttributes redirectAttributes, Locale locale) {
 
         final CompanyClosureEntry entry = getEntry(monthDayPath);
@@ -190,7 +190,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
      * The form is shown again by a redirect to its own url, so reloading the page neither submits the form again
      * nor leads to the url the form was sent to. Form and errors are handed over as flash attributes.
      */
-    private static void keepFormWithErrors(CompanyClosureForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
+    private static void keepFormWithErrors(CompanyClosureFormDto form, BindingResult errors, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute(COMPANY_CLOSURE, form);
         redirectAttributes.addFlashAttribute(MODEL_KEY_PREFIX + COMPANY_CLOSURE, errors);
     }
@@ -239,20 +239,20 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
      * @return one name per supported language: the names given by a user, the translations of a closure provided
      * by the application that has not been renamed
      */
-    private static List<CompanyClosureNameForm> namesOf(CompanyClosureEntry entry) {
+    private static List<CompanyClosureNameFormDto> namesOf(CompanyClosureEntry entry) {
         final Map<Locale, String> nameByLocale = nameByLocaleOf(entry);
         return Arrays.stream(SupportedLanguages.values())
             .map(language -> nameForm(language, nameByLocale))
             .toList();
     }
 
-    private static CompanyClosureNameForm nameForm(SupportedLanguages language, Map<Locale, String> nameByLocale) {
+    private static CompanyClosureNameFormDto nameForm(SupportedLanguages language, Map<Locale, String> nameByLocale) {
         final Locale locale = language.getLocale();
-        return new CompanyClosureNameForm(locale, nameByLocale.getOrDefault(locale, ""));
+        return new CompanyClosureNameFormDto(locale, nameByLocale.getOrDefault(locale, ""));
     }
 
-    private static CompanyClosureNameForm emptyNameForm(SupportedLanguages language) {
-        return new CompanyClosureNameForm(language.getLocale(), "");
+    private static CompanyClosureNameFormDto emptyNameForm(SupportedLanguages language) {
+        return new CompanyClosureNameFormDto(language.getLocale(), "");
     }
 
     private static CompanyClosureListDto toListDto(CompanyClosureEntry entry, Locale locale, LocalDate today) {

@@ -54,8 +54,8 @@ class CompanyClosureFormValidatorTest {
     }
 
     @Test
-    void supportsCompanyClosureForm() {
-        assertThat(sut.supports(CompanyClosureForm.class)).isTrue();
+    void supportsCompanyClosureFormDto() {
+        assertThat(sut.supports(CompanyClosureFormDto.class)).isTrue();
         assertThat(sut.supports(Object.class)).isFalse();
     }
 
@@ -68,7 +68,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsValidFromInPreviousYear() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setValidFrom(LocalDate.of(2025, DECEMBER, 31));
 
         final Errors errors = validate(form);
@@ -78,7 +78,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void acceptsFirstOfCurrentYear() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setValidFrom(LocalDate.of(2026, JANUARY, 1));
 
         assertThat(validate(form).hasErrors()).isFalse();
@@ -86,7 +86,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsMissingValidFrom() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setValidFrom(null);
 
         assertThat(validate(form).getFieldError("validFrom").getCode()).isEqualTo("error.entry.mandatory");
@@ -94,7 +94,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsMissingDayLength() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDayLength(null);
 
         assertThat(validate(form).getFieldError("dayLength").getCode()).isEqualTo("error.entry.mandatory");
@@ -102,15 +102,15 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsBlankNamesInEveryLanguage() {
-        final CompanyClosureForm form = validForm();
-        form.setNames(List.of(new CompanyClosureNameForm(GERMAN, "  "), new CompanyClosureNameForm(ENGLISH, "")));
+        final CompanyClosureFormDto form = validForm();
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "  "), new CompanyClosureNameFormDto(ENGLISH, "")));
 
         assertThat(validate(form).getFieldError("names").getCode()).isEqualTo("company-closure.error.names.mandatory");
     }
 
     @Test
     void rejectsMissingNames() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setNames(null);
 
         assertThat(validate(form).getFieldError("names").getCode()).isEqualTo("company-closure.error.names.mandatory");
@@ -118,16 +118,16 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void acceptsNameInOneLanguageOnly() {
-        final CompanyClosureForm form = validForm();
-        form.setNames(List.of(new CompanyClosureNameForm(GERMAN, ""), new CompanyClosureNameForm(ENGLISH, "Bridge day")));
+        final CompanyClosureFormDto form = validForm();
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, ""), new CompanyClosureNameFormDto(ENGLISH, "Bridge day")));
 
         assertThat(validate(form).hasErrors()).isFalse();
     }
 
     @Test
     void rejectsTooLongName() {
-        final CompanyClosureForm form = validForm();
-        form.setNames(List.of(new CompanyClosureNameForm(GERMAN, "Brückentag"), new CompanyClosureNameForm(ENGLISH, "x".repeat(101))));
+        final CompanyClosureFormDto form = validForm();
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "Brückentag"), new CompanyClosureNameFormDto(ENGLISH, "x".repeat(101))));
 
         final Errors errors = validate(form);
 
@@ -137,15 +137,15 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void acceptsNameWithMaxLength() {
-        final CompanyClosureForm form = validForm();
-        form.setNames(List.of(new CompanyClosureNameForm(GERMAN, "x".repeat(100))));
+        final CompanyClosureFormDto form = validForm();
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "x".repeat(100))));
 
         assertThat(validate(form).hasErrors()).isFalse();
     }
 
     @Test
     void rejectsMissingDayAndMonthOnCreate() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(null);
         form.setMonth(null);
 
@@ -158,7 +158,7 @@ class CompanyClosureFormValidatorTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, 0, 32})
     void rejectsDayOutOfRange(int day) {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(day);
 
         final Errors errors = validateNew(form);
@@ -170,7 +170,7 @@ class CompanyClosureFormValidatorTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, 0, 13})
     void rejectsMonthOutOfRange(int month) {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setMonth(month);
 
         final Errors errors = validateNew(form);
@@ -181,7 +181,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void keepsErrorOfDayThatIsNotANumber() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(null);
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
         errors.rejectValue("day", "typeMismatch");
@@ -194,7 +194,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsInvalidDate() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(31);
         form.setMonth(4);
 
@@ -203,7 +203,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void rejectsLeapDay() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(29);
         form.setMonth(2);
 
@@ -214,7 +214,7 @@ class CompanyClosureFormValidatorTest {
     void rejectsExistingDayOnCreate() {
         when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(
             new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), List.of(new CompanyClosureVersion(NOON, null)))));
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(24);
         form.setMonth(12);
 
@@ -233,7 +233,7 @@ class CompanyClosureFormValidatorTest {
     void rejectsWhenCompanyWideBlackoutCoversAFutureClosureDay() {
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
             blackout("Weihnachtssperre", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), true)));
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDayLength(FULL);
 
         final Errors errors = validateEdit(MonthDay.of(DECEMBER, 24), form);
@@ -256,7 +256,7 @@ class CompanyClosureFormValidatorTest {
     void rejectsNewDayInsideCompanyWideBlackout() {
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
             blackout("Weihnachtssperre", LocalDate.of(2027, DECEMBER, 20), LocalDate.of(2027, DECEMBER, 31), true)));
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDay(22);
         form.setMonth(12);
 
@@ -278,7 +278,7 @@ class CompanyClosureFormValidatorTest {
     void allowsBlackoutBeforeValidFrom() {
         when(blackoutPeriodService.getAllBlackoutPeriods()).thenReturn(List.of(
             blackout("Alt", LocalDate.of(2026, JANUARY, 1), LocalDate.of(2026, JANUARY, 5), true)));
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setValidFrom(LocalDate.of(2026, NOVEMBER, 6));
 
         assertThat(validateEdit(MonthDay.of(JANUARY, 2), form).hasErrors()).isFalse();
@@ -286,7 +286,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void allowsZero() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDayLength(ZERO);
 
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), form).hasErrors()).isFalse();
@@ -300,7 +300,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void allowsUnchangedDayLength() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDayLength(NOON);
 
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), NOON, form).hasErrors()).isFalse();
@@ -309,7 +309,7 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void allowsReductionFromFullToNoon() {
-        final CompanyClosureForm form = validForm();
+        final CompanyClosureFormDto form = validForm();
         form.setDayLength(NOON);
 
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, form).hasErrors()).isFalse();
@@ -352,7 +352,7 @@ class CompanyClosureFormValidatorTest {
         return new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), versions);
     }
 
-    private Errors validateEdit(CompanyClosureEntry entry, CompanyClosureForm form) {
+    private Errors validateEdit(CompanyClosureEntry entry, CompanyClosureFormDto form) {
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
         sut.validateEdit(entry, form, errors);
         return errors;
@@ -372,34 +372,34 @@ class CompanyClosureFormValidatorTest {
         return blackoutPeriod;
     }
 
-    private Errors validateEdit(MonthDay monthDay, CompanyClosureForm form) {
+    private Errors validateEdit(MonthDay monthDay, CompanyClosureFormDto form) {
         return validateEdit(monthDay, ZERO, form);
     }
 
-    private Errors validateEdit(MonthDay monthDay, DayLength existing, CompanyClosureForm form) {
+    private Errors validateEdit(MonthDay monthDay, DayLength existing, CompanyClosureFormDto form) {
         final CompanyClosureEntry entry = new CompanyClosureEntry(monthDay, locale -> "Alt", Map.of(), List.of(new CompanyClosureVersion(existing, null)));
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
         sut.validateEdit(entry, form, errors);
         return errors;
     }
 
-    private static CompanyClosureForm validForm() {
-        final CompanyClosureForm form = new CompanyClosureForm();
+    private static CompanyClosureFormDto validForm() {
+        final CompanyClosureFormDto form = new CompanyClosureFormDto();
         form.setDay(15);
         form.setMonth(5);
-        form.setNames(List.of(new CompanyClosureNameForm(GERMAN, "Brückentag")));
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "Brückentag")));
         form.setDayLength(FULL);
         form.setValidFrom(LocalDate.of(2026, NOVEMBER, 6));
         return form;
     }
 
-    private Errors validate(CompanyClosureForm form) {
+    private Errors validate(CompanyClosureFormDto form) {
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
         sut.validate(form, errors);
         return errors;
     }
 
-    private Errors validateNew(CompanyClosureForm form) {
+    private Errors validateNew(CompanyClosureFormDto form) {
         final Errors errors = new BeanPropertyBindingResult(form, "companyClosure");
         sut.validateNew(form, errors);
         return errors;

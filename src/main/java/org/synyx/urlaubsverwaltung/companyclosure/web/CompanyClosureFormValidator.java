@@ -69,7 +69,7 @@ class CompanyClosureFormValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return CompanyClosureForm.class.equals(clazz);
+        return CompanyClosureFormDto.class.equals(clazz);
     }
 
     /**
@@ -78,7 +78,7 @@ class CompanyClosureFormValidator implements Validator {
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
 
-        final CompanyClosureForm form = (CompanyClosureForm) target;
+        final CompanyClosureFormDto form = (CompanyClosureFormDto) target;
 
         validateNames(form, errors);
 
@@ -93,8 +93,8 @@ class CompanyClosureFormValidator implements Validator {
         }
     }
 
-    private static void validateNames(CompanyClosureForm form, Errors errors) {
-        final List<CompanyClosureNameForm> names = form.getNames();
+    private static void validateNames(CompanyClosureFormDto form, Errors errors) {
+        final List<CompanyClosureNameFormDto> names = form.getNames();
         if (names == null || names.stream().noneMatch(name -> hasText(name.getName()))) {
             errors.rejectValue(ATTRIBUTE_NAMES, ERROR_NAMES_MANDATORY);
             return;
@@ -113,7 +113,7 @@ class CompanyClosureFormValidator implements Validator {
      * {@link #validate(Object, Errors)} plus the company-wide blackout periods, which only block a change that
      * closes more of the day than the version valid at "valid from" does.
      */
-    void validateEdit(CompanyClosureEntry entry, CompanyClosureForm form, Errors errors) {
+    void validateEdit(CompanyClosureEntry entry, CompanyClosureFormDto form, Errors errors) {
         validate(form, errors);
         if (form.getDayLength() == null || form.getValidFrom() == null) {
             return;
@@ -143,7 +143,7 @@ class CompanyClosureFormValidator implements Validator {
     /**
      * Validates a new closure day: the fields of {@link #validate(Object, Errors)} plus day and month.
      */
-    void validateNew(CompanyClosureForm form, Errors errors) {
+    void validateNew(CompanyClosureFormDto form, Errors errors) {
 
         validate(form, errors);
 
@@ -186,7 +186,7 @@ class CompanyClosureFormValidator implements Validator {
      *
      * @param nextVersionStart exclusive end of the years to check, {@code null} if no later version exists
      */
-    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable LocalDate nextVersionStart, CompanyClosureForm form, Errors errors) {
+    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable LocalDate nextVersionStart, CompanyClosureFormDto form, Errors errors) {
         if (form.getDayLength() == null || form.getDayLength() == ZERO || form.getValidFrom() == null) {
             return;
         }
