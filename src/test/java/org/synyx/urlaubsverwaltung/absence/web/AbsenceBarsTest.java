@@ -88,6 +88,40 @@ class AbsenceBarsTest {
     }
 
     @Test
+    void daysOffAtTheStartOfTheVacationPeriodAreABridge() {
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
+            jan(9), full(VACATION_8),
+            jan(10), gapInPeriodOf(VACATION_7),
+            jan(11), gapInPeriodOf(VACATION_7),
+            jan(12), gapInPeriodOf(VACATION_7),
+            jan(13), full(VACATION_7),
+            jan(14), full(VACATION_7)
+        ), JANUARY_2025);
+
+        assertThat(pieces.get(jan(9))).containsExactly(solid(FULL, true, true, VACATION_8, 2));
+        assertThat(pieces.get(jan(10))).containsExactly(bridge(FULL, true, false, VACATION_7, NO_WORKDAY, false));
+        assertThat(pieces.get(jan(12))).containsExactly(bridge(FULL, false, false, VACATION_7, NO_WORKDAY, false));
+        assertThat(pieces.get(jan(13))).containsExactly(solid(FULL, false, false, VACATION_7, 4));
+        assertThat(pieces.get(jan(14))).containsExactly(solid(FULL, false, true, VACATION_7, 0));
+    }
+
+    @Test
+    void daysOffAtTheEndOfTheVacationPeriodAreABridge() {
+        final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
+            jan(9), full(VACATION_7),
+            jan(10), full(VACATION_7),
+            jan(11), gapInPeriodOf(VACATION_7),
+            jan(12), gapInPeriodOf(VACATION_7),
+            jan(13), full(VACATION_8)
+        ), JANUARY_2025);
+
+        assertThat(pieces.get(jan(10))).containsExactly(solid(FULL, false, false, VACATION_7, 0));
+        assertThat(pieces.get(jan(11))).containsExactly(bridge(FULL, false, false, VACATION_7, NO_WORKDAY, false));
+        assertThat(pieces.get(jan(12))).containsExactly(bridge(FULL, false, true, VACATION_7, NO_WORKDAY, false));
+        assertThat(pieces.get(jan(13))).containsExactly(solid(FULL, true, true, VACATION_8, 2));
+    }
+
+    @Test
     void holidayInsideAVacationStaysVisibleAsBridge() {
         final Map<LocalDate, List<AbsenceBars.Piece>> pieces = compute(Map.of(
             jan(7), full(VACATION_7),
@@ -396,6 +430,10 @@ class AbsenceBarsTest {
 
     private static AbsenceBars.Day gap(AbsenceBars.Gap gap) {
         return new AbsenceBars.Day(new AbsenceBars.HalfDay(null, gap), new AbsenceBars.HalfDay(null, gap));
+    }
+
+    private static AbsenceBars.Day gapInPeriodOf(AbsenceBars.Absence absence) {
+        return new AbsenceBars.Day(new AbsenceBars.HalfDay(null, NO_WORKDAY, absence), new AbsenceBars.HalfDay(null, NO_WORKDAY, absence));
     }
 
     private static AbsenceBars.Piece solid(AbsenceBars.Half half, boolean roundedStart, boolean roundedEnd, AbsenceBars.Absence absence, int labelHalves) {

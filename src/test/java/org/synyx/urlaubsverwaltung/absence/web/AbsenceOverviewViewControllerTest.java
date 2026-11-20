@@ -5276,6 +5276,63 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
+    void ensureVacationBarStartsOnTheDayOffItsPeriodStartsWith() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+
+        // friday 10th to tuesday 14th, the person does not work on fridays
+        final DateRange period = new DateRange(LocalDate.of(2025, JANUARY, 10), LocalDate.of(2025, JANUARY, 14));
+        final AbsencePeriod vacation = new AbsencePeriod(IntStream.of(13, 14)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), person,
+                new AbsencePeriod.RecordMorningVacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period),
+                new AbsencePeriod.RecordNoonVacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period)))
+            .toList());
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(vacation, noWorkdays(person, 10, 11, 12)));
+
+        final List<AbsenceOverviewPersonDayDto> days = januaryDays(0);
+
+        assertThat(days.get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.isRoundedStart()).isTrue();
+            assertThat(bar.getTitle()).isEqualTo("Kein Arbeitstag");
+            assertThat(bar.isTabStop()).isFalse();
+        });
+        assertThat(days.get(12).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.SOLID);
+            assertThat(bar.isRoundedStart()).isFalse();
+            assertThat(bar.isTabStop()).isTrue();
+        });
+    }
+
+    @Test
+    void ensureHalfDayVacationDoesNotReachTheFreeHalfOfItsDay() throws Exception {
+
+        final Person person = privilegedPerson();
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, Locale.GERMANY)).thenReturn("Erholungsurlaub");
+        when(messageSource.getMessage("MORNING", new Object[]{}, Locale.GERMANY)).thenReturn("vormittags");
+        when(messageSource.getMessage("absences.overview.no-workday", new Object[]{}, Locale.GERMANY)).thenReturn("Kein Arbeitstag");
+        // the month name is resolved before the bar titles - the stubs above are not all used yet then
+        when(messageSource.getMessage("month.january", new Object[]{}, Locale.GERMANY)).thenReturn("Januar");
+
+        final LocalDate friday = LocalDate.of(2025, JANUARY, 10);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(friday, person,
+            new AbsencePeriod.RecordMorningVacation(person, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, new DateRange(friday, friday)),
+            new AbsencePeriod.RecordNoonNoWorkday(person));
+        when(absenceService.getOpenAbsences(List.of(person), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2025, FEBRUARY, 14)))
+            .thenReturn(List.of(new AbsencePeriod(List.of(record))));
+
+        assertThat(januaryDays(0).get(9).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getHalf()).isEqualTo(AbsenceBars.Half.MORNING);
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.SOLID);
+        });
+    }
+
+    @Test
     void ensureTitleNamesHalfDayAndStatusOfAWaitingVacation() throws Exception {
 
         final Person person = privilegedPerson();
@@ -5662,10 +5719,12 @@ class AbsenceOverviewViewControllerTest {
             assertThat(bar.getApplicationId()).isEqualTo(7L);
             assertThat(bar.isTabStop()).isFalse();
         });
+        // the weekend starting february is a bridge, named only by its day off - the tab stop is the next solid piece
         assertThat(february.get(0).getBars()).singleElement().satisfies(bar -> {
             assertThat(bar.getApplicationId()).isEqualTo(7L);
-            assertThat(bar.isTabStop()).isTrue();
+            assertThat(bar.isTabStop()).isFalse();
         });
+        assertThat(february.get(2).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(true);
         assertThat(february.get(3).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);
     }
 

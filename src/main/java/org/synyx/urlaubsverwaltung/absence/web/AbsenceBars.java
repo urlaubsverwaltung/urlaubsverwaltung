@@ -16,7 +16,8 @@ import java.util.Set;
  * Computes the bars of one person in the absence overview.
  * <p>
  * A bar is one absence (application or sick note). It spans from the first to the last half day carrying the
- * absence. Non-workdays and public holidays in between belong to the bar as a bridge, anything else ends it.
+ * absence. Non-workdays and public holidays in between belong to the bar as a bridge, anything else ends it. So do
+ * non-workdays and public holidays at the start or end of the period of an absence of several days.
  * Bars are computed on a timeline wider than the visible range, so a bar continuing beyond the visible range is not
  * drawn as ending there.
  */
@@ -67,11 +68,27 @@ final class AbsenceBars {
     }
 
     /**
-     * @param absence the absence on this half day, may be {@code null}
-     * @param gap     the non-workday or public holiday on this half day, may be {@code null}
+     * @param absence       the absence on this half day, may be {@code null}
+     * @param gap           the non-workday or public holiday on this half day, may be {@code null}
+     * @param periodAbsence the absence of several days whose period contains this half day, may be {@code null}.
+     *                      Its bar runs across the gap even when the gap is at the start or end of the period.
      */
-    record HalfDay(Absence absence, Gap gap) {
+    record HalfDay(Absence absence, Gap gap, Absence periodAbsence) {
         static final HalfDay EMPTY = new HalfDay(null, null);
+
+        HalfDay(Absence absence, Gap gap) {
+            this(absence, gap, null);
+        }
+
+        /**
+         * @return the absence whose bar this half day belongs to on its own, {@code null} for none
+         */
+        private Absence barAbsence() {
+            if (absence != null) {
+                return absence;
+            }
+            return gap == null ? null : periodAbsence;
+        }
     }
 
     record Day(HalfDay morning, HalfDay noon) {
@@ -137,7 +154,7 @@ final class AbsenceBars {
         int bar = 0;
         int start = 0;
         while (start < slots.length) {
-            final Absence absence = slots[start].absence();
+            final Absence absence = slots[start].barAbsence();
             if (absence == null) {
                 start++;
                 continue;
@@ -158,12 +175,13 @@ final class AbsenceBars {
     }
 
     /**
-     * @return the last slot carrying {@code absence} that is reachable from {@code start} across gaps only
+     * @return the last slot belonging to {@code absence} that is reachable from {@code start} across gaps only
      */
     private static int lastSlotOf(Absence absence, HalfDay[] slots, int start) {
         int last = start;
         for (int cursor = start + 1; cursor < slots.length && continuesBar(absence, slots[cursor]); cursor++) {
-            if (slots[cursor].absence() != null) {
+            final Absence barAbsence = slots[cursor].barAbsence();
+            if (barAbsence != null && barAbsence.key().equals(absence.key())) {
                 last = cursor;
             }
         }
