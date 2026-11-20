@@ -216,7 +216,7 @@ class CompanyController implements HasLaunchpad, HasPersonSearch {
         final int value;
 
         if (rangeEnd == null) {
-            value = stats.numberOfPersonsWithRemainingVacationDaysGreaterThan(rangeStart);
+            value = stats.numberOfPersonsWithRemainingVacationDaysGreaterOrEqual(rangeStart);
         } else {
             value = stats.numberOfPersonsWithRemainingVacationDaysBetween(rangeStart, rangeEnd);
         }
