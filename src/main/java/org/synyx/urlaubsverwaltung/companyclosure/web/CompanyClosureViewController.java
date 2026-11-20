@@ -190,15 +190,15 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
                 changesByOldValidFrom.put(version.getOriginalValidFrom(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()));
             }
         }
-        final Person signedInUser = personService.getSignedInUser();
-        companyClosureService.changeCompanyClosureVersions(entry.monthDay(), changesByOldValidFrom, signedInUser);
-        if (form.hasNewVersion(entry.dayLengthAt(LocalDate.now(clock)))) {
-            companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom(), signedInUser);
-        }
+        final CompanyClosureVersion newVersion = form.hasNewVersion(entry.dayLengthAt(LocalDate.now(clock)))
+            ? new CompanyClosureVersion(form.getDayLength(), form.getValidFrom())
+            : null;
         // unchanged names keep the translations of a closure provided by the application
-        if (!form.getNameByLocale().equals(nameByLocaleOf(entry))) {
-            companyClosureService.renameCompanyClosure(entry.monthDay(), form.getNameByLocale(), signedInUser);
-        }
+        final Map<Locale, String> names = form.getNameByLocale().equals(nameByLocaleOf(entry))
+            ? null
+            : form.getNameByLocale();
+        final Person signedInUser = personService.getSignedInUser();
+        companyClosureService.updateCompanyClosure(entry.monthDay(), changesByOldValidFrom, newVersion, names, signedInUser);
         redirectAttributes.addFlashAttribute("updatedCompanyClosureName", form.nameFor(locale));
 
         return REDIRECT_TO_LIST;

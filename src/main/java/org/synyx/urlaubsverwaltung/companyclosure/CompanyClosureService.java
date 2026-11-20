@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.companyclosure;
 
+import org.jspecify.annotations.Nullable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -43,6 +44,24 @@ public interface CompanyClosureService {
      *                                  the current year or two versions would start at the same date
      */
     void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom, Person modifier);
+
+    /**
+     * Changes versions, adds a version and renames an existing company closure day in one transaction, so either all
+     * changes are saved or none of them.
+     *
+     * @param monthDay              day of the closure
+     * @param changesByOldValidFrom the changed versions by the date they started from so far, empty to change none, see
+     *                              {@link #changeCompanyClosureVersions(MonthDay, Map, Person)}
+     * @param newVersion            the version to add, {@code null} to add none, see
+     *                              {@link #changeCompanyClosure(MonthDay, DayLength, LocalDate, Person)}
+     * @param names                 the new names, {@code null} to keep the names, see
+     *                              {@link #renameCompanyClosure(MonthDay, Map, Person)}
+     * @param modifier              person who changes the closure
+     * @throws IllegalArgumentException in the cases of the methods named above
+     */
+    void updateCompanyClosure(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom,
+                              @Nullable CompanyClosureVersion newVersion, @Nullable Map<Locale, String> names,
+                              Person modifier);
 
     /**
      * @return all company closure days sorted by month day, from 01.01. to 31.12. The versions of each day are

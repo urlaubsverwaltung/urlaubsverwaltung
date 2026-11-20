@@ -214,8 +214,8 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas"));
 
-        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, LocalDate.of(2026, DECEMBER, 1), SIGNED_IN_USER);
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"), SIGNED_IN_USER);
+        final CompanyClosureVersion newVersion = new CompanyClosureVersion(ZERO, LocalDate.of(2026, DECEMBER, 1));
+        verify(companyClosureService).updateCompanyClosure(CHRISTMAS_EVE, Map.of(), newVersion, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"), SIGNED_IN_USER);
     }
 
     @Test
@@ -230,7 +230,7 @@ class CompanyClosureViewControllerTest {
 
         final BindingResult errors = (BindingResult) rejected.getFlashMap().get(BindingResult.MODEL_KEY_PREFIX + "companyClosure");
         assertThat(errors.getFieldError("validFrom").getCode()).isEqualTo("company-closure.error.validFrom.duplicate");
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
+        verify(companyClosureService, never()).updateCompanyClosure(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -248,9 +248,8 @@ class CompanyClosureViewControllerTest {
             .param("versions[0].validFrom", "01.07.2027"))
             .andExpect(redirectedUrl("/web/company-closure"));
 
-        verify(companyClosureService).changeCompanyClosureVersions(CHRISTMAS_EVE,
-            Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1))), SIGNED_IN_USER);
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
+        final Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom = Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1)));
+        verify(companyClosureService).updateCompanyClosure(CHRISTMAS_EVE, changesByOldValidFrom, null, null, SIGNED_IN_USER);
     }
 
     @Test
@@ -264,8 +263,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas Eve"));
 
-        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, TODAY, SIGNED_IN_USER);
-        verify(companyClosureService, never()).renameCompanyClosure(any(), any(), any());
+        verify(companyClosureService).updateCompanyClosure(CHRISTMAS_EVE, Map.of(), new CompanyClosureVersion(ZERO, TODAY), null, SIGNED_IN_USER);
     }
 
     @Test
@@ -279,7 +277,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Weihnachten"));
 
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten"), SIGNED_IN_USER);
+        verify(companyClosureService).updateCompanyClosure(CHRISTMAS_EVE, Map.of(), new CompanyClosureVersion(FULL, TODAY), Map.of(GERMAN, "Weihnachten"), SIGNED_IN_USER);
     }
 
     @Test
@@ -387,7 +385,7 @@ class CompanyClosureViewControllerTest {
             .param("validFrom", "06.11.2026"))
             .andExpect(status().isNotFound());
 
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
+        verify(companyClosureService, never()).updateCompanyClosure(any(), any(), any(), any(), any());
     }
 
     /**

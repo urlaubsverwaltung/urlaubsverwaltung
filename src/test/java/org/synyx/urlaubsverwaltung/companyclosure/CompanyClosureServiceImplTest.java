@@ -416,6 +416,42 @@ class CompanyClosureServiceImplTest {
     }
 
     @Test
+    void updateChangesVersionsAddsVersionAndRenames() {
+        final CompanyClosureVersionEntity planned = version(MORNING, LocalDate.of(2027, JANUARY, 1));
+        final CompanyClosureEntity christmasEve = christmasEveEntity();
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
+        when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null), planned));
+
+        final Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom = Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1)));
+        final CompanyClosureVersion newVersion = new CompanyClosureVersion(ZERO, LocalDate.of(2026, DECEMBER, 1));
+        sut.updateCompanyClosure(CHRISTMAS_EVE, changesByOldValidFrom, newVersion, Map.of(GERMAN, "Weihnachten"), MODIFIER);
+
+        assertThat(planned)
+            .extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
+            .containsExactly(FULL, LocalDate.of(2027, JULY, 1));
+        final ArgumentCaptor<CompanyClosureVersionEntity> versionCaptor = ArgumentCaptor.forClass(CompanyClosureVersionEntity.class);
+        verify(companyClosureVersionRepository).save(versionCaptor.capture());
+        assertThat(versionCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(ZERO, LocalDate.of(2026, DECEMBER, 1), MODIFIER);
+        assertThat(christmasEve.getNameByLocale()).isEqualTo(Map.of(GERMAN, "Weihnachten"));
+    }
+
+    @Test
+    void updateWithoutNewVersionAndNamesKeepsThem() {
+        final CompanyClosureEntity christmasEve = christmasEveEntity();
+        when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
+        when(companyClosureVersionRepository.findAll()).thenReturn(List.of(version(NOON, null), version(MORNING, LocalDate.of(2027, JANUARY, 1))));
+
+        final Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom = Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1)));
+        sut.updateCompanyClosure(CHRISTMAS_EVE, changesByOldValidFrom, null, null, MODIFIER);
+
+        verify(companyClosureVersionRepository, never()).save(any());
+        verify(companyClosureRepository, never()).save(any());
+        assertThat(christmasEve.getNameByLocale()).isNull();
+    }
+
+    @Test
     void renamesEntry() {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));

@@ -174,6 +174,21 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     }
 
     @Override
+    @Transactional
+    public void updateCompanyClosure(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom,
+                                     @Nullable CompanyClosureVersion newVersion, @Nullable Map<Locale, String> names,
+                                     Person modifier) {
+        // the calls run in the transaction of this method, a failing one rolls back the changes of the others
+        changeCompanyClosureVersions(monthDay, changesByOldValidFrom, modifier);
+        if (newVersion != null) {
+            changeCompanyClosure(monthDay, newVersion.dayLength(), newVersion.validFrom(), modifier);
+        }
+        if (names != null) {
+            renameCompanyClosure(monthDay, names, modifier);
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<CompanyClosureEntry> getCompanyClosureEntries() {
         final Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId = companyClosureVersionRepository.findAll().stream()
