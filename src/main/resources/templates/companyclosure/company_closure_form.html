@@ -156,40 +156,21 @@
                 <p id="names-error" class="uv-form__input-error" th:if="${#fields.hasErrors('names')}">
                   <th:block th:errors="*{names}">names Error</th:block>
                 </p>
-                <div
-                  th:each="name, nameStat : *{names}"
-                  th:with="
-                    nameField=|names[${nameStat.index}].name|,
-                    nameId=|names${nameStat.index}.name|,
-                    hasNameErrors=${#fields.hasErrors(nameField)}
-                  "
-                  class="flex flex-col gap-1"
-                >
-                  <input type="hidden" th:field="*{names[__${nameStat.index}__].locale}" />
-                  <label th:for="${nameId}" class="flex items-center gap-2 font-normal">
-                    <img th:src="@{/images/flags/{locale}.svg (locale=${name.locale})}" alt="" width="16" height="16" />
-                    <span th:text="${#messages.msg('locale.' + name.locale)}">Deutsch</span>
-                  </label>
-                  <input
-                    type="text"
-                    th:placeholder="${namePlaceholders[name.locale]}"
-                    th:lang="${name.locale.toLanguageTag()}"
-                    th:field="*{names[__${nameStat.index}__].name}"
-                    th:errorclass="error"
-                    th:classappend="${#fields.hasErrors('names')} ? 'error'"
-                    th:aria-invalid="${hasNameErrors or #fields.hasErrors('names')} ? 'true'"
-                    th:aria-describedby="|names-description${#fields.hasErrors('names') ? ' names-error' : ''} ${nameId}-placeholder${hasNameErrors ? ' ' + nameId + '-error' : ''}|"
-                    th:data-test-id="|company-closure-name-${name.locale}|"
-                  />
-                  <span
-                    th:id="|${nameId}-placeholder|"
-                    th:text="${namePlaceholders[name.locale]}"
-                    class="sr-only"
-                  ></span>
-                  <p th:id="|${nameId}-error|" class="uv-form__input-error" th:if="${hasNameErrors}">
-                    <th:block th:errors="*{__${nameField}__}">name Error</th:block>
-                  </p>
-                </div>
+                <!--/* the first name is the one of the default language, the other languages are collapsed */-->
+                <div th:replace="~{companyclosure/company_closure_name_field::name(name=*{names[0]}, index=0)}"></div>
+                <details>
+                  <summary class="flex items-center gap-2 w-fit cursor-pointer">
+                    <svg th:replace="~{icon/languages::svg(className='w-4 h-4 text-blue-400')}"></svg>
+                    <span th:text="#{company-closure.data.names.translations}">Übersetzungen</span>
+                  </summary>
+                  <div class="flex flex-col gap-4 mt-4">
+                    <th:block th:each="name, nameStat : *{names}" th:if="${not nameStat.first}">
+                      <div
+                        th:replace="~{companyclosure/company_closure_name_field::name(name=${name}, index=${nameStat.index})}"
+                      ></div>
+                    </th:block>
+                  </div>
+                </details>
               </div>
             </div>
 

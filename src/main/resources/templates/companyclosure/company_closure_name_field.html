@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Name field of a company closure</title>
+  </head>
+  <body>
+    <!--/* the name of a closure day in one language. index is the position of the name in the names of the form */-->
+    <div
+      th:fragment="name(name, index)"
+      th:with="
+        nameField=|names[${index}].name|,
+        nameId=|names${index}.name|,
+        hasNameErrors=${#fields.hasErrors(nameField)}
+      "
+      class="flex flex-col gap-1"
+    >
+      <input type="hidden" th:field="*{names[__${index}__].locale}" />
+      <label th:for="${nameId}" class="flex items-center gap-2 font-normal">
+        <img th:src="@{/images/flags/{locale}.svg (locale=${name.locale})}" alt="" width="16" height="16" />
+        <span th:text="${#messages.msg('locale.' + name.locale)}">Deutsch</span>
+      </label>
+      <input
+        type="text"
+        th:placeholder="${namePlaceholders[name.locale]}"
+        th:lang="${name.locale.toLanguageTag()}"
+        th:field="*{names[__${index}__].name}"
+        th:errorclass="error"
+        th:classappend="${#fields.hasErrors('names')} ? 'error'"
+        th:aria-invalid="${hasNameErrors or #fields.hasErrors('names')} ? 'true'"
+        th:aria-describedby="|names-description${#fields.hasErrors('names') ? ' names-error' : ''} ${nameId}-placeholder${hasNameErrors ? ' ' + nameId + '-error' : ''}|"
+        th:data-test-id="|company-closure-name-${name.locale}|"
+      />
+      <span th:id="|${nameId}-placeholder|" th:text="${namePlaceholders[name.locale]}" class="sr-only"></span>
+      <p th:id="|${nameId}-error|" class="uv-form__input-error" th:if="${hasNameErrors}">
+        <th:block th:errors="*{__${nameField}__}">name Error</th:block>
+      </p>
+    </div>
+  </body>
+</html>
