@@ -53,6 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -119,6 +120,7 @@ class CompanyClosureViewControllerTest {
         final MvcResult result = perform(get("/web/company-closure/new").locale(GERMAN))
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
+            .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
             .andReturn();
 
         final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
@@ -148,6 +150,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("monthDayPath", "12-24"))
             .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
+            .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
             .andReturn();
 
         final CompanyClosureForm form = (CompanyClosureForm) result.getModelAndView().getModel().get("companyClosure");
@@ -250,7 +253,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("monthDay", CHRISTMAS_EVE))
             .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
-            .andExpect(model().attributeExists("namePlaceholders"))
+            .andExpect(model().attributeExists("namePlaceholders", "dayLengths"))
             .andReturn();
 
         // the form keeps the rejected input instead of the values of the closure day
@@ -278,7 +281,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(view().name("companyclosure/company_closure_form"))
             .andExpect(model().attributeHasFieldErrors("companyClosure", "monthDay"))
             .andExpect(model().attributeDoesNotExist("monthDay"))
-            .andExpect(model().attributeExists("minValidFrom", "namePlaceholders"))
+            .andExpect(model().attributeExists("minValidFrom", "namePlaceholders", "dayLengths"))
             .andReturn();
 
         // the form keeps the rejected input instead of the defaults of a new closure day

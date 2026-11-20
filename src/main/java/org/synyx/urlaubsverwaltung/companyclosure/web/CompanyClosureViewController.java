@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -39,6 +40,9 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.validation.BindingResult.MODEL_KEY_PREFIX;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 /**
@@ -53,6 +57,10 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     private static final String REDIRECT_TO_LIST = "redirect:/web/company-closure";
     private static final String COMPANY_CLOSURE = "companyClosure";
     private static final String MIN_VALID_FROM = "minValidFrom";
+    /**
+     * The options of the form in the order they are shown: in two columns the half days share the first one.
+     */
+    private static final List<DayLength> DAY_LENGTHS = List.of(MORNING, NOON, FULL, ZERO);
 
     private final CompanyClosureService companyClosureService;
     private final CompanyClosureFormValidator validator;
@@ -197,6 +205,7 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
     private void addFormModel(Model model, Locale locale) {
         model.addAttribute(MIN_VALID_FROM, minValidFrom());
         model.addAttribute("namePlaceholders", namePlaceholders(locale));
+        model.addAttribute("dayLengths", DAY_LENGTHS);
     }
 
     /**

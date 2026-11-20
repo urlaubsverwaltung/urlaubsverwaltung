@@ -204,7 +204,7 @@
               </p>
               <div class="company-closure-day-length">
                 <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length__options">
-                  <label th:each="dayLength : ${ {'MORNING', 'NOON', 'FULL', 'ZERO'} }">
+                  <label th:each="dayLength : ${dayLengths}">
                     <input
                       type="radio"
                       required
