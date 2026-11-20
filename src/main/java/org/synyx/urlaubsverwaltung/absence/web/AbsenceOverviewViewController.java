@@ -373,7 +373,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
                 final List<AbsenceOverviewBarPieceDto> bars = new ArrayList<>();
                 for (AbsenceBars.Piece piece : barPiecesByPerson.get(person).getOrDefault(date, List.of())) {
-                    final boolean tabStop = piece.absence().detail() != null
+                    // a bridge is named only by its day off, the tab stop must name the absence
+                    final boolean tabStop = piece.absence().detail() != null && piece.kind() == AbsenceBars.Kind.SOLID
                         && barsWithTabStop.add(person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key());
                     bars.add(toBarPieceDto(piece, tabStop, message));
                 }
