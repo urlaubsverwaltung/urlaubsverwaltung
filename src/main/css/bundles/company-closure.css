@@ -8,8 +8,7 @@
 
   @variant md {
     display: grid;
-    /* the history gets twice the space of the name, so long names wrap before the history does */
-    grid-template-columns: auto 1fr auto 2fr auto;
+    grid-template-columns: auto 1fr auto auto;
     column-gap: --spacing(12);
   }
 }
@@ -40,15 +39,10 @@
   }
 }
 
-/* the areas place the children in a card. in a row they take the columns in source order (grid-area: auto) */
+/* the details take every column but the one of the actions, which must not be inside the summary */
 .company-closure-list__item {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-areas:
-    "date actions"
-    "name actions"
-    "current current"
-    "history history";
   column-gap: --spacing(4);
   padding: --spacing(4);
   border: 1px solid var(--color-gray-200);
@@ -61,10 +55,12 @@
   @variant md {
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
-    grid-template-areas: none;
+    /* summary and actions in the first row, the history of an open details in the second. a single row would not
+       grow by the offset of the baseline alignment, and the history would overlap the padding */
+    grid-template-rows: auto auto;
     /* the rows use the column gap of the surrounding grid */
     column-gap: normal;
-    /* aligned to the first line of the history */
+    /* aligned to the first line of the summary */
     align-items: baseline;
     padding: --spacing(3);
     border-width: 1px 0 0;
@@ -85,59 +81,116 @@
   }
 }
 
+.company-closure-list__details {
+  @variant md {
+    grid-column: 1 / -2;
+    /* an item spanning both rows takes no part in the baseline alignment, its summary does */
+    grid-row: 1 / span 2;
+    align-self: stretch;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* wraps the content of the details in browsers that support it, the history spans the row below the summary */
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+.company-closure-list__summary {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @variant md {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    /* the alignment of the row does not reach into the details, the summary joins it itself */
+    align-self: baseline;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+}
+
+/* the text gives the baseline of the row, the chevron has none */
 .company-closure-list__date {
-  grid-area: date;
+  display: flex;
+  align-items: baseline;
+  gap: --spacing(1);
   white-space: nowrap;
   /* the line height stays the one of the heading */
   font-size: var(--text-sm);
   font-weight: var(--font-weight-bold);
+}
 
-  @variant md {
-    grid-area: auto;
+.company-closure-list__chevron {
+  flex-shrink: 0;
+  align-self: center;
+  transition: rotate 150ms ease-in-out;
+
+  .company-closure-list__details[open] & {
+    rotate: 90deg;
   }
 }
 
-.company-closure-list__name {
-  grid-area: name;
+/* indented to the date, next to the chevron (its width and the gap) */
+.company-closure-list__name,
+.company-closure-list__history {
+  padding-left: --spacing(5);
 
   @variant md {
-    grid-area: auto;
+    padding-left: 0;
   }
 }
 
 .company-closure-list__current {
-  grid-area: current;
   margin-top: --spacing(4);
+  padding-left: --spacing(5);
 
   @variant md {
-    grid-area: auto;
     margin-top: 0;
+    padding-left: 0;
   }
 }
 
 .company-closure-list__history {
-  grid-area: history;
+  grid-column: 1 / -1;
   margin-top: --spacing(2);
 
   @variant md {
-    grid-area: auto;
-    margin-top: 0;
+    grid-row: 2;
+    margin-top: --spacing(3);
+    padding-left: --spacing(5);
   }
 }
 
-/* names the value in a card. in a row the column titles do it for sighted users, so the template hides it visually */
+.company-closure-list__versions {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+  margin-top: --spacing(1);
+}
+
+/* names a value. in a row the column titles do it for sighted users, so the template hides it visually there */
 .company-closure-list__label {
   font-weight: var(--font-weight-bold);
 }
 
 .company-closure-list__actions {
-  grid-area: actions;
   align-self: start;
   display: flex;
   justify-content: flex-end;
 
   @variant md {
-    grid-area: auto;
+    grid-row: 1;
     align-self: auto;
   }
 }
