@@ -125,20 +125,9 @@ class CompanyClosureFormValidatorTest {
     }
 
     @Test
-    void rejectsTooLongName() {
+    void acceptsLongName() {
         final CompanyClosureFormDto form = validForm();
-        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "Brückentag"), new CompanyClosureNameFormDto(ENGLISH, "x".repeat(101))));
-
-        final Errors errors = validate(form);
-
-        assertThat(errors.getFieldError("names[1].name").getCode()).isEqualTo("error.entry.tooManyChars");
-        assertThat(errors.getFieldError("names")).isNull();
-    }
-
-    @Test
-    void acceptsNameWithMaxLength() {
-        final CompanyClosureFormDto form = validForm();
-        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "x".repeat(100))));
+        form.setNames(List.of(new CompanyClosureNameFormDto(GERMAN, "x".repeat(1000))));
 
         assertThat(validate(form).hasErrors()).isFalse();
     }

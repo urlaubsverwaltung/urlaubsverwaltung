@@ -37,11 +37,7 @@ import static org.springframework.util.StringUtils.hasText;
 @Component
 class CompanyClosureFormValidator implements Validator {
 
-    // the name column is unbounded text, the limit keeps names readable in lists and calendars
-    private static final int MAX_NAME_LENGTH = 100;
-
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-    private static final String ERROR_TOO_MANY_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_NAMES_MANDATORY = "company-closure.error.names.mandatory";
     private static final String ERROR_VALID_FROM_PREVIOUS_YEAR = "company-closure.error.validFrom.previousYear";
     private static final String ERROR_DAY_RANGE = "company-closure.error.day.range";
@@ -109,14 +105,6 @@ class CompanyClosureFormValidator implements Validator {
         final List<CompanyClosureNameFormDto> names = form.getNames();
         if (names == null || names.stream().noneMatch(name -> hasText(name.getName()))) {
             errors.rejectValue(ATTRIBUTE_NAMES, ERROR_NAMES_MANDATORY);
-            return;
-        }
-
-        for (int index = 0; index < names.size(); index++) {
-            final String name = names.get(index).getName();
-            if (name != null && name.length() > MAX_NAME_LENGTH) {
-                errors.rejectValue("%s[%d].name".formatted(ATTRIBUTE_NAMES, index), ERROR_TOO_MANY_CHARS);
-            }
         }
     }
 

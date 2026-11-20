@@ -172,7 +172,6 @@
                   </label>
                   <input
                     type="text"
-                    maxlength="100"
                     th:placeholder="${namePlaceholders[name.locale]}"
                     th:lang="${name.locale.toLanguageTag()}"
                     th:field="*{names[__${nameStat.index}__].name}"
