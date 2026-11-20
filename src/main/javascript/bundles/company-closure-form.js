@@ -8,5 +8,9 @@ document.addEventListener("turbo:before-render", function (event) {
   event.detail.render = morphKeepingDatepickers;
 });
 
-// company closures apply to everybody, so the datepicker shows no absences of a person
-await createDatepicker("#validFrom", { getPersonId: () => {} });
+// company closures apply to everybody, so the datepicker shows no absences of a person. the edit form has one
+// "valid from" per planned version besides the one of a new version.
+const validFromInputs = document.querySelectorAll("[data-company-closure-valid-from]");
+await Promise.all(
+  [...validFromInputs].map((input) => createDatepicker(`#${CSS.escape(input.id)}`, { getPersonId: () => {} })),
+);

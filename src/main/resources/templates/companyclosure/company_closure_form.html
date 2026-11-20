@@ -194,7 +194,7 @@
               </div>
             </div>
 
-            <div class="uv-form__input-row pt-4" th:with="hasDayLengthErrors=${#fields.hasErrors('dayLength')}">
+            <div th:if="${monthDay == null}" class="uv-form__input-row pt-4">
               <p
                 id="dayLength-label"
                 class="uv-form__label uv-form__label--required"
@@ -202,29 +202,14 @@
               >
                 Betriebsruhe
               </p>
-              <div class="company-closure-day-length">
-                <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length__options">
-                  <label th:each="dayLength : ${dayLengths}">
-                    <input
-                      type="radio"
-                      required
-                      th:field="*{dayLength}"
-                      th:value="${dayLength}"
-                      th:aria-invalid="${hasDayLengthErrors} ? 'true'"
-                      th:aria-describedby="${hasDayLengthErrors} ? 'dayLength-error'"
-                    />
-                    <th:block th:text="#{|company-closure.dayLength.${dayLength}|}">ganztägig</th:block>
-                  </label>
-                </div>
-              </div>
-              <p id="dayLength-error" class="uv-form__input-error" th:if="${hasDayLengthErrors}">
-                <th:block th:errors="*{dayLength}">dayLength Error</th:block>
-              </p>
+              <th:block
+                th:replace="~{companyclosure/company_closure_version_fields::day-length(path='', labelId='dayLength-label', required=true)}"
+              ></th:block>
             </div>
           </div>
         </div>
 
-        <div role="group" aria-labelledby="group-companyclosure-validfrom-label">
+        <div th:if="${monthDay == null}" role="group" aria-labelledby="group-companyclosure-validfrom-label">
           <h2
             id="group-companyclosure-validfrom-label"
             class="uv-form-legend"
@@ -240,21 +225,106 @@
             </p>
             <div class="uv-form__input-row">
               <label for="validFrom" th:text="|#{company-closure.data.validFrom}:|">Gültig ab</label>
-              <input
-                id="validFrom"
-                required
-                th:field="*{validFrom}"
-                th:errorclass="error"
-                th:placeholder="#{pattern.date}"
-                autocomplete="off"
-                th:data-iso-value="${companyClosure.validFromIsoValue}"
-                th:data-min="${minValidFrom}"
-                th:aria-invalid="${#fields.hasErrors('validFrom')} ? 'true'"
-                th:aria-describedby="${#fields.hasErrors('validFrom')} ? 'validFrom-error'"
-              />
-              <p id="validFrom-error" class="uv-form__input-error" th:if="${#fields.hasErrors('validFrom')}">
-                <th:block th:errors="*{validFrom}">validFrom Error</th:block>
+              <th:block
+                th:replace="~{companyclosure/company_closure_version_fields::valid-from(path='', id='validFrom', required=true, min=${minValidFrom}, isoValue=${companyClosure.validFromIsoValue})}"
+              ></th:block>
+            </div>
+          </div>
+        </div>
+
+        <!--/* the history of an existing closure day: a new change, the ones of this year or later, which can be changed, and older ones */-->
+        <div th:if="${monthDay != null}" role="group" aria-labelledby="group-companyclosure-history-label">
+          <h2 id="group-companyclosure-history-label" class="uv-form-legend" th:text="#{company-closure.data.history}">
+            Verlauf
+          </h2>
+
+          <div class="uv-form__group">
+            <div class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <div>
+                <p th:text="#{company-closure.data.newVersion.description}"></p>
+                <p th:text="#{company-closure.data.editableVersions.description}"></p>
+              </div>
+            </div>
+
+            <div class="uv-form__input-row">
+              <p id="newVersion-label" class="uv-form__label" th:text="|#{company-closure.data.newVersion}:|">
+                Neue Änderung
               </p>
+              <div class="company-closure-version">
+                <div class="company-closure-version__valid-from">
+                  <label for="validFrom" th:text="|#{company-closure.data.validFrom}:|">Gültig ab</label>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::valid-from(path='', id='validFrom', required=false, min=${minValidFrom}, isoValue=${companyClosure.validFromIsoValue})}"
+                  ></th:block>
+                </div>
+                <div class="company-closure-version__day-length">
+                  <p
+                    id="newVersion-dayLength-label"
+                    class="uv-form__label"
+                    th:text="|#{company-closure.data.dayLength}:|"
+                  >
+                    Betriebsruhe
+                  </p>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::day-length(path='', labelId='newVersion-label newVersion-dayLength-label', required=false)}"
+                  ></th:block>
+                </div>
+              </div>
+            </div>
+
+            <div
+              th:each="version, versionStat : *{versions}"
+              th:with="
+                path=|versions[${versionStat.index}].|,
+                idPrefix=|versions${versionStat.index}|,
+                labelId=|versions${versionStat.index}-label|
+              "
+              class="uv-form__input-row"
+            >
+              <p
+                th:id="${labelId}"
+                class="uv-form__label uv-form__label--required"
+                th:text="${version.originalValidFrom != null and version.originalValidFrom.isAfter(today)} ? |#{company-closure.data.plannedVersion}:| : |#{company-closure.data.startedVersion}:|"
+              >
+                Geplante Änderung
+              </p>
+              <div class="company-closure-version">
+                <input type="hidden" th:field="*{versions[__${versionStat.index}__].originalValidFrom}" />
+                <div class="company-closure-version__valid-from">
+                  <label th:for="|${idPrefix}.validFrom|" th:text="|#{company-closure.data.validFrom}:|"
+                    >Gültig ab</label
+                  >
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::valid-from(path=${path}, id=|${idPrefix}.validFrom|, required=true, min=${minValidFrom}, isoValue=${version.validFromIsoValue})}"
+                  ></th:block>
+                </div>
+                <div class="company-closure-version__day-length">
+                  <p
+                    th:id="|${idPrefix}-dayLength-label|"
+                    class="uv-form__label uv-form__label--required"
+                    th:text="|#{company-closure.data.dayLength}:|"
+                  >
+                    Betriebsruhe
+                  </p>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::day-length(path=${path}, labelId=|${labelId} ${idPrefix}-dayLength-label|, required=true)}"
+                  ></th:block>
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${not #lists.isEmpty(olderVersions)}" class="uv-form__input-row">
+              <p id="olderVersions-label" class="uv-form__label" th:text="|#{company-closure.data.olderVersions}:|">
+                Vor diesem Jahr
+              </p>
+              <ul role="list" aria-labelledby="olderVersions-label" class="company-closure-version__older">
+                <li
+                  th:each="version : ${olderVersions}"
+                  th:with="dayLengthLabel=#{|company-closure.dayLength.${version.dayLength}|}"
+                  th:text="${version.validFrom == null} ? #{company-closure.data.version.initial(${dayLengthLabel})} : #{company-closure.data.version(${{version.validFrom}}, ${dayLengthLabel})}"
+                ></li>
+              </ul>
             </div>
           </div>
         </div>

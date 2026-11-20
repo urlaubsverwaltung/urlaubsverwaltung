@@ -16,11 +16,17 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.time.Month.FEBRUARY;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -43,6 +49,9 @@ class CompanyClosureFormValidator implements Validator {
     private static final String ERROR_MONTH_DAY_INVALID = "company-closure.error.monthDay.invalid";
     private static final String ERROR_MONTH_DAY_LEAP_DAY = "company-closure.error.monthDay.leapDay";
     private static final String ERROR_MONTH_DAY_EXISTS = "company-closure.error.monthDay.exists";
+
+    private static final String ERROR_VALID_FROM_DUPLICATE = "company-closure.error.validFrom.duplicate";
+    private static final String ERROR_VERSION_NOT_EDITABLE = "company-closure.error.version.notEditable";
 
     private static final String ERROR_BLACKOUT_PERIOD = "company-closure.error.blackout-period";
 
@@ -81,7 +90,10 @@ class CompanyClosureFormValidator implements Validator {
         final CompanyClosureFormDto form = (CompanyClosureFormDto) target;
 
         validateNames(form, errors);
+        validateNewVersion(form, errors);
+    }
 
+    private void validateNewVersion(CompanyClosureFormDto form, Errors errors) {
         if (form.getDayLength() == null) {
             errors.rejectValue(ATTRIBUTE_DAY_LENGTH, ERROR_MANDATORY_FIELD);
         }
@@ -109,26 +121,124 @@ class CompanyClosureFormValidator implements Validator {
     }
 
     /**
-     * Validates the changes of the closure day with the given day and month: the fields of
-     * {@link #validate(Object, Errors)} plus the company-wide blackout periods, which only block a change that
-     * closes more of the day than the version valid at "valid from" does.
+     * Validates the changes of an existing closure day: the names, the new version if one is entered, and the versions
+     * starting in the current year or later, which may be changed. A version must not start at the same date as
+     * another one, nor before the current year. Company-wide blackout periods only block a version that closes more
+     * of the day than the version before it.
      */
     void validateEdit(CompanyClosureEntry entry, CompanyClosureFormDto form, Errors errors) {
-        validate(form, errors);
-        if (form.getDayLength() == null || form.getValidFrom() == null) {
+        final LocalDate today = LocalDate.now(clock);
+        final LocalDate startOfYear = Year.now(clock).atDay(1);
+        final boolean hasNewVersion = form.hasNewVersion(entry.dayLengthAt(today));
+
+        validateNames(form, errors);
+        if (hasNewVersion) {
+            validateNewVersion(form, errors);
+        }
+
+        final Set<LocalDate> editableValidFroms = new HashSet<>();
+        for (CompanyClosureVersion version : entry.versions()) {
+            if (isEditable(version.validFrom(), startOfYear)) {
+                editableValidFroms.add(version.validFrom());
+            }
+        }
+
+        final List<CompanyClosureVersionFormDto> versions = form.getVersions();
+        for (int index = 0; index < versions.size(); index++) {
+            validateEditableVersion(versions.get(index), "versions[%d]".formatted(index), editableValidFroms, startOfYear, errors);
+        }
+
+        if (errors.hasErrors()) {
             return;
         }
-        final DayLength old = entry.dayLengthAt(form.getValidFrom());
-        final DayLength changed = form.getDayLength();
-        final boolean adds = (covers(changed, MORNING) && !covers(old, MORNING)) || (covers(changed, NOON) && !covers(old, NOON));
-        if (adds) {
-            // the changed version only applies until the next one starts
-            final LocalDate nextVersionStart = entry.versions().stream()
-                .map(CompanyClosureVersion::validFrom)
-                .filter(validFrom -> isAfter(validFrom, form.getValidFrom()))
-                .min(naturalOrder())
-                .orElse(null);
-            validateNoCompanyWideBlackoutPeriod(entry.monthDay(), nextVersionStart, form, errors);
+
+        validateDistinctValidFroms(entry, form, hasNewVersion, errors);
+        if (errors.hasErrors()) {
+            return;
+        }
+
+        final List<CompanyClosureVersion> resultingVersions = resultingVersions(entry, form, hasNewVersion);
+        if (hasNewVersion) {
+            validateNoCompanyWideBlackoutPeriod(entry.monthDay(), new CompanyClosureVersion(form.getDayLength(), form.getValidFrom()), resultingVersions, errors);
+        }
+        for (CompanyClosureVersionFormDto version : versions) {
+            final DayLength originalDayLength = entry.dayLengthAt(version.getOriginalValidFrom());
+            if (version.isChanged(originalDayLength)) {
+                validateNoCompanyWideBlackoutPeriod(entry.monthDay(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()), resultingVersions, errors);
+            }
+        }
+    }
+
+    /**
+     * @return whether a version with the given "valid from" may be changed: it starts in the current year or later
+     */
+    private static boolean isEditable(@Nullable LocalDate validFrom, LocalDate startOfYear) {
+        return validFrom != null && !validFrom.isBefore(startOfYear);
+    }
+
+    private static void validateEditableVersion(CompanyClosureVersionFormDto version, String path, Set<LocalDate> editableValidFroms, LocalDate startOfYear, Errors errors) {
+        // a version of the previous year after the turn of the year, or a manipulated form
+        if (!editableValidFroms.contains(version.getOriginalValidFrom())) {
+            errors.rejectValue(path + "." + ATTRIBUTE_VALID_FROM, ERROR_VERSION_NOT_EDITABLE);
+            return;
+        }
+        if (version.getDayLength() == null) {
+            errors.rejectValue(path + "." + ATTRIBUTE_DAY_LENGTH, ERROR_MANDATORY_FIELD);
+        }
+        if (version.getValidFrom() == null) {
+            errors.rejectValue(path + "." + ATTRIBUTE_VALID_FROM, ERROR_MANDATORY_FIELD);
+        } else if (version.getValidFrom().isBefore(startOfYear)) {
+            errors.rejectValue(path + "." + ATTRIBUTE_VALID_FROM, ERROR_VALID_FROM_PREVIOUS_YEAR);
+        }
+    }
+
+    /**
+     * @return the stored versions with the changes of the form, as they are after saving: a version that is not part
+     * of the form stays as it is. Includes the new version, sorted by "valid from" with the initial version first.
+     */
+    private static List<CompanyClosureVersion> resultingVersions(CompanyClosureEntry entry, CompanyClosureFormDto form, boolean hasNewVersion) {
+        final Map<LocalDate, CompanyClosureVersion> changedByOldValidFrom = new HashMap<>();
+        for (CompanyClosureVersionFormDto version : form.getVersions()) {
+            changedByOldValidFrom.put(version.getOriginalValidFrom(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()));
+        }
+
+        final List<CompanyClosureVersion> versions = new ArrayList<>();
+        for (CompanyClosureVersion version : entry.versions()) {
+            final CompanyClosureVersion changed = version.validFrom() == null ? null : changedByOldValidFrom.get(version.validFrom());
+            versions.add(changed == null ? version : changed);
+        }
+        if (hasNewVersion) {
+            versions.add(new CompanyClosureVersion(form.getDayLength(), form.getValidFrom()));
+        }
+        versions.sort(comparing(CompanyClosureVersion::validFrom, nullsFirst(naturalOrder())));
+        return versions;
+    }
+
+    /**
+     * The error is attached to the field that was entered: a version of the form, or the new version.
+     */
+    private static void validateDistinctValidFroms(CompanyClosureEntry entry, CompanyClosureFormDto form, boolean hasNewVersion, Errors errors) {
+        final Set<LocalDate> submittedOriginals = new HashSet<>();
+        for (CompanyClosureVersionFormDto version : form.getVersions()) {
+            submittedOriginals.add(version.getOriginalValidFrom());
+        }
+
+        // the stored versions that are not part of the form keep their date
+        final Set<LocalDate> seen = new HashSet<>();
+        for (CompanyClosureVersion version : entry.versions()) {
+            if (version.validFrom() != null && !submittedOriginals.contains(version.validFrom())) {
+                seen.add(version.validFrom());
+            }
+        }
+
+        final List<CompanyClosureVersionFormDto> versions = form.getVersions();
+        for (int index = 0; index < versions.size(); index++) {
+            if (!seen.add(versions.get(index).getValidFrom())) {
+                errors.rejectValue("versions[%d].%s".formatted(index, ATTRIBUTE_VALID_FROM), ERROR_VALID_FROM_DUPLICATE);
+            }
+        }
+        if (hasNewVersion && !seen.add(form.getValidFrom())) {
+            errors.rejectValue(ATTRIBUTE_VALID_FROM, ERROR_VALID_FROM_DUPLICATE);
         }
     }
 
@@ -161,7 +271,7 @@ class CompanyClosureFormValidator implements Validator {
         } else if (companyClosureService.getCompanyClosureEntries().stream().map(CompanyClosureEntry::monthDay).anyMatch(monthDay::equals)) {
             errors.rejectValue(ATTRIBUTE_MONTH_DAY, ERROR_MONTH_DAY_EXISTS);
         } else {
-            validateNoCompanyWideBlackoutPeriod(monthDay, null, form, errors);
+            validateNoCompanyWideBlackoutPeriod(monthDay, form.getDayLength(), form.getValidFrom(), null, errors);
         }
     }
 
@@ -182,19 +292,45 @@ class CompanyClosureFormValidator implements Validator {
 
     /**
      * A closure day recurs every year from "valid from" until the next version starts, so a company-wide blackout
-     * period in any of these years containing the day blocks it. Removing the closure ({@code ZERO}) is never blocked.
+     * period in any of these years containing the day blocks it. Removing the closure ({@code ZERO}) or closing no
+     * more of the day than the version before is never blocked.
      *
+     * @param resultingVersions all versions after saving, sorted by "valid from" with the initial version first
+     */
+    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, CompanyClosureVersion version, List<CompanyClosureVersion> resultingVersions, Errors errors) {
+        final DayLength previous = resultingVersions.stream()
+            .filter(other -> isBefore(other.validFrom(), version.validFrom()))
+            .reduce((first, second) -> second)
+            .map(CompanyClosureVersion::dayLength)
+            .orElse(ZERO);
+        final boolean adds = (covers(version.dayLength(), MORNING) && !covers(previous, MORNING))
+            || (covers(version.dayLength(), NOON) && !covers(previous, NOON));
+        if (adds) {
+            final LocalDate nextVersionStart = resultingVersions.stream()
+                .map(CompanyClosureVersion::validFrom)
+                .filter(validFrom -> isAfter(validFrom, version.validFrom()))
+                .min(naturalOrder())
+                .orElse(null);
+            validateNoCompanyWideBlackoutPeriod(monthDay, version.dayLength(), version.validFrom(), nextVersionStart, errors);
+        }
+    }
+
+    private static boolean isBefore(@Nullable LocalDate validFrom, LocalDate date) {
+        return validFrom == null || validFrom.isBefore(date);
+    }
+
+    /**
      * @param nextVersionStart exclusive end of the years to check, {@code null} if no later version exists
      */
-    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable LocalDate nextVersionStart, CompanyClosureFormDto form, Errors errors) {
-        if (form.getDayLength() == null || form.getDayLength() == ZERO || form.getValidFrom() == null) {
+    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable DayLength dayLength, @Nullable LocalDate validFrom, @Nullable LocalDate nextVersionStart, Errors errors) {
+        if (dayLength == null || dayLength == ZERO || validFrom == null) {
             return;
         }
 
         blackoutPeriodService.getAllBlackoutPeriods().stream()
             .filter(BlackoutPeriod::isCompanyWide)
             .sorted(comparing(BlackoutPeriod::getStartDate))
-            .filter(period -> containsClosureDay(period, monthDay, form.getValidFrom(), nextVersionStart))
+            .filter(period -> containsClosureDay(period, monthDay, validFrom, nextVersionStart))
             .findFirst()
             .ifPresent(period -> errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{period.getTitle()}, null));
     }

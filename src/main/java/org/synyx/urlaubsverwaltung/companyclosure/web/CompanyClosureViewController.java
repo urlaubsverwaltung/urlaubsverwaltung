@@ -28,6 +28,7 @@ import java.time.MonthDay;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -150,11 +151,12 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
         // a rejected form comes back with its errors by the redirect
         if (!model.containsAttribute(COMPANY_CLOSURE)) {
-            final LocalDate today = LocalDate.now(clock);
+            // the new version starts with the day length valid today and without "valid from", so saving changed
+            // names keeps the versions as they are
             final CompanyClosureFormDto form = new CompanyClosureFormDto();
             form.setNames(namesOf(entry));
-            form.setDayLength(entry.dayLengthAt(today));
-            form.setValidFrom(today);
+            form.setDayLength(entry.dayLengthAt(LocalDate.now(clock)));
+            form.setVersions(editableVersionsOf(entry));
             model.addAttribute(COMPANY_CLOSURE, form);
         }
         addEditModel(model, entry, locale);
@@ -176,7 +178,16 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
             return "redirect:/web/company-closure/%s/edit".formatted(toPath(entry.monthDay()));
         }
 
-        companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom());
+        final Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom = new LinkedHashMap<>();
+        for (CompanyClosureVersionFormDto version : form.getVersions()) {
+            if (version.isChanged(entry.dayLengthAt(version.getOriginalValidFrom()))) {
+                changesByOldValidFrom.put(version.getOriginalValidFrom(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()));
+            }
+        }
+        companyClosureService.changeCompanyClosureVersions(entry.monthDay(), changesByOldValidFrom);
+        if (form.hasNewVersion(entry.dayLengthAt(LocalDate.now(clock)))) {
+            companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom());
+        }
         // unchanged names keep the translations of a closure provided by the application
         if (!form.getNameByLocale().equals(nameByLocaleOf(entry))) {
             companyClosureService.renameCompanyClosure(entry.monthDay(), form.getNameByLocale());
@@ -199,7 +210,43 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
         model.addAttribute("monthDay", entry.monthDay());
         model.addAttribute("monthDayPath", toPath(entry.monthDay()));
         model.addAttribute("companyClosureName", entry.name(locale));
+        model.addAttribute("olderVersions", olderVersionsOf(entry));
+        // the label tells planned versions from the ones that have started
+        model.addAttribute("today", LocalDate.now(clock));
         addFormModel(model, locale);
+    }
+
+    /**
+     * @return the versions starting in the current year or later, which can be changed, the latest first
+     */
+    private List<CompanyClosureVersionFormDto> editableVersionsOf(CompanyClosureEntry entry) {
+        final LocalDate startOfYear = minValidFrom();
+        return entry.versions().stream()
+            .filter(version -> isEditable(version, startOfYear))
+            .sorted(comparing(CompanyClosureVersion::validFrom, reverseOrder()))
+            .map(CompanyClosureViewController::toFormDto)
+            .toList();
+    }
+
+    private static CompanyClosureVersionFormDto toFormDto(CompanyClosureVersion version) {
+        return new CompanyClosureVersionFormDto(version.dayLength(), version.validFrom());
+    }
+
+    /**
+     * @return the versions starting before the current year, which cannot be changed anymore, the latest first and
+     * the initial one last
+     */
+    private List<CompanyClosureVersion> olderVersionsOf(CompanyClosureEntry entry) {
+        final LocalDate startOfYear = minValidFrom();
+        return entry.versions().stream()
+            .filter(version -> !isEditable(version, startOfYear))
+            .sorted(comparing(CompanyClosureVersion::validFrom, nullsLast(reverseOrder())))
+            .toList();
+    }
+
+    private static boolean isEditable(CompanyClosureVersion version, LocalDate startOfYear) {
+        final LocalDate validFrom = version.validFrom();
+        return validFrom != null && !validFrom.isBefore(startOfYear);
     }
 
     private void addFormModel(Model model, Locale locale) {

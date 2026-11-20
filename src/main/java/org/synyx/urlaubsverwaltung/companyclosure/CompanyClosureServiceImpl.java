@@ -139,6 +139,38 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     }
 
     @Override
+    @Transactional
+    public void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom) {
+        if (changesByOldValidFrom.isEmpty()) {
+            return;
+        }
+        final CompanyClosureEntity entity = findEntity(monthDay)
+            .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll().stream()
+            .filter(version -> version.getCompanyClosureId().equals(entity.getId()))
+            .toList();
+
+        for (Map.Entry<LocalDate, CompanyClosureVersion> change : changesByOldValidFrom.entrySet()) {
+            final CompanyClosureVersionEntity version = versions.stream()
+                .filter(candidate -> change.getKey().equals(candidate.getValidFrom()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No version of " + monthDay + " starting at " + change.getKey()));
+            requireNotBeforeCurrentYear(version.getValidFrom());
+            requireNotBeforeCurrentYear(change.getValue().validFrom());
+            version.setDayLength(change.getValue().dayLength());
+            version.setValidFrom(change.getValue().validFrom());
+        }
+
+        final long distinctValidFroms = versions.stream().map(CompanyClosureVersionEntity::getValidFrom).distinct().count();
+        if (distinctValidFroms < versions.size()) {
+            throw new IllegalArgumentException("Two versions of " + monthDay + " would start at the same date.");
+        }
+
+        companyClosureVersionRepository.saveAll(versions);
+        applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<CompanyClosureEntry> getCompanyClosureEntries() {
         final Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId = companyClosureVersionRepository.findAll().stream()

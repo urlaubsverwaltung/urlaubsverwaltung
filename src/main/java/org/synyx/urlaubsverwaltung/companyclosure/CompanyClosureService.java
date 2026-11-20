@@ -31,6 +31,19 @@ public interface CompanyClosureService {
     void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom, Person modifier);
 
     /**
+     * Changes versions of an existing company closure day, all at once, so their dates may be moved past each other.
+     * Versions starting in the current year or later can be changed, also the ones that have started already: this
+     * changes closure days in the past.
+     *
+     * @param monthDay              day of the closure
+     * @param changesByOldValidFrom the changed versions by the date they started from so far
+     * @throws IllegalArgumentException if there is no closure for the month day, a version to change does not
+     *                                  exist or starts before the current year, a changed version would start before
+     *                                  the current year or two versions would start at the same date
+     */
+    void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom);
+
+    /**
      * @return all company closure days sorted by month day, from 01.01. to 31.12. The versions of each day are
      * sorted by {@code validFrom} ascending: the initial version without {@code validFrom} first, the latest
      * version last. See {@link CompanyClosureEntry#versions()}.

@@ -36,9 +36,17 @@ public class CompanyClosureFormDto implements Serializable {
      * one name per supported language in the order of {@link org.synyx.urlaubsverwaltung.settings.SupportedLanguages}
      */
     private List<CompanyClosureNameFormDto> names = new ArrayList<>();
+    /**
+     * day length and "valid from" of a new closure day, or of a new version of an existing one. For an existing
+     * closure day the day length starts with the one valid today and "valid from" empty, see {@link #hasNewVersion}.
+     */
     private DayLength dayLength;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate validFrom;
+    /**
+     * the versions of an existing closure day that have not started yet, the latest first
+     */
+    private List<CompanyClosureVersionFormDto> versions = new ArrayList<>();
 
     public Integer getDay() {
         return day;
@@ -122,5 +130,21 @@ public class CompanyClosureFormDto implements Serializable {
 
     public String getValidFromIsoValue() {
         return validFrom == null ? "" : validFrom.format(DateTimeFormatter.ISO_DATE);
+    }
+
+    public List<CompanyClosureVersionFormDto> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<CompanyClosureVersionFormDto> versions) {
+        this.versions = versions;
+    }
+
+    /**
+     * @param currentDayLength the day length valid today, which the form starts with
+     * @return whether a new version is entered, i.e. "valid from" is given or another day length is chosen
+     */
+    public boolean hasNewVersion(DayLength currentDayLength) {
+        return validFrom != null || (dayLength != null && dayLength != currentDayLength);
     }
 }

@@ -224,6 +224,33 @@
   }
 }
 
+/* day length and "valid from" of a version in the history of the edit form, one below the other */
+.company-closure-version {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(4);
+  /* below the label of the row in the one column layout of the form, which starts the grid at lg */
+  margin-top: --spacing(2);
+
+  @variant lg {
+    margin-top: 0;
+  }
+}
+
+.company-closure-version__valid-from,
+.company-closure-version__day-length {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
+/* the versions before the current year, read only */
+.company-closure-version__older {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
 /* the width of the input column decides how many options of the day length fit in one line */
 .company-closure-day-length {
   display: block;

@@ -9,6 +9,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.FlashMap;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
@@ -32,6 +33,7 @@ import java.util.Map;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
 import static java.util.Locale.ENGLISH;
@@ -141,8 +143,14 @@ class CompanyClosureViewControllerTest {
     }
 
     @Test
-    void editPrefillsToday() throws Exception {
-        givenChristmasEve();
+    void editPrefillsNamesAndVersionsOfTheCurrentYearOrLater() throws Exception {
+        final List<CompanyClosureVersion> versions = List.of(
+            new CompanyClosureVersion(NOON, null),
+            new CompanyClosureVersion(FULL, LocalDate.of(2026, JANUARY, 1)),
+            new CompanyClosureVersion(MORNING, LocalDate.of(2027, JANUARY, 1)),
+            new CompanyClosureVersion(ZERO, LocalDate.of(2028, JANUARY, 1)));
+        final CompanyClosureEntry christmasEve = new CompanyClosureEntry(CHRISTMAS_EVE, CompanyClosureViewControllerTest::christmasEveName, Map.of(), versions);
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(christmasEve));
 
         final MvcResult result = perform(get("/web/company-closure/12-24/edit"))
             .andExpect(view().name("companyclosure/company_closure_form"))
@@ -150,8 +158,12 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attribute("monthDayPath", "12-24"))
             .andExpect(model().attribute("companyClosureName", "Christmas Eve"))
             .andExpect(model().attribute("minValidFrom", LocalDate.of(2026, JANUARY, 1)))
+            .andExpect(model().attribute("today", TODAY))
             .andExpect(model().attribute("dayLengths", List.of(MORNING, NOON, FULL, ZERO)))
             .andReturn();
+
+        // only the versions before the current year are shown read only
+        assertThat(result.getModelAndView().getModel()).containsEntry("olderVersions", List.of(new CompanyClosureVersion(NOON, null)));
 
         final CompanyClosureFormDto form = (CompanyClosureFormDto) result.getModelAndView().getModel().get("companyClosure");
         assertThat(form.getNames()).containsExactly(
@@ -159,8 +171,14 @@ class CompanyClosureViewControllerTest {
             new CompanyClosureNameFormDto(GERMAN_AUSTRIA, "Heiligabend"),
             new CompanyClosureNameFormDto(ENGLISH, "Christmas Eve"),
             new CompanyClosureNameFormDto(GREEK, "Παραμονή Χριστουγέννων"));
+        // the new version starts with the day length valid today, without "valid from"
         assertThat(form.getDayLength()).isEqualTo(FULL);
-        assertThat(form.getValidFrom()).isEqualTo(TODAY);
+        assertThat(form.getValidFrom()).isNull();
+        // the versions of the current year or later can be changed, also the one that has started, the latest first
+        assertThat(form.getVersions()).satisfiesExactly(
+            version -> assertThat(version).usingRecursiveComparison().isEqualTo(new CompanyClosureVersionFormDto(ZERO, LocalDate.of(2028, JANUARY, 1))),
+            version -> assertThat(version).usingRecursiveComparison().isEqualTo(new CompanyClosureVersionFormDto(MORNING, LocalDate.of(2027, JANUARY, 1))),
+            version -> assertThat(version).usingRecursiveComparison().isEqualTo(new CompanyClosureVersionFormDto(FULL, LocalDate.of(2026, JANUARY, 1))));
     }
 
     @Test
@@ -185,13 +203,47 @@ class CompanyClosureViewControllerTest {
         givenChristmasEve();
 
         perform(withNames(post("/web/company-closure/12-24/edit"), "Weihnachten", "", "Christmas", "")
-            .param("dayLength", "FULL")
-            .param("validFrom", "01.01.2026"))
+            .param("dayLength", "ZERO")
+            .param("validFrom", "01.12.2026"))
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas"));
 
-        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, JANUARY, 1));
+        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, LocalDate.of(2026, DECEMBER, 1));
         verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
+    }
+
+    @Test
+    void rejectsNewVersionAtTheDateOfAStartedVersion() throws Exception {
+        givenChristmasEve();
+
+        final MvcResult rejected = perform(withNames(post("/web/company-closure/12-24/edit"), "Heiligabend", "", "", "")
+            .param("dayLength", "ZERO")
+            .param("validFrom", "01.01.2026"))
+            .andExpect(redirectedUrl("/web/company-closure/12-24/edit"))
+            .andReturn();
+
+        final BindingResult errors = (BindingResult) rejected.getFlashMap().get(BindingResult.MODEL_KEY_PREFIX + "companyClosure");
+        assertThat(errors.getFieldError("validFrom").getCode()).isEqualTo("company-closure.error.validFrom.duplicate");
+        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
+    }
+
+    @Test
+    void savesChangedPlannedVersionWithoutNewVersion() throws Exception {
+        final List<CompanyClosureVersion> versions = List.of(
+            new CompanyClosureVersion(NOON, null),
+            new CompanyClosureVersion(MORNING, LocalDate.of(2027, JANUARY, 1)));
+        final CompanyClosureEntry christmasEve = new CompanyClosureEntry(CHRISTMAS_EVE, CompanyClosureViewControllerTest::christmasEveName, Map.of(), versions);
+        when(companyClosureService.getCompanyClosureEntries()).thenReturn(List.of(christmasEve));
+
+        perform(withNames(post("/web/company-closure/12-24/edit"), "Heiligabend", "Heiligabend", "Christmas Eve", "Παραμονή Χριστουγέννων")
+            .param("versions[0].originalValidFrom", "2027-01-01")
+            .param("versions[0].dayLength", "FULL")
+            .param("versions[0].validFrom", "01.07.2027"))
+            .andExpect(redirectedUrl("/web/company-closure"));
+
+        verify(companyClosureService).changeCompanyClosureVersions(CHRISTMAS_EVE,
+            Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1))));
+        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
     }
 
     @Test
