@@ -186,16 +186,27 @@ export const HolidayService = (function () {
   const isSameAbsence = (one, other) =>
     Boolean(one && other) && one.absenceType === other.absenceType && one.id === other.id;
 
+  // whether the half day lies within the period of an absence of several days. a half-day absence is a single day,
+  // so a single day never reaches its free half.
+  const isInPeriodOf = (absence, { date }) => {
+    if (!absence?.from || absence.from === absence.to) {
+      return false;
+    }
+    const formattedDate = format(date, "yyyy-MM-dd");
+    return absence.from <= formattedDate && formattedDate <= absence.to;
+  };
+
   const halfDayIndex = ({ date, half }) =>
     differenceInCalendarDays(date, new Date(2000, 0, 1)) * 2 + (half === "NOON" ? 1 : 0);
 
-  // the outermost half day of the absence the bar reaches in the direction of step, across half days off
+  // the outermost half day of the absence the bar reaches in the direction of step, across half days off.
+  // half days off at the start or end of the absence's period belong to the bar as well.
   function barEnd(halfDay, absence, step) {
     let end = halfDay;
     let current = step(halfDay);
     let absenceOnCurrent = personalAbsenceOn(current);
     while (isSameAbsence(absenceOnCurrent, absence) || (!absenceOnCurrent && !isWorkingHalf(current))) {
-      if (absenceOnCurrent) {
+      if (absenceOnCurrent || isInPeriodOf(absence, current)) {
         end = current;
       }
       current = step(current);
@@ -223,37 +234,36 @@ export const HolidayService = (function () {
     return extent;
   }
 
-  // where the half day is in its bar, counted in half days
-  function barPosition(halfDay, absence) {
+  // the piece of the bar of the absence on the half day, placed by where the half day is in its bar
+  function barPiece(halfDay, absence, bridge) {
     const { first, last } = barExtent(halfDay, absence);
-    return { barOffset: halfDayIndex(halfDay) - first, barLength: last - first + 1 };
+    const index = halfDayIndex(halfDay);
+    return {
+      absence,
+      bridge,
+      continuesBefore: index > first,
+      continuesAfter: index < last,
+      barOffset: index - first,
+      barLength: last - first + 1,
+    };
   }
 
   // an empty piece when no bar runs across the half day
   function absenceBarPiece(halfDay) {
-    const before = adjacentAbsence(halfDay, previousHalfDay);
-    const after = adjacentAbsence(halfDay, nextHalfDay);
-
     const absence = personalAbsenceOn(halfDay);
     if (absence) {
-      return {
-        absence,
-        bridge: false,
-        continuesBefore: isSameAbsence(absence, before),
-        continuesAfter: isSameAbsence(absence, after),
-        ...barPosition(halfDay, absence),
-      };
+      return barPiece(halfDay, absence, false);
     }
-    if (!isWorkingHalf(halfDay) && isSameAbsence(before, after)) {
-      return {
-        absence: before,
-        bridge: true,
-        continuesBefore: true,
-        continuesAfter: true,
-        ...barPosition(halfDay, before),
-      };
+    if (isWorkingHalf(halfDay)) {
+      return {};
     }
-    return {};
+
+    const before = adjacentAbsence(halfDay, previousHalfDay);
+    const after = adjacentAbsence(halfDay, nextHalfDay);
+    const bridged = isSameAbsence(before, after)
+      ? before
+      : [before, after].find((candidate) => isInPeriodOf(candidate, halfDay));
+    return bridged ? barPiece(halfDay, bridged, true) : {};
   }
 
   function getBlackoutPeriodsForDate(date) {
@@ -422,7 +432,7 @@ export const HolidayService = (function () {
 
     /**
      * A vacation or sick note of several days is drawn as one bar. It runs across no workdays and public holidays
-     * in between, which are drawn as a bridge.
+     * in between, and at the start or end of its period, which are drawn as a bridge.
      *
      * @param {Date} date
      * @returns {Array} the pieces of the bars on the day, as
