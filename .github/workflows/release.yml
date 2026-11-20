@@ -41,13 +41,18 @@ jobs:
             ./target/urlaubsverwaltung-*.jar
             ./target/urlaubsverwaltung-*.cdx.json
 
-  # Builds the image without access to any registry, the upload jobs push it with --preserve-digests
+  # Builds the image per architecture (natively) without access to any registry, the upload jobs push it with --preserve-digests
   container-image:
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
-    outputs:
-      digest: ${{ steps.export.outputs.digest }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
@@ -62,15 +67,13 @@ jobs:
           -Ddocker-publish-registry=localhost
           -Ddocker-publish-registry-path=urlaubsverwaltung
       - name: Export docker image
-        id: export
         # layers are compressed once here, the upload jobs push these exact bytes so both registries get the same digest
         run: |
           docker save "localhost/urlaubsverwaltung/urlaubsverwaltung:${GITHUB_REF#refs/*/urlaubsverwaltung-}" -o image.tar
           skopeo copy --dest-compress docker-archive:image.tar dir:image
-          echo "digest=$(skopeo manifest-digest image/manifest.json)" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: container-image
+          name: container-image-${{ matrix.arch }}
           path: image
           retention-days: 1
           compression-level: 0
@@ -87,27 +90,38 @@ jobs:
       artifact-metadata: write
     env:
       IMAGE: ghcr.io/${{ github.repository }}/urlaubsverwaltung
-      DIGEST: ${{ needs.container-image.outputs.digest }}
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
-          name: container-image
-          path: image
+          pattern: container-image-*
+          path: images
       - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish docker image to GitHub Container Registry
-        run: skopeo copy --preserve-digests dir:image "docker://$IMAGE:${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+      - name: Publish docker images to GitHub Container Registry
+        run: |
+          VERSION="${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+          for arch in amd64 arm64; do
+            skopeo copy --preserve-digests "dir:images/container-image-$arch" "docker://$IMAGE:$VERSION-$arch"
+          done
+      - name: Create multi-arch manifest
+        id: manifest
+        run: |
+          VERSION="${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+          docker buildx imagetools create -t "$IMAGE:$VERSION" "$IMAGE:$VERSION-amd64" "$IMAGE:$VERSION-arm64"
+          echo "digest=$(docker buildx imagetools inspect "$IMAGE:$VERSION" --format '{{.Manifest.Digest}}')" >> "$GITHUB_OUTPUT"
       - name: Attest build provenance
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
         with:
           subject-name: ${{ env.IMAGE }}
-          subject-digest: ${{ env.DIGEST }}
+          subject-digest: ${{ steps.manifest.outputs.digest }}
           push-to-registry: true
       - name: Sign image
+        env:
+          DIGEST: ${{ steps.manifest.outputs.digest }}
         run: cosign sign --yes "$IMAGE@$DIGEST"
 
   container-upload-docker-hub-urlaubsverwaltung:
@@ -121,26 +135,37 @@ jobs:
       artifact-metadata: write
     env:
       IMAGE: docker.io/urlaubsverwaltung/urlaubsverwaltung
-      DIGEST: ${{ needs.container-image.outputs.digest }}
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
-          name: container-image
-          path: image
+          pattern: container-image-*
+          path: images
       - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532
       - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
         with:
           username: ${{ secrets.DOCKER_UV_USERNAME }}
           password: ${{ secrets.DOCKER_UV_TOKEN }}
-      - name: Publish docker image to Docker Hub urlaubsverwaltung
-        run: skopeo copy --preserve-digests dir:image "docker://$IMAGE:${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+      - name: Publish docker images to Docker Hub urlaubsverwaltung
+        run: |
+          VERSION="${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+          for arch in amd64 arm64; do
+            skopeo copy --preserve-digests "dir:images/container-image-$arch" "docker://$IMAGE:$VERSION-$arch"
+          done
+      - name: Create multi-arch manifest
+        id: manifest
+        run: |
+          VERSION="${GITHUB_REF#refs/*/urlaubsverwaltung-}"
+          docker buildx imagetools create -t "$IMAGE:$VERSION" "$IMAGE:$VERSION-amd64" "$IMAGE:$VERSION-arm64"
+          echo "digest=$(docker buildx imagetools inspect "$IMAGE:$VERSION" --format '{{.Manifest.Digest}}')" >> "$GITHUB_OUTPUT"
       - name: Attest build provenance
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
         with:
           subject-name: ${{ env.IMAGE }}
-          subject-digest: ${{ env.DIGEST }}
+          subject-digest: ${{ steps.manifest.outputs.digest }}
           push-to-registry: true
       - name: Sign image
+        env:
+          DIGEST: ${{ steps.manifest.outputs.digest }}
         run: cosign sign --yes "$IMAGE@$DIGEST"
 
   helm-chart-release:
