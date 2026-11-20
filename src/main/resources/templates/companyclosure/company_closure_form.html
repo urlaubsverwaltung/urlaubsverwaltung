@@ -194,21 +194,28 @@
               </div>
             </div>
 
-            <div class="uv-form__input-row pt-4">
-              <label for="dayLength" th:text="|#{company-closure.data.dayLength}:|">Betriebsruhe</label>
-              <span
-                th:replace="~{fragments/select::one(id='dayLength', name='dayLength', options=~{::companyclosure-daylength-options}, required=true)}"
+            <div class="uv-form__input-row pt-4" th:with="hasDayLengthErrors=${#fields.hasErrors('dayLength')}">
+              <p
+                id="dayLength-label"
+                class="uv-form__label uv-form__label--required"
+                th:text="|#{company-closure.data.dayLength}:|"
               >
-                <th:block th:fragment="companyclosure-daylength-options">
-                  <option
-                    th:each="dayLength : ${ {'ZERO', 'MORNING', 'NOON', 'FULL'} }"
+                Betriebsruhe
+              </p>
+              <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length">
+                <label th:each="dayLength : ${ {'ZERO', 'MORNING', 'NOON', 'FULL'} }">
+                  <input
+                    type="radio"
+                    required
+                    th:field="*{dayLength}"
                     th:value="${dayLength}"
-                    th:text="#{|company-closure.dayLength.${dayLength}|}"
-                    th:selected="${companyClosure.dayLength != null and companyClosure.dayLength.name() == dayLength}"
-                  ></option>
-                </th:block>
-              </span>
-              <p id="dayLength-error" class="uv-form__input-error" th:if="${#fields.hasErrors('dayLength')}">
+                    th:aria-invalid="${hasDayLengthErrors} ? 'true'"
+                    th:aria-describedby="${hasDayLengthErrors} ? 'dayLength-error'"
+                  />
+                  <th:block th:text="#{|company-closure.dayLength.${dayLength}|}">ganztägig</th:block>
+                </label>
+              </div>
+              <p id="dayLength-error" class="uv-form__input-error" th:if="${hasDayLengthErrors}">
                 <th:block th:errors="*{dayLength}">dayLength Error</th:block>
               </p>
             </div>

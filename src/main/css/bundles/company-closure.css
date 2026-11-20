@@ -224,6 +224,20 @@
   }
 }
 
+/* the options of the day length, one per line in a narrow main container and two per line from md on. the input
+   column of the form is too narrow for all four in one line, a grid never leaves one of them alone in the last line */
+.company-closure-day-length {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+
+  @variant @md/main {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: --spacing(6);
+  }
+}
+
 /* side note of a row whose inputs have their label on top. beside the row it starts at the input, not at the label */
 .company-closure-form__info {
   @variant lg {
