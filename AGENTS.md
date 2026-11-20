@@ -17,6 +17,7 @@ Before adding or changing code, read the conventions of its language:
 
 - Java: [docs/development/java.md](docs/development/java.md)
 - CSS in `src/main/css` and `src/main/javascript`: [docs/development/css.md](docs/development/css.md)
+- Thymeleaf templates in `src/main/resources/templates`: [docs/development/thymeleaf.md](docs/development/thymeleaf.md)
 
 Conventions of another language go into `docs/development/<language>.md` with one line here that says when to
 read the file.
