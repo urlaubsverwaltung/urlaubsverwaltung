@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -65,17 +67,20 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
 
     private final CompanyClosureService companyClosureService;
     private final CompanyClosureFormValidator validator;
+    private final PersonService personService;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
     private final MessageSource messageSource;
     private final Clock clock;
 
     CompanyClosureViewController(CompanyClosureService companyClosureService, CompanyClosureFormValidator validator,
+                                 PersonService personService,
                                  PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
                                  PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier,
                                  MessageSource messageSource, Clock clock) {
         this.companyClosureService = companyClosureService;
         this.validator = validator;
+        this.personService = personService;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
         this.messageSource = messageSource;
@@ -136,8 +141,9 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
             return "redirect:/web/company-closure/new";
         }
 
+        final Person signedInUser = personService.getSignedInUser();
         companyClosureService.createCompanyClosure(MonthDay.of(form.getMonth(), form.getDay()), form.getNameByLocale(),
-            form.getDayLength(), form.getValidFrom());
+            form.getDayLength(), form.getValidFrom(), signedInUser);
         redirectAttributes.addFlashAttribute("createdCompanyClosureName", form.nameFor(locale));
 
         return REDIRECT_TO_LIST;
@@ -184,13 +190,14 @@ class CompanyClosureViewController implements HasLaunchpad, HasPersonSearch {
                 changesByOldValidFrom.put(version.getOriginalValidFrom(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()));
             }
         }
-        companyClosureService.changeCompanyClosureVersions(entry.monthDay(), changesByOldValidFrom);
+        final Person signedInUser = personService.getSignedInUser();
+        companyClosureService.changeCompanyClosureVersions(entry.monthDay(), changesByOldValidFrom, signedInUser);
         if (form.hasNewVersion(entry.dayLengthAt(LocalDate.now(clock)))) {
-            companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom());
+            companyClosureService.changeCompanyClosure(entry.monthDay(), form.getDayLength(), form.getValidFrom(), signedInUser);
         }
         // unchanged names keep the translations of a closure provided by the application
         if (!form.getNameByLocale().equals(nameByLocaleOf(entry))) {
-            companyClosureService.renameCompanyClosure(entry.monthDay(), form.getNameByLocale());
+            companyClosureService.renameCompanyClosure(entry.monthDay(), form.getNameByLocale(), signedInUser);
         }
         redirectAttributes.addFlashAttribute("updatedCompanyClosureName", form.nameFor(locale));
 

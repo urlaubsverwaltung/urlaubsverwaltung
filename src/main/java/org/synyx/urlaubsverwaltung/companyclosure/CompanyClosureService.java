@@ -37,11 +37,12 @@ public interface CompanyClosureService {
      *
      * @param monthDay              day of the closure
      * @param changesByOldValidFrom the changed versions by the date they started from so far
+     * @param modifier              person who changes the versions
      * @throws IllegalArgumentException if there is no closure for the month day, a version to change does not
      *                                  exist or starts before the current year, a changed version would start before
      *                                  the current year or two versions would start at the same date
      */
-    void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom);
+    void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom, Person modifier);
 
     /**
      * @return all company closure days sorted by month day, from 01.01. to 31.12. The versions of each day are
@@ -58,10 +59,11 @@ public interface CompanyClosureService {
      *                  these languages show a generic name.
      * @param dayLength closed portion of the day
      * @param validFrom first date the closure applies to, not before the start of the current year
+     * @param creator   person who creates the closure
      * @throws IllegalArgumentException if there is a closure for the month day already, the month day is 29.02.,
      *                                  validFrom lies before the current year or all names are blank
      */
-    void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom);
+    void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom, Person creator);
 
     /**
      * Renames a company closure day. Names are not versioned, the new names apply to all years. They replace all
@@ -69,7 +71,8 @@ public interface CompanyClosureService {
      *
      * @param names name of the closure per language, at least one of them not blank. Blank names are not stored,
      *              these languages show a generic name.
+     * @param modifier person who renames the closure
      * @throws IllegalArgumentException if there is no closure for the month day or all names are blank
      */
-    void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names);
+    void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names, Person modifier);
 }

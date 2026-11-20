@@ -24,6 +24,7 @@ import java.util.Map;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.Month.NOVEMBER;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -267,8 +269,11 @@ class CompanyClosureServiceImplTest {
 
         sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, NOVEMBER, 6), MODIFIER);
 
-        verify(companyClosureVersionRepository).save(argThat(version ->
-            Instant.parse("2026-11-06T00:00:00Z").equals(version.getLastModifiedAt()) && MODIFIER.equals(version.getLastModifiedBy())));
+        final ArgumentCaptor<CompanyClosureVersionEntity> versionCaptor = ArgumentCaptor.forClass(CompanyClosureVersionEntity.class);
+        verify(companyClosureVersionRepository).save(versionCaptor.capture());
+        assertThat(versionCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getLastModifiedAt, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(Instant.parse("2026-11-06T00:00:00Z"), MODIFIER);
     }
 
     @Test
@@ -329,19 +334,25 @@ class CompanyClosureServiceImplTest {
         final MonthDay bridgeDay = MonthDay.of(MAY, 15);
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
 
-        sut.createCompanyClosure(bridgeDay, Map.of(GERMAN, " Brückentag ", ENGLISH, ""), FULL, validFrom);
+        sut.createCompanyClosure(bridgeDay, Map.of(GERMAN, " Brückentag ", ENGLISH, ""), FULL, validFrom, MODIFIER);
 
         final ArgumentCaptor<CompanyClosureEntity> entityCaptor = ArgumentCaptor.forClass(CompanyClosureEntity.class);
         verify(companyClosureRepository).save(entityCaptor.capture());
         assertThat(entityCaptor.getValue())
             .extracting(CompanyClosureEntity::getMonth, CompanyClosureEntity::getDayOfMonth, CompanyClosureEntity::getNameByLocale, CompanyClosureEntity::getMessageKey)
             .containsExactly(5, 15, Map.of(GERMAN, "Brückentag"), null);
+        assertThat(entityCaptor.getValue())
+            .extracting(CompanyClosureEntity::getLastModifiedAt, CompanyClosureEntity::getLastModifiedBy)
+            .containsExactly(Instant.parse("2026-11-06T00:00:00Z"), MODIFIER);
 
         final ArgumentCaptor<CompanyClosureVersionEntity> versionCaptor = ArgumentCaptor.forClass(CompanyClosureVersionEntity.class);
         verify(companyClosureVersionRepository).save(versionCaptor.capture());
         assertThat(versionCaptor.getValue())
             .extracting(CompanyClosureVersionEntity::getCompanyClosureId, CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom)
             .containsExactly(2L, FULL, validFrom);
+        assertThat(versionCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getLastModifiedAt, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(Instant.parse("2026-11-06T00:00:00Z"), MODIFIER);
 
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(bridgeDay));
     }
@@ -352,7 +363,7 @@ class CompanyClosureServiceImplTest {
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
         final Map<Locale, String> names = Map.of(GERMAN, "Heiligabend");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(CHRISTMAS_EVE, names, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(CHRISTMAS_EVE, names, FULL, validFrom, MODIFIER));
         verify(companyClosureRepository, never()).save(any());
         verifyNoInteractions(companyClosureVersionRepository, applicationEventPublisher);
     }
@@ -363,7 +374,7 @@ class CompanyClosureServiceImplTest {
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
         final Map<Locale, String> names = Map.of(GERMAN, "Schalttag");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(leapDay, names, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(leapDay, names, FULL, validFrom, MODIFIER));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
     }
 
@@ -373,7 +384,7 @@ class CompanyClosureServiceImplTest {
         final LocalDate validFrom = LocalDate.of(2025, DECEMBER, 31);
         final Map<Locale, String> names = Map.of(GERMAN, "Brückentag");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom, MODIFIER));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
     }
 
@@ -383,8 +394,25 @@ class CompanyClosureServiceImplTest {
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
         final Map<Locale, String> names = Map.of(GERMAN, " ");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.createCompanyClosure(bridgeDay, names, FULL, validFrom, MODIFIER));
         verifyNoInteractions(companyClosureRepository, companyClosureVersionRepository, applicationEventPublisher);
+    }
+
+    @Test
+    void changedVersionsRecordTheModifier() {
+        final CompanyClosureVersionEntity initial = version(NOON, null);
+        final CompanyClosureVersionEntity planned = version(MORNING, LocalDate.of(2027, JANUARY, 1));
+        givenChristmasEve(initial, planned);
+
+        sut.changeCompanyClosureVersions(CHRISTMAS_EVE,
+            Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1))), MODIFIER);
+
+        assertThat(planned)
+            .extracting(CompanyClosureVersionEntity::getDayLength, CompanyClosureVersionEntity::getValidFrom,
+                CompanyClosureVersionEntity::getLastModifiedAt, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(FULL, LocalDate.of(2027, JULY, 1), Instant.parse("2026-11-06T00:00:00Z"), MODIFIER);
+        assertThat(initial.getLastModifiedBy()).isNull();
+        assertThat(initial.getLastModifiedAt()).isNull();
     }
 
     @Test
@@ -392,9 +420,11 @@ class CompanyClosureServiceImplTest {
         final CompanyClosureEntity christmasEve = christmasEveEntity();
         when(companyClosureRepository.findAll()).thenReturn(List.of(christmasEve));
 
-        sut.renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
+        sut.renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"), MODIFIER);
 
         assertThat(christmasEve.getNameByLocale()).isEqualTo(Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
+        assertThat(christmasEve.getLastModifiedAt()).isEqualTo(Instant.parse("2026-11-06T00:00:00Z"));
+        assertThat(christmasEve.getLastModifiedBy()).isEqualTo(MODIFIER);
         assertThat(christmasEve.getMessageKey()).isEqualTo("companyclosure.name.christmasEve");
         verify(companyClosureRepository).save(christmasEve);
     }
@@ -405,7 +435,7 @@ class CompanyClosureServiceImplTest {
         final MonthDay labourDay = MonthDay.of(MAY, 1);
         final Map<Locale, String> names = Map.of(GERMAN, "Tag der Arbeit");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(labourDay, names));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(labourDay, names, MODIFIER));
         verify(companyClosureRepository, never()).save(any());
     }
 
@@ -413,7 +443,7 @@ class CompanyClosureServiceImplTest {
     void renameRejectsMissingName() {
         final Map<Locale, String> names = Map.of(GERMAN, "");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(CHRISTMAS_EVE, names));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.renameCompanyClosure(CHRISTMAS_EVE, names, MODIFIER));
         verify(companyClosureRepository, never()).save(any());
     }
 

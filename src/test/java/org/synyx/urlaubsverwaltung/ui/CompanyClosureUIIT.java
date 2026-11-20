@@ -137,9 +137,8 @@ class CompanyClosureUIIT {
     @Test
     void ensureClosureDayIsEditedAndCancelLeadsToTheOverviewAfterInvalidSubmits(Page page) {
 
-        companyClosureService.createCompanyClosure(MonthDay.of(JUNE, 16), Map.of(GERMAN, "Sommerfest"), FULL, LocalDate.now());
-
-        loginAsOffice(page, "closure.edit@example.org");
+        final Person office = loginAsOffice(page, "closure.edit@example.org");
+        companyClosureService.createCompanyClosure(MonthDay.of(JUNE, 16), Map.of(GERMAN, "Sommerfest"), FULL, LocalDate.now(), office);
 
         final CompanyClosureOverviewPage overviewPage = new CompanyClosureOverviewPage(page);
         final CompanyClosureFormPage formPage = new CompanyClosureFormPage(page);
@@ -184,11 +183,13 @@ class CompanyClosureUIIT {
         assertThat(overviewPage.closureDays()).not().containsText("Sommerfest");
     }
 
-    private void loginAsOffice(Page page, String email) {
+    private Person loginAsOffice(Page page, String email) {
         final String userId = keycloak.createUser(email, "Olga", "Office", email, email);
         final Person office = personService.create(userId, "Olga", "Office", email, List.of(), List.of(USER, OFFICE));
 
         new LoginPage(page, port).login(new LoginPage.Credentials(office.getEmail(), office.getEmail()));
         page.waitForURL(OverviewPage.URL_PATTERN);
+
+        return office;
     }
 }

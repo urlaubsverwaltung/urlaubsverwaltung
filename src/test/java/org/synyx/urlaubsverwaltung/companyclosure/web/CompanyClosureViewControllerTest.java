@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureEntry;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersion;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 
@@ -66,6 +68,7 @@ class CompanyClosureViewControllerTest {
     private static final LocalDate TODAY = LocalDate.of(2026, NOVEMBER, 6);
     private static final Locale GERMAN_AUSTRIA = forLanguageTag("de-AT");
     private static final Locale GREEK = forLanguageTag("el");
+    private static final Person SIGNED_IN_USER = new Person("office", "Muster", "Marlene", "muster@example.org");
 
     private CompanyClosureViewController sut;
 
@@ -73,6 +76,8 @@ class CompanyClosureViewControllerTest {
     private CompanyClosureService companyClosureService;
     @Mock
     private BlackoutPeriodService blackoutPeriodService;
+    @Mock
+    private PersonService personService;
     @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
@@ -82,7 +87,7 @@ class CompanyClosureViewControllerTest {
     void setUp() {
         final Clock clock = Clock.fixed(TODAY.atStartOfDay(ZoneId.of("UTC")).toInstant(), ZoneId.of("UTC"));
         sut = new CompanyClosureViewController(companyClosureService, new CompanyClosureFormValidator(companyClosureService, blackoutPeriodService, clock),
-            defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource(), clock);
+            personService, defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier, messageSource(), clock);
     }
 
     @Test
@@ -200,6 +205,7 @@ class CompanyClosureViewControllerTest {
 
     @Test
     void savesWithChosenValidFrom() throws Exception {
+        when(personService.getSignedInUser()).thenReturn(SIGNED_IN_USER);
         givenChristmasEve();
 
         perform(withNames(post("/web/company-closure/12-24/edit"), "Weihnachten", "", "Christmas", "")
@@ -208,8 +214,8 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas"));
 
-        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, LocalDate.of(2026, DECEMBER, 1));
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"));
+        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, LocalDate.of(2026, DECEMBER, 1), SIGNED_IN_USER);
+        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten", ENGLISH, "Christmas"), SIGNED_IN_USER);
     }
 
     @Test
@@ -224,11 +230,12 @@ class CompanyClosureViewControllerTest {
 
         final BindingResult errors = (BindingResult) rejected.getFlashMap().get(BindingResult.MODEL_KEY_PREFIX + "companyClosure");
         assertThat(errors.getFieldError("validFrom").getCode()).isEqualTo("company-closure.error.validFrom.duplicate");
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
+        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
     }
 
     @Test
     void savesChangedPlannedVersionWithoutNewVersion() throws Exception {
+        when(personService.getSignedInUser()).thenReturn(SIGNED_IN_USER);
         final List<CompanyClosureVersion> versions = List.of(
             new CompanyClosureVersion(NOON, null),
             new CompanyClosureVersion(MORNING, LocalDate.of(2027, JANUARY, 1)));
@@ -242,12 +249,13 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"));
 
         verify(companyClosureService).changeCompanyClosureVersions(CHRISTMAS_EVE,
-            Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1))));
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
+            Map.of(LocalDate.of(2027, JANUARY, 1), new CompanyClosureVersion(FULL, LocalDate.of(2027, JULY, 1))), SIGNED_IN_USER);
+        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
     }
 
     @Test
     void savesWithoutRenamingWhenNameIsUnchanged() throws Exception {
+        when(personService.getSignedInUser()).thenReturn(SIGNED_IN_USER);
         givenChristmasEve();
 
         perform(withNames(post("/web/company-closure/12-24/edit"), "Heiligabend", "Heiligabend", "Christmas Eve", "Παραμονή Χριστουγέννων")
@@ -256,12 +264,13 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Christmas Eve"));
 
-        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, TODAY);
-        verify(companyClosureService, never()).renameCompanyClosure(any(), any());
+        verify(companyClosureService).changeCompanyClosure(CHRISTMAS_EVE, ZERO, TODAY, SIGNED_IN_USER);
+        verify(companyClosureService, never()).renameCompanyClosure(any(), any(), any());
     }
 
     @Test
     void trimsNameBeforeSaving() throws Exception {
+        when(personService.getSignedInUser()).thenReturn(SIGNED_IN_USER);
         givenChristmasEve();
 
         perform(withNames(post("/web/company-closure/12-24/edit"), "  Weihnachten ", " ", "", "")
@@ -270,11 +279,12 @@ class CompanyClosureViewControllerTest {
             .andExpect(redirectedUrl("/web/company-closure"))
             .andExpect(flash().attribute("updatedCompanyClosureName", "Weihnachten"));
 
-        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten"));
+        verify(companyClosureService).renameCompanyClosure(CHRISTMAS_EVE, Map.of(GERMAN, "Weihnachten"), SIGNED_IN_USER);
     }
 
     @Test
     void createsNewDay() throws Exception {
+        when(personService.getSignedInUser()).thenReturn(SIGNED_IN_USER);
         givenChristmasEve();
 
         perform(withNames(post("/web/company-closure/new"), "Brückentag", "Fenstertag", "Bridge day", "")
@@ -286,7 +296,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(flash().attribute("createdCompanyClosureName", "Bridge day"));
 
         verify(companyClosureService).createCompanyClosure(MonthDay.of(MAY, 15),
-            Map.of(GERMAN, "Brückentag", GERMAN_AUSTRIA, "Fenstertag", ENGLISH, "Bridge day"), FULL, TODAY);
+            Map.of(GERMAN, "Brückentag", GERMAN_AUSTRIA, "Fenstertag", ENGLISH, "Bridge day"), FULL, TODAY, SIGNED_IN_USER);
     }
 
     @Test
@@ -343,7 +353,7 @@ class CompanyClosureViewControllerTest {
         assertThat(form.getDayLength()).isEqualTo(NOON);
         assertThat(form.nameFor(GERMAN)).isEqualTo("Heiligabend");
 
-        verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any());
+        verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -363,7 +373,7 @@ class CompanyClosureViewControllerTest {
             .andExpect(model().attributeHasFieldErrorCode("companyClosure", "month", "typeMismatch"))
             .andExpect(model().attributeErrorCount("companyClosure", 2));
 
-        verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any());
+        verify(companyClosureService, never()).createCompanyClosure(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -377,7 +387,7 @@ class CompanyClosureViewControllerTest {
             .param("validFrom", "06.11.2026"))
             .andExpect(status().isNotFound());
 
-        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any());
+        verify(companyClosureService, never()).changeCompanyClosure(any(), any(), any(), any());
     }
 
     /**

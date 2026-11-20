@@ -140,7 +140,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom) {
+    public void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom, Person modifier) {
         if (changesByOldValidFrom.isEmpty()) {
             return;
         }
@@ -150,6 +150,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             .filter(version -> version.getCompanyClosureId().equals(entity.getId()))
             .toList();
 
+        final Instant now = Instant.now(clock);
         for (Map.Entry<LocalDate, CompanyClosureVersion> change : changesByOldValidFrom.entrySet()) {
             final CompanyClosureVersionEntity version = versions.stream()
                 .filter(candidate -> change.getKey().equals(candidate.getValidFrom()))
@@ -159,6 +160,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             requireNotBeforeCurrentYear(change.getValue().validFrom());
             version.setDayLength(change.getValue().dayLength());
             version.setValidFrom(change.getValue().validFrom());
+            version.setLastModifiedAt(now);
+            version.setLastModifiedBy(modifier);
         }
 
         final long distinctValidFroms = versions.stream().map(CompanyClosureVersionEntity::getValidFrom).distinct().count();
@@ -203,7 +206,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom) {
+    public void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom, Person creator) {
         requireNotBeforeCurrentYear(validFrom);
         final Map<Locale, String> nameByLocale = requireName(names);
         if (LEAP_DAY.equals(monthDay)) {
@@ -213,16 +216,21 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             throw new IllegalArgumentException("Company closure for " + monthDay + " exists already.");
         }
 
+        final Instant now = Instant.now(clock);
         final CompanyClosureEntity entity = new CompanyClosureEntity();
         entity.setMonth(monthDay.getMonthValue());
         entity.setDayOfMonth(monthDay.getDayOfMonth());
         entity.setNameByLocale(nameByLocale);
+        entity.setLastModifiedAt(now);
+        entity.setLastModifiedBy(creator);
         final CompanyClosureEntity saved = companyClosureRepository.save(entity);
 
         final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
         version.setCompanyClosureId(saved.getId());
         version.setDayLength(dayLength);
         version.setValidFrom(validFrom);
+        version.setLastModifiedAt(now);
+        version.setLastModifiedBy(creator);
         companyClosureVersionRepository.save(version);
 
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
@@ -230,11 +238,13 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names) {
+    public void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names, Person modifier) {
         final Map<Locale, String> nameByLocale = requireName(names);
         final CompanyClosureEntity entity = findEntity(monthDay)
             .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
         entity.setNameByLocale(nameByLocale);
+        entity.setLastModifiedAt(Instant.now(clock));
+        entity.setLastModifiedBy(modifier);
         companyClosureRepository.save(entity);
     }
 

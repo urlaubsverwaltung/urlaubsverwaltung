@@ -87,7 +87,9 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
 
     @Test
     void renamePersistsNamesPerLanguage() {
-        sut.renameCompanyClosure(MonthDay.of(DECEMBER, 24), Map.of(GERMAN, "Weihnachtsruhe", forLanguageTag("el"), "Χριστούγεννα"));
+        final Person office = personService.create("office", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, OFFICE));
+
+        sut.renameCompanyClosure(MonthDay.of(DECEMBER, 24), Map.of(GERMAN, "Weihnachtsruhe", forLanguageTag("el"), "Χριστούγεννα"), office);
 
         assertThat(sut.getCompanyClosureEntries())
             .filteredOn(entry -> entry.monthDay().equals(MonthDay.of(DECEMBER, 24)))
