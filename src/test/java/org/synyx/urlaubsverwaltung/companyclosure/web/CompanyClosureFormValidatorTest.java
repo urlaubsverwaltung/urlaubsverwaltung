@@ -29,7 +29,6 @@ import static java.util.Locale.GERMAN;
 import static java.time.Month.JANUARY;
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -283,26 +282,27 @@ class CompanyClosureFormValidatorTest {
 
     @Test
     void allowsRenameWhenCompanyWideBlackoutCoversDay() {
+        coveringBlackout();
+
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, validForm()).hasErrors()).isFalse();
-        verifyNoInteractions(blackoutPeriodService);
     }
 
     @Test
     void allowsUnchangedDayLength() {
+        coveringBlackout();
         final CompanyClosureFormDto form = validForm();
         form.setDayLength(NOON);
 
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), NOON, form).hasErrors()).isFalse();
-        verifyNoInteractions(blackoutPeriodService);
     }
 
     @Test
     void allowsReductionFromFullToNoon() {
+        coveringBlackout();
         final CompanyClosureFormDto form = validForm();
         form.setDayLength(NOON);
 
         assertThat(validateEdit(MonthDay.of(DECEMBER, 24), FULL, form).hasErrors()).isFalse();
-        verifyNoInteractions(blackoutPeriodService);
     }
 
     @Test
@@ -332,6 +332,49 @@ class CompanyClosureFormValidatorTest {
         final Errors errors = validateEdit(christmasEveWithMorningFrom2028(), validForm());
 
         assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+    }
+
+    @Test
+    void rejectsLaterValidFromThatExtendsTheVersionBeforeIntoTheBlackout() {
+        // FULL applies until 2026, moving ZERO from 2027 to 2028 closes 24.12.2027 inside the blackout
+        coveringBlackout();
+        final CompanyClosureFormDto form = formMovingVersion(LocalDate.of(2027, JANUARY, 1), ZERO, LocalDate.of(2028, JANUARY, 1));
+
+        final Errors errors = validateEdit(christmasEveFullUntil(LocalDate.of(2027, JANUARY, 1)), form);
+
+        assertThat(errors.getGlobalError().getCode()).isEqualTo("company-closure.error.blackout-period");
+        assertThat(errors.getGlobalError().getArguments()).containsExactly("Weihnachtssperre");
+    }
+
+    @Test
+    void allowsMovingAVersionWhenTheDaysInTheBlackoutStayAsTheyAre() {
+        // 24.12.2027 is closed already and stays closed, the move only concerns 2028
+        coveringBlackout();
+        final CompanyClosureFormDto form = formMovingVersion(LocalDate.of(2028, JANUARY, 1), ZERO, LocalDate.of(2029, JANUARY, 1));
+
+        final Errors errors = validateEdit(christmasEveFullUntil(LocalDate.of(2028, JANUARY, 1)), form);
+
+        assertThat(errors.hasErrors()).isFalse();
+    }
+
+    private static CompanyClosureEntry christmasEveFullUntil(LocalDate zeroFrom) {
+        final List<CompanyClosureVersion> versions = List.of(
+            new CompanyClosureVersion(FULL, null),
+            new CompanyClosureVersion(ZERO, zeroFrom));
+        return new CompanyClosureEntry(MonthDay.of(DECEMBER, 24), locale -> "Heiligabend", Map.of(), versions);
+    }
+
+    /**
+     * @return a form that only moves the version starting at {@code originalValidFrom}, without a new version
+     */
+    private static CompanyClosureFormDto formMovingVersion(LocalDate originalValidFrom, DayLength dayLength, LocalDate validFrom) {
+        final CompanyClosureVersionFormDto version = new CompanyClosureVersionFormDto(dayLength, originalValidFrom);
+        version.setValidFrom(validFrom);
+        final CompanyClosureFormDto form = validForm();
+        form.setDayLength(FULL);
+        form.setValidFrom(null);
+        form.setVersions(List.of(version));
+        return form;
     }
 
     private static CompanyClosureEntry christmasEveWithMorningFrom2028() {

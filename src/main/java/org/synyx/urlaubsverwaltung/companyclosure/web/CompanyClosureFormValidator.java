@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.time.Month.FEBRUARY;
 import static java.util.Comparator.comparing;
@@ -111,8 +112,8 @@ class CompanyClosureFormValidator implements Validator {
     /**
      * Validates the changes of an existing closure day: the names, the new version if one is entered, and the versions
      * starting in the current year or later, which may be changed. A version must not start at the same date as
-     * another one, nor before the current year. Company-wide blackout periods only block a version that closes more
-     * of the day than the version before it.
+     * another one, nor before the current year. Company-wide blackout periods only block an edit that closes more of
+     * a day within them than is closed already.
      */
     void validateEdit(CompanyClosureEntry entry, CompanyClosureFormDto form, Errors errors) {
         final LocalDate today = LocalDate.now(clock);
@@ -146,15 +147,8 @@ class CompanyClosureFormValidator implements Validator {
         }
 
         final List<CompanyClosureVersion> resultingVersions = resultingVersions(entry, form, hasNewVersion);
-        if (hasNewVersion) {
-            validateNoCompanyWideBlackoutPeriod(entry.monthDay(), new CompanyClosureVersion(form.getDayLength(), form.getValidFrom()), resultingVersions, errors);
-        }
-        for (CompanyClosureVersionFormDto version : versions) {
-            final DayLength originalDayLength = entry.dayLengthAt(version.getOriginalValidFrom());
-            if (version.isChanged(originalDayLength)) {
-                validateNoCompanyWideBlackoutPeriod(entry.monthDay(), new CompanyClosureVersion(version.getDayLength(), version.getValidFrom()), resultingVersions, errors);
-            }
-        }
+        final CompanyClosureEntry resultingEntry = new CompanyClosureEntry(entry.monthDay(), entry.nameByLocale(), entry.names(), resultingVersions);
+        validateNoCompanyWideBlackoutPeriod(entry, resultingEntry, errors);
     }
 
     /**
@@ -230,10 +224,6 @@ class CompanyClosureFormValidator implements Validator {
         }
     }
 
-    private static boolean isAfter(@Nullable LocalDate validFrom, LocalDate date) {
-        return validFrom != null && validFrom.isAfter(date);
-    }
-
     private static boolean covers(DayLength dayLength, DayLength half) {
         return dayLength == FULL || dayLength == half;
     }
@@ -259,7 +249,7 @@ class CompanyClosureFormValidator implements Validator {
         } else if (companyClosureService.getCompanyClosureEntries().stream().map(CompanyClosureEntry::monthDay).anyMatch(monthDay::equals)) {
             errors.rejectValue(ATTRIBUTE_MONTH_DAY, ERROR_MONTH_DAY_EXISTS);
         } else {
-            validateNoCompanyWideBlackoutPeriod(monthDay, form.getDayLength(), form.getValidFrom(), null, errors);
+            validateNoCompanyWideBlackoutPeriod(monthDay, form.getDayLength(), form.getValidFrom(), errors);
         }
     }
 
@@ -279,38 +269,35 @@ class CompanyClosureFormValidator implements Validator {
     }
 
     /**
-     * A closure day recurs every year from "valid from" until the next version starts, so a company-wide blackout
-     * period in any of these years containing the day blocks it. Removing the closure ({@code ZERO}) or closing no
-     * more of the day than the version before is never blocked.
-     *
-     * @param resultingVersions all versions after saving, sorted by "valid from" with the initial version first
+     * An edit must not close more of a closure day within a company-wide blackout period than is closed already. Each
+     * day is compared before and after the edit, since a changed or moved version also changes the days the versions
+     * next to it apply to, e.g. a later "valid from" extends the version before it.
      */
-    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, CompanyClosureVersion version, List<CompanyClosureVersion> resultingVersions, Errors errors) {
-        final DayLength previous = resultingVersions.stream()
-            .filter(other -> isBefore(other.validFrom(), version.validFrom()))
-            .reduce((first, second) -> second)
-            .map(CompanyClosureVersion::dayLength)
-            .orElse(ZERO);
-        final boolean adds = (covers(version.dayLength(), MORNING) && !covers(previous, MORNING))
-            || (covers(version.dayLength(), NOON) && !covers(previous, NOON));
-        if (adds) {
-            final LocalDate nextVersionStart = resultingVersions.stream()
-                .map(CompanyClosureVersion::validFrom)
-                .filter(validFrom -> isAfter(validFrom, version.validFrom()))
-                .min(naturalOrder())
-                .orElse(null);
-            validateNoCompanyWideBlackoutPeriod(monthDay, version.dayLength(), version.validFrom(), nextVersionStart, errors);
-        }
+    private void validateNoCompanyWideBlackoutPeriod(CompanyClosureEntry stored, CompanyClosureEntry resulting, Errors errors) {
+        blackoutPeriodService.getAllBlackoutPeriods().stream()
+            .filter(BlackoutPeriod::isCompanyWide)
+            .sorted(comparing(BlackoutPeriod::getStartDate))
+            .filter(period -> closesMoreIn(period, stored, resulting))
+            .findFirst()
+            .ifPresent(period -> errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{period.getTitle()}, null));
     }
 
-    private static boolean isBefore(@Nullable LocalDate validFrom, LocalDate date) {
-        return validFrom == null || validFrom.isBefore(date);
+    private static boolean closesMoreIn(BlackoutPeriod period, CompanyClosureEntry stored, CompanyClosureEntry resulting) {
+        return closureDaysIn(period, stored.monthDay())
+            .anyMatch(date -> closesMoreAt(date, stored, resulting));
+    }
+
+    private static boolean closesMoreAt(LocalDate date, CompanyClosureEntry stored, CompanyClosureEntry resulting) {
+        final DayLength before = stored.dayLengthAt(date);
+        final DayLength after = resulting.dayLengthAt(date);
+        return (covers(after, MORNING) && !covers(before, MORNING)) || (covers(after, NOON) && !covers(before, NOON));
     }
 
     /**
-     * @param nextVersionStart exclusive end of the years to check, {@code null} if no later version exists
+     * A new closure day recurs every year from "valid from", so a company-wide blackout period in any of these years
+     * containing the day blocks it. Removing the closure ({@code ZERO}) is never blocked.
      */
-    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable DayLength dayLength, @Nullable LocalDate validFrom, @Nullable LocalDate nextVersionStart, Errors errors) {
+    private void validateNoCompanyWideBlackoutPeriod(MonthDay monthDay, @Nullable DayLength dayLength, @Nullable LocalDate validFrom, Errors errors) {
         if (dayLength == null || dayLength == ZERO || validFrom == null) {
             return;
         }
@@ -318,23 +305,23 @@ class CompanyClosureFormValidator implements Validator {
         blackoutPeriodService.getAllBlackoutPeriods().stream()
             .filter(BlackoutPeriod::isCompanyWide)
             .sorted(comparing(BlackoutPeriod::getStartDate))
-            .filter(period -> containsClosureDay(period, monthDay, validFrom, nextVersionStart))
+            .filter(period -> containsClosureDayFrom(period, monthDay, validFrom))
             .findFirst()
             .ifPresent(period -> errors.reject(ERROR_BLACKOUT_PERIOD, new Object[]{period.getTitle()}, null));
     }
 
-    /**
-     * @return whether the period contains the closure day of a year the version applies to
-     */
-    private static boolean containsClosureDay(BlackoutPeriod period, MonthDay monthDay, LocalDate validFrom, @Nullable LocalDate nextVersionStart) {
-        return rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
-            .mapToObj(monthDay::atYear)
-            .filter(date -> isInVersion(date, validFrom, nextVersionStart))
-            .anyMatch(date -> isInPeriod(date, period));
+    private static boolean containsClosureDayFrom(BlackoutPeriod period, MonthDay monthDay, LocalDate validFrom) {
+        return closureDaysIn(period, monthDay).anyMatch(date -> !date.isBefore(validFrom));
     }
 
-    private static boolean isInVersion(LocalDate date, LocalDate validFrom, @Nullable LocalDate nextVersionStart) {
-        return !date.isBefore(validFrom) && (nextVersionStart == null || date.isBefore(nextVersionStart));
+    /**
+     * @return the dates of the closure day within the period
+     */
+    private static Stream<LocalDate> closureDaysIn(BlackoutPeriod period, MonthDay monthDay) {
+        return rangeClosed(period.getStartDate().getYear(), period.getEndDate().getYear())
+            .filter(monthDay::isValidYear)
+            .mapToObj(monthDay::atYear)
+            .filter(date -> isInPeriod(date, period));
     }
 
     private static boolean isInPeriod(LocalDate date, BlackoutPeriod period) {
