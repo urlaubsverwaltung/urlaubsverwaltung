@@ -203,7 +203,7 @@
                 Betriebsruhe
               </p>
               <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length">
-                <label th:each="dayLength : ${ {'ZERO', 'MORNING', 'NOON', 'FULL'} }">
+                <label th:each="dayLength : ${ {'MORNING', 'NOON', 'FULL', 'ZERO'} }">
                   <input
                     type="radio"
                     required
