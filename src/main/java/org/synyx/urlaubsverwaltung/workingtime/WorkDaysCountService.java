@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -24,6 +26,7 @@ import java.util.TreeMap;
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.requireCalculableDuration;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
@@ -32,14 +35,17 @@ public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
+    private final CompanyClosureService companyClosureService;
 
     @Autowired
     public WorkDaysCountService(
         PublicHolidaysService publicHolidaysService,
-        WorkingTimeService workingTimeService
+        WorkingTimeService workingTimeService,
+        CompanyClosureService companyClosureService
     ) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
+        this.companyClosureService = companyClosureService;
     }
 
     /**
@@ -90,7 +96,7 @@ public class WorkDaysCountService {
         requireCalculableDuration(dateRange);
 
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
-        return calculateWorkDaysByYear(startDate, endDate, person, workingTimes);
+        return calculateWorkDaysByYear(startDate, endDate, person, workingTimes, closureWorkingDurations(startDate, endDate));
     }
 
     /**
@@ -160,6 +166,10 @@ public class WorkDaysCountService {
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeService.getByPersons(persons).stream()
             .collect(groupingBy(WorkingTime::getPerson));
 
+        final LocalDate earliestStart = applications.stream().map(a -> clipStart(a.getStartDate(), limitedToDateRange)).min(LocalDate::compareTo).orElseThrow();
+        final LocalDate latestEnd = applications.stream().map(a -> clipEnd(a.getEndDate(), limitedToDateRange)).max(LocalDate::compareTo).orElseThrow();
+        final Map<LocalDate, BigDecimal> closureDurations = closureWorkingDurations(earliestStart, latestEnd);
+
         final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = new LinkedHashMap<>();
         for (Application application : applications) {
             final LocalDate startDate = clipStart(application.getStartDate(), limitedToDateRange);
@@ -168,7 +178,7 @@ public class WorkDaysCountService {
             final Map<DateRange, WorkingTime> workingTimes =
                 WorkingTimeServiceImpl.workingTimesByDateRange(personWorkingTimes, new DateRange(startDate, endDate));
             workDaysByYearByApplication.put(application,
-                calculateWorkDaysByYear(startDate, endDate, application.getPerson(), workingTimes));
+                calculateWorkDaysByYear(startDate, endDate, application.getPerson(), workingTimes, closureDurations));
         }
 
         return workDaysByYearByApplication;
@@ -188,7 +198,7 @@ public class WorkDaysCountService {
         return limit.endDate();
     }
 
-    private SortedMap<Integer, BigDecimal> calculateWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes) {
+    private SortedMap<Integer, BigDecimal> calculateWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes, Map<LocalDate, BigDecimal> closureDurationByDate) {
 
         if (workingTimes.isEmpty()) {
             throw new WorkDaysCountException("No working times found for user '" + person.getId()
@@ -213,10 +223,11 @@ public class WorkDaysCountService {
             }
 
             final List<PublicHoliday> publicHolidays = publicHolidaysByDate.getOrDefault(day, List.of());
-            final BigDecimal duration = publicHolidays.stream()
+            final BigDecimal holidayDuration = publicHolidays.stream()
                 .map(PublicHoliday::getWorkingDuration)
                 .findFirst()
                 .orElse(BigDecimal.ONE);
+            final BigDecimal duration = holidayDuration.min(closureDurationByDate.getOrDefault(day, BigDecimal.ONE));
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
             workDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
@@ -225,6 +236,11 @@ public class WorkDaysCountService {
         }
 
         return workDaysByYear;
+    }
+
+    private Map<LocalDate, BigDecimal> closureWorkingDurations(LocalDate startDate, LocalDate endDate) {
+        return companyClosureService.getCompanyClosures(startDate, endDate).stream()
+            .collect(toMap(CompanyClosure::date, closure -> closure.dayLength().getInverse().getDuration()));
     }
 
     private static BigDecimal applyDayLength(BigDecimal workDays, DayLength dayLength) {

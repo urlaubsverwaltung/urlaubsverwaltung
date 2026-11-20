@@ -30,6 +30,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
@@ -710,6 +711,48 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                     ]
                 }
                 """, STRICT));
+    }
+
+    @Test
+    void returnsCompanyClosureWhenAsked() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+
+        final LocalDate startDate = LocalDate.of(2026, DECEMBER, 1);
+        final LocalDate endDate = LocalDate.of(2026, DECEMBER, 31);
+
+        final AbsencePeriod.Record closure = new AbsencePeriod.Record(LocalDate.of(2026, DECEMBER, 24), person,
+            new AbsencePeriod.RecordMorningCompanyClosure(person), new AbsencePeriod.RecordNoonCompanyClosure(person));
+        final AbsencePeriod.Record publicHoliday = new AbsencePeriod.Record(LocalDate.of(2026, DECEMBER, 25), person,
+            new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person));
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(new AbsencePeriod(List.of(closure, publicHoliday))));
+
+        // asked
+        perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
+            .param("from", "2026-12-01").param("to", "2026-12-31")
+            .param("absence-types", "company_closure"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.absences.length()").value(1))
+            .andExpect(jsonPath("$.absences[0].absenceType").value("COMPANY_CLOSURE"))
+            .andExpect(jsonPath("$.absences[0].date").value("2026-12-24"));
+
+        // not asked
+        perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
+            .param("from", "2026-12-01").param("to", "2026-12-31")
+            .param("absence-types", "public_holiday"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.absences.length()").value(1))
+            .andExpect(jsonPath("$.absences[0].absenceType").value("PUBLIC_HOLIDAY"));
+
+        // default
+        perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
+            .param("from", "2026-12-01").param("to", "2026-12-31"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.absences.length()").value(2));
     }
 
     @Test

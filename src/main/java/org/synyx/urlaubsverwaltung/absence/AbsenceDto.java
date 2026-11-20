@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
@@ -24,7 +25,8 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
         VACATION,
         SICK_NOTE,
         NO_WORKDAY,
-        PUBLIC_HOLIDAY
+        PUBLIC_HOLIDAY,
+        COMPANY_CLOSURE
     }
 
     private final String date;
@@ -61,6 +63,7 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
             case SICK -> SICK_NOTE;
             case NO_WORKDAY -> NO_WORKDAY;
             case PUBLIC_HOLIDAY -> PUBLIC_HOLIDAY;
+            case COMPANY_CLOSURE -> COMPANY_CLOSURE;
         };
     }
 

@@ -15,6 +15,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.COMPANY_CLOSURE;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
@@ -87,7 +88,7 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
                 final BigDecimal workingTime = workingTime(localDate).orElse(ZERO);
                 final WorkingDayInformation workingDayInformation = this.workingDays().get(application.getStartDate());
 
-                if (application.getDayLength().isHalfDay() && (workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday())) {
+                if (application.getDayLength().isHalfDay() && (workingDayInformation != null && !workingDayInformation.hasHalfDayOff())) {
                     if (workingDayInformation.dayLength.isHalfDay() && (application.getDayLength() == MORNING && workingDayInformation.morning() == WORKDAY || application.getDayLength() == NOON && workingDayInformation.noon() == WORKDAY)) {
                         workingTimeSum = workingTimeSum.add(workingTime);
                     } else if (workingDayInformation.dayLength == FULL) {
@@ -181,11 +182,12 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
         public enum WorkingTimeCalendarEntryType {
             WORKDAY,
             NO_WORKDAY,
-            PUBLIC_HOLIDAY
+            PUBLIC_HOLIDAY,
+            COMPANY_CLOSURE
         }
 
-        public boolean hasHalfDayPublicHoliday() {
-            return morning == PUBLIC_HOLIDAY || noon == PUBLIC_HOLIDAY;
+        public boolean hasHalfDayOff() {
+            return morning == PUBLIC_HOLIDAY || noon == PUBLIC_HOLIDAY || morning == COMPANY_CLOSURE || noon == COMPANY_CLOSURE;
         }
     }
 }

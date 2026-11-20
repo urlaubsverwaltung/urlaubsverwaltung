@@ -405,7 +405,7 @@ class ApplicationForLeaveUIIT {
         final FederalState federalState = settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
 
         LocalDate nextWorkDay = now();
-        while (publicHolidaysService.getPublicHoliday(nextWorkDay, federalState).isPresent()) {
+        while (!publicHolidaysService.getPublicHolidays(nextWorkDay, nextWorkDay, federalState).isEmpty()) {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
