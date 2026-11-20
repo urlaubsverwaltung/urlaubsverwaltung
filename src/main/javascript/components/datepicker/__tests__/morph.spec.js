@@ -123,6 +123,44 @@ describe("morph", () => {
     expect(document.querySelector("duet-date-picker").classList).toContain("hydrated");
   });
 
+  it("keeps the datepicker of a date input that is a text input", () => {
+    const currentPage = hydratedPage();
+    const newPage = serverSidePage();
+    newPage.querySelector("#extend-to-date-input").removeAttribute("type");
+
+    morphKeepingDatepickers(currentPage, newPage);
+
+    expect(document.querySelector("duet-date-picker").classList).toContain("hydrated");
+    expect(document.querySelectorAll("#extend-to-date-input")).toHaveLength(1);
+    expect(document.querySelector("duet-date-picker #extend-to-date-input")).not.toBeNull();
+  });
+
+  it("links the validation error of the server side date input to the input of the datepicker", () => {
+    const currentPage = hydratedPage();
+    const newPage = serverSidePage();
+    const dateInput = newPage.querySelector("#extend-to-date-input");
+    dateInput.setAttribute("aria-invalid", "true");
+    dateInput.setAttribute("aria-describedby", "date-error");
+
+    morphKeepingDatepickers(currentPage, newPage);
+
+    const pickerInput = document.querySelector("duet-date-picker input.duet-date__input");
+    expect(pickerInput.getAttribute("aria-invalid")).toBe("true");
+    expect(pickerInput.getAttribute("aria-describedby")).toBe("date-error");
+  });
+
+  it("removes the link to a validation error that is gone", () => {
+    const currentPage = hydratedPage();
+    const pickerInput = currentPage.querySelector("duet-date-picker input.duet-date__input");
+    pickerInput.setAttribute("aria-invalid", "true");
+    pickerInput.setAttribute("aria-describedby", "date-error");
+
+    morphKeepingDatepickers(currentPage, serverSidePage());
+
+    expect(pickerInput.hasAttribute("aria-invalid")).toBe(false);
+    expect(pickerInput.hasAttribute("aria-describedby")).toBe(false);
+  });
+
   it("renders the date input of the server when there is no datepicker for it", () => {
     document.body.innerHTML = `<form><p id="feedback">no preview yet</p></form>`;
 

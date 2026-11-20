@@ -2,16 +2,20 @@ package org.synyx.urlaubsverwaltung.companyclosure;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.LocaleStringMapJpaConverter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -37,7 +41,10 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     @Column(name = "day_of_month", nullable = false)
     private int dayOfMonth;
 
-    @Column(name = "message_key", nullable = false)
+    /**
+     * messageKey can be {@code null} and is only defined for the closures provided by the application.
+     */
+    @Column(name = "message_key")
     private String messageKey;
 
     /**
@@ -52,6 +59,14 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
     @ManyToOne
     @JoinColumn(name = "last_modified_by")
     private Person lastModifiedBy;
+
+    /**
+     * nameByLocale can be {@code null} and is only defined for closures created or renamed by a user. It takes
+     * precedence over the messageKey. Languages without a name are missing.
+     */
+    @Column(name = "name_by_locale")
+    @Convert(converter = LocaleStringMapJpaConverter.class)
+    private Map<Locale, String> nameByLocale;
 
     public Long getId() {
         return id;
@@ -103,6 +118,14 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public Map<Locale, String> getNameByLocale() {
+        return nameByLocale;
+    }
+
+    public void setNameByLocale(Map<Locale, String> nameByLocale) {
+        this.nameByLocale = nameByLocale;
+    }
+
     @Override
     public String toString() {
         return "CompanyClosureEntity{" +
@@ -110,6 +133,7 @@ public class CompanyClosureEntity extends AbstractTenantAwareEntity {
             ", month=" + month +
             ", dayOfMonth=" + dayOfMonth +
             ", messageKey='" + messageKey + '\'' +
+            ", nameByLocale=" + nameByLocale +
             '}';
     }
 

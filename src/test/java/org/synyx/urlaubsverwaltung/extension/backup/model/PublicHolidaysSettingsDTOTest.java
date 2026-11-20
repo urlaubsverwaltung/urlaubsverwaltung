@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.extension.backup.model.FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.extension.backup.model.FederalStateDTO.GERMANY_RHEINLAND_PFALZ;
 
 class PublicHolidaysSettingsDTOTest {
 
@@ -20,7 +21,7 @@ class PublicHolidaysSettingsDTOTest {
 
     @Test
     void happyPathDTOToPublicHolidaysSettings() {
-        PublicHolidaysSettingsDTO dto = new PublicHolidaysSettingsDTO(FederalStateDTO.GERMANY_RHEINLAND_PFALZ);
+        PublicHolidaysSettingsDTO dto = new PublicHolidaysSettingsDTO(GERMANY_RHEINLAND_PFALZ);
 
         final PublicHolidaysSettings publicHolidaysSettings = dto.toPublicHolidaysSettings();
         assertThat(publicHolidaysSettings.getFederalState()).isEqualTo(FederalState.GERMANY_RHEINLAND_PFALZ);

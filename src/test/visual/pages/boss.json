@@ -43,6 +43,22 @@
     "url": "/web/calendars/share/persons/4",
     "status": "covered"
   },
+  "/web/company-closure": {
+    "url": "/web/company-closure",
+    "status": "covered"
+  },
+  "/web/company-closure/12-24/edit": {
+    "url": "/web/company-closure/12-24/edit",
+    "status": "covered"
+  },
+  "/web/company-closure/12-31/edit": {
+    "url": "/web/company-closure/12-31/edit",
+    "status": "covered"
+  },
+  "/web/company-closure/new": {
+    "url": "/web/company-closure/new",
+    "status": "covered"
+  },
   "/web/company/overview": {
     "url": "/web/company/overview",
     "status": "covered"

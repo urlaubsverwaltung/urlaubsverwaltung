@@ -1,0 +1,321 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title
+      th:replace="~{fragments/page-title::page-title(${monthDay == null} ? #{company-closure.data.header.title.new} : #{company-closure.data.header.title.edit(${companyClosureName})})}"
+    ></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/company-closure.css}" />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('company_closure_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="company_closure_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <form
+        method="post"
+        th:action="${monthDay == null} ? @{/web/company-closure/new} : @{/web/company-closure/{monthDay}/edit(monthDay=${monthDayPath})}"
+        th:object="${companyClosure}"
+        class="uv-form uv-form-grid"
+        data-turbo="true"
+        novalidate
+      >
+        <button type="submit" class="hidden"></button>
+
+        <div role="group" aria-labelledby="group-companyclosure-data-label">
+          <h2
+            id="group-companyclosure-data-label"
+            class="uv-form-legend"
+            th:text="${monthDay == null} ? #{company-closure.data.header.title.new} : #{company-closure.data.header.title.edit(${companyClosureName})}"
+          >
+            Betriebsruhe
+          </h2>
+
+          <p
+            class="uv-form__global-feedback alert alert-danger"
+            th:if="${#fields.hasGlobalErrors()}"
+            th:errors="*{global}"
+          ></p>
+
+          <div class="uv-form__group">
+            <p th:if="${monthDay == null}" class="uv-form__group-info uv-help-block company-closure-form__info">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span id="monthDay-hint" th:text="#{company-closure.data.monthDay.hint}">
+                Zum Beispiel 24 und 12 für den 24. Dezember
+              </span>
+            </p>
+            <div th:if="${monthDay == null}" class="uv-form__input-row">
+              <p
+                id="monthDay-label"
+                class="uv-form__label uv-form__label--required"
+                th:text="|#{company-closure.data.date}:|"
+              >
+                Datum
+              </p>
+              <div
+                role="group"
+                aria-labelledby="monthDay-label"
+                class="company-closure-month-day"
+                th:with="hasMonthDayErrors=${#fields.hasErrors('monthDay')}"
+              >
+                <div class="company-closure-month-day__fields">
+                  <div class="company-closure-month-day__field">
+                    <label for="day" class="company-closure-month-day__label" th:text="#{company-closure.data.day}">
+                      Tag
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="2"
+                      autocomplete="off"
+                      placeholder="24"
+                      th:field="*{day}"
+                      th:errorclass="error"
+                      th:classappend="${hasMonthDayErrors} ? 'error'"
+                      th:aria-invalid="${hasMonthDayErrors or #fields.hasErrors('day')} ? 'true'"
+                      th:aria-describedby="|monthDay-hint${hasMonthDayErrors ? ' monthDay-error' : ''}${#fields.hasErrors('day') ? ' day-error' : ''}|"
+                      data-test-id="company-closure-day"
+                    />
+                    <p id="day-error" class="uv-form__input-error" th:if="${#fields.hasErrors('day')}">
+                      <th:block th:errors="*{day}">day Error</th:block>
+                    </p>
+                  </div>
+                  <div class="company-closure-month-day__field">
+                    <label for="month" class="company-closure-month-day__label" th:text="#{company-closure.data.month}">
+                      Monat
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="2"
+                      autocomplete="off"
+                      placeholder="12"
+                      th:field="*{month}"
+                      th:errorclass="error"
+                      th:classappend="${hasMonthDayErrors} ? 'error'"
+                      th:aria-invalid="${hasMonthDayErrors or #fields.hasErrors('month')} ? 'true'"
+                      th:aria-describedby="|monthDay-hint${hasMonthDayErrors ? ' monthDay-error' : ''}${#fields.hasErrors('month') ? ' month-error' : ''}|"
+                      data-test-id="company-closure-month"
+                    />
+                    <p id="month-error" class="uv-form__input-error" th:if="${#fields.hasErrors('month')}">
+                      <th:block th:errors="*{month}">month Error</th:block>
+                    </p>
+                  </div>
+                </div>
+                <p id="monthDay-error" class="uv-form__input-error" th:if="${hasMonthDayErrors}">
+                  <th:block th:errors="*{monthDay}">monthDay Error</th:block>
+                </p>
+              </div>
+            </div>
+
+            <div th:if="${monthDay != null}" class="uv-form__input-row">
+              <span class="uv-form__label" th:text="|#{company-closure.data.date}:|">Datum</span>
+              <span
+                th:text="${#temporals.format(#temporals.create(2000, monthDay.monthValue, monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
+              ></span>
+            </div>
+          </div>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block company-closure-form__info">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span
+                id="names-description"
+                th:text="#{company-closure.data.names.description(#{absences.overview.company-closure})}"
+              >
+                Gib den Namen in mindestens einer Sprache an.
+              </span>
+            </p>
+            <div class="uv-form__input-row">
+              <p
+                id="names-label"
+                class="uv-form__label uv-form__label--required"
+                th:text="|#{company-closure.data.name}:|"
+              >
+                Name
+              </p>
+              <div role="group" aria-labelledby="names-label" class="flex flex-col gap-4 w-full">
+                <p id="names-error" class="uv-form__input-error" th:if="${#fields.hasErrors('names')}">
+                  <th:block th:errors="*{names}">names Error</th:block>
+                </p>
+                <!--/* the first name is the one of the default language, the other languages are collapsed */-->
+                <div th:replace="~{companyclosure/company_closure_name_field::name(name=*{names[0]}, index=0)}"></div>
+                <details>
+                  <summary class="flex items-center gap-2 w-fit cursor-pointer">
+                    <svg th:replace="~{icon/languages::svg(className='w-4 h-4 text-blue-400')}"></svg>
+                    <span th:text="#{company-closure.data.names.translations}">Übersetzungen</span>
+                  </summary>
+                  <div class="flex flex-col gap-4 mt-4">
+                    <th:block th:each="name, nameStat : *{names}" th:if="${not nameStat.first}">
+                      <div
+                        th:replace="~{companyclosure/company_closure_name_field::name(name=${name}, index=${nameStat.index})}"
+                      ></div>
+                    </th:block>
+                  </div>
+                </details>
+              </div>
+            </div>
+
+            <div th:if="${monthDay == null}" class="uv-form__input-row pt-4">
+              <p
+                id="dayLength-label"
+                class="uv-form__label uv-form__label--required"
+                th:text="|#{company-closure.data.dayLength}:|"
+              >
+                Betriebsruhe
+              </p>
+              <th:block
+                th:replace="~{companyclosure/company_closure_version_fields::day-length(path='', labelId='dayLength-label', required=true)}"
+              ></th:block>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${monthDay == null}" role="group" aria-labelledby="group-companyclosure-validfrom-label">
+          <h2
+            id="group-companyclosure-validfrom-label"
+            class="uv-form-legend"
+            th:text="#{company-closure.data.validFrom}"
+          >
+            Gültig ab
+          </h2>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <span th:text="#{company-closure.data.validFrom.description}"></span>
+            </p>
+            <div class="uv-form__input-row">
+              <label for="validFrom" th:text="|#{company-closure.data.validFrom}:|">Gültig ab</label>
+              <th:block
+                th:replace="~{companyclosure/company_closure_version_fields::valid-from(path='', id='validFrom', required=true, min=${minValidFrom}, isoValue=${companyClosure.validFromIsoValue})}"
+              ></th:block>
+            </div>
+          </div>
+        </div>
+
+        <!--/* the history of an existing closure day: a new change, the ones of this year or later, which can be changed, and older ones */-->
+        <div th:if="${monthDay != null}" role="group" aria-labelledby="group-companyclosure-history-label">
+          <h2 id="group-companyclosure-history-label" class="uv-form-legend" th:text="#{company-closure.data.history}">
+            Verlauf
+          </h2>
+
+          <div class="uv-form__group">
+            <div class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+              <div>
+                <p th:text="#{company-closure.data.newVersion.description}"></p>
+                <p th:text="#{company-closure.data.editableVersions.description}"></p>
+              </div>
+            </div>
+
+            <div class="uv-form__input-row company-closure-history__entry">
+              <p id="newVersion-label" class="uv-form__label" th:text="|#{company-closure.data.newVersion}:|">
+                Neue Änderung
+              </p>
+              <div class="company-closure-version">
+                <div class="company-closure-version__valid-from">
+                  <label for="validFrom" th:text="|#{company-closure.data.validFrom}:|">Gültig ab</label>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::valid-from(path='', id='validFrom', required=false, min=${minValidFrom}, isoValue=${companyClosure.validFromIsoValue})}"
+                  ></th:block>
+                </div>
+                <div class="company-closure-version__day-length">
+                  <p
+                    id="newVersion-dayLength-label"
+                    class="uv-form__label"
+                    th:text="|#{company-closure.data.dayLength}:|"
+                  >
+                    Betriebsruhe
+                  </p>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::day-length(path='', labelId='newVersion-label newVersion-dayLength-label', required=false)}"
+                  ></th:block>
+                </div>
+              </div>
+            </div>
+
+            <div
+              th:each="version, versionStat : *{versions}"
+              th:with="
+                path=|versions[${versionStat.index}].|,
+                idPrefix=|versions${versionStat.index}|,
+                labelId=|versions${versionStat.index}-label|
+              "
+              class="uv-form__input-row company-closure-history__entry"
+            >
+              <p
+                th:id="${labelId}"
+                class="uv-form__label uv-form__label--required"
+                th:text="${version.originalValidFrom != null and version.originalValidFrom.isAfter(today)} ? |#{company-closure.data.plannedVersion}:| : |#{company-closure.data.startedVersion}:|"
+              >
+                Geplante Änderung
+              </p>
+              <div class="company-closure-version">
+                <input type="hidden" th:field="*{versions[__${versionStat.index}__].originalValidFrom}" />
+                <div class="company-closure-version__valid-from">
+                  <label th:for="|${idPrefix}.validFrom|" th:text="|#{company-closure.data.validFrom}:|"
+                    >Gültig ab</label
+                  >
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::valid-from(path=${path}, id=|${idPrefix}.validFrom|, required=true, min=${minValidFrom}, isoValue=${version.validFromIsoValue})}"
+                  ></th:block>
+                </div>
+                <div class="company-closure-version__day-length">
+                  <p
+                    th:id="|${idPrefix}-dayLength-label|"
+                    class="uv-form__label uv-form__label--required"
+                    th:text="|#{company-closure.data.dayLength}:|"
+                  >
+                    Betriebsruhe
+                  </p>
+                  <th:block
+                    th:replace="~{companyclosure/company_closure_version_fields::day-length(path=${path}, labelId=|${labelId} ${idPrefix}-dayLength-label|, required=true)}"
+                  ></th:block>
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${not #lists.isEmpty(olderVersions)}" class="uv-form__input-row company-closure-history__entry">
+              <p id="olderVersions-label" class="uv-form__label" th:text="|#{company-closure.data.olderVersions}:|">
+                Vor diesem Jahr
+              </p>
+              <ul role="list" aria-labelledby="olderVersions-label" class="company-closure-version__older">
+                <li
+                  th:each="version : ${olderVersions}"
+                  th:with="dayLengthLabel=#{|company-closure.dayLength.${version.dayLength}|}"
+                  th:text="${version.validFrom == null} ? #{company-closure.data.version.initial(${dayLengthLabel})} : #{company-closure.data.version(${{version.validFrom}}, ${dayLengthLabel})}"
+                ></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
+        </uv-sticky>
+      </form>
+    </main>
+  </body>
+</html>

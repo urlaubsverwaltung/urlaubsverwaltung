@@ -1,0 +1,120 @@
+<!doctype html>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|theme-${theme}|"
+  th:data-nav-collapsed="${navigationCollapsed ? 'true' : null}"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:asset="http://www.w3.org/1999/xhtml"
+>
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:replace="~{fragments/page-title::page-title(#{company-closure.title})}"></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/company-closure.css}" />
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('frame.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="frame.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(content=~{::main})}">
+    <main th:fragment="main" class="content-container content--max-w">
+      <div
+        th:replace="~{fragments/section-heading::section-heading(~{::companyclosure-list-heading-body}, ~{::companyclosure-list-heading-actions})}"
+      >
+        <th:block th:ref="companyclosure-list-heading-body">
+          <h1 th:text="#{company-closure.title}">Betriebsruhe</h1>
+        </th:block>
+        <th:block th:ref="companyclosure-list-heading-actions">
+          <a
+            th:href="@{/web/company-closure/new}"
+            class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+          >
+            <svg th:replace="~{icon/plus-square::svg(className='w-5 h-5')}"></svg>&nbsp;
+            <span th:text="#{company-closure.action.create}"></span>
+          </a>
+        </th:block>
+      </div>
+
+      <th:block
+        th:if="${createdCompanyClosureName != null or updatedCompanyClosureName != null}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+      >
+        <th:block th:ref="feedback-success-body">
+          <p
+            th:if="${createdCompanyClosureName != null}"
+            th:text="#{company-closure.action.create.success(${createdCompanyClosureName})}"
+          ></p>
+          <p
+            th:if="${updatedCompanyClosureName != null}"
+            th:text="#{company-closure.action.edit.success(${updatedCompanyClosureName})}"
+          ></p>
+        </th:block>
+      </th:block>
+
+      <p th:text="#{company-closure.description}"></p>
+
+      <div class="company-closure-list">
+        <!-- column titles for sighted users, every list item names its values itself for screen readers -->
+        <div aria-hidden="true" class="company-closure-list__head">
+          <span th:text="#{company-closure.data.date}">Datum</span>
+          <span th:text="#{company-closure.data.current}">Aktuell</span>
+          <span th:text="#{company-closure.data.name}">Name</span>
+          <span></span>
+        </div>
+        <ol id="companyclosure-list" role="list" class="company-closure-list__items">
+          <li
+            th:each="companyClosure : ${companyClosures}"
+            th:with="date=${#temporals.format(#temporals.create(2000, companyClosure.monthDay.monthValue, companyClosure.monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
+            class="company-closure-list__item"
+          >
+            <!-- the history is collapsed, the summary shows what applies today -->
+            <details class="company-closure-list__details">
+              <summary class="company-closure-list__summary">
+                <h2 class="company-closure-list__date">
+                  <svg th:replace="~{icon/chevron-right::svg(className='company-closure-list__chevron w-4 h-4')}"></svg>
+                  <span th:text="${date}">24. Dezember</span>
+                </h2>
+                <span class="company-closure-list__name" th:text="${companyClosure.name}"></span>
+                <span class="company-closure-list__current">
+                  <span class="company-closure-list__label md:sr-only" th:text="|#{company-closure.data.current}:|"
+                    >Aktuell:</span
+                  >
+                  <th:block th:text="#{|company-closure.dayLength.${companyClosure.currentDayLength}|}" />
+                </span>
+              </summary>
+              <div class="company-closure-list__history">
+                <span class="company-closure-list__label" th:text="|#{company-closure.data.history}:|">Verlauf:</span>
+                <ul role="list" class="company-closure-list__versions">
+                  <!-- start and day length in the columns of date and current value of the row, the colon only visible in the card -->
+                  <li th:each="version : ${companyClosure.versions}" class="company-closure-list__version">
+                    <span
+                      th:text="${version.validFrom == null} ? #{company-closure.data.version.start.initial} : #{company-closure.data.version.start(${{version.validFrom}})}"
+                    ></span
+                    ><span class="md:sr-only">: </span
+                    ><span th:text="#{|company-closure.dayLength.${version.dayLength}|}"></span>
+                  </li>
+                </ul>
+              </div>
+            </details>
+            <div class="company-closure-list__actions">
+              <a
+                class="button"
+                th:href="@{/web/company-closure/{monthDay}/edit(monthDay=${companyClosure.monthDayPath})}"
+              >
+                <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1 md:mr-0 lg:mr-1')}"></svg>
+                <!-- icon only between md and lg, the rows have no space for the text there -->
+                <span class="md:sr-only lg:not-sr-only" th:text="#{action.edit}">Bearbeiten</span>
+                <span class="sr-only" th:text="|${date} ${companyClosure.name}|"></span>
+              </a>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </main>
+  </body>
+</html>

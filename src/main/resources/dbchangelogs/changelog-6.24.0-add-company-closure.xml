@@ -98,4 +98,15 @@
       WHERE company_closure.month = 12 AND company_closure.day_of_month IN (24, 31);
     </sql>
   </changeSet>
+
+  <changeSet author="schneider" id="add-company-closure--name">
+    <preConditions onFail="HALT">
+      <tableExists tableName="company_closure"/>
+    </preConditions>
+
+    <addColumn tableName="company_closure">
+      <column name="name_by_locale" type="text"/>
+    </addColumn>
+    <dropNotNullConstraint tableName="company_closure" columnName="message_key" columnDataType="text"/>
+  </changeSet>
 </databaseChangeLog>

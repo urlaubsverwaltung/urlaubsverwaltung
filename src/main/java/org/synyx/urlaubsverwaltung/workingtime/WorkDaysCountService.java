@@ -240,7 +240,11 @@ public class WorkDaysCountService {
 
     private Map<LocalDate, BigDecimal> closureWorkingDurations(LocalDate startDate, LocalDate endDate) {
         return companyClosureService.getCompanyClosures(startDate, endDate).stream()
-            .collect(toMap(CompanyClosure::date, closure -> closure.dayLength().getInverse().getDuration()));
+            .collect(toMap(CompanyClosure::date, WorkDaysCountService::workingDuration));
+    }
+
+    private static BigDecimal workingDuration(CompanyClosure closure) {
+        return closure.dayLength().getInverse().getDuration();
     }
 
     private static BigDecimal applyDayLength(BigDecimal workDays, DayLength dayLength) {

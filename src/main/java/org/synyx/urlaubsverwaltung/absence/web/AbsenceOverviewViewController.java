@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriod;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodDescriptions;
 import org.synyx.urlaubsverwaltung.blackoutperiod.BlackoutPeriodService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -34,6 +36,7 @@ import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -61,9 +64,11 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.concat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.isTooFarFromTheCurrentYear;
@@ -298,7 +303,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
         // a company closure shows up like a public holiday - for every person
         final List<PublicHoliday> companyClosures = companyClosureService.getCompanyClosures(dateRange.startDate(), dateRange.endDate()).stream()
-            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name(locale)))
+            .map(closure -> toPublicHoliday(closure, locale))
             .toList();
 
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
@@ -328,11 +333,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             final Map<LocalDate, PublicHoliday> publicHolidays = publicHolidaysOfAllPersons.get(person);
             final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
             absenceRecordsByPersonAndDate.getOrDefault(person, Map.of()).forEach((date, records) -> {
-                final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> switch (gapType) {
-                    case PUBLIC_HOLIDAY -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"));
-                    case COMPANY_CLOSURE -> Optional.ofNullable(publicHolidays.get(date)).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.company-closure"));
-                    default -> message.apply("absences.overview.no-workday");
-                };
+                final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> gapTitle(gapType, publicHolidays.get(date), message);
                 barDays.put(date, new AbsenceBars.Day(
                     barHalfDay(records, AbsencePeriod.Record::getMorning, toBarAbsence, gapTitle),
                     barHalfDay(records, AbsencePeriod.Record::getNoon, toBarAbsence, gapTitle)
@@ -405,13 +406,34 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(Map<DateRange, WorkingTime> workingTimesByDateRange, List<PublicHoliday> companyClosures) {
-        return Stream.concat(
-                workingTimesByDateRange.entrySet().stream()
-                    .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue().getFederalState()))
-                    .flatMap(List::stream),
-                companyClosures.stream())
-            .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
+        final Stream<PublicHoliday> publicHolidays = workingTimesByDateRange.entrySet().stream()
+            .map(this::publicHolidaysOf)
+            .flatMap(List::stream);
+        return concat(publicHolidays, companyClosures.stream())
+            .collect(toMap(PublicHoliday::date, Function.identity(), AbsenceOverviewViewController::joinDescriptions));
+    }
 
+    private static PublicHoliday toPublicHoliday(CompanyClosure closure, Locale locale) {
+        return new PublicHoliday(closure.date(), closure.dayLength(), closure.name(locale));
+    }
+
+    private static String gapTitle(AbsencePeriod.AbsenceType gapType, @Nullable PublicHoliday publicHoliday, UnaryOperator<String> message) {
+        return switch (gapType) {
+            case PUBLIC_HOLIDAY -> ofNullable(publicHoliday).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.public-holiday"));
+            case COMPANY_CLOSURE -> ofNullable(publicHoliday).map(PublicHoliday::description).orElseGet(() -> message.apply("absences.overview.company-closure"));
+            default -> message.apply("absences.overview.no-workday");
+        };
+    }
+
+    private List<PublicHoliday> publicHolidaysOf(Map.Entry<DateRange, WorkingTime> workingTimeByDateRange) {
+        final DateRange dateRange = workingTimeByDateRange.getKey();
+        final FederalState federalState = workingTimeByDateRange.getValue().getFederalState();
+        return publicHolidaysService.getPublicHolidays(dateRange.startDate(), dateRange.endDate(), federalState);
+    }
+
+    private static PublicHoliday joinDescriptions(PublicHoliday publicHoliday, PublicHoliday other) {
+        final String description = publicHoliday.description().concat("/").concat(other.description());
+        return new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), description);
     }
 
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {

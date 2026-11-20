@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -26,9 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -51,17 +47,14 @@ public class PublicHolidayApiController {
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
-    private final CompanyClosureService companyClosureService;
 
     @Autowired
     public PublicHolidayApiController(PublicHolidaysService publicHolidaysService, PersonService personService,
-                                      WorkingTimeService workingTimeService, SettingsService settingsService,
-                                      CompanyClosureService companyClosureService) {
+                                      WorkingTimeService workingTimeService, SettingsService settingsService) {
         this.publicHolidaysService = publicHolidaysService;
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
-        this.companyClosureService = companyClosureService;
     }
 
     @Operation(
@@ -148,12 +141,7 @@ public class PublicHolidayApiController {
     }
 
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
-        // shortcut: keeps calendar and datepicker unchanged until they call the company closure API (PR 2), remove then
-        final Locale locale = LocaleContextHolder.getLocale();
-        final Stream<PublicHoliday> companyClosures = companyClosureService.getCompanyClosures(startDate, endDate).stream()
-            .map(closure -> new PublicHoliday(closure.date(), closure.dayLength(), closure.name(locale)));
-
-        return Stream.concat(publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream(), companyClosures)
+        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
             .map(this::mapPublicHolidayToDto)
             .toList();
     }

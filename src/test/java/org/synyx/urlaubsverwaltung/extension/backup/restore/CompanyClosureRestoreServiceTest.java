@@ -21,9 +21,11 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Month.JANUARY;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.inOrder;
@@ -53,11 +55,12 @@ class CompanyClosureRestoreServiceTest {
 
     @Test
     void restoresCompanyClosures() {
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+        final List<CompanyClosureVersionDTO> christmasEveVersions = List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
-            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null)));
-        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", null, null, List.of(
-            new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null)));
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null));
+        final List<CompanyClosureVersionDTO> newYearsEveVersions = List.of(new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null));
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, christmasEveVersions);
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", Map.of(GERMAN, "Jahresabschluss"), null, null, newYearsEveVersions);
 
         sut.restore(List.of(christmasEve, newYearsEve));
 
@@ -66,6 +69,7 @@ class CompanyClosureRestoreServiceTest {
         inOrder.verify(companyClosureImportService, times(2)).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
 
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMessageKey).containsExactly("companyclosure.name.christmasEve", "companyclosure.name.newYearsEve");
+        assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getNameByLocale).containsExactly(null, Map.of(GERMAN, "Jahresabschluss"));
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getDayOfMonth).containsExactly(24, 31);
         assertThat(closureCaptor.getAllValues()).extracting(CompanyClosureEntity::getMonth).containsExactly(12, 12);
         assertThat(versionsCaptor.getAllValues().get(0))
@@ -83,7 +87,7 @@ class CompanyClosureRestoreServiceTest {
         final Person office = new Person("office", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByUsername("office")).thenReturn(Optional.of(office));
         final Instant lastModifiedAt = Instant.parse("2026-11-06T10:00:00Z");
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", lastModifiedAt, "office", List.of(
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, lastModifiedAt, "office", List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), lastModifiedAt, "office")));
 
         sut.restore(List.of(christmasEve));
@@ -101,7 +105,7 @@ class CompanyClosureRestoreServiceTest {
     void restoresWithoutLastModifierWhenThePersonIsMissing() {
         when(personService.getPersonByUsername("deleted")).thenReturn(Optional.empty());
         final Instant lastModifiedAt = Instant.parse("2026-11-06T10:00:00Z");
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, null, List.of(
             new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), lastModifiedAt, "deleted")));
 
         sut.restore(List.of(christmasEve));

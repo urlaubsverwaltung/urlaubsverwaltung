@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.application.vacationtype;
+package org.synyx.urlaubsverwaltung;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -15,7 +15,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Converter
-final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Locale, String>, String> {
+public final class LocaleStringMapJpaConverter implements AttributeConverter<Map<Locale, String>, String> {
 
     private final TypeReference<Map<Locale, String>> typeReference = new TypeReference<>() {
     };

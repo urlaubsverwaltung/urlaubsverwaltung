@@ -114,6 +114,7 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyBlackoutPeriodLink(),
+                    companyCompanyClosureLink(),
                     companyApplicationsLink(),
                     companySickNoteLink(),
                     companyOvertimeLink()
@@ -162,6 +163,51 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isInstanceOfSatisfying(NavigationDto.class, dto ->
                 assertThat(dto.company()).contains(companyOvertimeLink(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/company-closure", "/web/company-closure/new", "/web/company-closure/12-24/edit", "/web/company-closure/12-24"})
+    void postHandleCompanyClosureLinkIsActiveOnCompanyClosurePages(String requestUri) {
+        mockSettings(false, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI(requestUri);
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyCompanyClosureLink(true)));
+    }
+
+    @Test
+    void postHandleCompanyClosureLinkIsNotActiveOnPagesStartingWithTheSameName() {
+        mockSettings(false, false, false, false);
+
+        final Person person = new Person();
+        person.setId(10L);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/company-closures");
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isInstanceOfSatisfying(NavigationDto.class, dto ->
+                assertThat(dto.company()).contains(companyCompanyClosureLink(false)));
     }
 
     @Test
@@ -328,6 +374,7 @@ class FrameDataProviderTest {
                     companyPersonLink(),
                     companyDepartmentLink(),
                     companyBlackoutPeriodLink(),
+                    companyCompanyClosureLink(),
                     companyApplicationsLink(),
                     companySickNoteLink(),
                     companyOvertimeLink()
@@ -828,6 +875,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto companyBlackoutPeriodLink(boolean active) {
         return new NavigationItemDto("company-blackoutperiod-link", "/web/blackoutperiod", "nav.company.blackoutperiods", "lock", active);
+    }
+
+    private static NavigationItemDto companyCompanyClosureLink() {
+        return companyCompanyClosureLink(false);
+    }
+
+    private static NavigationItemDto companyCompanyClosureLink(boolean active) {
+        return new NavigationItemDto("company-companyclosure-link", "/web/company-closure", "nav.company.company-closures", "calendar", active);
     }
 
     private static NavigationItemDto companyOvertimeLink() {

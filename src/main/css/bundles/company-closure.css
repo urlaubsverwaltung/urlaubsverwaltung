@@ -1,0 +1,348 @@
+@reference "../config.css";
+
+/* cards below the md viewport breakpoint, rows sharing the columns of this grid from md on */
+.company-closure-list {
+  margin-top: --spacing(8);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+
+  @variant md {
+    display: grid;
+    /* date, current day length, name and actions */
+    grid-template-columns: auto auto 1fr auto;
+    column-gap: --spacing(12);
+  }
+}
+
+/* column titles, only shown with the rows */
+.company-closure-list__head {
+  display: none;
+
+  @variant md {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    padding: 0 --spacing(3) --spacing(2);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.company-closure-list__items {
+  display: flex;
+  flex-direction: column;
+  row-gap: --spacing(4);
+
+  @variant md {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    row-gap: 0;
+  }
+}
+
+/* the details take every column but the one of the actions, which must not be inside the summary */
+.company-closure-list__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: --spacing(4);
+  padding: --spacing(4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+
+  @variant dark {
+    border-color: var(--color-gray-700);
+  }
+
+  @variant md {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    /* summary and actions in the first row, the history of an open details in the second. a single row would not
+       grow by the offset of the baseline alignment, and the history would overlap the padding */
+    grid-template-rows: auto auto;
+    /* the rows use the column gap of the surrounding grid */
+    column-gap: normal;
+    /* aligned to the first line of the summary */
+    align-items: baseline;
+    padding: --spacing(3);
+    border-width: 1px 0 0;
+    border-radius: 0;
+    transition: background-color 150ms ease-in-out;
+
+    &:last-child {
+      border-bottom-width: 1px;
+    }
+
+    @variant hover {
+      background-color: var(--color-zinc-50);
+
+      @variant dark {
+        background-color: var(--color-zinc-800);
+      }
+    }
+  }
+}
+
+.company-closure-list__details {
+  @variant md {
+    grid-column: 1 / -2;
+    /* an item spanning both rows takes no part in the baseline alignment, its summary does */
+    grid-row: 1 / span 2;
+    align-self: stretch;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* wraps the content of the details in browsers that support it, the history spans the row below the summary
+       and its entries share the columns of the row */
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+  }
+}
+
+.company-closure-list__summary {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @variant md {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    /* the alignment of the row does not reach into the details, the summary joins it itself */
+    align-self: baseline;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+}
+
+/* the text gives the baseline of the row, the chevron has none */
+.company-closure-list__date {
+  display: flex;
+  align-items: baseline;
+  gap: --spacing(1);
+  white-space: nowrap;
+  /* the line height stays the one of the heading */
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.company-closure-list__chevron {
+  flex-shrink: 0;
+  align-self: center;
+  transition: rotate 150ms ease-in-out;
+
+  .company-closure-list__details[open] & {
+    rotate: 90deg;
+  }
+}
+
+/* indented to the date, next to the chevron (its width and the gap) */
+.company-closure-list__name,
+.company-closure-list__history {
+  padding-left: --spacing(5);
+
+  @variant md {
+    padding-left: 0;
+  }
+}
+
+/* the card shows the name before the current day length, the row in the column after it */
+.company-closure-list__name {
+  @variant md {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+.company-closure-list__current {
+  margin-top: --spacing(4);
+  padding-left: --spacing(5);
+
+  @variant md {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+    padding-left: 0;
+  }
+}
+
+.company-closure-list__history {
+  grid-column: 1 / -1;
+  margin-top: --spacing(2);
+
+  @variant md {
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    margin-top: --spacing(3);
+    /* the start of an entry below the text of the date, next to the chevron */
+    padding-left: --spacing(5);
+  }
+}
+
+.company-closure-list__history > .company-closure-list__label {
+  @variant md {
+    grid-column: 1 / -1;
+  }
+}
+
+.company-closure-list__versions {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+  margin-top: --spacing(1);
+
+  @variant md {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    /* the entries use the column gap of the surrounding grid */
+    column-gap: normal;
+  }
+}
+
+/* start in the column of the date, day length in the one of the current day length */
+.company-closure-list__version {
+  @variant md {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+}
+
+/* names a value. in a row the column titles do it for sighted users, so the template hides it visually there */
+.company-closure-list__label {
+  font-weight: var(--font-weight-bold);
+}
+
+.company-closure-list__actions {
+  align-self: start;
+  display: flex;
+  justify-content: flex-end;
+
+  @variant md {
+    grid-row: 1;
+    align-self: auto;
+  }
+}
+
+/* entries of the history in the edit form: the new change, the editable versions and the older ones. a line between
+   two entries, with the row gap of the form on both sides */
+.company-closure-history__entry + .company-closure-history__entry {
+  padding-top: var(--uv-form-row-gap);
+  border-top: 1px solid var(--color-gray-200);
+
+  @variant dark {
+    border-color: var(--color-gray-700);
+  }
+}
+
+/* day and month of a closure day: one group with two fields */
+.company-closure-month-day {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+}
+
+.company-closure-month-day__fields {
+  display: flex;
+  gap: --spacing(4);
+}
+
+/* both fields share the width of the input column equally */
+.company-closure-month-day__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
+/* the group label carries the asterisk for both fields */
+.company-closure-month-day__label {
+  font-weight: var(--font-weight-normal);
+
+  &::after {
+    content: none;
+  }
+}
+
+/* day length and "valid from" of a version in the history of the edit form, one below the other */
+.company-closure-version {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(4);
+  /* below the label of the row in the one column layout of the form, which starts the grid at lg */
+  margin-top: --spacing(2);
+
+  @variant lg {
+    margin-top: 0;
+  }
+}
+
+.company-closure-version__valid-from,
+.company-closure-version__day-length {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
+/* the versions before the current year, read only */
+.company-closure-version__older {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(1);
+}
+
+/* the width of the input column decides how many options of the day length fit in one line */
+.company-closure-day-length {
+  display: block;
+  container: day-length / inline-size;
+}
+
+/* one option per line in a narrow column */
+.company-closure-day-length__options {
+  display: flex;
+  flex-direction: column;
+  gap: --spacing(2);
+  column-gap: --spacing(6);
+}
+
+/* two columns, filled column by column: full day and none on the left, the half days on the right.
+   the options come in the order full day, morning, noon, none, so none is placed below full day */
+@container day-length (width >= 22rem) {
+  .company-closure-day-length__options {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+
+    & > :nth-child(4) {
+      grid-area: 2 / 1;
+    }
+  }
+}
+
+/* all options in one line when they fit, in every language (they need about 29rem in german) */
+@container day-length (width >= 32rem) {
+  .company-closure-day-length__options {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+/* side note of a row whose inputs have their label on top. beside the row it starts at the input, not at the label */
+.company-closure-form__info {
+  @variant lg {
+    /* line of the label (font size * line height) and the gap to its input */
+    margin-top: calc(0.875rem * 1.375 + --spacing(1));
+  }
+}

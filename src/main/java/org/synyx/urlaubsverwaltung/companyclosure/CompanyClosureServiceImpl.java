@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.companyclosure;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
@@ -26,7 +27,15 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
+import static java.util.Locale.forLanguageTag;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -36,7 +45,9 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
     private static final String NAME_FALLBACK_MESSAGE_KEY = "absences.overview.company-closure";
 
     private static final Comparator<CompanyClosureVersionEntity> BY_VALID_FROM =
-        Comparator.comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(Comparator.naturalOrder()));
+        comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(naturalOrder()));
+
+    private static final MonthDay LEAP_DAY = MonthDay.of(FEBRUARY, 29);
 
     private final CompanyClosureRepository companyClosureRepository;
     private final CompanyClosureVersionRepository companyClosureVersionRepository;
@@ -63,7 +74,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         // only closure days within the range need their versions, most ranges contain none
         final List<Map.Entry<CompanyClosureEntity, LocalDate>> candidates = new ArrayList<>();
         for (CompanyClosureEntity entity : companyClosureRepository.findAll()) {
-            final MonthDay monthDay = MonthDay.of(entity.getMonth(), entity.getDayOfMonth());
+            final MonthDay monthDay = monthDayOf(entity);
             for (int year = from.getYear(); year <= to.getYear(); year++) {
                 if (!monthDay.isValidYear(year)) {
                     continue;
@@ -83,31 +94,27 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         for (Map.Entry<CompanyClosureEntity, LocalDate> candidate : candidates) {
             final CompanyClosureEntity entity = candidate.getKey();
             final LocalDate date = candidate.getValue();
-            final Function<Locale, String> nameByLocale = nameByLocale(entity.getMessageKey());
+            final Function<Locale, String> nameByLocale = nameByLocale(entity);
             versionValidAt(versions, entity.getId(), date)
                 .map(CompanyClosureVersionEntity::getDayLength)
                 .filter(dayLength -> dayLength != ZERO)
                 .ifPresent(dayLength -> closures.add(new CompanyClosure(date, dayLength, nameByLocale)));
         }
-        closures.sort(Comparator.comparing(CompanyClosure::date));
+        closures.sort(comparing(CompanyClosure::date));
         return closures;
     }
 
     @Override
     @Transactional
     public void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom, Person modifier) {
-        if (validFrom.isBefore(Year.now(clock).atDay(1))) {
-            throw new IllegalArgumentException("validFrom " + validFrom + " must not be before the current year.");
-        }
+        requireNotBeforeCurrentYear(validFrom);
 
-        final CompanyClosureEntity entity = companyClosureRepository.findAll().stream()
-            .filter(closure -> closure.getMonth() == monthDay.getMonthValue() && closure.getDayOfMonth() == monthDay.getDayOfMonth())
-            .findFirst()
+        final CompanyClosureEntity entity = findEntity(monthDay)
             .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
 
         final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll();
         final Optional<CompanyClosureVersionEntity> sameValidFrom = versions.stream()
-            .filter(version -> version.getCompanyClosureId().equals(entity.getId()) && validFrom.equals(version.getValidFrom()))
+            .filter(version -> isVersionValidFrom(version, entity.getId(), validFrom))
             .findFirst();
 
         final CompanyClosureVersionEntity version;
@@ -129,6 +136,131 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         version.setLastModifiedBy(modifier);
         companyClosureVersionRepository.save(version);
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
+    }
+
+    @Override
+    @Transactional
+    public void changeCompanyClosureVersions(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom, Person modifier) {
+        if (changesByOldValidFrom.isEmpty()) {
+            return;
+        }
+        final CompanyClosureEntity entity = findEntity(monthDay)
+            .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findAll().stream()
+            .filter(version -> version.getCompanyClosureId().equals(entity.getId()))
+            .toList();
+
+        final Instant now = Instant.now(clock);
+        for (Map.Entry<LocalDate, CompanyClosureVersion> change : changesByOldValidFrom.entrySet()) {
+            final CompanyClosureVersionEntity version = versions.stream()
+                .filter(candidate -> change.getKey().equals(candidate.getValidFrom()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No version of " + monthDay + " starting at " + change.getKey()));
+            requireNotBeforeCurrentYear(version.getValidFrom());
+            requireNotBeforeCurrentYear(change.getValue().validFrom());
+            version.setDayLength(change.getValue().dayLength());
+            version.setValidFrom(change.getValue().validFrom());
+            version.setLastModifiedAt(now);
+            version.setLastModifiedBy(modifier);
+        }
+
+        final long distinctValidFroms = versions.stream().map(CompanyClosureVersionEntity::getValidFrom).distinct().count();
+        if (distinctValidFroms < versions.size()) {
+            throw new IllegalArgumentException("Two versions of " + monthDay + " would start at the same date.");
+        }
+
+        companyClosureVersionRepository.saveAll(versions);
+        applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
+    }
+
+    @Override
+    @Transactional
+    public void updateCompanyClosure(MonthDay monthDay, Map<LocalDate, CompanyClosureVersion> changesByOldValidFrom,
+                                     @Nullable CompanyClosureVersion newVersion, @Nullable Map<Locale, String> names,
+                                     Person modifier) {
+        // the calls run in the transaction of this method, a failing one rolls back the changes of the others
+        changeCompanyClosureVersions(monthDay, changesByOldValidFrom, modifier);
+        if (newVersion != null) {
+            changeCompanyClosure(monthDay, newVersion.dayLength(), newVersion.validFrom(), modifier);
+        }
+        if (names != null) {
+            renameCompanyClosure(monthDay, names, modifier);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CompanyClosureEntry> getCompanyClosureEntries() {
+        final Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId = companyClosureVersionRepository.findAll().stream()
+            .collect(groupingBy(CompanyClosureVersionEntity::getCompanyClosureId));
+        return companyClosureRepository.findAll().stream()
+            .map(entity -> entryOf(entity, versionsByClosureId))
+            .sorted(comparing(CompanyClosureEntry::monthDay))
+            .toList();
+    }
+
+    private CompanyClosureEntry entryOf(CompanyClosureEntity entity, Map<Long, List<CompanyClosureVersionEntity>> versionsByClosureId) {
+        final List<CompanyClosureVersion> versions = versionsOf(versionsByClosureId.getOrDefault(entity.getId(), List.of()));
+        return new CompanyClosureEntry(monthDayOf(entity), nameByLocale(entity), namesOf(entity), versions);
+    }
+
+    private static List<CompanyClosureVersion> versionsOf(List<CompanyClosureVersionEntity> versionEntities) {
+        return versionEntities.stream()
+            .sorted(BY_VALID_FROM)
+            .map(CompanyClosureServiceImpl::toVersion)
+            .toList();
+    }
+
+    private static CompanyClosureVersion toVersion(CompanyClosureVersionEntity version) {
+        return new CompanyClosureVersion(version.getDayLength(), version.getValidFrom());
+    }
+
+    private static boolean isVersionValidFrom(CompanyClosureVersionEntity version, Long closureId, LocalDate validFrom) {
+        return version.getCompanyClosureId().equals(closureId) && validFrom.equals(version.getValidFrom());
+    }
+
+    @Override
+    @Transactional
+    public void createCompanyClosure(MonthDay monthDay, Map<Locale, String> names, DayLength dayLength, LocalDate validFrom, Person creator) {
+        requireNotBeforeCurrentYear(validFrom);
+        final Map<Locale, String> nameByLocale = requireName(names);
+        if (LEAP_DAY.equals(monthDay)) {
+            throw new IllegalArgumentException("A company closure on " + monthDay + " does not exist every year.");
+        }
+        if (findEntity(monthDay).isPresent()) {
+            throw new IllegalArgumentException("Company closure for " + monthDay + " exists already.");
+        }
+
+        final Instant now = Instant.now(clock);
+        final CompanyClosureEntity entity = new CompanyClosureEntity();
+        entity.setMonth(monthDay.getMonthValue());
+        entity.setDayOfMonth(monthDay.getDayOfMonth());
+        entity.setNameByLocale(nameByLocale);
+        entity.setLastModifiedAt(now);
+        entity.setLastModifiedBy(creator);
+        final CompanyClosureEntity saved = companyClosureRepository.save(entity);
+
+        final CompanyClosureVersionEntity version = new CompanyClosureVersionEntity();
+        version.setCompanyClosureId(saved.getId());
+        version.setDayLength(dayLength);
+        version.setValidFrom(validFrom);
+        version.setLastModifiedAt(now);
+        version.setLastModifiedBy(creator);
+        companyClosureVersionRepository.save(version);
+
+        applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
+    }
+
+    @Override
+    @Transactional
+    public void renameCompanyClosure(MonthDay monthDay, Map<Locale, String> names, Person modifier) {
+        final Map<Locale, String> nameByLocale = requireName(names);
+        final CompanyClosureEntity entity = findEntity(monthDay)
+            .orElseThrow(() -> new IllegalArgumentException("No company closure for " + monthDay));
+        entity.setNameByLocale(nameByLocale);
+        entity.setLastModifiedAt(Instant.now(clock));
+        entity.setLastModifiedBy(modifier);
+        companyClosureRepository.save(entity);
     }
 
     @EventListener(InitialDefaultSettingsSavedEvent.class)
@@ -171,18 +303,79 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
     }
 
-    private Function<Locale, String> nameByLocale(String messageKey) {
-        return locale -> {
-            // an unknown message key, e.g. from a restored backup, must not break every page showing the closure
-            final String name = messageSource.getMessage(messageKey, new Object[]{}, null, locale);
-            return name != null ? name : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
-        };
+    /**
+     * The name given by a user for the locale or its language (e.g. "de" for "de_DE"), the translation of the
+     * message key if the closure has no names given by a user, a generic name otherwise.
+     */
+    private Function<Locale, String> nameByLocale(CompanyClosureEntity entity) {
+        final Map<Locale, String> names = namesOf(entity);
+        if (!names.isEmpty()) {
+            return locale -> givenName(names, locale);
+        }
+
+        final String messageKey = entity.getMessageKey();
+        return locale -> translatedName(messageKey, locale);
+    }
+
+    private String givenName(Map<Locale, String> names, Locale locale) {
+        return ofNullable(names.get(locale))
+            .or(() -> ofNullable(names.get(forLanguageTag(locale.getLanguage()))))
+            .orElseGet(() -> messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale));
+    }
+
+    private String translatedName(@Nullable String messageKey, Locale locale) {
+        // an unknown message key, e.g. from a restored backup, must not break every page showing the closure
+        final String message = messageKey == null ? null : messageSource.getMessage(messageKey, new Object[]{}, null, locale);
+        return message != null ? message : messageSource.getMessage(NAME_FALLBACK_MESSAGE_KEY, new Object[]{}, locale);
+    }
+
+    /**
+     * @return the names given by a user without blank ones, e.g. from a restored backup
+     */
+    private static Map<Locale, String> namesOf(CompanyClosureEntity entity) {
+        final Map<Locale, String> nameByLocale = entity.getNameByLocale();
+        return nameByLocale == null ? Map.of() : withoutBlankNames(nameByLocale);
+    }
+
+    private static Map<Locale, String> requireName(Map<Locale, String> names) {
+        final Map<Locale, String> nameByLocale = withoutBlankNames(names);
+        if (nameByLocale.isEmpty()) {
+            throw new IllegalArgumentException("At least one name must not be blank.");
+        }
+        return nameByLocale;
+    }
+
+    private static Map<Locale, String> withoutBlankNames(Map<Locale, String> names) {
+        final Map<Locale, String> nonBlankNames = names.entrySet().stream()
+            .filter(entry -> hasText(entry.getValue()))
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().strip()));
+        return Map.copyOf(nonBlankNames);
+    }
+
+    private void requireNotBeforeCurrentYear(LocalDate validFrom) {
+        if (validFrom == null || validFrom.isBefore(Year.now(clock).atDay(1))) {
+            throw new IllegalArgumentException("validFrom " + validFrom + " must be given and must not be before the current year.");
+        }
+    }
+
+    private Optional<CompanyClosureEntity> findEntity(MonthDay monthDay) {
+        return companyClosureRepository.findAll().stream()
+            .filter(closure -> monthDayOf(closure).equals(monthDay))
+            .findFirst();
+    }
+
+    private static MonthDay monthDayOf(CompanyClosureEntity entity) {
+        return MonthDay.of(entity.getMonth(), entity.getDayOfMonth());
     }
 
     private static Optional<CompanyClosureVersionEntity> versionValidAt(List<CompanyClosureVersionEntity> versions, Long closureId, LocalDate date) {
         return versions.stream()
             .filter(version -> version.getCompanyClosureId().equals(closureId))
-            .filter(version -> version.getValidFrom() == null || !version.getValidFrom().isAfter(date))
+            .filter(version -> isValidAt(version, date))
             .max(BY_VALID_FROM);
+    }
+
+    private static boolean isValidAt(CompanyClosureVersionEntity version, LocalDate date) {
+        return version.getValidFrom() == null || !version.getValidFrom().isAfter(date);
     }
 }

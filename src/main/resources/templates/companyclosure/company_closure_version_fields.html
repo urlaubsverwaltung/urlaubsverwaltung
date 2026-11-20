@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fields of a company closure version</title>
+  </head>
+  <body>
+    <!--/* the day length of a version. path is the prefix of the field, e.g. '' or 'versions[0].', labelId one or more
+           ids of the elements naming the group */-->
+    <th:block th:fragment="day-length(path, labelId, required)">
+      <th:block
+        th:with="
+          field=|${path}dayLength|,
+          errorId=|${#strings.replace(#strings.replace(path, '[', ''), ']', '')}dayLength-error|,
+          hasErrors=${#fields.hasErrors(field)}
+        "
+      >
+        <div class="company-closure-day-length">
+          <div role="radiogroup" th:aria-labelledby="${labelId}" class="company-closure-day-length__options">
+            <label th:each="dayLength : ${dayLengths}">
+              <input
+                type="radio"
+                th:required="${required}"
+                th:field="*{__${field}__}"
+                th:value="${dayLength}"
+                th:aria-invalid="${hasErrors} ? 'true'"
+                th:aria-describedby="${hasErrors} ? ${errorId}"
+              />
+              <th:block th:text="#{|company-closure.dayLength.${dayLength}|}">ganztägig</th:block>
+            </label>
+          </div>
+        </div>
+        <p th:id="${errorId}" class="uv-form__input-error" th:if="${hasErrors}">
+          <th:block th:errors="*{__${field}__}">dayLength Error</th:block>
+        </p>
+      </th:block>
+    </th:block>
+
+    <!--/* the "valid from" of a version, enhanced to a datepicker. id is the one th:field generates for the path */-->
+    <th:block th:fragment="valid-from(path, id, required, min, isoValue)">
+      <th:block th:with="field=|${path}validFrom|, errorId=|${id}-error|, hasErrors=${#fields.hasErrors(field)}">
+        <input
+          th:required="${required}"
+          th:field="*{__${field}__}"
+          th:errorclass="error"
+          th:placeholder="#{pattern.date}"
+          autocomplete="off"
+          data-company-closure-valid-from
+          th:data-iso-value="${isoValue}"
+          th:data-min="${min}"
+          th:aria-invalid="${hasErrors} ? 'true'"
+          th:aria-describedby="${hasErrors} ? ${errorId}"
+        />
+        <p th:id="${errorId}" class="uv-form__input-error" th:if="${hasErrors}">
+          <th:block th:errors="*{__${field}__}">validFrom Error</th:block>
+        </p>
+      </th:block>
+    </th:block>
+  </body>
+</html>

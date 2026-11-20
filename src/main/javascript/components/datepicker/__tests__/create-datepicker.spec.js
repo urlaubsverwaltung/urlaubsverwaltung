@@ -21,6 +21,7 @@ describe("create-datepicker", () => {
 
     // default fallback so tests not explicitly concerned with blackout periods still resolve.
     fetchMock.route(/blackout-periods/, { blackoutPeriods: [] });
+    fetchMock.route(/company-closures/, { companyClosures: [] }, { name: "company-closures-fallback" });
   });
 
   afterEach(async () => {
@@ -243,7 +244,7 @@ describe("create-datepicker", () => {
 
         button.click();
 
-        expect(fetchMock.callHistory.calls()).toHaveLength(3);
+        expect(fetchMock.callHistory.calls()).toHaveLength(4);
       });
 
       test("after month has been changed", async () => {
@@ -265,7 +266,7 @@ describe("create-datepicker", () => {
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(4));
       });
 
       test("after year has been changed", async () => {
@@ -287,7 +288,7 @@ describe("create-datepicker", () => {
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(4));
       });
 
       test("after next button has been clicked", async () => {
@@ -307,7 +308,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         previousMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(4));
       });
 
       test("after prev button has been clicked", async () => {
@@ -327,7 +328,7 @@ describe("create-datepicker", () => {
         expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         nextMonthButton.click();
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(4));
       });
 
       test("after keyboard navigation to the next month", async () => {
@@ -351,7 +352,7 @@ describe("create-datepicker", () => {
 
         // another week ahead is the 7. january, visible month changes.
         fireEvent.arrowDown(document.querySelector(".duet-date__day[tabindex='0']"));
-        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(3));
+        await vi.waitFor(() => expect(fetchMock.callHistory.calls()).toHaveLength(4));
       });
     });
 
@@ -499,6 +500,31 @@ describe("create-datepicker", () => {
       });
     });
 
+    test("mergesCompanyClosuresIntoPublicHolidayMarkers", async () => {
+      fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-30&to=2021-01-03`, {
+        publicHolidays: [],
+      });
+      fetchMock.route(
+        `my-url-prefix/persons/42/absences?from=2020-11-30&to=2021-01-03&absence-types=vacation,sick_note,no_workday`,
+        { absences: [] },
+      );
+      fetchMock.removeRoutes({ names: ["company-closures-fallback"] });
+      fetchMock.route(`my-url-prefix/company-closures?from=2020-11-30&to=2021-01-03`, {
+        companyClosures: [
+          { date: "2020-12-24", description: "Heiligabend", dayLength: 0.5, absencePeriodName: "NOON" },
+        ],
+      });
+
+      document.body.innerHTML = `
+        <input value="24.12.2020" data-iso-value="2020-12-24" />
+      `;
+
+      await createDatepicker("input", { urlPrefix: "my-url-prefix", getPersonId: () => 42 });
+      document.querySelector("button.duet-date__toggle").click();
+
+      await vi.waitFor(() => expect(document.querySelector(".datepicker-day-public-holiday-noon")).not.toBeNull());
+    });
+
     test("gives the days the common look without fetching anything when there is no person", async () => {
       document.body.innerHTML = `
         <input value="24.12.2020" data-iso-value="2020-12-24" />
@@ -514,6 +540,7 @@ describe("create-datepicker", () => {
           .parentElement;
 
       expect(fetchMock.callHistory.calls()).toHaveLength(0);
+      expect(fetchMock.callHistory.calls(/company-closures/)).toHaveLength(0);
       expect(dayOf("24. Dezember").classList).toContain("datepicker-day");
       expect(dayOf("26. Dezember").classList).toContain("datepicker-day-weekend");
       expect(dayOf("24. Dezember").querySelector("[data-uv-icon]")).not.toBeNull();

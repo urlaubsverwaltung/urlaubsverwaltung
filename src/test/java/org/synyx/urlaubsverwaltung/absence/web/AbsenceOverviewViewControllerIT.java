@@ -40,6 +40,7 @@ import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -202,9 +203,9 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(anyList(), eq(december)))
             .thenReturn(Map.of(office, Map.of(december, new WorkingTime(office, december.startDate(), GERMANY_BADEN_WUERTTEMBERG, false))));
 
-        final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 24), office,
-            new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
-            new AbsencePeriod.RecordNoonCompanyClosure(office))));
+        final AbsencePeriod.RecordMorningVacation morningVacation = new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.RecordNoonCompanyClosure noonCompanyClosure = new AbsencePeriod.RecordNoonCompanyClosure(office);
+        final AbsencePeriod christmasEve = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 24), office, morningVacation, noonCompanyClosure)));
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(christmasEve));
 
         mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
@@ -226,13 +227,13 @@ class AbsenceOverviewViewControllerIT extends SingleTenantTestContainersBase {
         when(publicHolidaysService.getPublicHolidays(december.startDate(), december.endDate(), GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 23), NOON, "Testfeiertag")));
 
-        final AbsencePeriod testHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 23), office,
-            new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false),
-            new AbsencePeriod.RecordNoonPublicHoliday(office))));
+        final AbsencePeriod.RecordMorningVacation morningVacation = new AbsencePeriod.RecordMorningVacation(office, 9L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false);
+        final AbsencePeriod.RecordNoonPublicHoliday noonPublicHoliday = new AbsencePeriod.RecordNoonPublicHoliday(office);
+        final AbsencePeriod testHoliday = new AbsencePeriod(List.of(new AbsencePeriod.Record(LocalDate.of(2024, DECEMBER, 23), office, morningVacation, noonPublicHoliday)));
         when(absenceService.getOpenAbsences(anyList(), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(testHoliday));
 
         mockMvc.perform(get("/web/absences").param("year", "2024").param("month", "12")
-                .locale(Locale.GERMAN)
+                .locale(GERMAN)
                 .with(csrf())
                 .with(oidcSubject(office, List.of(USER, OFFICE))))
             .andExpect(status().isOk())
