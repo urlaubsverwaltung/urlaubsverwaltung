@@ -202,18 +202,20 @@
               >
                 Betriebsruhe
               </p>
-              <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length">
-                <label th:each="dayLength : ${ {'MORNING', 'NOON', 'FULL', 'ZERO'} }">
-                  <input
-                    type="radio"
-                    required
-                    th:field="*{dayLength}"
-                    th:value="${dayLength}"
-                    th:aria-invalid="${hasDayLengthErrors} ? 'true'"
-                    th:aria-describedby="${hasDayLengthErrors} ? 'dayLength-error'"
-                  />
-                  <th:block th:text="#{|company-closure.dayLength.${dayLength}|}">ganztägig</th:block>
-                </label>
+              <div class="company-closure-day-length">
+                <div role="radiogroup" aria-labelledby="dayLength-label" class="company-closure-day-length__options">
+                  <label th:each="dayLength : ${ {'MORNING', 'NOON', 'FULL', 'ZERO'} }">
+                    <input
+                      type="radio"
+                      required
+                      th:field="*{dayLength}"
+                      th:value="${dayLength}"
+                      th:aria-invalid="${hasDayLengthErrors} ? 'true'"
+                      th:aria-describedby="${hasDayLengthErrors} ? 'dayLength-error'"
+                    />
+                    <th:block th:text="#{|company-closure.dayLength.${dayLength}|}">ganztägig</th:block>
+                  </label>
+                </div>
               </div>
               <p id="dayLength-error" class="uv-form__input-error" th:if="${hasDayLengthErrors}">
                 <th:block th:errors="*{dayLength}">dayLength Error</th:block>

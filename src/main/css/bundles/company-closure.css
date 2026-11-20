@@ -224,17 +224,35 @@
   }
 }
 
-/* the options of the day length, one per line in a narrow main container and two per line from md on. the input
-   column of the form is too narrow for all four in one line, a grid never leaves one of them alone in the last line */
+/* the width of the input column decides how many options of the day length fit in one line */
 .company-closure-day-length {
+  display: block;
+  container: day-length / inline-size;
+}
+
+/* one option per line in a narrow column */
+.company-closure-day-length__options {
   display: flex;
   flex-direction: column;
   gap: --spacing(2);
+  column-gap: --spacing(6);
+}
 
-  @variant @md/main {
+/* two columns, filled column by column: the half days on the left, full day and none on the right */
+@container day-length (width >= 22rem) {
+  .company-closure-day-length__options {
     display: grid;
     grid-template-columns: repeat(2, max-content);
-    column-gap: --spacing(6);
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+  }
+}
+
+/* all options in one line when they fit, in every language (they need about 29rem in german) */
+@container day-length (width >= 32rem) {
+  .company-closure-day-length__options {
+    display: flex;
+    flex-direction: row;
   }
 }
 
