@@ -39,7 +39,7 @@ public enum FederalState {
     GERMANY_SCHLESWIG_HOLSTEIN("de", "sh"),
     GERMANY_THUERINGEN("de", "th"),
 
-    GREECE_GREECE("gr", "gr"),
+    GREECE_GREECE("gr"),
 
     AUSTRIA_BURGENLAND("at", "1"),
     AUSTRIA_KAERNTEN("at", "2"),
@@ -78,20 +78,19 @@ public enum FederalState {
     SWITZERLAND_ZUG("ch", "zg"),
     SWITZERLAND_ZUERICH("ch", "zh"),
 
-    UNITED_KINGDOM_ALDERNEY("gb", "al"),
     UNITED_KINGDOM_ENGLAND("gb", "eng"),
-    UNITED_KINGDOM_GUERNSEY("gb", "gu"),
-    UNITED_KINGDOM_ISLE_OF_MAN("gb", "im"),
-    UNITED_KINGDOM_JERSEY("gb", "je"),
+    UNITED_KINGDOM_GUERNSEY("gg"),
+    UNITED_KINGDOM_ISLE_OF_MAN("im"),
+    UNITED_KINGDOM_JERSEY("je"),
     UNITED_KINGDOM_NORTHERN_IRELAND("gb", "nir"),
     UNITED_KINGDOM_SCOTLAND("gb", "sct"),
     UNITED_KINGDOM_WALES("gb", "wls"),
 
-    MALTA("mt", "mt"),
+    MALTA("mt"),
 
-    ITALY("it", "it"),
+    ITALY("it"),
 
-    CROATIA("hr", "hr"),
+    CROATIA("hr"),
 
     SPAIN_ANDALUCIA("es", "an"),
     SPAIN_ARAGON("es", "ar"),
@@ -114,26 +113,26 @@ public enum FederalState {
     SPAIN_CANTABRIA("es", "cb"),
     SPAIN_VALENCIA("es", "vc"),
 
-    NETHERLANDS("nl", "nl"),
+    NETHERLANDS("nl"),
 
-    LITHUANIA("lt", "lt"),
+    LITHUANIA("lt"),
 
-    BELGIUM("be", "be"),
+    BELGIUM("be"),
 
-    POLAND("pl", "pl"),
+    POLAND("pl"),
 
-    FINLAND("fi", "fi"),
+    FINLAND("fi"),
     FINLAND_ALAND("fi", "01"),
 
-    ROMANIA("ro", "ro"),
+    ROMANIA("ro"),
 
-    PORTUGAL("pt", "pt"),
+    PORTUGAL("pt"),
     PORTUGAL_AZORES("pt", "20"),
     PORTUGAL_MADEIRA("pt", "30"),
 
-    BULGARIA("bg", "bg"),
+    BULGARIA("bg"),
 
-    LATVIA("lv", "lv"),
+    LATVIA("lv"),
 
     USA_MARYLAND("us", "md"),
     USA_VIRGINIA("us", "va"),

@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="replace-alderney-with-guernsey">
+    <comment>
+      UNITED_KINGDOM_ALDERNEY was removed because jollyday has no public holiday calendar for Alderney.
+      Alderney belongs to the Bailiwick of Guernsey, which already provided its public holidays.
+    </comment>
+    <update tableName="settings">
+      <column name="federal_state" value="UNITED_KINGDOM_GUERNSEY"/>
+      <where>federal_state = 'UNITED_KINGDOM_ALDERNEY'</where>
+    </update>
+    <update tableName="working_time">
+      <column name="federal_state_override" value="UNITED_KINGDOM_GUERNSEY"/>
+      <where>federal_state_override = 'UNITED_KINGDOM_ALDERNEY'</where>
+    </update>
+  </changeSet>
+</databaseChangeLog>
