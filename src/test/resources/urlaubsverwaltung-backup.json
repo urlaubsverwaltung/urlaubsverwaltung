@@ -2965,17 +2965,21 @@
       "month": 12,
       "dayOfMonth": 24,
       "messageKey": "companyclosure.name.christmasEve",
+      "lastModifiedAt": null,
+      "externalIdOfLastModifier": null,
       "versions": [
-        {"dayLength": "NOON", "validFrom": null},
-        {"dayLength": "FULL", "validFrom": "2027-01-01"}
+        {"dayLength": "NOON", "validFrom": null, "lastModifiedAt": null, "externalIdOfLastModifier": null},
+        {"dayLength": "FULL", "validFrom": "2027-01-01", "lastModifiedAt": "2026-11-06T10:00:00Z", "externalIdOfLastModifier": "office"}
       ]
     },
     {
       "month": 12,
       "dayOfMonth": 31,
       "messageKey": "companyclosure.name.newYearsEve",
+      "lastModifiedAt": null,
+      "externalIdOfLastModifier": null,
       "versions": [
-        {"dayLength": "NOON", "validFrom": null}
+        {"dayLength": "NOON", "validFrom": null, "lastModifiedAt": null, "externalIdOfLastModifier": null}
       ]
     }
   ]

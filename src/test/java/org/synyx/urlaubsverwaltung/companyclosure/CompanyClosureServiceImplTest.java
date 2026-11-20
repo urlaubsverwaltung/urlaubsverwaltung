@@ -8,8 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.ZoneId;
@@ -41,6 +44,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 class CompanyClosureServiceImplTest {
 
     private static final MonthDay CHRISTMAS_EVE = MonthDay.of(DECEMBER, 24);
+    private static final Person MODIFIER = new Person("office", "Muster", "Marlene", "muster@example.org");
 
     private CompanyClosureServiceImpl sut;
 
@@ -147,7 +151,7 @@ class CompanyClosureServiceImplTest {
     @Test
     void rejectsValidFromBeforeCurrentYear() {
         final LocalDate validFrom = LocalDate.of(2025, DECEMBER, 31);
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom, MODIFIER));
         verifyNoInteractions(companyClosureVersionRepository, applicationEventPublisher);
     }
 
@@ -155,7 +159,7 @@ class CompanyClosureServiceImplTest {
     void allowsValidFromAtStartOfCurrentYear() {
         givenChristmasEve(version(NOON, null));
 
-        sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, JANUARY, 1));
+        sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, JANUARY, 1), MODIFIER);
 
         verify(companyClosureVersionRepository).save(any(CompanyClosureVersionEntity.class));
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(CHRISTMAS_EVE));
@@ -167,9 +171,11 @@ class CompanyClosureServiceImplTest {
         final CompanyClosureVersionEntity existing = version(NOON, validFrom);
         givenChristmasEve(version(NOON, null), existing);
 
-        sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom);
+        sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, validFrom, MODIFIER);
 
         assertThat(existing.getDayLength()).isEqualTo(FULL);
+        assertThat(existing.getLastModifiedAt()).isEqualTo(Instant.parse("2026-11-06T00:00:00Z"));
+        assertThat(existing.getLastModifiedBy()).isEqualTo(MODIFIER);
         verify(companyClosureVersionRepository).save(existing);
         verify(applicationEventPublisher).publishEvent(new CompanyClosureChangedEvent(CHRISTMAS_EVE));
     }
@@ -178,7 +184,7 @@ class CompanyClosureServiceImplTest {
     void unchangedValueSavesNothing() {
         givenChristmasEve(version(NOON, null));
 
-        sut.changeCompanyClosure(CHRISTMAS_EVE, NOON, LocalDate.of(2026, NOVEMBER, 6));
+        sut.changeCompanyClosure(CHRISTMAS_EVE, NOON, LocalDate.of(2026, NOVEMBER, 6), MODIFIER);
 
         verify(companyClosureVersionRepository, never()).save(any());
         verifyNoInteractions(applicationEventPublisher);
@@ -190,8 +196,37 @@ class CompanyClosureServiceImplTest {
         final MonthDay labourDay = MonthDay.of(MAY, 1);
         final LocalDate validFrom = LocalDate.of(2026, NOVEMBER, 6);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(labourDay, FULL, validFrom));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.changeCompanyClosure(labourDay, FULL, validFrom, MODIFIER));
         verify(companyClosureVersionRepository, never()).save(any());
+    }
+
+    @Test
+    void newVersionRecordsTheModifier() {
+        givenChristmasEve(version(NOON, null));
+
+        sut.changeCompanyClosure(CHRISTMAS_EVE, FULL, LocalDate.of(2026, NOVEMBER, 6), MODIFIER);
+
+        verify(companyClosureVersionRepository).save(argThat(version ->
+            Instant.parse("2026-11-06T00:00:00Z").equals(version.getLastModifiedAt()) && MODIFIER.equals(version.getLastModifiedBy())));
+    }
+
+    @Test
+    void forgetsDeletedModifierAndKeepsTheClosures() {
+        final CompanyClosureEntity closure = christmasEveEntity();
+        closure.setLastModifiedBy(MODIFIER);
+        final CompanyClosureVersionEntity version = version(FULL, LocalDate.of(2026, NOVEMBER, 6));
+        version.setLastModifiedBy(MODIFIER);
+        when(companyClosureRepository.findByLastModifiedBy(MODIFIER)).thenReturn(List.of(closure));
+        when(companyClosureVersionRepository.findByLastModifiedBy(MODIFIER)).thenReturn(List.of(version));
+
+        sut.forgetDeletedModifier(new PersonDeletedEvent(MODIFIER));
+
+        assertThat(closure.getLastModifiedBy()).isNull();
+        assertThat(version.getLastModifiedBy()).isNull();
+        verify(companyClosureRepository).saveAll(List.of(closure));
+        verify(companyClosureVersionRepository).saveAll(List.of(version));
+        verify(companyClosureRepository, never()).delete(any());
+        verify(companyClosureVersionRepository, never()).delete(any());
     }
 
     @Test

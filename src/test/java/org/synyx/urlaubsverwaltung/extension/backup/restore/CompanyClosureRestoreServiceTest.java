@@ -15,15 +15,21 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureVersionDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DayLengthDTO;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CompanyClosureRestoreServiceTest {
@@ -32,6 +38,8 @@ class CompanyClosureRestoreServiceTest {
 
     @Mock
     private CompanyClosureImportService companyClosureImportService;
+    @Mock
+    private PersonService personService;
 
     @Captor
     private ArgumentCaptor<CompanyClosureEntity> closureCaptor;
@@ -40,16 +48,16 @@ class CompanyClosureRestoreServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new CompanyClosureRestoreService(companyClosureImportService);
+        sut = new CompanyClosureRestoreService(companyClosureImportService, personService);
     }
 
     @Test
     void restoresCompanyClosures() {
-        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", List.of(
-            new CompanyClosureVersionDTO(DayLengthDTO.NOON, null),
-            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1))));
-        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", List.of(
-            new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null)));
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+            new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), null, null)));
+        final CompanyClosureDTO newYearsEve = new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", null, null, List.of(
+            new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null)));
 
         sut.restore(List.of(christmasEve, newYearsEve));
 
@@ -68,5 +76,39 @@ class CompanyClosureRestoreServiceTest {
         assertThat(versionsCaptor.getAllValues().get(1))
             .extracting(CompanyClosureVersionEntity::getDayLength)
             .containsExactly(DayLength.MORNING);
+    }
+
+    @Test
+    void restoresLastModifier() {
+        final Person office = new Person("office", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByUsername("office")).thenReturn(Optional.of(office));
+        final Instant lastModifiedAt = Instant.parse("2026-11-06T10:00:00Z");
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", lastModifiedAt, "office", List.of(
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), lastModifiedAt, "office")));
+
+        sut.restore(List.of(christmasEve));
+
+        verify(companyClosureImportService).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
+        assertThat(closureCaptor.getValue())
+            .extracting(CompanyClosureEntity::getLastModifiedAt, CompanyClosureEntity::getLastModifiedBy)
+            .containsExactly(lastModifiedAt, office);
+        assertThat(versionsCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getLastModifiedAt, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(tuple(lastModifiedAt, office));
+    }
+
+    @Test
+    void restoresWithoutLastModifierWhenThePersonIsMissing() {
+        when(personService.getPersonByUsername("deleted")).thenReturn(Optional.empty());
+        final Instant lastModifiedAt = Instant.parse("2026-11-06T10:00:00Z");
+        final CompanyClosureDTO christmasEve = new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+            new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), lastModifiedAt, "deleted")));
+
+        sut.restore(List.of(christmasEve));
+
+        verify(companyClosureImportService).importCompanyClosure(closureCaptor.capture(), versionsCaptor.capture());
+        assertThat(versionsCaptor.getValue())
+            .extracting(CompanyClosureVersionEntity::getLastModifiedAt, CompanyClosureVersionEntity::getLastModifiedBy)
+            .containsExactly(tuple(lastModifiedAt, null));
     }
 }

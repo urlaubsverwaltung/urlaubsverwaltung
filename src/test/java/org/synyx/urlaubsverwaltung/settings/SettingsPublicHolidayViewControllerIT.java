@@ -195,8 +195,8 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
             assertThat(actual.getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
         });
 
-        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 24)), eq(DayLength.NOON), any(LocalDate.class));
-        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 31)), eq(DayLength.MORNING), any(LocalDate.class));
+        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 24)), eq(DayLength.NOON), any(LocalDate.class), eq(person));
+        verify(companyClosureService).changeCompanyClosure(eq(MonthDay.of(DECEMBER, 31)), eq(DayLength.MORNING), any(LocalDate.class), eq(person));
     }
 
     private Person mockPerson(String username) {

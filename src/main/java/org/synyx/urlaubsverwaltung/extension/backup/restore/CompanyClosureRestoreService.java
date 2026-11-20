@@ -3,10 +3,14 @@ package org.synyx.urlaubsverwaltung.extension.backup.restore;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureImportService;
+import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureVersionEntity;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureVersionDTO;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -18,9 +22,11 @@ class CompanyClosureRestoreService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final CompanyClosureImportService companyClosureImportService;
+    private final PersonService personService;
 
-    CompanyClosureRestoreService(CompanyClosureImportService companyClosureImportService) {
+    CompanyClosureRestoreService(CompanyClosureImportService companyClosureImportService, PersonService personService) {
         this.companyClosureImportService = companyClosureImportService;
+        this.personService = personService;
     }
 
     void restore(List<CompanyClosureDTO> companyClosures) {
@@ -30,11 +36,24 @@ class CompanyClosureRestoreService {
 
         for (CompanyClosureDTO dto : companyClosures) {
             companyClosureImportService.importCompanyClosure(
-                dto.toEntity(),
-                dto.versions().stream().map(CompanyClosureVersionDTO::toEntity).toList()
+                dto.toEntity(findLastModifier(dto.externalIdOfLastModifier())),
+                dto.versions().stream().map(this::toEntity).toList()
             );
         }
 
         LOG.info("Restored {} companyClosures.", companyClosures.size());
+    }
+
+    private CompanyClosureVersionEntity toEntity(CompanyClosureVersionDTO dto) {
+        return dto.toEntity(findLastModifier(dto.externalIdOfLastModifier()));
+    }
+
+    /**
+     * The person may be deleted or missing in the backup, the closure is restored without its last modifier then.
+     */
+    private Person findLastModifier(String externalId) {
+        return Optional.ofNullable(externalId)
+            .flatMap(personService::getPersonByUsername)
+            .orElse(null);
     }
 }

@@ -12,7 +12,9 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CompanyClosureVersionDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DayLengthDTO;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,6 +24,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CompanyClosureDataCollectionServiceTest {
+
+    private static final Instant LAST_MODIFIED_AT = Instant.parse("2026-11-06T10:00:00Z");
 
     @InjectMocks
     private CompanyClosureDataCollectionService sut;
@@ -35,18 +39,18 @@ class CompanyClosureDataCollectionServiceTest {
         final CompanyClosureEntity newYearsEve = closure(2L, 31, "companyclosure.name.newYearsEve");
         when(companyClosureImportService.findAllClosures()).thenReturn(List.of(newYearsEve, christmasEve));
         when(companyClosureImportService.findAllVersions()).thenReturn(List.of(
-            version(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
+            changedVersion(1L, DayLength.FULL, LocalDate.of(2027, JANUARY, 1)),
             version(2L, DayLength.MORNING, null),
             version(1L, DayLength.NOON, null)));
 
         final List<CompanyClosureDTO> actual = sut.collectCompanyClosures();
 
         assertThat(actual).containsExactly(
-            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", List.of(
-                new CompanyClosureVersionDTO(DayLengthDTO.NOON, null),
-                new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1)))),
-            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", List.of(
-                new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null))));
+            new CompanyClosureDTO(12, 24, "companyclosure.name.christmasEve", null, null, List.of(
+                new CompanyClosureVersionDTO(DayLengthDTO.NOON, null, null, null),
+                new CompanyClosureVersionDTO(DayLengthDTO.FULL, LocalDate.of(2027, JANUARY, 1), LAST_MODIFIED_AT, "office"))),
+            new CompanyClosureDTO(12, 31, "companyclosure.name.newYearsEve", null, null, List.of(
+                new CompanyClosureVersionDTO(DayLengthDTO.MORNING, null, null, null))));
     }
 
     private static CompanyClosureEntity closure(Long id, int dayOfMonth, String messageKey) {
@@ -55,6 +59,13 @@ class CompanyClosureDataCollectionServiceTest {
         entity.setMonth(12);
         entity.setDayOfMonth(dayOfMonth);
         entity.setMessageKey(messageKey);
+        return entity;
+    }
+
+    private static CompanyClosureVersionEntity changedVersion(Long closureId, DayLength dayLength, LocalDate validFrom) {
+        final CompanyClosureVersionEntity entity = version(closureId, dayLength, validFrom);
+        entity.setLastModifiedAt(LAST_MODIFIED_AT);
+        entity.setLastModifiedBy(new Person("office", "Muster", "Marlene", "muster@example.org"));
         return entity;
     }
 

@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Comparator.nullsFirst;
+import static org.synyx.urlaubsverwaltung.extension.backup.backup.PersonHelper.optionalExternalUserId;
 
 @Service
 @ConditionalOnBackupCreateEnabled
@@ -28,10 +29,12 @@ class CompanyClosureDataCollectionService {
         return companyClosureImportService.findAllClosures().stream()
             .sorted(Comparator.comparing(CompanyClosureEntity::getId))
             .map(closure -> new CompanyClosureDTO(closure.getMonth(), closure.getDayOfMonth(), closure.getMessageKey(),
+                closure.getLastModifiedAt(), optionalExternalUserId(closure.getLastModifiedBy()),
                 versions.stream()
                     .filter(version -> closure.getId().equals(version.getCompanyClosureId()))
                     .sorted(Comparator.comparing(CompanyClosureVersionEntity::getValidFrom, nullsFirst(Comparator.naturalOrder())))
-                    .map(version -> new CompanyClosureVersionDTO(DayLengthDTO.valueOf(version.getDayLength().name()), version.getValidFrom()))
+                    .map(version -> new CompanyClosureVersionDTO(DayLengthDTO.valueOf(version.getDayLength().name()), version.getValidFrom(),
+                        version.getLastModifiedAt(), optionalExternalUserId(version.getLastModifiedBy())))
                     .toList()))
             .toList();
     }

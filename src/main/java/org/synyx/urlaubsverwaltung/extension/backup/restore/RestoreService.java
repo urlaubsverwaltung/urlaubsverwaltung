@@ -61,8 +61,8 @@ class RestoreService {
     void restoreData(UrlaubsverwaltungBackupDTO backupToRestore) {
         LOG.info("Starting to restore data...");
         settingsRestoreService.restore(backupToRestore.settings());
-        companyClosureRestoreService.restore(backupToRestore.companyClosures());
         personRestoreService.restore(backupToRestore.persons());
+        companyClosureRestoreService.restore(backupToRestore.companyClosures());
         personActivePeriodRestoreService.restore(backupToRestore.personActivePeriods());
         overtimeRestoreService.restore(backupToRestore.overtimes());
 

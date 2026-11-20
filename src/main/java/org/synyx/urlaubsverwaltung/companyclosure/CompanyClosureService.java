@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.companyclosure;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -22,7 +23,8 @@ public interface CompanyClosureService {
      * @param monthDay  day of the closure
      * @param dayLength closed portion of the day
      * @param validFrom first date the new value applies to, not before the start of the current year
+     * @param modifier  person who changes the closure
      * @throws IllegalArgumentException if there is no closure for the month day or validFrom lies before the current year
      */
-    void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom);
+    void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom, Person modifier);
 }

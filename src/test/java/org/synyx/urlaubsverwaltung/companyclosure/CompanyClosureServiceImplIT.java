@@ -5,10 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
+import java.util.List;
 import java.util.Locale;
 
 import static java.time.Month.DECEMBER;
@@ -16,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
@@ -23,6 +28,10 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private CompanyClosureService sut;
+    @Autowired
+    private CompanyClosureVersionRepository companyClosureVersionRepository;
+    @Autowired
+    private PersonService personService;
 
     @Test
     void defaultsExistAfterStartup() {
@@ -37,11 +46,39 @@ class CompanyClosureServiceImplIT extends SingleTenantTestContainersBase {
     void changePersistsANewVersion() {
         final Year year = Year.now();
 
-        sut.changeCompanyClosure(MonthDay.of(DECEMBER, 24), FULL, year.atDay(1));
+        final Person office = personService.create("office", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, OFFICE));
+
+        sut.changeCompanyClosure(MonthDay.of(DECEMBER, 24), FULL, year.atDay(1), office);
 
         final LocalDate christmasEve = year.atMonthDay(MonthDay.of(DECEMBER, 24));
         final LocalDate lastYearsChristmasEve = year.minusYears(1).atMonthDay(MonthDay.of(DECEMBER, 24));
         assertThat(sut.getCompanyClosures(christmasEve, christmasEve)).extracting(CompanyClosure::dayLength).containsExactly(FULL);
         assertThat(sut.getCompanyClosures(lastYearsChristmasEve, lastYearsChristmasEve)).extracting(CompanyClosure::dayLength).containsExactly(NOON);
+        assertThat(companyClosureVersionRepository.findByLastModifiedBy(office))
+            .singleElement()
+            .satisfies(version -> {
+                assertThat(version.getValidFrom()).isEqualTo(year.atDay(1));
+                assertThat(version.getLastModifiedAt()).isNotNull();
+            });
+    }
+
+    @Test
+    void deletingTheModifierKeepsTheVersion() {
+        final Year year = Year.now();
+        final Person office = personService.create("office", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, OFFICE));
+        final Person admin = personService.create("admin", "Max", "Muster", "max@example.org", List.of(), List.of(USER, OFFICE));
+        sut.changeCompanyClosure(MonthDay.of(DECEMBER, 24), FULL, year.atDay(1), office);
+
+        personService.delete(office.getIdAsPersonId(), admin.getIdAsPersonId());
+
+        final LocalDate christmasEve = year.atMonthDay(MonthDay.of(DECEMBER, 24));
+        assertThat(sut.getCompanyClosures(christmasEve, christmasEve)).extracting(CompanyClosure::dayLength).containsExactly(FULL);
+        assertThat(companyClosureVersionRepository.findAll())
+            .filteredOn(version -> year.atDay(1).equals(version.getValidFrom()))
+            .singleElement()
+            .satisfies(version -> {
+                assertThat(version.getLastModifiedBy()).isNull();
+                assertThat(version.getLastModifiedAt()).isNotNull();
+            });
     }
 }

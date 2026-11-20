@@ -8,9 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DateLimits;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.InitialDefaultSettingsSavedEvent;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
@@ -92,7 +95,7 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
 
     @Override
     @Transactional
-    public void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom) {
+    public void changeCompanyClosure(MonthDay monthDay, DayLength dayLength, LocalDate validFrom, Person modifier) {
         if (validFrom.isBefore(Year.now(clock).atDay(1))) {
             throw new IllegalArgumentException("validFrom " + validFrom + " must not be before the current year.");
         }
@@ -122,6 +125,8 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             return;
         }
         version.setDayLength(dayLength);
+        version.setLastModifiedAt(Instant.now(clock));
+        version.setLastModifiedBy(modifier);
         companyClosureVersionRepository.save(version);
         applicationEventPublisher.publishEvent(new CompanyClosureChangedEvent(monthDay));
     }
@@ -133,6 +138,22 @@ class CompanyClosureServiceImpl implements CompanyClosureService {
             createDefault(MonthDay.of(DECEMBER, 24), "companyclosure.name.christmasEve");
             createDefault(MonthDay.of(DECEMBER, 31), "companyclosure.name.newYearsEve");
         }
+    }
+
+    /**
+     * Keeps the closures of a deleted person and forgets only who changed them last.
+     */
+    @EventListener
+    void forgetDeletedModifier(PersonDeletedEvent event) {
+        final Person deletedPerson = event.person();
+
+        final List<CompanyClosureEntity> closures = companyClosureRepository.findByLastModifiedBy(deletedPerson);
+        closures.forEach(closure -> closure.setLastModifiedBy(null));
+        companyClosureRepository.saveAll(closures);
+
+        final List<CompanyClosureVersionEntity> versions = companyClosureVersionRepository.findByLastModifiedBy(deletedPerson);
+        versions.forEach(version -> version.setLastModifiedBy(null));
+        companyClosureVersionRepository.saveAll(versions);
     }
 
     private void createDefault(MonthDay monthDay, String messageKey) {

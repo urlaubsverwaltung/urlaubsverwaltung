@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.HasPersonSearch;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -35,6 +37,7 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
     private final SettingsService settingsService;
     private final SettingsPublicHolidayValidator settingsValidator;
     private final CompanyClosureService companyClosureService;
+    private final PersonService personService;
     private final Clock clock;
     private final PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     private final PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -43,6 +46,7 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         SettingsService settingsService,
         SettingsPublicHolidayValidator settingsValidator,
         CompanyClosureService companyClosureService,
+        PersonService personService,
         Clock clock,
         PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy,
         PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier
@@ -50,6 +54,7 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
         this.settingsService = settingsService;
         this.settingsValidator = settingsValidator;
         this.companyClosureService = companyClosureService;
+        this.personService = personService;
         this.clock = clock;
         this.defaultPersonSuggestionUrlStrategy = defaultPersonSuggestionUrlStrategy;
         this.personSearchUiFragmentSupplier = personSearchUiFragmentSupplier;
@@ -97,8 +102,9 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad, HasPer
 
         // the service ignores unchanged values
         final LocalDate today = LocalDate.now(clock);
-        companyClosureService.changeCompanyClosure(CHRISTMAS_EVE, settingsDto.getWorkingDurationForChristmasEve().getInverse(), today);
-        companyClosureService.changeCompanyClosure(NEW_YEARS_EVE, settingsDto.getWorkingDurationForNewYearsEve().getInverse(), today);
+        final Person signedInUser = personService.getSignedInUser();
+        companyClosureService.changeCompanyClosure(CHRISTMAS_EVE, settingsDto.getWorkingDurationForChristmasEve().getInverse(), today, signedInUser);
+        companyClosureService.changeCompanyClosure(NEW_YEARS_EVE, settingsDto.getWorkingDurationForNewYearsEve().getInverse(), today, signedInUser);
 
         redirectAttributes.addFlashAttribute("success", true);
 

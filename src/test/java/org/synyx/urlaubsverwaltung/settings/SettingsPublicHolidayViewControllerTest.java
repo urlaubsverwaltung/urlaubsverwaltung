@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosure;
 import org.synyx.urlaubsverwaltung.companyclosure.CompanyClosureService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.search.PersonSearchUiFragmentSupplier;
 import org.synyx.urlaubsverwaltung.search.PersonSuggestionUrlStrategy;
@@ -44,6 +46,8 @@ class SettingsPublicHolidayViewControllerTest {
     @Mock
     private CompanyClosureService companyClosureService;
     @Mock
+    private PersonService personService;
+    @Mock
     private PersonSuggestionUrlStrategy defaultPersonSuggestionUrlStrategy;
     @Mock
     private PersonSearchUiFragmentSupplier personSearchUiFragmentSupplier;
@@ -52,7 +56,7 @@ class SettingsPublicHolidayViewControllerTest {
 
     @BeforeEach
     void setup() {
-        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, companyClosureService,
+        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, companyClosureService, personService,
             Clock.fixed(Instant.parse("2026-11-06T10:00:00Z"), UTC), defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
     }
 
@@ -89,7 +93,7 @@ class SettingsPublicHolidayViewControllerTest {
 
     @Test
     void showsWorkingDurationOfNextYearWhenDayHasPassed() {
-        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, companyClosureService,
+        sut = new SettingsPublicHolidayViewController(settingsService, settingsValidator, companyClosureService, personService,
             Clock.fixed(Instant.parse("2026-12-28T10:00:00Z"), UTC), defaultPersonSuggestionUrlStrategy, personSearchUiFragmentSupplier);
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(companyClosureService.getCompanyClosures(LocalDate.of(2027, DECEMBER, 24), LocalDate.of(2027, DECEMBER, 24)))
@@ -121,6 +125,8 @@ class SettingsPublicHolidayViewControllerTest {
 
         final Settings existing = new Settings();
         when(settingsService.getSettings()).thenReturn(existing);
+        final Person signedInUser = new Person("office", "Muster", "Marlene", "muster@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final String view = sut.settingsSaved(dto, errors, new ConcurrentModel(), redirectAttributes);
 
@@ -130,8 +136,8 @@ class SettingsPublicHolidayViewControllerTest {
         verify(settingsService).save(existing);
         assertThat(existing.getPublicHolidaysSettings().getFederalState()).isEqualTo(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
-        verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 24), DayLength.FULL, LocalDate.of(2026, NOVEMBER, 6));
-        verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 31), DayLength.MORNING, LocalDate.of(2026, NOVEMBER, 6));
+        verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 24), DayLength.FULL, LocalDate.of(2026, NOVEMBER, 6), signedInUser);
+        verify(companyClosureService).changeCompanyClosure(MonthDay.of(DECEMBER, 31), DayLength.MORNING, LocalDate.of(2026, NOVEMBER, 6), signedInUser);
     }
 
     @Test
