@@ -431,17 +431,17 @@
                 th:fragment="conflicts"
               >
                 <div
-                  th:unless="${#lists.isEmpty(conflictingApplications) and #lists.isEmpty(conflictingCompanyClosures)}"
+                  th:if="${not #lists.isEmpty(conflictingApplications) or not #lists.isEmpty(conflictingCompanyClosures)}"
                   class="p-4 border-t border-amber-300 bg-white text-sm dark:border-amber-700 dark:bg-zinc-900"
                 >
                   <h3
-                    th:unless="${#lists.isEmpty(conflictingApplications)}"
+                    th:if="${not #lists.isEmpty(conflictingApplications)}"
                     class="mb-2 font-semibold text-zinc-600 dark:text-zinc-400"
                     th:text="#{blackoutperiod.conflict.warning}"
                   >
                     Kollidierende Anträge
                   </h3>
-                  <ul th:unless="${#lists.isEmpty(conflictingApplications)}" class="list-disc pl-5 space-y-1">
+                  <ul th:if="${not #lists.isEmpty(conflictingApplications)}" class="list-disc pl-5 space-y-1">
                     <li th:each="conflict : ${conflictingApplications}">
                       <th:block th:text="${conflict.personName}"></th:block>:
                       <th:block th:text="${{conflict.startDate}}"></th:block>
@@ -451,14 +451,14 @@
                     </li>
                   </ul>
                   <h3
-                    th:unless="${#lists.isEmpty(conflictingCompanyClosures)}"
+                    th:if="${not #lists.isEmpty(conflictingCompanyClosures)}"
                     class="mb-2 font-semibold text-zinc-600 dark:text-zinc-400"
                     th:classappend="${#lists.isEmpty(conflictingApplications) ? '' : 'mt-4'}"
                     th:text="#{blackoutperiod.conflict.companyClosure}"
                   >
                     Diese Betriebsruhe liegt im Zeitraum. Sie bleibt bestehen:
                   </h3>
-                  <ul th:unless="${#lists.isEmpty(conflictingCompanyClosures)}" class="list-disc pl-5 space-y-1">
+                  <ul th:if="${not #lists.isEmpty(conflictingCompanyClosures)}" class="list-disc pl-5 space-y-1">
                     <li th:each="closure : ${conflictingCompanyClosures}">
                       <th:block th:text="${{closure.date}}"></th:block>:
                       <th:block th:text="${closure.name}"></th:block>

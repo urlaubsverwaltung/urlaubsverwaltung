@@ -126,7 +126,7 @@
               </div>
             </div>
 
-            <div th:unless="${monthDay == null}" class="uv-form__input-row">
+            <div th:if="${monthDay != null}" class="uv-form__input-row">
               <span class="uv-form__label" th:text="|#{company-closure.data.date}:|">Datum</span>
               <span
                 th:text="${#temporals.format(#temporals.create(2000, monthDay.monthValue, monthDay.dayOfMonth), #messages.msg('company-closure.data.monthDay.pattern'))}"
