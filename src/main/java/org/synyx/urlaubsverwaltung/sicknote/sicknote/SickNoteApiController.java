@@ -152,8 +152,13 @@ public class SickNoteApiController {
             ? departmentService.getMembersForSecondStageAuthority(signedInUser)
             : List.of();
 
+        final List<Person> ownApprovers = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getOwnApproversOfDepartmentHead(signedInUser, membersForDepartmentHead)
+            : List.of();
+
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
             .filter(Person::isActive)
+            .filter(person -> !ownApprovers.contains(person))
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
             .toList();

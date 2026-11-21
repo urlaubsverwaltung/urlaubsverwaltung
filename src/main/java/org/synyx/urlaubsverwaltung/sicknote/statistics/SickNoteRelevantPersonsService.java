@@ -55,7 +55,7 @@ class SickNoteRelevantPersonsService {
         }
 
         if (person.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            final List<Person> managedMembers = departmentService.getManagedMembersOfPerson(person, year);
+            final List<Person> managedMembers = withoutOwnApprovers(person, departmentService.getManagedMembersOfPerson(person, year));
             if (year.equals(Year.now(clock))) {
                 // we can, however, determine it for THIS year.
                 return managedMembers.stream().filter(Person::isActive).toList();
@@ -70,6 +70,11 @@ class SickNoteRelevantPersonsService {
         }
 
         return emptyList();
+    }
+
+    private List<Person> withoutOwnApprovers(Person departmentHead, List<Person> persons) {
+        final List<Person> ownApprovers = departmentService.getOwnApproversOfDepartmentHead(departmentHead, persons);
+        return persons.stream().filter(person -> !ownApprovers.contains(person)).toList();
     }
 
     private List<Year> years(LocalDate from, LocalDate to) {

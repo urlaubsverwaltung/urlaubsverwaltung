@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
@@ -84,6 +85,19 @@ class OvertimeStatisticsPersonsTest {
         }
 
         @Test
+        void ensureDepartmentHeadDoesNotGetTheirOwnSecondStageAuthority() {
+
+            final Person signedInUser = person(1L, USER, DEPARTMENT_HEAD);
+            final Person marie = person(2L, USER);
+            final Person secondStageAuthority = person(3L, USER, SECOND_STAGE_AUTHORITY);
+
+            when(departmentService.getManagedMembersOfPerson(signedInUser, YEAR)).thenReturn(List.of(marie, secondStageAuthority));
+            when(departmentService.getOwnApproversOfDepartmentHead(signedInUser, List.of(marie, secondStageAuthority))).thenReturn(List.of(secondStageAuthority));
+
+            assertThat(sut.relevantPersonsOfYear(signedInUser, YEAR)).containsExactly(marie);
+        }
+
+        @Test
         void ensureManagerWithoutManagedMembersGetsAnEmptyList() {
 
             final Person signedInUser = person(1L, USER, DEPARTMENT_HEAD);
@@ -134,6 +148,19 @@ class OvertimeStatisticsPersonsTest {
 
             assertThat(sut.relevantPersonsOfWholeHistory(signedInUser)).containsExactly(marie);
             verifyNoInteractions(personService);
+        }
+
+        @Test
+        void ensureDepartmentHeadDoesNotGetTheirOwnSecondStageAuthority() {
+
+            final Person signedInUser = person(1L, USER, DEPARTMENT_HEAD);
+            final Person marie = person(2L, USER);
+            final Person secondStageAuthority = person(3L, USER, SECOND_STAGE_AUTHORITY);
+
+            when(departmentService.getManagedActiveMembersOfPerson(signedInUser)).thenReturn(List.of(marie, secondStageAuthority));
+            when(departmentService.getOwnApproversOfDepartmentHead(signedInUser, List.of(marie, secondStageAuthority))).thenReturn(List.of(secondStageAuthority));
+
+            assertThat(sut.relevantPersonsOfWholeHistory(signedInUser)).containsExactly(marie);
         }
 
         @ParameterizedTest

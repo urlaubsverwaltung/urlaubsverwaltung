@@ -49,7 +49,7 @@ public class OvertimePermissionEvaluator {
     public OvertimePermissions of(Person signedInUser, Person overtimePerson) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return new OvertimePermissions(signedInUser, overtimePerson,
-            departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson),
+            isDepartmentHeadAllowedToManage(signedInUser, overtimePerson),
             departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson),
             overtimeSettings.isOvertimeActive(),
             overtimeSettings.isOvertimeSyncActive(),
@@ -116,5 +116,14 @@ public class OvertimePermissionEvaluator {
     private static boolean isWritableBy(Person signedInUser, OvertimeSettings overtimeSettings) {
         return overtimeSettings.isOvertimeActive()
             && (signedInUser.hasRole(OFFICE) || !overtimeSettings.isOvertimeSyncActive());
+    }
+
+    /**
+     * A department head does not manage the overtime of their own second stage authority, who decides about the department
+     * head. Stricter than for applications for leave, where the department head only does not decide about them.
+     */
+    private boolean isDepartmentHeadAllowedToManage(Person signedInUser, Person person) {
+        return departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
+            && !departmentService.isSecondStageAuthorityAllowedToManagePerson(person, signedInUser);
     }
 }
