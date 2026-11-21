@@ -13,8 +13,10 @@
           </p>
           <p class="uv-help-block">
             <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
-            <th:block th:text="#{settings.publicHolidays.company-closure.hint}" />
-            <a th:href="@{/web/company-closure}" th:text="#{nav.company.company-closures}">Betriebsruhe</a>
+            <span>
+              <th:block th:text="#{settings.publicHolidays.company-closure.hint}" />
+              <a th:href="@{/web/company-closure}" th:text="#{nav.company.company-closures}">Betriebsruhe</a>
+            </span>
           </p>
         </div>
 
