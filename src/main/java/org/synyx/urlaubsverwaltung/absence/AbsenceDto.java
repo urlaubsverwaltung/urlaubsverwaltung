@@ -40,17 +40,28 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     private final String from;
     private final String to;
 
-    AbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
+    /**
+     * @param withDetails {@code false} leaves out id, category, type and period, e.g. of a sick note the user may not view
+     */
+    AbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo, boolean withDetails) {
         this.date = date.format(ofPattern(DATE_PATTERN));
         this.absenceType = toAbsenceTypes(recordInfo.getAbsenceType());
-        this.id = recordInfo.getId().orElse(null);
         this.status = recordInfo.getStatus().name();
         this.absent = dayLength.name();
         this.absentNumeric = dayLength.getDuration().doubleValue();
-        this.category = recordInfo.getCategory().orElse(null);
-        this.typeId = recordInfo.getTypeId().orElse(null);
-        this.from = recordInfo.getPeriod().map(period -> period.startDate().format(ofPattern(DATE_PATTERN))).orElse(null);
-        this.to = recordInfo.getPeriod().map(period -> period.endDate().format(ofPattern(DATE_PATTERN))).orElse(null);
+        if (withDetails) {
+            this.id = recordInfo.getId().orElse(null);
+            this.category = recordInfo.getCategory().orElse(null);
+            this.typeId = recordInfo.getTypeId().orElse(null);
+            this.from = recordInfo.getPeriod().map(period -> period.startDate().format(ofPattern(DATE_PATTERN))).orElse(null);
+            this.to = recordInfo.getPeriod().map(period -> period.endDate().format(ofPattern(DATE_PATTERN))).orElse(null);
+        } else {
+            this.id = null;
+            this.category = null;
+            this.typeId = null;
+            this.from = null;
+            this.to = null;
+        }
 
         if (VacationCategory.OVERTIME.name().equals(category) && id != null) {
             this.add(linkTo(methodOn(OvertimeAbsenceApiController.class).overtimeAbsence(recordInfo.getPerson().getId(), id)).withRel("overtime"));
