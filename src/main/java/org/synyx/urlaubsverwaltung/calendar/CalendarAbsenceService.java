@@ -56,14 +56,14 @@ class CalendarAbsenceService {
     private List<CalendarAbsence> generateAbsencesFromApplication(List<Application> applications) {
         final CalendarAbsenceConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
-                .map(application -> new CalendarAbsence(application.getPerson(), application.getPeriod(), config))
+                .map(application -> new CalendarAbsence("application-" + application.getId(), application.getPerson(), application.getPeriod(), config))
                 .toList();
     }
 
     private List<CalendarAbsence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final CalendarAbsenceConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
-                .map(sickNote -> new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), config))
+                .map(sickNote -> new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), config))
                 .toList();
     }
 

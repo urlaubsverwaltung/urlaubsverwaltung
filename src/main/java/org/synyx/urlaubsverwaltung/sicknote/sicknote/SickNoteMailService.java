@@ -379,7 +379,7 @@ public class SickNoteMailService {
     }
 
     private ByteArrayResource generateCalendar(SickNote sickNote, CalendarAbsenceType absenceType, ICalType iCalType, Person recipient) {
-        final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
+        final CalendarAbsence absence = new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType, recipient);
     }
 
