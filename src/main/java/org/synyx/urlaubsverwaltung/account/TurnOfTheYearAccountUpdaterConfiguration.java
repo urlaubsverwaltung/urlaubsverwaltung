@@ -41,5 +41,9 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
             }),
             accountProperties.getUpdate().getCron()
         );
+        taskRegistrar.addCronTask(
+            scheduleLocking.withLock("CreateMissingAccountsOfThisYear", turnOfTheYearAccountUpdaterService::createMissingAccountsOfThisYear),
+            accountProperties.getUpdate().getCatchUpCron()
+        );
     }
 }
