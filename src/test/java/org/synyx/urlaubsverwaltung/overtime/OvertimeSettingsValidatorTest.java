@@ -34,6 +34,21 @@ class OvertimeSettingsValidatorTest {
     }
 
     @ParameterizedTest
+    @NullSource
+    @ValueSource(ints = -1)
+    void ensureMinimumOvertimeReductionValidationFailsWhenOvertimeIsInactive(Integer givenValue) {
+
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        overtimeSettings.setOvertimeActive(false);
+        overtimeSettings.setMinimumOvertimeReduction(givenValue);
+
+        OvertimeSettingsValidator.validateOvertimeSettings(overtimeSettings, errors);
+
+        verify(errors).rejectValue("overtimeSettings.minimumOvertimeReduction", "settings.overtime.minimumOvertimeReduction.error");
+        verifyNoMoreInteractions(errors);
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = {0, 1})
     void ensureMinimumOvertimeReductionValidationSucceeds(int givenMinimumReduction) {
 
