@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -83,5 +84,18 @@ class PersonNotificationsMapperTest {
         personNotificationsDto.setRemainingVacationDaysManagementAll(new PersonNotificationDto(true, true));
 
         assertThat(mapToMailNotifications(personNotificationsDto)).containsExactly(NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL, NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_EXPIRED_MANAGEMENT_ALL);
+    }
+
+    @Test
+    void ensureStoredNotificationIsNotActiveWhenTheRolesNoLongerAllowIt() {
+
+        final Person user = new Person();
+        user.setId(3L);
+        user.setPermissions(List.of(Role.USER));
+        user.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+
+        final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(user, false);
+
+        assertThat(personNotificationsDto.getApplicationAppliedForManagement().isActive()).isFalse();
     }
 }

@@ -296,7 +296,7 @@ class PersonNotificationsViewControllerTest {
                 ))
             ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAllowedForManagement", hasProperty("visible", is(false)))))
