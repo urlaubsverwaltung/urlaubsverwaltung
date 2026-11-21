@@ -28,6 +28,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
@@ -48,6 +49,7 @@ public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String CALENDAR_ICS = "calendar.ics";
+    private static final String DATE_BASED_CALENDAR_ICS = "calendar-earlier-invite.ics";
 
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
@@ -228,6 +230,9 @@ public class SickNoteMailService {
     @Async
     void sendCancelToColleagues(SickNote sickNote) {
 
+        final ByteArrayResource calendarFile = generateCalendar(sickNote, DEFAULT, CANCELLED, sickNote.getPerson());
+        final ByteArrayResource dateBasedCancellation = iCalService.getCancellationOfDateBasedInvite(calendarAbsence(sickNote, DEFAULT), sickNote.getPerson());
+
         // Inform colleagues of applicant which are in same department
         final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
@@ -235,6 +240,8 @@ public class SickNoteMailService {
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.sicknote.cancelled.to_colleagues", sickNote.getPerson().getNiceName())
             .withTemplate("sick_note_cancel_to_colleagues", modelColleaguesSupplier)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .withAttachment(DATE_BASED_CALENDAR_ICS, dateBasedCancellation)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
@@ -333,12 +340,15 @@ public class SickNoteMailService {
     @Async
     public void sendSickNoteExtensionAcceptedToColleagues(SickNote extendedSickNote) {
 
-        // no calendar file: its uid depends on the end date, it would add a second appointment instead of moving the first one
+        // the same uid moves the appointment of the created sick note to the new end date
+        final ByteArrayResource calendarFile = generateCalendar(extendedSickNote, DEFAULT, extendedSickNote.getPerson());
+
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(extendedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.sicknote.extension.accepted.to_colleagues", extendedSickNote.getPerson().getNiceName())
             .withTemplate("sick_note_extension_accepted_to_colleagues", _ -> Map.of("sickNote", extendedSickNote))
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
@@ -379,8 +389,11 @@ public class SickNoteMailService {
     }
 
     private ByteArrayResource generateCalendar(SickNote sickNote, CalendarAbsenceType absenceType, ICalType iCalType, Person recipient) {
-        final CalendarAbsence absence = new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
-        return iCalService.getSingleAppointment(absence, iCalType, recipient);
+        return iCalService.getSingleAppointment(calendarAbsence(sickNote, absenceType), iCalType, recipient);
+    }
+
+    private CalendarAbsence calendarAbsence(SickNote sickNote, CalendarAbsenceType absenceType) {
+        return new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
     }
 
     private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {

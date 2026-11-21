@@ -35,10 +35,13 @@ import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
@@ -410,11 +413,19 @@ class SickNoteMailServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), eq(CANCELLED), eq(person))).thenReturn(attachment);
+
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, APRIL, 10))
             .endDate(LocalDate.of(2022, APRIL, 20))
+            .dayLength(DayLength.FULL)
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -422,6 +433,9 @@ class SickNoteMailServiceTest {
         colleague.setPermissions(Set.of(USER));
         colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED));
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED)).thenReturn(List.of(colleague));
+
+        final ByteArrayResource dateBasedCancellation = new ByteArrayResource("date based".getBytes());
+        when(iCalService.getCancellationOfDateBasedInvite(any(), eq(person))).thenReturn(dateBasedCancellation);
 
         sut.sendCancelToColleagues(sickNote);
 
@@ -432,6 +446,10 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).content()).isEqualTo(dateBasedCancellation);
+        assertThat(mail.getMailAttachments(GERMAN).get().get(1).name()).isEqualTo("calendar-earlier-invite.ics");
     }
 
     @Test
@@ -763,11 +781,19 @@ class SickNoteMailServiceTest {
         final Person person = new Person("person", "person", "theo", "theo@example.org");
         person.setId(1L);
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), eq(PUBLISHED), eq(person))).thenReturn(attachment);
+
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, MARCH, 10))
             .endDate(LocalDate.of(2022, APRIL, 22))
+            .dayLength(DayLength.FULL)
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -786,8 +812,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageArguments()).containsExactly("theo person");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_extension_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
-        // the calendar file of the created sick note has another uid, a new one would add a second appointment
-        assertThat(mail.getMailAttachments(GERMAN)).isEmpty();
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
