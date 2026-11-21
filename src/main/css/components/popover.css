@@ -422,7 +422,7 @@
 @utility popover--backdrop-content {
   &::backdrop {
     position: fixed;
-    top: var(--top-content-start);
+    top: anchor(--topbar-backdrop-anchor bottom);
     left: 0;
     right: 0;
     bottom: 0;
