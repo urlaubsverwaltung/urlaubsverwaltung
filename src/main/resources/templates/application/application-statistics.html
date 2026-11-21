@@ -49,7 +49,7 @@
                 <li>
                   <a
                     id="statistics-csv-download-link-all"
-                    th:href="@{/web/application/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                    th:href="@{/web/application/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, department=${selectedDepartments}, allElements=${true})}"
                     class="icon-link"
                     download
                   >
@@ -60,7 +60,7 @@
                 <li>
                   <a
                     id="statistics-csv-download-link"
-                    th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query}, department=${selectedDepartments})}"
                     class="icon-link"
                     download
                   >
@@ -80,7 +80,7 @@
                 <li>
                   <a
                     id="export-csv-download-link-all"
-                    th:href="@{/web/application/export (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                    th:href="@{/web/application/export (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, department=${selectedDepartments}, allElements=${true})}"
                     class="icon-link"
                     download
                   >
@@ -91,7 +91,7 @@
                 <li>
                   <a
                     id="export-csv-download-link"
-                    th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query}, department=${selectedDepartments})}"
                     class="icon-link"
                     download
                   >
@@ -130,6 +130,12 @@
               <div id="statistics-filter-inputs">
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
                 <input type="hidden" name="query" th:value="${query}" />
+                <input
+                  th:each="department : ${selectedDepartments}"
+                  type="hidden"
+                  name="department"
+                  th:value="${department}"
+                />
               </div>
               <div class="flex flex-col gap-1">
                 <fieldset>
@@ -168,6 +174,12 @@
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
               <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
               <input type="hidden" name="sort" th:value="${sortQuery}" />
+              <input
+                th:each="department : ${selectedDepartments}"
+                type="hidden"
+                name="department"
+                th:value="${department}"
+              />
             </div>
             <div class="flex-1 flex flex-col @3xl/main:flex-row">
               <label for="search" class="@3xl/main:sr-only">
@@ -197,6 +209,27 @@
               </span>
             </div>
           </form>
+          <!-- no turbo frame: the picker button has to show the confirmed selection -->
+          <form
+            th:if="${departmentPicker != null}"
+            action="#"
+            method="get"
+            class="flex flex-col @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-2"
+          >
+            <div id="statistics-form-department-inputs">
+              <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+              <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+              <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
+              <input type="hidden" name="sort" th:value="${sortQuery}" />
+              <input type="hidden" name="query" th:value="${query}" />
+            </div>
+            <label for="department-picker" class="@3xl/main:sr-only" th:text="|#{department-picker.departments}:|">
+              Abteilungen:
+            </label>
+            <uv-department-picker
+              th:replace="~{fragments/department-picker::department-picker(id='department-picker', picker=${departmentPicker})}"
+            ></uv-department-picker>
+          </form>
         </div>
         <div class="@3xl/main:ml-auto">
           <!-- use relative action (URL) since this form is used for two different URLs -->
@@ -206,6 +239,12 @@
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
               <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
               <input type="hidden" name="query" th:value="${query}" />
+              <input
+                th:each="department : ${selectedDepartments}"
+                type="hidden"
+                name="department"
+                th:value="${department}"
+              />
             </div>
             <div class="flex flex-col @3xl/main:flex-row @3xl/main:gap-2 @3xl/main:items-center">
               <label for="sort-select"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
@@ -258,6 +297,9 @@
           </turbo-stream>
           <turbo-stream target="period-text" action="replace">
             <template th:insert="~{::#period-text}"></template>
+          </turbo-stream>
+          <turbo-stream th:if="${departmentPicker != null}" target="statistics-form-department-inputs" action="replace">
+            <template th:insert="~{::#statistics-form-department-inputs}"></template>
           </turbo-stream>
           <turbo-stream target="statistics-form-sort-inputs" action="replace">
             <template th:insert="~{::#statistics-form-sort-inputs}"></template>
@@ -486,6 +528,12 @@
             <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
             <input type="hidden" name="sort" th:value="${sortQuery}" />
             <input type="hidden" name="query" th:value="${query}" />
+            <input
+              th:each="department : ${selectedDepartments}"
+              type="hidden"
+              name="department"
+              th:value="${department}"
+            />
           </div>
           <div class="flex items-center gap-2">
             <label for="pagination-size-select" th:text="#{pagination.page.size.label.text}"> Zeige </label>
