@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.Month.JANUARY;
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,10 +25,15 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 @ExtendWith(MockitoExtension.class)
 class HealthSickDaysStatisticServiceTest {
 
+    private static final LocalDate FROM = LocalDate.of(2026, NOVEMBER, 1);
+    private static final LocalDate TO = LocalDate.of(2026, NOVEMBER, 13);
+
     private HealthSickDaysStatisticService sut;
 
     @Mock
     private SickNoteStatisticsService sickNoteStatisticsService;
+
+    private final Person viewer = createPerson("viewer");
 
     @BeforeEach
     void setUp() {
@@ -36,150 +41,66 @@ class HealthSickDaysStatisticServiceTest {
     }
 
     @Test
-    void ensureHealthRateIsComplementOfSickRate() {
+    void ensureHealthRateAndSickDaysOfTheRequestedRange() {
 
-        final Person viewer = createPerson("viewer");
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
+        // 9 sick days of 90 target work days in the range: 10% sick, 90% healthy.
+        // the statistics of the year (sick rate since january, sick days of whole sick notes) are not asked for.
+        statistics(BigDecimal.valueOf(90), Map.of(createPerson(1L), BigDecimal.valueOf(4), createPerson(2L), BigDecimal.valueOf(5)), 10);
 
-        final BigDecimal shouldWorkDays = BigDecimal.valueOf(20);
-        final BigDecimal totalNumberOfAllSickNotes = BigDecimal.valueOf(10);
+        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, FROM, TO);
 
-        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
-        when(statistics.getSickRate()).thenReturn(BigDecimal.valueOf(30));
-        when(statistics.getTotalNumberOfSickDaysAllCategories()).thenReturn(totalNumberOfAllSickNotes);
-        when(statistics.getShouldWorkDaysForDateRange(from, to)).thenReturn(shouldWorkDays);
-        when(statistics.getSickDaysByPersonForDateRange(from, to)).thenReturn(Map.of());
-        when(statistics.getNumberOfPersonsToConsider()).thenReturn(0);
-
-        when(sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer)).thenReturn(statistics);
-
-        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
-
-        final HealthRate healthRate = new HealthRate(0.7);
-        final Distribution distribution = new Distribution(0, List.of(
-            new SickDaysStatistic.DistributionEntry(null, 0.0, 0),
-            new SickDaysStatistic.DistributionEntry(0.5, 2.0, 0),
-            new SickDaysStatistic.DistributionEntry(2.0, 5.0, 0),
-            new SickDaysStatistic.DistributionEntry(5.0, null, 0)
-        ));
-        assertThat(actual).isEqualTo(new SickDaysStatistic(healthRate, totalNumberOfAllSickNotes, shouldWorkDays, distribution));
+        assertThat(actual.healthRate()).isEqualTo(new HealthRate(0.9));
+        assertThat(actual.totalNumberOfAllSickNotes()).isEqualByComparingTo(BigDecimal.valueOf(9));
+        assertThat(actual.shouldWorkDays()).isEqualByComparingTo(BigDecimal.valueOf(90));
     }
 
     @Test
     void ensureHealthRateIsFullWhenNoSickDays() {
 
-        final Person viewer = createPerson("viewer");
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
+        statistics(BigDecimal.valueOf(90), Map.of(createPerson(1L), BigDecimal.ZERO), 1);
 
-        final BigDecimal shouldWorkDays = BigDecimal.valueOf(20);
-        final BigDecimal totalNumberOfAllSickNotes = BigDecimal.ZERO;
+        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, FROM, TO);
 
-        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
-        when(statistics.getSickRate()).thenReturn(BigDecimal.ZERO);
-        when(statistics.getTotalNumberOfSickDaysAllCategories()).thenReturn(totalNumberOfAllSickNotes);
-        when(statistics.getShouldWorkDaysForDateRange(from, to)).thenReturn(shouldWorkDays);
-        when(statistics.getSickDaysByPersonForDateRange(from, to)).thenReturn(Map.of());
-        when(statistics.getNumberOfPersonsToConsider()).thenReturn(0);
-
-        when(sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer)).thenReturn(statistics);
-
-        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
-
-        final HealthRate healthRate = new HealthRate(1.0);
-        final Distribution distribution = new Distribution(0, List.of(
-            new SickDaysStatistic.DistributionEntry(null, 0.0, 0),
-            new SickDaysStatistic.DistributionEntry(0.5, 2.0, 0),
-            new SickDaysStatistic.DistributionEntry(2.0, 5.0, 0),
-            new SickDaysStatistic.DistributionEntry(5.0, null, 0)
-        ));
-        assertThat(actual).isEqualTo(new SickDaysStatistic(healthRate, totalNumberOfAllSickNotes, shouldWorkDays, distribution));
+        assertThat(actual.healthRate()).isEqualTo(new HealthRate(1.0));
+        assertThat(actual.totalNumberOfAllSickNotes()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
-    void ensureHealthRateIsZeroWhenFullSickRate() {
+    void ensureHealthRateIsFullWhenNoWorkDays() {
 
-        final Person viewer = createPerson(1L);
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
+        statistics(BigDecimal.ZERO, Map.of(), 0);
 
-        final BigDecimal shouldWorkDays = BigDecimal.valueOf(20);
-        final BigDecimal totalNumberOfAllSickNotes = BigDecimal.valueOf(20);
+        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, FROM, TO);
 
-        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
-        when(statistics.getSickRate()).thenReturn(BigDecimal.valueOf(100));
-        when(statistics.getTotalNumberOfSickDaysAllCategories()).thenReturn(totalNumberOfAllSickNotes);
-        when(statistics.getShouldWorkDaysForDateRange(from, to)).thenReturn(shouldWorkDays);
-        when(statistics.getSickDaysByPersonForDateRange(from, to)).thenReturn(Map.of());
-        when(statistics.getNumberOfPersonsToConsider()).thenReturn(0);
-
-        when(sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer)).thenReturn(statistics);
-
-        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
-
-        final HealthRate healthRate = new HealthRate(0.0);
-        final Distribution distribution = new Distribution(0, List.of(
-            new SickDaysStatistic.DistributionEntry(null, 0.0, 0),
-            new SickDaysStatistic.DistributionEntry(0.5, 2.0, 0),
-            new SickDaysStatistic.DistributionEntry(2.0, 5.0, 0),
-            new SickDaysStatistic.DistributionEntry(5.0, null, 0)
-        ));
-        assertThat(actual).isEqualTo(new SickDaysStatistic(healthRate, totalNumberOfAllSickNotes, shouldWorkDays, distribution));
+        assertThat(actual.healthRate()).isEqualTo(new HealthRate(1.0));
     }
 
     @Test
-    void ensureTotalNumberOfSickDaysIsTakenFromStatistics() {
+    void ensureHealthRateIsZeroWhenSickOnEveryWorkDay() {
 
-        final Person viewer = createPerson(1L);
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
+        statistics(BigDecimal.valueOf(10), Map.of(createPerson(1L), BigDecimal.valueOf(10)), 1);
 
-        final BigDecimal shouldWorkDays = BigDecimal.valueOf(21);
-        final BigDecimal totalNumberOfAllSickNotes = BigDecimal.valueOf(12.5);
+        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, FROM, TO);
 
-        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
-        when(statistics.getSickRate()).thenReturn(BigDecimal.valueOf(50));
-        when(statistics.getTotalNumberOfSickDaysAllCategories()).thenReturn(totalNumberOfAllSickNotes);
-        when(statistics.getShouldWorkDaysForDateRange(from, to)).thenReturn(shouldWorkDays);
-        when(statistics.getSickDaysByPersonForDateRange(from, to)).thenReturn(Map.of());
-        when(statistics.getNumberOfPersonsToConsider()).thenReturn(0);
-
-        when(sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer)).thenReturn(statistics);
-
-        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
-
-        assertThat(actual.totalNumberOfAllSickNotes()).isEqualTo(totalNumberOfAllSickNotes);
-        assertThat(actual.shouldWorkDays()).isEqualTo(shouldWorkDays);
+        assertThat(actual.healthRate()).isEqualTo(new HealthRate(0.0));
     }
 
     @Test
     void ensureDistributionBucketsPersonsBySickDaysInRange() {
 
-        final Person viewer = createPerson("viewer");
-        final LocalDate from = LocalDate.of(2026, JANUARY, 1);
-        final LocalDate to = LocalDate.of(2026, JANUARY, 31);
-
         final Person personWithTwoSickDays = createPerson(1L);
         final Person personWithFiveSickDays = createPerson(2L);
         final Person personWithTenSickDays = createPerson(3L);
 
-        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
-        when(statistics.getSickRate()).thenReturn(BigDecimal.ZERO);
-        when(statistics.getTotalNumberOfSickDaysAllCategories()).thenReturn(BigDecimal.ZERO);
-        when(statistics.getShouldWorkDaysForDateRange(from, to)).thenReturn(BigDecimal.ZERO);
-        when(statistics.getNumberOfPersonsToConsider()).thenReturn(5);
-        when(statistics.getSickDaysByPersonForDateRange(from, to)).thenReturn(Map.of(
+        statistics(BigDecimal.valueOf(100), Map.of(
             personWithTwoSickDays, BigDecimal.valueOf(2),
             personWithFiveSickDays, BigDecimal.valueOf(5),
             personWithTenSickDays, BigDecimal.valueOf(10)
-        ));
+        ), 5);
 
-        when(sickNoteStatisticsService.createStatisticsForPerson(from, to, viewer)).thenReturn(statistics);
+        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, FROM, TO);
 
-        final SickDaysStatistic actual = sut.getSickDaysStatistics(viewer, from, to);
-
-        // personWithNoSickDays is not in the map but counted via numberOfPersonsToConsider - map.size()
+        // persons without sick days are not in the map but counted via numberOfPersonsToConsider - map.size()
         final Distribution expected = new Distribution(5, List.of(
             new SickDaysStatistic.DistributionEntry(null, 0.0, 2),
             new SickDaysStatistic.DistributionEntry(0.5, 2.0, 1),
@@ -188,5 +109,13 @@ class HealthSickDaysStatisticServiceTest {
         ));
 
         assertThat(actual.distribution()).isEqualTo(expected);
+    }
+
+    private void statistics(BigDecimal shouldWorkDays, Map<Person, BigDecimal> sickDaysByPerson, int numberOfPersonsToConsider) {
+        final SickNoteStatistics statistics = mock(SickNoteStatistics.class);
+        when(statistics.getShouldWorkDaysForDateRange(FROM, TO)).thenReturn(shouldWorkDays);
+        when(statistics.getSickDaysByPersonForDateRange(FROM, TO)).thenReturn(sickDaysByPerson);
+        when(statistics.getNumberOfPersonsToConsider()).thenReturn(numberOfPersonsToConsider);
+        when(sickNoteStatisticsService.createStatisticsForPerson(FROM, TO, viewer)).thenReturn(statistics);
     }
 }
