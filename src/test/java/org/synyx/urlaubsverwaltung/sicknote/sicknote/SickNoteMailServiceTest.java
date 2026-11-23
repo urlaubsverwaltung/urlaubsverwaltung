@@ -35,10 +35,12 @@ import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
@@ -410,11 +412,19 @@ class SickNoteMailServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), eq(CANCELLED), eq(person))).thenReturn(attachment);
+
         final SickNote sickNote = SickNote.builder()
             .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, APRIL, 10))
             .endDate(LocalDate.of(2022, APRIL, 20))
+            .dayLength(DayLength.FULL)
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -432,6 +442,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().content()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments(GERMAN).get().getFirst().name()).isEqualTo("calendar.ics");
     }
 
     @Test
