@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:18.7
+    image: postgres:19.0
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-urlaubsverwaltung}
       POSTGRES_USER: ${POSTGRES_USER:-urlaubsverwaltung}
