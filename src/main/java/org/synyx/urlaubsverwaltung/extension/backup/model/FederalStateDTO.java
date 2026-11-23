@@ -66,6 +66,7 @@ public enum FederalStateDTO {
     SWITZERLAND_ZUG,
     SWITZERLAND_ZUERICH,
 
+    // kept so backups made before Alderney was removed from FederalState can still be restored
     UNITED_KINGDOM_ALDERNEY,
     UNITED_KINGDOM_ENGLAND,
     UNITED_KINGDOM_GUERNSEY,
@@ -128,6 +129,9 @@ public enum FederalStateDTO {
     USA_WASHINGTON_DC;
 
     public FederalState toFederalState() {
+        if (this == UNITED_KINGDOM_ALDERNEY) {
+            return FederalState.UNITED_KINGDOM_GUERNSEY;
+        }
         return FederalState.valueOf(this.name());
     }
 }
