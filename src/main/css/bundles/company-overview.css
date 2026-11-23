@@ -101,7 +101,8 @@
     flex-direction: column;
     gap: --spacing(2);
     align-items: center;
-    justify-content: flex-end;
+    /* bar containers share one height, so starting at the top keeps the bars on one baseline when labels wrap */
+    justify-content: flex-start;
     flex: 1 1 0;
     min-width: 0;
 
