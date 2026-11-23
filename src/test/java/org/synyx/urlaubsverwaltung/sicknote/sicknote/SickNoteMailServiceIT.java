@@ -608,7 +608,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void sendSickNoteCancelToColleagues() throws MessagingException, IOException {
+    void sendSickNoteCancelToColleagues() throws MessagingException {
 
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED), List.of(USER));
 
