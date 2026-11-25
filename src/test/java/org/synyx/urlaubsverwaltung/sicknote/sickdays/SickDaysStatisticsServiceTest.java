@@ -26,8 +26,15 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNotePermissionEvaluator;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +44,11 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class SickDaysStatisticsServiceTest {
@@ -536,5 +547,76 @@ class SickDaysStatisticsServiceTest {
             assertThat(actual.getDepartments()).containsExactly("Service");
             assertThat(actual.getSickNotes()).isEmpty();
         });
+    }
+
+    @Test
+    void ensureSortsBySickDaysBeforeCuttingOutThePage() {
+
+        final LocalDate startDate = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2022, DECEMBER, 31);
+
+        final Person office = person(42L, "Office", USER, OFFICE);
+        final Person anna = person(1L, "Anna", USER);
+        final Person bert = person(2L, "Bert", USER);
+        final Person carl = person(3L, "Carl", USER);
+
+        // persons come in no particular order without a person sort
+        when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(carl, office, anna, bert)));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(carl, office, anna, bert), startDate, endDate)).thenReturn(List.of(
+            sickNote(anna, SICK_NOTE, LocalDate.of(2022, MARCH, 1), LocalDate.of(2022, MARCH, 3)),
+            sickNote(bert, SICK_NOTE, LocalDate.of(2022, MARCH, 1), LocalDate.of(2022, MARCH, 1)),
+            sickNote(bert, SICK_NOTE_CHILD, LocalDate.of(2022, APRIL, 1), LocalDate.of(2022, APRIL, 5)),
+            sickNote(carl, SICK_NOTE, LocalDate.of(2022, MAY, 1), LocalDate.of(2022, MAY, 2))
+        ));
+
+        final PageableSearchQuery secondPage = new PageableSearchQuery(PageRequest.of(1, 2, Sort.by(Sort.Direction.DESC, "sickDays")), "");
+        final Page<SickDaysDetailedStatistics> actual = sut.getAll(office, startDate, endDate, secondPage);
+
+        // anna 3, carl 2, bert 1, office 0 - the first page holds anna and carl
+        assertThat(actual.getContent()).extracting(SickDaysDetailedStatistics::getPerson).containsExactly(bert, office);
+        assertThat(actual.getTotalElements()).isEqualTo(4);
+    }
+
+    @Test
+    void ensureSortsByChildSickDaysAndPersonsWithTheSameDaysByName() {
+
+        final LocalDate startDate = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2022, DECEMBER, 31);
+
+        final Person office = person(42L, "Office", USER, OFFICE);
+        final Person anna = person(1L, "Anna", USER);
+        final Person bert = person(2L, "Bert", USER);
+
+        when(personService.getActivePersons(PersonPageRequest.unpaged(), "")).thenReturn(new PageImpl<>(List.of(office, bert, anna)));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office, bert, anna), startDate, endDate)).thenReturn(List.of(
+            sickNote(anna, SICK_NOTE, LocalDate.of(2022, MARCH, 1), LocalDate.of(2022, MARCH, 10)),
+            sickNote(office, SICK_NOTE_CHILD, LocalDate.of(2022, APRIL, 1), LocalDate.of(2022, APRIL, 2))
+        ));
+
+        final PageableSearchQuery firstPage = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "childSickDays")), "");
+        final Page<SickDaysDetailedStatistics> actual = sut.getAll(office, startDate, endDate, firstPage);
+
+        // the sick days of anna do not count, anna and bert have no child sick days
+        assertThat(actual.getContent()).extracting(SickDaysDetailedStatistics::getPerson).containsExactly(office, anna, bert);
+    }
+
+    private static Person person(long id, String firstName, Role... roles) {
+        final Person person = new Person("username" + id, "Doe", firstName, "person" + id + "@example.org");
+        person.setId(id);
+        person.setPermissions(List.of(roles));
+        return person;
+    }
+
+    private static SickNote sickNote(Person person, SickNoteCategory category, LocalDate startDate, LocalDate endDate) {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(category);
+        return SickNote.builder()
+            .person(person)
+            .sickNoteType(sickNoteType)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(startDate, endDate))
+            .build();
     }
 }

@@ -481,6 +481,12 @@ class SickDaysOverviewViewControllerTest {
                 new HtmlOptionDto("sicknotes.statistics.sort.firstName.desc", "person.firstName,desc", false),
                 new HtmlOptionDto("sicknotes.statistics.sort.lastName.asc", "person.lastName,asc", false),
                 new HtmlOptionDto("sicknotes.statistics.sort.lastName.desc", "person.lastName,desc", false)
+            )),
+            new HtmlOptgroupDto("sicknotes.sort.optgroup.statistics.label", List.of(
+                new HtmlOptionDto("sicknotes.statistics.sort.sickDays.asc", "sickDays,asc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.sickDays.desc", "sickDays,desc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.childSickDays.asc", "childSickDays,asc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.childSickDays.desc", "childSickDays,desc", false)
             ))
         ));
     }
