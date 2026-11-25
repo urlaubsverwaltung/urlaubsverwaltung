@@ -44,6 +44,8 @@ import static java.util.stream.Collectors.joining;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.period.DateLimits.exceedsMaximumRequestedDuration;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDaysStatisticsService.CHILD_SICK_DAYS_SORT_KEY;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDaysStatisticsService.SICK_DAYS_SORT_KEY;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
@@ -165,7 +167,11 @@ public class SickDaysOverviewViewController implements HasLaunchpad, HasPersonSe
         final List<HtmlOptionDto> personOptions = sortOptionGroupDto("person", List.of("firstName", "lastName"), originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("sicknotes.sort.optgroup.person.label", personOptions);
 
-        return new HtmlSelectDto(List.of(personOptgroup));
+        final List<String> statisticsProperties = List.of(SICK_DAYS_SORT_KEY, CHILD_SICK_DAYS_SORT_KEY);
+        final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto("", statisticsProperties, originalPersonSort);
+        final HtmlOptgroupDto statisticsOptgroup = new HtmlOptgroupDto("sicknotes.sort.optgroup.statistics.label", statisticsOptions);
+
+        return new HtmlSelectDto(List.of(personOptgroup, statisticsOptgroup));
     }
 
     private static List<HtmlOptionDto> sortOptionGroupDto(String propertyPrefix, List<String> properties, Sort sort) {
