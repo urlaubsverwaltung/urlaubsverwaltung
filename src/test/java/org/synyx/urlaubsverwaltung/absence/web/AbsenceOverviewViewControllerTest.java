@@ -5877,6 +5877,40 @@ class AbsenceOverviewViewControllerTest {
         assertThat(february.get(3).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);
     }
 
+    @Test
+    void ensureFirstBridgeIsTheTabStopOfABarWithoutSolidPieceInTheMonth() throws Exception {
+
+        final Person office = viewer(Role.USER, Role.OFFICE);
+        final Person other = otherPerson();
+        when(personService.getActivePersons()).thenReturn(List.of(office, other));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(holidayVacationType()));
+
+        // Mon 27th January to Sun 2nd February 2025 - february shows the days off at the end of its period only
+        final DateRange period = new DateRange(LocalDate.of(2025, JANUARY, 27), LocalDate.of(2025, FEBRUARY, 2));
+        final AbsencePeriod vacation = new AbsencePeriod(IntStream.rangeClosed(27, 31)
+            .mapToObj(day -> new AbsencePeriod.Record(LocalDate.of(2025, JANUARY, day), other,
+                new AbsencePeriod.RecordMorningVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period),
+                new AbsencePeriod.RecordNoonVacation(other, 7L, AbsencePeriod.AbsenceStatus.ALLOWED, "HOLIDAY", 42L, false, period)))
+            .toList());
+        final AbsencePeriod weekend = new AbsencePeriod(Stream.of(LocalDate.of(2025, FEBRUARY, 1), LocalDate.of(2025, FEBRUARY, 2))
+            .map(date -> new AbsencePeriod.Record(date, other, new AbsencePeriod.RecordMorningNoWorkday(other), new AbsencePeriod.RecordNoonNoWorkday(other)))
+            .toList());
+        when(absenceService.getOpenAbsences(List.of(office, other), LocalDate.of(2024, DECEMBER, 18), LocalDate.of(2026, JANUARY, 14)))
+            .thenReturn(List.of(vacation, weekend));
+
+        final AbsenceOverviewDto overview = (AbsenceOverviewDto) perform(get("/web/absences")
+                .param("year", "2025").param("month", "").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andReturn().getModelAndView().getModel().get("absenceOverview");
+        final List<AbsenceOverviewPersonDayDto> february = overview.getMonths().get(1).getPersons().get(1).getDays();
+
+        assertThat(february.get(0).getBars()).singleElement().satisfies(bar -> {
+            assertThat(bar.getKind()).isEqualTo(AbsenceBars.Kind.BRIDGE);
+            assertThat(bar.isTabStop()).isTrue();
+        });
+        assertThat(february.get(1).getBars()).singleElement().extracting(AbsenceOverviewBarPieceDto::isTabStop).isEqualTo(false);
+    }
+
     private Person viewer(Role... roles) {
         final Person viewer = new Person();
         viewer.setId(1L);

@@ -1329,6 +1329,24 @@ describe("calendar", () => {
       expect(classesOf("2017-12-18")).toContain("absence-full--continues-before");
     });
 
+    test("bridging the days off at the start of its period after another absence", async () => {
+      const period = { from: "2017-12-15", to: "2017-12-19" };
+      await renderWithAbsences([
+        vacation("2017-12-14"),
+        noWorkday("2017-12-15"),
+        noWorkday("2017-12-16"),
+        noWorkday("2017-12-17"),
+        { ...vacation("2017-12-18", "FULL", { id: 2 }), ...period },
+        { ...vacation("2017-12-19", "FULL", { id: 2 }), ...period },
+      ]);
+
+      expect(classesOf("2017-12-14")).not.toContain("absence-full--continues-after");
+      expect(classesOf("2017-12-15")).toEqual(
+        expect.arrayContaining(["absence-full--bridge", "absence-full--continues-after"]),
+      );
+      expect(classesOf("2017-12-15")).not.toContain("absence-full--continues-before");
+    });
+
     test("bridging the days off at the end of its period", async () => {
       const period = { from: "2017-12-14", to: "2017-12-17" };
       await renderWithAbsences([

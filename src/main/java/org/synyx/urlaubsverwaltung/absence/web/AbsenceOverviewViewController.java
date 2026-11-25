@@ -347,6 +347,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Map<Integer, AbsenceOverviewMonthDto> monthsByNr = new LinkedHashMap<>();
         // the first linked piece of a bar in a month - person, month and bar
         final Set<String> barsWithTabStop = new HashSet<>();
+        // a bridge is named only by its day off, so the tab stop is the first solid piece - if the bar has one in the month
+        final Set<String> barsWithSolidPiece = new HashSet<>();
+        barPiecesByPerson.forEach((person, piecesByDate) -> piecesByDate.forEach((date, pieces) -> pieces.stream()
+            .filter(piece -> piece.kind() == AbsenceBars.Kind.SOLID)
+            .forEach(piece -> barsWithSolidPiece.add(barInMonth(person, date, piece)))));
 
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
@@ -384,9 +389,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
                 final List<AbsenceOverviewBarPieceDto> bars = new ArrayList<>();
                 for (AbsenceBars.Piece piece : barPiecesByPerson.get(person).getOrDefault(date, List.of())) {
-                    // a bridge is named only by its day off, the tab stop must name the absence
-                    final boolean tabStop = piece.absence().detail() != null && piece.kind() == AbsenceBars.Kind.SOLID
-                        && barsWithTabStop.add(person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key());
+                    final String barInMonth = barInMonth(person, date, piece);
+                    final boolean tabStop = piece.absence().detail() != null
+                        && (piece.kind() == AbsenceBars.Kind.SOLID || !barsWithSolidPiece.contains(barInMonth))
+                        && barsWithTabStop.add(barInMonth);
                     bars.add(toBarPieceDto(piece, tabStop, message));
                 }
                 final String publicHolidayName = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
@@ -686,6 +692,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
                 .filter(_ -> seen.add(recordInfo.getAbsenceType() + "-" + recordInfo.getId().orElseThrow()))
                 .ifPresent(period -> period.forEach(date -> periodAbsences.putIfAbsent(date, toBarAbsence.apply(recordInfo)))));
         return periodAbsences;
+    }
+
+    private static String barInMonth(Person person, LocalDate date, AbsenceBars.Piece piece) {
+        return person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key();
     }
 
     private static Optional<AbsencePeriod.RecordInfo> firstOfType(List<AbsencePeriod.RecordInfo> recordInfos, AbsencePeriod.AbsenceType absenceType) {
