@@ -331,12 +331,14 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Map<Person, Map<LocalDate, List<AbsenceBars.Piece>>> barPiecesByPerson = new HashMap<>();
         for (Person person : personList) {
             final Map<LocalDate, PublicHoliday> publicHolidays = publicHolidaysOfAllPersons.get(person);
+            final Map<LocalDate, List<AbsencePeriod.Record>> recordsByDate = absenceRecordsByPersonAndDate.getOrDefault(person, Map.of());
+            final Map<LocalDate, AbsenceBars.Absence> periodAbsences = periodAbsencesByDate(recordsByDate, barTimeline, toBarAbsence);
             final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
-            absenceRecordsByPersonAndDate.getOrDefault(person, Map.of()).forEach((date, records) -> {
+            recordsByDate.forEach((date, records) -> {
                 final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> gapTitle(gapType, publicHolidays.get(date), message);
                 barDays.put(date, new AbsenceBars.Day(
-                    barHalfDay(records, AbsencePeriod.Record::getMorning, toBarAbsence, gapTitle),
-                    barHalfDay(records, AbsencePeriod.Record::getNoon, toBarAbsence, gapTitle)
+                    barHalfDay(records, AbsencePeriod.Record::getMorning, toBarAbsence, gapTitle, periodAbsences.get(date)),
+                    barHalfDay(records, AbsencePeriod.Record::getNoon, toBarAbsence, gapTitle, periodAbsences.get(date))
                 ));
             });
             barPiecesByPerson.put(person, AbsenceBars.compute(barTimeline, barDays, dateRange));
@@ -345,6 +347,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         final Map<Integer, AbsenceOverviewMonthDto> monthsByNr = new LinkedHashMap<>();
         // the first linked piece of a bar in a month - person, month and bar
         final Set<String> barsWithTabStop = new HashSet<>();
+        // a bridge is named only by its day off, so the tab stop is the first solid piece - if the bar has one in the month
+        final Set<String> barsWithSolidPiece = new HashSet<>();
+        barPiecesByPerson.forEach((person, piecesByDate) -> piecesByDate.forEach((date, pieces) -> pieces.stream()
+            .filter(piece -> piece.kind() == AbsenceBars.Kind.SOLID)
+            .forEach(piece -> barsWithSolidPiece.add(barInMonth(person, date, piece)))));
 
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
@@ -382,8 +389,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
                 final List<AbsenceOverviewBarPieceDto> bars = new ArrayList<>();
                 for (AbsenceBars.Piece piece : barPiecesByPerson.get(person).getOrDefault(date, List.of())) {
+                    final String barInMonth = barInMonth(person, date, piece);
                     final boolean tabStop = piece.absence().detail() != null
-                        && barsWithTabStop.add(person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key());
+                        && (piece.kind() == AbsenceBars.Kind.SOLID || !barsWithSolidPiece.contains(barInMonth))
+                        && barsWithTabStop.add(barInMonth);
                     bars.add(toBarPieceDto(piece, tabStop, message));
                 }
                 final String publicHolidayName = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
@@ -646,7 +655,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
     private static AbsenceBars.HalfDay barHalfDay(List<AbsencePeriod.Record> records,
                                                   Function<AbsencePeriod.Record, Optional<AbsencePeriod.RecordInfo>> half,
                                                   Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence,
-                                                  Function<AbsencePeriod.AbsenceType, String> gapTitle) {
+                                                  Function<AbsencePeriod.AbsenceType, String> gapTitle,
+                                                  AbsenceBars.Absence periodAbsence) {
 
         final List<AbsencePeriod.RecordInfo> recordInfos = records.stream().map(half).flatMap(Optional::stream).toList();
 
@@ -663,7 +673,32 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .map(recordInfo -> new AbsenceBars.Gap(gapTitle.apply(recordInfo.getAbsenceType())))
             .orElse(null);
 
-        return new AbsenceBars.HalfDay(absence, gap);
+        return new AbsenceBars.HalfDay(absence, gap, periodAbsence);
+    }
+
+    /**
+     * @return the vacations and sick notes of several days by the dates of their periods. A half-day absence is a single
+     * day, so a single day never reaches its free half. Only dates of the timeline are contained, a period may reach far
+     * beyond it.
+     */
+    private static Map<LocalDate, AbsenceBars.Absence> periodAbsencesByDate(Map<LocalDate, List<AbsencePeriod.Record>> recordsByDate,
+                                                                             DateRange timeline,
+                                                                             Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence) {
+        final Map<LocalDate, AbsenceBars.Absence> periodAbsences = new HashMap<>();
+        final Set<String> seen = new HashSet<>();
+        recordsByDate.values().stream()
+            .flatMap(List::stream)
+            .flatMap(record -> Stream.of(record.getMorning(), record.getNoon()).flatMap(Optional::stream))
+            .forEach(recordInfo -> recordInfo.getPeriod()
+                .filter(period -> !period.startDate().equals(period.endDate()))
+                .filter(_ -> seen.add(recordInfo.getAbsenceType() + "-" + recordInfo.getId().orElseThrow()))
+                .flatMap(period -> period.overlap(timeline))
+                .ifPresent(period -> period.forEach(date -> periodAbsences.putIfAbsent(date, toBarAbsence.apply(recordInfo)))));
+        return periodAbsences;
+    }
+
+    private static String barInMonth(Person person, LocalDate date, AbsenceBars.Piece piece) {
+        return person.getId() + "/" + date.getMonthValue() + "/" + piece.absence().key();
     }
 
     private static Optional<AbsencePeriod.RecordInfo> firstOfType(List<AbsencePeriod.RecordInfo> recordInfos, AbsencePeriod.AbsenceType absenceType) {
