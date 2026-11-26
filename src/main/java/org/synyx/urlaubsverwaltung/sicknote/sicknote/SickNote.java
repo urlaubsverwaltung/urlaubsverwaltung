@@ -163,7 +163,7 @@ public final class SickNote {
             final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(dateRange.startDate());
             if (dayLength.isHalfDay() && workingDayInformation != null) {
                 // only a worked half counts, e.g. not the free afternoon of christmas eve
-                if (isWorkingHalf(workingDayInformation, dayLength)) {
+                if (workingDayInformation.isWorkingHalf(dayLength)) {
                     workingTimeSum = workingTimeSum.add(dayLength.getDuration());
                 }
             } else {
@@ -171,12 +171,6 @@ public final class SickNote {
             }
         }
         return workingTimeSum;
-    }
-
-    private static boolean isWorkingHalf(WorkingTimeCalendar.WorkingDayInformation workingDayInformation, DayLength half) {
-        final WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType entryType =
-            half == DayLength.MORNING ? workingDayInformation.morning() : workingDayInformation.noon();
-        return entryType == WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {

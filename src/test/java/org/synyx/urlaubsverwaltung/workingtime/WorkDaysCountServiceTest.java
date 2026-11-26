@@ -109,6 +109,33 @@ class WorkDaysCountServiceTest {
     }
 
     @Test
+    void halfDayOnTheClosedHalfOfACompanyClosureCountsNothing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 23);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(day, day), workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, NOON, locale -> "Closure")));
+
+        assertThat(sut.getWorkDaysCount(NOON, day, day, person)).isEqualByComparingTo(ZERO);
+        assertThat(sut.getWorkDaysCount(MORNING, day, day, person)).isEqualByComparingTo(new BigDecimal("0.5"));
+    }
+
+    @Test
+    void halfDayApplicationOnTheClosedHalfOfACompanyClosureCountsNothing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate day = LocalDate.of(2026, DECEMBER, 23);
+        final Application application = application(person, day, day, MORNING);
+        final WorkingTime workingTime = createWorkingTime(person, day, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getByPersons(List.of(person))).thenReturn(List.of(workingTime));
+        when(companyClosureService.getCompanyClosures(day, day)).thenReturn(List.of(new CompanyClosure(day, MORNING, locale -> "Closure")));
+
+        assertThat(sut.getWorkDaysCountForApplications(List.of(application)).get(application)).isEqualByComparingTo(ZERO);
+        assertThat(sut.getWorkDaysCountByYearForApplications(List.of(application)).get(application).get(2026)).isEqualByComparingTo(ZERO);
+    }
+
+    @Test
     void holidayAndClosureOnSameDayCountOnce() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
