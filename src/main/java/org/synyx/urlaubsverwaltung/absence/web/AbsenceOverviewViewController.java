@@ -332,7 +332,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
         for (Person person : personList) {
             final Map<LocalDate, PublicHoliday> publicHolidays = publicHolidaysOfAllPersons.get(person);
             final Map<LocalDate, List<AbsencePeriod.Record>> recordsByDate = absenceRecordsByPersonAndDate.getOrDefault(person, Map.of());
-            final Map<LocalDate, AbsenceBars.Absence> periodAbsences = periodAbsencesByDate(recordsByDate, toBarAbsence);
+            final Map<LocalDate, AbsenceBars.Absence> periodAbsences = periodAbsencesByDate(recordsByDate, barTimeline, toBarAbsence);
             final Map<LocalDate, AbsenceBars.Day> barDays = new HashMap<>();
             recordsByDate.forEach((date, records) -> {
                 final Function<AbsencePeriod.AbsenceType, String> gapTitle = gapType -> gapTitle(gapType, publicHolidays.get(date), message);
@@ -678,9 +678,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
 
     /**
      * @return the vacations and sick notes of several days by the dates of their periods. A half-day absence is a single
-     * day, so a single day never reaches its free half.
+     * day, so a single day never reaches its free half. Only dates of the timeline are contained, a period may reach far
+     * beyond it.
      */
     private static Map<LocalDate, AbsenceBars.Absence> periodAbsencesByDate(Map<LocalDate, List<AbsencePeriod.Record>> recordsByDate,
+                                                                             DateRange timeline,
                                                                              Function<AbsencePeriod.RecordInfo, AbsenceBars.Absence> toBarAbsence) {
         final Map<LocalDate, AbsenceBars.Absence> periodAbsences = new HashMap<>();
         final Set<String> seen = new HashSet<>();
@@ -690,6 +692,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad, HasPersonSea
             .forEach(recordInfo -> recordInfo.getPeriod()
                 .filter(period -> !period.startDate().equals(period.endDate()))
                 .filter(_ -> seen.add(recordInfo.getAbsenceType() + "-" + recordInfo.getId().orElseThrow()))
+                .flatMap(period -> period.overlap(timeline))
                 .ifPresent(period -> period.forEach(date -> periodAbsences.putIfAbsent(date, toBarAbsence.apply(recordInfo)))));
         return periodAbsences;
     }
