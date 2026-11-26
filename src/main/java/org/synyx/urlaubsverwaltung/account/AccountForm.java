@@ -30,6 +30,7 @@ public class AccountForm {
     private LocalDate expiryDateGlobally;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
+    private boolean annualVacationDaysForFollowingYears;
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
     private String comment;
@@ -169,6 +170,14 @@ public class AccountForm {
 
     public void setActualVacationDays(BigDecimal actualVacationDays) {
         this.actualVacationDays = actualVacationDays;
+    }
+
+    public boolean isAnnualVacationDaysForFollowingYears() {
+        return annualVacationDaysForFollowingYears;
+    }
+
+    public void setAnnualVacationDaysForFollowingYears(boolean annualVacationDaysForFollowingYears) {
+        this.annualVacationDaysForFollowingYears = annualVacationDaysForFollowingYears;
     }
 
     public BigDecimal getRemainingVacationDays() {

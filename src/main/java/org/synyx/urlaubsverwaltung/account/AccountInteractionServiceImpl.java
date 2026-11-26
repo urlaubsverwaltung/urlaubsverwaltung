@@ -173,6 +173,26 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
+    public void updateAnnualVacationDaysOfFollowingYears(int year, Person person, BigDecimal annualVacationDays) {
+
+        Optional<Account> followingAccount = accountService.getHolidaysAccount(year + 1, person);
+        while (followingAccount.isPresent()) {
+            final Account account = followingAccount.get();
+
+            // a prorated entitlement was set on purpose and stays, an entitlement for the whole year follows
+            if (sameDays(account.getActualVacationDays(), account.getAnnualVacationDays())) {
+                account.setActualVacationDays(annualVacationDays);
+            }
+            account.setAnnualVacationDays(annualVacationDays);
+
+            accountService.save(account);
+            LOG.info("Updated annual vacation days of holidays account: {}", account);
+
+            followingAccount = accountService.getHolidaysAccount(account.getYear() + 1, person);
+        }
+    }
+
+    @Override
     public void deleteAllByPerson(Person person) {
         accountService.deleteAllByPerson(person);
     }
@@ -210,6 +230,10 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             ZERO,
             referenceAccount.getComment()
         );
+    }
+
+    private static boolean sameDays(@Nullable BigDecimal days, @Nullable BigDecimal otherDays) {
+        return days != null && otherDays != null && days.compareTo(otherDays) == 0;
     }
 
     /**

@@ -135,6 +135,17 @@
                 <p class="uv-form__input-error" th:if="${#fields.hasErrors('annualVacationDays')}">
                   <th:block th:errors="*{annualVacationDays}"> annualVacationDays Error </th:block>
                 </p>
+                <div th:if="${nextYearsAccount != null}">
+                  <label class="text-base font-normal">
+                    <input type="checkbox" th:field="*{annualVacationDaysForFollowingYears}" />
+                    <span
+                      th:text="#{person.form.annualVacation.annualVacation.followingYears(${nextYearsAccount.year}, ${nextYearsAccount.annualVacationDays})}"
+                    >
+                      Jährlichen Urlaubsanspruch auch für 2027 und bereits angelegte Folgejahre übernehmen (2027 bisher:
+                      30 Tage)
+                    </span>
+                  </label>
+                </div>
               </div>
               <div class="uv-form__input-row">
                 <label for="actualVacationDays" th:text="|#{person.form.annualVacation.actualVacation}:|">
