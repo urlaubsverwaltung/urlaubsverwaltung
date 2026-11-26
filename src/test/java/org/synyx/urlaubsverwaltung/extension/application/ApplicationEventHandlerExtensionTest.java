@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.UUID;
 
 import static java.time.Month.OCTOBER;
@@ -97,8 +96,8 @@ class ApplicationEventHandlerExtensionTest {
             assertThat(result.appliedBy()).isEqualTo(ApplicationPersonDTO.builder().personId(2L).username("office").build());
             assertThat(result.twoStageApproval()).isTrue();
             assertThat(result.period()).isEqualTo(ApplicationPeriodDTO.builder()
-                .startDate(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
-                .endDate(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                .startDate(Instant.parse("2026-10-19T00:00:00Z"))
+                .endDate(Instant.parse("2026-10-23T00:00:00Z"))
                 .dayLength(DayLength.FULL)
                 .build());
             assertThat(result.vacationType()).isEqualTo(VacationTypeDTO.builder()

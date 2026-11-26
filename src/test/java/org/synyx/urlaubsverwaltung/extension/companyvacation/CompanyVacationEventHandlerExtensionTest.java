@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationPublishedEvent
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -135,6 +136,6 @@ class CompanyVacationEventHandlerExtensionTest {
     }
 
     private static Instant localDateToInstant(LocalDate localDate) {
-        return localDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant();
+        return localDate.atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 }

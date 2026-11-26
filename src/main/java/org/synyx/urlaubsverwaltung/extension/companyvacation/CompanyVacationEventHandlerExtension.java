@@ -15,9 +15,9 @@ import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
@@ -25,7 +25,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 class CompanyVacationEventHandlerExtension {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-    private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 
     private final TenantSupplier tenantSupplier;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -68,7 +67,7 @@ class CompanyVacationEventHandlerExtension {
     }
 
     private static Instant localDateToInstant(LocalDate localDate) {
-        return localDate.atStartOfDay(DEFAULT_TIME_ZONE).toInstant();
+        return localDate.atStartOfDay(UTC).toInstant();
     }
 
     private CompanyVacationDeletedEventDto toCompanyVacationDeletedEventDto(String tenantId, CompanyVacationDeletedEvent event) {
