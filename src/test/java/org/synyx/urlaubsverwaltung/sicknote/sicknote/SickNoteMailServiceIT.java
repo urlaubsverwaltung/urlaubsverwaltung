@@ -77,6 +77,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(), List.of(USER, OFFICE));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
             .id(1L)
@@ -154,6 +155,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT), List.of(USER));
 
         final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        management.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -201,7 +203,9 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT), List.of(USER));
 
         final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        management.setPermissions(List.of(USER));
         final Person editor = new Person("office", "Office", "Olaf", "olaf@example.org");
+        editor.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -249,6 +253,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED), List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
             .id(1L)
@@ -293,6 +298,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
 
         final Person editor = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        editor.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -349,6 +355,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
 
         final Person maintainer = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        maintainer.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -404,7 +411,9 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
 
         final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        management.setPermissions(List.of(USER));
         final Person canceller = new Person("office", "Office", "Olaf", "olaf@example.org");
+        canceller.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -452,6 +461,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
 
         final Person canceller = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        canceller.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -510,6 +520,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
 
         final Person canceller = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        canceller.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -558,6 +569,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(), List.of(USER));
 
         final Person maintainer = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        maintainer.setPermissions(List.of(USER));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -613,6 +625,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED), List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
             .id(1L)
@@ -655,8 +668,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
-        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT))
             .thenReturn(List.of(office1, office2));
@@ -756,7 +769,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(USER, OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT))
             .thenReturn(List.of(office));
@@ -851,7 +864,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteExtensionSubmittedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(USER, OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT))
             .thenReturn(List.of(office));
@@ -902,7 +915,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteExtensionAcceptedNotificationToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("person", "Marlene", "Muster", "user@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER), List.of(USER));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(), List.of(OFFICE));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(), List.of(USER, OFFICE));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -948,8 +961,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteExtensionAcceptedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person maintainer = personService.create("maintainer", "Hans", "Dampf", "maintainer@example.org", List.of(), List.of(OFFICE));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person maintainer = personService.create("maintainer", "Hans", "Dampf", "maintainer@example.org", List.of(), List.of(USER, OFFICE));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT))
             .thenReturn(List.of(office));
@@ -1000,6 +1013,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED), List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
             .id(1L)
@@ -1038,7 +1052,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteAcceptedNotificationToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER), List.of(USER));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(), List.of(OFFICE));
+        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(), List.of(USER, OFFICE));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -1084,8 +1098,8 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
-        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT))
             .thenReturn(List.of(office1, office2));

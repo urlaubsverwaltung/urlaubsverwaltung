@@ -103,7 +103,9 @@ class MailServiceImpl implements MailService {
         final List<Person> recipients = new ArrayList<>();
         mail.getMailAddressRecipients().ifPresent(recipients::addAll);
 
+        // a deactivated person keeps the notifications set before, but takes no part any more
         return recipients.stream()
+            .filter(Person::isActive)
             .distinct()
             .toList();
     }

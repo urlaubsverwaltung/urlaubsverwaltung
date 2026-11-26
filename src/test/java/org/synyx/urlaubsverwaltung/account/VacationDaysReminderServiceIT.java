@@ -33,6 +33,7 @@ import static java.time.Month.APRIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -60,6 +61,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(42L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -105,6 +107,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(42L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -146,6 +149,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(42L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
@@ -200,6 +204,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, expiredRemainingVacationDaysManagementMailService, clock);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
