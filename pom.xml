@@ -324,8 +324,6 @@
             </name>
             <env>
               <BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>120%</BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>
-              <!-- not used, and incompatible with Spring Boot 4.2 (org.springframework.boot.env.EnvironmentPostProcessor was removed) -->
-              <BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
             </env>
           </image>
           <docker>
