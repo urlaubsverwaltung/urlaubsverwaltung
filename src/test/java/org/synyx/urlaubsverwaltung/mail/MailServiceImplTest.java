@@ -31,6 +31,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class MailServiceImplTest {
@@ -66,6 +68,8 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
+
+        hans.setPermissions(List.of(USER));
         hans.setEmail("hans@example.org");
 
         final String subjectMessageKey = "subject.overtime.created";
@@ -88,9 +92,13 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
+
+        hans.setPermissions(List.of(USER));
         hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
+
+        franz.setPermissions(List.of(USER));
         franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
@@ -110,18 +118,50 @@ class MailServiceImplTest {
     }
 
     @Test
+    void ensureNoMailIsSentToDeactivatedPerson() {
+
+        setupMockServletRequest();
+
+        final Person active = new Person();
+        active.setEmail("active@example.org");
+        active.setPermissions(List.of(USER));
+
+        final Person deactivated = new Person();
+        deactivated.setEmail("deactivated@example.org");
+        deactivated.setPermissions(List.of());
+        deactivated.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
+
+        final Mail mail = Mail.builder()
+            .withRecipient(List.of(active, deactivated))
+            .withSubject("subject.overtime.created")
+            .withTemplate("overtime_office", _ -> new HashMap<>())
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "active@example.org", "subject", "emailBody");
+        verifyNoMoreInteractions(mailSenderService);
+    }
+
+    @Test
     void ensureNoMailIsSentToPersonWithUnverifiedEmail() {
 
         setupMockServletRequest();
 
         final Person verified = new Person();
+
+        verified.setPermissions(List.of(USER));
         verified.setEmail("verified@example.org");
         verified.setEmailVerified(true);
 
         final Person unknown = new Person();
+
+        unknown.setPermissions(List.of(USER));
         unknown.setEmail("unknown@example.org");
 
         final Person unverified = new Person();
+
+        unverified.setPermissions(List.of(USER));
         unverified.setEmail("unverified@example.org");
         unverified.setEmailVerified(false);
 
@@ -144,9 +184,13 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
+
+        hans.setPermissions(List.of(USER));
         hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
+
+        franz.setPermissions(List.of(USER));
         franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
@@ -174,9 +218,13 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
+
+        hans.setPermissions(List.of(USER));
         hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
+
+        franz.setPermissions(List.of(USER));
         franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
@@ -204,10 +252,14 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
+
+        hans.setPermissions(List.of(USER));
         hans.setId(1L);
         hans.setEmail("hans@example.org");
 
         final Person john = new Person();
+
+        john.setPermissions(List.of(USER));
         john.setId(2L);
         john.setEmail("john@example.org");
 
@@ -234,6 +286,8 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person franz = new Person();
+
+        franz.setPermissions(List.of(USER));
         franz.setEmail("franz@example.org");
 
         final String subjectMessageKey = "subject.overtime.created";
@@ -256,6 +310,8 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
+
+        hans.setPermissions(List.of(USER));
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
@@ -283,6 +339,8 @@ class MailServiceImplTest {
         when(mailProperties.getReplyToDisplayName()).thenReturn("focus:absence");
 
         final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
+
+        hans.setPermissions(List.of(USER));
 
         final Mail mail = Mail.builder()
             .withRecipient(hans)
@@ -313,6 +371,8 @@ class MailServiceImplTest {
 
         final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
 
+        hans.setPermissions(List.of(USER));
+
         final Mail mail = Mail.builder()
             .withRecipient(hans)
             .withSubject("subject.overtime.created")
@@ -334,6 +394,8 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person("hans", "Dampf, Jr.", "Hans", "hans@example.org");
+
+        hans.setPermissions(List.of(USER));
 
         final Mail mail = Mail.builder()
             .withRecipient(hans)

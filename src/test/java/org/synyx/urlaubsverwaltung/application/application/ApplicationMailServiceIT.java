@@ -118,14 +118,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToApplicantManagementAndColleague() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(3L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(USER, OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(2L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
 
         final Application application = createApplication(person);
@@ -140,6 +141,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(boss, office));
 
         final Person colleague = new Person("colleague", "Dampf", "Hans", "dampf@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(42L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
@@ -279,14 +281,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithOneReplacement() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(USER, OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -384,15 +388,18 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithMultipleReplacements() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(USER, OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -493,12 +500,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutRejectedApplicationIsSentToApplierAndRelevantPersons() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(2L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
 
         final Application application = createApplication(person);
@@ -511,6 +519,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.REJECTED, boss, "Geht leider nicht zu dem Zeitraum");
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
+        departmentHead.setPermissions(List.of(USER));
         departmentHead.setId(3L);
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(boss, departmentHead));
@@ -587,10 +596,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
         final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
+        recipient.setPermissions(List.of(USER));
         recipient.setId(1L);
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
+        sender.setPermissions(List.of(USER));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(List.of(USER));
 
         final Application application = createApplication(recipient);
         application.setApplicationDate(LocalDate.of(2022, MAY, 19));
@@ -641,10 +653,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void sendDeclinedCancellationRequestApplicationNotification() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(10L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(USER, OFFICE));
 
         final Application application = createApplication(person);
         application.setStatus(ApplicationStatus.ALLOWED);
@@ -655,6 +668,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCEL_REQUESTED_DECLINED, office, "Stornierung abgelehnt!");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setPermissions(List.of(USER));
         relevantPerson.setId(1337L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
@@ -731,10 +745,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(USER, OFFICE));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, MAY, 29));
@@ -802,11 +817,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
 
         final Application application = createApplication(person);
         application.setApplier(office);
@@ -815,7 +831,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
         relevantPerson.setId(2L);
-        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setPermissions(List.of(USER, BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
@@ -866,11 +882,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNoteForOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
 
         final Application application = createApplication(person);
         application.setApplier(office);
@@ -879,7 +896,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
         relevantPerson.setId(2L);
-        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setPermissions(List.of(USER, BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
@@ -930,6 +947,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutConfirmationAllowedDirectlySent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
@@ -942,6 +960,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
@@ -1014,10 +1033,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureConfirmationAllowedDirectlyByOfficeSent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(USER, OFFICE));
 
         final Application application = createApplication(person);
         application.setApplier(office);
@@ -1029,6 +1049,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
@@ -1095,6 +1116,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNewDirectlyAllowedApplicationNotificationSent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
@@ -1102,6 +1124,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setEndDate(LocalDate.of(2021, APRIL, 16));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setPermissions(List.of(USER));
         relevantPerson.setId(1L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(relevantPerson));
@@ -1150,8 +1173,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotifyHolidayReplacementAboutDirectlyAllowedApplicationSent() throws Exception {
 
         final Person applier = new Person("applier", "applier", "applier", "applier@example.org");
+        applier.setPermissions(List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
@@ -1159,6 +1184,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setApplier(applier);
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
@@ -1206,11 +1232,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectHolidayReplacementApplyMailIsSent() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
         application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
@@ -1252,14 +1280,17 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectHolidayReplacementAllowMailIsSent() throws Exception {
 
         final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+        boss.setPermissions(List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setBoss(boss);
         application.setStartDate(LocalDate.of(2020, MAY, 29));
         application.setEndDate(LocalDate.of(2020, MAY, 29));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
@@ -1304,13 +1335,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectHolidayReplacementCancellationMailIsSent() throws Exception {
 
         final Person canceller = new Person("canceller", "canceller", "canceller", "canceller@example.org");
+        canceller.setPermissions(List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
         application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
@@ -1350,14 +1384,17 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsWaiting() throws MessagingException, IOException {
 
         final Person editor = new Person("editor", "editor", "editor", "editor@example.org");
+        editor.setPermissions(List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setStatus(WAITING);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
         application.setEndDate(LocalDate.of(2020, DECEMBER, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1398,14 +1435,17 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsAllowed() throws MessagingException, IOException {
 
         final Person editor = new Person("editor", "editor", "editor", "editor@example.org");
+        editor.setPermissions(List.of(USER));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setStatus(ALLOWED);
         application.setStartDate(LocalDate.of(2020, DECEMBER, 18));
         application.setEndDate(LocalDate.of(2020, DECEMBER, 20));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1445,6 +1485,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureToSendAppliedNotificationByApplicantWhereFromIsNotNull() throws MessagingException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
@@ -1471,6 +1512,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
@@ -1521,9 +1563,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -1579,11 +1623,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -1641,6 +1688,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
@@ -1652,7 +1700,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Habe das mal für dich beantragt");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
         application.setApplier(office);
 
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
@@ -1696,10 +1744,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
 
@@ -1713,7 +1763,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Habe das mal für dich beantragt");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
 
         application.setApplier(office);
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
@@ -1757,10 +1807,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -1778,7 +1831,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Habe das mal für dich beantragt");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
 
         application.setApplier(office);
         sut.sendAppliedByManagementNotificationByManagement(application, comment);
@@ -1822,6 +1875,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REVOKED));
 
         final Application application = createApplication(person);
@@ -1832,6 +1886,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.REVOKED, person, "Wrong date - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setPermissions(List.of(USER));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
@@ -1888,18 +1943,21 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REVOKED));
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
         final Person office = new Person("office", "Person", "Office", "office@example.org");
+        office.setPermissions(List.of(USER));
         application.setCanceller(office);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.REVOKED, office, "Wrong information - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setPermissions(List.of(USER));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
@@ -1956,6 +2014,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensuresDirectCancelInformsRecipientOfInterest() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 16));
@@ -1968,6 +2027,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCELLED, person, "Cancelled");
 
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        recipientOfInterest.setPermissions(List.of(USER));
         recipientOfInterest.setId(1L);
         recipientOfInterest.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(recipientOfInterest));
@@ -2012,6 +2072,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureApplicantReceivesNotificationsIfApplicantCancel() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
@@ -2025,6 +2086,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCELLED, person, "Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
@@ -2099,6 +2161,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
@@ -2108,12 +2171,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setEndDate(LocalDate.of(2021, APRIL, 16));
 
         final Person office = new Person("office", "Person", "Office", "office@example.org");
+        office.setPermissions(List.of(USER));
         application.setCanceller(office);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCELLED, office, "Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
@@ -2185,11 +2250,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
+        office.setPermissions(List.of(USER, OFFICE));
         office.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
 
         final Application application = createApplication(person);
@@ -2203,11 +2269,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCELLED, person, "Geht leider nicht");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setPermissions(List.of(USER));
         relevantPerson.setId(2L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
         colleague.setId(42L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
@@ -2307,15 +2375,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
         departmentHead.setId(2L);
-        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2023, MAY, 22));
@@ -2409,15 +2478,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
         departmentHead.setId(2L);
-        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Application application = createApplication(secondStage);
@@ -2514,16 +2583,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(2L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
-        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final Application application = createApplication(departmentHead);
         application.setStartDate(LocalDate.of(2023, MAY, 22));
@@ -2614,10 +2683,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutNewApplicationWithoutOverlappingVacations() throws MessagingException, IOException {
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
@@ -2679,10 +2749,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutNewApplicationWithMultipleOverlappingVacations() throws MessagingException, IOException {
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
@@ -2751,10 +2822,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentWithOneReplacement() throws MessagingException, IOException {
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
@@ -2816,11 +2888,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setId(1L);
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
@@ -2886,12 +2960,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(2L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final Application application = createApplication(person);
@@ -2979,13 +3054,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(1L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final Application application = createApplication(person);
@@ -3079,14 +3156,17 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(1L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final Application application = createApplication(person);
@@ -3181,12 +3261,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutTemporaryAllowedApplicationWithMultipleOverlappingVacations() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(1L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final Application application = createApplication(person);
@@ -3279,12 +3360,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutTemporaryAllowedApplicationWithoutOverlappingVacations() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
         secondStage.setId(1L);
-        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final Application application = createApplication(person);
@@ -3367,12 +3449,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureBossesAndDepartmentHeadsGetRemindMail() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setPermissions(List.of(BOSS));
+        boss.setPermissions(List.of(USER, BOSS));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
-        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2024, AUGUST, 8));
 
@@ -3409,10 +3492,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // PERSONs
         final Person personA = new Person("personA", "Mahler", "Max", "mahler@example.org");
+        personA.setPermissions(List.of(USER));
         personA.setId(1L);
         final Person personB = new Person("personB", "Förster", "Frederik", "förster@example.org");
+        personB.setPermissions(List.of(USER));
         personB.setId(2L);
         final Person personC = new Person("personC", "Schuster", "Peter", "schuster@example.org");
+        personC.setPermissions(List.of(USER));
         personC.setId(3L);
 
         // APPLICATIONs
@@ -3442,12 +3528,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // DEPARTMENT HEADs
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(List.of(USER));
         boss.setId(1L);
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
+        departmentHeadA.setPermissions(List.of(USER));
         departmentHeadA.setId(2L);
         departmentHeadA.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
+        departmentHeadB.setPermissions(List.of(USER));
         departmentHeadB.setId(3L);
         departmentHeadB.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
@@ -3551,6 +3640,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureToSendEditedApplicationNotificationIfEditorIsApplicant() throws Exception {
 
         final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
+        editor.setPermissions(List.of(USER));
         editor.setId(1L);
         editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
@@ -3559,7 +3649,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
         relevantPerson.setId(2L);
-        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setPermissions(List.of(USER, BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
@@ -3615,8 +3705,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureToSendEditedApplicationNotificationIfEditorIsOffice() throws Exception {
 
         final Person office = new Person("office", "Muster", "Marlene", "mustermann.marlene@example.org");
+        office.setPermissions(List.of(USER));
 
         final Person applicant = new Person("editor", "Muster", "Max", "mustermann@example.org");
+        applicant.setPermissions(List.of(USER));
         applicant.setId(1L);
         applicant.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
@@ -3625,7 +3717,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
         relevantPerson.setId(2L);
-        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setPermissions(List.of(USER, BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
@@ -3681,9 +3773,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.now(clock));
@@ -3733,9 +3827,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplication() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 2));
@@ -3783,9 +3879,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 3));
@@ -3832,6 +3930,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
@@ -3872,6 +3971,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementTomorrow() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
@@ -3912,6 +4012,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
@@ -3952,6 +4053,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
@@ -3992,9 +4094,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 2));
@@ -4044,9 +4148,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 2));
@@ -4098,10 +4204,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 2));
@@ -4157,10 +4266,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        holidayReplacementOne.setPermissions(List.of(USER));
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+        holidayReplacementTwo.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 2));
@@ -4216,9 +4328,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithReplacementWithoutNoteWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, JANUARY, 31));
@@ -4268,7 +4382,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingHolidayReplacementToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
@@ -4311,7 +4427,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingHolidayReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
@@ -4354,7 +4472,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingHolidayReplacementMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);
@@ -4396,7 +4516,9 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensurePersonGetsANotificationForUpcomingHolidayReplacementWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
+        holidayReplacement.setPermissions(List.of(USER));
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
 
         final Application application = createApplication(person);

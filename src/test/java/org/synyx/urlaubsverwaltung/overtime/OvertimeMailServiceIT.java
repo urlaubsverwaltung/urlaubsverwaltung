@@ -91,6 +91,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
     void ensureApplicantWithOvertimeNotificationGetMailIfOvertimeRecordedFromManagement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setPermissions(List.of(USER));
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
