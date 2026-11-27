@@ -106,6 +106,15 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-jakarta9</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-observation-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- DATABASE -->
     <dependency>
