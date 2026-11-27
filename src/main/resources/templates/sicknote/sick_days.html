@@ -329,7 +329,9 @@
                     &nbsp;<th:block
                       th:replace="~{fragments/number::number(${sickDaysStatistic.amountSickDays})}"
                     ></th:block>
-                    <th:block th:text="#{sicknotes.daysOverview.sickDays.number}"></th:block>
+                    <th:block
+                      th:text="#{sicknotes.daysOverview.sickDays.number(${sickDaysStatistic.amountSickDays})}"
+                    ></th:block>
                   </div>
                 </a>
                 <p
@@ -355,7 +357,9 @@
                     &nbsp;<th:block
                       th:replace="~{fragments/number::number(${sickDaysStatistic.amountChildSickDays})}"
                     ></th:block>
-                    <th:block th:text="#{sicknotes.daysOverview.sickDays.child.number}"></th:block>
+                    <th:block
+                      th:text="#{sicknotes.daysOverview.sickDays.child.number(${sickDaysStatistic.amountChildSickDays})}"
+                    ></th:block>
                   </div>
                 </a>
                 <p

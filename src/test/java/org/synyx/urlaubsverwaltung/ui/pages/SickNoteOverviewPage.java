@@ -27,13 +27,13 @@ public class SickNoteOverviewPage {
     }
 
     public void showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
-        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.number");
+        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.number", new Object[]{sickDays});
         final String sickDaysAubText = msg("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate});
         showsPersonRow(firstName, lastName, sickDays + " " + sickDaysText, sickDaysAubText, daysWithIncapacityCertificate);
     }
 
     public void showsChildSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
-        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.child.number");
+        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.child.number", new Object[]{sickDays});
         final String sickDaysAubText = msg("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate});
         showsPersonRow(firstName, lastName, sickDays + " " + sickDaysText, sickDaysAubText, daysWithIncapacityCertificate);
     }
