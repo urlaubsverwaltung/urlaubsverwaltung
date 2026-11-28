@@ -23,13 +23,12 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
+
+import static java.time.ZoneOffset.UTC;
 
 @Component
 @ConditionalOnExtensionsEnabled
 public class SickNoteEventHandlerExtension {
-
-    private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 
     private final TenantSupplier tenantSupplier;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -94,7 +93,7 @@ public class SickNoteEventHandlerExtension {
     }
 
     private static Instant localDateToInstant(LocalDate localDate) {
-        return localDate.atStartOfDay(DEFAULT_TIME_ZONE).toInstant();
+        return localDate.atStartOfDay(UTC).toInstant();
     }
 
     private static String toStatus(SickNote sickNote) {
