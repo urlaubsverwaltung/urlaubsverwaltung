@@ -149,7 +149,7 @@ class CalendarSyncService {
     private void addCalendarEntry(Application application) {
         calendarProviderService.getCalendarProvider()
             .ifPresentOrElse(
-                calendarProvider -> calendarProvider.add(new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
+                calendarProvider -> calendarProvider.add(new CalendarAbsence("application-" + application.getId(), application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
                     .ifPresentOrElse(
                         eventId -> {
                             createCalendarEntryMapping(application.getId(), VACATION, eventId);
@@ -164,7 +164,7 @@ class CalendarSyncService {
     private void addCalendarEntry(SickNote sickNote) {
         calendarProviderService.getCalendarProvider()
             .ifPresentOrElse(
-                calendarProvider -> calendarProvider.add(new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
+                calendarProvider -> calendarProvider.add(new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
                     .ifPresentOrElse(
                         eventId -> {
                             createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId);
@@ -182,7 +182,7 @@ class CalendarSyncService {
                 absenceMapping -> calendarProviderService.getCalendarProvider()
                     .ifPresentOrElse(
                         calendarProvider -> {
-                            final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+                            final CalendarAbsence absence = new CalendarAbsence("application-" + application.getId(), application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
                             calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
                             LOG.info("Updated calendar entry for application id={}, eventId={}", application.getId(), absenceMapping.getEventId());
                         },
@@ -198,7 +198,7 @@ class CalendarSyncService {
                 absenceMapping -> calendarProviderService.getCalendarProvider()
                     .ifPresentOrElse(
                         calendarProvider -> {
-                            final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
+                            final CalendarAbsence absence = new CalendarAbsence("sicknote-" + sickNote.getId(), sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
                             calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
                             LOG.info("Updated calendar entry for sick note id={}, eventId={}", sickNote.getId(), absenceMapping.getEventId());
                         },

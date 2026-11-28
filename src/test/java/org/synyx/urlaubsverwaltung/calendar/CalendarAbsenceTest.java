@@ -35,7 +35,7 @@ class CalendarAbsenceTest {
         final LocalDate end = LocalDate.of(2015, SEPTEMBER, 23);
         final Period period = new Period(start, end, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
 
         assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay().atZone(ZoneOffset.UTC));
         assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay().atZone(ZoneOffset.UTC).plusDays(1));
@@ -49,7 +49,7 @@ class CalendarAbsenceTest {
         final LocalDate end = LocalDate.of(2015, SEPTEMBER, 23);
         final Period period = new Period(start, end, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration("Europe/Berlin"));
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration("Europe/Berlin"));
 
         assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(ZoneId.of("Europe/Berlin")));
         assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(ZoneId.of("Europe/Berlin")).plusDays(1));
@@ -62,7 +62,7 @@ class CalendarAbsenceTest {
         final LocalDate start = LocalDate.of(2015, SEPTEMBER, 21);
         final Period period = new Period(start, start, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration("IST"));
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration("IST"));
 
         assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(ZoneId.of("Asia/Kolkata")));
     }
@@ -75,7 +75,7 @@ class CalendarAbsenceTest {
         final LocalDate end = LocalDate.of(2015, OCTOBER, 25);
         final Period period = new Period(start, end, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
 
         assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay().atZone(ZoneOffset.UTC));
         assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay().atZone(ZoneOffset.UTC).plusDays(1));
@@ -90,7 +90,7 @@ class CalendarAbsenceTest {
         final ZonedDateTime end = today.withHour(12);
         final Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.MORNING);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.getStartDate()).isEqualTo(start);
         assertThat(absence.getEndDate()).isEqualTo(end);
     }
@@ -103,7 +103,7 @@ class CalendarAbsenceTest {
         final ZonedDateTime end = today.withHour(16);
         final Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.NOON);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.getStartDate()).isEqualTo(start);
         assertThat(absence.getEndDate()).isEqualTo(end);
     }
@@ -115,7 +115,7 @@ class CalendarAbsenceTest {
         final LocalDate end = start.plusDays(2);
         final Period period = new Period(start, end, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.isAllDay()).isTrue();
     }
 
@@ -125,7 +125,7 @@ class CalendarAbsenceTest {
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.MORNING);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.isAllDay()).isFalse();
     }
 
@@ -135,7 +135,7 @@ class CalendarAbsenceTest {
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.NOON);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.isAllDay()).isFalse();
     }
 
@@ -145,7 +145,7 @@ class CalendarAbsenceTest {
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration());
         assertThat(absence.getCalendarAbsenceTypeMessageKey()).isEqualTo("calendar.absence.type.default");
     }
 
@@ -155,7 +155,7 @@ class CalendarAbsenceTest {
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.FULL);
 
-        final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration(), HOLIDAY_REPLACEMENT);
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, period, getAbsenceTimeConfiguration(), HOLIDAY_REPLACEMENT);
         assertThat(absence.getCalendarAbsenceTypeMessageKey()).isEqualTo("calendar.absence.type.holidayReplacement");
     }
 
@@ -164,7 +164,7 @@ class CalendarAbsenceTest {
         // Date where daylight saving time is relevant
         final LocalDate start = LocalDate.of(2015, OCTOBER, 23);
         final LocalDate end = LocalDate.of(2015, OCTOBER, 25);
-        final CalendarAbsence absence = new CalendarAbsence(person, new Period(start, end, DayLength.FULL), getAbsenceTimeConfiguration());
+        final CalendarAbsence absence = new CalendarAbsence("application-1", person, new Period(start, end, DayLength.FULL), getAbsenceTimeConfiguration());
 
         final String absenceToString = absence.toString();
         assertThat(absenceToString)

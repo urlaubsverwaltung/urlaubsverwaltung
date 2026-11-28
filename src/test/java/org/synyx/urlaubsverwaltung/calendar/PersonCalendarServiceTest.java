@@ -364,6 +364,6 @@ class PersonCalendarServiceTest {
         final Period period = new Period(start, end, length);
         final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(new TimeSettings());
 
-        return new CalendarAbsence(person, period, timeConfig);
+        return new CalendarAbsence("application-1", person, period, timeConfig);
     }
 }

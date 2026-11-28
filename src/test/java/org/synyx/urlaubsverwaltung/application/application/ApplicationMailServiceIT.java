@@ -1462,7 +1462,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        final Message msg = inbox[0];
+        final MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getReplyTo()[0]);
@@ -1478,7 +1478,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.
+            """);
+
+        final List<AttachmentResource> attachments = getAttachments(msg);
+        assertThat(attachments.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
