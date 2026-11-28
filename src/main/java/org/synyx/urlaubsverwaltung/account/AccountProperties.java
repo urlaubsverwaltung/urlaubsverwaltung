@@ -41,12 +41,27 @@ public class AccountProperties {
         @CronExpression
         private String cron = "0 0 5 1 1 *";
 
+        /**
+         * Creates the users account for the current year if it is still missing, e.g. because no instance ran at the
+         * turn of the year, by default every day at 05:30 am
+         */
+        @CronExpression
+        private String catchUpCron = "0 30 5 * * *";
+
         public String getCron() {
             return cron;
         }
 
         public void setCron(String cron) {
             this.cron = cron;
+        }
+
+        public String getCatchUpCron() {
+            return catchUpCron;
+        }
+
+        public void setCatchUpCron(String catchUpCron) {
+            this.catchUpCron = catchUpCron;
         }
     }
 

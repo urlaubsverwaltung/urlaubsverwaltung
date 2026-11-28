@@ -34,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_REMAINING_VACATION_DAYS_CARRIED_OVER_MANAGEMENT_ALL;
@@ -193,6 +194,34 @@ class TurnOfTheYearAccountUpdaterServiceTest {
 
         verifyNoInteractions(mailService);
         verify(vacationDaysReminderService).remindForRemainingVacationDays();
+    }
+
+    @Test
+    void ensureCreatesOnlyMissingHolidaysAccountsOfThisYearWithoutMails() {
+
+        final Person withAccount = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        withAccount.setId(1L);
+        final Person withoutAccount = new Person("franka", "Potente", "Franka", "franka@example.org");
+        withoutAccount.setId(2L);
+        final Person withoutAnnualVacationDays = new Person("max", "Mustermann", "Max", "max@example.org");
+        withoutAnnualVacationDays.setId(3L);
+        final List<Person> activePersons = List.of(withAccount, withoutAccount, withoutAnnualVacationDays);
+        when(personService.getActivePersons()).thenReturn(activePersons);
+
+        final Account lastYearWithAccount = createHolidaysAccount(withAccount, LAST_YEAR);
+        final Account lastYearWithoutAccount = createHolidaysAccount(withoutAccount, LAST_YEAR);
+        final Account lastYearWithoutAnnualVacationDays = createHolidaysAccount(withoutAnnualVacationDays, LAST_YEAR);
+        lastYearWithoutAnnualVacationDays.setAnnualVacationDays(null);
+        when(accountService.getHolidaysAccount(LAST_YEAR, activePersons))
+            .thenReturn(List.of(lastYearWithAccount, lastYearWithoutAccount, lastYearWithoutAnnualVacationDays));
+        when(accountService.getHolidaysAccount(CURRENT_YEAR, activePersons))
+            .thenReturn(List.of(createHolidaysAccount(withAccount, CURRENT_YEAR)));
+
+        sut.createMissingAccountsOfThisYear();
+
+        verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(lastYearWithoutAccount);
+        verifyNoMoreInteractions(accountInteractionService);
+        verifyNoInteractions(mailService, vacationDaysReminderService);
     }
 
     private static Person anOffice() {

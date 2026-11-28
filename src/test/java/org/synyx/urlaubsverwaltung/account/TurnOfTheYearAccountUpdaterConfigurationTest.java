@@ -33,6 +33,7 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
     void updatesAccountsWithGivenCronJobInterval() {
 
         when(scheduleLocking.withLock(eq("UpdateAccountsForNextPeriod"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+        when(scheduleLocking.withLock(eq("CreateMissingAccountsOfThisYear"), any(Runnable.class))).thenAnswer(returnsSecondArg());
 
         final AccountProperties properties = new AccountProperties();
         final TurnOfTheYearAccountUpdaterService service = mock(TurnOfTheYearAccountUpdaterService.class);
@@ -43,7 +44,7 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
         sut.configureTasks(taskRegistrar);
 
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
-        assertThat(cronTaskList).hasSize(1);
+        assertThat(cronTaskList).hasSize(2);
 
         final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 5 1 1 *");
@@ -53,5 +54,27 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
         cronTask.getRunnable().run();
         verify(service).updateAccountsForNextPeriod();
         verify(companyVacationService).publishCompanyEvents();
+    }
+
+    @Test
+    void createsMissingAccountsWithGivenCatchUpCronJobInterval() {
+
+        when(scheduleLocking.withLock(eq("UpdateAccountsForNextPeriod"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+        when(scheduleLocking.withLock(eq("CreateMissingAccountsOfThisYear"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+
+        final AccountProperties properties = new AccountProperties();
+        final TurnOfTheYearAccountUpdaterService service = mock(TurnOfTheYearAccountUpdaterService.class);
+        final CompanyVacationService companyVacationService = mock(CompanyVacationService.class);
+        final TurnOfTheYearAccountUpdaterConfiguration sut = new TurnOfTheYearAccountUpdaterConfiguration(properties, service, companyVacationService, scheduleLocking, taskScheduler);
+
+        final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
+        sut.configureTasks(taskRegistrar);
+
+        final CronTask cronTask = taskRegistrar.getCronTaskList().getLast();
+        assertThat(cronTask.getExpression()).isEqualTo("0 30 5 * * *");
+
+        cronTask.getRunnable().run();
+        verify(service).createMissingAccountsOfThisYear();
+        verifyNoInteractions(companyVacationService);
     }
 }
