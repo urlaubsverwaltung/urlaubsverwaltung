@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.export;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -30,6 +33,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -45,18 +49,20 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
     private final ApplicationForLeaveExportService applicationForLeaveExportService;
     private final ApplicationForLeaveCsvExportService applicationForLeaveCsvExportService;
     private final DateFormatAware dateFormatAware;
+    private final DepartmentService departmentService;
     private final Clock clock;
 
     @Autowired
     ApplicationForLeaveExportViewController(
         PersonService personService, ApplicationForLeaveExportService applicationForLeaveExportService,
         ApplicationForLeaveCsvExportService applicationForLeaveCsvExportService, DateFormatAware dateFormatAware,
-        Clock clock) {
+        DepartmentService departmentService, Clock clock) {
 
         this.personService = personService;
         this.applicationForLeaveExportService = applicationForLeaveExportService;
         this.applicationForLeaveCsvExportService = applicationForLeaveCsvExportService;
         this.dateFormatAware = dateFormatAware;
+        this.departmentService = departmentService;
         this.clock = clock;
     }
 
@@ -68,7 +74,7 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
         @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
-        Locale locale
+        Locale locale, HttpServletRequest request
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
@@ -83,7 +89,14 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         final String adaptedQuery = allElements ? "" : query;
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
 
-        final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.startDate(), period.endDate(), pageableSearchQuery);
+        // the export service skips departments the signed-in user is not allowed to manage
+        final List<Long> departmentIds = departmentNames(request).stream()
+            .map(departmentService::getDepartmentByName)
+            .flatMap(Optional::stream)
+            .map(Department::getId)
+            .toList();
+
+        final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.startDate(), period.endDate(), pageableSearchQuery, departmentIds);
         final List<ApplicationForLeaveExport> export = exportPage.getContent();
         final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, locale, export);
 
@@ -92,6 +105,12 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.fileName(), UTF_8).build());
 
         return ResponseEntity.status(OK).headers(headers).body(csvFile.resource());
+    }
+
+    private static List<String> departmentNames(HttpServletRequest request) {
+        // not bound with @RequestParam List<String>: a single value would be split at its commas, like "Sales, North"
+        final String[] values = request.getParameterValues("department");
+        return values == null ? List.of() : List.of(values);
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {
