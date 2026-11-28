@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -95,7 +96,14 @@ public class AccountViewController implements HasLaunchpad, HasPersonSearch {
         final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(selectedYear, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new).orElseGet(() -> getAccountFormDraft(selectedYear, person));
 
+        final Optional<Account> maybeNextYearsAccount = accountService.getHolidaysAccount(selectedYear + 1, person);
+        // next year's days still being a copy of this year's means they most likely have to follow a change
+        final boolean nextYearsDaysAreCopy = maybeHolidaysAccount.isPresent() && maybeNextYearsAccount.isPresent()
+            && sameDays(maybeHolidaysAccount.get().getAnnualVacationDays(), maybeNextYearsAccount.get().getAnnualVacationDays());
+        accountForm.setAnnualVacationDaysForFollowingYears(nextYearsDaysAreCopy);
+
         model.addAttribute("account", accountForm);
+        maybeNextYearsAccount.ifPresent(nextYearsAccount -> model.addAttribute("nextYearsAccount", nextYearsAccount));
         model.addAttribute("person", person);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("currentYear", currentYear);
@@ -120,6 +128,8 @@ public class AccountViewController implements HasLaunchpad, HasPersonSearch {
             model.addAttribute("person", person);
             model.addAttribute("selectedYear", accountForm.getHolidaysAccountYear());
             model.addAttribute("currentYear", Year.now(clock).getValue());
+            accountService.getHolidaysAccount(accountForm.getHolidaysAccountYear() + 1, person)
+                .ifPresent(nextYearsAccount -> model.addAttribute("nextYearsAccount", nextYearsAccount));
 
             addVacationTypeColorsToModel(model);
 
@@ -149,6 +159,10 @@ public class AccountViewController implements HasLaunchpad, HasPersonSearch {
                 expiryDateLocally, annualVacationDays, actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
+        if (accountForm.isAnnualVacationDaysForFollowingYears()) {
+            accountInteractionService.updateAnnualVacationDaysOfFollowingYears(validFrom.getYear(), person, annualVacationDays);
+        }
+
         // the next years carry over the left vacation days of this one, like on every change of an application
         accountInteractionService.updateRemainingVacationDays(validFrom.getYear(), person);
 
@@ -176,6 +190,10 @@ public class AccountViewController implements HasLaunchpad, HasPersonSearch {
         accountForm.setOverrideVacationDaysExpire(accountDraft.doRemainingVacationDaysExpireLocally() != null);
 
         return accountForm;
+    }
+
+    private static boolean sameDays(@Nullable BigDecimal days, @Nullable BigDecimal otherDays) {
+        return days != null && otherDays != null && days.compareTo(otherDays) == 0;
     }
 
     private void addVacationTypeColorsToModel(Model model) {

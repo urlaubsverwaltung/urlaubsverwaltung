@@ -28,6 +28,7 @@ import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
 import static java.time.Month.OCTOBER;
@@ -297,6 +298,57 @@ class AccountInteractionServiceImplTest {
         assertThat(nextYearAccount.getRemainingVacationDays()).isEqualTo(remainingVacationDays);
 
         verify(vacationDaysService, never()).getTotalLeftVacationDaysAtEndOfYear(any());
+        verify(accountService, never()).save(any());
+    }
+
+    @Test
+    void ensureUpdatesAnnualVacationDaysOfAllFollowingYears() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Account account2013 = new Account(person, of(2013, JANUARY, 1), of(2013, DECEMBER, 31), null, null, BigDecimal.valueOf(30), ZERO, ZERO, "");
+        account2013.setActualVacationDays(BigDecimal.valueOf(30));
+        final Account account2014 = new Account(person, of(2014, JANUARY, 1), of(2014, DECEMBER, 31), null, null, BigDecimal.valueOf(30), ZERO, ZERO, "");
+        account2014.setActualVacationDays(BigDecimal.valueOf(30));
+
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
+        when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.empty());
+
+        sut.updateAnnualVacationDaysOfFollowingYears(2012, person, BigDecimal.valueOf(28));
+
+        assertThat(account2013.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(28));
+        assertThat(account2013.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(28));
+        assertThat(account2014.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(28));
+        assertThat(account2014.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(28));
+        verify(accountService).save(account2013);
+        verify(accountService).save(account2014);
+    }
+
+    @Test
+    void ensureUpdateOfAnnualVacationDaysOfFollowingYearsKeepsProratedVacationDays() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Account account2013 = new Account(person, of(2013, JULY, 1), of(2013, DECEMBER, 31), null, null, new BigDecimal("30.0"), ZERO, ZERO, "");
+        account2013.setActualVacationDays(BigDecimal.valueOf(15));
+
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
+        when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
+
+        sut.updateAnnualVacationDaysOfFollowingYears(2012, person, BigDecimal.valueOf(28));
+
+        assertThat(account2013.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(28));
+        assertThat(account2013.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(15));
+        verify(accountService).save(account2013);
+    }
+
+    @Test
+    void ensureUpdateOfAnnualVacationDaysOfFollowingYearsDoesNothingWithoutNextYearsAccount() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
+
+        sut.updateAnnualVacationDaysOfFollowingYears(2012, person, BigDecimal.valueOf(28));
+
         verify(accountService, never()).save(any());
     }
 

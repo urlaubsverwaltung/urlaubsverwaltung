@@ -42,10 +42,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -128,7 +130,45 @@ class AccountViewControllerTest {
             .andExpect(model().attribute("currentYear", notNullValue()))
             .andExpect(model().attribute("selectedYear", notNullValue()))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
+            .andExpect(model().attributeDoesNotExist("nextYearsAccount"))
+            .andExpect(model().attribute("account", hasProperty("annualVacationDaysForFollowingYears", is(false))))
             .andExpect(view().name("account/account_form"));
+    }
+
+    @Test
+    void editAccountPreselectsFollowingYearsWhenNextYearsAnnualVacationDaysAreACopy() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Account account = new Account(person, Year.of(2026).atDay(1), Year.of(2026).atDay(1).with(lastDayOfYear()), null, null, BigDecimal.valueOf(30), ZERO, ZERO, "");
+        final Account nextYearsAccount = new Account(person, Year.of(2027).atDay(1), Year.of(2027).atDay(1).with(lastDayOfYear()), null, null, new BigDecimal("30.0"), ZERO, ZERO, "");
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(2027, person)).thenReturn(Optional.of(nextYearsAccount));
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/account").param("year", "2026"))
+            .andExpect(model().attribute("nextYearsAccount", nextYearsAccount))
+            .andExpect(model().attribute("account", hasProperty("annualVacationDaysForFollowingYears", is(true))));
+    }
+
+    @Test
+    void editAccountDoesNotPreselectFollowingYearsWhenNextYearsAnnualVacationDaysDiffer() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Account account = new Account(person, Year.of(2026).atDay(1), Year.of(2026).atDay(1).with(lastDayOfYear()), null, null, BigDecimal.valueOf(30), ZERO, ZERO, "");
+        final Account nextYearsAccount = new Account(person, Year.of(2027).atDay(1), Year.of(2027).atDay(1).with(lastDayOfYear()), null, null, BigDecimal.valueOf(25), ZERO, ZERO, "");
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(2027, person)).thenReturn(Optional.of(nextYearsAccount));
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/account").param("year", "2026"))
+            .andExpect(model().attribute("nextYearsAccount", nextYearsAccount))
+            .andExpect(model().attribute("account", hasProperty("annualVacationDaysForFollowingYears", is(false))));
     }
 
     @Test
@@ -146,6 +186,7 @@ class AccountViewControllerTest {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(accountService.getHolidaysAccount(providedYear, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(providedYear + 1, person)).thenReturn(Optional.empty());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account")
             .param("year", Integer.toString(providedYear)))
@@ -235,6 +276,45 @@ class AccountViewControllerTest {
     }
 
     @Test
+    void updateAccountShowsNextYearsAccountIfValidationFails() throws Exception {
+
+        final Person person = somePerson();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+
+        final Account nextYearsAccount = someAccount();
+        when(accountService.getHolidaysAccount(2027, person)).thenReturn(Optional.of(nextYearsAccount));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("comment", "errors");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .flashAttr("account", new AccountForm(2026)))
+            .andExpect(model().attribute("nextYearsAccount", nextYearsAccount))
+            .andExpect(view().name("account/account_form"));
+    }
+
+    @Test
+    void updateAccountUpdatesAnnualVacationDaysOfFollowingYearsWhenSelected() throws Exception {
+
+        final Person person = somePerson();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(2026, person)).thenReturn(Optional.empty());
+
+        final AccountForm accountForm = new AccountForm(2026);
+        accountForm.setAnnualVacationDays(BigDecimal.valueOf(28));
+        accountForm.setAnnualVacationDaysForFollowingYears(true);
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .flashAttr("account", accountForm));
+
+        verify(accountInteractionService).updateAnnualVacationDaysOfFollowingYears(2026, person, BigDecimal.valueOf(28));
+        verify(accountInteractionService).updateRemainingVacationDays(2026, person);
+    }
+
+    @Test
     void updateAccountShowGlobalError() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
@@ -283,6 +363,7 @@ class AccountViewControllerTest {
             .flashAttr("account", accountForm));
 
         verify(accountInteractionService).editHolidaysAccount(account, validFrom, validTo, null, expiryDate, ZERO, ZERO, ZERO, BigDecimal.valueOf(5L), "comment");
+        verify(accountInteractionService, never()).updateAnnualVacationDaysOfFollowingYears(anyInt(), any(), any());
         // the next years carry over the left vacation days of the corrected one
         verify(accountInteractionService).updateRemainingVacationDays(validFrom.getYear(), signedInPerson);
     }

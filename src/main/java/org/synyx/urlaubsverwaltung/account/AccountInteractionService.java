@@ -65,6 +65,16 @@ public interface AccountInteractionService {
     );
 
     /**
+     * Sets the given annual vacation days on all {@link Account}s that follow the {@link Account} of the given year,
+     * until a year has no {@link Account}. The actual vacation days follow only where they equal the annual vacation days.
+     *
+     * @param year               whose following years are updated
+     * @param person             to update the accounts for
+     * @param annualVacationDays the new annual vacation days
+     */
+    void updateAnnualVacationDaysOfFollowingYears(int year, Person person, BigDecimal annualVacationDays);
+
+    /**
      * Auto-creates a new {@link Account} or updates the existing {@link Account} for the next year, based on the information of the given reference account.
      *
      * @param referenceAccount to get the information about annual vacation days, left vacation days etc.
