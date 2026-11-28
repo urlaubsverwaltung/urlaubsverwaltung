@@ -94,12 +94,20 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
                     } else if (workingDayInformation.dayLength == FULL) {
                         workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, HALF_UP));
                     }
-                } else {
+                } else if (!isOnFreeHalf(application, workingDayInformation)) {
                     workingTimeSum = workingTimeSum.add(workingTime);
                 }
             }
             return workingTimeSum;
         }
+    }
+
+    /**
+     * @return whether the application is a half day on the free half of a day, e.g. the afternoon of christmas eve
+     */
+    public static boolean isOnFreeHalf(Application application, WorkingDayInformation workingDayInformation) {
+        return application.getDayLength().isHalfDay() && workingDayInformation != null
+            && workingDayInformation.hasHalfDayOff() && !workingDayInformation.isWorkingHalf(application.getDayLength());
     }
 
     /**
@@ -188,6 +196,14 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
 
         public boolean hasHalfDayOff() {
             return morning == PUBLIC_HOLIDAY || noon == PUBLIC_HOLIDAY || morning == COMPANY_CLOSURE || noon == COMPANY_CLOSURE;
+        }
+
+        /**
+         * @param half {@link DayLength#MORNING} or {@link DayLength#NOON}
+         * @return whether the half is worked, e.g. not the free afternoon of christmas eve
+         */
+        public boolean isWorkingHalf(DayLength half) {
+            return (half == MORNING ? morning : noon) == WORKDAY;
         }
     }
 }

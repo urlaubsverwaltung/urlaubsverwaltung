@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -340,12 +340,13 @@ class WorkingTimeCalendarTest {
         }
 
         @ParameterizedTest
-        @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-        void ensureWorkingTimeForHalfDayApplicationAtHalfPublicHoliday(DayLength dayLength) {
+        @CsvSource({"MORNING, WORKDAY, PUBLIC_HOLIDAY, 0.5", "NOON, WORKDAY, PUBLIC_HOLIDAY, 0", "NOON, COMPANY_CLOSURE, WORKDAY, 0.5", "MORNING, COMPANY_CLOSURE, WORKDAY, 0"})
+        void ensureWorkingTimeForHalfDayApplicationAtHalfDayOff(DayLength dayLength, WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon, BigDecimal expected) {
 
             final LocalDate christmas = LocalDate.of(2024, DECEMBER, 24);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY));
+            final DayLength workingDayLength = morning == WORKDAY ? MORNING : NOON;
+            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(christmas, new WorkingDayInformation(workingDayLength, morning, noon));
             final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
             final Application application = new Application();
@@ -354,7 +355,7 @@ class WorkingTimeCalendarTest {
             application.setDayLength(dayLength);
 
             final BigDecimal actual = sut.workingTimeInDateRage(application, new DateRange(christmas, christmas.plusDays(1)));
-            assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
+            assertThat(actual).isEqualByComparingTo(expected);
         }
 
         static Stream<Arguments> singleHalfDay() {

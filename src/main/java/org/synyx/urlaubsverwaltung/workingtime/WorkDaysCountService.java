@@ -63,7 +63,7 @@ public class WorkDaysCountService {
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
-        final BigDecimal workDays = getWorkDaysByYear(startDate, endDate, person).values().stream()
+        final BigDecimal workDays = getWorkDaysByYear(dayLength, startDate, endDate, person).values().stream()
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return applyDayLength(workDays, dayLength);
@@ -84,19 +84,19 @@ public class WorkDaysCountService {
     public SortedMap<Integer, BigDecimal> getWorkDaysCountByYear(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
         final SortedMap<Integer, BigDecimal> workDaysByYear = new TreeMap<>();
-        getWorkDaysByYear(startDate, endDate, person)
+        getWorkDaysByYear(dayLength, startDate, endDate, person)
             .forEach((year, workDays) -> workDaysByYear.put(year, applyDayLength(workDays, dayLength)));
 
         return workDaysByYear;
     }
 
-    private SortedMap<Integer, BigDecimal> getWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person) {
+    private SortedMap<Integer, BigDecimal> getWorkDaysByYear(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
         final DateRange dateRange = new DateRange(startDate, endDate);
         requireCalculableDuration(dateRange);
 
         final Map<DateRange, WorkingTime> workingTimes = workingTimeService.getWorkingTimesByPersonAndDateRange(person, dateRange);
-        return calculateWorkDaysByYear(startDate, endDate, person, workingTimes, closureWorkingDurations(startDate, endDate));
+        return calculateWorkDaysByYear(dayLength, startDate, endDate, person, workingTimes, closedDayLengths(startDate, endDate));
     }
 
     /**
@@ -168,7 +168,7 @@ public class WorkDaysCountService {
 
         final LocalDate earliestStart = applications.stream().map(a -> clipStart(a.getStartDate(), limitedToDateRange)).min(LocalDate::compareTo).orElseThrow();
         final LocalDate latestEnd = applications.stream().map(a -> clipEnd(a.getEndDate(), limitedToDateRange)).max(LocalDate::compareTo).orElseThrow();
-        final Map<LocalDate, BigDecimal> closureDurations = closureWorkingDurations(earliestStart, latestEnd);
+        final Map<LocalDate, DayLength> closedDayLengths = closedDayLengths(earliestStart, latestEnd);
 
         final Map<Application, SortedMap<Integer, BigDecimal>> workDaysByYearByApplication = new LinkedHashMap<>();
         for (Application application : applications) {
@@ -178,7 +178,7 @@ public class WorkDaysCountService {
             final Map<DateRange, WorkingTime> workingTimes =
                 WorkingTimeServiceImpl.workingTimesByDateRange(personWorkingTimes, new DateRange(startDate, endDate));
             workDaysByYearByApplication.put(application,
-                calculateWorkDaysByYear(startDate, endDate, application.getPerson(), workingTimes, closureDurations));
+                calculateWorkDaysByYear(application.getDayLength(), startDate, endDate, application.getPerson(), workingTimes, closedDayLengths));
         }
 
         return workDaysByYearByApplication;
@@ -198,7 +198,7 @@ public class WorkDaysCountService {
         return limit.endDate();
     }
 
-    private SortedMap<Integer, BigDecimal> calculateWorkDaysByYear(LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes, Map<LocalDate, BigDecimal> closureDurationByDate) {
+    private SortedMap<Integer, BigDecimal> calculateWorkDaysByYear(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person, Map<DateRange, WorkingTime> workingTimes, Map<LocalDate, DayLength> closedDayLengthByDate) {
 
         if (workingTimes.isEmpty()) {
             throw new WorkDaysCountException("No working times found for user '" + person.getId()
@@ -227,10 +227,16 @@ public class WorkDaysCountService {
                 .map(PublicHoliday::getWorkingDuration)
                 .findFirst()
                 .orElse(BigDecimal.ONE);
-            final BigDecimal duration = holidayDuration.min(closureDurationByDate.getOrDefault(day, BigDecimal.ONE));
+            final DayLength closedDayLength = closedDayLengthByDate.getOrDefault(day, DayLength.ZERO);
+            final BigDecimal duration = holidayDuration.min(closedDayLength.getInverse().getDuration());
 
-            final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
-            workDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
+            // a half day on the free half of a day is no work day at all, e.g. the morning of a morning closure
+            final boolean onFreeHalf = dayLength.isHalfDay()
+                && (covers(closedDayLength, dayLength) || publicHolidays.stream().anyMatch(publicHoliday -> covers(publicHoliday.dayLength(), dayLength)));
+            if (!onFreeHalf) {
+                final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
+                workDaysByYear.merge(day.getYear(), duration.multiply(workingDuration), BigDecimal::add);
+            }
 
             day = day.plusDays(1);
         }
@@ -238,13 +244,13 @@ public class WorkDaysCountService {
         return workDaysByYear;
     }
 
-    private Map<LocalDate, BigDecimal> closureWorkingDurations(LocalDate startDate, LocalDate endDate) {
+    private Map<LocalDate, DayLength> closedDayLengths(LocalDate startDate, LocalDate endDate) {
         return companyClosureService.getCompanyClosures(startDate, endDate).stream()
-            .collect(toMap(CompanyClosure::date, WorkDaysCountService::workingDuration));
+            .collect(toMap(CompanyClosure::date, CompanyClosure::dayLength));
     }
 
-    private static BigDecimal workingDuration(CompanyClosure closure) {
-        return closure.dayLength().getInverse().getDuration();
+    private static boolean covers(DayLength dayLength, DayLength half) {
+        return dayLength == DayLength.FULL || dayLength == half;
     }
 
     private static BigDecimal applyDayLength(BigDecimal workDays, DayLength dayLength) {

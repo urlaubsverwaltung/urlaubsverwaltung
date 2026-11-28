@@ -45,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
@@ -697,6 +698,53 @@ class VacationDaysServiceTest {
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
             assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+        });
+    }
+
+    @Test
+    void ensureGetVacationDaysLeftWithHalfDayApplicationOnTheFreeHalfOfADayUsesNoDays() {
+        final Person person = anyPerson();
+
+        final int year = 2022;
+        final LocalDate firstDayOfYear = LocalDate.of(year, JANUARY, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final LocalDate christmas = LocalDate.of(year, DECEMBER, 24);
+
+        final Account account = anyAccount(person, Year.of(year));
+        account.setAnnualVacationDays(BigDecimal.valueOf(30));
+        account.setActualVacationDays(BigDecimal.valueOf(30));
+        account.setRemainingVacationDays(BigDecimal.valueOf(0));
+
+        // allowed before the afternoon became free
+        final Application application = anyApplication(person);
+        application.setDayLength(NOON);
+        application.setStartDate(christmas);
+        application.setEndDate(christmas);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), firstDayOfYear, lastDayOfYear))
+            .thenReturn(List.of(application));
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(
+            Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY))
+        );
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
+
+        final Map<Account, HolidayAccountVacationDays> actual =
+            sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
+
+        final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(30))
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+
+        assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
             assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
             assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });

@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.isOnFreeHalf;
 
 
 /**
@@ -375,7 +376,9 @@ public class VacationDaysService {
         final WorkingTimeCalendar.WorkingDayInformation workingDayInformation = workingTimeCalendar.workingDays().get(application.getStartDate());
 
         final UsedVacationDaysDateRange dateRangeUsedVacationDays;
-        if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayOff()) {
+        if (isOnFreeHalf(application, workingDayInformation)) {
+            dateRangeUsedVacationDays = new UsedVacationDaysDateRange(ZERO, ZERO);
+        } else if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayOff()) {
             // halfDay application is only possible for one localDate.
             // so we can safely divide the calculated workDays by 2.
             dateRangeUsedVacationDays = new UsedVacationDaysDateRange(divideBy2(dateRangeWorkDaysCountBeforeExpiryDate), divideBy2(dateRangeWorkDaysCountAfterExpiryDate));
@@ -395,7 +398,9 @@ public class VacationDaysService {
         }
 
         final UsedVacationDaysYear yearUsedVacationDays;
-        if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayOff()) {
+        if (isOnFreeHalf(application, workingDayInformation)) {
+            yearUsedVacationDays = new UsedVacationDaysYear(ZERO, ZERO);
+        } else if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayOff()) {
             // halfDay application is only possible for one localDate.
             // so we can safely divide the calculated workDays by 2.
             yearUsedVacationDays = new UsedVacationDaysYear(divideBy2(yearWorkDaysCountBeforeExpiry), divideBy2(yearWorkDaysCountAfterExpiry));
