@@ -432,6 +432,25 @@ class OvertimePermissionEvaluatorTest {
     }
 
     @Nested
+    class OwnSecondStageAuthority {
+
+        @Test
+        void ensureDepartmentHeadDoesNotManageOvertimeOfTheirOwnSecondStageAuthority() {
+            final Person departmentHead = person(SIGNED_IN_USER_ID, USER, DEPARTMENT_HEAD);
+            final Person secondStageAuthority = person(OTHER_PERSON_ID, USER, SECOND_STAGE_AUTHORITY);
+
+            settings(true, false, false);
+            when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(true);
+
+            final OvertimePermissions permissions = sut.of(departmentHead, secondStageAuthority);
+            assertThat(permissions.isAllowedToView()).isFalse();
+            assertThat(permissions.isAllowedToAdd()).isFalse();
+            assertThat(permissions.isAllowedToEdit(overtime(UV_INTERNAL))).isFalse();
+        }
+    }
+
+    @Nested
     class DepartmentLookups {
 
         @Test
@@ -442,6 +461,7 @@ class OvertimePermissionEvaluatorTest {
             settings(true, false, true);
             when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(true);
             when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(false);
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(overtimePerson, signedInUser)).thenReturn(false);
 
             final OvertimePermissions permissions = sut.of(signedInUser, overtimePerson);
             permissions.isAllowedToView();
@@ -486,6 +506,9 @@ class OvertimePermissionEvaluatorTest {
         settings(overtimeActive, syncActive, writePrivilegedOnly);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(departmentHead);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, overtimePerson)).thenReturn(secondStageAuthority);
+        if (departmentHead) {
+            when(departmentService.isSecondStageAuthorityAllowedToManagePerson(overtimePerson, signedInUser)).thenReturn(false);
+        }
 
         return sut.of(signedInUser, overtimePerson);
     }

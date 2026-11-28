@@ -47,7 +47,7 @@ public class SickNotePermissionEvaluator {
      */
     public SickNotePermissions of(Person signedInUser, Person sickNotePerson) {
         return new SickNotePermissions(signedInUser, sickNotePerson,
-            departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson),
+            isDepartmentHeadAllowedToManage(signedInUser, sickNotePerson),
             departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson),
             isSubmissionOfSickNotesEnabled());
     }
@@ -114,5 +114,14 @@ public class SickNotePermissionEvaluator {
 
     private boolean isSubmissionOfSickNotesEnabled() {
         return settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+    }
+
+    /**
+     * A department head does not manage the sick notes of their own second stage authority, who decides about the department
+     * head. Stricter than for applications for leave, where the department head only does not decide about them.
+     */
+    private boolean isDepartmentHeadAllowedToManage(Person signedInUser, Person person) {
+        return departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
+            && !departmentService.isSecondStageAuthorityAllowedToManagePerson(person, signedInUser);
     }
 }
