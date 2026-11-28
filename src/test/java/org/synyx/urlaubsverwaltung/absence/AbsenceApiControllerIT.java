@@ -34,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -261,6 +263,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -303,10 +306,60 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void ensureSickNoteWithoutDetailsForBossWithoutSickNoteView() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(23L);
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
+
+        final Person boss = new Person("boss", "Boss", "Bernd", "boss@example.org");
+        boss.setId(1L);
+        boss.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(boss);
+
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+        final DateRange period = new DateRange(LocalDate.of(2015, DECEMBER, 28), LocalDate.of(2016, JANUARY, 8));
+
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE_CHILD", 1L, period);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE_CHILD", 1L, period);
+        final AbsencePeriod.Record fullDaySickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonSick);
+
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(new AbsencePeriod(List.of(fullDaySickRecord))));
+
+        perform(
+            get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("boss")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().json("""
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": null,
+                          "absent": "FULL",
+                          "absentNumeric": 1,
+                          "absenceType": "SICK_NOTE",
+                          "category": null,
+                          "typeId": null,
+                          "from": null,
+                          "to": null,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
+    }
+
+    @Test
     void ensureCorrectConversionOfSickMorning() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -350,6 +403,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -394,6 +448,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -450,6 +505,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -565,6 +621,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -609,6 +666,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -653,6 +711,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -760,6 +819,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
